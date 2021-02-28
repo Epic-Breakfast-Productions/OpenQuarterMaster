@@ -1,0 +1,6 @@
+quarkus:
+  log:
+    level: DEBUG
+  mongodb:
+    database: openQuarterMaster
+    connection-string: mongodb://localhost:27017

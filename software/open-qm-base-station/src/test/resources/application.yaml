@@ -1,0 +1,8 @@
+quarkus:
+  log:
+    level: DEBUG
+  mongodb:
+    database: openQuarterMaster
+    connection-string: mongodb://localhost:27018
+    write-concern:
+      journal: false
