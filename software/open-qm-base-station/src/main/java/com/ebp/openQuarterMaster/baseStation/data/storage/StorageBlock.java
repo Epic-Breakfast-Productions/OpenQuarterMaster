@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.data;
+package com.ebp.openQuarterMaster.baseStation.data.storage;
 
+import com.ebp.openQuarterMaster.baseStation.data.OurMongoEntity;
 import io.quarkus.mongodb.panache.MongoEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
