@@ -18,16 +18,23 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-mongodb-panache'
 
-    compile 'javax.measure:unit-api:2.1.2'
-    implementation 'tec.uom:uom-se:1.0.10'
+//    compile 'javax.measure:unit-api:2.1.2'
 
-    testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.rest-assured:rest-assured'
+    // https://mvnrepository.com/artifact/tech.units/indriya
+    //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
+    implementation group: 'tech.units', name: 'indriya', version: '2.1.2'
+    implementation 'systems.uom:systems-common:2.1'
 
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
     testCompileOnly 'org.projectlombok:lombok:1.18.16'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+    /*
+    Test Dependencies
+     */
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
 
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.0.0'
     testCompile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'

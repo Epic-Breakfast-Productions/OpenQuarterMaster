@@ -1,5 +1,5 @@
 package com.ebp.openQuarterMaster.baseStation.data.pojos;
 
-public enum InventoryType {
+public enum TrackType {
     COUNT, TRACK, MIX
 }
