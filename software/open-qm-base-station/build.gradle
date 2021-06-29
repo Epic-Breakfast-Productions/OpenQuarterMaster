@@ -15,10 +15,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-mongodb-panache'
 
     compile 'javax.measure:unit-api:2.1.2'
-    compile 'tec.units:unit-ri:1.0.3'
+    implementation 'tec.uom:uom-se:1.0.10'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

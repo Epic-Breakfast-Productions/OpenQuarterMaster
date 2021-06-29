@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.data.storage;
+package com.ebp.openQuarterMaster.baseStation.data.mongo.storage;
 
 import com.ebp.openQuarterMaster.baseStation.data.OurMongoEntity;
 import io.quarkus.mongodb.panache.MongoEntity;
