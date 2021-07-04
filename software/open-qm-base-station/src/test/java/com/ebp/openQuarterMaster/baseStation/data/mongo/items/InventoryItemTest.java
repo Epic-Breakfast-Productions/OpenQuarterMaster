@@ -5,7 +5,6 @@ import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningSe
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,8 +19,8 @@ public class InventoryItemTest extends RunningServerTest {
 
         assertTrue(false);
 
-        InventoryItem entityOne = new InventoryItem();
-        InventoryItem entityTwo = new InventoryItem();
+        InventoryItemEntity entityOne = new InventoryItemEntity();
+        InventoryItemEntity entityTwo = new InventoryItemEntity();
 
 //        entityOne.setCapacityMeasurement(LITRE);
 //        entityOne.setCapacityMeasurement(LITRE);

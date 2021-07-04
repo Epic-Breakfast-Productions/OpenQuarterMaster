@@ -1,13 +1,17 @@
-package com.ebp.openQuarterMaster.baseStation.data;
+package com.ebp.openQuarterMaster.baseStation.data.mongo;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import lombok.*;
 
 import java.util.Objects;
 
 /**
- * Wrapper for the panache entity to implement hashcode/ equals
+ * Wrapper for the panache entity to implement hashcode/ equals, include the object/type held
  */
-public abstract class OurMongoEntity extends PanacheMongoEntity {
+public abstract class OurMongoEntity<T> extends PanacheMongoEntity {
+
+	public T obj;
+
 	public boolean isPersisted() {
 		return this.id != null;
 	}
@@ -32,6 +36,17 @@ public abstract class OurMongoEntity extends PanacheMongoEntity {
 			}
 		} else {
 			if(other.id != null) {
+				return false;
+			}
+		}
+		if(this.obj != null){
+			//noinspection RedundantIfStatement
+			if(!this.obj.equals(other.obj)){
+				return false;
+			}
+		} else {
+			//noinspection RedundantIfStatement
+			if(other.obj != null) {
 				return false;
 			}
 		}
