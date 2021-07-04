@@ -44,8 +44,14 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			.version(version)
 			.net(new Net(port, Network.localhostIsIPv6()))
 			.build();
-		MONGO = MongodStarter.getDefaultInstance().prepare(config);
-		MONGO.start();
+		try{
+			MONGO = MongodStarter.getDefaultInstance().prepare(config);
+			MONGO.start();
+		} catch (Throwable e){
+			log.error("FAILED to start test mongo server: ", e);
+			MONGO = null;
+			throw e;
+		}
 	}
 	
 	public static synchronized void stopMongoTestServer() {

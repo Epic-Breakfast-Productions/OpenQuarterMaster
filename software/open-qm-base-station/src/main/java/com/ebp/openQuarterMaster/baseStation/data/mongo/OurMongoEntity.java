@@ -10,7 +10,10 @@ import java.util.Objects;
  */
 public abstract class OurMongoEntity<T> extends PanacheMongoEntity {
 
+	@Getter
+	@Setter
 	public T obj;
+
 
 	public boolean isPersisted() {
 		return this.id != null;

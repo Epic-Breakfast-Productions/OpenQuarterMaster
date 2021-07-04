@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
@@ -9,26 +10,27 @@ import org.bson.codecs.EncoderContext;
 import javax.inject.Singleton;
 import javax.measure.Unit;
 
+import static com.ebp.openQuarterMaster.baseStation.data.pojos.Utils.OBJECT_MAPPER;
+
 @Singleton
 public class UnitCodec implements Codec<Unit> {
 
     @Override
     public Unit decode(BsonReader bsonReader, DecoderContext decoderContext) {
-        String unitData = bsonReader.readString();
-
-        //todo
-
-        return null;
+        try {
+            return OBJECT_MAPPER.readValue(bsonReader.readString(), Unit.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to decode unit field.", e);
+        }
     }
 
     @Override
     public void encode(BsonWriter bsonWriter, Unit unit, EncoderContext encoderContext) {
-        System.out.println("Encoding....");
-//
-//        bsonWriter.writeDateTime(Date.from(status.getTimestamp().toInstant(ZoneOffset.UTC)).getTime());
-//        bsonWriter.writeString(status.name());
-
-        //TODO
+        try {
+            bsonWriter.writeString(OBJECT_MAPPER.writeValueAsString(unit));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to encode unit field.", e);
+        }
     }
 
     @Override

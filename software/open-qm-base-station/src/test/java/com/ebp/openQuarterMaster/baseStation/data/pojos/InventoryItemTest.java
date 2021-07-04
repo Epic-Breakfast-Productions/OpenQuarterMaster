@@ -9,9 +9,9 @@ import tech.units.indriya.unit.Units;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-class InventoryItemTest {
+public class InventoryItemTest {
 
-    private static InventoryItem getTestItem(){
+    public static InventoryItem getTestItem(){
         return InventoryItem
                 .builder()
                 .name("test item")
