@@ -7,12 +7,10 @@ import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
-
     List<Codec> codecs = List.of(
             new UUIDCodec(),
             new UnitCodec()
