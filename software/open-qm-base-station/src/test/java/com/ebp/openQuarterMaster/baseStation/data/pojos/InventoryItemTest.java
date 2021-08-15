@@ -21,13 +21,15 @@ public class InventoryItemTest {
 
         InventoryItem itemOne = getTestItem();
 
+//        Utils.OBJECT_MAPPER.setTimeZone(TimeZone.getTimeZone(itemOne.getLastUpdated().getZone()));
+
         String itemJson = Utils.OBJECT_MAPPER.writeValueAsString(itemOne);
 
         log.info("test item json: {}", itemJson);
 
         InventoryItem itemBack = Utils.OBJECT_MAPPER.readValue(itemJson, InventoryItem.class);
 
-        assertEquals(itemOne, itemBack);
+        assertEquals(itemOne, itemBack, "Deserialized object was not equal to original.");
     }
 
 
