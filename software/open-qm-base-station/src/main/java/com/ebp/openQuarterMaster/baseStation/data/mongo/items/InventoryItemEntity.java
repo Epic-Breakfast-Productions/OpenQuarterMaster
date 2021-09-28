@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.data.mongo.items;
 
 import com.ebp.openQuarterMaster.baseStation.data.mongo.OurMongoEntity;
 import com.ebp.openQuarterMaster.baseStation.data.pojos.InventoryItem;
-import io.quarkus.mongodb.panache.MongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

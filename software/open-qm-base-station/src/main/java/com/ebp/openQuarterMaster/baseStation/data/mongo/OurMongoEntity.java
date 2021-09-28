@@ -9,11 +9,9 @@ import java.util.Objects;
  * Wrapper for the panache entity to implement hashcode/ equals, include the object/type held
  */
 public abstract class OurMongoEntity<T> extends PanacheMongoEntity {
-
 	@Getter
 	@Setter
 	public T obj;
-
 
 	public boolean isPersisted() {
 		return this.id != null;

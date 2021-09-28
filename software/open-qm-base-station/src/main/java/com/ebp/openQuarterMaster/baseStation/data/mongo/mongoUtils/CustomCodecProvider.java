@@ -7,12 +7,11 @@ import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
-
+    @SuppressWarnings("rawtypes")
     List<Codec> codecs = List.of(
             new UUIDCodec(),
             new UnitCodec()
@@ -20,8 +19,10 @@ public class CustomCodecProvider implements CodecProvider {
 
     @Override
     public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
+        //noinspection rawtypes
         for(Codec codec : codecs){
             if (clazz == codec.getEncoderClass()) {
+                //noinspection unchecked
                 return (Codec<T>) codec;
             }
         }

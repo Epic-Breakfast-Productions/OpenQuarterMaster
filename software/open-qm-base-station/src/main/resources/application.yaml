@@ -1,6 +1,42 @@
+# https://quarkus.io/guides/config-reference
+service:
+  version: ${quarkus.application.version:0.0.0-TEST} # shouldn't need to default this for testing but here we are. https://github.com/quarkusio/quarkus/issues/15013
+  apiVersion: 1.0.0
+
 quarkus:
   log:
     level: DEBUG
   mongodb:
     database: openQuarterMaster
     connection-string: mongodb://localhost:27017
+#  package:
+#    type: uber-jar
+
+  # https://quarkus.io/guides/openapi-swaggerui
+  smallrye-openapi:
+    info-title: Open QuarterMaster Base Station API
+    info-version: ${service.apiVersion}
+    info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
+#    info-terms-of-service: <url>
+    info-contact-email: contact@gjstewart.net
+    info-contact-name: Greg Stewart
+    info-contact-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+    info-license-name: GNU General Public License v3.0
+    info-license-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE
+  swagger-ui:
+    title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
+    theme: flattop
+    footer: With <3, EBP
+
+"%dev":
+  quarkus:
+    log:
+      level: DEBUG
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (DEV)
+"%test":
+  quarkus:
+    log:
+      level: TRACE
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (TEST)
