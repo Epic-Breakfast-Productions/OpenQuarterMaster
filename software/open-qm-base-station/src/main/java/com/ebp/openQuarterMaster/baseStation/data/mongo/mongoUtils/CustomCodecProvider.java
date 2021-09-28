@@ -21,7 +21,6 @@ public class CustomCodecProvider implements CodecProvider {
 
     @Override
     public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-        for (Codec codec : codecs) {
         //noinspection rawtypes
         for(Codec codec : codecs){
             if (clazz == codec.getEncoderClass()) {
