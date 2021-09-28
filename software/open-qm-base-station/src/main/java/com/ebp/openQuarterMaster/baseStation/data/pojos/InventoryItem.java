@@ -4,17 +4,17 @@ import com.ebp.openQuarterMaster.baseStation.data.pojos.exceptions.UnitNotSuppor
 import lombok.*;
 import tech.units.indriya.AbstractUnit;
 
-import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryItem {
+public class InventoryItem extends Tracked {
 
     /**
      * The name of this inventory item
@@ -36,13 +36,6 @@ public class InventoryItem {
     private List<String> keywords = new ArrayList<>();
 
     /**
-     * How we keep track of this item
-     */
-    @Builder.Default
-    @NonNull
-    private TrackType trackType = TrackType.COUNT;
-
-    /**
      * The unit used to measure the item
      */
     @Builder.Default
@@ -50,7 +43,7 @@ public class InventoryItem {
     private Unit unit = AbstractUnit.ONE;
 
     public InventoryItem setUnit(Unit unit) throws UnitNotSupportedException {
-        if(unit == null){
+        if (unit == null) {
             throw new NullPointerException("Unit cannot be null");
         }
         if (!Utils.ALLOWED_MEASUREMENTS.contains(unit)) {

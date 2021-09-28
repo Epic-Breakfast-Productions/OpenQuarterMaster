@@ -1,20 +1,20 @@
 package com.ebp.openQuarterMaster.baseStation.data.mongo.items;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.InventoryItemTest;
+import com.ebp.openQuarterMaster.baseStation.data.mongo.MongoEntityTest;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.InventoryItem;
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
-import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-public class InventoryItemEntityTest extends RunningServerTest {
+public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity, InventoryItem> {
 
     @Test
     public void testEquals() {
@@ -43,8 +43,21 @@ public class InventoryItemEntityTest extends RunningServerTest {
     @Test
     public void testPersist() {
         InventoryItemEntity entityOne = new InventoryItemEntity();
-        entityOne.setObj(InventoryItemTest.getTestItem());
+        entityOne.setObj(this.getBasicTestObj());
 
         entityOne.persist();
+    }
+
+    @Override
+    public InventoryItemEntity getBasicTestEntity() {
+        return null;
+    }
+
+    @Override
+    public InventoryItem getBasicTestObj() {
+        return InventoryItem
+                .builder()
+                .name("test item")
+                .build();
     }
 }

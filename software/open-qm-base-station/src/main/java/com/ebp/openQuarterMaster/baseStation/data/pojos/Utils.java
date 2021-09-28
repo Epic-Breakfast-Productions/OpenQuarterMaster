@@ -1,6 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.data.pojos;
 
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import systems.uom.common.USCustomary;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.unit.Units;
@@ -8,16 +11,28 @@ import tech.uom.lib.jackson.UnitJacksonModule;
 
 import javax.measure.Unit;
 import java.util.List;
+import java.util.TimeZone;
 
 public class Utils {
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final Module[] MAPPER_MODULES = {
+            new UnitJacksonModule(),
+            new JavaTimeModule()
+    };
 
     static {
         setupObjectMapper(OBJECT_MAPPER);
     }
 
-    public static void setupObjectMapper(ObjectMapper mapper){
-        mapper.registerModule(new UnitJacksonModule());
+    public static void setupObjectMapper(ObjectMapper mapper) {
+        mapper.registerModules(MAPPER_MODULES);
+
+//        mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+
+        //set the timezone to this server's.
+        mapper.setTimeZone(TimeZone.getDefault());
     }
 
     //amounts
