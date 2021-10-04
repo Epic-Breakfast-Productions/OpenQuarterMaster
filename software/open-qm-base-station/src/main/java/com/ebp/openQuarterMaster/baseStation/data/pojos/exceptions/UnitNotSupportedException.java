@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.data.pojos.exceptions;
 
 import javax.measure.Unit;
 
-public class UnitNotSupportedException extends RuntimeException {
+public class UnitNotSupportedException extends IllegalArgumentException {
     public UnitNotSupportedException() {
         super();
     }
@@ -17,10 +17,6 @@ public class UnitNotSupportedException extends RuntimeException {
 
     public UnitNotSupportedException(Throwable cause) {
         super(cause);
-    }
-
-    public UnitNotSupportedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
     public UnitNotSupportedException(Unit given) {

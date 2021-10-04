@@ -1,8 +1,15 @@
 package com.ebp.openQuarterMaster.baseStation.data.pojos;
 
+import com.ebp.openQuarterMaster.baseStation.data.pojos.exceptions.UnitNotSupportedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tech.units.indriya.unit.Units;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,10 +25,7 @@ public class InventoryItemTest {
 
     @Test
     public void testSerialization() throws JsonProcessingException {
-
         InventoryItem itemOne = getTestItem();
-
-//        Utils.OBJECT_MAPPER.setTimeZone(TimeZone.getTimeZone(itemOne.getLastUpdated().getZone()));
 
         String itemJson = Utils.OBJECT_MAPPER.writeValueAsString(itemOne);
 
@@ -31,7 +35,6 @@ public class InventoryItemTest {
 
         assertEquals(itemOne, itemBack, "Deserialized object was not equal to original.");
     }
-
 
     @Test
     public void playground() throws JsonProcessingException {

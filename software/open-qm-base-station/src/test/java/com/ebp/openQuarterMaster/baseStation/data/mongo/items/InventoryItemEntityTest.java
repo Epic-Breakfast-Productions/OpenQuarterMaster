@@ -16,9 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity, InventoryItem> {
 
+    @Override
+    public InventoryItemEntity getBasicTestEntity() {
+        return null;
+    }
+
+    @Override
+    public InventoryItem getBasicTestObj() {
+        return InventoryItem
+                .builder()
+                .name("test item")
+                .build();
+    }
+
     @Test
     public void testEquals() {
-
         InventoryItemEntity entityOne = new InventoryItemEntity();
         InventoryItemEntity entityTwo = new InventoryItemEntity();
 
@@ -36,7 +48,6 @@ public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity
                 entityOne,
                 entityTwo
         );
-        //TODO:: more
     }
 
 
@@ -48,16 +59,4 @@ public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity
         entityOne.persist();
     }
 
-    @Override
-    public InventoryItemEntity getBasicTestEntity() {
-        return null;
-    }
-
-    @Override
-    public InventoryItem getBasicTestObj() {
-        return InventoryItem
-                .builder()
-                .name("test item")
-                .build();
-    }
 }

@@ -1,32 +1,35 @@
 package com.ebp.openQuarterMaster.baseStation.data.pojos;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.exceptions.UnitNotSupportedException;
 import com.ebp.openQuarterMaster.baseStation.data.pojos.history.Historied;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.validators.ValidUnit;
 import lombok.*;
 import tech.units.indriya.AbstractUnit;
 
 import javax.measure.Unit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class InventoryItem extends Historied {
-
     /**
      * The name of this inventory item
      */
     @NonNull
+    @NotNull
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     /**
      * The id for this inventory item
      */
     @Builder.Default
+    @NonNull
+    @NotNull
     private UUID id = UUID.randomUUID();
 
     /**
@@ -34,23 +37,20 @@ public class InventoryItem extends Historied {
      */
     @Builder.Default
     @NonNull
-    private List<String> keywords = new ArrayList<>();
+    @NotNull
+    private List<@NotBlank String> keywords = new ArrayList<>();
+
+    @Builder.Default
+    @NonNull
+    @NotNull
+    private Map<String, Object> attributes = new HashMap<>();
 
     /**
      * The unit used to measure the item
      */
     @Builder.Default
     @NonNull
+    @NotNull
+    @ValidUnit
     private Unit unit = AbstractUnit.ONE;
-
-    public InventoryItem setUnit(Unit unit) throws UnitNotSupportedException {
-        if (unit == null) {
-            throw new NullPointerException("Unit cannot be null");
-        }
-        if (!Utils.ALLOWED_MEASUREMENTS.contains(unit)) {
-            throw new UnitNotSupportedException(unit);
-        }
-        this.unit = unit;
-        return this;
-    }
 }
