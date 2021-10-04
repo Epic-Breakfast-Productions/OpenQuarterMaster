@@ -8,7 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
-import javax.ws.rs.GET;
+import javax.validation.Valid;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -38,7 +38,7 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public String createInventoryItem() {
+    public String createInventoryItem(@Valid InventoryItem item) {
         return "Hello RESTEasy";
     }
 }

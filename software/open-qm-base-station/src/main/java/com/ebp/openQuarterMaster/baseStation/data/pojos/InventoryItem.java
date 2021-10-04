@@ -28,8 +28,8 @@ public class InventoryItem extends Historied {
      * The id for this inventory item
      */
     @Builder.Default
-    @NonNull
-    @NotNull
+//    @NonNull
+//    @NotNull
     private UUID id = UUID.randomUUID();
 
     /**
