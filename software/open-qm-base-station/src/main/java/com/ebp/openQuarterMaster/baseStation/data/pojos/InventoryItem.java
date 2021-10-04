@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.data.pojos;
 
 import com.ebp.openQuarterMaster.baseStation.data.pojos.exceptions.UnitNotSupportedException;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.history.Historied;
 import lombok.*;
 import tech.units.indriya.AbstractUnit;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryItem extends Tracked {
+public class InventoryItem extends Historied {
 
     /**
      * The name of this inventory item

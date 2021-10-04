@@ -24,6 +24,7 @@ quarkus:
     info-license-name: GNU General Public License v3.0
     info-license-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE
   swagger-ui:
+    always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With <3, EBP
