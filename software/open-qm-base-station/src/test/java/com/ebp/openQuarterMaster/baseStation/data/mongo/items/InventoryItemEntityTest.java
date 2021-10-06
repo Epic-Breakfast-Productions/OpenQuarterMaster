@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.data.mongo.items;
 
 import com.ebp.openQuarterMaster.baseStation.data.mongo.MongoEntityTest;
-import com.ebp.openQuarterMaster.baseStation.data.pojos.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.InventoryItem;
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;

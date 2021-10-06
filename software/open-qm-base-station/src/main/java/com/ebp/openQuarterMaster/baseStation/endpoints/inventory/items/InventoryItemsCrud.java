@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.InventoryItem;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

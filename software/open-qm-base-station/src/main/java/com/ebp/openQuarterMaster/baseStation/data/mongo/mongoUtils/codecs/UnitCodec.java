@@ -10,7 +10,7 @@ import org.bson.codecs.EncoderContext;
 import javax.inject.Singleton;
 import javax.measure.Unit;
 
-import static com.ebp.openQuarterMaster.baseStation.data.pojos.Utils.OBJECT_MAPPER;
+import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 
 @Singleton
 public class UnitCodec implements Codec<Unit> {

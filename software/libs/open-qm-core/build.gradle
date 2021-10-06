@@ -1,0 +1,115 @@
+plugins {
+    id 'java-library'
+    // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+    id 'maven-publish'
+    // https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
+//    id 'signing'
+//    id "io.freefair.lombok" version "6.2.0" //TODO:: find out why this won't work
+}
+
+group 'com.ebp.openQuarterMaster.lib'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+
+    // https://mvnrepository.com/artifact/tech.units/indriya
+    //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
+    implementation group: 'tech.units', name: 'indriya', version: '2.1.2'
+    // https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
+    implementation group: 'tech.uom.lib', name: 'uom-lib-jackson', version: '2.1'
+    implementation 'systems.uom:systems-common:2.1'
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'open-qm-lib-core'
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Open QuarterMaster Core Library'
+                description = 'A concise description of my library'
+                url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software'
+//                properties = [
+//                        myProp: "value",
+//                        "prop.with.dots": "anotherValue"
+//                ]
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'GregJohnStewart'
+                        name = 'Greg Stewart'
+                        email = 'contact@gjstewart.net'
+                    }
+                }
+//                scm {
+//                    connection = 'scm:git:git://example.com/my-library.git'
+//                    developerConnection = 'scm:git:ssh://example.com/my-library.git'
+//                    url = 'http://example.com/my-library/'
+//                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+//TODO:: setup proper signing
+//signing {
+//    sign publishing.publications.mavenJava
+//}
+
+//TODO:: fix lombok methods not included in javadocs
+javadoc {
+    if(JavaVersion.current().isJava11Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
