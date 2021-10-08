@@ -1,5 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils;
 
+
+import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.QuantityCodec;
 import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.UUIDCodec;
 import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.UnitCodec;
 import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.ZonedDateTimeCodec;
@@ -15,6 +17,7 @@ public class CustomCodecProvider implements CodecProvider {
     @SuppressWarnings("rawtypes")
     List<Codec> codecs = List.of(
             new UUIDCodec(),
+            new QuantityCodec(),
             new UnitCodec(),
             new ZonedDateTimeCodec()
     );

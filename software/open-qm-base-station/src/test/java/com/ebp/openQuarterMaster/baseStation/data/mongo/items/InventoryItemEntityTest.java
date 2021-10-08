@@ -3,6 +3,8 @@ package com.ebp.openQuarterMaster.baseStation.data.mongo.items;
 import com.ebp.openQuarterMaster.baseStation.data.mongo.MongoEntityTest;
 import com.ebp.openQuarterMaster.lib.core.InventoryItem;
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.lib.core.InventoryItemAmt;
+import com.ebp.openQuarterMaster.lib.core.storage.stored.AmountStored;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,8 @@ public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity
     }
 
     @Override
-    public InventoryItem getBasicTestObj() {
-        return InventoryItem
-                .builder()
-                .name("test item")
-                .build();
+    public InventoryItem<AmountStored> getBasicTestObj() {
+        return new InventoryItemAmt();
     }
 
     @Test
@@ -53,10 +52,15 @@ public class InventoryItemEntityTest extends MongoEntityTest<InventoryItemEntity
 
     @Test
     public void testPersist() {
+        InventoryItemAmt itemOrig = new InventoryItemAmt();
         InventoryItemEntity entityOne = new InventoryItemEntity();
-        entityOne.setObj(this.getBasicTestObj());
+        entityOne.setObj(itemOrig);
 
         entityOne.persist();
+
+        InventoryItemEntity entityGotten = InventoryItemEntity.findById(entityOne.id);
+
+        assertEquals(entityOne, entityGotten);
     }
 
 }

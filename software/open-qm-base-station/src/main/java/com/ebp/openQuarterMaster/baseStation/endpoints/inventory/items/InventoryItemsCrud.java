@@ -37,7 +37,7 @@ public class InventoryItemsCrud {
             description = "Bad request given. Data given could not pass validation. (no user at given id, etc.)",
             content = @Content(mediaType = "text/plain")
     )
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON    )
     public String createInventoryItem(@Valid InventoryItem item) {
         return "Hello RESTEasy";
     }

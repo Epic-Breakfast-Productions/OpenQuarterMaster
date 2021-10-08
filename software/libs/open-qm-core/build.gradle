@@ -22,6 +22,11 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
 
+    //if need ObjectIds, BsonIgnore
+//    implementation group: 'org.mongodb', name: 'bson', version: '4.3.3'
+
+
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 

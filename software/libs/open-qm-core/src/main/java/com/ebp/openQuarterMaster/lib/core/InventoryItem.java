@@ -1,21 +1,21 @@
 package com.ebp.openQuarterMaster.lib.core;
 
-import com.ebp.openQuarterMaster.lib.core.history.Historied;
-import com.ebp.openQuarterMaster.lib.core.validators.ValidUnit;
+import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import lombok.*;
-import tech.units.indriya.AbstractUnit;
 
-import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
+/**
+ * Describes a type of inventory item.
+ * @param <S> The type of storage the item uses
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class InventoryItem extends Historied {
+@AllArgsConstructor
+public abstract class InventoryItem<S extends Stored> extends MainObject {
     /**
      * The name of this inventory item
      */
@@ -25,32 +25,13 @@ public class InventoryItem extends Historied {
     private String name;
 
     /**
-     * The id for this inventory item
-     */
-    @Builder.Default
-//    @NonNull
-//    @NotNull
-    private UUID id = UUID.randomUUID();
-
-    /**
      * Keywords associated with this item. Used for searching for items.
      */
-    @Builder.Default
     @NonNull
     @NotNull
     private List<@NotBlank String> keywords = new ArrayList<>();
 
-    @Builder.Default
     @NonNull
     @NotNull
-    private Map<String, Object> attributes = new HashMap<>();
-
-    /**
-     * The unit used to measure the item
-     */
-    @Builder.Default
-    @NonNull
-    @NotNull
-    @ValidUnit
-    private Unit unit = AbstractUnit.ONE;
+    private Map<UUID, S> storageMap = new HashMap<>();
 }
