@@ -23,7 +23,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
 
     //if need ObjectIds, BsonIgnore
-//    implementation group: 'org.mongodb', name: 'bson', version: '4.3.3'
+    implementation group: 'org.mongodb', name: 'bson', version: '4.3.3'
 
 
 
@@ -40,10 +40,16 @@ dependencies {
     // https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
     implementation group: 'tech.uom.lib', name: 'uom-lib-jackson', version: '2.1'
     implementation 'systems.uom:systems-common:2.1'
+
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation("org.assertj:assertj-core:3.21.0")
+    implementation group: 'tech.uom.lib', name: 'uom-lib-assertj', version: '2.1'
+
+    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.6'
 }
 
 test {

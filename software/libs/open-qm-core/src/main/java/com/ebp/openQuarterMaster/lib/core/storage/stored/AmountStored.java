@@ -9,8 +9,10 @@ import javax.measure.Unit;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class AmountStored extends Stored {
-    private final Quantity amount;
+    /** The amount of the thing stored. */
+    private Quantity amount;
 
     public AmountStored(Number amount, Unit unit){
         this(Quantities.getQuantity(amount, unit));
