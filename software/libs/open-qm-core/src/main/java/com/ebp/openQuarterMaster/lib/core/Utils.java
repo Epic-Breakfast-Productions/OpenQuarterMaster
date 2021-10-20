@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core;
 
+import com.ebp.openQuarterMaster.lib.core.temp.TempQuantityJacksonModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,7 +18,8 @@ public class Utils {
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     public static final Module[] MAPPER_MODULES = {
             new UnitJacksonModule(),
-            new JavaTimeModule()
+            new JavaTimeModule(),
+            new TempQuantityJacksonModule()
     };
 
     static {

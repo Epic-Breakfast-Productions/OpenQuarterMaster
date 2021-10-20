@@ -16,10 +16,10 @@ import java.util.Map;
 public class InventoryItemCodecProvider implements CodecProvider {
     @Override
     public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-        if(InventoryItemAmt.class.isAssignableFrom(clazz)){
+        if (InventoryItemAmt.class.isAssignableFrom(clazz)) {
             return (Codec<T>) registry.get(InventoryItemAmt.class);
         }
-        if(InventoryItemTracked.class.isAssignableFrom(clazz)){
+        if (InventoryItemTracked.class.isAssignableFrom(clazz)) {
             return (Codec<T>) registry.get(InventoryItemTracked.class);
         }
         return null;

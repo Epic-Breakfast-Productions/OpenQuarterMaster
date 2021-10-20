@@ -17,7 +17,7 @@ import java.util.Map;
 
 import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 
-//@Singleton
+
 //public class InventoryItemCodec<S extends Stored> implements Codec<InventoryItem<S>> {
 //    private final Class<InventoryItem<S>> encoderClass;
 //    private final Codec<InventoryItem<S>> storedCodec;

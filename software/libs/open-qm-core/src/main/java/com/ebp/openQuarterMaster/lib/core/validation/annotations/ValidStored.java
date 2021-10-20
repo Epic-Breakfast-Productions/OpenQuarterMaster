@@ -1,4 +1,6 @@
-package com.ebp.openQuarterMaster.lib.core.validators;
+package com.ebp.openQuarterMaster.lib.core.validation.annotations;
+
+import com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -6,7 +8,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -14,12 +16,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * https://docs.jboss.org/hibernate/validator/5.0/reference/en-US/html/validator-customconstraints.html#validator-customconstraints-validator
  */
-@Target({ FIELD, METHOD, PARAMETER })
+@Target({TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = UnitValidator.class)
+@Constraint(validatedBy = StoredValidator.class)
 @Documented
-public @interface ValidUnit {
-    String message() default "Unit was not one of allowed units.";
+public @interface ValidStored {
+    String message() default "Stored values were not set correctly.";
 
     Class<?>[] groups() default { };
     Class<? extends Payload>[] payload() default { };
