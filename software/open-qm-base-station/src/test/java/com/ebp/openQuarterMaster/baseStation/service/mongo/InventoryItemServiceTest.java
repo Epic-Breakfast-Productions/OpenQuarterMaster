@@ -1,8 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoServiceTest;
-import com.ebp.openQuarterMaster.lib.core.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, InventoryItemService> {
     @Inject
     InventoryItemService service;
+    @Inject
+    InventoryItemTestObjectCreator itemTestObjectCreator;
 
     @Override
     protected InventoryItem getTestObject() {
-        InventoryItem output = new InventoryItem();
-
-        return output;
+        return itemTestObjectCreator.getTestObject();
     }
 
     @AfterEach

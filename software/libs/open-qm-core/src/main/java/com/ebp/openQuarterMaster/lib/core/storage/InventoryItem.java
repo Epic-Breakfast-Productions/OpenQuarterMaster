@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.lib.core;
+package com.ebp.openQuarterMaster.lib.core.storage;
 
+import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidInventoryItem;
@@ -26,23 +27,25 @@ public class InventoryItem extends MainObject {
      * The name of this inventory item
      */
     @NonNull
-    @NotNull
-    @NotBlank(message = "Name cannot be blank")
+//    @NotNull
+//    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     /**
      * Keywords associated with this item. Used for searching for items.
      */
     @NonNull
-    @NotNull
-    private List<@NotBlank String> keywords = new ArrayList<>();
+//    @NotNull
+    private List<
+//            @NotBlank
+                    String> keywords = new ArrayList<>();
 
     @NonNull
-    @NotNull
+//    @NotNull
     private StoredType storedType;
 
     @NonNull
-    @NotNull
+//    @NotNull
     private Map<UUID, Stored> storageMap = new HashMap<>();
 
     /**
@@ -50,7 +53,7 @@ public class InventoryItem extends MainObject {
      * Will always be {@link AbstractUnit#ONE} if {@link #storedType} is {@link StoredType#AMOUNT}
      */
     @NonNull
-    @NotNull
+//    @NotNull
     @ValidUnit
     private Unit unit = AbstractUnit.ONE;
 

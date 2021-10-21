@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
-import com.ebp.openQuarterMaster.lib.core.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 

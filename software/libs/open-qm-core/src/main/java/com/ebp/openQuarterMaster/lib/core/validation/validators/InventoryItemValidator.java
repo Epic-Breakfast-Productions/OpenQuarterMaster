@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidInventoryItem;
 
 import javax.validation.ConstraintValidator;
