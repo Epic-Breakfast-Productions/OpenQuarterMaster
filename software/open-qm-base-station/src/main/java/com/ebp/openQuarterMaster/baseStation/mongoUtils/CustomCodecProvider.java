@@ -1,10 +1,10 @@
-package com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils;
+package com.ebp.openQuarterMaster.baseStation.mongoUtils;
 
 
-import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.QuantityCodec;
-import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.UUIDCodec;
-import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.UnitCodec;
-import com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs.ZonedDateTimeCodec;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.QuantityCodec;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.UUIDCodec;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.UnitCodec;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.ZonedDateTimeCodec;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;

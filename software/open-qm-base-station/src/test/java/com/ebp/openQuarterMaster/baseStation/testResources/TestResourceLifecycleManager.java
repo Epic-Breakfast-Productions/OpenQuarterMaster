@@ -1,11 +1,13 @@
 package com.ebp.openQuarterMaster.baseStation.testResources;
 
 import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.runtime.Mongod;
 import de.flapdoodle.embed.process.runtime.Network;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
@@ -25,7 +27,8 @@ import java.util.Map;
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
 	private static final boolean SELENIUM_HEADLESS = true;
 	
-	private static volatile MongodExecutable MONGO = null;
+	private static volatile MongodExecutable MONGO_EXE = null;
+
 	private static volatile WebDriver webDriver;
 	
 	static {
@@ -33,7 +36,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	}
 	
 	public static synchronized void startMongoTestServer() throws IOException {
-		if(MONGO != null) {
+		if(MONGO_EXE != null) {
 			log.info("Flapdoodle Mongo already started.");
 			return;
 		}
@@ -45,32 +48,34 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			.net(new Net(port, Network.localhostIsIPv6()))
 			.build();
 		try{
-			MONGO = MongodStarter.getDefaultInstance().prepare(config);
-			MONGO.start();
+			MONGO_EXE = MongodStarter.getDefaultInstance().prepare(config);
+			MongodProcess process = MONGO_EXE.start();
+			if(!process.isProcessRunning()){
+				throw new IOException();
+			}
 		} catch (Throwable e){
 			log.error("FAILED to start test mongo server: ", e);
-			MONGO = null;
+			MONGO_EXE = null;
 			throw e;
 		}
 	}
 	
 	public static synchronized void stopMongoTestServer() {
-		if(MONGO == null) {
+		if(MONGO_EXE == null) {
 			log.warn("Mongo was not started.");
 			return;
 		}
-		MONGO.stop();
-		MONGO = null;
+		MONGO_EXE.stop();
+		MONGO_EXE = null;
 	}
 	
-	public synchronized static void cleanMongo() {
-		if(MONGO == null) {
+	public synchronized static void cleanMongo() throws IOException {
+		if(MONGO_EXE == null) {
 			log.warn("Mongo was not started.");
 			return;
 		}
 		
 		log.info("Cleaning Mongo of all entries.");
-		//TODO
 	}
 	
 	

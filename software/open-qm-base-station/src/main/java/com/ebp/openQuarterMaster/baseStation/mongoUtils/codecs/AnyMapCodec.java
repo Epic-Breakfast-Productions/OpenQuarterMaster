@@ -1,6 +1,5 @@
-package com.ebp.openQuarterMaster.baseStation.data.mongo.mongoUtils.codecs;
+package com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bson.*;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
@@ -8,7 +7,6 @@ import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
 import org.bson.json.JsonReader;
 
-import javax.measure.Unit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

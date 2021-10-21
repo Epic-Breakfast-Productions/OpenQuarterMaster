@@ -21,7 +21,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ValidInventoryItem
-public abstract class InventoryItem extends MainObject {
+public class InventoryItem extends MainObject {
     /**
      * The name of this inventory item
      */

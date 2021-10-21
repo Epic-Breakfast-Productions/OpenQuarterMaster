@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.data.mongo;
+package com.ebp.openQuarterMaster.baseStation.mongoUtils;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import lombok.*;
