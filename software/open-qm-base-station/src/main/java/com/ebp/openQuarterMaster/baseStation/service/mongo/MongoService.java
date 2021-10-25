@@ -78,6 +78,7 @@ public abstract class MongoService<T extends MainObject> {
 
     //TODO:: get with filter
     //TODO:: paging with filter
+    //  https://medium.com/swlh/mongodb-pagination-fast-consistent-ece2a97070f3
 
     public ObjectId add(T object){
         InsertOneResult result = getCollection().insertOne(object);

@@ -117,7 +117,7 @@ public class StoredTest {
 
         assertEquals(StoredType.TRACKED, s.getType());
         assertSame(trackedMap, s.getItems());
-        assertNull(s.getAmount());
+        assertNotNull(s.getAmount());
         assertTrue(validator.isValid(s, null));
     }
 

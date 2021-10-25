@@ -2,14 +2,20 @@
 service:
   version: ${quarkus.application.version:0.0.0-TEST} # shouldn't need to default this for testing but here we are. https://github.com/quarkusio/quarkus/issues/15013
   apiVersion: 1.0.0
+  nameShort: OQMbase
+  nameFull: Open Quarter Master Base Station
 
 quarkus:
   log:
     level: DEBUG
+    console:
+      format: "%d{HH:mm:ss} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{2.}] (%t) %s%e%n"
   mongodb:
     database: openQuarterMaster
     connection-string: mongodb://localhost:27017
-#  package:
+    tracing:
+      enabled: true
+  #  package:
 #    type: uber-jar
 
   # https://quarkus.io/guides/openapi-swaggerui
@@ -28,6 +34,14 @@ quarkus:
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With <3, EBP
+  # https://quarkus.io/guides/opentracing
+  jaeger:
+    enabled: true
+    service-name: ${service.nameShort}v${service.apiVersion}
+    sampler-type: const
+    sampler-param: 1
+#    metrics:
+#      enabled: true
 
 "%dev":
   quarkus:

@@ -12,27 +12,15 @@ import java.util.stream.Collectors;
 
 public class StoredValidator implements ConstraintValidator<ValidUnit, Stored> {
 
-    private boolean validateAmountStored(Stored stored){
-        return stored.getAmount() != null &&
-                stored.getItems() == null;
+    private boolean validateAmountStored(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
+        return stored.getItems() == null && stored.getAmount() != null;
     }
-    private boolean validateTrackedStored(Stored stored){
-        if(!(
-                stored.getItems() != null &&
-                stored.getAmount() == null
-        )){
-          return false;
-        }
-        //tracked items cannot have null or empty keys or values
-        if(stored.getItems()
-                .keySet()
-                .stream()
-                .anyMatch((String key)->{
-                    return key == null && key.isBlank();
-                })
-        ){
+
+    private boolean validateTrackedStored(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
+        if (stored.getItems() == null) {
             return false;
         }
+
         if(stored.getItems()
                 .values()
                 .stream()
@@ -45,17 +33,17 @@ public class StoredValidator implements ConstraintValidator<ValidUnit, Stored> {
 
     @Override
     public boolean isValid(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
-        if(stored == null){
+        if (stored == null) {
             return false;
         }
-        if(stored.getType() == null){
+        if (stored.getType() == null) {
             return false;
         }
-        switch (stored.getType()){
+        switch (stored.getType()) {
             case AMOUNT:
-                return validateAmountStored(stored);
+                return validateAmountStored(stored, constraintValidatorContext);
             case TRACKED:
-                return validateTrackedStored(stored);
+                return validateTrackedStored(stored, constraintValidatorContext);
             default:
                 return false;
         }

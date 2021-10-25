@@ -13,9 +13,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,7 +48,6 @@ class StoredValidatorTest {
         }};
         return Stream.of(
                 Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), validMap)),
-                Arguments.of(new Stored(StoredType.TRACKED, Quantities.getQuantity(50, AbstractUnit.ONE), validMap)),
                 Arguments.of(new Stored(StoredType.TRACKED, null, null)),
                 Arguments.of(new Stored(StoredType.AMOUNT, null, null)),
                 Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put(null, new TrackedItem(UUID.randomUUID()));}})),

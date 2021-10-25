@@ -11,6 +11,6 @@ public class UnitValidator implements ConstraintValidator<ValidUnit, Unit> {
 
     @Override
     public boolean isValid(Unit unit, ConstraintValidatorContext constraintValidatorContext) {
-        return Utils.ALLOWED_MEASUREMENTS.contains(unit);
+        return unit != null && Utils.ALLOWED_MEASUREMENTS.contains(unit);
     }
 }

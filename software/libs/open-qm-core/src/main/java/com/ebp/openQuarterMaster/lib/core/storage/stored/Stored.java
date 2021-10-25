@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.storage.stored;
 
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidStored;
 import lombok.*;
+import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -37,7 +38,7 @@ public class Stored {
      * Key is the identifying string data, value is the tracked item.
      * To only be used when {@link #type} is {@link StoredType#TRACKED}
      */
-    private Map<@NotBlank String, TrackedItem> items = null;
+    private Map<@NotBlank String, @NotNull TrackedItem> items = null;
 
     private Stored(StoredType type){
         this.setType(type);
@@ -59,6 +60,18 @@ public class Stored {
     public Stored(Map<String, TrackedItem> items){
         this(StoredType.TRACKED);
         this.setItems(items);
+    }
+
+    //TODO:: test
+    public Quantity getAmount(){
+        switch (this.getType()){
+            case AMOUNT:
+                return this.amount;
+            case TRACKED:
+                return Quantities.getQuantity(this.getItems().size(), AbstractUnit.ONE);
+            default:
+                throw new IllegalStateException("Invalid type set. should not happen.");
+        }
     }
 
     public Stored add(Quantity amount) {
@@ -104,5 +117,4 @@ public class Stored {
 
     //TODO:: get item at key
     //TODO:: removes
-    //TODO:: transfer
 }

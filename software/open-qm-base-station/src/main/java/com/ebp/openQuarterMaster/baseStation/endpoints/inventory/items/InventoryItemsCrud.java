@@ -2,6 +2,8 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import lombok.extern.java.Log;
+import lombok.extern.jbosslog.JBossLog;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -10,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import org.jboss.logging.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -19,10 +22,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-@Slf4j
+@JBossLog
 @Path("/inventory/item")
 public class InventoryItemsCrud {
+
     @Inject
     InventoryItemService service;
 
@@ -38,7 +43,7 @@ public class InventoryItemsCrud {
     )
     @Tags({@Tag(name = "Inventory Items")})
     @APIResponse(
-            responseCode = "200",
+            responseCode = "201",
             description = "Got the user's info.",
             content = @Content(
                     mediaType = "application/json",
@@ -53,12 +58,13 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public ObjectId createInventoryItem(@Valid InventoryItem item) {
-        log.info(createMarker, "Creating new item.");
+    public Response createInventoryItem(@Valid InventoryItem item) {
+//        log.info(createMarker, "Creating new item.");
+        log.info("Creating new item.");
         ObjectId output = service.add(item);
-        log.info(createMarker, "Item created: {}", output);
-        return output;
-        //TODO:: better, 201 response
+//        log.info(createMarker, "Item created: {}", output);
+        log.info("Item created: " + output);
+        return Response.status(Response.Status.CREATED).entity(output).build();
         //TODO:: request tracing
     }
 }
