@@ -6,3 +6,5 @@ quarkus:
     connection-string: mongodb://localhost:27018
     write-concern:
       journal: false
+  jaeger:
+    enabled: true

@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.stored;
 
+
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -66,7 +67,9 @@ public class StoredTest {
         assertEquals(1, s.getAmount().getValue());
         assertEquals(AbstractUnit.ONE, s.getAmount().getUnit());
         assertNull(s.getItems());
-        assertTrue(validator.isValid(s, null));
+        assertTrue(
+                validator.isValid(s, null)
+        );
     }
     @Test
     public void constructorAmountQuantityNullDecomposedTest(){

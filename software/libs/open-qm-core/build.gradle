@@ -42,6 +42,7 @@ dependencies {
     implementation group: 'tech.uom.lib', name: 'uom-lib-jackson', version: '2.1'
     implementation 'systems.uom:systems-common:2.1'
 
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
 
     testImplementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'

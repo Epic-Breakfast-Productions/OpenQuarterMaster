@@ -18,7 +18,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
-//    implementation 'io.opentracing.contrib:opentracing-mongo-common'
+    implementation 'io.opentracing.contrib:opentracing-mongo-common'
 
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.quarkus:quarkus-hibernate-validator'
@@ -26,7 +26,7 @@ dependencies {
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
     // https://quarkus.io/guides/logging
-//    implementation("org.jboss.slf4j:slf4j-jboss-logmanager")
+    implementation("org.jboss.slf4j:slf4j-jboss-logmanager")
 
     // https://mvnrepository.com/artifact/tech.units/indriya
     //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya

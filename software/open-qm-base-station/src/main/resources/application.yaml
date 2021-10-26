@@ -9,7 +9,7 @@ quarkus:
   log:
     level: DEBUG
     console:
-      format: "%d{HH:mm:ss} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{2.}] (%t) %s%e%n"
+      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%c{2.}](%t) %s%e%n"
   mongodb:
     database: openQuarterMaster
     connection-string: mongodb://localhost:27017

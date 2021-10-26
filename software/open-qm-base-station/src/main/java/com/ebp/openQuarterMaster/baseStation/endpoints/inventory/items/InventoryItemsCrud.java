@@ -12,7 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.jboss.logging.Logger;
+import org.eclipse.microprofile.opentracing.Traced;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -24,7 +24,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@JBossLog
+@Traced
+@Slf4j
 @Path("/inventory/item")
 public class InventoryItemsCrud {
 
