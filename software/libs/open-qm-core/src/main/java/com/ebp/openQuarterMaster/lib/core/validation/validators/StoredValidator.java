@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidStored;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 
 import javax.validation.ConstraintValidator;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class StoredValidator implements ConstraintValidator<ValidUnit, Stored> {
+public class StoredValidator implements ConstraintValidator<ValidStored, Stored> {
 
     private boolean validateAmountStored(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
         return stored.getItems() == null && stored.getAmount() != null;

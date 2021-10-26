@@ -5,6 +5,7 @@ plugins {
     // https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
 //    id 'signing'
 //    id "io.freefair.lombok" version "6.2.0" //TODO:: find out why this won't work
+    //id 'org.kordamp.gradle.jandex' version '0.11.0'
 }
 
 group 'com.ebp.openQuarterMaster.lib'
