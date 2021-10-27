@@ -1,12 +1,14 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
 import org.bson.BsonDocument;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -62,6 +64,20 @@ public abstract class MongoService<T extends MainObject> {
         return list;
     }
 
+    public List<T> list(Bson filter){
+        List<T> list = new ArrayList<>();
+        MongoCursor<T> cursor = getCollection().find(filter).iterator();
+
+        try {
+            while (cursor.hasNext()) {
+                list.add(cursor.next());
+            }
+        } finally {
+            cursor.close();
+        }
+        return list;
+    }
+
     public long count(){
         return getCollection().countDocuments();
     }
@@ -84,6 +100,21 @@ public abstract class MongoService<T extends MainObject> {
         InsertOneResult result = getCollection().insertOne(object);
 
         return result.getInsertedId().asObjectId().getValue();
+    }
+
+    public T remove(ObjectId objectId){
+        T toRemove = this.get(objectId);
+
+        if(toRemove == null){
+            return null;
+        }
+
+        this.getCollection().deleteOne(eq("_id", objectId));
+        return toRemove;
+    }
+
+    public T remove(String objectId){
+        return this.remove(new ObjectId(objectId));
     }
 
     public long removeAll(){
