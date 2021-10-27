@@ -2,8 +2,6 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
-import lombok.extern.java.Log;
-import lombok.extern.jbosslog.JBossLog;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -32,12 +30,6 @@ public class InventoryItemsCrud {
     @Inject
     InventoryItemService service;
 
-    private static final String markerBase = "InvItm_";
-    private static final Marker createMarker = MarkerFactory.getMarker(markerBase + "C");
-    private static final Marker readMarker = MarkerFactory.getMarker(markerBase + "R");
-    private static final Marker updateMarker = MarkerFactory.getMarker(markerBase + "U");
-    private static final Marker deleteMarker = MarkerFactory.getMarker(markerBase + "D");
-
     @POST
     @Operation(
             summary = "Adds a new inventory item."
@@ -60,12 +52,9 @@ public class InventoryItemsCrud {
     )
     @Produces(MediaType.APPLICATION_JSON)
     public Response createInventoryItem(@Valid InventoryItem item) {
-//        log.info(createMarker, "Creating new item.");
         log.info("Creating new item.");
         ObjectId output = service.add(item);
-//        log.info(createMarker, "Item created: {}", output);
         log.info("Item created: " + output);
         return Response.status(Response.Status.CREATED).entity(output).build();
-        //TODO:: request tracing
     }
 }
