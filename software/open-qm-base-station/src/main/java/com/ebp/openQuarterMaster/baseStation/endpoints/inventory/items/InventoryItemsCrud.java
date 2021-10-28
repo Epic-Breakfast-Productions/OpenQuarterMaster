@@ -1,14 +1,16 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.SearchUtils;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -16,8 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -113,7 +113,11 @@ public class InventoryItemsCrud {
                             type = SchemaType.ARRAY,
                             implementation = InventoryItem.class
                     )
-            )
+            ),
+            headers = {
+                    @Header(name="num-elements", description = "Gives the number of elements returned in the body."),
+                    @Header(name="query-num-results", description = "Gives the number of results in the query given.")
+            }
     )
     @APIResponse(
             responseCode = "204",
@@ -122,22 +126,31 @@ public class InventoryItemsCrud {
     )
     @Produces({MediaType.APPLICATION_JSON})
     public Response listInventoryItems(
-            @QueryParam("name") String name
+            //for actual queries
+            @QueryParam("name") String name,
+            //paging
+            @QueryParam("pageSize") Integer pageSize,
+            @QueryParam("pageNum") Integer pageNum,
+            //sorting
+            @QueryParam("sortBy") String sortField,
+            @QueryParam("sortType") SortType sortType
     ) {
         log.info("Searching for items with: ");
 
         List<Bson> filters = new ArrayList<>();
+        Bson sort = SearchUtils.getSortBson(sortField, sortType);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
 
         if(name != null && !name.isBlank()){
             filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
         }
+        Bson filter = (filters.isEmpty() ? null : and(filters));
 
-        List<InventoryItem> output;
-        if(filters.isEmpty()){
-            output = this.service.list();
-        } else {
-            output = this.service.list(and(filters));
-        }
+        List<InventoryItem> output = this.service.list(
+                filter,
+                sort,
+                pageOptions
+        );
 
         if(output.isEmpty()){
             return Response.status(Response.Status.NO_CONTENT).build();
@@ -147,6 +160,7 @@ public class InventoryItemsCrud {
                 .status(Response.Status.OK)
                 .entity(output)
                 .header("num-elements", output.size())
+                .header("query-num-results", this.service.count(filter))
                 .build();
     }
 
