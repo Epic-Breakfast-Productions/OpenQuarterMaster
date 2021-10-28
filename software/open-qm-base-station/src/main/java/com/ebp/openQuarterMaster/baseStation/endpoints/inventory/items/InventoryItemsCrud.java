@@ -102,7 +102,7 @@ public class InventoryItemsCrud {
 
     @GET
     @Operation(
-            summary = "Gets a list inventory items."
+            summary = "Gets a list of inventory items."
     )
     @APIResponse(
             responseCode = "200",
@@ -120,7 +120,7 @@ public class InventoryItemsCrud {
             description = "No items found from query given.",
             content = @Content(mediaType = "text/plain")
     )
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
     public Response listInventoryItems(
             @QueryParam("name") String name
     ) {
@@ -132,13 +132,22 @@ public class InventoryItemsCrud {
             filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
         }
 
-        List<InventoryItem> output = this.service.list(and(filters));
+        List<InventoryItem> output;
+        if(filters.isEmpty()){
+            output = this.service.list();
+        } else {
+            output = this.service.list(and(filters));
+        }
 
         if(output.isEmpty()){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
 
-        return Response.status(Response.Status.FOUND).entity(output).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(output)
+                .header("num-elements", output.size())
+                .build();
     }
 
     @DELETE
