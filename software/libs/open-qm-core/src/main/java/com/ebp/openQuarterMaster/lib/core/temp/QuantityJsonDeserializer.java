@@ -52,7 +52,7 @@ public class QuantityJsonDeserializer extends StdDeserializer<Quantity> {
 
     @Override
     public Quantity deserialize(JsonParser jp, DeserializationContext deserializationContext)
-        throws IOException, JsonProcessingException {
+            throws IOException, JsonProcessingException {
         TreeNode root = jp.readValueAsTree();
         if (root.get("value") == null) {
             throw new JsonParseException(jp, "Value not found for quantity type.");

@@ -2,9 +2,9 @@ package com.ebp.openQuarterMaster.lib.core.storage.stored;
 
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class StoredTest {
+public class StoredTest extends BasicTest {
     private static Stream<Arguments> jsonTestArgs(){
         return Stream.of(
                 Arguments.of(new Stored(Quantities.getQuantity(50, AbstractUnit.ONE))),
@@ -32,7 +32,7 @@ public class StoredTest {
                 Arguments.of(
                         new Stored(
                                 new HashMap<>(){{
-                                    put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+                                    put(FAKER.idNumber().valid(), new TrackedItem(UUID.randomUUID()));
                                 }}
                         )
                 )
@@ -112,7 +112,7 @@ public class StoredTest {
     public void constructorTrackedHashMapTest(){
         Map<String, TrackedItem> trackedMap = new HashMap<>(){{
             put(
-                    Faker.instance().idNumber().valid(),
+                    FAKER.idNumber().valid(),
                     new TrackedItem()
             );
         }};

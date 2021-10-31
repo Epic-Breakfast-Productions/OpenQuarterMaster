@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,16 +16,14 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class StorageBlockTest {
-
+class StorageBlockTest extends BasicTest {
 
     private static Stream<Arguments> jsonTestArgs(){
         //TODO:: test with ObjectIds
-        Faker faker = Faker.instance();
         return Stream.of(
                 Arguments.of(new StorageBlock(
-                        faker.name().name(),
-                        faker.address().fullAddress(),
+                        FAKER.name().name(),
+                        FAKER.address().fullAddress(),
                         null,
                         new ArrayList<>(){{add(new Capacity(Quantities.getQuantity(5, AbstractUnit.ONE)));}}
                 ))

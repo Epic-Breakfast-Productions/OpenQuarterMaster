@@ -1,19 +1,14 @@
 package com.ebp.openQuarterMaster.lib.core;
 
-import com.ebp.openQuarterMaster.lib.core.storage.Capacity;
-import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javafaker.Faker;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.units.indriya.AbstractUnit;
-import tech.units.indriya.quantity.Quantities;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -21,7 +16,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class MainObjectTest {
+class MainObjectTest extends BasicTest {
 
     @NoArgsConstructor
     private static class TestMainObject extends MainObject {

@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HistoryEventTest {
+class HistoryEventTest extends BasicTest {
     public HistoryEvent getBasicTestItem() {
         return HistoryEvent.builder()
                 .type(EventType.CREATE)

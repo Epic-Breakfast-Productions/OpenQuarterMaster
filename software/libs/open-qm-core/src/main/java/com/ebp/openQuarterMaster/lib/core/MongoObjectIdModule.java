@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.bson.types.ObjectId;
 
-import javax.measure.Quantity;
 import java.io.IOException;
 
 public class MongoObjectIdModule extends SimpleModule {

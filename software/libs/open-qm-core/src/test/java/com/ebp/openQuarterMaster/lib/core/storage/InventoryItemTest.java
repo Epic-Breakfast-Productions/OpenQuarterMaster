@@ -4,6 +4,7 @@ import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class InventoryItemTest {
+class InventoryItemTest extends BasicTest {
 
     //TODO:: test with objectIds
     private static Stream<Arguments> jsonTestArgs(){
@@ -36,12 +37,12 @@ class InventoryItemTest {
         }};
 
         return Stream.of(
-                Arguments.of(new InventoryItem(Faker.instance().name().name(), AbstractUnit.ONE)),
-                Arguments.of(new InventoryItem(Faker.instance().name().name(), "serial")),
-                Arguments.of(new InventoryItem().setStoredType(StoredType.AMOUNT).setName(Faker.instance().name().name())),
+                Arguments.of(new InventoryItem(FAKER.name().name(), AbstractUnit.ONE)),
+                Arguments.of(new InventoryItem(FAKER.name().name(), "serial")),
+                Arguments.of(new InventoryItem().setStoredType(StoredType.AMOUNT).setName(FAKER.name().name())),
                 Arguments.of(new InventoryItem()
                         .setStoredType(StoredType.TRACKED)
-                        .setName(Faker.instance().name().name())
+                        .setName(FAKER.name().name())
                         .setStorageMap(validTrackedMap)
                 )
         );
