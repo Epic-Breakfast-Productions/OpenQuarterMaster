@@ -229,4 +229,82 @@ public class InventoryItemsCrud {
         log.info("Item found, deleted.");
         return Response.status(Response.Status.OK).entity(output).build();
     }
+
+    @GET
+    @Path("{itemId}/{storageBlockId}")
+    @Operation(
+            summary = "Gets the stored amount or tracked item to the storage block specified."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Item added.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = InventoryItem.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No item found to delete.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+        //TODO
+        return Response.serverError().entity("Not implemented yet.").build();
+    }
+
+    @PUT
+    @Path("{itemId}/{storageBlockId}")
+    @Operation(
+            summary = "Adds a stored amount or tracked item to the storage block specified."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Item added.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = InventoryItem.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No item found to delete.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+        //TODO
+        return Response.serverError().entity("Not implemented yet.").build();
+    }
+
+    @DELETE
+    @Path("{itemId}/{storageBlockId}")
+    @Operation(
+            summary = "Adds a stored amount or tracked item to the storage block specified."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Item added.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = InventoryItem.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "No item found to delete.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+        //TODO
+        return Response.serverError().entity("Not implemented yet.").build();
+    }
 }
