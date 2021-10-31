@@ -1,10 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
@@ -16,6 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class StorageBlock extends MainObject {
     /**
      * The label for this storage block

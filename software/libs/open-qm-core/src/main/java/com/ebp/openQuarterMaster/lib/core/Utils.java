@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.bson.codecs.ObjectIdCodec;
 import systems.uom.common.USCustomary;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.unit.Units;
@@ -19,6 +20,7 @@ public class Utils {
     public static final Module[] MAPPER_MODULES = {
             new UnitJacksonModule(),
             new JavaTimeModule(),
+            new MongoObjectIdModule(),
             new TempQuantityJacksonModule()
     };
 
