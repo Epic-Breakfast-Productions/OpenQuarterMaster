@@ -4,7 +4,6 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
-import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,8 +19,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
@@ -52,7 +50,14 @@ class InventoryItemsCrudTest extends RunningServerTest {
 
         InventoryItem stored = service.get(returned);
         assertNotNull(stored);
+
+        assertFalse(stored.getHistory().isEmpty());
+        assertEquals(1, stored.getHistory().size());
+
+        item.setHistory(stored.getHistory());
         item.setId(returned);
+
+
         assertEquals(item, stored);
     }
 }

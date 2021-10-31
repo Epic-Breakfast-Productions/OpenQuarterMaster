@@ -2,18 +2,31 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.history.EventType;
+import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.InsertOneOptions;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.Validator;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import static com.mongodb.client.model.Aggregates.set;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -27,6 +40,7 @@ import static com.mongodb.client.model.Filters.eq;
 @AllArgsConstructor
 public abstract class MongoService<T extends MainObject> {
 
+    protected final ObjectMapper objectMapper;
     protected final MongoClient mongoClient;
     protected final String database;
     protected final String collectionName;
@@ -35,11 +49,13 @@ public abstract class MongoService<T extends MainObject> {
     protected MongoCollection<T> collection = null;
 
     protected MongoService(
+            ObjectMapper objectMapper,
             MongoClient mongoClient,
             String database,
             Class<T> clazz
     ) {
         this(
+                objectMapper,
                 mongoClient,
                 database,
                 clazz.getSimpleName(),
@@ -145,12 +161,57 @@ public abstract class MongoService<T extends MainObject> {
         return this.get(new ObjectId(objectId));
     }
 
-    /**
-     * Adds an object to the collection.
-     * @param object The object to add
-     * @return The id of the newly added object.
-     */
+    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, ConstraintValidator<A, T> validator){
+        if(updateJson.has("history")){
+            throw new IllegalArgumentException("Not allowed to update history of an object manually.");
+        }
+        T object = this.get(id);
+
+        ObjectReader reader = objectMapper.readerForUpdating(object);
+        try {
+            reader.readValue(updateJson);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
+        }
+
+        if(!validator.isValid(object, null)){
+            throw new IllegalArgumentException("Unable to update with data given. Resulting object is invalid.");
+        }
+
+        object.getHistory()
+                .add(
+                        HistoryEvent.builder()
+                                .userId(UUID.randomUUID())//TODO:: get id from jwt
+                                .type(EventType.UPDATE)
+                                .build()
+                );
+
+        this.getCollection().findOneAndReplace(eq("_id", id), object);
+        return object;
+    }
+
+    public <A extends Annotation> T update(String id, ObjectNode updateJson, ConstraintValidator<A, T> validator) {
+        return this.update(new ObjectId(id), updateJson, validator);
+    }
+
+        /**
+         * Adds an object to the collection.
+         * @param object The object to add
+         * @return The id of the newly added object.
+         */
     public ObjectId add(T object) {
+        if(!object.getHistory().isEmpty()){
+            throw new IllegalArgumentException("Object cannot have history before creation.");
+        }
+
+        object.getHistory()
+                .add(
+                        HistoryEvent.builder()
+                                .userId(UUID.randomUUID())//TODO:: get id from jwt
+                                .type(EventType.CREATE)
+                                .build()
+                );
+
         InsertOneResult result = getCollection().insertOne(object);
 
         return result.getInsertedId().asObjectId().getValue();
@@ -168,7 +229,16 @@ public abstract class MongoService<T extends MainObject> {
             return null;
         }
 
-        this.getCollection().deleteOne(eq("_id", objectId));
+        toRemove.getHistory()
+                .add(
+                        HistoryEvent.builder()
+                                .userId(UUID.randomUUID())//TODO:: get id from jwt
+                                .type(EventType.REMOVE)
+                                .build()
+                );
+
+        DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
+
         return toRemove;
     }
 

@@ -5,6 +5,8 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.validation.validators.InventoryItemValidator;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -38,6 +40,7 @@ public class InventoryItemsCrud {
     @Inject
     InventoryItemService service;
 
+    InventoryItemValidator inventoryItemValidator = new InventoryItemValidator();
 
     @POST
     @Operation(
@@ -84,7 +87,7 @@ public class InventoryItemsCrud {
     )
     @APIResponse(
             responseCode = "400",
-            description = "Bad request given. Data given could not pass validation.)",
+            description = "Bad request given. Data given could not pass validation.",
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
@@ -98,6 +101,36 @@ public class InventoryItemsCrud {
         }
         log.info("Item found");
         return Response.status(Response.Status.FOUND).entity(output).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @Operation(
+            summary = "Updates a particular inventory item.",
+            description = "Partial update to an inventory item. Do not need to supply all fields, just the one you wish to update."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Item updated.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = InventoryItem.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request given. Data given could not pass validation.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateInventoryItem(@PathParam String id, ObjectNode itemUpdates) {
+        log.info("Updating item with id {}", id);
+
+        InventoryItem updated = this.service.update(id, itemUpdates, inventoryItemValidator);
+
+        return Response.ok(updated).build();
     }
 
     @GET
