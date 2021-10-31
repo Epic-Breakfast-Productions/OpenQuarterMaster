@@ -12,6 +12,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MainObject extends Historied {
+    /** The id of this object in the Mongodb. */
     private ObjectId id;
+    /** Attributes this object might have, usable for any purpose. */
     private Map<String, String> attributes = new HashMap<>();
 }

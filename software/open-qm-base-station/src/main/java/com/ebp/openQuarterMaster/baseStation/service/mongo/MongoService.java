@@ -31,10 +31,11 @@ import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
- *
+ * <p>
  * TODO:: update
  * TODO:: add histories
  * TODO:: fully test
+ *
  * @param <T> The type of object stored.
  */
 @AllArgsConstructor
@@ -142,6 +143,7 @@ public abstract class MongoService<T extends MainObject> {
 
     /**
      * Gets an object with a particular id.
+     *
      * @param objectId The id of the object to get
      * @return The object found. Null if not found.
      */
@@ -152,8 +154,9 @@ public abstract class MongoService<T extends MainObject> {
 
     /**
      * Gets an object with a particular id.
-     *
+     * <p>
      * Wrapper for {@link #get(ObjectId)}, to be able to use String representation of ObjectId.
+     *
      * @param objectId The id of the object to get
      * @return The object found. Null if not found.
      */
@@ -161,8 +164,8 @@ public abstract class MongoService<T extends MainObject> {
         return this.get(new ObjectId(objectId));
     }
 
-    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, ConstraintValidator<A, T> validator){
-        if(updateJson.has("history")){
+    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, ConstraintValidator<A, T> validator) {
+        if (updateJson.has("history")) {
             throw new IllegalArgumentException("Not allowed to update history of an object manually.");
         }
         T object = this.get(id);
@@ -174,17 +177,16 @@ public abstract class MongoService<T extends MainObject> {
             throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
         }
 
-        if(!validator.isValid(object, null)){
+        if (!validator.isValid(object, null)) {
             throw new IllegalArgumentException("Unable to update with data given. Resulting object is invalid.");
         }
 
-        object.getHistory()
-                .add(
-                        HistoryEvent.builder()
-                                .userId(UUID.randomUUID())//TODO:: get id from jwt
-                                .type(EventType.UPDATE)
-                                .build()
-                );
+        object.updated(
+                HistoryEvent.builder()
+                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .type(EventType.UPDATE)
+                        .build()
+        );
 
         this.getCollection().findOneAndReplace(eq("_id", id), object);
         return object;
@@ -194,23 +196,23 @@ public abstract class MongoService<T extends MainObject> {
         return this.update(new ObjectId(id), updateJson, validator);
     }
 
-        /**
-         * Adds an object to the collection.
-         * @param object The object to add
-         * @return The id of the newly added object.
-         */
+    /**
+     * Adds an object to the collection.
+     *
+     * @param object The object to add
+     * @return The id of the newly added object.
+     */
     public ObjectId add(T object) {
-        if(!object.getHistory().isEmpty()){
+        if (!object.getHistory().isEmpty()) {
             throw new IllegalArgumentException("Object cannot have history before creation.");
         }
 
-        object.getHistory()
-                .add(
-                        HistoryEvent.builder()
-                                .userId(UUID.randomUUID())//TODO:: get id from jwt
-                                .type(EventType.CREATE)
-                                .build()
-                );
+        object.updated(
+                HistoryEvent.builder()
+                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .type(EventType.CREATE)
+                        .build()
+        );
 
         InsertOneResult result = getCollection().insertOne(object);
 
@@ -219,6 +221,7 @@ public abstract class MongoService<T extends MainObject> {
 
     /**
      * Removes the object with the id given.
+     *
      * @param objectId The id of the object to remove
      * @return The object that was removed
      */
@@ -229,13 +232,12 @@ public abstract class MongoService<T extends MainObject> {
             return null;
         }
 
-        toRemove.getHistory()
-                .add(
-                        HistoryEvent.builder()
-                                .userId(UUID.randomUUID())//TODO:: get id from jwt
-                                .type(EventType.REMOVE)
-                                .build()
-                );
+        toRemove.updated(
+                HistoryEvent.builder()
+                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .type(EventType.REMOVE)
+                        .build()
+        );
 
         DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
 
@@ -244,8 +246,9 @@ public abstract class MongoService<T extends MainObject> {
 
     /**
      * Removes the object with the id given.
-     *
+     * <p>
      * Wrapper for {@link #remove(ObjectId)}, to be able to use String representation of ObjectId.
+     *
      * @param objectId The id of the object to remove
      * @return The object that was removed
      */
@@ -255,6 +258,7 @@ public abstract class MongoService<T extends MainObject> {
 
     /**
      * Removes all items from the collection.
+     *
      * @return The number of items that were removed.
      */
     public long removeAll() {

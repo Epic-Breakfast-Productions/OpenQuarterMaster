@@ -26,7 +26,6 @@ import java.util.*;
 @ValidInventoryItem
 public class InventoryItem extends MainObject {
 
-
     /**
      * The name of this inventory item
      */
@@ -41,10 +40,16 @@ public class InventoryItem extends MainObject {
     @NotNull
     private List<@NotBlank String> keywords = new ArrayList<>();
 
+    /**
+     * The type of storage this item uses.
+     */
     @NonNull
     @NotNull
     private StoredType storedType;
 
+    /**
+     * The map of where the items are stored.
+     */
     @NonNull
     @NotNull
     private Map<@NonNull ObjectId, Stored> storageMap = new LinkedHashMap<>();

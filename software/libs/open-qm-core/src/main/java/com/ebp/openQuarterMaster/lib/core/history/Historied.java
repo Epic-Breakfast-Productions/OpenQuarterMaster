@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 //import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import java.time.ZonedDateTime;
@@ -13,20 +14,25 @@ import java.util.List;
  */
 @Data
 public abstract class Historied {
-    /** The list of history events */
+    /**
+     * The list of history events. Modified by the base station only.
+     * <p>
+     * Don't directly modify the values in this list, use {@link #updated(HistoryEvent)} to add a new event.
+     */
     private List<HistoryEvent> history = new ArrayList<>(List.of());
 
     /**
      * Adds a history event to the set held, to the front of the list.
+     *
      * @param event The event to add
      * @return This historied object.
      */
     @JsonIgnore
     public Historied updated(HistoryEvent event) {
-        if(this.history.isEmpty() && !EventType.CREATE.equals(event.getType())){
+        if (this.history.isEmpty() && !EventType.CREATE.equals(event.getType())) {
             throw new IllegalArgumentException("First event must be CREATE");
         }
-        if(!this.history.isEmpty() && EventType.CREATE.equals(event.getType())){
+        if (!this.history.isEmpty() && EventType.CREATE.equals(event.getType())) {
             throw new IllegalArgumentException("Cannot add another CREATE event type.");
         }
 
@@ -34,13 +40,25 @@ public abstract class Historied {
         return this;
     }
 
-//    @BsonIgnore
+    /**
+     * Gets the last event that occurred in this object's history.
+     *
+     * @return The last event in the object's history
+     */
+    @BsonIgnore
     @JsonIgnore
     public HistoryEvent lastHistoryEvent() {
         return this.getHistory().get(0);
     }
 
-//    @BsonIgnore
+    /**
+     * Gets the time of the last events in the object's history.
+     * <p>
+     * Wrapper for {@link #lastHistoryEvent()}
+     *
+     * @return the time of the last events in the object's history.
+     */
+    @BsonIgnore
     @JsonIgnore
     public ZonedDateTime lastHistoryEventTime() {
         return this.lastHistoryEvent().getTimestamp();
