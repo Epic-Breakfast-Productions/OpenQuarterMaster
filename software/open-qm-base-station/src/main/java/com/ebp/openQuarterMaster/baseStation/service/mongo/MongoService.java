@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.InsertOneOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
@@ -19,14 +18,12 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import javax.validation.ConstraintValidator;
-import javax.validation.Validator;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.mongodb.client.model.Aggregates.set;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
