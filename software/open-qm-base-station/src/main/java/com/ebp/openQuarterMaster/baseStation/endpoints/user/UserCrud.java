@@ -121,7 +121,6 @@ public class UserCrud extends EndpointProvider {
         return Response.status(Response.Status.CREATED).entity(output).build();
     }
 
-
     @GET
     @Operation(
             summary = "Gets a list of users."

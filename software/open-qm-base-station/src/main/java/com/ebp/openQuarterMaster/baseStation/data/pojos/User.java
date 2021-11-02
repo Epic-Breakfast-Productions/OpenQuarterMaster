@@ -35,7 +35,9 @@ public class User extends MainObject {
     @NonNull
     @NotNull
     private String title = "";
+
     private String pwHash = null;
+
     private List<String> roles = new ArrayList<>();
 
     private Map<@NotBlank String, String> externIds = new HashMap<>();

@@ -24,6 +24,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -72,7 +73,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "Bad request given. Data given could not pass validation.)",
             content = @Content(mediaType = "text/plain")
     )
-    @PermitAll
+    @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createInventoryItem(
@@ -174,6 +175,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "Bad request given. Data given could not pass validation.",
             content = @Content(mediaType = "text/plain")
     )
+    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInventoryItem(
             @Context SecurityContext securityContext,
@@ -212,6 +214,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "Bad request given. Data given could not pass validation.",
             content = @Content(mediaType = "text/plain")
     )
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateInventoryItem(
             @Context SecurityContext securityContext,
@@ -246,6 +249,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "No item found to delete.",
             content = @Content(mediaType = "text/plain")
     )
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteInventoryItem(
             @Context SecurityContext securityContext,
