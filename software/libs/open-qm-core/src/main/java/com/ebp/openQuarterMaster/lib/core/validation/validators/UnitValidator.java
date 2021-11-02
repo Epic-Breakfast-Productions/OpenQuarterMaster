@@ -6,11 +6,23 @@ import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 import javax.measure.Unit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UnitValidator implements ConstraintValidator<ValidUnit, Unit> {
+public class UnitValidator extends Validator implements ConstraintValidator<ValidUnit, Unit> {
 
     @Override
     public boolean isValid(Unit unit, ConstraintValidatorContext constraintValidatorContext) {
-        return unit != null && Utils.ALLOWED_MEASUREMENTS.contains(unit);
+        List<String> errs = new ArrayList<>();
+
+        if(unit == null){
+            return true;
+        } else {
+            if(!Utils.ALLOWED_MEASUREMENTS.contains(unit)){
+                errs.add("Unit not valid. " + unit.getName() + " not applicable for item storage.");
+            }
+        }
+
+        return this.processValidationResults(errs, constraintValidatorContext);
     }
 }

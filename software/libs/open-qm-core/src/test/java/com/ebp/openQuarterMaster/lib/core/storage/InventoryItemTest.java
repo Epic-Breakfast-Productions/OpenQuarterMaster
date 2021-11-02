@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class InventoryItemTest extends BasicTest {
 
-    //TODO:: test with objectIds
     private static Stream<Arguments> jsonTestArgs(){
         Map<ObjectId, Stored> validAmountMap = new HashMap<>(){{
             put(ObjectId.get(), new Stored(Quantities.getQuantity(5, AbstractUnit.ONE)));
@@ -37,7 +36,7 @@ class InventoryItemTest extends BasicTest {
         }};
 
         return Stream.of(
-                Arguments.of(new InventoryItem(FAKER.name().name(), AbstractUnit.ONE)),
+                Arguments.of(new InventoryItem(FAKER.name().name(), AbstractUnit.ONE).setId(ObjectId.get())),
                 Arguments.of(new InventoryItem(FAKER.name().name(), "serial")),
                 Arguments.of(new InventoryItem().setStoredType(StoredType.AMOUNT).setName(FAKER.name().name())),
                 Arguments.of(new InventoryItem()

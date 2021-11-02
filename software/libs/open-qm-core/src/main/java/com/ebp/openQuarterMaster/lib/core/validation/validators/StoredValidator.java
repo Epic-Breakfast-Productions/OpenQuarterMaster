@@ -7,46 +7,50 @@ import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class StoredValidator implements ConstraintValidator<ValidStored, Stored> {
+public class StoredValidator extends Validator implements ConstraintValidator<ValidStored, Stored> {
 
-    private boolean validateAmountStored(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
-        return stored.getItems() == null && stored.getAmount() != null;
+    private void validateAmountStored(Stored stored, List<String> errs) {
+        if (stored.getItems() != null) {
+            errs.add("Items list in amount stored was not null");
+        }
+        if(stored.getAmount() == null){
+            errs.add("Amount in amount stored was null");
+        }
     }
 
-    private boolean validateTrackedStored(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
+    private void validateTrackedStored(Stored stored, List<String> errs) {
         if (stored.getItems() == null) {
-            return false;
+            errs.add("Item list in tracked stored was null.");
         }
-
-        if(stored.getItems()
-                .values()
-                .stream()
-                .anyMatch(Objects::isNull)
-        ){
-            return false;
-        }
-        return true;
     }
 
     @Override
     public boolean isValid(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
+        List<String> validationErrs = new ArrayList<>();
         if (stored == null) {
-            return false;
+            validationErrs.add("Stored object was null");
+        } else {
+            if (stored.getType() == null) {
+                validationErrs.add("Type was null");
+            } else {
+                switch (stored.getType()) {
+                    case AMOUNT:
+                        validateAmountStored(stored, validationErrs);
+                        break;
+                    case TRACKED:
+                        validateTrackedStored(stored, validationErrs);
+                        break;
+                    default:
+                        validationErrs.add("Unsupported stored type: " + stored.getType().name());
+                }
+            }
         }
-        if (stored.getType() == null) {
-            return false;
-        }
-        switch (stored.getType()) {
-            case AMOUNT:
-                return validateAmountStored(stored, constraintValidatorContext);
-            case TRACKED:
-                return validateTrackedStored(stored, constraintValidatorContext);
-            default:
-                return false;
-        }
+        return this.processValidationResults(validationErrs, constraintValidatorContext);
     }
 }

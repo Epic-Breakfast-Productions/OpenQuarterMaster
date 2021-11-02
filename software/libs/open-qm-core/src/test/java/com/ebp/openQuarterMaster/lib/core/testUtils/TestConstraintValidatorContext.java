@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class TestConstraintValidatorContext implements ConstraintValidatorContext {
 
-
+    private String defaultMessage = "default validation error message.";
 
     @Override
     public void disableDefaultConstraintViolation() {

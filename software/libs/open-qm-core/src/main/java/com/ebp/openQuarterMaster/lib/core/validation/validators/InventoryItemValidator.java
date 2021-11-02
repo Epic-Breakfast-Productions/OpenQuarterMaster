@@ -8,50 +8,74 @@ import tech.units.indriya.AbstractUnit;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.ArrayList;
+import java.util.List;
 
-public class InventoryItemValidator implements ConstraintValidator<ValidInventoryItem, InventoryItem> {
+/**
+ * Validator that validates the state of an {@link InventoryItem}.
+ *
+ * TODO:: test
+ */
+public class InventoryItemValidator extends Validator implements ConstraintValidator<ValidInventoryItem, InventoryItem> {
 
-    private boolean validateAmountItem(InventoryItem item){
+    private void validateAmountItem(InventoryItem item, List<String> errs){
+        boolean typeMismatch = false;
+        boolean incompatibleAmount = false;
         for(Stored stored : item.getStorageMap().values()) {
             //all stored items need to match amount
-            if(!StoredType.AMOUNT.equals(stored.getType())){
-                return false;
+            if(!typeMismatch && !StoredType.AMOUNT.equals(stored.getType())){
+                typeMismatch = true;
             }
             //all stored items need to be a compatible unit
-            if(!item.getUnit().isCompatible(stored.getAmount().getUnit())){
-                return false;
+            if(!incompatibleAmount && !item.getUnit().isCompatible(stored.getAmount().getUnit())){
+                incompatibleAmount = true;
+            }
+            if(typeMismatch && incompatibleAmount){
+                break;
             }
         }
-        return true;
+        if(typeMismatch){
+            errs.add("Item has storage(s) that are not AMOUNT");
+        }
+        if(incompatibleAmount){
+            errs.add("Item has storage(s) that have incompatible units with the item");
+        }
     }
 
-    private boolean validateTrackedItem(InventoryItem item){
+    private void validateTrackedItem(InventoryItem item, List<String> errs){
         //unit of item must be ONE
         if(!AbstractUnit.ONE.equals(item.getUnit())){
-            return false;
+            errs.add("The unit for the tracked item was not ONE");
         }
-
         //all stored items need to match tracked
-        return item.getStorageMap().values().stream().anyMatch((Stored stored)->{
-            return StoredType.TRACKED.equals(stored.getType());
-        });
+        if(!item.getStorageMap().values().stream().allMatch((Stored stored) -> {
+                return StoredType.TRACKED.equals(stored.getType());
+            })){
+            errs.add("Not all stored values were of TRACKED type.");
+        }
     }
 
     @Override
     public boolean isValid(InventoryItem item, ConstraintValidatorContext constraintValidatorContext) {
+        List<String> validationErrs = new ArrayList<>();
         if(item == null){
-            return false;
+            validationErrs.add("Item was null");
+        }else {
+            if (item.getStoredType() == null) {
+                validationErrs.add("Stored type was null.");
+            } else {
+                switch (item.getStoredType()) {
+                    case AMOUNT:
+                        validateAmountItem(item, validationErrs);
+                        break;
+                    case TRACKED:
+                        validateTrackedItem(item, validationErrs);
+                        break;
+                    default:
+                        validationErrs.add("Unsupported stored type: " + item.getStoredType().name());
+                }
+            }
         }
-        if(item.getStoredType() == null){
-            return false;
-        }
-        switch (item.getStoredType()){
-            case AMOUNT:
-                return validateAmountItem(item);
-            case TRACKED:
-                return validateTrackedItem(item);
-            default:
-                return false;
-        }
+        return this.processValidationResults(validationErrs, constraintValidatorContext);
     }
 }
