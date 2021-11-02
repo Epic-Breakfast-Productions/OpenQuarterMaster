@@ -15,13 +15,17 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+    // https://quarkus.io/guides/security-properties
+//    implementation 'io.quarkus:quarkus-elytron-security-properties-file'
+    implementation 'io.quarkus:quarkus-elytron-security'
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
-
-    implementation 'io.quarkus:quarkus-mongodb-panache'
-    implementation 'io.quarkus:quarkus-hibernate-validator'
 
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
@@ -34,6 +38,7 @@ dependencies {
     // https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
     implementation group: 'tech.uom.lib', name: 'uom-lib-jackson', version: '2.1'
     implementation 'systems.uom:systems-common:2.1'
+    implementation 'org.passay:passay:1.6.1'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'

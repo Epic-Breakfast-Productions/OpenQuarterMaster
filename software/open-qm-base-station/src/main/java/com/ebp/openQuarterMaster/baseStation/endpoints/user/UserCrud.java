@@ -1,13 +1,18 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
 import com.ebp.openQuarterMaster.baseStation.data.pojos.User;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.UserCreateRequest;
 import com.ebp.openQuarterMaster.baseStation.data.pojos.UserGetResponse;
+import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
+import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -18,28 +23,104 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
+import javax.validation.Validator;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.regex;
+import static com.mongodb.client.model.Filters.*;
 
 @Traced
 @Slf4j
 @Path("/user")
 @Tags({@Tag(name = "Users")})
-public class UserCrud {
-
+@RequestScoped
+public class UserCrud extends EndpointProvider {
+    @Inject
+    Validator validator;
     @Inject
     UserService service;
+    @Inject
+    JsonWebToken jwt;
+    @Inject
+    PasswordService passwordService;
+
+    @POST
+    @Operation(
+            summary = "Adds a new user."
+    )
+    @APIResponse(
+            responseCode = "201",
+            description = "User added.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = ObjectId.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request given. Data given could not pass validation.)",
+            content = @Content(mediaType = "text/plain")
+    )
+    @PermitAll
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createUser(
+            @Context SecurityContext securityContext,
+            @Valid UserCreateRequest userCreateRequest
+    ) {
+        logRequestContext(this.jwt, securityContext);
+        log.info("Creating new user.");
+
+        if (
+                !this.service.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty()
+        ) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("User with Email already exists.").build();
+        }
+
+        User.Builder builder = User.builder(userCreateRequest);
+
+        {
+            List<String> roles = new ArrayList<>() {{
+                add("user");
+            }};
+            if (this.service.collectionEmpty()) {
+                roles.add("userAdmin");
+            }
+            builder.roles(roles);
+        }
+
+        builder.pwHash(this.passwordService.createPasswordHash(userCreateRequest.getPassword()));
+
+        User newUser = builder.build();
+        if (userCreateRequest.getAttributes() != null) {
+            newUser.getAttributes().putAll(userCreateRequest.getAttributes());
+        }
+
+        Set<ConstraintViolation<User>> validationViolations = validator.validate(newUser, User.class);
+        if (!validationViolations.isEmpty()) {
+            Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
+        }
+
+        ObjectId output = service.add(newUser);
+        log.info("Item created with id: {}", output);
+        return Response.status(Response.Status.CREATED).entity(output).build();
+    }
+
 
     @GET
     @Operation(
@@ -62,11 +143,13 @@ public class UserCrud {
     )
     @APIResponse(
             responseCode = "204",
-            description = "No items found from query given.",
+            description = "No users found from query given.",
             content = @Content(mediaType = "text/plain")
     )
+    @RolesAllowed("userAdmin")
     @Produces({MediaType.APPLICATION_JSON})
     public Response listInventoryItems(
+            @Context SecurityContext securityContext,
             //for actual queries
             @QueryParam("name") String name,
             //paging
@@ -76,13 +159,14 @@ public class UserCrud {
             @QueryParam("sortBy") String sortField,
             @QueryParam("sortType") SortType sortType
     ) {
-        log.info("Searching for items with: ");
+        logRequestContext(this.jwt, securityContext);
+        log.info("Searching for users with: ");
 
         List<Bson> filters = new ArrayList<>();
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
         PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
 
-        if(name != null && !name.isBlank()){
+        if (name != null && !name.isBlank()) {
             //TODO:: handle first and last name properly
             filters.add(regex("firstName", SearchUtils.getSearchTermPattern(name)));
         }

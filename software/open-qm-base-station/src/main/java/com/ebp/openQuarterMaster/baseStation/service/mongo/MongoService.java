@@ -114,6 +114,10 @@ public abstract class MongoService<T extends MainObject> {
         return this.list(null, null, null);
     }
 
+    public boolean collectionEmpty() {
+        return this.getCollection().countDocuments() == 0;
+    }
+
     /**
      * Gets the count of records in the collection using a filter.
      *

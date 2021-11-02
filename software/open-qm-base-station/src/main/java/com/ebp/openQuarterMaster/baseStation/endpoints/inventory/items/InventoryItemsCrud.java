@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
+import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -21,24 +23,33 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
+import javax.annotation.security.PermitAll;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
 @Path("/inventory/item")
 @Tags({@Tag(name = "Inventory Items")})
-public class InventoryItemsCrud {
+@RequestScoped
+public class InventoryItemsCrud extends EndpointProvider {
 
     @Inject
     InventoryItemService service;
+
+    @Inject
+    JsonWebToken jwt;
 
     InventoryItemValidator inventoryItemValidator = new InventoryItemValidator();
 
@@ -61,13 +72,86 @@ public class InventoryItemsCrud {
             description = "Bad request given. Data given could not pass validation.)",
             content = @Content(mediaType = "text/plain")
     )
+    @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createInventoryItem(@Valid InventoryItem item) {
+    public Response createInventoryItem(
+            @Context SecurityContext securityContext,
+            @Valid InventoryItem item
+    ) {
+        logRequestContext(this.jwt, securityContext);
         log.info("Creating new item.");
         ObjectId output = service.add(item);
         log.info("Item created with id: {}", output);
         return Response.status(Response.Status.CREATED).entity(output).build();
+    }
+
+
+    @GET
+    @Operation(
+            summary = "Gets a list of inventory items."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Item retrieved.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            type = SchemaType.ARRAY,
+                            implementation = InventoryItem.class
+                    )
+            ),
+            headers = {
+                    @Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+                    @Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+            }
+    )
+    @APIResponse(
+            responseCode = "204",
+            description = "No items found from query given.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @PermitAll
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response listInventoryItems(
+            @Context SecurityContext securityContext,
+            //for actual queries
+            @QueryParam("name") String name,
+            //paging
+            @QueryParam("pageSize") Integer pageSize,
+            @QueryParam("pageNum") Integer pageNum,
+            //sorting
+            @QueryParam("sortBy") String sortField,
+            @QueryParam("sortType") SortType sortType
+    ) {
+        logRequestContext(this.jwt, securityContext);
+        log.info("Searching for items with: ");
+
+        List<Bson> filters = new ArrayList<>();
+        Bson sort = SearchUtils.getSortBson(sortField, sortType);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
+
+        if (name != null && !name.isBlank()) {
+            filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
+        }
+        Bson filter = (filters.isEmpty() ? null : and(filters));
+
+        List<InventoryItem> output = this.service.list(
+                filter,
+                sort,
+                pageOptions
+        );
+
+        if (output.isEmpty()) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(output)
+                .header("num-elements", output.size())
+                .header("query-num-results", this.service.count(filter))
+                .build();
     }
 
     @GET
@@ -91,11 +175,15 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getInventoryItem(@PathParam String id) {
+    public Response getInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String id
+    ) {
+        logRequestContext(this.jwt, securityContext);
         log.info("Retrieving item with id {}", id);
         InventoryItem output = service.get(id);
 
-        if(output == null){
+        if (output == null) {
             log.info("Item not found.");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -125,76 +213,17 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateInventoryItem(@PathParam String id, ObjectNode itemUpdates) {
+    public Response updateInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String id,
+            ObjectNode itemUpdates
+    ) {
+        logRequestContext(this.jwt, securityContext);
         log.info("Updating item with id {}", id);
 
         InventoryItem updated = this.service.update(id, itemUpdates, inventoryItemValidator);
 
         return Response.ok(updated).build();
-    }
-
-    @GET
-    @Operation(
-            summary = "Gets a list of inventory items."
-    )
-    @APIResponse(
-            responseCode = "200",
-            description = "Item retrieved.",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                            type = SchemaType.ARRAY,
-                            implementation = InventoryItem.class
-                    )
-            ),
-            headers = {
-                    @Header(name="num-elements", description = "Gives the number of elements returned in the body."),
-                    @Header(name="query-num-results", description = "Gives the number of results in the query given.")
-            }
-    )
-    @APIResponse(
-            responseCode = "204",
-            description = "No items found from query given.",
-            content = @Content(mediaType = "text/plain")
-    )
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response listInventoryItems(
-            //for actual queries
-            @QueryParam("name") String name,
-            //paging
-            @QueryParam("pageSize") Integer pageSize,
-            @QueryParam("pageNum") Integer pageNum,
-            //sorting
-            @QueryParam("sortBy") String sortField,
-            @QueryParam("sortType") SortType sortType
-    ) {
-        log.info("Searching for items with: ");
-
-        List<Bson> filters = new ArrayList<>();
-        Bson sort = SearchUtils.getSortBson(sortField, sortType);
-        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
-
-        if(name != null && !name.isBlank()){
-            filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
-        }
-        Bson filter = (filters.isEmpty() ? null : and(filters));
-
-        List<InventoryItem> output = this.service.list(
-                filter,
-                sort,
-                pageOptions
-        );
-
-        if(output.isEmpty()){
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
-
-        return Response
-                .status(Response.Status.OK)
-                .entity(output)
-                .header("num-elements", output.size())
-                .header("query-num-results", this.service.count(filter))
-                .build();
     }
 
     @DELETE
@@ -218,11 +247,15 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteInventoryItem(@PathParam String id) {
+    public Response deleteInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String id
+    ) {
+        logRequestContext(this.jwt, securityContext);
         log.info("Deleting item with id {}", id);
         InventoryItem output = service.remove(id);
 
-        if(output == null){
+        if (output == null) {
             log.info("Item not found.");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -251,7 +284,12 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+    public Response getStoredInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String itemId,
+            @PathParam String storageBlockId
+    ) {
+        logRequestContext(this.jwt, securityContext);
         //TODO
         return Response.serverError().entity("Not implemented yet.").build();
     }
@@ -277,7 +315,12 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+    public Response addStoredInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String itemId,
+            @PathParam String storageBlockId
+    ) {
+        logRequestContext(this.jwt, securityContext);
         //TODO
         return Response.serverError().entity("Not implemented yet.").build();
     }
@@ -303,7 +346,12 @@ public class InventoryItemsCrud {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeStoredInventoryItem(@PathParam String itemId, @PathParam String storageBlockId) {
+    public Response removeStoredInventoryItem(
+            @Context SecurityContext securityContext,
+            @PathParam String itemId,
+            @PathParam String storageBlockId
+    ) {
+        logRequestContext(this.jwt, securityContext);
         //TODO
         return Response.serverError().entity("Not implemented yet.").build();
     }
