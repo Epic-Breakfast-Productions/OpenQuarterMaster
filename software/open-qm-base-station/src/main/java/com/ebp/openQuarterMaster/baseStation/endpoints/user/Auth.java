@@ -103,8 +103,10 @@ public class Auth extends EndpointProvider {
         }
 
         if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password")).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password.")).build();
         }
+
+        //TODO:: additional checks on locked status, etc
 
         return Response.status(Response.Status.ACCEPTED)
                 .entity(this.jwtService.getUserJwt(user, false))

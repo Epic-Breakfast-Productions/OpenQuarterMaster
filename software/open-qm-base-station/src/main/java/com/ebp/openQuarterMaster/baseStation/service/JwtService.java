@@ -12,7 +12,6 @@ import org.eclipse.microprofile.jwt.Claims;
 import javax.enterprise.context.ApplicationScoped;
 import java.security.PrivateKey;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @Slf4j
 @ApplicationScoped
 public class JwtService {
-    private static final Base64.Decoder DECODER = Base64.getDecoder();
     public static final String JWT_USER_ID_CLAIM = "userId";
 //    public static final String[] ROLES = {UserLevel.REGULAR.name(), UserLevel.ADMIN.name()};
 
