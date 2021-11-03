@@ -1,9 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.TokenCheckResponse;
-import com.ebp.openQuarterMaster.baseStation.data.pojos.UserCreateRequest;
-import com.ebp.openQuarterMaster.baseStation.data.pojos.UserLoginResponse;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.*;
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
+import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
@@ -15,6 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -37,16 +37,20 @@ import java.util.Date;
 @RequestScoped
 public class Auth extends EndpointProvider {
     @Inject
-    UserService service;
-
-    @Inject
-    JsonWebToken jwt;
+    UserService userService;
 
     @Inject
     PasswordService passwordService;
 
+    @Inject
+    JwtService jwtService;
+
     @ConfigProperty(name = "service.authMode")
     AuthMode authMode;
+
+    @Inject
+    JsonWebToken jwt;
+
 
     private void assertSelfAuthMode() {
         if (!AuthMode.SELF.equals(this.authMode)) {
@@ -86,19 +90,29 @@ public class Auth extends EndpointProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response authenticateUser(
             @Context SecurityContext securityContext,
-            @Valid UserCreateRequest userCreateRequest
+            @Valid UserLoginRequest loginRequest
     ) {
         logRequestContext(this.jwt, securityContext);
         this.assertSelfAuthMode();
         log.info("Authenticating user.");
 
+        User user = this.userService.getFromLoginRequest(loginRequest);
+
+        if (user == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User not found.")).build();
+        }
+
+        if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password")).build();
+        }
 
         return Response.status(Response.Status.ACCEPTED)
-//                .entity(output)
+                .entity(this.jwtService.getUserJwt(user, false))
                 .build();
     }
 
     @GET
+    @Path("tokenCheck")
     @Operation(
             summary = "Checks a users' token."
     )
@@ -110,7 +124,8 @@ public class Auth extends EndpointProvider {
                     schema = @Schema(implementation = TokenCheckResponse.class)
             )
     )
-    @Tags({@Tag(name = "User"), @Tag(name = "Auth")})
+    @Tags({@Tag(name = "Users"), @Tag(name = "User Auth")})
+    @SecurityRequirement(name = "JwtAuth")
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public Response tokenCheck(@Context SecurityContext ctx) {

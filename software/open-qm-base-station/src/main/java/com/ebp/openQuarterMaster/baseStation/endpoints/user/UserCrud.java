@@ -111,7 +111,7 @@ public class UserCrud extends EndpointProvider {
             newUser.getAttributes().putAll(userCreateRequest.getAttributes());
         }
 
-        Set<ConstraintViolation<User>> validationViolations = validator.validate(newUser, User.class);
+        Set<ConstraintViolation<User>> validationViolations = validator.validate(newUser);
         if (!validationViolations.isEmpty()) {
             Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
         }

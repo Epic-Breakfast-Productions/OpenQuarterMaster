@@ -1,6 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service;
 
 
+import com.ebp.openQuarterMaster.baseStation.data.pojos.User;
+import com.ebp.openQuarterMaster.baseStation.data.pojos.UserLoginRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.wildfly.common.codec.DecodeException;
 import org.wildfly.security.password.PasswordFactory;
@@ -88,10 +90,8 @@ public class PasswordService {
         }
     }
 
-    public void assertPasswordMatchesHash(String encodedPass, String pass) {
-        if (!this.passwordMatchesHash(encodedPass, pass)) {
-            throw new IllegalArgumentException("Password given was incorrect.");
-        }
+    public boolean passwordMatchesHash(User user, UserLoginRequest loginRequest) {
+        return this.passwordMatchesHash(user.getPwHash(), loginRequest.getPassword());
     }
 
     /**
