@@ -13,7 +13,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -35,7 +34,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
     @Inject
     InventoryItemService service;
 
-    @Test
+
+    //    @Test
     public void testCreate() throws JsonProcessingException {
         InventoryItem item = testObjectCreator.getTestObject();
         ObjectId returned = given()

@@ -17,6 +17,9 @@ public abstract class EndpointProvider {
                     context.getUserPrincipal().getName(),
                     context.isSecure()
             );
+            if (context.isSecure()) {
+                log.warn("Request with JWT made without HTTPS");
+            }
         }
 
     }

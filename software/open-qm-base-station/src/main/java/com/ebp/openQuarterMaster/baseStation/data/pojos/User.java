@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO:: move to lib
+ * TODO:: move to lib?
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -36,10 +36,16 @@ public class User extends MainObject {
     @NotNull
     private String title = "";
 
+    /*
+     * Not used if service.authMode set to EXTERNAL
+     */
     private String pwHash = null;
 
     private List<String> roles = new ArrayList<>();
 
+    /*
+     * Only used if service.authMode set to EXTERNAL
+     */
     private Map<@NotBlank String, String> externIds = new HashMap<>();
 
     /**

@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.TimeUtils;
+import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -50,6 +51,8 @@ public class Auth extends EndpointProvider {
 
     @Inject
     JsonWebToken jwt;
+    @Inject
+    SecurityIdentity identity;
 
 
     private void assertSelfAuthMode() {
@@ -132,9 +135,12 @@ public class Auth extends EndpointProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response tokenCheck(@Context SecurityContext ctx) {
         logRequestContext(this.jwt, ctx);
+        log.info("Checking user's token.");
         this.assertSelfAuthMode();
+
         TokenCheckResponse response = new TokenCheckResponse();
         if (jwt.getRawToken() != null) {
+            log.info("User roles: {}", this.identity.getRoles());
             response.setHadToken(true);
             response.setTokenSecure(ctx.isSecure());
             response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());
