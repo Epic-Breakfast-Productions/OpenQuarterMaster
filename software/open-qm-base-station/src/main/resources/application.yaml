@@ -4,6 +4,13 @@ service:
   apiVersion: 1.0.0
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
+  authMode: SELF # self or external
+
+runningInfo:
+  organization: The Testing Organization
+  serverName: ${runningInfo.organization}
+  hostname: localhost
+  port: ${quarkus.http.port}
 
 quarkus:
   log:
@@ -23,12 +30,15 @@ quarkus:
     info-title: Open QuarterMaster Base Station API
     info-version: ${service.apiVersion}
     info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
-#    info-terms-of-service: <url>
+    #    info-terms-of-service: <url>
     info-contact-email: contact@gjstewart.net
     info-contact-name: Greg Stewart
     info-contact-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
     info-license-name: GNU General Public License v3.0
     info-license-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE
+    security-scheme: jwt
+    security-scheme-name: JwtAuth
+
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
@@ -42,6 +52,19 @@ quarkus:
     sampler-param: 1
 #    metrics:
 #      enabled: true
+
+mp:
+  jwt:
+    verify:
+      privatekey:
+        location: security/packagedPrivateKeyPkcs8.pem
+      publickey:
+        location: security/packagedPublicKey.pem
+      issuer: ${runningInfo.organization} - ${service.nameShort}
+    expiration:
+      default: 86400 # 1 day
+      extended: 2678400 # 1 month
+
 
 "%dev":
   quarkus:
