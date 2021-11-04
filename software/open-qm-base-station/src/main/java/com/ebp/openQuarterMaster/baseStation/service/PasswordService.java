@@ -24,11 +24,18 @@ import java.security.spec.InvalidKeySpecException;
 @ApplicationScoped
 @Slf4j
 public class PasswordService {
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static SecureRandom SECURE_RANDOM = null;
     private static final String ALGORITHM = BCryptPassword.ALGORITHM_BCRYPT;
     private static final int ITERATIONS = 11;
 
     private final PasswordFactory passwordFactory;
+
+    private static synchronized SecureRandom getSecureRandom() {
+        if (SECURE_RANDOM == null) {
+            SECURE_RANDOM = new SecureRandom();
+        }
+        return SECURE_RANDOM;
+    }
 
     public PasswordService() {
         WildFlyElytronPasswordProvider provider = WildFlyElytronPasswordProvider.getInstance();
@@ -101,7 +108,7 @@ public class PasswordService {
      */
     private static byte[] getSalt() {
         byte[] salt = new byte[BCryptPassword.BCRYPT_SALT_SIZE];
-        SECURE_RANDOM.nextBytes(salt);
+        getSecureRandom().nextBytes(salt);
         return salt;
     }
 }

@@ -35,11 +35,18 @@ The following claims are considered in this application:
 | aud          | audience          | The audience for the token; Recipient for which the JWT is intended. User identification string.   | -                           | -                                                 |
 | auth_time    |                   | The epoch time of when the authorization happened                                                  | -                           | -                                                 |
 | exp          | expiration time   | The epoch time of when the token will expire                                                       | -                           | -                                                 |
-| jti          | JWT ID            | Unique ID of the token, allows revokation of the token or for it to only be used once.             | -                           |                                                   |
+| jti          | JWT ID            | Unique ID of the token, allows revocation of the token or for it to only be used once.             | -                           |                                                   |
 
 References:
 
 - https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
+
+### For External Auth
+
+For the service to work with `service.authMode` set to `EXTERNAL`:
+
+- service needs the `mp.jwt.verify.publickey` set to the public key cert from the issuer of the jwt tokens
+- Tokens need to be provided with all claims listed above
 
 ## User Roles
 
