@@ -14,8 +14,6 @@ user management.
 
 ### JWT
 
-The jwt requires the following:
-
 #### Claims
 
 The following claims are considered in this application:

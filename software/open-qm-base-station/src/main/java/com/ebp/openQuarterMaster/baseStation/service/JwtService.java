@@ -48,16 +48,28 @@ public class JwtService {
         this.privateKey = KeyUtils.readPrivateKey(privateKeyLocation); //KeyUtils.readPrivateKey(privateKeyLocation); //     StaticUtils.resourceAsUrl(privateKeyLocation).toString());
     }
 
-
+    /**
+     * Gets a user's jwt. Meant to be used during auth, returns the object meant to return to the user.
+     *
+     * @param user            The user to get the jwt for
+     * @param extendedTimeout If the jwt should have an extended expiration period
+     * @return The response to give back to the user.
+     */
     public UserLoginResponse getUserJwt(User user, boolean extendedTimeout) {
         Instant expiration = Instant.now().plusSeconds((extendedTimeout
                 ? this.extendedExpiration
                 : this.defaultExpiration));
 
-
         return new UserLoginResponse(this.generateTokenString(user, expiration), expiration);
     }
 
+    /**
+     * Generates a jwt for use by the user.
+     *
+     * @param user    The user to get the jwt for
+     * @param expires When the jwt should expire
+     * @return The jwt for the user
+     */
     public String generateTokenString(
             User user,
             Instant expires
@@ -65,9 +77,7 @@ public class JwtService {
         //info on what claims are: https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
         JwtClaimsBuilder claims = Jwt.claims(this.getUserClaims(user));
 
-
         claims.expiresAt(expires);
-        claims.claim(Claims.auth_time.name(), expires.getEpochSecond());
 
         return claims.jws().keyId(this.sigKeyId).sign(this.privateKey);
     }
@@ -103,6 +113,7 @@ public class JwtService {
         Map<String, Object> output = new HashMap<>();
 
         output.put(JWT_ISSUER_CLAIM, this.issuer); // serverInfo.getOrganization() + " - Task Timekeeper Server");
+        output.put(Claims.auth_time.name(), Instant.now().getEpochSecond());
 
         return output;
     }

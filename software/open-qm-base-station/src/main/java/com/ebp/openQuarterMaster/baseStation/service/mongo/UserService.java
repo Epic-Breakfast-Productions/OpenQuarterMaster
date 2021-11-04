@@ -15,8 +15,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 @ApplicationScoped
 public class UserService extends MongoService<User> {
@@ -48,12 +50,26 @@ public class UserService extends MongoService<User> {
         this.authMode = authMode;
     }
 
-    public User getFromEmail(String email) {
-        return this.getCollection().find(eq("email", email)).limit(1).first();
+    /**
+     * Gets a user from either their username or email.
+     *
+     * @param usernameOrEmail The username or email of the user.
+     * @return
+     */
+    public User getFromUsernameEmail(String usernameOrEmail) {
+        return this.getCollection()
+                .find(
+                        or(
+                                eq("email", usernameOrEmail),
+                                eq("username", usernameOrEmail)
+                        )
+                )
+                .limit(1)
+                .first();
     }
 
     public User getFromLoginRequest(UserLoginRequest loginRequest) {
-        return this.getFromEmail(loginRequest.getEmail());
+        return this.getFromUsernameEmail(loginRequest.getUsernameEmail());
     }
 
     private User getExternalUser(String externalSource, String externalId) {
@@ -80,13 +96,28 @@ public class UserService extends MongoService<User> {
 
         Set<ConstraintViolation<User>> validationErrs = this.validator.validate(user);
         if (!validationErrs.isEmpty()) {
-            throw new IllegalStateException("Resulting user from jwt wasn't valid.");
+            throw new IllegalStateException(
+                    "Resulting user from jwt wasn't valid: " +
+                            validationErrs.stream().map(ConstraintViolation<User>::getMessage).collect(Collectors.joining(", "))
+            );
         }
+        //TODO:: check if username or email already exists
 
         this.add(user);
         return user;
     }
 
+    /**
+     * Gets a user from the given jwt.
+     * <p>
+     * If {@link #authMode} is set to {@link AuthMode#SELF}, simple lookup.
+     * <p>
+     * If {@link #authMode} is set to {@link AuthMode#EXTERNAL}, the service will lookup based on the external id in the
+     * jwt, creating the user if they don't exist yet.
+     *
+     * @param jwt The jwt to get the user for
+     * @return The user the jwt was for. Null if no user found.
+     */
     public User getFromJwt(JsonWebToken jwt) {
         String userId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
 

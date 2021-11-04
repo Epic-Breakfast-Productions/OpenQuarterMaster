@@ -1,6 +1,5 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;

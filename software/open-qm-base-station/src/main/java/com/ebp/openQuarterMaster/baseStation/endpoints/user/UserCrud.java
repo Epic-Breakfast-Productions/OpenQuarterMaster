@@ -89,12 +89,17 @@ public class UserCrud extends EndpointProvider {
 
         //TODO:: don't do if authType is external
 
+
         //TODO:: refactor
         if (
-                !this.userService.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty() ||
-                        !this.userService.list(eq("username", userCreateRequest.getEmail()), null, null).isEmpty()
+                !this.userService.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty()
         ) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("User with Email already exists.").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("User with email already exists.").build();
+        }
+        if (
+                !this.userService.list(eq("username", userCreateRequest.getUsername()), null, null).isEmpty()
+        ) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("User with username already exists.").build();
         }
 
         User.Builder builder = User.builder(userCreateRequest);

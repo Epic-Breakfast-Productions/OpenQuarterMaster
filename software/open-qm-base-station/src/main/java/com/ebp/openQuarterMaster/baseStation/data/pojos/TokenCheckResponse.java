@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ * TODO:: move to lib
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

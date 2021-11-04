@@ -5,18 +5,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * TODO:: move to lib
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginRequest {
     @NonNull
     @NotNull
-    @Email
-    private String email;
+    @NotBlank
+    private String usernameEmail;
     @NonNull
     @NotNull
+    @NotBlank
     private String password;
 }

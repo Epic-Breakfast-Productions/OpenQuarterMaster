@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * TODO:: move to lib
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

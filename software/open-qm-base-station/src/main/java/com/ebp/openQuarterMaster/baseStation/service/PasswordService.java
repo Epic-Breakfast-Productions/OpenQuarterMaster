@@ -30,6 +30,11 @@ public class PasswordService {
 
     private final PasswordFactory passwordFactory;
 
+    /**
+     * Initialized at runtime, required for native builds.
+     *
+     * @return A Secure Random for use while creating salts
+     */
     private static synchronized SecureRandom getSecureRandom() {
         if (SECURE_RANDOM == null) {
             SECURE_RANDOM = new SecureRandom();
@@ -49,9 +54,10 @@ public class PasswordService {
     }
 
     /**
-     * Validate/sanitizes the password given, and makes a hash out of it.
+     * Makes a hash for the password given.
      *
      * @param password The password to hash
+     * @param iterations The number of iterations to perform (4-34)
      * @return The hash for the password
      */
     public String createPasswordHash(String password, int iterations) {
@@ -74,10 +80,25 @@ public class PasswordService {
         }
     }
 
+    /**
+     * Makes a hash for the password given.
+     * <p>
+     * Wrapper for {@link #createPasswordHash(String, int)}, giving {@link #ITERATIONS} as the number of iterations.
+     *
+     * @param password The password to hash
+     * @return The hash for the password
+     */
     public String createPasswordHash(String password) {
         return this.createPasswordHash(password, ITERATIONS);
     }
 
+    /**
+     * Determines if the password given matches what is represented by the hash.
+     *
+     * @param encodedPass The hash of the user's password
+     * @param pass        The password given to check
+     * @return If the password given matched the hashed password
+     */
     public boolean passwordMatchesHash(String encodedPass, String pass) {
         BCryptPassword original = null;
         try {
@@ -97,6 +118,15 @@ public class PasswordService {
         }
     }
 
+    /**
+     * Checks to see if the password given in the login request matches the hashed pasword of the user.
+     * <p>
+     * Wrapper for {@link #passwordMatchesHash(String, String)}.
+     *
+     * @param user         The user to get the pw hash from
+     * @param loginRequest The request sent to try to authenticate a user
+     * @return If the request contained the correct password for the user.
+     */
     public boolean passwordMatchesHash(User user, UserLoginRequest loginRequest) {
         return this.passwordMatchesHash(user.getPwHash(), loginRequest.getPassword());
     }
