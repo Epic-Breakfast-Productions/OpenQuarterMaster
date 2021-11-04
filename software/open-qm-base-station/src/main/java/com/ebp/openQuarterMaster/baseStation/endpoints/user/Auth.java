@@ -34,7 +34,7 @@ import java.util.Date;
 @Traced
 @Slf4j
 @Path("/user/auth")
-@Tags({@Tag(name = "Users"), @Tag(name = "User Auth")})
+@Tags({@Tag(name = "User Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
 public class Auth extends EndpointProvider {
     @Inject
@@ -111,6 +111,8 @@ public class Auth extends EndpointProvider {
 
         //TODO:: additional checks on locked status, etc
 
+        log.info("User {} authenticated, generating token and returning.", user.getId());
+
         return Response.status(Response.Status.ACCEPTED)
                 .entity(this.jwtService.getUserJwt(user, false))
                 .build();
@@ -129,7 +131,6 @@ public class Auth extends EndpointProvider {
                     schema = @Schema(implementation = TokenCheckResponse.class)
             )
     )
-    @Tags({@Tag(name = "Users"), @Tag(name = "User Auth")})
     @SecurityRequirement(name = "JwtAuth")
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
@@ -141,6 +142,8 @@ public class Auth extends EndpointProvider {
         TokenCheckResponse response = new TokenCheckResponse();
         if (jwt.getRawToken() != null) {
             log.info("User roles: {}", this.identity.getRoles());
+            log.info("User JWT claims: {}", this.jwt.getClaimNames());
+
             response.setHadToken(true);
             response.setTokenSecure(ctx.isSecure());
             response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());

@@ -198,7 +198,7 @@ public abstract class MongoService<T extends MainObject> {
     }
 
     /**
-     * Adds an object to the collection.
+     * Adds an object to the collection. Adds a created history event and the object's new object id.
      *
      * @param object The object to add
      * @return The id of the newly added object.
@@ -217,7 +217,9 @@ public abstract class MongoService<T extends MainObject> {
 
         InsertOneResult result = getCollection().insertOne(object);
 
-        return result.getInsertedId().asObjectId().getValue();
+        object.setId(result.getInsertedId().asObjectId().getValue());
+
+        return object.getId();
     }
 
     /**

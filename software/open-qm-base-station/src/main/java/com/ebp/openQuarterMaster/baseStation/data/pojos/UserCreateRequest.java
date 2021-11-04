@@ -26,6 +26,10 @@ public class UserCreateRequest {
     private String lastName;
     @NonNull
     @NotNull
+    @NotBlank
+    private String username;
+    @NonNull
+    @NotNull
     @Email
     private String email;
     @NonNull

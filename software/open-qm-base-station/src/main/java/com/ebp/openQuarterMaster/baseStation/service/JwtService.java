@@ -20,7 +20,9 @@ import java.util.UUID;
 @ApplicationScoped
 public class JwtService {
     public static final String JWT_USER_ID_CLAIM = "userId";
-//    public static final String[] ROLES = {UserLevel.REGULAR.name(), UserLevel.ADMIN.name()};
+    public static final String JWT_USER_EMAIL_CLAIM = "userEmail";
+    public static final String JWT_USER_TITLE_CLAIM = "userTitle";
+    public static final String JWT_ISSUER_CLAIM = Claims.iss.name();
 
     private final long defaultExpiration;
     private final long extendedExpiration;
@@ -60,6 +62,7 @@ public class JwtService {
             User user,
             Instant expires
     ) {
+        //info on what claims are: https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
         JwtClaimsBuilder claims = Jwt.claims(this.getUserClaims(user));
 
 
@@ -80,14 +83,18 @@ public class JwtService {
 //                user.getId() + "-" + user.getLastLogin().getTime() + "-" + user.getNumLogins()
                 user.getId() + "-" + UUID.randomUUID()
         );//TODO: move to utility, test
-        output.put("sub", userIdentification);
-        output.put("aud", userIdentification);
-        output.put("upn", user.getEmail());
+        output.put(Claims.sub.name(), userIdentification);
+        output.put(Claims.aud.name(), userIdentification);
+        output.put(Claims.upn.name(), user.getUsername());
+        output.put(JWT_USER_EMAIL_CLAIM, user.getEmail());
+        output.put(JWT_USER_TITLE_CLAIM, user.getTitle());
+        output.put(Claims.given_name.name(), user.getFirstName());
+        output.put(Claims.family_name.name(), user.getLastName());
         output.put(JWT_USER_ID_CLAIM, user.getId());
 
         output.put("roleMappings", new HashMap<String, Object>());
 
-        output.put("groups", user.getRoles());
+        output.put(Claims.groups.name(), user.getRoles());
 
         return output;
     }
@@ -95,7 +102,7 @@ public class JwtService {
     private Map<String, Object> getBaseClaims() {
         Map<String, Object> output = new HashMap<>();
 
-        output.put("iss", this.issuer); // serverInfo.getOrganization() + " - Task Timekeeper Server");
+        output.put(JWT_ISSUER_CLAIM, this.issuer); // serverInfo.getOrganization() + " - Task Timekeeper Server");
 
         return output;
     }

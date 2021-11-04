@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -45,13 +46,13 @@ import static com.mongodb.client.model.Filters.*;
 @Traced
 @Slf4j
 @Path("/user")
-@Tags({@Tag(name = "Users")})
+@Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
 @RequestScoped
 public class UserCrud extends EndpointProvider {
     @Inject
     Validator validator;
     @Inject
-    UserService service;
+    UserService userService;
     @Inject
     JsonWebToken jwt;
     @Inject
@@ -86,8 +87,12 @@ public class UserCrud extends EndpointProvider {
         logRequestContext(this.jwt, securityContext);
         log.info("Creating new user.");
 
+        //TODO:: don't do if authType is external
+
+        //TODO:: refactor
         if (
-                !this.service.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty()
+                !this.userService.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty() ||
+                        !this.userService.list(eq("username", userCreateRequest.getEmail()), null, null).isEmpty()
         ) {
             return Response.status(Response.Status.BAD_REQUEST).entity("User with Email already exists.").build();
         }
@@ -98,7 +103,7 @@ public class UserCrud extends EndpointProvider {
             List<String> roles = new ArrayList<>() {{
                 add("user");
             }};
-            if (this.service.collectionEmpty()) {
+            if (this.userService.collectionEmpty()) {
                 roles.add("userAdmin");
             }
             builder.roles(roles);
@@ -116,8 +121,8 @@ public class UserCrud extends EndpointProvider {
             Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
         }
 
-        ObjectId output = service.add(newUser);
-        log.info("Item created with id: {}", output);
+        ObjectId output = userService.add(newUser);
+        log.info("User created with id: {}", output);
         return Response.status(Response.Status.CREATED).entity(output).build();
     }
 
@@ -137,7 +142,7 @@ public class UserCrud extends EndpointProvider {
             ),
             headers = {
                     @Header(name="num-elements", description = "Gives the number of elements returned in the body."),
-                    @Header(name="query-num-results", description = "Gives the number of results in the query given.")
+                    @Header(name = "query-num-results", description = "Gives the number of results in the query given.")
             }
     )
     @APIResponse(
@@ -147,7 +152,7 @@ public class UserCrud extends EndpointProvider {
     )
     @RolesAllowed("userAdmin")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response listInventoryItems(
+    public Response listUsers(
             @Context SecurityContext securityContext,
             //for actual queries
             @QueryParam("name") String name,
@@ -171,7 +176,7 @@ public class UserCrud extends EndpointProvider {
         }
         Bson filter = (filters.isEmpty() ? null : and(filters));
 
-        List<User> users = this.service.list(
+        List<User> users = this.userService.list(
                 filter,
                 sort,
                 pageOptions
@@ -191,7 +196,44 @@ public class UserCrud extends EndpointProvider {
                 .status(Response.Status.OK)
                 .entity(output)
                 .header("num-elements", output.size())
-                .header("query-num-results", this.service.count(filter))
+                .header("query-num-results", this.userService.count(filter))
+                .build();
+    }
+
+    @GET
+    @Path("self")
+    @Operation(
+            summary = "Gets information on the user supplied by the JWT."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "User info retrieved.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            type = SchemaType.ARRAY,
+                            implementation = UserGetResponse.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "204",
+            description = "No users found from query given.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @PermitAll
+    @SecurityRequirement(name = "JwtAuth")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getSelfInfo(
+            @Context SecurityContext securityContext
+    ) {
+        logRequestContext(this.jwt, securityContext);
+        log.info("Retrieving info for user.");
+        User user = this.userService.getFromJwt(jwt);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(UserGetResponse.builder(user).build())
                 .build();
     }
 

@@ -1,7 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
+import com.ebp.openQuarterMaster.baseStation.data.pojos.User;
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
@@ -42,12 +44,15 @@ import static com.mongodb.client.model.Filters.regex;
 @Traced
 @Slf4j
 @Path("/inventory/item")
-@Tags({@Tag(name = "Inventory Items")})
+@Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class InventoryItemsCrud extends EndpointProvider {
 
     @Inject
-    InventoryItemService service;
+    InventoryItemService inventoryItemService;
+
+    @Inject
+    UserService userService;
 
     @Inject
     JsonWebToken jwt;
@@ -82,7 +87,9 @@ public class InventoryItemsCrud extends EndpointProvider {
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Creating new item.");
-        ObjectId output = service.add(item);
+        User user = this.userService.getFromJwt(jwt);
+
+        ObjectId output = inventoryItemService.add(item);
         log.info("Item created with id: {}", output);
         return Response.status(Response.Status.CREATED).entity(output).build();
     }
@@ -137,7 +144,7 @@ public class InventoryItemsCrud extends EndpointProvider {
         }
         Bson filter = (filters.isEmpty() ? null : and(filters));
 
-        List<InventoryItem> output = this.service.list(
+        List<InventoryItem> output = this.inventoryItemService.list(
                 filter,
                 sort,
                 pageOptions
@@ -151,7 +158,7 @@ public class InventoryItemsCrud extends EndpointProvider {
                 .status(Response.Status.OK)
                 .entity(output)
                 .header("num-elements", output.size())
-                .header("query-num-results", this.service.count(filter))
+                .header("query-num-results", this.inventoryItemService.count(filter))
                 .build();
     }
 
@@ -183,7 +190,7 @@ public class InventoryItemsCrud extends EndpointProvider {
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Retrieving item with id {}", id);
-        InventoryItem output = service.get(id);
+        InventoryItem output = inventoryItemService.get(id);
 
         if (output == null) {
             log.info("Item not found.");
@@ -223,8 +230,9 @@ public class InventoryItemsCrud extends EndpointProvider {
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Updating item with id {}", id);
+        User user = this.userService.getFromJwt(jwt);
 
-        InventoryItem updated = this.service.update(id, itemUpdates, inventoryItemValidator);
+        InventoryItem updated = this.inventoryItemService.update(id, itemUpdates, inventoryItemValidator);
 
         return Response.ok(updated).build();
     }
@@ -257,7 +265,8 @@ public class InventoryItemsCrud extends EndpointProvider {
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Deleting item with id {}", id);
-        InventoryItem output = service.remove(id);
+        User user = this.userService.getFromJwt(jwt);
+        InventoryItem output = inventoryItemService.remove(id);
 
         if (output == null) {
             log.info("Item not found.");
@@ -325,6 +334,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             @PathParam String storageBlockId
     ) {
         logRequestContext(this.jwt, securityContext);
+        User user = this.userService.getFromJwt(jwt);
         //TODO
         return Response.serverError().entity("Not implemented yet.").build();
     }
@@ -332,7 +342,7 @@ public class InventoryItemsCrud extends EndpointProvider {
     @DELETE
     @Path("{itemId}/{storageBlockId}")
     @Operation(
-            summary = "Adds a stored amount or tracked item to the storage block specified."
+            summary = "Removes a stored amount or tracked item from the storage block specified."
     )
     @APIResponse(
             responseCode = "200",
@@ -356,6 +366,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             @PathParam String storageBlockId
     ) {
         logRequestContext(this.jwt, securityContext);
+        User user = this.userService.getFromJwt(jwt);
         //TODO
         return Response.serverError().entity("Not implemented yet.").build();
     }

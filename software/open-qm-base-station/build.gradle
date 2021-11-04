@@ -26,6 +26,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
+    implementation 'io.quarkus:quarkus-container-image-jib'
 
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
