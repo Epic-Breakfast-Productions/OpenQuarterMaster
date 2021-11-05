@@ -1,12 +1,16 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.*;
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.TimeUtils;
+import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
+import com.ebp.openQuarterMaster.lib.core.rest.user.TokenCheckResponse;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginResponse;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

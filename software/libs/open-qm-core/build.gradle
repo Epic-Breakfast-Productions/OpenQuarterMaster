@@ -44,6 +44,7 @@ dependencies {
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
+    implementation 'org.passay:passay:1.6.1'
 
     testImplementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
     testImplementation 'org.hibernate.validator:hibernate-validator-cdi:7.0.1.Final'

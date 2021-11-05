@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.data.pojos;
+package com.ebp.openQuarterMaster.lib.core.rest.user;
 
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO:: move to lib
+ * The response object from getting a user
  */
 @Data
 @AllArgsConstructor

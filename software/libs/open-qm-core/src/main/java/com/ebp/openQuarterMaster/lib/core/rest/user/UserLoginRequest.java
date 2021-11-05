@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.data.pojos;
+package com.ebp.openQuarterMaster.lib.core.rest.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * TODO:: move to lib
+ * The request object for logging in a user
  */
 @Data
 @AllArgsConstructor

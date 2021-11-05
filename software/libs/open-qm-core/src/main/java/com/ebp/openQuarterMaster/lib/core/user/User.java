@@ -1,9 +1,8 @@
-package com.ebp.openQuarterMaster.baseStation.data.pojos;
+package com.ebp.openQuarterMaster.lib.core.user;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import lombok.*;
-import org.eclipse.microprofile.jwt.Claims;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO:: move to lib?
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -72,23 +70,10 @@ public class User extends MainObject {
                 .email(userCreateRequest.getEmail())
                 .title(userCreateRequest.getTitle());
     }
-
-    /**
-     * Still responsible for setting:
-     * <ul>
-     *     <li>attributes</li>
-     *     <li>external ids</li>
-     * </ul>
-     *
-     * @param externalJwt
-     * @return
-     */
-    public static Builder builder(JsonWebToken externalJwt) {
-        return new Builder()
-                .firstName(externalJwt.getClaim(Claims.given_name))
-                .lastName(externalJwt.getClaim(Claims.family_name))
-                .username(externalJwt.getClaim(Claims.upn))
-                .email(externalJwt.getClaim("userEmail"))
-                .title(externalJwt.getClaim("userTitle"));
+    public static Builder builder() {
+        return new Builder();
     }
+
+
+
 }

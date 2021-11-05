@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core;
 
-import com.ebp.openQuarterMaster.lib.core.temp.TempQuantityJacksonModule;
+import com.ebp.openQuarterMaster.lib.core.jackson.MongoObjectIdModule;
+import com.ebp.openQuarterMaster.lib.core.jackson.TempQuantityJacksonModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,7 +16,15 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class Utils {
+    /**
+     * A global object mapper that is pre-configured to handle all objects in lib.
+     * <p>
+     * Configured by {@link #setupObjectMapper(ObjectMapper)}.
+     */
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    /**
+     * Modules needed for proper serialization of lib objects. Registered with {@link #OBJECT_MAPPER}
+     */
     public static final Module[] MAPPER_MODULES = {
             new UnitJacksonModule(),
             new JavaTimeModule(),
@@ -27,19 +36,26 @@ public class Utils {
         setupObjectMapper(OBJECT_MAPPER);
     }
 
+    /**
+     * Configures a given object mapper with the proper configuration to handle all lib objects.
+     *
+     * @param mapper The object mapper to set up.
+     */
     public static void setupObjectMapper(ObjectMapper mapper) {
         mapper.registerModules(MAPPER_MODULES);
 
-//        mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
 //        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
 
         //set the timezone to this server's.
         mapper.setTimeZone(TimeZone.getDefault());
     }
 
-    //amounts
-    public static final List<Unit> ALLOWED_MEASUREMENTS = List.of(
+    /**
+     * List of units that are applicable to storage.
+     */
+    public static final List<Unit> ALLOWED_UNITS = List.of(
             AbstractUnit.ONE,
             Units.MOLE,
             // length
@@ -87,6 +103,4 @@ public class Utils {
             //energy
             Units.JOULE
     );
-
-
 }

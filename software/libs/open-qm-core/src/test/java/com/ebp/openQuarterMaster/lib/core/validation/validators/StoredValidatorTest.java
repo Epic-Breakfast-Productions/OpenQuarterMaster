@@ -22,15 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StoredValidatorTest {
 
-//    private static Validator VALIDATOR;
-//
-//    static {
-//        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-//        VALIDATOR = factory.getValidator();
-//    }
-
     private static Stream<Arguments> validArgs(){
         return Stream.of(
+                Arguments.of((Stored)null),
                 Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), null)),
                 Arguments.of(new Stored(StoredType.TRACKED, null, new HashMap<>())),
                 Arguments.of(new Stored(StoredType.TRACKED, null,
@@ -79,6 +73,7 @@ class StoredValidatorTest {
     @ParameterizedTest(name = "invalidTest[{index}]")
     @MethodSource("invalidArgs")
     public void invalidTest(Stored testStored) {
+        //TODO:: test with error messages
         boolean result = this.validator.isValid(testStored, null);
         assertFalse(result);
     }

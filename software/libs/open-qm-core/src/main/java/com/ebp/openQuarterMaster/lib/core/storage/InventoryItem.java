@@ -71,7 +71,9 @@ public class InventoryItem extends MainObject {
     /**
      * The name of the identifier used for the items tracked.
      * <p>
-     * Example might be serial number
+     * Example might be serial number.
+     *
+     * Only for use when {@link #storedType} is {@link StoredType#TRACKED}
      */
     private String trackedItemIdentifierName = null;
 

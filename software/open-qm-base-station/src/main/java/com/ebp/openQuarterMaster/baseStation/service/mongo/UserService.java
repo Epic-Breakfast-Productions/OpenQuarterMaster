@@ -1,12 +1,13 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.User;
-import com.ebp.openQuarterMaster.baseStation.data.pojos.UserLoginRequest;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -86,7 +87,12 @@ public class UserService extends MongoService<User> {
             return user;
         }
 
-        User.Builder userBuilder = User.builder(jwt);
+        User.Builder userBuilder = User.builder()
+                .firstName(jwt.getClaim(Claims.given_name))
+                .lastName(jwt.getClaim(Claims.family_name))
+                .username(jwt.getClaim(Claims.upn))
+                .email(jwt.getClaim("userEmail"))
+                .title(jwt.getClaim("userTitle"));
 
         userBuilder.externIds(new HashMap<>() {{
             put(externalSource, externalId);

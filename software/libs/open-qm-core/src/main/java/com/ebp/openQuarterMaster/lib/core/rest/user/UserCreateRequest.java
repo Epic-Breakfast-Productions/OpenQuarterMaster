@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.data.pojos;
+package com.ebp.openQuarterMaster.lib.core.rest.user;
 
-import com.ebp.openQuarterMaster.baseStation.data.validation.annotations.ValidPassword;
+import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO:: move to lib
+ * The response object from a user create request
  */
 @Data
 @AllArgsConstructor

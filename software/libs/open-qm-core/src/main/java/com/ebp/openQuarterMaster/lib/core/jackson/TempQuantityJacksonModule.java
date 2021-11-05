@@ -27,27 +27,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.ebp.openQuarterMaster.lib.core.temp;
+package com.ebp.openQuarterMaster.lib.core.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.ebp.openQuarterMaster.lib.core.jackson.QuantityJsonDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
-import systems.uom.ucum.format.UCUMFormat;
-import systems.uom.ucum.format.UCUMFormat.Variant;
-import tech.units.indriya.format.EBNFUnitFormat;
-import tech.units.indriya.format.SimpleUnitFormat;
 
-import javax.measure.Dimension;
 import javax.measure.Quantity;
-import javax.measure.Unit;
-import java.io.IOException;
-import java.text.ParsePosition;
 
 /**
  * Configures Jackson to (de)serialize JSR 385 Unit objects using their UCUM representation, since the actual objects don't

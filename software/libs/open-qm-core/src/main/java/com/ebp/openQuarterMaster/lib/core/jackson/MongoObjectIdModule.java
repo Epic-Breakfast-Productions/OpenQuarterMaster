@@ -1,6 +1,5 @@
-package com.ebp.openQuarterMaster.lib.core;
+package com.ebp.openQuarterMaster.lib.core.jackson;
 
-import com.ebp.openQuarterMaster.lib.core.temp.QuantityJsonDeserializer;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,6 +12,9 @@ import org.bson.types.ObjectId;
 
 import java.io.IOException;
 
+/**
+ * Jackson module to handle the Mongodb ObjectId in a reasonable manner
+ */
 public class MongoObjectIdModule extends SimpleModule {
     public MongoObjectIdModule() {
         super();

@@ -33,9 +33,7 @@ public class StoredValidator extends Validator implements ConstraintValidator<Va
     @Override
     public boolean isValid(Stored stored, ConstraintValidatorContext constraintValidatorContext) {
         List<String> validationErrs = new ArrayList<>();
-        if (stored == null) {
-            validationErrs.add("Stored object was null");
-        } else {
+        if (stored != null) {
             if (stored.getType() == null) {
                 validationErrs.add("Type was null");
             } else {

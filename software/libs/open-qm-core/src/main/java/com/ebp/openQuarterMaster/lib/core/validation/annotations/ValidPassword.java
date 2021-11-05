@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.data.validation.annotations;
+package com.ebp.openQuarterMaster.lib.core.validation.annotations;
 
-import com.ebp.openQuarterMaster.baseStation.data.validation.validators.PasswordConstraintValidator;
+import com.ebp.openQuarterMaster.lib.core.validation.validators.PasswordConstraintValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

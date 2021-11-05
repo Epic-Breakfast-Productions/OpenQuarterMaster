@@ -1,11 +1,11 @@
-package com.ebp.openQuarterMaster.baseStation.data.pojos;
+package com.ebp.openQuarterMaster.lib.core.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * TODO:: move to lib
+ * The response object from when errors occur
  */
 @Data
 @AllArgsConstructor

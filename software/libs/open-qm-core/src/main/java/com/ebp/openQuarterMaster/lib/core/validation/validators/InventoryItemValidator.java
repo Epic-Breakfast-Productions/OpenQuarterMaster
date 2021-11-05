@@ -13,10 +13,15 @@ import java.util.List;
 
 /**
  * Validator that validates the state of an {@link InventoryItem}.
- *
- * TODO:: test
  */
 public class InventoryItemValidator extends Validator implements ConstraintValidator<ValidInventoryItem, InventoryItem> {
+
+    public static final String STORED_TYPE_WAS_NULL = "Stored type was null";
+    public static final String NOT_AMOUNT = "Item has storage(s) that are not AMOUNT";
+    public static final String INCOMPATIBLE_UNITS = "Item has storage(s) that have incompatible units with the item";
+    public static final String TRACKED_IDENTIFIER_NAME_WHEN_IT_SHOULDN_T = "Item has a tracked identifier name when it shouldn't";
+    public static final String NOT_ONE = "The unit for the tracked item was not ONE";
+    public static final String NOT_ALL_TRACKED_TYPE = "Not all stored values were of TRACKED type.";
 
     private void validateAmountItem(InventoryItem item, List<String> errs){
         boolean typeMismatch = false;
@@ -35,34 +40,35 @@ public class InventoryItemValidator extends Validator implements ConstraintValid
             }
         }
         if(typeMismatch){
-            errs.add("Item has storage(s) that are not AMOUNT");
+            errs.add(NOT_AMOUNT);
         }
         if(incompatibleAmount){
-            errs.add("Item has storage(s) that have incompatible units with the item");
+            errs.add(INCOMPATIBLE_UNITS);
+        }
+        if(item.getTrackedItemIdentifierName() != null){
+            errs.add(TRACKED_IDENTIFIER_NAME_WHEN_IT_SHOULDN_T);
         }
     }
 
     private void validateTrackedItem(InventoryItem item, List<String> errs){
         //unit of item must be ONE
         if(!AbstractUnit.ONE.equals(item.getUnit())){
-            errs.add("The unit for the tracked item was not ONE");
+            errs.add(NOT_ONE);
         }
         //all stored items need to match tracked
         if(!item.getStorageMap().values().stream().allMatch((Stored stored) -> {
                 return StoredType.TRACKED.equals(stored.getType());
             })){
-            errs.add("Not all stored values were of TRACKED type.");
+            errs.add(NOT_ALL_TRACKED_TYPE);
         }
     }
 
     @Override
     public boolean isValid(InventoryItem item, ConstraintValidatorContext constraintValidatorContext) {
         List<String> validationErrs = new ArrayList<>();
-        if(item == null){
-            validationErrs.add("Item was null");
-        }else {
+        if(item != null){
             if (item.getStoredType() == null) {
-                validationErrs.add("Stored type was null.");
+                validationErrs.add(STORED_TYPE_WAS_NULL);
             } else {
                 switch (item.getStoredType()) {
                     case AMOUNT:

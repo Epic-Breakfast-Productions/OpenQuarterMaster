@@ -1,6 +1,5 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
-import com.ebp.openQuarterMaster.baseStation.data.pojos.User;
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
@@ -8,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.InventoryItemValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;

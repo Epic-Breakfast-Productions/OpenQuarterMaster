@@ -1,11 +1,16 @@
 package com.ebp.openQuarterMaster.lib.core.testUtils;
 
-import jakarta.validation.ClockProvider;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ClockProvider;
+import javax.validation.ConstraintValidatorContext;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestConstraintValidatorContext implements ConstraintValidatorContext {
 
-    private String defaultMessage = "default validation error message.";
+    @Getter
+    private final List<String> errorMessages = new ArrayList<>();
 
     @Override
     public void disableDefaultConstraintViolation() {
@@ -24,7 +29,11 @@ public class TestConstraintValidatorContext implements ConstraintValidatorContex
 
     @Override
     public ConstraintViolationBuilder buildConstraintViolationWithTemplate(String messageTemplate) {
+        TestConstraintValidatorContext me = this;
         return new ConstraintViolationBuilder() {
+            String message = messageTemplate;
+            TestConstraintValidatorContext parent = me;
+
             @Override
             public NodeBuilderDefinedContext addNode(String name) {
                 return null;
@@ -52,7 +61,8 @@ public class TestConstraintValidatorContext implements ConstraintValidatorContex
 
             @Override
             public ConstraintValidatorContext addConstraintViolation() {
-                return null;
+                parent.getErrorMessages().add(this.message);
+                return parent;
             }
         };
     }

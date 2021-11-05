@@ -37,4 +37,8 @@ public class StorageBlock extends MainObject {
     @NonNull
     @NotNull
     private List<@NotNull Capacity> capacityMeasures;
+
+    public boolean hasParent(){
+        return this.getParent() != null;
+    }
 }
