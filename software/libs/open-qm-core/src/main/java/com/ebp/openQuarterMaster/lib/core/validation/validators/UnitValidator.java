@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 
@@ -18,7 +19,7 @@ public class UnitValidator extends Validator implements ConstraintValidator<Vali
         if(unit == null){
             return true;
         } else {
-            if(!Utils.ALLOWED_UNITS.contains(unit)){
+            if(!UnitUtils.ALLOWED_UNITS.contains(unit)){
                 errs.add("Unit not valid. " + unit.getName() + " not applicable for item storage.");
             }
         }

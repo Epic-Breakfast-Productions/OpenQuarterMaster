@@ -2,17 +2,13 @@ package com.ebp.openQuarterMaster.lib.core;
 
 import com.ebp.openQuarterMaster.lib.core.jackson.MongoObjectIdModule;
 import com.ebp.openQuarterMaster.lib.core.jackson.TempQuantityJacksonModule;
+import com.ebp.openQuarterMaster.lib.core.jackson.UnitModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import systems.uom.common.USCustomary;
-import tech.units.indriya.AbstractUnit;
-import tech.units.indriya.unit.Units;
 import tech.uom.lib.jackson.UnitJacksonModule;
 
-import javax.measure.Unit;
-import java.util.List;
 import java.util.TimeZone;
 
 public class Utils {
@@ -29,7 +25,8 @@ public class Utils {
             new UnitJacksonModule(),
             new JavaTimeModule(),
             new MongoObjectIdModule(),
-            new TempQuantityJacksonModule()
+            new TempQuantityJacksonModule(),
+            new UnitModule()
     };
 
     static {
@@ -52,55 +49,4 @@ public class Utils {
         mapper.setTimeZone(TimeZone.getDefault());
     }
 
-    /**
-     * List of units that are applicable to storage.
-     */
-    public static final List<Unit> ALLOWED_UNITS = List.of(
-            AbstractUnit.ONE,
-            Units.MOLE,
-            // length
-            Units.METRE,
-            USCustomary.INCH,
-            USCustomary.FOOT,
-            USCustomary.FOOT_SURVEY,
-            USCustomary.YARD,
-            USCustomary.MILE,
-            USCustomary.NAUTICAL_MILE,
-
-            // mass
-            Units.GRAM,
-            Units.KILOGRAM,
-            USCustomary.OUNCE,
-            USCustomary.POUND,
-            USCustomary.TON,
-
-            //area
-            Units.SQUARE_METRE,
-            USCustomary.SQUARE_FOOT,
-            USCustomary.ARE,
-            USCustomary.HECTARE,
-            USCustomary.ACRE,
-
-            // volume
-            Units.LITRE,
-            Units.CUBIC_METRE,
-            USCustomary.LITER,
-            USCustomary.CUBIC_INCH,
-            USCustomary.CUBIC_FOOT,
-            USCustomary.ACRE_FOOT,
-            USCustomary.GALLON_DRY,
-            USCustomary.GALLON_LIQUID,
-            USCustomary.FLUID_OUNCE,
-            USCustomary.GILL_LIQUID,
-            USCustomary.MINIM,
-            USCustomary.FLUID_DRAM,
-            USCustomary.CUP,
-            USCustomary.TEASPOON,
-            USCustomary.TABLESPOON,
-            USCustomary.BARREL,
-            USCustomary.PINT,
-
-            //energy
-            Units.JOULE
-    );
 }

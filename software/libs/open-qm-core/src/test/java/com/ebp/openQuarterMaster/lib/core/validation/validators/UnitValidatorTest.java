@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnitValidatorTest {
 
     private static Stream<Arguments> validUnits(){
-        return Utils.ALLOWED_UNITS.stream().map(Arguments::of);
+        return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
     }
     private static Stream<Arguments> invalidUnits(){
         return Stream.of(
