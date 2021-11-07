@@ -3,17 +3,16 @@ package com.ebp.openQuarterMaster.lib.core.history;
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HistoryEventTest extends BasicTest {
     public HistoryEvent getBasicTestItem() {
         return HistoryEvent.builder()
                 .type(EventType.CREATE)
-                .userId(UUID.randomUUID())
+                .userId(ObjectId.get())
                 .description("someDesc")
                 .build();
     }

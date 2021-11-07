@@ -1,11 +1,11 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +24,7 @@ class HistoriedTest extends BasicTest {
         Historied o2 = o.updated(
                 HistoryEvent.builder()
                         .type(EventType.CREATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
         assertSame(o, o2);
@@ -33,7 +33,7 @@ class HistoriedTest extends BasicTest {
         o2 = o.updated(
                 HistoryEvent.builder()
                         .type(EventType.UPDATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
 
@@ -46,14 +46,14 @@ class HistoriedTest extends BasicTest {
 
         o.updated(HistoryEvent.builder()
                 .type(EventType.CREATE)
-                .userId(UUID.randomUUID())
+                .userId(ObjectId.get())
                 .build()
         );
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             o.updated(HistoryEvent.builder()
                     .type(EventType.CREATE)
-                    .userId(UUID.randomUUID())
+                    .userId(ObjectId.get())
                     .build());
         });
     }
@@ -65,7 +65,7 @@ class HistoriedTest extends BasicTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             o.updated(HistoryEvent.builder()
                     .type(EventType.UPDATE)
-                    .userId(UUID.randomUUID())
+                    .userId(ObjectId.get())
                     .build());
         });
     }
@@ -77,13 +77,13 @@ class HistoriedTest extends BasicTest {
         o.updated(
                 HistoryEvent.builder()
                         .type(EventType.CREATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
         o.updated(
                 HistoryEvent.builder()
                         .type(EventType.UPDATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
 
@@ -99,13 +99,13 @@ class HistoriedTest extends BasicTest {
         o.updated(
                 HistoryEvent.builder()
                         .type(EventType.CREATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
         o.updated(
                 HistoryEvent.builder()
                         .type(EventType.UPDATE)
-                        .userId(UUID.randomUUID())
+                        .userId(ObjectId.get())
                         .build()
         );
 

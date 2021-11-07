@@ -1,10 +1,10 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 import lombok.*;
+import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 /**
  * Describes an event in an object's history.
@@ -14,14 +14,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class HistoryEvent {
-    /** The type of event that occurred */
+    /**
+     * The type of event that occurred
+     */
     @NonNull
     private EventType type;
-    /** The user that performed the event */
-    @NonNull
-    @NotNull
-    private UUID userId;
-    /** When the event occurred */
+    /**
+     * The user that performed the event
+     */
+    private ObjectId userId;
+    /**
+     * When the event occurred
+     */
     @Builder.Default
     @NonNull
     @NotNull
