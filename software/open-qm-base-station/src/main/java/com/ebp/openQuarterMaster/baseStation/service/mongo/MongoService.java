@@ -4,6 +4,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.EventType;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -17,40 +18,51 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
  * <p>
- * TODO:: update
- * TODO:: add histories
  * TODO:: fully test
  *
  * @param <T> The type of object stored.
  */
 @AllArgsConstructor
 public abstract class MongoService<T extends MainObject> {
+    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+
+    private static void assertNotNullUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User must exist to perform action.");
+        }
+    }
 
     protected final ObjectMapper objectMapper;
     protected final MongoClient mongoClient;
     protected final String database;
     protected final String collectionName;
     protected final Class<T> clazz;
+    protected final boolean allowNullUserForCreate;
 
     protected MongoCollection<T> collection = null;
+
 
     protected MongoService(
             ObjectMapper objectMapper,
             MongoClient mongoClient,
             String database,
-            Class<T> clazz
+            Class<T> clazz,
+            boolean allowNullUserForCreate
     ) {
         this(
                 objectMapper,
@@ -58,6 +70,7 @@ public abstract class MongoService<T extends MainObject> {
                 database,
                 clazz.getSimpleName(),
                 clazz,
+                allowNullUserForCreate,
                 null
         );
     }
@@ -165,7 +178,8 @@ public abstract class MongoService<T extends MainObject> {
         return this.get(new ObjectId(objectId));
     }
 
-    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, ConstraintValidator<A, T> validator) {
+    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, User user) {
+        assertNotNullUser(user);
         if (updateJson.has("history")) {
             throw new IllegalArgumentException("Not allowed to update history of an object manually.");
         }
@@ -178,13 +192,14 @@ public abstract class MongoService<T extends MainObject> {
             throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
         }
 
-        if (!validator.isValid(object, null)) {
-            throw new IllegalArgumentException("Unable to update with data given. Resulting object is invalid.");
+        Set<ConstraintViolation<T>> validationErrs = VALIDATOR.validate(object);
+        if (!validationErrs.isEmpty()) {
+            throw new IllegalArgumentException("Unable to update with data given. Resulting object is invalid: " + validationErrs.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
         }
 
         object.updated(
                 HistoryEvent.builder()
-                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .userId(user.getId())
                         .type(EventType.UPDATE)
                         .build()
         );
@@ -193,8 +208,8 @@ public abstract class MongoService<T extends MainObject> {
         return object;
     }
 
-    public <A extends Annotation> T update(String id, ObjectNode updateJson, ConstraintValidator<A, T> validator) {
-        return this.update(new ObjectId(id), updateJson, validator);
+    public <A extends Annotation> T update(String id, ObjectNode updateJson, User user) {
+        return this.update(new ObjectId(id), updateJson, user);
     }
 
     /**
@@ -203,14 +218,17 @@ public abstract class MongoService<T extends MainObject> {
      * @param object The object to add
      * @return The id of the newly added object.
      */
-    public ObjectId add(T object) {
+    public ObjectId add(T object, User user) {
+        if (!this.allowNullUserForCreate) {
+            assertNotNullUser(user);
+        }
         if (!object.getHistory().isEmpty()) {
             throw new IllegalArgumentException("Object cannot have history before creation.");
         }
 
         object.updated(
                 HistoryEvent.builder()
-                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .userId(user.getId())
                         .type(EventType.CREATE)
                         .build()
         );
@@ -228,7 +246,8 @@ public abstract class MongoService<T extends MainObject> {
      * @param objectId The id of the object to remove
      * @return The object that was removed
      */
-    public T remove(ObjectId objectId) {
+    public T remove(ObjectId objectId, User user) {
+        assertNotNullUser(user);
         T toRemove = this.get(objectId);
 
         if (toRemove == null) {
@@ -237,7 +256,7 @@ public abstract class MongoService<T extends MainObject> {
 
         toRemove.updated(
                 HistoryEvent.builder()
-                        .userId(UUID.randomUUID())//TODO:: get id from jwt
+                        .userId(user.getId())
                         .type(EventType.REMOVE)
                         .build()
         );
@@ -250,13 +269,13 @@ public abstract class MongoService<T extends MainObject> {
     /**
      * Removes the object with the id given.
      * <p>
-     * Wrapper for {@link #remove(ObjectId)}, to be able to use String representation of ObjectId.
+     * Wrapper for {@link #remove(ObjectId, User)}, to be able to use String representation of ObjectId.
      *
      * @param objectId The id of the object to remove
      * @return The object that was removed
      */
-    public T remove(String objectId) {
-        return this.remove(new ObjectId(objectId));
+    public T remove(String objectId, User user) {
+        return this.remove(new ObjectId(objectId), user);
     }
 
     /**

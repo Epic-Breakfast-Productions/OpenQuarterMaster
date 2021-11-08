@@ -126,7 +126,7 @@ public class UserCrud extends EndpointProvider {
             Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
         }
 
-        ObjectId output = userService.add(newUser);
+        ObjectId output = userService.add(newUser, null);
         log.info("User created with id: {}", output);
         return Response.status(Response.Status.CREATED).entity(output).build();
     }

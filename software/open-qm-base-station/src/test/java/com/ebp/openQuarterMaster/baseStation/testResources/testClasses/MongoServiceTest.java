@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
+import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -24,8 +25,9 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
 
     protected void defaultListTest(S service){
         int numIn = 5;
-        for(int i = 0; i < numIn; i++){
-            service.add(this.getTestObject());
+        for(int i = 0; i < numIn; i++) {
+
+            service.add(this.getTestObject(), TestUserService.getTestUser());
         }
 
         assertEquals(numIn, service.list().size());
@@ -34,7 +36,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
     protected void defaultCountTest(S service){
         int numIn = 5;
         for(int i = 0; i < numIn; i++){
-            service.add(this.getTestObject());
+            service.add(this.getTestObject(), TestUserService.getTestUser());
         }
 
         assertEquals(numIn, service.count());
@@ -43,7 +45,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
     protected void defaultGetObjectIdTest(S service){
         T item = this.getTestObject();
 
-        ObjectId id = service.add(item);
+        ObjectId id = service.add(item, TestUserService.getTestUser());
 
         T itemGot = service.get(id);
 
@@ -54,7 +56,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
     protected void defaultGetStringTest(S service){
         T item = this.getTestObject();
 
-        String id = service.add(item).toHexString();
+        String id = service.add(item, TestUserService.getTestUser()).toHexString();
 
         T itemGot = service.get(id);
 
@@ -65,7 +67,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
     protected void defaultAddTest(S service){
         T item = getTestObject(false);
 
-        ObjectId id = service.add(item);
+        ObjectId id = service.add(item, TestUserService.getTestUser());
 
         assertNotNull(item.getId());
         assertEquals(id, item.getId());
@@ -77,7 +79,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
     protected void defaultRemoveAllTest(S service){
         int numIn = 5;
         for(int i = 0; i < numIn; i++){
-            service.add(this.getTestObject());
+            service.add(this.getTestObject(), TestUserService.getTestUser());
         }
 
         assertEquals(numIn, service.removeAll());

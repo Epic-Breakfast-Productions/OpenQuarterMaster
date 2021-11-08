@@ -28,7 +28,7 @@ public class UserService extends MongoService<User> {
     private AuthMode authMode;
 
     UserService() {//required for DI
-        super(null, null, null, null, null, null);
+        super(null, null, null, null, null, false, null);
     }
 
     @Inject
@@ -45,7 +45,8 @@ public class UserService extends MongoService<User> {
                 objectMapper,
                 mongoClient,
                 database,
-                User.class
+                User.class,
+                true
         );
         this.validator = validator;
         this.authMode = authMode;
@@ -109,7 +110,7 @@ public class UserService extends MongoService<User> {
         }
         //TODO:: check if username or email already exists
 
-        this.add(user);
+        this.add(user, null);
         return user;
     }
 

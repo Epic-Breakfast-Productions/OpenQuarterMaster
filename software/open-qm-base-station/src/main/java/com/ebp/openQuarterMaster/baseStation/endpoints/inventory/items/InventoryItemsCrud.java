@@ -8,7 +8,6 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.user.User;
-import com.ebp.openQuarterMaster.lib.core.validation.validators.InventoryItemValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
@@ -57,8 +56,6 @@ public class InventoryItemsCrud extends EndpointProvider {
     @Inject
     JsonWebToken jwt;
 
-    InventoryItemValidator inventoryItemValidator = new InventoryItemValidator();
-
     @POST
     @Operation(
             summary = "Adds a new inventory item."
@@ -89,7 +86,7 @@ public class InventoryItemsCrud extends EndpointProvider {
         log.info("Creating new item.");
         User user = this.userService.getFromJwt(jwt);
 
-        ObjectId output = inventoryItemService.add(item);
+        ObjectId output = inventoryItemService.add(item, user);
         log.info("Item created with id: {}", output);
         return Response.status(Response.Status.CREATED).entity(output).build();
     }
@@ -101,7 +98,7 @@ public class InventoryItemsCrud extends EndpointProvider {
     )
     @APIResponse(
             responseCode = "200",
-            description = "Item retrieved.",
+            description = "Items retrieved.",
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(
@@ -232,7 +229,7 @@ public class InventoryItemsCrud extends EndpointProvider {
         log.info("Updating item with id {}", id);
         User user = this.userService.getFromJwt(jwt);
 
-        InventoryItem updated = this.inventoryItemService.update(id, itemUpdates, inventoryItemValidator);
+        InventoryItem updated = this.inventoryItemService.update(id, itemUpdates, user);
 
         return Response.ok(updated).build();
     }
@@ -266,7 +263,7 @@ public class InventoryItemsCrud extends EndpointProvider {
         logRequestContext(this.jwt, securityContext);
         log.info("Deleting item with id {}", id);
         User user = this.userService.getFromJwt(jwt);
-        InventoryItem output = inventoryItemService.remove(id);
+        InventoryItem output = inventoryItemService.remove(id, user);
 
         if (output == null) {
             log.info("Item not found.");
