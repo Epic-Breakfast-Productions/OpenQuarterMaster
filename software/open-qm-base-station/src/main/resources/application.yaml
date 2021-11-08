@@ -64,6 +64,8 @@ mp:
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
+    token:
+      cookie: jwt
 
 
 "%dev":

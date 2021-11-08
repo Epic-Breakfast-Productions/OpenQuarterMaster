@@ -13,14 +13,34 @@
 </head>
 <body>
 <h1>
-    Server Running
+    {config:['service.nameFull']}
 </h1>
 <ul>
     <li><a href="/openapi-ui/index.html">OpenAPI</a></li>
     <li><a href="/q/health-ui/index.html">Health UI</a></li>
 </ul>
 
+{#if hasToken}
+Had token! Username: {username}
+{#else}
+Did not have token.
+<br/>
+Input a token:
+<input type="text" id="token">
+<button type="button" id="submitButton">Submit</button>
+{/if}
+
+
+<script src="/lib/jquery-3.6.0/jquery.min.js"></script>
 <script src="/lib/bootstrap/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script>
+    $("#submitButton").click(function(){
+        Cookies.set("jwt",$("#token").val);
+        location.reload();
+    });
+
+</script>
 
 </body>
 </html>

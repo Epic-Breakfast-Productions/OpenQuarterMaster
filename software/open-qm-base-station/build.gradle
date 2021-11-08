@@ -22,6 +22,8 @@ dependencies {
     // https://quarkus.io/guides/security-properties
     implementation 'io.quarkus:quarkus-elytron-security'
     implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-qute'
+    implementation 'io.quarkus:quarkus-resteasy-qute'
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
