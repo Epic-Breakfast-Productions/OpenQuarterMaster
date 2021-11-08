@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
 import java.util.stream.Stream;
@@ -21,6 +22,13 @@ class UnitUtilsTest {
 
     private static Stream<Arguments> unitsAsArgs() {
         return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
+    }
+
+    private static Stream<Arguments> invalidUnits() {
+        return Stream.of(
+                Units.BECQUEREL,
+                Units.DAY
+        ).map(Arguments::of);
     }
 
     private final UnitValidator unitValidator = new UnitValidator();
@@ -54,5 +62,18 @@ class UnitUtilsTest {
         assertEquals(unit, deserialized);
         assertTrue(this.unitValidator.isValid(deserialized, null));
     }
+
+    //TODO:: figure out how to serialize invalid units
+//    @ParameterizedTest(name = "invalidUnitSerialization[{index}]({0})")
+//    @MethodSource("invalidUnits")
+//    public void invalidUnitSerialization(Unit unit) throws JsonProcessingException {
+//        log.info("Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", unit, unit.getName(), unit.getSymbol(), unit.getDimension());
+//
+//        String serialized = Utils.OBJECT_MAPPER.writeValueAsString(unit);
+//        log.info("Serialized unit: {}", serialized);
+//        Unit deserialized = Utils.OBJECT_MAPPER.readValue(serialized, Unit.class);
+//
+//        log.info("Deserialized unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", deserialized, deserialized.getName(), deserialized.getSymbol(), deserialized.getDimension());
+//    }
 
 }

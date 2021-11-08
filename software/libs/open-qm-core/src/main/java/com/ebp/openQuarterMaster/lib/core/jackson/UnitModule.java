@@ -1,12 +1,15 @@
 package com.ebp.openQuarterMaster.lib.core.jackson;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
+import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.bson.types.ObjectId;
 
 import javax.measure.Unit;
 import java.io.IOException;
@@ -36,9 +39,9 @@ public class UnitModule extends SimpleModule {
         public Unit deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
             Unit output = UnitUtils.unitFromString(p.getValueAsString());
 
-//            if(output == null) { //TODO
-//                output = ctxt.findNonContextualValueDeserializer(Unit.class).deserialize(p, ctxt);
-//            }
+            if (output == null) {
+                output = (Unit) ctxt.findNonContextualValueDeserializer(Utils.OBJECT_MAPPER.constructType(Unit.class)).deserialize(p, ctxt);
+            }
             return output;
         }
     }
