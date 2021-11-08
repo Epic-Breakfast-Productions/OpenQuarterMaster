@@ -23,6 +23,7 @@
 
 {#if hasToken}
 Had token! Username: {username}
+<button type="button" id="logoutButton">Submit</button>
 {#else}
 Did not have token.
 <br/>
@@ -38,6 +39,10 @@ Input a token:
 <script>
     $("#submitButton").click(function(){
         Cookies.set("jwt",$("#token").val);
+        location.reload();
+    });
+    $("#logoutButton").click(function(){
+        Cookies.remove("jwt");
         location.reload();
     });
 

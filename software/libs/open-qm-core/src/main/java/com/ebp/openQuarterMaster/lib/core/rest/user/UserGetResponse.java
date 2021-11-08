@@ -3,7 +3,6 @@ package com.ebp.openQuarterMaster.lib.core.rest.user;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.user.User;
-import com.sun.tools.javac.Main;
 import lombok.*;
 import org.bson.types.ObjectId;
 
@@ -22,6 +21,7 @@ import java.util.Map;
 @Builder(builderClassName = "Builder")
 public class UserGetResponse extends MainObject {
     private ObjectId id;
+    private String username;
     private String firstName;
     private String lastName;
     private String email;
@@ -34,6 +34,7 @@ public class UserGetResponse extends MainObject {
     public static Builder builder(User user) {
         return new Builder()
                 .id(user.getId())
+                .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
