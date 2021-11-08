@@ -42,7 +42,7 @@ import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
-@Path("/inventory/item")
+@Path("/api/inventory/item")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class InventoryItemsCrud extends EndpointProvider {

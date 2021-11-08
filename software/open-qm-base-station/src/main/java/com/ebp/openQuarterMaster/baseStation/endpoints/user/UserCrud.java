@@ -45,7 +45,7 @@ import static com.mongodb.client.model.Filters.*;
 
 @Traced
 @Slf4j
-@Path("/user")
+@Path("/api/user")
 @Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
 @RequestScoped
 public class UserCrud extends EndpointProvider {

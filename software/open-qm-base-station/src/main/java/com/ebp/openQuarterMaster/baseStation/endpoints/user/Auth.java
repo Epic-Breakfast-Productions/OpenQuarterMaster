@@ -37,7 +37,7 @@ import java.util.Date;
 
 @Traced
 @Slf4j
-@Path("/user/auth")
+@Path("/api/user/auth")
 @Tags({@Tag(name = "User Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
 public class Auth extends EndpointProvider {

@@ -21,7 +21,7 @@ public abstract class UiProvider {
                 log.warn("Request with JWT made without HTTPS");
             }
         }
-
+        log.debug("Raw jwt: {}", jwt.getRawToken());
     }
 
     protected static boolean hasJwt(JsonWebToken jwt) {

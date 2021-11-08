@@ -43,7 +43,7 @@ import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
-@Path("/storage")
+@Path("/api/storage")
 @Tags({@Tag(name = "Storage", description = "Endpoints for managing Storage Mediums.")})
 @RequestScoped
 public class StorageCrud extends EndpointProvider {

@@ -228,7 +228,7 @@ public abstract class MongoService<T extends MainObject> {
 
         object.updated(
                 HistoryEvent.builder()
-                        .userId(user.getId())
+                        .userId((user != null ? user.getId() : null))
                         .type(EventType.CREATE)
                         .build()
         );

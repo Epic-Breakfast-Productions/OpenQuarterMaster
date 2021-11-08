@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Traced
 @Slf4j
-@Path("/info")
+@Path("/api/info")
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
 @ApplicationScoped
 public class GeneralInfo extends EndpointProvider {
