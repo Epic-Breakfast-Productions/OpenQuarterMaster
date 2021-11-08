@@ -1,32 +1,33 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidStored;
-import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 public class StoredValidator extends Validator implements ConstraintValidator<ValidStored, Stored> {
 
+    public static final String ITEMS_LIST_NOT_NULL = "Items list in amount stored was not null";
+    public static final String AMOUNT_WAS_NULL = "Amount in amount stored was null";
+    public static final String ITEM_LIST_WAS_NULL = "Item list in tracked stored was null.";
+    public static final String TYPE_WAS_NULL = "Type was null";
+
     private void validateAmountStored(Stored stored, List<String> errs) {
         if (stored.getItems() != null) {
-            errs.add("Items list in amount stored was not null");
+            errs.add(ITEMS_LIST_NOT_NULL);
         }
-        if(stored.getAmount() == null){
-            errs.add("Amount in amount stored was null");
+        if (stored.getAmount() == null) {
+            errs.add(AMOUNT_WAS_NULL);
         }
     }
 
     private void validateTrackedStored(Stored stored, List<String> errs) {
         if (stored.getItems() == null) {
-            errs.add("Item list in tracked stored was null.");
+            errs.add(ITEM_LIST_WAS_NULL);
         }
     }
 
@@ -35,7 +36,7 @@ public class StoredValidator extends Validator implements ConstraintValidator<Va
         List<String> validationErrs = new ArrayList<>();
         if (stored != null) {
             if (stored.getType() == null) {
-                validationErrs.add("Type was null");
+                validationErrs.add(TYPE_WAS_NULL);
             } else {
                 switch (stored.getType()) {
                     case AMOUNT:

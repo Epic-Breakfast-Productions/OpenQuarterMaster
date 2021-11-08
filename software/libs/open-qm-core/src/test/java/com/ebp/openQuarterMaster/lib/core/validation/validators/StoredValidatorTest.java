@@ -4,6 +4,8 @@ import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectValidatorTest;
+import com.ebp.openQuarterMaster.lib.core.testUtils.TestConstraintValidatorContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,19 +20,21 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class StoredValidatorTest {
+class StoredValidatorTest extends ObjectValidatorTest<StoredValidator> {
 
-    private static Stream<Arguments> validArgs(){
+    private static Stream<Arguments> validArgs() {
         return Stream.of(
-                Arguments.of((Stored)null),
+                Arguments.of((Stored) null),
                 Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), null)),
                 Arguments.of(new Stored(StoredType.TRACKED, null, new HashMap<>())),
                 Arguments.of(new Stored(StoredType.TRACKED, null,
-                                new HashMap<>(){{
-                                    put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
-                                }}
+                        new HashMap<>() {{
+                            put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+                        }}
                         )
                 )
         );
@@ -41,22 +45,12 @@ class StoredValidatorTest {
             put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
         }};
         return Stream.of(
-                Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), validMap)),
-                Arguments.of(new Stored(StoredType.TRACKED, null, null)),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, null)),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put(null, new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put("", new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put(" ", new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put("\t", new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put("\n", new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put("\r", new TrackedItem(UUID.randomUUID()));}})),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, new HashMap<>(){{put(Faker.instance().idNumber().valid(), null);}})),
-                Arguments.of(Utils.OBJECT_MAPPER.readValue("{}", Stored.class))//because constructor checks for null stored type
+                Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), validMap), new String[]{ITEMS_LIST_NOT_NULL}),
+                Arguments.of(new Stored(StoredType.TRACKED, null, null), new String[]{ITEM_LIST_WAS_NULL}),
+                Arguments.of(new Stored(StoredType.AMOUNT, null, null), new String[]{AMOUNT_WAS_NULL}),
+                Arguments.of(Utils.OBJECT_MAPPER.readValue("{}", Stored.class), new String[]{TYPE_WAS_NULL})//because constructor checks for null stored type
         );
     }
-
-
-    private StoredValidator validator;
 
     @BeforeEach
     public void setUp() {
@@ -72,9 +66,11 @@ class StoredValidatorTest {
 
     @ParameterizedTest(name = "invalidTest[{index}]")
     @MethodSource("invalidArgs")
-    public void invalidTest(Stored testStored) {
-        //TODO:: test with error messages
-        boolean result = this.validator.isValid(testStored, null);
+    public void invalidTest(Stored testStored, String... expectedMessages) {
+        TestConstraintValidatorContext ctx = new TestConstraintValidatorContext();
+        boolean result = this.validator.isValid(testStored, ctx);
         assertFalse(result);
+        assertHasErrorMessages(ctx, expectedMessages);
+
     }
 }
