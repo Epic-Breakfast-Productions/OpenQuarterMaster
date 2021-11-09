@@ -1,0 +1,50 @@
+{#include webui/mainWebPageTemplate}
+{#title}Login{/title}
+{#pageStyle}
+
+{/pageStyle}
+{#showNavbar}false{/showNavbar}
+{#pageContent}
+
+<div class="row">
+    <div class="col">
+    </div>
+    <form class="col card text-center">
+        <div class="card-header">
+            <img src="/media/logo.png" alt="" width="72">
+            <h1>Please sign in</h1>
+        </div>
+        <div class="card-body">
+            {#if config:['service.authMode'] == 'SELF'}
+
+            <div class="form-floating">
+                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            {#else}
+            <div class="form-floating">
+                <input type="password" class="form-control" id="tokenInput" placeholder="name@example.com">
+                <label for="floatingInput">JWT Token from {config:['service.externalAuth.name']}</label>
+            </div>
+            {/if}
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+        </div>
+    </form>
+    <div class="col">
+    </div>
+</div>
+
+
+{/pageContent}
+{/include}

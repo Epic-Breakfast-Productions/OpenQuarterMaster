@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <link rel="stylesheet" href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.litera.min.css">
+    <script type="text/javascript">
+		function submitForm(){
+			document.getElementById("redirectForm").submit();
+		}
+
+    </script>
+</head>
+<body onload="submitForm()">
+<form id="redirectForm" action="{#insert redirectTo}/{/}" method="get">
+    <h1>Redirecting...</h1>
+    <button type="submit" class="btn btn-link">
+        Click here if the redirection does not happen quickly
+    </button>
+
+    <input type="hidden" name="responseType" value="{responseType}">
+    <input type="hidden" name="message" value="{message}">
+</form>
+</body>
+</html>

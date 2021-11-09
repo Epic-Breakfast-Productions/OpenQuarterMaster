@@ -5,6 +5,9 @@ service:
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
   authMode: SELF # self or external
+  externalAuth:
+    name: Keycloak
+    link: http://google.com
 
 runningInfo:
   organization: The Testing Organization
@@ -67,7 +70,10 @@ mp:
 #    token:
 #      header: Cookie
 #      cookie: jwt
-
+#
+#smallrye:
+#  jwt:
+#    always-check-authorization: true
 
 "%dev":
   quarkus:

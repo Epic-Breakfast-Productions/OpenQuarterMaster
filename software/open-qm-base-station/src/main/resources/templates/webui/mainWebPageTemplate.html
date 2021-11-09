@@ -1,0 +1,105 @@
+{! @com.gjs.taskTimekeeper.webServer.server.config.ServerInfoBean serverInfo !}
+{!
+Main webpage template
+
+Ingests:
+- title
+- styleSheets
+- pageStyle
+- pageContent
+- scripts
+- pageScript
+- showNavbar*
+!}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <title>{#insert title}{/} - Open QuarterMaster</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/res/style/bootstrap-adjust.css">
+    <link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.litera.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/lib/fontawesome-free-5.15.4-web/css/all.css">
+    <link rel="stylesheet" href="/lib/spin.js/spin.css">
+    <link rel="stylesheet" href="/res/css/main.css">
+    {#if styleSheets??}
+    {#for styleSheet in styleSheets}
+    <link rel="stylesheet" href="{styleSheet}">
+    {/for}
+    {/if}
+
+    <style>
+	{#insert pageStyle}/* No page css */ {/}
+
+    </style>
+</head>
+<body>
+<span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
+<!-- nav here -->
+{! #if showNavbar !}
+<!-- TODO:: navbar -->nav
+{! /if !}
+<div id="mainContainer" class="container">
+
+    <div id="messageDiv">
+
+    </div>
+
+    <main role="main">
+        {#insert pageContent}<h1>No body!</h1>{/}
+    </main>
+
+    <hr/>
+    <footer id="footer" class="row" role="contentinfo">
+        <div class="col-sm-4">
+            <h2 class="footer-header">Open Quarter Master Server</h2>
+            <p>
+                &copy; 2022 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
+                Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
+                License</a><br/>
+                <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
+            </p>
+        </div>
+        <div id="serverInfo" class="col-sm-4">
+            <h2 class="footer-header">
+                Run by:<br/>
+                me
+            </h2>
+            <h2>
+                Contact information:
+            </h2>
+        </div>
+        <div class="col-sm-4">
+            <p>
+                Your privacy is important to the original project. It only creates one cookie, and that is for the login
+                token.
+                The project also only collects what you give it, and it is up to the people running the server to ensure
+                it is handled
+                well. Please contact the folks running the server for more information.
+            </p>
+            <!-- TODO:: legal disclaimer, etc. -->
+        </div>
+    </footer>
+</div>
+
+<script src="/lib/jquery-3.6.0/jquery.min.js"></script>
+<script src="/lib/bootstrap/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script src="/res/js/login.js"></script>
+<script src="/res/js/main.js"></script>
+{#if styleSheets??}
+{#for script in scripts}
+<script src="{script}"></script>
+{/for}
+{/if}
+<script>
+{#insert pageScript}{/}
+
+</script>
+</body>
+</html>

@@ -1,17 +1,15 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -30,37 +28,29 @@ import javax.ws.rs.core.SecurityContext;
 public class Index extends UiProvider {
 
     @Inject
+    @Location("webui/pages/index")
     Template index;
-
-    @Inject
-    JsonWebToken jwt;
 
     @Inject
     UserService userService;
 
     @GET
     @PermitAll
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_HTML)
     public TemplateInstance index(
             @Context SecurityContext securityContext
     ) {
-        logRequestContext(jwt, securityContext);
-
-        return index.data("hasToken", hasJwt(jwt));
+        return index.instance();
     }
 
     @GET
-    @RolesAllowed("user")
-    @Produces(MediaType.TEXT_PLAIN)
-    public TemplateInstance get(
+    @Path("overview")
+    @PermitAll
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance overview(
             @Context SecurityContext securityContext
     ) {
-        logRequestContext(jwt, securityContext);
-        User user = userService.getFromJwt(jwt);
-
-        return index
-                .data("hasToken", hasJwt(jwt))
-                .data("username", user.getUsername());
+        return index.instance();
     }
 
 }
