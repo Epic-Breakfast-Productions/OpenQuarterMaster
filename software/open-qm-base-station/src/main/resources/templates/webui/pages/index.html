@@ -1,15 +1,10 @@
-{#include webui/mainWebPageTemplate}
-{#title}Login{/title}
-{#pageStyle}
-
-{/pageStyle}
-{#showNavbar}false{/showNavbar}
+{#include webui/mainWebPageTemplate title='Login' showNavbar=false}
 {#pageContent}
 
 <div class="row">
     <div class="col">
     </div>
-    <form class="col card text-center">
+    <form class="col card text-center" id="signInForm">
         <div class="card-header">
             <img src="/media/logo.png" alt="" width="72">
             <h1>Please sign in</h1>
@@ -18,27 +13,27 @@
             {#if config:['service.authMode'] == 'SELF'}
 
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
+                <input type="text" class="form-control" id="emailUsernameInput" placeholder="name@example.com">
+                <label for="emailUsernameInput">Email address or Username</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password">
+                <label for="passwordInput">Password</label>
             </div>
             {#else}
             <div class="form-floating">
                 <input type="password" class="form-control" id="tokenInput" placeholder="name@example.com">
-                <label for="floatingInput">JWT Token from {config:['service.externalAuth.name']}</label>
+                <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
             </div>
             {/if}
 
             <div class="checkbox mb-3">
                 <label>
-                    <input type="checkbox" value="remember-me"> Remember me
+                    <input type="checkbox" value="remember-me" id="rememberUserCheckbox"> Remember me
                 </label>
             </div>
             <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+            <p class="mt-5 mb-3 text-muted">&copy; 2021–2021</p>
         </div>
     </form>
     <div class="col">
@@ -47,4 +42,35 @@
 
 
 {/pageContent}
+{#pageScript}
+assertNotLoggedIn();
+
+var signInForm = $("#signInForm");
+
+signInForm.submit(function(event){
+event.preventDefault();
+console.log("Submitting login form.");
+
+var result = false;
+var rememberUser = $("#rememberUserCheckbox").is(":checked");
+
+{#if config:['service.authMode'] == 'SELF'}
+result = getToken(
+$("#emailUsernameInput").val(),
+$("#passwordInput").val(),
+rememberUser
+);
+{#else}
+result = $("tokenInput").val();
+{/if}
+
+if(!result){
+addMessage("danger", "Login failed", "Login Failed", null);
+} else {
+login(result, rememberUser);
+}
+});
+
+
+{/pageScript}
 {/include}

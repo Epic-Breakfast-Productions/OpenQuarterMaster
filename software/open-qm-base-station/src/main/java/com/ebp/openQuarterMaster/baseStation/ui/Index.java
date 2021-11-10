@@ -5,11 +5,13 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -30,9 +32,15 @@ public class Index extends UiProvider {
     @Inject
     @Location("webui/pages/index")
     Template index;
+    @Inject
+    @Location("webui/pages/overview")
+    Template overview;
 
     @Inject
     UserService userService;
+
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     @PermitAll
@@ -40,17 +48,19 @@ public class Index extends UiProvider {
     public TemplateInstance index(
             @Context SecurityContext securityContext
     ) {
+        logRequestContext(jwt, securityContext);
         return index.instance();
     }
 
     @GET
     @Path("overview")
-    @PermitAll
+    @RolesAllowed("user")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance overview(
             @Context SecurityContext securityContext
     ) {
-        return index.instance();
+        logRequestContext(jwt, securityContext);
+        return overview.instance();
     }
 
 }
