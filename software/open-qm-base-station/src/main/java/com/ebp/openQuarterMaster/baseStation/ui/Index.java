@@ -1,6 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -35,6 +37,12 @@ public class Index extends UiProvider {
     @Inject
     @Location("webui/pages/overview")
     Template overview;
+    @Inject
+    @Location("webui/pages/storage")
+    Template storage;
+    @Inject
+    @Location("webui/pages/items")
+    Template items;
 
     @Inject
     UserService userService;
@@ -60,7 +68,32 @@ public class Index extends UiProvider {
             @Context SecurityContext securityContext
     ) {
         logRequestContext(jwt, securityContext);
-        return overview.instance();
+        User user = userService.getFromJwt(this.jwt);
+        return overview.data("userInfo", UserGetResponse.builder(user).build());
+    }
+
+    @GET
+    @Path("storage")
+    @RolesAllowed("user")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance storage(
+            @Context SecurityContext securityContext
+    ) {
+        logRequestContext(jwt, securityContext);
+        User user = userService.getFromJwt(this.jwt);
+        return storage.data("userInfo", UserGetResponse.builder(user).build());
+    }
+
+    @GET
+    @Path("items")
+    @RolesAllowed("user")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance items(
+            @Context SecurityContext securityContext
+    ) {
+        logRequestContext(jwt, securityContext);
+        User user = userService.getFromJwt(this.jwt);
+        return items.data("userInfo", UserGetResponse.builder(user).build());
     }
 
 }
