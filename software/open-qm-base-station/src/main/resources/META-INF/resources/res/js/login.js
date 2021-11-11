@@ -49,7 +49,7 @@ function checkToken(jwtToken){
         authorization: jwtToken,
         done: function(data){
             console.log("Got response from getting token check request: " + JSON.stringify(data));
-            valid = returned.hadToken && !returned.expired;
+            valid = data.hadToken && !data.expired;
         },
         fail: function(data){
             console.warn("Bad response from token check attempt: " + JSON.stringify(data));
