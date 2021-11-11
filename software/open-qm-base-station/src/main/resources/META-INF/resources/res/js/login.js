@@ -18,17 +18,20 @@ function getToken(usernameEmail, password, rememberUser){
             extendedExpire: rememberUser
         };
     var result = false;
-    $.ajax({
-            url: "/api/user/auth",
-            data: JSON.stringify(loginRequestData),
-            contentType: "application/json; charset=UTF-8",
-            dataType: 'json',
-            async: false,
-            type: "POST"
-        }).done(function(data) {
+
+
+    doRestCall({
+        spinnerContainer: null,
+        url: "/api/user/auth",
+        method: "POST",
+        data: loginRequestData,
+        async: false,
+        done: function(data) {
             console.log("Response from login request: " + JSON.stringify(data));
             result = data.token;
-        });
+        }
+    });
+
     return result;
 }
 
@@ -39,16 +42,21 @@ function getToken(usernameEmail, password, rememberUser){
 function checkToken(jwtToken){
     console.log("Checking validity of token: " + jwtToken);
     var valid = false;
-    $.ajax({
+
+    doRestCall({
+        spinnerContainer: null,
         url: "/api/user/auth/tokenCheck",
-        headers: {"Authorization": "Bearer " + jwtToken},
         async: false,
-        type: "GET",
-        success: function(data) {
-            var returned = jQuery.parseJSON(data);
+        authorization: jwtToken,
+        done: function(data){
+            console.log("Got response from getting token check request: " + JSON.stringify(data));
             valid = returned.hadToken && !returned.expired;
-        }
+        },
+        fail: function(data){
+            console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+        },
     });
+
     console.log("Result: " + valid);
     return valid;
 }

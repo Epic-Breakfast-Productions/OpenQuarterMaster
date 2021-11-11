@@ -4,9 +4,9 @@ function doRestCall({
 	timeout = (5*60*1000),
 	method = 'GET',
 	data = null,
-	authorized = false,
+	authorization = false,
 	done,
-	fail,
+	fail = function(){},
 	failNoResponse = null,
 	failNoResponseCheckStatus = true,
 	extraHeaders = {},
@@ -29,10 +29,10 @@ function doRestCall({
 		console.log("Sending json data: " + ajaxOps.data);
 	}
 
-	if(authorized){
+	if(authorization){
 		extraHeaders = {
 			...extraHeaders,
-			...{Authorization: "Bearer " + loginToken}
+			...{Authorization: "Bearer " + authorization}
 		}
 	}
 
