@@ -50,10 +50,10 @@ Ingests:
 {#if showNavbar}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/overview">
             <img src="/media/logo.png" alt="" width="24" height="24">
         </a>
-        <a class="navbar-brand" href="#">{config:['service.nameShort']}</a>
+        <a class="navbar-brand" href="/overview">{config:['service.nameShort']}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
                 aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -62,27 +62,35 @@ Ingests:
         <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Overview
+                    <a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">Overview
+                        {#if page is 'overview'}
                         <span class="visually-hidden">(current)</span>
+                        {/if}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Storage</a>
+                    <a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">Storage</a>
+                    {#if page is 'storage'}
+                    <span class="visually-hidden">(current)</span>
+                    {/if}
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Items</a>
+                    <a class="nav-link {#if page is 'items'}active{/if}" href="/items">Items</a>
+                    {#if page is 'items'}
+                    <span class="visually-hidden">(current)</span>
+                    {/if}
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
-                    </div>
-                </li>
+                <!--                <li class="nav-item dropdown">-->
+                <!--                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"-->
+                <!--                       aria-haspopup="true" aria-expanded="false">Dropdown</a>-->
+                <!--                    <div class="dropdown-menu">-->
+                <!--                        <a class="dropdown-item" href="#">Action</a>-->
+                <!--                        <a class="dropdown-item" href="#">Another action</a>-->
+                <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
+                <!--                        <div class="dropdown-divider"></div>-->
+                <!--                        <a class="dropdown-item" href="#">Separated link</a>-->
+                <!--                    </div>-->
+                <!--                </li>-->
             </ul>
 
             <form class="d-flex me-auto">
