@@ -1,3 +1,4 @@
+var wholeBody = $('body');
 function doRestCall({
 	spinnerContainer = wholeBody.get(0),
 	url = null,
@@ -13,7 +14,7 @@ function doRestCall({
 	async = true
 } = {}){
 	console.log("Making rest call.");
-	var spinner = (spinnerContainer === null ? null : new Spinner(spinnerOpts).spin(spinnerContainer));
+	var spinner = (spinnerContainer === null ? null : new Spin.Spinner(spinnerOpts).spin(spinnerContainer));
 
 	var ajaxOps = {
 		url: url,

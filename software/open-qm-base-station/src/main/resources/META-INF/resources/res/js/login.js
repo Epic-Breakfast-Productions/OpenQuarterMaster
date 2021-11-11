@@ -21,7 +21,6 @@ function getToken(usernameEmail, password, rememberUser){
 
 
     doRestCall({
-        spinnerContainer: null,
         url: "/api/user/auth",
         method: "POST",
         data: loginRequestData,
