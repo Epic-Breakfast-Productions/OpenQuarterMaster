@@ -1,10 +1,13 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
+import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
+import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -13,10 +16,12 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
+import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.setupJwtCall;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,11 +39,18 @@ class InventoryItemsCrudTest extends RunningServerTest {
     @Inject
     InventoryItemService service;
 
+    @Inject
+    JwtService jwtService;
 
-//        @Test
+    @Inject
+    TestUserService testUserService;
+
+
+    @Test
     public void testCreate() throws JsonProcessingException {
+        User user = this.testUserService.getTestUser(false, true);
         InventoryItem item = testObjectCreator.getTestObject();
-        ObjectId returned = given()
+        ObjectId returned = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(item))
                 .when()
