@@ -7,6 +7,7 @@ import javax.ws.rs.core.SecurityContext;
 
 @Slf4j
 public abstract class UiProvider {
+    protected static final String USER_INFO_DATA_KEY = "userInfo";
 
     protected static void logRequestContext(JsonWebToken jwt, SecurityContext context) {
         if (!hasJwt(jwt)) {

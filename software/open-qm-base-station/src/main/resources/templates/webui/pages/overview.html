@@ -1,13 +1,21 @@
-{#include webui/mainWebPageTemplate showNavbar=true title='Overview' page='overview'}
+{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Overview' page='overview'}
 {#pageStyle}
 
 {/pageStyle}
 {#showNavbar}false{/showNavbar}
 {#pageContent}
 
-<h1>
-    Overview
-</h1>
+<p>
+    {numItems} types of items stored in over {numStorageBlocks} storage blocks
+</p>
+<p>
+    Todo:
+<ul>
+    <li>% storage util</li>
+    <li>graphs on storage stats?</li>
+    <li>List out top items close to expire</li>
+</ul>
+</p>
 
 {/pageContent}
 {/include}
