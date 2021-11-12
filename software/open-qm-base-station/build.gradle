@@ -43,8 +43,12 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    nativeTestCompileOnly 'org.projectlombok:lombok:1.18.22'
+    nativeTestAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     /*
     Test Dependencies
