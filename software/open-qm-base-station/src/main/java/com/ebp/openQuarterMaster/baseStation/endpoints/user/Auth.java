@@ -78,7 +78,7 @@ public class Auth extends EndpointProvider {
             )
     )
     @APIResponse(
-            responseCode = "401",
+            responseCode = "400",
             description = "Incorrect credentials given.",
             content = @Content(mediaType = "text/plain")
     )
