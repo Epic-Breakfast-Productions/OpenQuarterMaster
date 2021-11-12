@@ -8,6 +8,9 @@
         <div class="card-header">
             <img src="/media/logo.png" alt="" width="72">
             <h1>Please sign in</h1>
+            {#if config:['service.authMode'] == 'SELF'}
+            <a href="/accountCreate">Or, Create account</a>
+            {/if}
         </div>
         <div class="card-body">
             {#if config:['service.authMode'] == 'SELF'}
@@ -33,6 +36,7 @@
                 </label>
             </div>
             <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+
             <p class="mt-5 mb-3 text-muted">&copy; 2021–2021</p>
         </div>
     </form>

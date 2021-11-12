@@ -35,6 +35,9 @@ public class Index extends UiProvider {
     @Location("webui/pages/index")
     Template index;
     @Inject
+    @Location("webui/pages/accountCreate")
+    Template accountCreate;
+    @Inject
     @Location("webui/pages/overview")
     Template overview;
     @Inject
@@ -58,6 +61,17 @@ public class Index extends UiProvider {
     ) {
         logRequestContext(jwt, securityContext);
         return index.instance();
+    }
+
+    @GET
+    @Path("/accountCreate")
+    @PermitAll
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance accountCreate(
+            @Context SecurityContext securityContext
+    ) {
+        logRequestContext(jwt, securityContext);
+        return accountCreate.instance();
     }
 
     @GET
