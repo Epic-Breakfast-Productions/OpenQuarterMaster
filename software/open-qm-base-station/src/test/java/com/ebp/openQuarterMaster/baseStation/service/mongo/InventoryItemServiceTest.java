@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
+import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoServiceTest;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -12,16 +13,27 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, InventoryItemService> {
-    @Inject
-    InventoryItemService service;
-    @Inject
+
+    InventoryItemService inventoryItemService;
+
     InventoryItemTestObjectCreator itemTestObjectCreator;
+
+    @Inject
+    InventoryItemServiceTest(
+            InventoryItemService inventoryItemService,
+            InventoryItemTestObjectCreator itemTestObjectCreator,
+            TestUserService testUserService
+    ) {
+        this.inventoryItemService = inventoryItemService;
+        this.itemTestObjectCreator = itemTestObjectCreator;
+        this.testUserService = testUserService;
+    }
 
     @Override
     protected InventoryItem getTestObject() {
@@ -29,42 +41,44 @@ class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, Inventory
     }
 
     @AfterEach
-    public void cleanup(){
-        this.service.removeAll();
+    public void cleanup() {
+        this.inventoryItemService.removeAll();
     }
 
     @Test
-    public void injectTest(){
-        assertNotNull(service);
+    public void injectTest() {
+        assertNotNull(inventoryItemService);
     }
 
     @Test
-    public void listTest(){
-        this.defaultListTest(this.service);
-    }
-    @Test
-    public void countTest(){
-        this.defaultCountTest(this.service);
+    public void listTest() {
+        this.defaultListTest(this.inventoryItemService);
     }
 
     @Test
-    public void addTest(){
-        this.defaultAddTest(this.service);
+    public void countTest() {
+        this.defaultCountTest(this.inventoryItemService);
     }
 
     @Test
-    public void getObjectIdTest(){
-        this.defaultGetObjectIdTest(this.service);
-    }
-    @Test
-    public void getStringTest(){
-        this.defaultGetStringTest(this.service);
-    }
-    @Test
-    public void removeAllTest(){
-        this.defaultRemoveAllTest(this.service);
+    public void addTest() {
+        this.defaultAddTest(this.inventoryItemService);
     }
 
+    @Test
+    public void getObjectIdTest() {
+        this.defaultGetObjectIdTest(this.inventoryItemService);
+    }
+
+    @Test
+    public void getStringTest() {
+        this.defaultGetStringTest(this.inventoryItemService);
+    }
+
+    @Test
+    public void removeAllTest() {
+        this.defaultRemoveAllTest(this.inventoryItemService);
+    }
 
 
 //    @Test
