@@ -3,12 +3,73 @@
 <h1>
     Account Create
 </h1>
-<p>
-    <a href="/" title="Back to Login">Back to Login</a>
-</p>
+<a href="/" title="Back to Login">Back to Login</a>
+<hr/>
+<div class="row">
+    <form id="userAccountCreateForm">
+        <div class="form-floating">
+            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+            <label for="emailInput">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
+            <label for="usernameInput">Username</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
+            <label for="firstnameInput">First name</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="lastnameInput" placeholder="Last Name" required>
+            <label for="lastnameInput">Last name</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control" id="titleInput" placeholder="Title">
+            <label for="titleInput">Title</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
+            <label for="passwordInput">Password</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
+                   required>
+            <label for="passwordConfirmInput">Password Confirm</label>
+        </div>
+        <button type="submit" class="btn btn-success btn-lg">Create User</button>
+    </form>
+</div>
 {/pageContent}
 {#pageScript}
 assertNotLoggedIn();
+
+$("#userAccountCreateForm").submit(function(event){
+event.preventDefault();
+console.log("Submitting login form.");
+
+var createRequestData = {
+firstName: $("#firstnameInput").val(),
+lastName: $("#lastnameInput").val(),
+username: $("#usernameInput").val(),
+email: $("#emailInput").val(),
+title: $("#titleInput").val(),
+password: $("#passwordInput").val()
+};
+
+doRestCall({
+url: "/api/user",
+method: "POST",
+data: createRequestData,
+async: false,
+done: function(data) {
+console.log("Response from user create request: " + JSON.stringify(data));
+},
+fail: function(data){
+console.log("FAILED to create user: " + JSON.stringify(data));
+}
+});
+console.log("Done.");
+});
 
 {/pageScript}
 {/include}
