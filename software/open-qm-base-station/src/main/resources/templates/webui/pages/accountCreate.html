@@ -7,6 +7,7 @@
 <hr/>
 <div class="row">
     <form id="userAccountCreateForm">
+        <div id="createMessageDiv"></div>
         <div class="form-floating">
             <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
             <label for="emailInput">Email address</label>
@@ -47,6 +48,11 @@ $("#userAccountCreateForm").submit(function(event){
 event.preventDefault();
 console.log("Submitting login form.");
 
+if($("#passwordInput").val() != $("#passwordConfirmInput").val()){
+addMessageToDiv($("#createMessageDiv"), "warning", "Password must match confirm!", null, null);
+return;
+}
+
 var createRequestData = {
 firstName: $("#firstnameInput").val(),
 lastName: $("#lastnameInput").val(),
@@ -63,10 +69,25 @@ data: createRequestData,
 async: false,
 done: function(data) {
 console.log("Response from user create request: " + JSON.stringify(data));
+window.location.replace("/?message=User Registration Successful!&messageType=success");
 },
 fail: function(data){
 console.log("FAILED to create user: " + JSON.stringify(data));
+var errMessages = "";
+if(data.responseJSON.hasOwnProperty('error')){
+errMessages = data.responseJSON.error;
+} else if(data.responseJSON.hasOwnProperty('parameterViolations')){
+data.responseJSON.parameterViolations.forEach(function(violation){
+errMessages += violation.message + "<br/>";
+});
+} else {
+errMessages = "Unknown or unspecified error";
 }
+
+addMessageToDiv($("#createMessageDiv"), "warning", errMessages, "Failed to register", null);
+
+
+}//fail
 });
 console.log("Done.");
 });

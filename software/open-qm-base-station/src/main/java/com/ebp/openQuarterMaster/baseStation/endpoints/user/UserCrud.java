@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -94,12 +95,12 @@ public class UserCrud extends EndpointProvider {
         if (
                 !this.userService.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty()
         ) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("User with email already exists.").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User with email already exists.")).build();
         }
         if (
                 !this.userService.list(eq("username", userCreateRequest.getUsername()), null, null).isEmpty()
         ) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("User with username already exists.").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User with username already exists.")).build();
         }
 
         User.Builder builder = User.builder(userCreateRequest);
