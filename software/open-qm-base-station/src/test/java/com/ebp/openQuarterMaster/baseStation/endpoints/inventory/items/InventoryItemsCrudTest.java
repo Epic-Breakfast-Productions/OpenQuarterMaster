@@ -35,7 +35,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
     InventoryItemService service;
 
 
-    //    @Test
+//        @Test
     public void testCreate() throws JsonProcessingException {
         InventoryItem item = testObjectCreator.getTestObject();
         ObjectId returned = given()

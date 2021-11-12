@@ -14,18 +14,19 @@ import lombok.Getter;
 public class PagingOptions {
     /**
      * Gets paging options from those provided in query parameters.
+     *
      * @param pageSize The size of the page
-     * @param pageNum The page number to get
+     * @param pageNum  The page number to get
      * @return A paging options object. Can be null
      */
-    public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum){
-        if(pageSize == null && pageNum == null){
+    public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum, boolean defaultsIfNotSet) {
+        if (pageSize == null && pageNum == null) {
             return null;
         }
-        if(pageSize == null){
+        if (pageSize == null) {
             throw new IllegalArgumentException("Page size not provided.");
         }
-        if(pageNum == null){
+        if (pageNum == null) {
             pageNum = 1;
         }
         return new PagingOptions(pageSize, pageNum);

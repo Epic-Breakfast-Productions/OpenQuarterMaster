@@ -173,7 +173,7 @@ public class UserCrud extends EndpointProvider {
 
         List<Bson> filters = new ArrayList<>();
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
-        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
 
         if (name != null && !name.isBlank()) {
             //TODO:: handle first and last name properly

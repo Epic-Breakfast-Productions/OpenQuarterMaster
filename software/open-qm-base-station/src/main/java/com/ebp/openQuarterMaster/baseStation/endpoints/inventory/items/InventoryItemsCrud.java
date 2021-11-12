@@ -4,9 +4,11 @@ import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
@@ -122,6 +120,8 @@ public class InventoryItemsCrud extends EndpointProvider {
             @Context SecurityContext securityContext,
             //for actual queries
             @QueryParam("name") String name,
+            @QueryParam("keywords") List<String> keywords,
+            @QueryParam("storedType") StoredType storedType,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
@@ -130,32 +130,27 @@ public class InventoryItemsCrud extends EndpointProvider {
             @QueryParam("sortType") SortType sortType
     ) {
         logRequestContext(this.jwt, securityContext);
-        log.info("Searching for items with: ");
 
-        List<Bson> filters = new ArrayList<>();
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
-        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
 
-        if (name != null && !name.isBlank()) {
-            filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
-        }
-        Bson filter = (filters.isEmpty() ? null : and(filters));
-
-        List<InventoryItem> output = this.inventoryItemService.list(
-                filter,
+        SearchResult<InventoryItem> searchResult = this.inventoryItemService.search(
+                name,
+                keywords,
+                storedType,
                 sort,
                 pageOptions
         );
 
-        if (output.isEmpty()) {
+        if (searchResult.getResults().isEmpty()) {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
 
         return Response
                 .status(Response.Status.OK)
-                .entity(output)
-                .header("num-elements", output.size())
-                .header("query-num-results", this.inventoryItemService.count(filter))
+                .entity(searchResult.getResults())
+                .header("num-elements", searchResult.getResults().size())
+                .header("query-num-results", searchResult.getNumResultsForEntireQuery())
                 .build();
     }
 
