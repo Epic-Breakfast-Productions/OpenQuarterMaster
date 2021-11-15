@@ -28,13 +28,17 @@ class InventoryItemTest extends BasicTest {
             put(ObjectId.get(), List.of(new Stored(Quantities.getQuantity(5, AbstractUnit.ONE))));
         }};
         Map<ObjectId, List<Stored>> validTrackedMap = new HashMap<>() {{
-//            put(ObjectId.get(), new Stored());
+            put(ObjectId.get(), List.of(new Stored(Map.of())));
         }};
 
         return Stream.of(
                 Arguments.of(new InventoryItem(FAKER.name().name(), AbstractUnit.ONE).setId(ObjectId.get())),
                 Arguments.of(new InventoryItem(FAKER.name().name(), "serial")),
-                Arguments.of(new InventoryItem().setStoredType(StoredType.AMOUNT).setName(FAKER.name().name())),
+                Arguments.of(new InventoryItem()
+                        .setStoredType(StoredType.AMOUNT)
+                        .setName(FAKER.name().name())
+                        .setStorageMap(validAmountMap)
+                ),
                 Arguments.of(new InventoryItem()
                         .setStoredType(StoredType.TRACKED)
                         .setName(FAKER.name().name())
@@ -47,9 +51,10 @@ class InventoryItemTest extends BasicTest {
     @ParameterizedTest(name = "jsonTest[{index}]")
     @MethodSource("jsonTestArgs")
     public void jsonTest(InventoryItem testStored) throws JsonProcessingException {
+        log.info("Item object: {}", testStored);
+
         String storedJson = Utils.OBJECT_MAPPER.writeValueAsString(testStored);
 
-        log.info("Item object: {}", testStored);
         log.info("Item json: {}", storedJson);
 
         InventoryItem deserialized = Utils.OBJECT_MAPPER.readValue(storedJson, InventoryItem.class);
