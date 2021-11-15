@@ -29,12 +29,12 @@ class StoredValidatorTest extends ObjectValidatorTest<StoredValidator> {
     private static Stream<Arguments> validArgs() {
         return Stream.of(
                 Arguments.of((Stored) null),
-                Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), null)),
-                Arguments.of(new Stored(StoredType.TRACKED, null, new HashMap<>())),
-                Arguments.of(new Stored(StoredType.TRACKED, null,
-                        new HashMap<>() {{
-                            put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
-                        }}
+                Arguments.of(new Stored(StoredType.AMOUNT, null, Quantities.getQuantity(50, AbstractUnit.ONE), null)),
+                Arguments.of(new Stored(StoredType.TRACKED, null, null, new HashMap<>())),
+                Arguments.of(new Stored(StoredType.TRACKED, null, null,
+                                new HashMap<>() {{
+                                    put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+                                }}
                         )
                 )
         );
@@ -45,9 +45,9 @@ class StoredValidatorTest extends ObjectValidatorTest<StoredValidator> {
             put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
         }};
         return Stream.of(
-                Arguments.of(new Stored(StoredType.AMOUNT, Quantities.getQuantity(50, AbstractUnit.ONE), validMap), new String[]{ITEMS_LIST_NOT_NULL}),
-                Arguments.of(new Stored(StoredType.TRACKED, null, null), new String[]{ITEM_LIST_WAS_NULL}),
-                Arguments.of(new Stored(StoredType.AMOUNT, null, null), new String[]{AMOUNT_WAS_NULL}),
+                Arguments.of(new Stored(StoredType.AMOUNT, null, Quantities.getQuantity(50, AbstractUnit.ONE), validMap), new String[]{ITEMS_LIST_NOT_NULL}),
+                Arguments.of(new Stored(StoredType.TRACKED, null, null, null), new String[]{ITEM_LIST_WAS_NULL}),
+                Arguments.of(new Stored(StoredType.AMOUNT, null, null, null), new String[]{AMOUNT_WAS_NULL}),
                 Arguments.of(Utils.OBJECT_MAPPER.readValue("{}", Stored.class), new String[]{TYPE_WAS_NULL})//because constructor checks for null stored type
         );
     }

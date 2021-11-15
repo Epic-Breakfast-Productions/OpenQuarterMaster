@@ -3,35 +3,31 @@ package com.ebp.openQuarterMaster.lib.core.storage;
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
-import tech.units.indriya.unit.Units;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 class InventoryItemTest extends BasicTest {
 
-    private static Stream<Arguments> jsonTestArgs(){
-        Map<ObjectId, Stored> validAmountMap = new HashMap<>(){{
-            put(ObjectId.get(), new Stored(Quantities.getQuantity(5, AbstractUnit.ONE)));
+    private static Stream<Arguments> jsonTestArgs() {
+        Map<ObjectId, List<Stored>> validAmountMap = new HashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(Quantities.getQuantity(5, AbstractUnit.ONE))));
         }};
-        Map<ObjectId, Stored> validTrackedMap = new HashMap<>(){{
+        Map<ObjectId, List<Stored>> validTrackedMap = new HashMap<>() {{
 //            put(ObjectId.get(), new Stored());
         }};
 

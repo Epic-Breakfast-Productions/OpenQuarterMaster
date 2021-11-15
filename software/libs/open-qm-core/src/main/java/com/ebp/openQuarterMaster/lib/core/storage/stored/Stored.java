@@ -9,6 +9,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -26,6 +27,11 @@ public class Stored {
     @NonNull
     @NotNull
     private StoredType type;
+
+    /**
+     * When the item(s) held expire. Null if does not expire.
+     */
+    private ZonedDateTime expires = null;
 
     /**
      * The amount of the thing stored.

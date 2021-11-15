@@ -14,7 +14,10 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Describes a type of inventory item.
@@ -52,7 +55,7 @@ public class InventoryItem extends MainObject {
      */
     @NonNull
     @NotNull
-    private Map<@NonNull ObjectId, Stored> storageMap = new LinkedHashMap<>();
+    private Map<@NonNull ObjectId, List<Stored>> storageMap = new LinkedHashMap<>();
 
     /**
      * The unit used to measure the item.
@@ -106,8 +109,10 @@ public class InventoryItem extends MainObject {
      */
     public Quantity recalcTotal() {
         Quantity total = Quantities.getQuantity(0, this.getUnit());
-        for (Stored stored : this.getStorageMap().values()) {
-            total = total.add(stored.getAmount());
+        for (List<Stored> storedList : this.getStorageMap().values()) {
+            for (Stored stored : storedList) {
+                total = total.add(stored.getAmount());
+            }
         }
         this.setTotal(total);
         return this.getTotal();

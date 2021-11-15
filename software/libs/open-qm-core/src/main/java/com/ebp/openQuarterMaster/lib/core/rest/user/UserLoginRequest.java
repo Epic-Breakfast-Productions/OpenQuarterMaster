@@ -23,7 +23,6 @@ public class UserLoginRequest {
     @NotNull
     @NotBlank
     private String password;
-    @NonNull
     @NotNull
     private boolean extendedExpire = false;
 }

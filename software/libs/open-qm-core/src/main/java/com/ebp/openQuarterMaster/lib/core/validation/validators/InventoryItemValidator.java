@@ -23,50 +23,58 @@ public class InventoryItemValidator extends Validator implements ConstraintValid
     public static final String NOT_ONE = "The unit for the tracked item was not ONE";
     public static final String NOT_ALL_TRACKED_TYPE = "Not all stored values were of TRACKED type.";
 
-    private void validateAmountItem(InventoryItem item, List<String> errs){
+    private void validateAmountItem(InventoryItem item, List<String> errs) {
         boolean typeMismatch = false;
         boolean incompatibleAmount = false;
-        for(Stored stored : item.getStorageMap().values()) {
-            //all stored items need to match amount
-            if(!typeMismatch && !StoredType.AMOUNT.equals(stored.getType())){
-                typeMismatch = true;
+        for (List<Stored> storedList : item.getStorageMap().values()) {
+            for (Stored stored : storedList) {
+                //all stored items need to match amount
+                if (!typeMismatch && !StoredType.AMOUNT.equals(stored.getType())) {
+                    typeMismatch = true;
+                }
+                //all stored items need to be a compatible unit
+                if (!incompatibleAmount && !item.getUnit().isCompatible(stored.getAmount().getUnit())) {
+                    incompatibleAmount = true;
+                }
+                if (typeMismatch && incompatibleAmount) {
+                    break;
+                }
             }
-            //all stored items need to be a compatible unit
-            if(!incompatibleAmount && !item.getUnit().isCompatible(stored.getAmount().getUnit())){
-                incompatibleAmount = true;
-            }
-            if(typeMismatch && incompatibleAmount){
+            if (typeMismatch && incompatibleAmount) {
                 break;
             }
         }
-        if(typeMismatch){
+        if (typeMismatch) {
             errs.add(NOT_AMOUNT);
         }
-        if(incompatibleAmount){
+        if (incompatibleAmount) {
             errs.add(INCOMPATIBLE_UNITS);
         }
-        if(item.getTrackedItemIdentifierName() != null){
+        if (item.getTrackedItemIdentifierName() != null) {
             errs.add(TRACKED_IDENTIFIER_NAME_WHEN_IT_SHOULDN_T);
         }
     }
 
-    private void validateTrackedItem(InventoryItem item, List<String> errs){
+    private void validateTrackedItem(InventoryItem item, List<String> errs) {
         //unit of item must be ONE
-        if(!AbstractUnit.ONE.equals(item.getUnit())){
+        if (!AbstractUnit.ONE.equals(item.getUnit())) {
             errs.add(NOT_ONE);
         }
         //all stored items need to match tracked
-        if(!item.getStorageMap().values().stream().allMatch((Stored stored) -> {
-                return StoredType.TRACKED.equals(stored.getType());
-            })){
-            errs.add(NOT_ALL_TRACKED_TYPE);
+        for (List<Stored> storedList : item.getStorageMap().values()) {
+            for (Stored curStored : storedList) {
+                if (!StoredType.TRACKED.equals(curStored.getType())) {
+                    errs.add(NOT_ALL_TRACKED_TYPE);
+                    return;
+                }
+            }
         }
     }
 
     @Override
     public boolean isValid(InventoryItem item, ConstraintValidatorContext constraintValidatorContext) {
         List<String> validationErrs = new ArrayList<>();
-        if(item != null){
+        if (item != null) {
             if (item.getStoredType() == null) {
                 validationErrs.add(STORED_TYPE_WAS_NULL);
             } else {

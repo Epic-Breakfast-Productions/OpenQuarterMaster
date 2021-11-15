@@ -17,20 +17,22 @@ import tech.units.indriya.unit.Units;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.ebp.openQuarterMaster.lib.core.validation.validators.InventoryItemValidator.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InventoryItemValidatorTest extends ObjectValidatorTest<InventoryItemValidator> {
 
     private static Stream<Arguments> validArgs() {
-        Map<ObjectId, Stored> mapWithGram = new LinkedHashMap<>() {{
-            put(ObjectId.get(), new Stored(2, Units.GRAM));
+        Map<ObjectId, List<Stored>> mapWithGram = new LinkedHashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(2, Units.GRAM)));
         }};
-        Map<ObjectId, Stored> mapWithTracked = new LinkedHashMap<>() {{
-            put(ObjectId.get(), new Stored(new HashMap<String, TrackedItem>()));
+        Map<ObjectId, List<Stored>> mapWithTracked = new LinkedHashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(new HashMap<String, TrackedItem>())));
         }};
         return Stream.of(
                 Arguments.of((InventoryItem) null),
@@ -43,19 +45,18 @@ class InventoryItemValidatorTest extends ObjectValidatorTest<InventoryItemValida
     }
 
     private static Stream<Arguments> invalidArgs() throws JsonProcessingException {
-        Map<ObjectId, Stored> mapWithGram = new LinkedHashMap<>() {{
-            put(ObjectId.get(), new Stored(2, Units.GRAM));
+        Map<ObjectId, List<Stored>> mapWithGram = new LinkedHashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(2, Units.GRAM)));
         }};
-        Map<ObjectId, Stored> mapWithTracked = new LinkedHashMap<>() {{
-            put(ObjectId.get(), new Stored(new HashMap<String, TrackedItem>()));
-        }};
-
-        Map<ObjectId, Stored> mixedMap = new LinkedHashMap<>() {{
-            put(ObjectId.get(), new Stored(2, AbstractUnit.ONE));
-            put(ObjectId.get(), new Stored(new HashMap<String, TrackedItem>()));
-            put(ObjectId.get(), new Stored(2, Units.GRAM));
+        Map<ObjectId, List<Stored>> mapWithTracked = new LinkedHashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(new HashMap<String, TrackedItem>())));
         }};
 
+        Map<ObjectId, List<Stored>> mixedMap = new LinkedHashMap<>() {{
+            put(ObjectId.get(), List.of(new Stored(2, AbstractUnit.ONE)));
+            put(ObjectId.get(), List.of(new Stored(new HashMap<String, TrackedItem>())));
+            put(ObjectId.get(), List.of(new Stored(2, Units.GRAM)));
+        }};
 
         return Stream.of(
                 Arguments.of(Utils.OBJECT_MAPPER.readValue("{}", InventoryItem.class), new String[]{STORED_TYPE_WAS_NULL}),
