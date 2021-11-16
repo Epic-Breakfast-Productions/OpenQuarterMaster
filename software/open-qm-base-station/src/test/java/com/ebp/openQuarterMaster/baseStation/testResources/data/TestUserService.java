@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.github.javafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.types.ObjectId;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -58,5 +59,13 @@ public class TestUserService {
 
     public User getTestUser() {
         return this.getTestUser(false, false);
+    }
+
+    public User getExternalTestUser() {
+        User testUser = this.getTestUser(false, false);
+
+        testUser.setId(ObjectId.get());
+
+        return testUser;
     }
 }

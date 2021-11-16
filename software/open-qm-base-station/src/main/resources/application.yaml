@@ -4,7 +4,8 @@ service:
   apiVersion: 1.0.0
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
-  authMode: SELF # self or external
+  authMode: SELF # SELF or EXTERNAL
+  # Not used if authMode = SELF
   externalAuth:
     name: Keycloak
     link: http://google.com

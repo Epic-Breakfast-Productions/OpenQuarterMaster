@@ -1,6 +1,6 @@
 quarkus:
   log:
-    level: DEBUG
+    level: TRACE
   mongodb:
     database: openQuarterMasterTest
     connection-string: mongodb://localhost:27018
@@ -8,19 +8,21 @@ quarkus:
       journal: false
   jaeger:
     enabled: true
+  smallrye-openapi:
+    info-title: Open QuarterMaster Base Station API (TEST)
 
-"%test":
-  quarkus:
-    log:
-      level: TRACE
-    smallrye-openapi:
-      info-title: Open QuarterMaster Base Station API (TEST)
 "%externalAuth":
   service:
     authMode: EXTERNAL
-  quarkus:
-    log:
-      level: TRACE
-    smallrye-openapi:
-      info-title: Open QuarterMaster Base Station API (TEST)
+    externalAuth:
+      name: Test External Key Source
+  mp:
+    jwt:
+      verify:
+        privatekey:
+          location: security/testExternalPrivateKeyPkcs8.pem
+        publickey:
+          location: security/testExternalPublicKey.pem
+        issuer: ${runningInfo.organization} - ${service.nameShort} - EXTERNAL
+
 

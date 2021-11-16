@@ -75,7 +75,9 @@ public class JwtService {
             Instant expires
     ) {
         //info on what claims are: https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
-        JwtClaimsBuilder claims = Jwt.claims(this.getUserClaims(user));
+        Map<String, Object> rawClaims = this.getUserClaims(user);
+
+        JwtClaimsBuilder claims = Jwt.claims(rawClaims);
 
         claims.expiresAt(expires);
 
