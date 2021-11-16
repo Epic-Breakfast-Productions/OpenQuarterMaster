@@ -25,7 +25,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -124,8 +123,8 @@ public class StorageCrud extends EndpointProvider {
             description = "No items found from query given.",
             content = @Content(mediaType = "text/plain")
     )
-    @PermitAll
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed("user")
     public Response listInventoryItems(
             @Context SecurityContext securityContext,
             //for actual queries
@@ -188,8 +187,8 @@ public class StorageCrud extends EndpointProvider {
             description = "Bad request given. Data given could not pass validation.",
             content = @Content(mediaType = "text/plain")
     )
-    @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
     public Response getStorageBlock(
             @Context SecurityContext securityContext,
             @PathParam String id

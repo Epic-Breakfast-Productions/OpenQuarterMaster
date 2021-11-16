@@ -26,7 +26,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -114,7 +113,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "No items found from query given.",
             content = @Content(mediaType = "text/plain")
     )
-    @PermitAll
+    @RolesAllowed("user")
     @Produces({MediaType.APPLICATION_JSON})
     public Response listInventoryItems(
             @Context SecurityContext securityContext,
@@ -174,7 +173,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "Bad request given. Data given could not pass validation.",
             content = @Content(mediaType = "text/plain")
     )
-    @PermitAll
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getInventoryItem(
             @Context SecurityContext securityContext,
@@ -288,6 +287,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             description = "No item found to delete.",
             content = @Content(mediaType = "text/plain")
     )
+    @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getStoredInventoryItem(
             @Context SecurityContext securityContext,
@@ -320,6 +320,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
     public Response addStoredInventoryItem(
             @Context SecurityContext securityContext,
             @PathParam String itemId,
@@ -352,6 +353,7 @@ public class InventoryItemsCrud extends EndpointProvider {
             content = @Content(mediaType = "text/plain")
     )
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
     public Response removeStoredInventoryItem(
             @Context SecurityContext securityContext,
             @PathParam String itemId,
