@@ -58,13 +58,6 @@ public class Auth extends EndpointProvider {
     @Inject
     SecurityIdentity identity;
 
-
-    private void assertSelfAuthMode() {
-        if (!AuthMode.SELF.equals(this.authMode)) {
-            throw new ForbiddenException("Service not set to authenticate its own users.");
-        }
-    }
-
     @POST
     @Operation(
             summary = "Authenticates a user"
@@ -100,7 +93,7 @@ public class Auth extends EndpointProvider {
             @Valid UserLoginRequest loginRequest
     ) {
         logRequestContext(this.jwt, securityContext);
-        this.assertSelfAuthMode();
+        assertSelfAuthMode(this.authMode);
         log.info("Authenticating user.");
 
         User user = this.userService.getFromLoginRequest(loginRequest);
@@ -141,7 +134,6 @@ public class Auth extends EndpointProvider {
     public Response tokenCheck(@Context SecurityContext ctx) {
         logRequestContext(this.jwt, ctx);
         log.info("Checking user's token.");
-        this.assertSelfAuthMode();
 
         TokenCheckResponse response = new TokenCheckResponse();
         if (jwt.getRawToken() != null) {

@@ -8,3 +8,19 @@ quarkus:
       journal: false
   jaeger:
     enabled: true
+
+"%test":
+  quarkus:
+    log:
+      level: TRACE
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (TEST)
+"%externalAuth":
+  service:
+    authMode: EXTERNAL
+  quarkus:
+    log:
+      level: TRACE
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (TEST)
+

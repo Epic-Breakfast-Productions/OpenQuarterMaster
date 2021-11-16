@@ -43,6 +43,8 @@ class PasswordServiceTest {
     /**
      * Test to help determine how many iterations to use.
      * <p>
+     * https://security.stackexchange.com/questions/17207/recommended-of-rounds-for-bcrypt
+     * <p>
      * Uncomment the next line to test
      */
 //    @Test

@@ -81,9 +81,4 @@ smallrye:
       level: DEBUG
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
-"%test":
-  quarkus:
-    log:
-      level: TRACE
-    smallrye-openapi:
-      info-title: Open QuarterMaster Base Station API (TEST)
+

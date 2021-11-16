@@ -10,6 +10,10 @@ import javax.validation.ConstraintValidatorContext;
  * Validates Passwords coming in.
  * <p>
  * List of rules described in {@link #DEFAULT_RULES}
+ *
+ * https://www.baeldung.com/registration-password-strength-and-rules
+ *
+ * http://www.passay.org/reference/
  */
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 

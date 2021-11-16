@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
@@ -13,6 +14,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -58,6 +60,8 @@ public class UserCrud extends EndpointProvider {
     JsonWebToken jwt;
     @Inject
     PasswordService passwordService;
+    @ConfigProperty(name = "service.authMode")
+    AuthMode authMode;
 
     @POST
     @Operation(
@@ -88,8 +92,7 @@ public class UserCrud extends EndpointProvider {
         logRequestContext(this.jwt, securityContext);
         log.info("Creating new user.");
 
-        //TODO:: don't do if authType is external
-
+        assertSelfAuthMode(this.authMode);
 
         //TODO:: refactor
         if (

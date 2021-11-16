@@ -61,10 +61,15 @@ REST is easy peasy with this Hello World RESTEasy resource.
 
 ### RESTEasy JSON serialisation using Jackson
 
-This example demonstrate RESTEasy JSON serialisation by letting you list, add and remove quark types from a list. Quarked!
+This example demonstrate RESTEasy JSON serialisation by letting you list, add and remove quark types from a list.
+Quarked!
 
 [Related guide section...](https://quarkus.io/guides/rest-json#creating-your-first-json-rest-service)
 
 # to look into
 
- - https://medium.com/picovoice/prioritizing-privacy-add-offline-speech-recognition-to-a-java-application-1c864574fb7e
+- https://medium.com/picovoice/prioritizing-privacy-add-offline-speech-recognition-to-a-java-application-1c864574fb7e
+
+# TODOS:
+
+- Order tests by type (test profile) `@TestClassOrder()` https://www.baeldung.com/junit-5-test-order
