@@ -10,7 +10,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -26,11 +25,6 @@ class MongoServiceTest extends RunningServerTest {
 
     @Inject
     TestMongoService testMongoService;
-
-    @AfterEach
-    public void cleanup() {
-        this.testMongoService.removeAll();
-    }
 
     @Test
     public void testCollectionEmpty() {

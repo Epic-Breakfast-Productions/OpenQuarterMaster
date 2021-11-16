@@ -37,14 +37,13 @@ class InventoryItemsCrudTest extends RunningServerTest {
     ObjectMapper objectMapper;
 
     @Inject
-    InventoryItemService service;
+    InventoryItemService inventoryItemService;
 
     @Inject
     JwtService jwtService;
 
     @Inject
     TestUserService testUserService;
-
 
     @Test
     public void testCreate() throws JsonProcessingException {
@@ -60,7 +59,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
                 .extract().body().as(ObjectId.class);
         log.info("Got object id back from create request: {}", returned);
 
-        InventoryItem stored = service.get(returned);
+        InventoryItem stored = inventoryItemService.get(returned);
         assertNotNull(stored);
 
         assertFalse(stored.getHistory().isEmpty());

@@ -4,6 +4,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.github.javafaker.Faker;
+import lombok.Getter;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 public class TestUserService {
     public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 
+    @Getter
     @Inject
     UserService userService;
 

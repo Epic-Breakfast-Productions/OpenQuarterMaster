@@ -8,7 +8,6 @@ import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -38,11 +37,6 @@ class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, Inventory
     @Override
     protected InventoryItem getTestObject() {
         return itemTestObjectCreator.getTestObject();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        this.inventoryItemService.removeAll();
     }
 
     @Test
