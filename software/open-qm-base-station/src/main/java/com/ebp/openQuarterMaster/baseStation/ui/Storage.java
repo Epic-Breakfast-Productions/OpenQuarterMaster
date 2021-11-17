@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
+import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -38,6 +39,9 @@ public class Storage extends UiProvider {
     UserService userService;
 
     @Inject
+    StorageBlockService storageBlockService;
+
+    @Inject
     JsonWebToken jwt;
 
     @GET
@@ -49,7 +53,10 @@ public class Storage extends UiProvider {
     ) {
         logRequestContext(jwt, securityContext);
         User user = userService.getFromJwt(this.jwt);
-        return storage.data("userInfo", UserGetResponse.builder(user).build());
+        return storage
+                .data("userInfo", UserGetResponse.builder(user).build())
+                .data("showSearch", false)
+                .data("numStorageBlocks", storageBlockService.count());
     }
 
 }
