@@ -1,0 +1,2 @@
+var searchForm = $("#searchForm");
+

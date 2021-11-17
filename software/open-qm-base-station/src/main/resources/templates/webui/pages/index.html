@@ -28,6 +28,9 @@
                 <input type="password" class="form-control" id="tokenInput" placeholder="Token">
                 <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
             </div>
+            <div class="">
+                <a href="#todo" id="loginWithExternalLink">Sign in with external service</a>
+            </div>
             {/if}
 
             <div class="checkbox mb-3">
@@ -47,12 +50,14 @@
 
 {/pageContent}
 {#pageScript}
+{!
+<script> // !}
 assertNotLoggedIn();
 
 var signInForm = $("#signInForm");
 
 signInForm.submit(function(event){
-event.preventDefault();
+    event.preventDefault();
 console.log("Submitting login form.");
 
 var result = false;
@@ -78,6 +83,10 @@ login(result, rememberUser);
 }
 });
 
+{!
 
+
+
+</script> !}
 {/pageScript}
 {/include}

@@ -22,6 +22,26 @@ function addMessage(type, message, heading, id){
 	addMessageToDiv(messageDiv, type, message, heading, id);
 }
 
+function reloadPageWithMessage(message, type, heading){
+    var messageQuery = "message=" + message;
+
+    if(type){
+        messageQuery += "&messageType=" + type;
+    }
+    if(heading){
+        messageQuery += "&messageHeading=" + heading;
+    }
+
+    var url = window.location.href;
+    if (url.indexOf('?') > -1){
+        url += '&' + messageQuery;
+    }else{
+        url += '?' + messageQuery;
+    }
+    window.location.replace(url);
+}
+
+
 var getParams = new URLSearchParams(window.location.search);
 
 if(getParams.has("message")){

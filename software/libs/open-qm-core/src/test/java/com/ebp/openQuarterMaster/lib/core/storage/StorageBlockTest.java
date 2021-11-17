@@ -25,6 +25,7 @@ class StorageBlockTest extends BasicTest {
                         FAKER.name().name(),
                         FAKER.address().fullAddress(),
                         null,
+                        new ArrayList<>(),
                         new ArrayList<>(){{add(new Capacity(Quantities.getQuantity(5, AbstractUnit.ONE)));}}
                 ))
         );

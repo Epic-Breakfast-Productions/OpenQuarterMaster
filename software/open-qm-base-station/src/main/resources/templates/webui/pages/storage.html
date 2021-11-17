@@ -1,3 +1,4 @@
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult searchResult}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Storage' page='storage'}
 {!
 Accepts:
@@ -11,7 +12,9 @@ Accepts:
 
 <div class="row">
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success"><i class="fas fa-plus"></i> Add Storage Block</button>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
+                onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Storage Block
+        </button>
     </div>
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
@@ -55,11 +58,34 @@ Accepts:
             </tr>
             </thead>
             <tbody>
+            {#if searchResults.getResults().isEmpty()}
             <tr>
-                <td colspan="5">
-                    No content
+                <td colspan="5" class="text-center">
+                    <h2>
+                        No Storage Blocks
+                    </h2>
+                    <div class="col d-grid gap-2">
+                        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+                                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
+                                class="fas fa-plus"></i> Add Storage Block
+                        </button>
+                    </div>
                 </td>
             </tr>
+            {#else}
+            {#for result in searchResults.getResults()}
+            <tr>
+                <td>{result.getLabel()}</td>
+                <td>{result.getLocation()}</td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" title="Remove"
+                            onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            {/for}
+            {/if}
             </tbody>
             <tfoot>
             <tr>
@@ -73,4 +99,149 @@ Accepts:
 </div>
 
 {/pageContent}
+{#modals}
+
+{!
+{#include webui/bootstrapComponents/modal}
+{title}Add/Edit Storage Block{/title}
+{/include}
+!}
+<div class="modal fade" tabindex="-1" id="addEditModal" aria-labelledby="addEditModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEditModalTitle"><span id="addEditModalTitleText">Add/Edit</span> Storage
+                    Block</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addEditFormMessages">
+
+                </div>
+                <form id="addEditStorageForm">
+                    <input type="hidden" id="addEditFormMode" value="">
+                    <div class="mb-3 row">
+                        <label for="addEditLabelInput" class="col-sm-2 col-form-label">Label</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="addEditLabelInput" placeholder="Label">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="addEditLocationInput" class="col-sm-2 col-form-label">Location</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="addEditLocationInput" placeholder="Location">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addEditStorageForm" class="btn btn-success"
+                        id="addEditFormSubmitButton"></button>
+            </div>
+        </div>
+    </div>
+</div>
+{/modals}
+
+
+{#pageScript}
+{!
+<script> !}
+
+function removeStorageBlock(blockId){
+    console.log("Removing storage block " + blockId);
+
+    var result = false;
+    doRestCall({
+            url: "/api/storage/" + blockId,
+            method: "DELETE",
+            async: false,
+            done: function(data) {
+                console.log("Response from remove request: " + JSON.stringify(data));
+                result = true;
+            },
+            fail: function(data) {
+                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+            }
+        });
+
+if(!result){
+        addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+    } else {
+        reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+    }
+
+}
+
+
+
+
+
+var addEditStorageForm = $("#addEditStorageForm");
+var addEditModalTitleText = $("#addEditModalTitleText");
+var addEditFormSubmitButton = $("#addEditFormSubmitButton");
+var addEditFormMessages = $("#addEditFormMessages");
+//inputs
+var addEditFormMode = $("#addEditFormMode");
+var addEditFormId = $("#addEditFormId");
+var addEditLabelInput = $("#addEditLabelInput");
+var addEditLocationInput = $("#addEditLocationInput");
+
+function resetAddEdit(){
+    addEditStorageForm.trigger("reset");
+}
+
+
+function setupAddEditForAdd(){
+    console.log("Setting up add/edit form for add.");
+    resetAddEdit();
+    addEditFormMode.val("add");
+    addEditModalTitleText.text("Add");
+    addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Storage Block');
+}
+
+addEditStorageForm.submit(function(event){
+    event.preventDefault();
+    console.log("Submitting add/edit form.");
+
+    var addEditData = {
+        label: addEditLabelInput.val(),
+        location: addEditLocationInput.val()
+    };
+
+    var result = false;
+    if(addEditFormMode.val() == "add"){
+        console.log("Adding new storage block.");
+        doRestCall({
+            url: "/api/storage",
+            method: "POST",
+            data: addEditData,
+            async: false,
+            done: function(data) {
+                console.log("Response from create request: " + JSON.stringify(data));
+                result = true;
+            },
+            fail: function(data) {
+                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+            }
+        });
+    }
+
+    if(!result){
+        addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+    } else {
+        reloadPageWithMessage("Created storage block successfully!", "success", "Success!");
+    }
+});
+
+
+{!
+
+
+
+</script> !}
+{/pageScript}
+
 {/include}

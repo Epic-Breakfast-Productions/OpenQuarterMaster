@@ -4,10 +4,12 @@ import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
@@ -128,7 +126,11 @@ public class StorageCrud extends EndpointProvider {
     public Response listInventoryItems(
             @Context SecurityContext securityContext,
             //for actual queries
-            @QueryParam("name") String name,
+            @QueryParam("label") String label,
+            @QueryParam("location") String location,
+            @QueryParam("parents") List<String> parents,
+            @QueryParam("keywords") List<String> keywords,
+            @QueryParam("storedType") StoredType storedType,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
@@ -138,32 +140,28 @@ public class StorageCrud extends EndpointProvider {
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Searching for storage blocks with: ");
-        //TODO:: for storage blocks
 
-        List<Bson> filters = new ArrayList<>();
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
         PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
 
-        if (name != null && !name.isBlank()) {
-            filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
-        }
-        Bson filter = (filters.isEmpty() ? null : and(filters));
-
-        List<StorageBlock> output = this.storageBlockService.list(
-                filter,
+        SearchResult<StorageBlock> output = this.storageBlockService.search(
+                label,
+                location,
+                parents,
+                keywords,
                 sort,
                 pageOptions
         );
 
-        if (output.isEmpty()) {
+        if (output.getResults().isEmpty()) {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
 
         return Response
                 .status(Response.Status.OK)
-                .entity(output)
-                .header("num-elements", output.size())
-                .header("query-num-results", this.storageBlockService.count(filter))
+                .entity(output.getResults())
+                .header("num-elements", output.getResults().size())
+                .header("query-num-results", output.getNumResultsForEntireQuery())
                 .build();
     }
 

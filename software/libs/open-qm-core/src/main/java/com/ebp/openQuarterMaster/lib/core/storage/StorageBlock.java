@@ -4,7 +4,9 @@ import com.ebp.openQuarterMaster.lib.core.MainObject;
 import lombok.*;
 import org.bson.types.ObjectId;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +22,14 @@ public class StorageBlock extends MainObject {
      */
     @NonNull
     @NotNull
+    @NotBlank
     private String label;
     /**
      * The location of this storage block. If a sub-block, just the location within that sub-block.
      */
     @NonNull
     @NotNull
+    @NotBlank
     private String location;
     /**
      * The parent of this storage block, if any
@@ -33,13 +37,13 @@ public class StorageBlock extends MainObject {
     private ObjectId parent;
     @NotNull
     @NonNull
-    private List<String> keywords;
+    private List<@NotBlank String> keywords = new ArrayList<>();
     /**
      * The capacities of this storage block. Intended to describe different units of capacity for the block.
      */
     @NonNull
     @NotNull
-    private List<@NotNull Capacity> capacityMeasures;
+    private List<@NotNull Capacity> capacityMeasures = new ArrayList<>();
 
     public boolean hasParent(){
         return this.getParent() != null;
