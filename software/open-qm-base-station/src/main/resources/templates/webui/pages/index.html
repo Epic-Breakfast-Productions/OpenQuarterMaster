@@ -66,6 +66,9 @@ rememberUser
 );
 {#else}
 result = $("#tokenInput").val();
+if(!checkToken(result)){
+result = null;
+}
 {/if}
 
 if(!result){

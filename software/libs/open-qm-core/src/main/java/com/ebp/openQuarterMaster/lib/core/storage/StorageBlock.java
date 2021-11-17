@@ -31,6 +31,9 @@ public class StorageBlock extends MainObject {
      * The parent of this storage block, if any
      */
     private ObjectId parent;
+    @NotNull
+    @NonNull
+    private List<String> keywords;
     /**
      * The capacities of this storage block. Intended to describe different units of capacity for the block.
      */

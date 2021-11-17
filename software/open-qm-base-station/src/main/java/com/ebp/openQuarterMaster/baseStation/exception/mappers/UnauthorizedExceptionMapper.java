@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.exception.mappers;
 
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -14,10 +15,13 @@ import java.net.URI;
 @Slf4j
 @Provider
 public class UnauthorizedExceptionMapper implements ExceptionMapper<UnauthorizedException> {
-    @Context//you can inject JAXRS contextual resources here
+    //you can inject JAXRS contextual resources here
+    @Context
     UriInfo crc;
-//    @Context
+    //    @Context
 //    Cookie cookie;
+    @Context
+    JsonWebToken jsonWebToken;
 
     private static boolean isUiEndpoint(URI uri) {
         String path = uri.getPath();
