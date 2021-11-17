@@ -27,5 +27,5 @@ var getParams = new URLSearchParams(window.location.search);
 if(getParams.has("message")){
     var type = (getParams.has("messageType") ? getParams.get("messageType") : "info");
     var heading = (getParams.has("messageHeading") ? getParams.get("messageHeading") : null)
-    addMessage(type, getParams.get("message"), null, null);
+    addMessage(type, getParams.get("message"), heading, null);
 }

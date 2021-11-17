@@ -2,7 +2,11 @@ var jwtCookieName = "jwt";
 
 function login(jwtVal, remember){
     Cookies.set(jwtCookieName, jwtVal);
-    window.location.replace("/overview");
+    var getParams = new URLSearchParams(window.location.search);
+
+    window.location.replace(
+    (getParams.has("returnPath")?getParams.get("returnPath"):"/overview")
+    );
 }
 
 function logout(){
