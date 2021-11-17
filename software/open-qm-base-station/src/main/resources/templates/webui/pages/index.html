@@ -25,7 +25,7 @@
             </div>
             {#else}
             <div class="form-floating">
-                <input type="password" class="form-control" id="tokenInput" placeholder="name@example.com">
+                <input type="password" class="form-control" id="tokenInput" placeholder="Token">
                 <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
             </div>
             {/if}
@@ -65,7 +65,7 @@ $("#passwordInput").val(),
 rememberUser
 );
 {#else}
-result = $("tokenInput").val();
+result = $("#tokenInput").val();
 {/if}
 
 if(!result){
