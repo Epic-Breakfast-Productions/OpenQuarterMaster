@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service;
 
+import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebServerTest;
 import com.google.common.base.Stopwatch;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
-class PasswordServiceTest {
+class PasswordServiceTest extends WebServerTest {
     private static final int GOAL_MS_HASH_TIME = 250;
     private static final int THRESHOLD_MS_HASH_TIME = 1000;
     private static final int MIN_ITERATIONS = 4;

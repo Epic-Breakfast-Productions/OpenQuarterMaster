@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public abstract class RunningServerTest extends WebServerTest {
 
     @AfterEach
-    public void afterEach() throws IllegalAccessException {
+    public void afterEach() {
         log.info("Searching for MongoServices to use in cleanup: {}", this.getClass());
         List<MongoService> svcList = (Arrays.stream(this.getClass().getDeclaredFields()).filter((Field curField) -> {
             log.debug("Field: {}", curField.getType());
