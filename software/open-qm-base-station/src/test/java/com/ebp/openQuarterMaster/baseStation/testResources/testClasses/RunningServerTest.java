@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Execution(ExecutionMode.SAME_THREAD)//TODO:: remove this, when know how to make this work
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 
     @AfterEach
