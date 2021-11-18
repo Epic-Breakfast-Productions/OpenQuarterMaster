@@ -23,16 +23,14 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 import java.util.Date;
 
 @Traced
@@ -40,6 +38,7 @@ import java.util.Date;
 @Path("/api/user/auth")
 @Tags({@Tag(name = "User Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
+@NoCache
 public class Auth extends EndpointProvider {
     @Inject
     UserService userService;
@@ -146,5 +145,42 @@ public class Auth extends EndpointProvider {
             response.setExpirationDate(new Date(jwt.getExpirationTime()));
         }
         return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON_TYPE).entity(response).build();
+    }
+
+    @GET
+    @Path("callback")
+    @Operation(
+            summary = "Callback for an external auth provider to come back to this service."
+    )
+    @APIResponse(
+            responseCode = "303",
+            description = "Token from external auth source received."
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Service is not in external auth mode."
+    )
+    @PermitAll
+    public Response callback(
+            @Context SecurityContext ctx,
+            @QueryParam("returnPath") String returnPath
+    ) {
+        logRequestContext(this.jwt, ctx);
+        log.info("Receiving token from external auth.");
+        if (AuthMode.SELF.equals(authMode)) {
+            //TODO:: throw custom exception, handle to return proper response object
+            throw new ForbiddenException("Service not set to authenticate via external means.");
+        }
+
+        String jwt = "";
+
+
+        return Response.seeOther(
+                        UriBuilder.fromUri(
+                                        (returnPath == null || returnPath.isBlank() ? "/overview" : returnPath)
+                                )
+                                .build()
+                ).cookie(new NewCookie("jwt", jwt))
+                .build();
     }
 }
