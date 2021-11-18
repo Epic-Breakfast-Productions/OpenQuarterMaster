@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -7,7 +8,6 @@ import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.runtime.Mongod;
 import de.flapdoodle.embed.process.runtime.Network;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
@@ -26,17 +26,46 @@ import java.util.Map;
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
 	private static final boolean SELENIUM_HEADLESS = true;
-	
+
 	private static volatile MongodExecutable MONGO_EXE = null;
+	private static volatile KeycloakContainer KEYCLOAK_CONTAINER = null;
 
 	private static volatile WebDriver webDriver;
-	
+
 	static {
 		WebDriverManager.firefoxdriver().setup();
 	}
-	
+
+//	private boolean startKeycloak = false;
+//
+//	public TestResourceLifecycleManager(){
+//		log.info("Created new lifecycle manager()");
+//	}
+//
+//	public TestResourceLifecycleManager(String startKeycloak){
+//		log.info("Created new lifecycle manager({})", startKeycloak);
+//		this.startKeycloak = Boolean.parseBoolean(startKeycloak);
+//	}
+
+	public static synchronized Map<String, String> startKeycloakTestServer() {
+		if (KEYCLOAK_CONTAINER != null) {
+			log.info("Keycloak already started.");
+			return Map.of();
+		}
+
+		KEYCLOAK_CONTAINER = new KeycloakContainer()
+//				.withEnv("hello","world")
+				.withRealmImportFile("keycloak-realm.json");
+		KEYCLOAK_CONTAINER.start();
+		log.info("Test keycloak started at endpoint: {}", KEYCLOAK_CONTAINER.getAuthServerUrl());
+
+		return Map.of(
+				//TODO:: add config for server to talk to
+		);
+	}
+
 	public static synchronized void startMongoTestServer() throws IOException {
-		if(MONGO_EXE != null) {
+		if (MONGO_EXE != null) {
 			log.info("Flapdoodle Mongo already started.");
 			return;
 		}
@@ -98,19 +127,23 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	@Override
 	public Map<String, String> start() {
+		log.info("STARTING test lifecycle resources.");
+		Map<String, String> configOverride = new HashMap<>();
 		try {
 			startMongoTestServer();
-		} catch(IOException e) {
+		} catch (IOException e) {
 			log.error("Unable to start Flapdoodle Mongo server");
 		}
-		
+
+		configOverride.putAll(startKeycloakTestServer());
 		initWebDriver();
-		
-		return new HashMap<>();
+
+		return configOverride;
 	}
 	
 	@Override
 	public void stop() {
+		log.info("STOPPING test lifecycle resources.");
 		stopMongoTestServer();
 		log.info("Closing web driver.");
 		getWebDriver().close();

@@ -66,23 +66,28 @@ Ingests:
         <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">Overview
+                    <a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
+                        <i class="fas fa-tachometer-alt"></i> Overview
                         {#if page is 'overview'}
                         <span class="visually-hidden">(current)</span>
                         {/if}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">Storage</a>
-                    {#if page is 'storage'}
-                    <span class="visually-hidden">(current)</span>
-                    {/if}
+                    <a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
+                        <i class="fas fa-boxes"></i> Storage
+                        {#if page is 'storage'}
+                        <span class="visually-hidden">(current)</span>
+                        {/if}
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {#if page is 'items'}active{/if}" href="/items">Items</a>
-                    {#if page is 'items'}
-                    <span class="visually-hidden">(current)</span>
-                    {/if}
+                    <a class="nav-link {#if page is 'items'}active{/if}" href="/items"><i
+                            class="fas fa-balance-scale"></i> Items
+                        {#if page is 'items'}
+                        <span class="visually-hidden">(current)</span>
+                        {/if}
+                    </a>
                 </li>
                 <!--                <li class="nav-item dropdown">-->
                 <!--                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"-->
@@ -120,7 +125,7 @@ Ingests:
 {/if}
 <div id="mainContainer" class="container">
     {#if showTitle}
-    <h1>{title}</h1>
+    <h1>{#if titleIcon??}<i class="fas fa-{titleIcon}"></i> {/if}{title}</h1>
     <hr/>
     {/if}
     <div id="messageDiv">

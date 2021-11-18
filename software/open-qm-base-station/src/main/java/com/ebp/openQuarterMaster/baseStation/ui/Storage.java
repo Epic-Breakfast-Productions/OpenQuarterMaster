@@ -90,7 +90,7 @@ public class Storage extends UiProvider {
 
         return storage
                 .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
-                .data("userInfo", UserGetResponse.builder(user).build())
+                .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                 .data("showSearch", false)
                 .data("numStorageBlocks", storageBlockService.count())
                 .data("searchResults", searchResults);

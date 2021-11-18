@@ -9,6 +9,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
@@ -25,7 +26,7 @@ import static io.restassured.RestAssured.given;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(TestResourceLifecycleManager.class)
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = {@ResourceArg(name = "startKeycloak", value = "true")})
 @TestHTTPEndpoint(UserCrud.class)
 class UserCrudExternalTest extends RunningServerTest {
     @Inject

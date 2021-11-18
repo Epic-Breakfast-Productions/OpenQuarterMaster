@@ -28,7 +28,7 @@ import static io.restassured.RestAssured.given;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(TestResourceLifecycleManager.class)
+@QuarkusTestResource(value = TestResourceLifecycleManager.class)
 @TestHTTPEndpoint(Auth.class)
 class AuthExternalTest extends RunningServerTest {
     @Inject

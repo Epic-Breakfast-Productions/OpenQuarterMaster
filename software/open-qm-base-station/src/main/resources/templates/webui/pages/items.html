@@ -1,12 +1,92 @@
-{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Items' page='items'}
-{#pageStyle}
-
-{/pageStyle}
+{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Items' titleIcon='balance-scale' page='items'}
 {#pageContent}
 
-<p>
-    Items
-</p>
 
+<div class="row">
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
+                onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Item
+        </button>
+    </div>
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Item stats</button>
+    </div>
+</div>
+<br/>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    Search form here
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col table-responsive">
+        <table class=" table table-bordered table-striped table-hover table-sm">
+            <thead>
+            <tr>
+                <td colspan="5">
+                    Pagination
+                </td>
+            </tr>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Total Stored</th>
+                <th scope="col" width="125px">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {#if searchResults.getResults().isEmpty()}
+            <tr>
+                <td colspan="3" class="text-center">
+                    <h2>
+                        No Items
+                    </h2>
+                    <div class="col d-grid gap-2">
+                        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+                                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
+                                class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {#else}
+            {#for result in searchResults.getResults()}
+            <tr>
+                <td>{result.getName()}</td>
+                <td></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" title="Remove"
+                            onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            {/for}
+            {/if}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">
+                    Pagination
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
 {/pageContent}
 {/include}
