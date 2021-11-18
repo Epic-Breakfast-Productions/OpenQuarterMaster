@@ -1,24 +1,28 @@
 {@com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult searchResult}
+{@java.util.Map allowedUnitsMap}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Storage' page='storage'}
 {!
 Accepts:
 - showSearch: bool, to have the search form expanded already
 - numStorageBlocks: int, the number of storage blocks in the system
-!}
-{#pageStyle}
+- allowedUnitsMap- Map
+<String, List
+<Unit>> the map of allowed units
+    !}
+    {#pageStyle}
 
-{/pageStyle}
-{#pageContent}
+    {/pageStyle}
+    {#pageContent}
 
-<div class="row">
-    <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
-                onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Storage Block
-        </button>
-    </div>
-    <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
-    </div>
+    <div class="row">
+        <div class="col d-grid gap-2">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
+                    onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Storage Block
+            </button>
+        </div>
+        <div class="col d-grid gap-2">
+            <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
+        </div>
 </div>
 <br/>
 <div class="row">
@@ -98,13 +102,17 @@ Accepts:
             </tr>
             </tfoot>
         </table>
+        <select>
+            {#unitOptions allowedUnitsMap=allowedUnitsMap}
+            {/unitOptions}
+        </select>
     </div>
 </div>
 
-{/pageContent}
+    {/pageContent}
 {#modals}
 
-{!
+    {!
 {#include webui/bootstrapComponents/modal}
 {title}Add/Edit Storage Block{/title}
 {/include}
@@ -159,7 +167,7 @@ Accepts:
 {/modals}
 
 
-{#pageScript}
+    {#pageScript}
 {!
 <script> !}
 
@@ -263,4 +271,4 @@ addEditStorageForm.submit(function(event){
 </script> !}
 {/pageScript}
 
-{/include}
+    {/include}

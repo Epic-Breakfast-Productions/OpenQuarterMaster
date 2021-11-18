@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
@@ -88,6 +89,7 @@ public class Storage extends UiProvider {
         );
 
         return storage
+                .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
                 .data("userInfo", UserGetResponse.builder(user).build())
                 .data("showSearch", false)
                 .data("numStorageBlocks", storageBlockService.count())

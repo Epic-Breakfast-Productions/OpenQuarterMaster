@@ -1,0 +1,15 @@
+{!
+Ingests:
+- allowedUnitsMap- Map
+<String, List
+<Unit>> the map of allowed units
+    !}
+    {#for unitCategory in allowedUnitsMap.entrySet()}
+
+    <optgroup label="{unitCategory.getKey()}">
+        {#for unit in unitCategory.getValue()}
+        <option value="">{unit.toString()}</option>
+        {/for}
+    </optgroup>
+
+    {/for}
