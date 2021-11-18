@@ -29,8 +29,7 @@ public class StorageBlock extends MainObject {
      */
     @NonNull
     @NotNull
-    @NotBlank
-    private String location;
+    private String location = "";
     /**
      * The parent of this storage block, if any
      */

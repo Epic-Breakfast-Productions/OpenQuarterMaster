@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
@@ -37,6 +38,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 @Traced
 @Slf4j
@@ -83,11 +87,26 @@ public class StorageCrud extends EndpointProvider {
         log.info("Creating new storage block.");
         User user = this.userService.getFromJwt(jwt);
 
-        //TODO:: make validator, extract
+        if (
+                !this.storageBlockService.list(
+                        and(
+                                eq("label", storageBlock.getLabel()),
+                                eq("location", storageBlock.getLocation()),
+                                eq("parent", storageBlock.getParent())
+                        ),
+                        null,
+                        null
+                ).isEmpty()
+        ) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(
+                    new ErrorMessage("The same label cannot exist for the same parent and location.")
+            ).build();
+        }
+
         if (storageBlock.getParent() != null) {
             StorageBlock parent = this.storageBlockService.get(storageBlock.getParent());
             if (parent == null) {
-                throw new IllegalArgumentException("No parent exists for storage block.");
+                throw new IllegalArgumentException("No parent exists for parent given.");
             }
         }
 

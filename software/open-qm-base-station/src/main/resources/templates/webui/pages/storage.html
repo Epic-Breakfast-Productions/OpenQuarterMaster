@@ -50,11 +50,11 @@ Accepts:
                 </td>
             </tr>
             <tr>
-                <th scope="col">Name</th>
+                <th scope="col">Label</th>
                 <th scope="col">Location</th>
                 <th scope="col">Parent</th>
                 <th scope="col">Capacity</th>
-                <th scope="col">Actions</th>
+                <th scope="col" width="125px">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -80,6 +80,9 @@ Accepts:
                 <td></td>
                 <td></td>
                 <td>
+                    <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
+                    </button>
                     <button type="button" class="btn btn-sm btn-danger" title="Remove"
                             onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
                 </td>
@@ -123,7 +126,7 @@ Accepts:
                     <div class="mb-3 row">
                         <label for="addEditLabelInput" class="col-sm-2 col-form-label">Label</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="addEditLabelInput" placeholder="Label">
+                            <input type="text" class="form-control" id="addEditLabelInput" placeholder="Label" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
