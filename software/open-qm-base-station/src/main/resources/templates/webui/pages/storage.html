@@ -151,6 +151,10 @@ Accepts:
 <script> !}
 
 function removeStorageBlock(blockId){
+    if(!confirm("Are you sure you want to delete this storage block? This cannot be undone.")){
+        return;
+    }
+
     console.log("Removing storage block " + blockId);
 
     var result = false;
