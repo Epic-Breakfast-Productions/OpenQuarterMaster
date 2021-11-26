@@ -32,13 +32,14 @@ Accepts:
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    Search Fields
+                    <i class="fas fa-search"></i> Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    Search form here
+                    {#StorageSearchForm id='mainStorageSearch'}
+                    {/StorageSearchForm}
                 </div>
             </div>
         </div>

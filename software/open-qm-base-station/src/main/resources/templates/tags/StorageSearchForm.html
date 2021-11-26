@@ -1,0 +1,37 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+
+<form id="{id}" action="/storage" method="get">
+  <div class="mb-3">
+    <label for="{id}-blockNameInput" class="form-label">Storage Block Name</label>
+    <input type="text" class="form-control" name="blockName" id="{id}-blockNameInput"
+           aria-describedby="{id}-blockNameInputHelp">
+    <div id="{id}-blockNameInputHelp" class="form-text">The name of the storage block to find.</div>
+  </div>
+  <div class="mb-3">
+    <label for="{id}-blockLocationInput" class="form-label">Location</label>
+    <input type="text" class="form-control" name="blockLocation" id="{id}-blockLocationInput"
+           aria-describedby="{id}-blockLocationInputHelp">
+    <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
+  </div>
+  <div class="mb-3">
+    <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
+    <input type="text" class="form-control" name="blockParentName" id="{id}-blockParentNameInput"
+           aria-describedby="{id}-blockParentNameInputHelp">
+    <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.</div>
+  </div>
+  <div class="mb-3">
+    <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
+    <input type="text" class="form-control" name="blockName" id="{id}-blockCapacityInput"
+           aria-describedby="{id}-blockCapacityInputHelp">
+    <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
+  </div>
+  <div class="col d-grid gap-2">
+    <button type="submit" class="btn btn-info"><i class="fas fa-search"></i> Search
+    </button>
+  </div>
+</form>
