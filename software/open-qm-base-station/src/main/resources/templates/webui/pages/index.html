@@ -1,10 +1,8 @@
 {#include webui/mainWebPageTemplate title='Login' showNavbar=false showTitle=false}
 {#pageContent}
-
-<div class="row">
-    <div class="col">
-    </div>
-    <form class="col card text-center" id="signInForm">
+<br />
+<div class="row justify-content-center ">
+    <form class="col align-self-center col-6 card text-center" id="signInForm">
         <div class="card-header">
             <img src="/media/logo.png" alt="" width="72">
             <h1>Please sign in</h1>
@@ -14,7 +12,6 @@
         </div>
         <div class="card-body">
             {#if config:['service.authMode'] == 'SELF'}
-
             <div class="form-floating">
                 <input type="text" class="form-control" id="emailUsernameInput" placeholder="name@example.com">
                 <label for="emailUsernameInput">Email address or Username</label>
@@ -23,21 +20,23 @@
                 <input type="password" class="form-control" id="passwordInput" placeholder="Password">
                 <label for="passwordInput">Password</label>
             </div>
-            {#else}
-            <div class="form-floating">
-                <input type="password" class="form-control" id="tokenInput" placeholder="Token">
-                <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
-            </div>
-            <div class="">
-                <a href="#todo" id="loginWithExternalLink">Sign in with external service</a>
-            </div>
-            {/if}
-
             <div class="checkbox mb-3">
                 <label>
                     <input type="checkbox" value="remember-me" id="rememberUserCheckbox"> Remember me
                 </label>
             </div>
+            {#else}
+            <a href="{config:['service.externalAuth.signInLink']}" class="btn btn-lg btn-primary" id="loginWithExternalLink">
+                <i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
+            </a>
+            <br />
+            <br />
+            <h3>Or, Enter your JWT:</h3>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="tokenInput" placeholder="Token">
+                <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
+            </div>
+            {/if}
             <button class="w-100 btn btn-lg btn-primary" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in
             </button>
 
