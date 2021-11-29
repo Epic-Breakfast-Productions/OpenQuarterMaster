@@ -48,60 +48,8 @@ Accepts:
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            <thead>
-            <tr>
-                <td colspan="5">
-                    Pagination
-                </td>
-            </tr>
-            <tr>
-                <th scope="col">Label</th>
-                <th scope="col">Location</th>
-                <th scope="col">Parent</th>
-                <th scope="col">Capacity</th>
-                <th scope="col" width="125px">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {#if searchResults.getResults().isEmpty()}
-            <tr>
-                <td colspan="5" class="text-center">
-                    <h2>
-                        No Storage Blocks
-                    </h2>
-                    <div class="col d-grid gap-2">
-                        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
-                                class="fas fa-plus"></i> Add Storage Block
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            {#else}
-            {#for result in searchResults.getResults()}
-            <tr>
-                <td>{result.getLabel()}</td>
-                <td>{result.getLocation()}</td>
-                <td></td>
-                <td></td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
-                    <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" title="Remove"
-                            onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-            {/for}
-            {/if}
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="5">
-                    Pagination
-                </td>
-            </tr>
-            </tfoot>
+            {#storageSearchResults searchResults=searchResult}
+            {/storageSearchResults}
         </table>
         <select>
             {#unitOptions allowedUnitsMap=allowedUnitsMap}

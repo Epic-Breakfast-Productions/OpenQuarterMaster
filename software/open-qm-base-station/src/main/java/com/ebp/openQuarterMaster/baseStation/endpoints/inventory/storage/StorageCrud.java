@@ -13,6 +13,8 @@ import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -56,6 +58,10 @@ public class StorageCrud extends EndpointProvider {
 
     @Inject
     JsonWebToken jwt;
+
+    @Inject
+    @Location("tags/storageSearchResults.html")
+    Template storageSearchResultsTemplate;
 
     @POST
     @Operation(
@@ -123,13 +129,19 @@ public class StorageCrud extends EndpointProvider {
     @APIResponse(
             responseCode = "200",
             description = "Blocks retrieved.",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                            type = SchemaType.ARRAY,
-                            implementation = InventoryItem.class
+            content = {
+                    @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    type = SchemaType.ARRAY,
+                                    implementation = InventoryItem.class
+                            )
+                    ),
+                    @Content(
+                            mediaType = "text/html",
+                            schema = @Schema(type = SchemaType.STRING)
                     )
-            ),
+            },
             headers = {
                     @Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
                     @Header(name = "query-num-results", description = "Gives the number of results in the query given.")
@@ -140,7 +152,7 @@ public class StorageCrud extends EndpointProvider {
             description = "No items found from query given.",
             content = @Content(mediaType = "text/plain")
     )
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
     @RolesAllowed("user")
     public Response listInventoryItems(
             @Context SecurityContext securityContext,
@@ -155,7 +167,8 @@ public class StorageCrud extends EndpointProvider {
             @QueryParam("pageNum") Integer pageNum,
             //sorting
             @QueryParam("sortBy") String sortField,
-            @QueryParam("sortType") SortType sortType
+            @QueryParam("sortType") SortType sortType,
+            @HeaderParam("accept") String acceptHeaderVal
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Searching for storage blocks with: ");
@@ -176,12 +189,25 @@ public class StorageCrud extends EndpointProvider {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
 
-        return Response
+        Response.ResponseBuilder rb = Response
                 .status(Response.Status.OK)
-                .entity(output.getResults())
                 .header("num-elements", output.getResults().size())
-                .header("query-num-results", output.getNumResultsForEntireQuery())
-                .build();
+                .header("query-num-results", output.getNumResultsForEntireQuery());
+        log.debug("Accept header value: \"{}\"", acceptHeaderVal);
+        switch (acceptHeaderVal) {
+            case MediaType.TEXT_HTML:
+                log.debug("Requestor wanted html.");
+                rb = rb.entity(this.storageSearchResultsTemplate.data("searchResults", output))
+                        .type(MediaType.TEXT_HTML_TYPE);
+                break;
+            case MediaType.APPLICATION_JSON:
+            default:
+                log.debug("Requestor wanted json, or any other form");
+                rb = rb.entity(output.getResults())
+                        .type(MediaType.APPLICATION_JSON_TYPE);
+        }
+
+        return rb.build();
     }
 
     @GET

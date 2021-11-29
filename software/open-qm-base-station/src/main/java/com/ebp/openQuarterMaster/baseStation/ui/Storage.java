@@ -93,7 +93,7 @@ public class Storage extends UiProvider {
                 .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                 .data("showSearch", false)
                 .data("numStorageBlocks", storageBlockService.count())
-                .data("searchResults", searchResults);
+                .data("searchResult", searchResults);
     }
 
 }
