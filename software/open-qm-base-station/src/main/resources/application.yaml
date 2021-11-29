@@ -19,7 +19,7 @@ runningInfo:
 quarkus:
   # for demo
   rest-client:
-    com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller:
+    demoService:
       url: http://localhost:8081
       scope: javax.inject.Singleton
 
