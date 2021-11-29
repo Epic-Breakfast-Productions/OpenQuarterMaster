@@ -8,7 +8,7 @@ service:
   # Not used if authMode = SELF
   externalAuth:
     name: Keycloak
-    link: http://google.com
+    signInLink: http://google.com
 
 runningInfo:
   organization: The Testing Organization
@@ -17,6 +17,12 @@ runningInfo:
   port: ${quarkus.http.port}
 
 quarkus:
+  # for demo
+  rest-client:
+    com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller:
+      url: http://localhost:8081
+      scope: javax.inject.Singleton
+
   log:
     level: DEBUG
     console:

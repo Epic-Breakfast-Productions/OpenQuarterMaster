@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
+import com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
@@ -13,6 +14,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -46,6 +48,10 @@ public class Overview extends UiProvider {
     @Inject
     JsonWebToken jwt;
 
+    @Inject
+    @RestClient
+    DemoServiceCaller extensionsService;
+
     @GET
     @Path("overview")
     @RolesAllowed("user")
@@ -55,10 +61,34 @@ public class Overview extends UiProvider {
     ) {
         logRequestContext(jwt, securityContext);
         User user = userService.getFromJwt(this.jwt);
+
+        //FOR DEMO PURPOSES ONLY
+        String response1 = null;
+        String response2 = null;
+        {
+            String authHeaderContent = "Bearer " + this.jwt.getRawToken();
+
+            try {
+                response1 = extensionsService.get1(authHeaderContent);
+//                response1 = extensionsService.get1(authHeaderContent);
+            } catch (Throwable e){
+                log.warn("Failed to reach service for 1: ", e);
+                response1 = e.getMessage();
+            }
+            try {
+                response2 = extensionsService.get2(authHeaderContent);
+            } catch (Throwable e){
+                log.warn("Failed to reach service for 2: ", e);
+                response2 = e.getMessage();
+            }
+        }
+
         return overview
                 .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                 .data("numItems", inventoryItemService.count())
                 .data("numStorageBlocks", storageBlockService.count())
+                .data("response1", response1)
+                .data("response2", response2)
                 ;
     }
 

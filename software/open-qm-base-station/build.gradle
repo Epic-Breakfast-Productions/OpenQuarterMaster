@@ -29,6 +29,11 @@ dependencies {
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
     implementation 'io.quarkus:quarkus-container-image-jib'
 
+    //for demo
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+
+
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
     // https://quarkus.io/guides/logging
