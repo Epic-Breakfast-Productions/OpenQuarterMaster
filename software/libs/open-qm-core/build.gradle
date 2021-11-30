@@ -1,10 +1,10 @@
 plugins {
     id 'java-library'
+    id "io.freefair.lombok" version "6.3.0"
     // https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
     id 'maven-publish'
     // https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
 //    id 'signing'
-//    id "io.freefair.lombok" version "6.2.0" //TODO:: find out why this won't work
     //id 'org.kordamp.gradle.jandex' version '0.11.0'
 }
 
@@ -25,11 +25,6 @@ dependencies {
 
     //if need ObjectIds, BsonIgnore
     implementation group: 'org.mongodb', name: 'bson', version: '4.3.3'
-
-
-
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
@@ -125,9 +120,9 @@ publishing {
 //    sign publishing.publications.mavenJava
 //}
 
-//TODO:: fix lombok methods not included in javadocs
 javadoc {
     if(JavaVersion.current().isJava11Compatible()) {
         options.addBooleanOption('html5', true)
+        options.addBooleanOption('private', true)
     }
 }
