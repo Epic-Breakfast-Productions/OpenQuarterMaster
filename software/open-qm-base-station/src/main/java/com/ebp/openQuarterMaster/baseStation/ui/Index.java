@@ -1,9 +1,12 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
+import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -18,6 +21,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
+import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Traced
 @Slf4j
@@ -37,13 +44,44 @@ public class Index extends UiProvider {
     @Inject
     JsonWebToken jwt;
 
+    @ConfigProperty(name = "service.authMode")
+    AuthMode authMode;
+
+    @ConfigProperty(name = "service.externalAuth.interactionBase", defaultValue = "")
+    String externInteractionBase;
+    @ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
+    String externInteractionClientId;
+    @ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
+    String externInteractionCallbackUrl;
+
     @GET
     @PermitAll
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance index(
             @Context SecurityContext securityContext
-    ) {
+    ) throws MalformedURLException, URISyntaxException {
         logRequestContext(jwt, securityContext);
+
+
+
+        if(EXTERNAL.equals(this.authMode)){
+            URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
+
+            signInLinkBuilder.setParameter("response_type", "code");
+            signInLinkBuilder.setParameter("scope", "openid");
+            signInLinkBuilder.setParameter("audience", "account");
+            signInLinkBuilder.setParameter("state", "TODO");
+            signInLinkBuilder.setParameter("client_id", externInteractionClientId);
+            signInLinkBuilder.setParameter("redirect_uri", externInteractionCallbackUrl);
+
+
+            // ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
+
+
+            return index.data(
+                    "signInLink", signInLinkBuilder.build());
+        }
+
         return index.instance();
     }
 
