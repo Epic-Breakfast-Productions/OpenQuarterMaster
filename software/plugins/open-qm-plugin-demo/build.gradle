@@ -18,7 +18,6 @@ dependencies {
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
     implementation 'io.quarkus:quarkus-container-image-jib'
-//    implementation 'io.quarkus:quarkus-smallrye-jwt'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

@@ -8,13 +8,22 @@ service:
   # Not used if authMode = SELF
   externalAuth:
     name: Keycloak
-    signInLink: http://google.com
+    url: http://localhost:8080
+    realm: realm
+    clientId: clientId
+    clientSecret: clientSecret
+    interactionBase: ${service.externalAuth.url:}/auth/realms/${service.externalAuth.realm:}/protocol/openid-connect
+    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
+    tokenUrl: ${service.externalAuth.interactionBase:}/token
+    callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
 
 runningInfo:
   organization: The Testing Organization
+  protocol: http
   serverName: ${runningInfo.organization}
   hostname: localhost
   port: ${quarkus.http.port}
+  baseUrl: ${runningInfo.protocol}://${runningInfo.hostname}:${runningInfo.port}
 
 quarkus:
   # for demo

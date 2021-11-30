@@ -26,7 +26,7 @@
                 </label>
             </div>
             {#else}
-            <a href="{config:['service.externalAuth.signInLink']}" class="btn btn-lg btn-primary" id="loginWithExternalLink">
+            <a href="{config:['service.externalAuth.signInLink']}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
                 <i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
             </a>
             <br />

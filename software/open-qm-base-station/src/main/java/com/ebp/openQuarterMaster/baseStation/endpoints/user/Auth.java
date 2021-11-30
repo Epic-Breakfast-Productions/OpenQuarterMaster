@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URL;
 import java.util.Date;
 
 @Traced
@@ -52,6 +53,13 @@ public class Auth extends EndpointProvider {
 
     @ConfigProperty(name = "service.authMode")
     AuthMode authMode;
+
+    @ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
+    String externalClientId;
+    @ConfigProperty(name = "service.externalAuth.clientSecret", defaultValue = "")
+    String externalClientSecret;
+    @ConfigProperty(name = "service.externalAuth.tokenUrl", defaultValue = "")
+    URL externalTokenUrl;
 
     @Inject
     JsonWebToken jwt;
@@ -167,6 +175,7 @@ public class Auth extends EndpointProvider {
             @QueryParam("returnPath") String returnPath,
             @QueryParam("code") String codeJwt
     ) {
+        //TODO:: check state info
         logRequestContext(this.jwt, ctx);
         log.info("Receiving token from external auth.");
         if (AuthMode.SELF.equals(authMode)) {
@@ -175,6 +184,7 @@ public class Auth extends EndpointProvider {
         }
 
         String jwt = codeJwt;
+        //TODO:: call keycloak, get jwt
 
 
         log.debug("JWT got from external auth: {}", jwt);
