@@ -163,7 +163,8 @@ public class Auth extends EndpointProvider {
     @PermitAll
     public Response callback(
             @Context SecurityContext ctx,
-            @QueryParam("returnPath") String returnPath
+            @QueryParam("returnPath") String returnPath,
+            @QueryParam("code") String codeJwt
     ) {
         logRequestContext(this.jwt, ctx);
         log.info("Receiving token from external auth.");
@@ -172,8 +173,10 @@ public class Auth extends EndpointProvider {
             throw new ForbiddenException("Service not set to authenticate via external means.");
         }
 
-        String jwt = "";
+        String jwt = codeJwt;
 
+
+        log.debug("JWT got from external auth: {}", jwt);
 
         return Response.seeOther(
                         UriBuilder.fromUri(
