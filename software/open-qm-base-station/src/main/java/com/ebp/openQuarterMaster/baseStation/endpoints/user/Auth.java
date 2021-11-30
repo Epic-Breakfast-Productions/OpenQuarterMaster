@@ -228,7 +228,7 @@ public class Auth extends EndpointProvider {
                                 ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
                                 jwt,
                                 "/",
-                                ConfigProvider.getConfig().getValue("runningInfo.hostname", String.class),
+                                ConfigProvider.getConfig().getValue("runningInfo.hostnamePort", String.class),
                                 "Login jwt",
                                 Integer.MAX_VALUE,
                                 true

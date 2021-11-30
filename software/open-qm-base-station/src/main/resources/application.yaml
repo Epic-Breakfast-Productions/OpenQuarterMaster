@@ -24,9 +24,8 @@ runningInfo:
   organization: The Testing Organization
   protocol: http
   serverName: ${runningInfo.organization}
-  hostname: localhost
-  port: ${quarkus.http.port}
-  baseUrl: ${runningInfo.protocol}://${runningInfo.hostname}:${runningInfo.port}
+  hostnamePort: localhost:${quarkus.http.port}
+  baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
 
 quarkus:
   rest-client:
