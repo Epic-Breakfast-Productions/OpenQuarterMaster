@@ -202,12 +202,14 @@ public class Auth extends EndpointProvider {
                     this.callbackUrl
             );
         } catch (Throwable e) {
+            log.warn("Failed to get token from keycloak (exception)- ", e);
             //TODO:: deal with properly
             e.printStackTrace();
             throw e;
         }
 
         if(!returned.has("access_token")){
+            log.warn("Failed to get token from keycloak (token not in data)");
             //TODO:: handle
             throw new IllegalStateException("Token not in data");
         }

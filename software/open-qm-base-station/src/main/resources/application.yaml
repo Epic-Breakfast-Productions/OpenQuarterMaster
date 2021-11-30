@@ -4,7 +4,7 @@ service:
   apiVersion: 1.0.0
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
-  authMode: EXTERNAL # SELF or EXTERNAL
+  authMode: SELF # SELF or EXTERNAL
   # Not used if authMode = SELF
   externalAuth:
     name: Keycloak
@@ -31,7 +31,7 @@ runningInfo:
 quarkus:
   rest-client:
     keycloak:
-      url: ${service.externalAuth.url}
+      url: ${service.externalAuth.tokenUrl}
       scope: javax.inject.Singleton
 
     # for demo
