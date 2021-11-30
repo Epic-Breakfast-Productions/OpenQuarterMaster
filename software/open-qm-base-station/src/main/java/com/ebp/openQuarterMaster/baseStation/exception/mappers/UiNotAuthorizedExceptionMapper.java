@@ -45,7 +45,12 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
 //                    .entity("Not authorized")//entity is not required
                     .cookie(
                             new NewCookie(
-                                    new Cookie(ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class), ""),
+                                    new Cookie(
+                                            ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
+                                            "",
+                                            "/",
+                                            ConfigProvider.getConfig().getValue("runningInfo.hostname", String.class)
+                                    ),
                                     "To clear out the auth cookie",
                                     0,
                                     false
