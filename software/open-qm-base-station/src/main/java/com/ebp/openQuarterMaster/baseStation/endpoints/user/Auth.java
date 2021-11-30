@@ -208,7 +208,7 @@ public class Auth extends EndpointProvider {
             throw e;
         }
 
-        if(!returned.has("access_token")){
+        if (!returned.has("access_token")) {
             log.warn("Failed to get token from keycloak (token not in data)");
             //TODO:: handle
             throw new IllegalStateException("Token not in data");
@@ -231,6 +231,43 @@ public class Auth extends EndpointProvider {
                                 ConfigProvider.getConfig().getValue("runningInfo.hostnamePort", String.class),
                                 "Login jwt",
                                 Integer.MAX_VALUE,
+                                true
+                        )
+                )
+                .build();
+    }
+
+
+    @GET
+    @Path("logout")
+    @Operation(
+            summary = "Callback for an external auth provider to come back to this service."
+    )
+    @APIResponse(
+            responseCode = "303",
+            description = "Token from external auth source received."
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Service is not in external auth mode."
+    )
+    @PermitAll
+    public Response logout(
+            @Context SecurityContext ctx,
+            @QueryParam("returnPath") String returnPath,
+            @QueryParam("code") String code
+    ) {
+        return Response.seeOther(
+                        UriBuilder.fromUri("/?messageHeader=Success!&messageHeader=You have logged out&messageType=success")
+                                .build()
+                ).cookie(
+                        new NewCookie(
+                                ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
+                                "",
+                                "/",
+                                ConfigProvider.getConfig().getValue("runningInfo.hostnamePort", String.class),
+                                "Login jwt clear",
+                                0,
                                 true
                         )
                 )

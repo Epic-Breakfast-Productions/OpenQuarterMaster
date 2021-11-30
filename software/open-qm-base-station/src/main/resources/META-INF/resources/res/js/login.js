@@ -11,7 +11,7 @@ function login(jwtVal, remember){
 
 function logout(){
     Cookies.remove(jwtCookieName);
-    window.location.replace("/");
+    window.location.replace("/api/user/auth/logout");
 }
 
 function getToken(usernameEmail, password, rememberUser){
