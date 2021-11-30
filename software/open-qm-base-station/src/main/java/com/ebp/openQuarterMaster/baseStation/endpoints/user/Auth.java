@@ -258,7 +258,7 @@ public class Auth extends EndpointProvider {
             @QueryParam("code") String code
     ) {
         return Response.seeOther(
-                        UriBuilder.fromUri("/?messageHeader=Success!&messageHeader=You have logged out&messageType=success")
+                        UriBuilder.fromUri("/?messageHeader=Success!&message=You have logged out&messageType=success")
                                 .build()
                 ).cookie(
                         new NewCookie(
