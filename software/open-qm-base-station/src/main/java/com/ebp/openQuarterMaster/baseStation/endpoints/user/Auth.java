@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
+import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
@@ -11,6 +12,7 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.TokenCheckResponse;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -24,6 +26,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.annotation.security.PermitAll;
@@ -32,7 +35,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.net.URL;
 import java.util.Date;
 
 @Traced
@@ -51,6 +53,10 @@ public class Auth extends EndpointProvider {
     @Inject
     JwtService jwtService;
 
+    @Inject
+    @RestClient
+    KeycloakServiceCaller keycloakServiceCaller;
+
     @ConfigProperty(name = "service.authMode")
     AuthMode authMode;
 
@@ -58,8 +64,10 @@ public class Auth extends EndpointProvider {
     String externalClientId;
     @ConfigProperty(name = "service.externalAuth.clientSecret", defaultValue = "")
     String externalClientSecret;
-    @ConfigProperty(name = "service.externalAuth.tokenUrl", defaultValue = "")
-    URL externalTokenUrl;
+    @ConfigProperty(name = "service.externalAuth.scope", defaultValue = "")
+    String externalScope;
+    @ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
+    String callbackUrl;
 
     @Inject
     JsonWebToken jwt;
@@ -173,7 +181,7 @@ public class Auth extends EndpointProvider {
     public Response callback(
             @Context SecurityContext ctx,
             @QueryParam("returnPath") String returnPath,
-            @QueryParam("code") String codeJwt
+            @QueryParam("code") String code
     ) {
         //TODO:: check state info
         logRequestContext(this.jwt, ctx);
@@ -183,9 +191,28 @@ public class Auth extends EndpointProvider {
             throw new ForbiddenException("Service not set to authenticate via external means.");
         }
 
-        String jwt = codeJwt;
-        //TODO:: call keycloak, get jwt
+        JsonNode returned;
+        try {
+            returned = this.keycloakServiceCaller.getJwt(
+                    this.externalClientId,
+                    this.externalClientSecret,
+                    this.externalScope,
+                    "authorization_code",
+                    code,
+                    this.callbackUrl
+            );
+        } catch (Throwable e) {
+            //TODO:: deal with properly
+            e.printStackTrace();
+            throw e;
+        }
 
+        if(!returned.has("access_token")){
+            //TODO:: handle
+            throw new IllegalStateException("Token not in data");
+        }
+
+        String jwt = returned.get("access_token").asText();
 
         log.debug("JWT got from external auth: {}", jwt);
 

@@ -12,9 +12,12 @@ service:
     realm: realm
     clientId: clientId
     clientSecret: clientSecret
-    interactionBase: ${service.externalAuth.url:}/auth/realms/${service.externalAuth.realm:}/protocol/openid-connect
+    scope: openid
+    interactionBasePath: /auth/realms/${service.externalAuth.realm:}/protocol/openid-connect
+    interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
 #    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
-    tokenUrl: ${service.externalAuth.interactionBase:}/token
+    tokenPath: ${service.externalAuth.interactionBasePath:}/token
+    tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
     callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
 
 runningInfo:
@@ -26,8 +29,12 @@ runningInfo:
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostname}:${runningInfo.port}
 
 quarkus:
-  # for demo
   rest-client:
+    keycloak:
+      url: ${service.externalAuth.url}
+      scope: javax.inject.Singleton
+
+    # for demo
     demoService:
       url: http://localhost:8081
       scope: javax.inject.Singleton
