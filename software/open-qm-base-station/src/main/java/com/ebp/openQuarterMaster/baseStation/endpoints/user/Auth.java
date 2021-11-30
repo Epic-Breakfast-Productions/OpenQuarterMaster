@@ -13,6 +13,7 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -183,7 +184,7 @@ public class Auth extends EndpointProvider {
                                         (returnPath == null || returnPath.isBlank() ? "/overview" : returnPath)
                                 )
                                 .build()
-                ).cookie(new NewCookie("jwt", jwt))
+                ).cookie(new NewCookie(ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class), jwt))
                 .build();
     }
 }
