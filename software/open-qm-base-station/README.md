@@ -72,4 +72,29 @@ Quarked!
 
 # TODOS:
 
-- Order tests by type (test profile) `@TestClassOrder()` https://www.baeldung.com/junit-5-test-order
+- Storage
+  - Finish add
+  - do edit
+  - do view
+  - do all stats
+- Items
+  - Add item
+  - edit item
+  - delete item
+  - stats
+- Overview
+  - stats
+- User
+  - external
+    - view your infos
+  - self
+    - view your info
+    - give admins
+      - add user
+      - remove user
+      - promote/demote user
+      - search users
+- REST
+  - handle ParseException for expired, bad tokens for UI
+- Image/thumbnail support
+- Testing
