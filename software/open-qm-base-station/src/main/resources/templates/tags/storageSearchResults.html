@@ -3,8 +3,13 @@
   Template to show storage search results. Gives the contents of a table, but not the main table tag
 
   Ingests:
-  - actionType - the action to take
+  - actionType - the action to take. "full" or "select"
   - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectStorageBlock('<block name>', '<block id>', '<inputIdPrepend>')" on the select button
 !}
   <thead>
   <tr>
@@ -42,12 +47,21 @@
     <td>{result.getLocation()}</td>
     <td></td>
     <td></td>
+    {#if actionType == 'full'}
     <td>
       <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
               onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
+      {#else if actionType == 'select'}
+    <td class="d-grid gap-2">
+      <button type="button" class="btn btn-sm btn-success" title="Select {result.getLabel()}"
+              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+              onclick="selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">
+        <i class="fas fa-check-circle"></i> Select
+      </button>
+      {/if}
     </td>
   </tr>
   {/for}

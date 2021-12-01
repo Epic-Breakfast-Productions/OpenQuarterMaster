@@ -1,2 +1,1 @@
-var searchForm = $("#searchForm");
 

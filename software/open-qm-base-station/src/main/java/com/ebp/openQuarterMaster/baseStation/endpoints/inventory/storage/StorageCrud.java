@@ -168,7 +168,12 @@ public class StorageCrud extends EndpointProvider {
             //sorting
             @QueryParam("sortBy") String sortField,
             @QueryParam("sortType") SortType sortType,
-            @HeaderParam("accept") String acceptHeaderVal
+            @HeaderParam("accept") String acceptHeaderVal,
+            //options for html rendering
+            @HeaderParam("actionType") String actionTypeHeaderVal,
+            @HeaderParam("searchFormId") String searchFormIdHeaderVal,
+            @HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal,
+            @HeaderParam("otherModalId") String otherModalIdHeaderVal
     ) {
         logRequestContext(this.jwt, securityContext);
         log.info("Searching for storage blocks with: ");
@@ -197,7 +202,14 @@ public class StorageCrud extends EndpointProvider {
         switch (acceptHeaderVal) {
             case MediaType.TEXT_HTML:
                 log.debug("Requestor wanted html.");
-                rb = rb.entity(this.storageSearchResultsTemplate.data("searchResults", output))
+                rb = rb.entity(
+                                this.storageSearchResultsTemplate
+                                        .data("searchResults", output)
+                                        .data("actionType", (actionTypeHeaderVal == null || acceptHeaderVal.isBlank() ? "full" : actionTypeHeaderVal))
+                                        .data("searchFormId", (searchFormIdHeaderVal == null || searchFormIdHeaderVal.isBlank() ? "" : searchFormIdHeaderVal))
+                                        .data("inputIdPrepend", (inputIdPrependHeaderVal == null || inputIdPrependHeaderVal.isBlank() ? "" : inputIdPrependHeaderVal))
+                                        .data("otherModalId", (otherModalIdHeaderVal == null || otherModalIdHeaderVal.isBlank() ? "" : otherModalIdHeaderVal))
+                        )
                         .type(MediaType.TEXT_HTML_TYPE);
                 break;
             case MediaType.APPLICATION_JSON:
