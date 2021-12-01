@@ -12,17 +12,27 @@ quarkus:
     info-title: Open QuarterMaster Base Station API (TEST)
 
 "%externalAuth":
+  test:
+    keycloak:
+      # These values populated by `TestResourceLifecycleManager`
+      url:
+      adminName:
+      adminPass:
   service:
     authMode: EXTERNAL
     externalAuth:
-      name: Test External Key Source
+      name: Test Keycloak
+      realm: apps
+      clientId: quartermaster
+      clientSecret: 5116b335-e0fb-4947-bf1f-0b3434331e52
+      scope: openid
   mp:
     jwt:
       verify:
         privatekey:
-          location: security/testExternalPrivateKeyPkcs8.pem
+          location:
         publickey:
-          location: security/testExternalPublicKey.pem
+          location: security/testKeycloakPublicKey.pem
         issuer: ${runningInfo.organization} - ${service.nameShort} - EXTERNAL
 
 

@@ -50,17 +50,27 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	public static synchronized Map<String, String> startKeycloakTestServer() {
 		if (KEYCLOAK_CONTAINER != null) {
 			log.info("Keycloak already started.");
-			return Map.of();
-		}
-
-		KEYCLOAK_CONTAINER = new KeycloakContainer()
+		} else {
+			KEYCLOAK_CONTAINER = new KeycloakContainer()
 //				.withEnv("hello","world")
-				.withRealmImportFile("keycloak-realm.json");
-		KEYCLOAK_CONTAINER.start();
-		log.info("Test keycloak started at endpoint: {}", KEYCLOAK_CONTAINER.getAuthServerUrl());
+					.withRealmImportFile("keycloak-realm.json");
+			KEYCLOAK_CONTAINER.start();
+			log.info(
+					"Test keycloak started at endpoint: {}\tAdmin creds: {}:{}",
+					KEYCLOAK_CONTAINER.getAuthServerUrl(),
+					KEYCLOAK_CONTAINER.getAdminUsername(),
+					KEYCLOAK_CONTAINER.getAdminPassword()
+			);
 
+			//TODO:: get public key
+			//TODO:: get client secret?
+		}
 		return Map.of(
+				"test.keycloak.url", KEYCLOAK_CONTAINER.getAuthServerUrl(),
+				"test.keycloak.adminName", KEYCLOAK_CONTAINER.getAdminUsername(),
+				"test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
 				//TODO:: add config for server to talk to
+				"service.externalAuth.url", KEYCLOAK_CONTAINER.getAuthServerUrl()
 		);
 	}
 

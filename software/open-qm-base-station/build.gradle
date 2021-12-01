@@ -59,6 +59,7 @@ dependencies {
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '4.0.0'
     testImplementation 'com.deque:axe-selenium:3.0'
     testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
+    testImplementation "org.keycloak:keycloak-admin-client:15.0.2"
 }
 
 group 'com.ebp.openQuarterMaster'
