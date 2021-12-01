@@ -176,6 +176,7 @@ var addEditFormId = $("#addEditFormId");
 var addEditLabelInput = $("#addEditLabelInput");
 var addEditLocationInput = $("#addEditLocationInput");
 var addEditKeywordsInput = $("#addEditKeywordsInput");
+var addEditParentIdInput = $("#addEditParentInputId");
 
 function resetAddEdit(){
     addEditStorageForm.trigger("reset");
@@ -196,9 +197,17 @@ addEditStorageForm.submit(function(event){
 
     var addEditData = {
         label: addEditLabelInput.val(),
-        location: addEditLocationInput.val(),
-        keywords: addEditKeywordsInput.val().split(",")
+        location: addEditLocationInput.val()
     };
+
+    var keywordValue = addEditKeywordsInput.val().trim()
+    if(keywordValue){
+        addEditData.keywords = addEditKeywordsInput.val().split(",");
+    }
+
+    if(addEditParentIdInput.val()){
+        addEditData.parent = addEditParentIdInput.val();
+    }
 
     var result = false;
     if(addEditFormMode.val() == "add"){
