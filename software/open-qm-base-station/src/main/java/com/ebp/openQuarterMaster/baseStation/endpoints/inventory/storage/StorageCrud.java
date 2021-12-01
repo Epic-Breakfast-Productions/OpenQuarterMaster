@@ -209,6 +209,7 @@ public class StorageCrud extends EndpointProvider {
                                         .data("searchFormId", (searchFormIdHeaderVal == null || searchFormIdHeaderVal.isBlank() ? "" : searchFormIdHeaderVal))
                                         .data("inputIdPrepend", (inputIdPrependHeaderVal == null || inputIdPrependHeaderVal.isBlank() ? "" : inputIdPrependHeaderVal))
                                         .data("otherModalId", (otherModalIdHeaderVal == null || otherModalIdHeaderVal.isBlank() ? "" : otherModalIdHeaderVal))
+                                        .data("storageService", this.storageBlockService)
                         )
                         .type(MediaType.TEXT_HTML_TYPE);
                 break;
