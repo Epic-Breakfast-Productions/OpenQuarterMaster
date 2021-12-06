@@ -1,5 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.ui;
 
+import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
@@ -22,12 +26,12 @@ import java.util.List;
 @Slf4j
 @RequestScoped
 public class WebDriverWrapper implements Closeable {
-    @Getter
-    private volatile WebDriver webDriver;
-
     static {
         WebDriverManager.firefoxdriver().setup();
     }
+
+    @Getter
+    private volatile WebDriver webDriver;
 
     @ConfigProperty(name = "test.selenium.headless", defaultValue = "true")
     boolean headless;
@@ -35,6 +39,8 @@ public class WebDriverWrapper implements Closeable {
     int defaultWait;
     @ConfigProperty(name="runningInfo.baseUrl")
     String baseUrl;
+    @Inject
+    TestUserService testUserService;
 
     @PostConstruct
     void setup(){
@@ -80,5 +86,15 @@ public class WebDriverWrapper implements Closeable {
     public void waitForPageLoad(){
         this.waitFor(By.id("footer"));
         log.info("Page loaded: {}", this.getWebDriver().getCurrentUrl());
+    }
+
+    public void loginUser(User testUser){
+        this.goToIndex();
+
+        this.waitForPageLoad();
+
+        this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+        this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
+        this.waitForPageLoad();
     }
 }

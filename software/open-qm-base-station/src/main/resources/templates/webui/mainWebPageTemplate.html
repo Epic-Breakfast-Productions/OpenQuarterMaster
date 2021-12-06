@@ -114,9 +114,16 @@ Ingests:
                         <!--                        <a class="dropdown-item" href="#">Action</a>-->
                         <!--                        <a class="dropdown-item" href="#">Another action</a>-->
                         <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
+                        {#if userInfo.getRoles().contains('userAdmin')}
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt"></i>
-                            Logout</a>
+                        <a class="dropdown-item" href="#" id="userAdminLink">
+                            <i class="fas fa-users-cog"></i> User Admin
+                        </a>
+                        {/if}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="logoutButton">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
                     </div>
                 </li>
             </ul>

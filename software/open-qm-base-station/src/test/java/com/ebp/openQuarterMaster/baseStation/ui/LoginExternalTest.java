@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
+import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserAdminLoggedIn;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserLoggedIn;
 
 @Slf4j
@@ -64,5 +65,14 @@ public class LoginExternalTest extends WebUiTest {
         this.webDriverWrapper.waitForPageLoad();
 
         assertUserLoggedIn(this.webDriverWrapper, testUser);
+    }
+
+    @Test
+    public void testLoginAdminWithToken() throws InterruptedException {
+        User testUser = this.testUserService.getTestUser(true, true);
+
+        this.webDriverWrapper.loginUser(testUser);
+
+        assertUserAdminLoggedIn(this.webDriverWrapper, testUser);
     }
 }
