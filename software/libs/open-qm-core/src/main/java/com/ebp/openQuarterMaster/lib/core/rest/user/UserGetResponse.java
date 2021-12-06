@@ -6,10 +6,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import lombok.*;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The response object from getting a user
@@ -27,7 +24,7 @@ public class UserGetResponse extends MainObject {
     private String email;
     private String title;
     private Map<String, String> externIds = new HashMap<>();
-    private List<String> roles = new ArrayList<>();
+    private Set<String> roles = new HashSet<>();
     private Map<String, String> attributes = new HashMap<>();
     private List<HistoryEvent> history = new ArrayList<>(List.of());
 
@@ -40,7 +37,7 @@ public class UserGetResponse extends MainObject {
                 .email(user.getEmail())
                 .title(user.getTitle())
                 .externIds(user.getExternIds())
-                .roles(new ArrayList<>(user.getRoles()))
+                .roles(user.getRoles())
                 .attributes(user.getAttributes())
                 .history(user.getHistory());
     }

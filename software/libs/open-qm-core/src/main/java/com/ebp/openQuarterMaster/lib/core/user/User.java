@@ -7,10 +7,7 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  */
@@ -42,7 +39,7 @@ public class User extends MainObject {
      */
     private String pwHash = null;
 
-    private List<String> roles = new ArrayList<>();
+    private Set<String> roles = new HashSet<>();
 
     /*
      * Only used if service.authMode set to EXTERNAL

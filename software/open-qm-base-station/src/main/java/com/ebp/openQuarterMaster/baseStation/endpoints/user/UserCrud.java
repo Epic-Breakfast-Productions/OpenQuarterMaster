@@ -40,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class UserCrud extends EndpointProvider {
         User.Builder builder = User.builder(userCreateRequest);
 
         {
-            List<String> roles = new ArrayList<>() {{
+            Set<String> roles = new HashSet<>() {{
                 add("user");
             }};
             if (this.userService.collectionEmpty()) {

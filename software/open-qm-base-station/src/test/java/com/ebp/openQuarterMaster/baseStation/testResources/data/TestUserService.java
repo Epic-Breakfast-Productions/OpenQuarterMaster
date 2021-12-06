@@ -28,6 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -97,7 +98,7 @@ public class TestUserService {
 //            rep.setGroups(testUser.getRoles());
             rep.setClientRoles(Map.of(
                     "quartermaster",
-                    testUser.getRoles()
+                    new ArrayList<>(testUser.getRoles())
             ));
         }
 
@@ -175,7 +176,7 @@ public class TestUserService {
         builder.lastName(this.faker.name().lastName());
         builder.email(this.faker.internet().emailAddress());
         builder.title(this.faker.company().profession());
-        builder.roles(new ArrayList<>() {{
+        builder.roles(new HashSet<>() {{
             add("user");
             if (admin) {
                 add("userAdmin");
