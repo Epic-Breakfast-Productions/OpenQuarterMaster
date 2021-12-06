@@ -824,18 +824,18 @@
     {
       "id": "72ad7380-e1b8-40bc-8044-32720b693b6d",
       "clientId": "quartermaster",
-      "rootUrl": "https://open-qm-base-station-quartermaster.apps.single-node-test2.nixon.com/",
-      "adminUrl": "https://open-qm-base-station-quartermaster.apps.single-node-test2.nixon.com/",
+      "rootUrl": "http://localhost:8081/",
+      "adminUrl": "http://localhost:8081/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "12abaab8-0b4f-4ccb-a068-668764593c06",
       "redirectUris": [
-        "https://open-qm-base-station-quartermaster.apps.single-node-test2.nixon.com/*"
+        "http://localhost:8081/*"
       ],
       "webOrigins": [
-        "https://open-qm-base-station-quartermaster.apps.single-node-test2.nixon.com"
+        "http://localhost:8081"
       ],
       "notBefore": 0,
       "bearerOnly": false,

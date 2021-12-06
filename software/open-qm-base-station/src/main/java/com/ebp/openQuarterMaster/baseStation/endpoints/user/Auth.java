@@ -160,6 +160,8 @@ public class Auth extends EndpointProvider {
             response.setTokenSecure(ctx.isSecure());
             response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());
             response.setExpirationDate(new Date(jwt.getExpirationTime()));
+        } else {
+            log.info("User had no jwt");
         }
         return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON_TYPE).entity(response).build();
     }

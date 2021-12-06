@@ -35,9 +35,7 @@ public class User extends MainObject {
     @NotNull
     @Email
     private String email;
-    @NonNull
-    @NotNull
-    private String title = "";
+    private String title;
 
     /*
      * Not used if service.authMode set to EXTERNAL

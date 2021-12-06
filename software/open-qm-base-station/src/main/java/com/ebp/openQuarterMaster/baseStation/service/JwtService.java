@@ -20,8 +20,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class JwtService {
     public static final String JWT_USER_ID_CLAIM = "userId";
-    public static final String JWT_USER_EMAIL_CLAIM = "userEmail";
-    public static final String JWT_USER_TITLE_CLAIM = "userTitle";
+    public static final String JWT_USER_TITLE_CLAIM = "title";
     public static final String JWT_ISSUER_CLAIM = Claims.iss.name();
 
     private final long defaultExpiration;
@@ -95,10 +94,10 @@ public class JwtService {
 //                user.getId() + "-" + user.getLastLogin().getTime() + "-" + user.getNumLogins()
                 user.getId() + "-" + UUID.randomUUID()
         );//TODO: move to utility, test
-        output.put(Claims.sub.name(), userIdentification);
+        output.put(Claims.sub.name(), user.getId());
         output.put(Claims.aud.name(), userIdentification);
         output.put(Claims.upn.name(), user.getUsername());
-        output.put(JWT_USER_EMAIL_CLAIM, user.getEmail());
+        output.put(Claims.email.name(), user.getEmail());
         output.put(JWT_USER_TITLE_CLAIM, user.getTitle());
         output.put(Claims.given_name.name(), user.getFirstName());
         output.put(Claims.family_name.name(), user.getLastName());

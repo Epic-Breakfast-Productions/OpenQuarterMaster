@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -18,9 +19,11 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.ebp.openQuarterMaster.baseStation.service.JwtService.JWT_USER_TITLE_CLAIM;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 
+@Slf4j
 @ApplicationScoped
 public class UserService extends MongoService<User> {
 
@@ -75,12 +78,16 @@ public class UserService extends MongoService<User> {
     }
 
     private User getExternalUser(String externalSource, String externalId) {
+        if(externalId == null){
+            return null;
+        }
         return this.getCollection().find(eq("externIds." + externalSource, externalId)).limit(1).first();
     }
 
     private User getOrCreateExternalUser(JsonWebToken jwt) {
         String externalSource = jwt.getIssuer();
-        String externalId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
+        String externalId = jwt.getClaim(Claims.sub);
+        log.debug("User id from external jwt: {}", externalId);
         User user = this.getExternalUser(externalSource, externalId);
 
         if (user != null) {
@@ -91,9 +98,14 @@ public class UserService extends MongoService<User> {
         User.Builder userBuilder = User.builder()
                 .firstName(jwt.getClaim(Claims.given_name))
                 .lastName(jwt.getClaim(Claims.family_name))
-                .username(jwt.getClaim(Claims.upn))
-                .email(jwt.getClaim("userEmail"))
-                .title(jwt.getClaim("userTitle"));
+                .email(jwt.getClaim(Claims.email))
+                .title(jwt.getClaim(JWT_USER_TITLE_CLAIM));
+
+        if(jwt.getClaim(Claims.upn) != null) {
+            userBuilder.username(jwt.getClaim(Claims.upn));
+        } else if(jwt.getClaim(Claims.preferred_username) != null){
+            userBuilder.username(jwt.getClaim(Claims.preferred_username));
+        }
 
         userBuilder.externIds(new HashMap<>() {{
             put(externalSource, externalId);
@@ -130,8 +142,10 @@ public class UserService extends MongoService<User> {
 
         switch (this.authMode) {
             case SELF:
+                log.debug("Getting user data from self.");
                 return this.get(userId);
             case EXTERNAL:
+                log.debug("Getting external user data ");
                 return this.getOrCreateExternalUser(jwt);
         }
         return null;
