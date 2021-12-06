@@ -217,6 +217,7 @@ public class Auth extends EndpointProvider {
         String jwt = returned.get("access_token").asText();
 
         log.debug("JWT got from external auth: {}", jwt);
+        log.debug("Public key to verify sig: {}", ConfigProvider.getConfig().getValue("mp.jwt.verify.publickey.location", String.class));
 
         return Response.seeOther(
                         UriBuilder.fromUri(
@@ -228,7 +229,7 @@ public class Auth extends EndpointProvider {
                                 ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
                                 jwt,
                                 "/",
-                                ConfigProvider.getConfig().getValue("runningInfo.hostnamePort", String.class),
+                                ConfigProvider.getConfig().getValue("runningInfo.hostname", String.class),
                                 "Login jwt",
                                 Integer.MAX_VALUE,
                                 true
@@ -254,8 +255,7 @@ public class Auth extends EndpointProvider {
     @PermitAll
     public Response logout(
             @Context SecurityContext ctx,
-            @QueryParam("returnPath") String returnPath,
-            @QueryParam("code") String code
+            @QueryParam("returnPath") String returnPath
     ) {
         return Response.seeOther(
                         UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")

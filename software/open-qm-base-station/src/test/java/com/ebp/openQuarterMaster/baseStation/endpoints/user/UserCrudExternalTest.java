@@ -26,7 +26,7 @@ import static io.restassured.RestAssured.given;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = {@ResourceArg(name = "startKeycloak", value = "true")})
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value="true"))
 @TestHTTPEndpoint(UserCrud.class)
 class UserCrudExternalTest extends RunningServerTest {
     @Inject

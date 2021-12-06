@@ -11,11 +11,17 @@ quarkus:
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
 
+test:
+  profile: test
+
+
 "%externalAuth":
   test:
+    profile: externalAuth
     keycloak:
       # These values populated by `TestResourceLifecycleManager`
       url:
+      authUrl:
       adminName:
       adminPass:
   service:
@@ -24,15 +30,15 @@ quarkus:
       name: Test Keycloak
       realm: apps
       clientId: quartermaster
-      clientSecret: 5116b335-e0fb-4947-bf1f-0b3434331e52
+      clientSecret: 12abaab8-0b4f-4ccb-a068-668764593c06
       scope: openid
   mp:
     jwt:
       verify:
         privatekey:
           location:
-        publickey:
-          location: security/testKeycloakPublicKey.pem
+#        publickey:
+#          location:
         issuer: ${runningInfo.organization} - ${service.nameShort} - EXTERNAL
 
 

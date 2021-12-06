@@ -58,7 +58,7 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
                     )
                     .build();
         }
-
-        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+        log.info("Erring exception for url that wasn't in ui");
+        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage() + e.toString()).build();
     }
 }
