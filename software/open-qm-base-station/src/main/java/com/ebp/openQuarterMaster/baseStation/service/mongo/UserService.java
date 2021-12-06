@@ -99,7 +99,8 @@ public class UserService extends MongoService<User> {
                 .firstName(jwt.getClaim(Claims.given_name))
                 .lastName(jwt.getClaim(Claims.family_name))
                 .email(jwt.getClaim(Claims.email))
-                .title(jwt.getClaim(JWT_USER_TITLE_CLAIM));
+                .title(jwt.getClaim(JWT_USER_TITLE_CLAIM))
+                .roles(jwt.getClaim(Claims.groups));
 
         if(jwt.getClaim(Claims.upn) != null) {
             userBuilder.username(jwt.getClaim(Claims.upn));
