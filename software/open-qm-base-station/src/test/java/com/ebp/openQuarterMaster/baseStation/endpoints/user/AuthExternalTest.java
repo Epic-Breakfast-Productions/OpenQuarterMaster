@@ -70,7 +70,7 @@ class AuthExternalTest extends RunningServerTest {
         )
                 .contentType(ContentType.JSON)
                 .when()
-                .get("tokenCheck")
+                .get("/api/user/auth/tokenCheck")
                 .then();
 
         log.info("token check response: {}", response.extract().body().asString());

@@ -8,12 +8,14 @@ service:
   # Not used if authMode = SELF
   externalAuth:
     name: Keycloak
-    url: http://localhost:8080
-    realm: realm
-    clientId: clientId
-    clientSecret: clientSecret
+    url: http://localhost:49185
+    realm: apps
+    clientId: quartermaster
+    clientSecret: secret # 12abaab8-0b4f-4ccb-a068-668764593c06
     scope: openid
-    interactionBasePath: /auth/realms/${service.externalAuth.realm:}/protocol/openid-connect
+    realmBasePath: /auth/realms/${service.externalAuth.realm:}
+    realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
+    interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
 #    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
@@ -24,7 +26,9 @@ runningInfo:
   organization: The Testing Organization
   protocol: http
   serverName: ${runningInfo.organization}
-  hostnamePort: localhost:${quarkus.http.port}
+  hostname: localhost
+  port: ${quarkus.http.port}
+  hostnamePort: ${runningInfo.hostname}:${quarkus.http.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
 
 quarkus:
@@ -35,7 +39,7 @@ quarkus:
 
     # for demo
     demoService:
-      url: http://localhost:8081
+      url: http://localhost:8082
       scope: javax.inject.Singleton
 
   log:
@@ -85,7 +89,7 @@ mp:
         location: security/packagedPrivateKeyPkcs8.pem
       publickey:
         location: security/packagedPublicKey.pem
-      issuer: ${runningInfo.organization} - ${service.nameShort}
+      issuer: ${runningInfo.organization} - ${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month

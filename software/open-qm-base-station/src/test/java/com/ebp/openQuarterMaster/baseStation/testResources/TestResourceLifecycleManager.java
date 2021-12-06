@@ -9,7 +9,6 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
@@ -18,9 +17,6 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.KeysMetadataRepresentation;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -43,12 +39,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 
     private static volatile MongodExecutable MONGO_EXE = null;
     private static volatile KeycloakContainer KEYCLOAK_CONTAINER = null;
-
-    private static volatile WebDriver webDriver;
-
-    static {
-        WebDriverManager.firefoxdriver().setup();
-    }
 
 	private boolean externalAuth = false;
 
@@ -147,8 +137,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
                 //TODO:: add config for server to talk to
                 "service.externalAuth.url", keycloakUrl,
                 "mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath()
-//                "service.externalAuth.clientId", clientId,
-//                "service.externalAuth.clientSecret", clientSecret
+
 
         );
     }
@@ -197,23 +186,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     }
 
 
-    public static synchronized boolean webDriverIsInitted() {
-        return getWebDriver() != null;
-    }
-
-    public static synchronized void initWebDriver() {
-        if (!webDriverIsInitted()) {
-            log.info("Opening web browser");
-            webDriver = new FirefoxDriver(new FirefoxOptions().setHeadless(SELENIUM_HEADLESS));
-        } else {
-            log.info("Driver already started.");
-        }
-    }
-
-    public static synchronized WebDriver getWebDriver() {
-        return webDriver;
-    }
-
     @Override
     public void init(Map<String, String> initArgs) {
         this.externalAuth = Boolean.parseBoolean(initArgs.getOrDefault(EXTERNAL_AUTH_ARG, Boolean.toString(this.externalAuth)));
@@ -230,7 +202,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         }
 
         configOverride.putAll(startKeycloakTestServer());
-        initWebDriver();
+//        initWebDriver();
 
         return configOverride;
     }
@@ -239,9 +211,5 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     public void stop() {
         log.info("STOPPING test lifecycle resources.");
         stopMongoTestServer();
-        log.info("Closing web driver.");
-        if (webDriverIsInitted()) {
-            getWebDriver().close();
-        }
     }
 }

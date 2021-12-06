@@ -1,4 +1,6 @@
 quarkus:
+  http:
+    port: 8081
   log:
     level: TRACE
   mongodb:
@@ -13,6 +15,9 @@ quarkus:
 
 test:
   profile: test
+  selenium:
+    headless: false
+    defailtWait: 5 # seconds
 
 
 "%externalAuth":
@@ -37,8 +42,6 @@ test:
       verify:
         privatekey:
           location:
-#        publickey:
-#          location:
-        issuer: ${runningInfo.organization} - ${service.nameShort} - EXTERNAL
+        issuer: ${service.externalAuth.realmBase:}
 
 

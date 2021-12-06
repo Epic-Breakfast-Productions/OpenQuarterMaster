@@ -183,7 +183,7 @@ public class TestUserService {
             }
         }});
 
-        String password = getRandomPassword();//TODO:: better for pw validation
+        String password = getRandomPassword();
         builder.pwHash(this.passwordService.createPasswordHash(password));
 
         User testUser = builder.build();
