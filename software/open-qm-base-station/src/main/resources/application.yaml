@@ -84,7 +84,9 @@ quarkus:
     sampler-param: 1
 #    metrics:
 #      enabled: true
-
+  http:
+    auth:
+      proactive: false
 mp:
   jwt:
     verify:
