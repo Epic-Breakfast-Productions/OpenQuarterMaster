@@ -1,4 +1,5 @@
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Items' titleIcon='balance-scale' page='items'}
+{@java.util.Map allowedUnitsMap}
 {#pageContent}
 
 
@@ -86,6 +87,11 @@
             </tr>
             </tfoot>
         </table>
+
+        <select>
+            {#unitOptions allowedUnitsMap=allowedUnitsMap}
+            {/unitOptions}
+        </select>
     </div>
 </div>
 {/pageContent}

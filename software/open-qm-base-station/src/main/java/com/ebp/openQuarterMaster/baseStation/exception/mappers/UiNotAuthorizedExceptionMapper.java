@@ -1,10 +1,13 @@
 package com.ebp.openQuarterMaster.baseStation.exception.mappers;
 
+import com.ebp.openQuarterMaster.baseStation.ui.UiUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.net.URI;
 
@@ -44,17 +47,7 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
                     )//build the URL where you want to redirect
 //                    .entity("Not authorized")//entity is not required
                     .cookie(
-                            new NewCookie(
-                                    new Cookie(
-                                            ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
-                                            "",
-                                            "/",
-                                            ConfigProvider.getConfig().getValue("runningInfo.hostname", String.class)
-                                    ),
-                                    "To clear out the auth cookie",
-                                    0,
-                                    false
-                            )
+                            UiUtils.getAuthRemovalCookie()
                     )
                     .build();
         }

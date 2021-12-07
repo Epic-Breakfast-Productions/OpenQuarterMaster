@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
+import com.ebp.openQuarterMaster.baseStation.ui.UiUtils;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.TimeUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
@@ -262,17 +263,7 @@ public class Auth extends EndpointProvider {
         return Response.seeOther(
                         UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")
                                 .build()
-                ).cookie(
-                        new NewCookie(
-                                ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
-                                "",
-                                "/",
-                                ConfigProvider.getConfig().getValue("runningInfo.hostnamePort", String.class),
-                                "Login jwt clear",
-                                0,
-                                true
-                        )
-                )
+                ).cookie(UiUtils.getAuthRemovalCookie())
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
@@ -85,6 +86,7 @@ public class Items extends UiProvider {
 
         return items
                 .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
+                .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
                 .data("showSearch", false)
                 .data("searchResults", searchResult);
     }

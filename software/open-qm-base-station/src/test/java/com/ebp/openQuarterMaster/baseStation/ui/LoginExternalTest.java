@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.profiles.ExternalAuthTestProfile;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
+import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.General;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
+import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.LocationAssertions.assertOnPage;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserAdminLoggedIn;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserLoggedIn;
 
@@ -74,5 +76,20 @@ public class LoginExternalTest extends WebUiTest {
         this.webDriverWrapper.loginUser(testUser);
 
         assertUserAdminLoggedIn(this.webDriverWrapper, testUser);
+    }
+
+    @Test
+    public void testLogout() throws InterruptedException {
+        User testUser = this.testUserService.getTestUser(true, true);
+
+        this.webDriverWrapper.loginUser(testUser);
+
+        this.webDriverWrapper.waitFor(General.USERNAME_DISPLAY).click();
+        this.webDriverWrapper.waitFor(General.LOGOUT_BUTTON).click();
+
+        this.webDriverWrapper.waitForPageLoad();
+        Thread.sleep(3);
+
+        assertOnPage(this.webDriverWrapper, "/");
     }
 }
