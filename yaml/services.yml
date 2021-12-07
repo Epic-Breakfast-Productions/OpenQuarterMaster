@@ -1,0 +1,70 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: mongodb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      helm.sh/chart: mongodb-10.29.1
+    name: mongodb
+  spec:
+    ports:
+    - name: mongodb
+      port: 27017
+      protocol: TCP
+      targetPort: mongodb
+    selector:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: mongodb
+      app.kubernetes.io/name: mongodb
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: open-qm-base-station
+    name: open-qm-base-station
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deployment: open-qm-base-station
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: open-qm-plugin-demo
+      app.kubernetes.io/component: open-qm-plugin-demo
+      app.kubernetes.io/instance: open-qm-plugin-demo
+    name: open-qm-plugin-demo
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    - name: 9779-tcp
+      port: 9779
+      protocol: TCP
+      targetPort: 9779
+    selector:
+      deployment: open-qm-plugin-demo
+    sessionAffinity: None
+    type: ClusterIP
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
