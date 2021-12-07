@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
+import com.ebp.openQuarterMaster.baseStation.demo.DemoExternalServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
@@ -50,7 +51,10 @@ public class Overview extends UiProvider {
 
     @Inject
     @RestClient
-    DemoServiceCaller extensionsService;
+    DemoServiceCaller demoService;
+    @Inject
+    @RestClient
+    DemoExternalServiceCaller externDemoService;
 
     @GET
     @Path("overview")
@@ -65,21 +69,35 @@ public class Overview extends UiProvider {
         //FOR DEMO PURPOSES ONLY
         String response1 = null;
         String response2 = null;
+        String responseExt1 = null;
+        String responseExt2 = null;
         {
             String authHeaderContent = "Bearer " + this.jwt.getRawToken();
 
             try {
-                response1 = extensionsService.get1(authHeaderContent);
+                response1 = demoService.get1(authHeaderContent);
 //                response1 = extensionsService.get1(authHeaderContent);
             } catch (Throwable e){
                 log.warn("Failed to reach service for 1: ", e);
                 response1 = e.getMessage();
             }
             try {
-                response2 = extensionsService.get2(authHeaderContent);
+                response2 = demoService.get2(authHeaderContent);
             } catch (Throwable e){
                 log.warn("Failed to reach service for 2: ", e);
                 response2 = e.getMessage();
+            }
+            try {
+                responseExt1 = externDemoService.get1(authHeaderContent);
+            } catch (Throwable e){
+                log.warn("Failed to reach service for external 1: ", e);
+                responseExt1 = e.getMessage();
+            }
+            try {
+                responseExt2 = externDemoService.get2(authHeaderContent);
+            } catch (Throwable e){
+                log.warn("Failed to reach service for external 2: ", e);
+                responseExt2 = e.getMessage();
             }
         }
 
@@ -89,6 +107,8 @@ public class Overview extends UiProvider {
                 .data("numStorageBlocks", storageBlockService.count())
                 .data("response1", response1)
                 .data("response2", response2)
+                .data("responseExt1", responseExt1)
+                .data("responseExt2", responseExt2)
                 ;
     }
 

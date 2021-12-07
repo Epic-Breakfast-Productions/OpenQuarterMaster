@@ -16,7 +16,7 @@ quarkus:
 test:
   profile: test
   selenium:
-    headless: false
+    headless: true
     defailtWait: 5 # seconds
 
 

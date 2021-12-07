@@ -41,6 +41,9 @@ quarkus:
     demoService:
       url: http://localhost:8082
       scope: javax.inject.Singleton
+    demoServiceExternal:
+      url: http://localhost:8082
+      scope: javax.inject.Singleton
 
   log:
     level: DEBUG

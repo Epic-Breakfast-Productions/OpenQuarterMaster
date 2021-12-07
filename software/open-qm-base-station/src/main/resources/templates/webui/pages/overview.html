@@ -9,15 +9,22 @@
 </p>
 
 <h3>
-    Results from external service:
+    Results from other service(s):
 </h3>
-<p>
-    Endpoint 1: <code>{response1}</code>
-</p>
-<p>
-    Endpoint 2: <code>{response2}</code>
-</p>
-
+<table class="table table-bordered">
+    <tr>
+        <th>
+            Service/endpoint
+        </th>
+        <th>
+            Response
+        </th>
+    </tr>
+    <tr><th class="text-nowrap">Endpoint 1<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/1</code>)</th><td><code>{response1}</code></td></tr>
+    <tr><th class="text-nowrap">Endpoint 2<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/2</code>)</th><td><code>{response2}</code></td></tr>
+    <tr><th class="text-nowrap">Endpoint 1 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/1</code>)</th><td><code>{responseExt1}</code></td></tr>
+    <tr><th class="text-nowrap">Endpoint 2 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/2</code>)</th><td><code>{responseExt2}</code></td></tr>
+</table>
 <p>
     Todo:
 <ul>
