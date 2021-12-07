@@ -35,8 +35,6 @@ import static org.keycloak.crypto.KeyUse.SIG;
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
     public static final String EXTERNAL_AUTH_ARG = "externalAuth";
 
-    private static final boolean SELENIUM_HEADLESS = true;
-
     private static volatile MongodExecutable MONGO_EXE = null;
     private static volatile KeycloakContainer KEYCLOAK_CONTAINER = null;
 
@@ -202,7 +200,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         }
 
         configOverride.putAll(startKeycloakTestServer());
-//        initWebDriver();
 
         return configOverride;
     }

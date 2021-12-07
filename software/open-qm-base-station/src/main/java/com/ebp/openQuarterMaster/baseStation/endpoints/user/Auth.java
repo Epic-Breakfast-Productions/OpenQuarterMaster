@@ -74,6 +74,8 @@ public class Auth extends EndpointProvider {
     JsonWebToken jwt;
     @Inject
     SecurityIdentity identity;
+//    @Context
+//    UriInfo crc;
 
     @POST
     @Operation(
@@ -184,7 +186,9 @@ public class Auth extends EndpointProvider {
     public Response callback(
             @Context SecurityContext ctx,
             @QueryParam("returnPath") String returnPath,
-            @QueryParam("code") String code
+            @QueryParam("code") String code,
+            @QueryParam("state") String state,
+            @QueryParam("session_state") String sessionState
     ) {
         //TODO:: check state info
         logRequestContext(this.jwt, ctx);
@@ -240,7 +244,6 @@ public class Auth extends EndpointProvider {
                 )
                 .build();
     }
-
 
     @GET
     @Path("logout")

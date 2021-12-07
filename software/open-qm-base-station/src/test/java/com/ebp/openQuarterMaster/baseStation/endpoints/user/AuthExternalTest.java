@@ -37,7 +37,7 @@ class AuthExternalTest extends RunningServerTest {
     TestUserService testUserService;
 
     @Test
-    public void testLogin() throws JsonProcessingException {
+    public void testLoginEndpoint() throws JsonProcessingException {
         User testUser = this.testUserService.getTestUser(false, true);
 
         UserLoginRequest ulr = new UserLoginRequest(testUser.getEmail(), testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY), true);
