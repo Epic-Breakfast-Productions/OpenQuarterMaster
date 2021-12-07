@@ -35,8 +35,6 @@ class AuthExternalTest extends RunningServerTest {
     ObjectMapper objectMapper;
     @Inject
     TestUserService testUserService;
-//    @Inject
-//    JwtService jwtService;
 
     @Test
     public void testLogin() throws JsonProcessingException {

@@ -17,21 +17,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
 
 @Slf4j
-@RequestScoped
+//@RequestScoped
+@ApplicationScoped
 public class WebDriverWrapper implements Closeable {
     static {
         WebDriverManager.firefoxdriver().setup();
     }
 
     @Getter
-    private volatile WebDriver webDriver;
+    private volatile WebDriver webDriver = null;
 
     @ConfigProperty(name = "test.selenium.headless", defaultValue = "true")
     boolean headless;
@@ -44,12 +45,21 @@ public class WebDriverWrapper implements Closeable {
 
     @PostConstruct
     void setup(){
+        log.info("Creating new web driver.");
         this.webDriver = new FirefoxDriver(new FirefoxOptions().setHeadless(headless));
     }
 
     @PreDestroy
     public void close(){
+        log.info("Closing out web driver.");
         this.webDriver.close();
+    }
+
+    public void cleanup(){
+        log.info("Cleaning up browser after test.");
+        this.webDriver.manage().deleteAllCookies();
+        this.webDriver.get("about:logo");
+        this.webDriver.navigate().refresh();
     }
 
     public WebElement findElement(By by){
@@ -68,7 +78,7 @@ public class WebDriverWrapper implements Closeable {
     }
 
     public WebDriverWait getWait(int seconds){
-        return new WebDriverWait(this.webDriver, Duration.ofSeconds(seconds));
+        return new WebDriverWait(this.getWebDriver(), Duration.ofSeconds(seconds));
     }
 
     public WebDriverWait getWait(){
