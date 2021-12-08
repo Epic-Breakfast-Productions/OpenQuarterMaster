@@ -11,6 +11,7 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -111,29 +112,33 @@ public class Overview extends UiProvider {
 //            }
             }
             {
-                try {
-                    response1 = demoService.get1(authHeaderContent);
-                } catch (Throwable e) {
-                    log.warn("Failed to reach service for 1: ", e);
-                    response1 = e.getMessage();
+                if(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoService.perform", Boolean.class)) {
+                    try {
+                        response1 = demoService.get1(authHeaderContent);
+                    } catch (Throwable e) {
+                        log.warn("Failed to reach service for 1: ", e);
+                        response1 = e.getMessage();
+                    }
+                    try {
+                        response2 = demoService.get2(authHeaderContent);
+                    } catch (Throwable e) {
+                        log.warn("Failed to reach service for 2: ", e);
+                        response2 = e.getMessage();
+                    }
                 }
-                try {
-                    response2 = demoService.get2(authHeaderContent);
-                } catch (Throwable e) {
-                    log.warn("Failed to reach service for 2: ", e);
-                    response2 = e.getMessage();
-                }
-                try {
-                    responseExt1 = externDemoService.get1(authHeaderContent);
-                } catch (Throwable e) {
-                    log.warn("Failed to reach service for external 1: ", e);
-                    responseExt1 = e.getMessage();
-                }
-                try {
-                    responseExt2 = externDemoService.get2(authHeaderContent);
-                } catch (Throwable e) {
-                    log.warn("Failed to reach service for external 2: ", e);
-                    responseExt2 = e.getMessage();
+                if(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.perform", Boolean.class)) {
+                    try {
+                        responseExt1 = externDemoService.get1(authHeaderContent);
+                    } catch (Throwable e) {
+                        log.warn("Failed to reach service for external 1: ", e);
+                        responseExt1 = e.getMessage();
+                    }
+                    try {
+                        responseExt2 = externDemoService.get2(authHeaderContent);
+                    } catch (Throwable e) {
+                        log.warn("Failed to reach service for external 2: ", e);
+                        responseExt2 = e.getMessage();
+                    }
                 }
             }
             log.info("Finished demo service calls: {}/{}/{}/{}", response1, response2, responseExt1, responseExt2);
