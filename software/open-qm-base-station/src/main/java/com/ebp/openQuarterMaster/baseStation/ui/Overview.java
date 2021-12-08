@@ -95,7 +95,7 @@ public class Overview extends UiProvider {
                     result = future.get(500, TimeUnit.MILLISECONDS);
                 } catch (Throwable e) {
                     log.warn("Failed to make call {}: ", curStage.getKey(), e);
-                    result = e.getMessage();
+                    result = e.getClass().getName() + " - " + e.getMessage();
                 }
                 log.info("Got result from call {} - {}", curStage.getKey(), result);
 
