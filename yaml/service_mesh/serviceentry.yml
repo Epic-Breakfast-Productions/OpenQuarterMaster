@@ -16,6 +16,22 @@ items:
       number: 80
       protocol: HTTP
     resolution: DNS
+- apiVersion: networking.istio.io/v1beta1
+  kind: ServiceEntry
+  metadata:
+    name: external-demo
+  spec:
+    hosts:
+    - docker-laptop
+    location: MESH_EXTERNAL
+    ports:
+    - name: https
+      number: 443
+      protocol: HTTPS
+    - name: http
+      number: 80
+      protocol: HTTP
+    resolution: DNS
 kind: List
 metadata:
   resourceVersion: ""
