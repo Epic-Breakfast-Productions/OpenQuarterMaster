@@ -74,6 +74,7 @@ public class Overview extends UiProvider {
         String responseExt2 = null;
         {
             String authHeaderContent = "Bearer " + this.jwt.getRawToken();
+            log.info("Performing rest calls to demo services.");
             {
 //            java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
 //
