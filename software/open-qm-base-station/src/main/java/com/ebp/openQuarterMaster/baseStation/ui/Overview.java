@@ -89,9 +89,9 @@ public class Overview extends UiProvider {
 
                 String result = null;
                 try {
-                    result = future.get(1000, TimeUnit.MILLISECONDS);
+                    result = future.get(500, TimeUnit.MILLISECONDS);
                 } catch (Throwable e) {
-                    log.warn("Failed to make call {}", curStage.getKey(), e);
+                    log.warn("Failed to make call {}: ", curStage.getKey(), e);
                     result = e.getMessage();
                 }
 
