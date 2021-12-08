@@ -41,13 +41,15 @@ quarkus:
     demoService:
       url: http://localhost:8082
       scope: javax.inject.Singleton
-      connectTimeout: 500
-      readTimeout: 500
+      mp-rest:
+        connectTimeout: 500
+        readTimeout: 500
     demoServiceExternal:
       url: http://localhost:8082
       scope: javax.inject.Singleton
-      connectTimeout: 500
-      readTimeout: 500
+      mp-rest:
+        connectTimeout: 500
+        readTimeout: 500
 
   log:
     level: DEBUG
