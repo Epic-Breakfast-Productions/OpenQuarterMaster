@@ -88,12 +88,14 @@ public class Overview extends UiProvider {
                 CompletableFuture<String> future = curStage.getValue();
 
                 String result = null;
+                log.info("Waiting on call {}", curStage.getKey());
                 try {
                     result = future.get(500, TimeUnit.MILLISECONDS);
                 } catch (Throwable e) {
                     log.warn("Failed to make call {}: ", curStage.getKey(), e);
                     result = e.getMessage();
                 }
+                log.info("Got result from call {} - {}", curStage.getKey(), result);
 
                 switch (curStage.getKey()) {
                     case 1:
