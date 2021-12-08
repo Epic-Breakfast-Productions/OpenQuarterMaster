@@ -49,7 +49,7 @@ quarkus:
       scope: javax.inject.Singleton
       connectTimeout: 500
       readTimeout: 500
-      perform: false
+      perform: true
 
   log:
     level: DEBUG
