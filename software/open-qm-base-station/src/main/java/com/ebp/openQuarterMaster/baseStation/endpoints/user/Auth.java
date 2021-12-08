@@ -263,6 +263,7 @@ public class Auth extends EndpointProvider {
             @Context SecurityContext ctx,
             @QueryParam("returnPath") String returnPath
     ) {
+        log.info("Logging out user.");
         return Response.seeOther(
                         UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")
                                 .build()

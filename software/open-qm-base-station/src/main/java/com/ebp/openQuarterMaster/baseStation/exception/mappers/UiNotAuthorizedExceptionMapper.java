@@ -27,12 +27,29 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
     @Context
     JsonWebToken jsonWebToken;
 
+    protected String getErrorMessage(E e){
+        StringBuilder errorMessages = new StringBuilder();
+
+        Throwable lastE = null;
+        Throwable curE = e;
+        while (curE != null && lastE != curE) {
+            if (e.getMessage() != null) {
+                errorMessages.append(e.getMessage());
+            }
+            lastE = curE;
+            curE = e.getCause();
+        }
+        return errorMessages.toString();
+    }
+
 //    @Context
 //    @CookieParam("jwt")
 //    Map<String, Cookie> authCookies;
 
     public Response toResponse(E e) {
-        log.warn("User not authorized to access: {} - {}/{}", crc.getRequestUri(), e.getClass().getName(), e.getMessage());
+        String errorMessage = this.getErrorMessage(e);
+
+        log.warn("User not authorized to access: {} - {} Message(s): {}", crc.getRequestUri(), e.getClass().getName(), errorMessage);
 
 //        log.info("Cookie: {}", authCookies);
         URI uri = this.crc.getRequestUri();
@@ -40,7 +57,7 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
             return Response.seeOther( //seeOther = 303 redirect
                             UriBuilder.fromUri("/")
                                     .queryParam("messageHeading", "Unauthorized")
-                                    .queryParam("message", "Please login to access this page.")
+                                    .queryParam("message", "Please login to access this page. Error: " + errorMessage)
                                     .queryParam("messageType", "danger")
                                     .queryParam("returnPath", uri.getPath() + (uri.getQuery() == null ? "" : "?" + uri.getQuery()))
                                     .build()
