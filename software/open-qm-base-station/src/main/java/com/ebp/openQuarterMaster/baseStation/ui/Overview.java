@@ -29,6 +29,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Traced
 @Slf4j
@@ -88,7 +89,7 @@ public class Overview extends UiProvider {
 
                 String result = null;
                 try {
-                    result = future.join();
+                    result = future.get(1000, TimeUnit.MILLISECONDS);
                 } catch (Throwable e) {
                     log.warn("Failed to make call {}", curStage.getKey(), e);
                     result = e.getMessage();
