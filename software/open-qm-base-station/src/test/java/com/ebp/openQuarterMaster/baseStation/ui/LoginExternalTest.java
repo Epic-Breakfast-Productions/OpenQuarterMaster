@@ -87,8 +87,7 @@ public class LoginExternalTest extends WebUiTest {
         this.webDriverWrapper.waitFor(General.USERNAME_DISPLAY).click();
         this.webDriverWrapper.waitFor(General.LOGOUT_BUTTON).click();
 
-        this.webDriverWrapper.waitForPageLoad();
-        Thread.sleep(3);
+        this.webDriverWrapper.waitFor(Root.SIGN_IN_BUTTON);
 
         assertOnPage(this.webDriverWrapper, "/");
     }

@@ -26,6 +26,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Traced
 @Slf4j
@@ -73,31 +76,64 @@ public class Overview extends UiProvider {
         String responseExt2 = null;
         {
             String authHeaderContent = "Bearer " + this.jwt.getRawToken();
+            java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
 
-            try {
-                response1 = demoService.get1(authHeaderContent);
-//                response1 = extensionsService.get1(authHeaderContent);
-            } catch (Throwable e){
-                log.warn("Failed to reach service for 1: ", e);
-                response1 = e.getMessage();
+            completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
+            completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
+            completionStages.put(3, externDemoService.get1(authHeaderContent).toCompletableFuture());
+            completionStages.put(4, externDemoService.get2(authHeaderContent).toCompletableFuture());
+
+            for (Map.Entry<Integer, CompletableFuture<String>> curStage : completionStages.entrySet()) {
+                CompletableFuture<String> future = curStage.getValue();
+
+                String result = null;
+                try {
+                    result = future.join();
+                } catch (Throwable e) {
+                    log.warn("Failed to make call {}", curStage.getKey(), e);
+                    result = e.getMessage();
+                }
+
+                switch (curStage.getKey()) {
+                    case 1:
+                        response1 = result;
+                        break;
+                    case 2:
+                        response2 = result;
+                        break;
+                    case 3:
+                        responseExt1 = result;
+                        break;
+                    case 4:
+                        responseExt2 = result;
+                        break;
+                }
             }
-            try {
-                response2 = demoService.get2(authHeaderContent);
-            } catch (Throwable e){
-                log.warn("Failed to reach service for 2: ", e);
-                response2 = e.getMessage();
-            }
-            try {
-                responseExt1 = externDemoService.get1(authHeaderContent);
-            } catch (Throwable e){
-                log.warn("Failed to reach service for external 1: ", e);
-                responseExt1 = e.getMessage();
-            }
-            try {
-                responseExt2 = externDemoService.get2(authHeaderContent);
-            } catch (Throwable e){
-                log.warn("Failed to reach service for external 2: ", e);
-                responseExt2 = e.getMessage();
+            {
+//            try {
+//                response1 = demoService.get1(authHeaderContent);
+//            } catch (Throwable e){
+//                log.warn("Failed to reach service for 1: ", e);
+//                response1 = e.getMessage();
+//            }
+//            try {
+//                response2 = demoService.get2(authHeaderContent);
+//            } catch (Throwable e){
+//                log.warn("Failed to reach service for 2: ", e);
+//                response2 = e.getMessage();
+//            }
+//            try {
+//                responseExt1 = externDemoService.get1(authHeaderContent);
+//            } catch (Throwable e){
+//                log.warn("Failed to reach service for external 1: ", e);
+//                responseExt1 = e.getMessage();
+//            }
+//            try {
+//                responseExt2 = externDemoService.get2(authHeaderContent);
+//            } catch (Throwable e){
+//                log.warn("Failed to reach service for external 2: ", e);
+//                responseExt2 = e.getMessage();
+//            }
             }
         }
 
