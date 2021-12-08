@@ -136,6 +136,7 @@ public class Overview extends UiProvider {
 //                responseExt2 = e.getMessage();
 //            }
             }
+            log.info("Finished demo service calls: {}/{}/{}/{}", response1, response2, responseExt1, responseExt2);
         }
 
         return overview
