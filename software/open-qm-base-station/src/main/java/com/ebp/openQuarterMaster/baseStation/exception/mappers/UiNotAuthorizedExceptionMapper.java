@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.exception.mappers;
 
 import com.ebp.openQuarterMaster.baseStation.ui.UiUtils;
+import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -29,6 +30,10 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
 
     protected String getErrorMessage(E e){
         StringBuilder errorMessages = new StringBuilder();
+
+        if(e instanceof UnauthorizedException){
+            errorMessages.append("User not logged in; did not receive token. ");
+        }
 
         Throwable lastE = null;
         Throwable curE = e;
@@ -68,7 +73,7 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
                     )
                     .build();
         }
-        log.info("Erring exception for url that wasn't in ui");
-        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage() + e.toString()).build();
+        log.info("Erring exception for url that wasn't in ui.");
+        return Response.status(Response.Status.UNAUTHORIZED).entity(errorMessage).build();
     }
 }
