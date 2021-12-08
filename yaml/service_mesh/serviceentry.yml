@@ -1,0 +1,22 @@
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1beta1
+  kind: ServiceEntry
+  metadata:
+    name: auth0-ext
+  spec:
+    hosts:
+    - keycloak-sso.apps.sno-demo.nixon.com
+    location: MESH_EXTERNAL
+    ports:
+    - name: https
+      number: 443
+      protocol: HTTPS
+    - name: http
+      number: 80
+      protocol: HTTP
+    resolution: DNS
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

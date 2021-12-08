@@ -1,0 +1,20 @@
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1beta1
+  kind: Gateway
+  metadata:
+    name: qm-gw
+  spec:
+    selector:
+      istio: ingressgateway
+    servers:
+    - hosts:
+      - '*'
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

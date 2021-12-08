@@ -26,8 +26,9 @@ items:
   kind: Service
   metadata:
     labels:
-      app: open-qm-base-station
-    name: open-qm-base-station
+      app: base-station
+      service: base-station
+    name: base-station
   spec:
     ports:
     - name: 8080-tcp
@@ -45,7 +46,8 @@ items:
       app: open-qm-plugin-demo
       app.kubernetes.io/component: open-qm-plugin-demo
       app.kubernetes.io/instance: open-qm-plugin-demo
-    name: open-qm-plugin-demo
+      service: demo-plugin
+    name: demo-plugin 
   spec:
     ports:
     - name: 8080-tcp
