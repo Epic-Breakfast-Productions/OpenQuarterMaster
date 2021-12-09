@@ -1,18 +1,10 @@
 package com.ebp.openQuarterMaster.lib.core.media;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import lombok.*;
 
-import javax.imageio.ImageIO;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
-import java.util.*;
 
 /**
  */
@@ -46,7 +38,7 @@ public class Image extends MainObject {
 
     /**
      * The base-64 encoded data that makes up the image.
-     *
+     * <p>
      * TODO:: validator for valid base64
      */
     @NonNull
@@ -54,18 +46,18 @@ public class Image extends MainObject {
     @NotBlank
     private char[] data;
 
-    public Image(String title, BufferedImage image){
-        BufferedImage resized = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, image.getType());
+//    public Image(String title, BufferedImage image){
+//        BufferedImage resized = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, image.getType());
+//
+//        CharArrayWriter writer = new CharArrayWriter();
+//
+//        //TODO:: finish
+//
+//        ImageIO.write(resized, CONVERTED_IMAGE_FORMAT, new WriterOutwriter);
+//        this(title, CONVERTED_IMAGE_FORMAT, os.toByteArray());
+//    }
 
-        CharArrayWriter writer = new CharArrayWriter();
-
-        //TODO:: finish
-
-        ImageIO.write(resized, CONVERTED_IMAGE_FORMAT, new WriterOutwriter);
-        this(title, CONVERTED_IMAGE_FORMAT, os.toByteArray());
-    }
-
-    public String toDataString(){
+    public String toDataString() {
         StringBuilder sb = new StringBuilder("data:image/");
         sb.append(this.getType());
         sb.append(";base64,");
