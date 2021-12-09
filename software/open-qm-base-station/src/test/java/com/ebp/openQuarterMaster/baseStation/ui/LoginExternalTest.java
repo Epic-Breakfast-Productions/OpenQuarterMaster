@@ -52,6 +52,13 @@ public class LoginExternalTest extends WebUiTest {
 
         this.webDriverWrapper.waitForPageLoad();
         assertUserLoggedIn(this.webDriverWrapper, testUser);
+
+        //test refresh keys
+        this.webDriverWrapper.getWebDriver().navigate().refresh();
+
+        this.webDriverWrapper.waitForPageLoad();
+        assertUserLoggedIn(this.webDriverWrapper, testUser);
+
     }
 
     @Test

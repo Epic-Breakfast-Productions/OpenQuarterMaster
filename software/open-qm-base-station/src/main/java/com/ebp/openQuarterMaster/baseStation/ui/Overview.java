@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.ui;
 
 import com.ebp.openQuarterMaster.baseStation.demo.DemoExternalServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller;
+import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
@@ -9,7 +10,6 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -20,13 +20,13 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +52,9 @@ public class Overview extends UiProvider {
 
     @Inject
     JsonWebToken jwt;
+    @Inject
+    @RestClient
+    KeycloakServiceCaller ksc;
 
     @Inject
     @RestClient
@@ -64,11 +67,13 @@ public class Overview extends UiProvider {
     @Path("overview")
     @RolesAllowed("user")
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance overview(
-            @Context SecurityContext securityContext
+    public Response overview(
+            @Context SecurityContext securityContext,
+            @CookieParam("jwt_refresh") String refreshToken
     ) {
         logRequestContext(jwt, securityContext);
         User user = userService.getFromJwt(this.jwt);
+        List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 
         //FOR DEMO PURPOSES ONLY
         String response1 = null;
@@ -148,15 +153,23 @@ public class Overview extends UiProvider {
             log.info("Finished demo service calls: {}/{}/{}/{}", response1, response2, responseExt1, responseExt2);
         }
 
-        return overview
-                .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
-                .data("numItems", inventoryItemService.count())
-                .data("numStorageBlocks", storageBlockService.count())
-                .data("response1", response1)
-                .data("response2", response2)
-                .data("responseExt1", responseExt1)
-                .data("responseExt2", responseExt2)
-                ;
+        Response.ResponseBuilder responseBuilder = Response.ok(
+                overview
+                        .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
+                        .data("numItems", inventoryItemService.count())
+                        .data("numStorageBlocks", storageBlockService.count())
+                        .data("response1", response1)
+                        .data("response2", response2)
+                        .data("responseExt1", responseExt1)
+                        .data("responseExt2", responseExt2),
+                MediaType.TEXT_HTML_TYPE
+        );
+
+        if(newCookies != null && !newCookies.isEmpty()){
+            responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
+        }
+
+        return responseBuilder.build();
     }
 
 }

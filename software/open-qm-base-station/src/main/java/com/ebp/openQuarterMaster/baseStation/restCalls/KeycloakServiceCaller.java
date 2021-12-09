@@ -28,10 +28,8 @@ public interface KeycloakServiceCaller {
     JsonNode refreshToken(
             @FormParam("client_id") String clientId,
             @FormParam("client_secret") String clientSecret,
-            @FormParam("scope") String scope,
             @FormParam("grant_type") String grant_type,
-            @FormParam("code") String code,
-            @FormParam("redirect_uri") String redirect_uri
+            @FormParam("refresh_token") String refresh_token
     );
 
 }

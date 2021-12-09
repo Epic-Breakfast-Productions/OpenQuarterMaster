@@ -2,12 +2,14 @@ package com.ebp.openQuarterMaster.baseStation.ui;
 
 import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
+
+import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Slf4j
 public abstract class UiProvider {
@@ -33,9 +35,33 @@ public abstract class UiProvider {
         return jwt != null && jwt.getClaimNames() != null;
     }
 
-    protected static List<NewCookie> refreshAuthToken(AuthMode authMode, KeycloakServiceCaller ksc, String refreshCode){
-        //TODO:: this: https://stackoverflow.com/questions/51386337/refresh-access-token-via-refresh-token-in-keycloak
-        return null;
+    protected static JsonNode refreshAuthToken(KeycloakServiceCaller ksc, String refreshCode) {
+        if (!EXTERNAL.equals(ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class))) {
+            return null;
+        }
+        if(refreshCode == null || refreshCode.isBlank()){
+            return null;
+        }
+
+        JsonNode response;
+
+        try {
+            response = ksc.refreshToken(
+                    ConfigProvider.getConfig().getValue("service.externalAuth.clientId", String.class),
+                    ConfigProvider.getConfig().getValue("service.externalAuth.clientSecret", String.class),
+                    "refresh_token",
+                    refreshCode
+            );
+        } catch (Throwable e) {
+            log.warn("Failed to refresh token from keycloak (exception)- ", e);
+            //TODO:: deal with properly
+            e.printStackTrace();
+            throw e;
+        }
+
+        log.info("Got response from keycloak on token refresh request: {}", response);
+
+        return response;
     }
 
 }

@@ -16,7 +16,6 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -36,9 +35,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 @Traced
@@ -230,51 +227,7 @@ public class Auth extends EndpointProvider {
             throw e;
         }
 
-        List<String> fields = new ArrayList<>();
-        for (Iterator<String> it = returned.fieldNames(); it.hasNext(); ) {
-            fields.add(it.next());
-        }
-        log.info("Fields from keycloak: {}", fields);
-
-        if (!returned.has("access_token")) {
-            log.warn("Failed to get token from keycloak (token not in data)");
-            //TODO:: handle
-            throw new IllegalStateException("Token not in data");
-        }
-
-        String jwt = returned.get("access_token").asText();
-        int jwt_expires_in = returned.get("expires_in").asInt();
-        String refresh_token = null;
-        int refreshExpiresIn = jwt_expires_in;
-        if (returned.has("refresh_token")) {
-            refresh_token = returned.get("refresh_token").asText();
-            refreshExpiresIn = returned.get("refresh_expires_in").asInt();
-        }
-
-        log.debug("JWT got from external auth: {}", jwt);
-        log.debug("Public key to verify sig: {}", ConfigProvider.getConfig().getValue("mp.jwt.verify.publickey.location", String.class));
-
-        List<NewCookie> newCookies = new ArrayList<>();
-
-        newCookies.add(
-                UiUtils.getNewCookie(
-                        jwtCookieName,
-                        jwt,
-                        "JWT from external auth",
-                        jwt_expires_in
-                )
-        );
-        if (refresh_token != null) {
-            newCookies.add(
-                    UiUtils.getNewCookie(
-                            jwtCookieName + "_refresh",
-                            refresh_token,
-                            "JWT refresh token.",
-                            refreshExpiresIn
-                    )
-            );
-        }
-
+        List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(returned);
 
         Response.ResponseBuilder responseBuilder = Response.seeOther(
                 UriBuilder.fromUri(

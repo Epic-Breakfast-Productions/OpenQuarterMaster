@@ -132,7 +132,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
                 "test.keycloak.authUrl", KEYCLOAK_CONTAINER.getAuthServerUrl(),
                 "test.keycloak.adminName", KEYCLOAK_CONTAINER.getAdminUsername(),
                 "test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
-                //TODO:: add config for server to talk to
                 "service.externalAuth.url", keycloakUrl,
                 "mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath()
 
