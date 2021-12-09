@@ -24,7 +24,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         Map<String, String> configOverride = new HashMap<>();
 
         if(this.otherProfile){
-            configOverride.put("some.value", "something else");
+            configOverride.put("some.valueTwo", "something else");
         }
 
 
