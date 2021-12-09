@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.plugin;
 
+import com.ebp.openQuarterMaster.plugin.testResources.ProfileTwoTestProfile;
 import com.ebp.openQuarterMaster.plugin.testResources.TestResourceLifecycleManager;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
@@ -9,12 +10,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
-public class demoTest {
+@TestProfile(ProfileTwoTestProfile.class)
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.OTHER_PROFILE, value="true"))
+public class demoTestotherProfile {
 
     @ConfigProperty(name = "some.value")
     String value;
@@ -28,7 +30,7 @@ public class demoTest {
           .then()
              .statusCode(200);
 
-        assertEquals(value, valueTwo);
+        assertNotEquals(value, valueTwo);
     }
 
 }
