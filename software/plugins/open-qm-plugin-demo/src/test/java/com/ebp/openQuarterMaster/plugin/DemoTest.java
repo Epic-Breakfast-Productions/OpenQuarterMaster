@@ -2,9 +2,7 @@ package com.ebp.openQuarterMaster.plugin;
 
 import com.ebp.openQuarterMaster.plugin.testResources.TestResourceLifecycleManager;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.TestProfile;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(value = TestResourceLifecycleManager.class)
-public class demoTest {
+public class DemoTest {
 
     @ConfigProperty(name = "some.value")
     String value;
