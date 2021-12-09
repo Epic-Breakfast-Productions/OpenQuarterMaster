@@ -20,9 +20,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
@@ -57,32 +59,37 @@ public class Index extends UiProvider {
     @GET
     @PermitAll
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance index(
+    public Response index(
             @Context SecurityContext securityContext
     ) throws MalformedURLException, URISyntaxException {
         logRequestContext(jwt, securityContext);
 
 
+        Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
 
-        if(EXTERNAL.equals(this.authMode)){
+        if (EXTERNAL.equals(this.authMode)) {
             URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
+            String state = UUID.randomUUID().toString();
 
             signInLinkBuilder.setParameter("response_type", "code");
             signInLinkBuilder.setParameter("scope", "openid");
             signInLinkBuilder.setParameter("audience", "account");
-            signInLinkBuilder.setParameter("state", "TODO");
+            signInLinkBuilder.setParameter("state", state);
             signInLinkBuilder.setParameter("client_id", externInteractionClientId);
             signInLinkBuilder.setParameter("redirect_uri", externInteractionCallbackUrl);
 
-
-            // ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
-
-
-            return index.data(
-                    "signInLink", signInLinkBuilder.build());
+            responseBuilder.entity(
+                    index.data(
+                            "signInLink", signInLinkBuilder.build()
+                    )
+            ).cookie(
+                    UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
+            );
+        } else {
+            responseBuilder.entity(index.instance());
         }
 
-        return index.instance();
+        return responseBuilder.build();
     }
 
     @GET

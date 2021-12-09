@@ -22,4 +22,16 @@ public interface KeycloakServiceCaller {
             @FormParam("redirect_uri") String redirect_uri
     );
 
+    //TODO:: https://stackoverflow.com/questions/51386337/refresh-access-token-via-refresh-token-in-keycloak
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    JsonNode refreshToken(
+            @FormParam("client_id") String clientId,
+            @FormParam("client_secret") String clientSecret,
+            @FormParam("scope") String scope,
+            @FormParam("grant_type") String grant_type,
+            @FormParam("code") String code,
+            @FormParam("redirect_uri") String redirect_uri
+    );
+
 }

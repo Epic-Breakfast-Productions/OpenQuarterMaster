@@ -2,6 +2,8 @@
 
 This guide explains how users are authenticated in this system.
 
+ - https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+
 ## Authentication
 
 The endpoints on this server are protected by RBAC controls, utilizing JWT's.
