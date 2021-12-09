@@ -26,7 +26,7 @@ import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value="true"))
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value="true"), restrictToAnnotatedClass = true)
 public class LoginExternalTest extends WebUiTest {
     @Inject
     TestUserService testUserService;

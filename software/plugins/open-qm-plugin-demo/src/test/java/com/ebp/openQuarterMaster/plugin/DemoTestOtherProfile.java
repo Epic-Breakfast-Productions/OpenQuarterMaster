@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @QuarkusTest
 @TestProfile(ProfileTwoTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.OTHER_PROFILE, value="true"))
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.OTHER_PROFILE, value="true"), restrictToAnnotatedClass = true)
 public class DemoTestOtherProfile {
 
     @ConfigProperty(name = "some.value")
