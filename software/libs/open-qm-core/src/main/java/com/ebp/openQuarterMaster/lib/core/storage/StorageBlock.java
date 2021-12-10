@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
+import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import lombok.*;
 import org.bson.types.ObjectId;
@@ -16,7 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StorageBlock extends MainObject {
+public class StorageBlock extends ImagedMainObject {
     /**
      * The label for this storage block
      */

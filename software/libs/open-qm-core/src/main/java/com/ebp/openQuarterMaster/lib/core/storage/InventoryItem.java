@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
+import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
@@ -27,7 +28,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ValidInventoryItem
-public class InventoryItem extends MainObject {
+public class InventoryItem extends ImagedMainObject {
 
     /**
      * The name of this inventory item
