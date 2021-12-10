@@ -140,4 +140,16 @@ class ImageTest {
         }
     }
 
+    @Test
+    public void constructorTest() throws IOException {
+        BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+
+        StopWatch sw = StopWatch.createStarted();
+        Image image = new Image("Test image", imageIn);
+        sw.stop();
+        log.info("Took {} to construct Image. Resulting size: {}", sw, image.getDataLength());
+
+        //TODO:: determine that data is correctly base64 encoded
+    }
+
 }
