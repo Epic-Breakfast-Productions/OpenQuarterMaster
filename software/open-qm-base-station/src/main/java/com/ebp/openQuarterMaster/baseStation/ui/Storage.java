@@ -16,6 +16,7 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -64,6 +65,7 @@ public class Storage extends UiProvider {
             @QueryParam("location") String location,
             @QueryParam("parents") List<String> parents,
             @QueryParam("keywords") List<String> keywords,
+            @QueryParam("stores") List<ObjectId> stores,
             @QueryParam("storedType") StoredType storedType,
             //paging
             @QueryParam("pageSize") Integer pageSize,
@@ -85,6 +87,8 @@ public class Storage extends UiProvider {
                 location,
                 parents,
                 keywords,
+                null,
+                stores,
                 sort,
                 pageOptions
         );

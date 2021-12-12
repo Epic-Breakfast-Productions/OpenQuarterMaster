@@ -20,6 +20,12 @@ public class SearchUtils {
         );
     }
 
+    public static void addBasicSearchFilter(List<Bson> filters, String field, String value){
+        if (value != null && !value.isBlank()) {
+            filters.add(regex(field, SearchUtils.getSearchTermPattern(value.strip())));
+        }
+    }
+
     /**
      * TODO:: test
      *
@@ -41,8 +47,13 @@ public class SearchUtils {
         }
     }
 
+
+    public static Bson getKeywordBson(List<String> keywords){
+        return in("keywords", keywords);
+    }
+
     /**
-     * Parses keyword searches.
+     * Parses attribute searches.
      * <p>
      * Query should be in the following form:
      *

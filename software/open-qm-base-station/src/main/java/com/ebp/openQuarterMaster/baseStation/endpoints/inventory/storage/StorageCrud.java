@@ -154,13 +154,14 @@ public class StorageCrud extends EndpointProvider {
     )
     @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
     @RolesAllowed("user")
-    public Response listInventoryItems(
+    public Response listStorageBlocks(
             @Context SecurityContext securityContext,
             //for actual queries
             @QueryParam("label") String label,
             @QueryParam("location") String location,
             @QueryParam("parents") List<String> parents,
             @QueryParam("keywords") List<String> keywords,
+            @QueryParam("stores") List<ObjectId> stores,
             @QueryParam("storedType") StoredType storedType,
             //paging
             @QueryParam("pageSize") Integer pageSize,
@@ -186,6 +187,8 @@ public class StorageCrud extends EndpointProvider {
                 location,
                 parents,
                 keywords,
+                null,
+                stores,
                 sort,
                 pageOptions
         );

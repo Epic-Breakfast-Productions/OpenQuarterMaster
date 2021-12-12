@@ -2,17 +2,20 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.mongodb.client.model.Filters.and;
 
@@ -40,11 +43,24 @@ public class StorageBlockService extends MongoService<StorageBlock> {
         );
     }
 
+    /**
+     * Searches for the
+     * @param label
+     * @param location
+     * @param parents
+     * @param keywords
+     * @param stores
+     * @param sort
+     * @param pagingOptions
+     * @return
+     */
     public SearchResult<StorageBlock> search(
             String label,
             String location,
             List<String> parents,
             List<String> keywords,
+            Map<String, String> attributes,
+            List<ObjectId> stores,
             //TODO:: capacity
             Bson sort,
             PagingOptions pagingOptions
@@ -55,10 +71,11 @@ public class StorageBlockService extends MongoService<StorageBlock> {
                 keywords
         );
         List<Bson> filters = new ArrayList<>();
-//        if (name != null && !name.isBlank()) {
-//            filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
-//        }
-        //TODO:: keywords, storedType
+
+        SearchUtils.addBasicSearchFilter(filters, "name", label);
+        SearchUtils.addBasicSearchFilter(filters, "location", location);
+
+        //TODO::
 
         Bson filter = (filters.isEmpty() ? null : and(filters));
 

@@ -14,8 +14,8 @@
 !}
   <thead>
   <tr>
-    <td colspan="5">
-      Pagination
+    <td colspan="5" class="text-center">
+      {#paginationButtons searchFormId=searchFormId numResults=searchResults.getResults().size()}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -70,7 +70,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="5">
+    <td colspan="5" class="text-center">
       Pagination
     </td>
   </tr>

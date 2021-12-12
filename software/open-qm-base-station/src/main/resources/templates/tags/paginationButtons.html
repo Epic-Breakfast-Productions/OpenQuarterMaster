@@ -1,0 +1,20 @@
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions pagingOptions}
+{!
+
+Inputs:
+  - searchFormId; the id of the search form to reference
+  - pagingOptions: the options for paging
+  - numResults: the number of search results in the current search
+!}
+
+<div class="btn-group">
+
+<button type="button" class="btn btn-sm btn-primary paginationButton" title="First page" onclick="paginationClick('{searchFormId}', 1);">&lt;&lt;</button>
+<button type="button" class="btn btn-sm btn-primary paginationButton" title="Previous page" onclick="paginationClick('{searchFormId}', 1);">&lt;</button>
+
+<button type="button" class="btn btn-sm btn-primary paginationButton" title="Page 1" onclick="paginationClick('{searchFormId}', 1);">1</button>
+
+<button type="button" class="btn btn-sm btn-primary paginationButton" title="Next page" onclick="paginationClick('{searchFormId}', 1);">&gt;</button>
+<button type="button" class="btn btn-sm btn-primary paginationButton" title="Last page" onclick="paginationClick('{searchFormId}', 1);">&gt;&gt;</button>
+
+</div>
