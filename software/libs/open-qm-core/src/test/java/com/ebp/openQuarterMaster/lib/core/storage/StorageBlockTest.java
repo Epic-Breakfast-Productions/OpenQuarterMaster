@@ -13,21 +13,24 @@ import tech.units.indriya.quantity.Quantities;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 class StorageBlockTest extends BasicTest {
 
-    private static Stream<Arguments> jsonTestArgs(){
+    private static Stream<Arguments> jsonTestArgs() {
         //TODO:: test with ObjectIds
         return Stream.of(
-                Arguments.of(new StorageBlock(
-                        FAKER.name().name(),
-                        FAKER.address().fullAddress(),
-                        null,
-                        new ArrayList<>(),
-                        new ArrayList<>(){{add(new Capacity(Quantities.getQuantity(5, AbstractUnit.ONE)));}}
-                ))
+                Arguments.of(
+                        new StorageBlock(
+                                FAKER.name().name(),
+                                FAKER.address().fullAddress(),
+                                null,
+                                new ArrayList<>() {{
+                                    add(new Capacity(Quantities.getQuantity(5, AbstractUnit.ONE)));
+                                }}
+                        )
+                )
         );
     }
 

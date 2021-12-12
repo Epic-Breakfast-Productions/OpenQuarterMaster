@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
-import com.ebp.openQuarterMaster.lib.core.MainObject;
 import lombok.*;
 import org.bson.types.ObjectId;
 
@@ -35,9 +34,7 @@ public class StorageBlock extends ImagedMainObject {
      * The parent of this storage block, if any
      */
     private ObjectId parent;
-    @NotNull
-    @NonNull
-    private List<@NotBlank String> keywords = new ArrayList<>();
+
     /**
      * The capacities of this storage block. Intended to describe different units of capacity for the block.
      */
