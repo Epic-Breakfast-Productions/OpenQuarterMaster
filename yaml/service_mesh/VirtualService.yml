@@ -1,0 +1,159 @@
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"base-station","namespace":"quartermaster"},"spec":{"hosts":["base-station"],"http":[{"route":[{"destination":{"host":"base-station","subset":"v1"}}]}]}}
+    creationTimestamp: "2021-12-07T22:56:21Z"
+    generation: 6
+    name: base-station
+    namespace: quartermaster
+    resourceVersion: "875402"
+    uid: 8f5fe1d5-1ace-4733-9938-b54dc3a7acb6
+  spec:
+    hosts:
+    - base-station
+    http:
+    - route:
+      - destination:
+          host: base-station
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"demo-app","namespace":"quartermaster"},"spec":{"hosts":["demo-app"],"http":[{"route":[{"destination":{"host":"demo-app","subset":"v1"}}]}]}}
+    creationTimestamp: "2021-12-07T22:56:21Z"
+    generation: 3
+    name: demo-app
+    namespace: quartermaster
+    resourceVersion: "875705"
+    uid: 1f95fc4f-42c5-4589-bacc-dac78982c347
+  spec:
+    hosts:
+    - demo-app
+    http:
+    - route:
+      - destination:
+          host: demo-plugin
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"docker-laptop","namespace":"quartermaster"},"spec":{"hosts":["docker-laptop"],"tls":[{"match":[{"port":8080,"sniHosts":["docker-laptop"]}],"route":[{"destination":{"host":"docker-laptop","port":{"number":8080}},"weight":100}]}]}}
+    creationTimestamp: "2021-12-08T21:58:08Z"
+    generation: 1
+    name: docker-laptop
+    namespace: quartermaster
+    resourceVersion: "684139"
+    uid: 2d082aab-a40d-4603-a466-4d787e6aad72
+  spec:
+    hosts:
+    - docker-laptop
+    tls:
+    - match:
+      - port: 8080
+        sniHosts:
+        - docker-laptop
+      route:
+      - destination:
+          host: docker-laptop
+          port:
+            number: 8080
+        weight: 100
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"keycloak","namespace":"quartermaster"},"spec":{"hosts":["keycloak-sso.apps.sno-demo.nixon.com"],"tls":[{"match":[{"port":443,"sniHosts":["keycloak-sso.apps.sno-demo.nixon.com"]}],"route":[{"destination":{"host":"keycloak-sso.apps.sno-demo.nixon.com","port":{"number":443}},"weight":100}]}]}}
+    creationTimestamp: "2021-12-07T22:56:21Z"
+    generation: 1
+    name: keycloak
+    namespace: quartermaster
+    resourceVersion: "463208"
+    uid: 9f5efc4a-cf96-48ec-a485-cdff0dfbdf4c
+  spec:
+    hosts:
+    - keycloak-sso.apps.sno-demo.nixon.com
+    tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - keycloak-sso.apps.sno-demo.nixon.com
+      route:
+      - destination:
+          host: keycloak-sso.apps.sno-demo.nixon.com
+          port:
+            number: 443
+        weight: 100
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"mongodb","namespace":"quartermaster"},"spec":{"hosts":["mongodb"],"http":[{"route":[{"destination":{"host":"mongodb","subset":"v1"}}]}]}}
+    creationTimestamp: "2021-12-08T19:20:58Z"
+    generation: 2
+    name: mongodb
+    namespace: quartermaster
+    resourceVersion: "883981"
+    uid: ca0d16b7-b3fa-45f9-b795-62786a0ffef2
+  spec:
+    hosts:
+    - mongodb
+    http:
+    - route:
+      - destination:
+          host: mongodb
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.istio.io/v1beta1","kind":"VirtualService","metadata":{"annotations":{},"name":"quartermaster-gateway","namespace":"quartermaster"},"spec":{"gateways":["quartermaster-gateway"],"hosts":["*"],"http":[{"match":[{"uri":{"exact":"/"}},{"uri":{"exact":"/overview"}},{"uri":{"prefix":"/api/"}},{"uri":{"exact":"/items"}},{"uri":{"exact":"/storage"}},{"uri":{"prefix":"/q/"}}],"route":[{"destination":{"host":"base-station","port":{"number":8080}}}]}]}}
+    creationTimestamp: "2021-12-07T22:56:21Z"
+    generation: 6
+    name: quartermaster-gateway
+    namespace: quartermaster
+    resourceVersion: "765787"
+    uid: 6d15612c-c9b2-4e53-8e13-8a732cfd1e6c
+  spec:
+    gateways:
+    - qm-gw
+    hosts:
+    - '*'
+    http:
+    - match:
+      - uri:
+          exact: /
+      - uri:
+          exact: /overview
+      - uri:
+          prefix: /api/
+      - uri:
+          prefix: /lib/
+      - uri:
+          prefix: /res/
+      - uri:
+          prefix: /media/
+      - uri:
+          exact: /items
+      - uri:
+          exact: /storage
+      - uri:
+          prefix: /q/
+      - uri:
+          exact: /favicon.ico
+      route:
+      - destination:
+          host: base-station
+          port:
+            number: 8080
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

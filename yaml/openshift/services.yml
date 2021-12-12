@@ -4,34 +4,14 @@ items:
   kind: Service
   metadata:
     labels:
-      app.kubernetes.io/component: mongodb
-      app.kubernetes.io/instance: mongodb
-      app.kubernetes.io/managed-by: Helm
-      app.kubernetes.io/name: mongodb
-      helm.sh/chart: mongodb-10.29.1
-    name: mongodb
-  spec:
-    ports:
-    - name: mongodb
-      port: 27017
-      protocol: TCP
-      targetPort: mongodb
-    selector:
-      app.kubernetes.io/component: mongodb
-      app.kubernetes.io/instance: mongodb
-      app.kubernetes.io/name: mongodb
-    sessionAffinity: None
-    type: ClusterIP
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
       app: base-station
+      deployment: open-qm-base-station
       service: base-station
     name: base-station
+    namespace: quartermaster
   spec:
     ports:
-    - name: 8080-tcp
+    - name: http
       port: 8080
       protocol: TCP
       targetPort: 8080
@@ -47,23 +27,38 @@ items:
       app.kubernetes.io/component: open-qm-plugin-demo
       app.kubernetes.io/instance: open-qm-plugin-demo
       service: demo-plugin
-    name: demo-plugin 
+    name: demo-plugin
   spec:
     ports:
-    - name: 8080-tcp
+    - name: http
       port: 8080
       protocol: TCP
       targetPort: 8080
-    - name: 8778-tcp
-      port: 8778
-      protocol: TCP
-      targetPort: 8778
-    - name: 9779-tcp
-      port: 9779
-      protocol: TCP
-      targetPort: 9779
     selector:
       deployment: open-qm-plugin-demo
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: mongodb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      helm.sh/chart: mongodb-10.29.1
+    name: mongodb
+    namespace: quartermaster
+  spec:
+    ports:
+    - name: mongodb
+      port: 27017
+      protocol: TCP
+      targetPort: mongodb
+    selector:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: mongodb
+      app.kubernetes.io/name: mongodb
     sessionAffinity: None
     type: ClusterIP
 kind: List
