@@ -11,7 +11,7 @@ Inputs:
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Previous page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getPreviousPage()});" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-left"></i></button>
 
     {#for page in pagingCalculations.getPageIterator()}
-    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Page 1" onclick="paginationClick('{searchFormId}', {page});" {#if pagingCalculations.onPage(page)}disabled{/if}>{page}</button>
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Page {page}" onclick="paginationClick('{searchFormId}', {page});" {#if pagingCalculations.onPage(page)}disabled{/if}>{page}</button>
     {/for}
 
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Next page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getNextPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}><i class="fas fa-angle-right"></i></button>

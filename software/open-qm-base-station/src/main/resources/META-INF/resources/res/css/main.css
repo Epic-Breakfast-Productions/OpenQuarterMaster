@@ -3,3 +3,7 @@
 .paginationButton {
     /* border: 1px solid black; */
 }
+
+.numPerPageInput {
+    width: 25px;
+}

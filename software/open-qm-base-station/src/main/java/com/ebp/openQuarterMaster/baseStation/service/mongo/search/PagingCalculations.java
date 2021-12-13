@@ -10,17 +10,17 @@ import java.util.Iterator;
 @Setter(AccessLevel.PROTECTED)
 public class PagingCalculations {
     private PagingOptions pagingOptions = new PagingOptions(PagingOptions.DEFAULT_PAGE_SIZE, PagingOptions.DEFAULT_PAGE_NUM);
-    private int numResults;
+    private long numResults;
 
     private boolean onFirstPage;
     private boolean onLastPage;
-    private int numPages;
-    private int lastPage;
-    private int curPage;
-    private int nextPage;
-    private int previousPage;
+    private long numPages;
+    private long lastPage;
+    private long curPage;
+    private long nextPage;
+    private long previousPage;
 
-    protected PagingCalculations(PagingOptions options, int numResults, int numPages){
+    protected PagingCalculations(PagingOptions options, long numResults, long numPages){
         this(
                 options,
                 numResults,
@@ -34,26 +34,29 @@ public class PagingCalculations {
         );
     }
 
-    public PagingCalculations(PagingOptions options, int numResults){
+    public PagingCalculations(PagingOptions options, long numResults){
         this(
                 options,
                 numResults,
-                Math.max(1, numResults / options.getPageSize()) //Ciel?
+                (long)Math.ceil((double) numResults / (double) options.getPageSize()) //Ciel?
         );
     }
 
     public PagingCalculations(PagingOptions options, SearchResult<?> searchResult){
-        this(options, searchResult.getResults().size());
+        this(options, searchResult.getNumResultsForEntireQuery());
     }
 
-    public boolean onPage(int curPage){
+    public boolean onPage(long curPage){
         return this.getCurPage() == curPage;
     }
+    public boolean onPage(int curPage){
+        return this.onPage((long) curPage);
+    }
 
-    public Iterator<Integer> getPageIterator(){
+    public Iterator<Long> getPageIterator(){
         return new Iterator<>() {
-            private final int end = getNumPages();
-            private int current = 1;
+            private final long end = getNumPages();
+            private long current = 1;
 
             @Override
             public boolean hasNext() {
@@ -61,7 +64,7 @@ public class PagingCalculations {
             }
 
             @Override
-            public Integer next() {
+            public Long next() {
                 return current++;
             }
         };

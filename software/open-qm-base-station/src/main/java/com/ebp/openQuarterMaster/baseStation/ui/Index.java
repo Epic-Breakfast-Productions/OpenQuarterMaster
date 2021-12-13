@@ -72,7 +72,6 @@ public class Index extends UiProvider {
             redirectUri = new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString();
         }
 
-
         Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
 
         if (EXTERNAL.equals(this.authMode)) {

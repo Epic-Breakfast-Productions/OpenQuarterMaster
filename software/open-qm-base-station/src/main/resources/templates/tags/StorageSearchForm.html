@@ -5,32 +5,45 @@ Ingests:
 - id - the id to give the form
 !}
 
-<form id="{id}" action="/storage" method="get" class="row">
-  <div class="mb-3 col">
-    <label for="{id}-blockNameInput" class="form-label">Storage Block Name</label>
-    <input type="text" class="form-control" name="name" id="{id}-blockNameInput"
-           aria-describedby="{id}-blockNameInputHelp">
-    <div id="{id}-blockNameInputHelp" class="form-text">The name of the storage block to find.</div>
-  </div>
-  <div class="mb-3 col">
-    <label for="{id}-blockLocationInput" class="form-label">Location</label>
-    <input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
-           aria-describedby="{id}-blockLocationInputHelp">
-    <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
-  </div>
-  <div class="mb-3 col">
-    <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
-    <input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput" aria-describedby="{id}-blockParentNameInputHelp">
-    <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.</div>
-  </div>
-  <div class="mb-3 col">
-    <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
-    <input type="text" class="form-control" name="capacity" id="{id}-blockCapacityInput"
-           aria-describedby="{id}-blockCapacityInputHelp">
-    <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
-  </div>
-  <div class="col-12">
-    <button type="submit" class="btn btn-info"><i class="fas fa-search"></i> Search</button>
-    <button type="reset" class="btn btn-warning">Reset</button>
-  </div>
+<form id="{id}" action="/storage" method="get">
+    <div class="row">
+        <div class="mb-3 col col-3">
+            <label for="{id}-blockNameInput" class="form-label">Storage Block Name</label>
+            <input type="text" class="form-control" name="name" id="{id}-blockNameInput"
+                   aria-describedby="{id}-blockNameInputHelp">
+            <div id="{id}-blockNameInputHelp" class="form-text">The name of the storage block to find.</div>
+        </div>
+        <div class="mb-3 col col-3">
+            <label for="{id}-blockLocationInput" class="form-label">Location</label>
+            <input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
+                   aria-describedby="{id}-blockLocationInputHelp">
+            <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
+        </div>
+        <div class="mb-3 col col-3">
+            <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
+            <input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput"
+                   aria-describedby="{id}-blockParentNameInputHelp">
+            <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.
+            </div>
+        </div>
+        <div class="mb-3 col col-3">
+            <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
+            <input type="text" class="form-control" name="capacity" id="{id}-blockCapacityInput"
+                   aria-describedby="{id}-blockCapacityInputHelp">
+            <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-2 text-center">
+            <button type="submit" class="btn btn-info mb-1"><i class="fas fa-search"></i> Search</button>
+            <button type="reset" class="btn btn-warning mb-1">Reset</button>
+        </div>
+        <div class="col col-2">
+            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="1">
+            <div class="input-group" title="Number of results per page">
+                <label for="{id}-pageSizeInput" class="input-group-text"><i class="fas fa-hashtag"></i></label>
+                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="25" value="25">
+            </div>
+        </div>
+    </div>
 </form>
