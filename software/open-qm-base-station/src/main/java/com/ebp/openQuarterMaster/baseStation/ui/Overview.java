@@ -11,6 +11,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -97,7 +98,7 @@ public class Overview extends UiProvider {
                 String result = null;
                 log.info("Waiting on call {}", curStage.getKey());
                 try {
-                    result = future.get(500, TimeUnit.MILLISECONDS);
+                    result = future.get(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.readTimeout", Integer.class), TimeUnit.MILLISECONDS);
                 } catch (Throwable e) {
                     log.warn("Failed to make call {}: ", curStage.getKey(), e);
                     result = e.getClass().getName() + " - " + e.getMessage();

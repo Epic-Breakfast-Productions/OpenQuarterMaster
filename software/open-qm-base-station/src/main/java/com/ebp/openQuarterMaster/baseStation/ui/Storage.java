@@ -3,10 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.ui;
 import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.*;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
@@ -80,7 +77,7 @@ public class Storage extends UiProvider {
         List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
-        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, true);
 
         SearchResult<StorageBlock> searchResults = this.storageBlockService.search(
                 label,
@@ -100,6 +97,7 @@ public class Storage extends UiProvider {
                         .data("showSearch", false)
                         .data("numStorageBlocks", storageBlockService.count())
                         .data("searchResult", searchResults)
+                        .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults))
                         .data("storageService", storageBlockService),
                 MediaType.TEXT_HTML_TYPE
         );

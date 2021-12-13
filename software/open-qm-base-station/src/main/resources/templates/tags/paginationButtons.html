@@ -1,20 +1,19 @@
-{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions pagingOptions}
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {!
-
 Inputs:
-  - searchFormId; the id of the search form to reference
-  - pagingOptions: the options for paging
-  - numResults: the number of search results in the current search
+- searchFormId; the id of the search form to reference
+- pagingOptions: the options for paging
+- numResults: the number of search results in the current search
 !}
 
-<div class="btn-group">
+<div class="btn-group" role="group" aria-label="Search Pagination">
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="First page" onclick="paginationClick('{searchFormId}', 1);" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-double-left"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Previous page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getPreviousPage()});" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-left"></i></button>
 
-<button type="button" class="btn btn-sm btn-primary paginationButton" title="First page" onclick="paginationClick('{searchFormId}', 1);">&lt;&lt;</button>
-<button type="button" class="btn btn-sm btn-primary paginationButton" title="Previous page" onclick="paginationClick('{searchFormId}', 1);">&lt;</button>
+    {#for page in pagingCalculations.getPageIterator()}
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Page 1" onclick="paginationClick('{searchFormId}', {page});" {#if pagingCalculations.onPage(page)}disabled{/if}>{page}</button>
+    {/for}
 
-<button type="button" class="btn btn-sm btn-primary paginationButton" title="Page 1" onclick="paginationClick('{searchFormId}', 1);">1</button>
-
-<button type="button" class="btn btn-sm btn-primary paginationButton" title="Next page" onclick="paginationClick('{searchFormId}', 1);">&gt;</button>
-<button type="button" class="btn btn-sm btn-primary paginationButton" title="Last page" onclick="paginationClick('{searchFormId}', 1);">&gt;&gt;</button>
-
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Next page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getNextPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}><i class="fas fa-angle-right"></i></button>
+    <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Last page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getLastPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}><i class="fas fa-angle-double-right"></i></button>
 </div>

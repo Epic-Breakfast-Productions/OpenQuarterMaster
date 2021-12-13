@@ -1,4 +1,5 @@
 {@com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult searchResult}
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {@java.util.Map allowedUnitsMap}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Storage' titleIcon='boxes' page='storage'}
 {!
@@ -48,7 +49,7 @@ Accepts:
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#storageSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch'}
+            {#storageSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
             {/storageSearchResults}
         </table>
     </div>

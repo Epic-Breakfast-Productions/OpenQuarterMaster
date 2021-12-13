@@ -1,8 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo.search;
 
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * Object to describe paging options.
@@ -10,8 +8,11 @@ import lombok.Getter;
  * TODO:: test
  */
 @Data
-@Getter(AccessLevel.PRIVATE)
 public class PagingOptions {
+    public static final int DEFAULT_PAGE_SIZE = 25;
+    public static final int DEFAULT_PAGE_NUM = 1;
+
+
     /**
      * Gets paging options from those provided in query parameters.
      *
@@ -20,11 +21,17 @@ public class PagingOptions {
      * @return A paging options object. Can be null
      */
     public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum, boolean defaultsIfNotSet) {
-        if (pageSize == null && pageNum == null) {
-            return null;
-        }
-        if (pageSize == null) {
-            throw new IllegalArgumentException("Page size not provided.");
+        if(defaultsIfNotSet){
+            if(pageSize == null){
+                pageSize = DEFAULT_PAGE_SIZE;
+            }
+        } else {
+            if (pageSize == null && pageNum == null) {
+                return null;
+            }
+            if (pageSize == null) {
+                throw new IllegalArgumentException("Page size not provided.");
+            }
         }
         if (pageNum == null) {
             pageNum = 1;
@@ -51,4 +58,5 @@ public class PagingOptions {
     public int getSkipVal() {
         return this.pageSize*(this.pageNum - 1);
     }
+
 }

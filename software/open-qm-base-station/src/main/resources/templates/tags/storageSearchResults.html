@@ -1,4 +1,5 @@
 {@com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult<com.ebp.openQuarterMaster.lib.core.storage.StorageBlock> searchResults}
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {!
   Template to show storage search results. Gives the contents of a table, but not the main table tag
 
@@ -15,7 +16,7 @@
   <thead>
   <tr>
     <td colspan="5" class="text-center">
-      {#paginationButtons searchFormId=searchFormId numResults=searchResults.getResults().size()}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -71,7 +72,7 @@
   <tfoot>
   <tr>
     <td colspan="5" class="text-center">
-      Pagination
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
   </tfoot>
