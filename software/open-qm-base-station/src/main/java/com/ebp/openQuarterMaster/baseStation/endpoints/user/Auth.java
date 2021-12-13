@@ -16,6 +16,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -218,13 +219,13 @@ public class Auth extends EndpointProvider {
                     this.externalScope,
                     "authorization_code",
                     code,
-                    this.callbackUrl
+                    (returnPath == null || returnPath.isBlank() ? this.callbackUrl : new URIBuilder(this.callbackUrl).addParameter("returnPath", returnPath).build().toString())
             );
         } catch (Throwable e) {
             log.warn("Failed to get token from keycloak (exception)- ", e);
             //TODO:: deal with properly
             e.printStackTrace();
-            throw e;
+            throw new IllegalStateException("Failed to get token from Keycloak", e);
         }
 
         List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(returned);

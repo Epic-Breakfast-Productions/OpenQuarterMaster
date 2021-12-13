@@ -36,6 +36,8 @@ public class WebDriverWrapper implements Closeable {
 
     @ConfigProperty(name = "test.selenium.headless", defaultValue = "true")
     boolean headless;
+    @ConfigProperty(name = "test.selenium.quickClean", defaultValue = "true")
+    boolean quickClean;
     @ConfigProperty(name="test.selenium.defaultWait", defaultValue = "5")
     int defaultWait;
     @ConfigProperty(name="runningInfo.baseUrl")
@@ -57,9 +59,17 @@ public class WebDriverWrapper implements Closeable {
 
     public void cleanup(){
         log.info("Cleaning up browser after test.");
-        this.webDriver.manage().deleteAllCookies();
-        this.webDriver.get("about:logo");
-        this.webDriver.navigate().refresh();
+
+        if(this.quickClean) {
+            this.webDriver.manage().deleteAllCookies();
+            this.webDriver.get("about:logo");
+            this.webDriver.navigate().refresh();
+        } else {
+//            this.webDriver.quit();
+            this.webDriver.close();
+            this.webDriver = null;
+            this.setup();
+        }
     }
 
     public WebElement findElement(By by){

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -60,9 +61,16 @@ public class Index extends UiProvider {
     @PermitAll
     @Produces(MediaType.TEXT_HTML)
     public Response index(
-            @Context SecurityContext securityContext
+            @Context SecurityContext securityContext,
+            @QueryParam("returnPath") String returnPath
     ) throws MalformedURLException, URISyntaxException {
         logRequestContext(jwt, securityContext);
+
+        String redirectUri = externInteractionCallbackUrl;
+
+        if(returnPath != null && !returnPath.isBlank()){
+            redirectUri = new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString();
+        }
 
 
         Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
@@ -76,7 +84,7 @@ public class Index extends UiProvider {
             signInLinkBuilder.setParameter("audience", "account");
             signInLinkBuilder.setParameter("state", state);
             signInLinkBuilder.setParameter("client_id", externInteractionClientId);
-            signInLinkBuilder.setParameter("redirect_uri", externInteractionCallbackUrl);
+            signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 
             responseBuilder.entity(
                     index.data(
