@@ -1,6 +1,4 @@
 
-
-
 function paginationClick(formId, page){
     console.log("Paginating. Form Id: \"" + formId, "\", page: " + page);
     var searchForm = $("#" + formId);
@@ -26,3 +24,10 @@ function fillInQueryForm(queryForm){
 function resetToOne(pageNumInputId){
     $("#" + pageNumInputId).val(1);
 }
+
+$(".pagingSearchForm").each(function(i, form){
+    var pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
+    form.addEventListener('change', function() {
+             resetToOne(pageNumInputId);
+    });
+});
