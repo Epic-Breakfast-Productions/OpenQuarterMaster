@@ -8,7 +8,6 @@ items:
       deployment: open-qm-base-station
       service: base-station
     name: base-station
-    namespace: quartermaster
   spec:
     ports:
     - name: http
@@ -48,7 +47,6 @@ items:
       app.kubernetes.io/name: mongodb
       helm.sh/chart: mongodb-10.29.1
     name: mongodb
-    namespace: quartermaster
   spec:
     ports:
     - name: mongodb

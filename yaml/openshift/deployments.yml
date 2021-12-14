@@ -6,13 +6,14 @@ items:
     annotations:
       meta.helm.sh/release-name: mongodb
       meta.helm.sh/release-namespace: quartermaster
-    generation: 1
     labels:
+      app: mongodb
       app.kubernetes.io/component: mongodb
       app.kubernetes.io/instance: mongodb
       app.kubernetes.io/managed-by: Helm
       app.kubernetes.io/name: mongodb
       helm.sh/chart: mongodb-10.29.1
+      version: v1
     name: mongodb
   spec:
     progressDeadlineSeconds: 600
@@ -27,13 +28,17 @@ items:
       type: Recreate
     template:
       metadata:
+        annotations:
+          sidecar.istio.io/inject: "true"
         creationTimestamp: null
         labels:
+          app: mongodb
           app.kubernetes.io/component: mongodb
           app.kubernetes.io/instance: mongodb
           app.kubernetes.io/managed-by: Helm
           app.kubernetes.io/name: mongodb
           helm.sh/chart: mongodb-10.29.1
+          version: v1
       spec:
         affinity:
           podAntiAffinity:
@@ -111,13 +116,12 @@ items:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    annotations:
-      deployment.kubernetes.io/revision: "12"
-    generation: 12
     labels:
-      app: open-qm-base-station
+      app: base-station
       app.kubernetes.io/component: open-qm-base-station
       app.kubernetes.io/instance: open-qm-base-station
+      deployment: open-qm-base-station
+      version: v1
     name: open-qm-base-station
   spec:
     progressDeadlineSeconds: 600
@@ -135,9 +139,12 @@ items:
       metadata:
         annotations:
           openshift.io/generated-by: OpenShiftNewApp
+          sidecar.istio.io/inject: "true"
         creationTimestamp: null
         labels:
+          app: base-station
           deployment: open-qm-base-station
+          version: v1
       spec:
         containers:
         - env:
@@ -152,9 +159,11 @@ items:
           - name: quarkus.oidc.authentication.scopes
             value: profile,address,email,address,phone,offline_access,microprofile-jwt
           - name: quarkus.rest-client.demoService.url
-            value: http://open-qm-plugin-demo:8080
+            value: http://demo-plugin:8080
+          - name: quarkus.rest-client.demoServiceExternal.url
+            value: http://docker-laptop:8080
           - name: runningInfo.baseUrl
-            value: https://quartermaster-quartermaster.apps.sno-demo.nixon.com/
+            value: https://istio-ingressgateway-istio-system-qm.apps.sno-demo.nixon.com
           - name: service.externalAuth.url
             value: https://keycloak-sso.apps.sno-demo.nixon.com
           - name: service.externalAuth.realm
@@ -163,7 +172,13 @@ items:
             value: quartermaster
           - name: service.externalAuth.clientSecret
             value: bfa4b025-e7d4-4fe0-9eb5-d9a5be644da4
-          image: image-registry.openshift-image-registry.svc:5000/quartermaster/open-qm-base-station@sha256:3352b8ce8c3d0c327fa5970de03c2c384fe634562dca699aa2ddf37e769805b1
+          - name: quarkus.tls.trust-all
+            value: "true"
+          - name: quarkus.rest-client.demoServiceExternal.readTimeout
+            value: "1000"
+          - name: runningInfo.hostname
+            value: istio-ingressgateway-istio-system-qm.apps.sno-demo.nixon.com
+          image: image-registry.openshift-image-registry.svc:5000/quartermaster/open-qm-base-station:0.0.60-native
           imagePullPolicy: IfNotPresent
           name: open-qm-base-station
           ports:
@@ -184,6 +199,8 @@ items:
         restartPolicy: Always
         schedulerName: default-scheduler
         securityContext: {}
+        serviceAccount: quartermaster-base
+        serviceAccountName: quartermaster-base
         terminationGracePeriodSeconds: 30
         volumes:
         - name: keycloak-public
@@ -193,13 +210,11 @@ items:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    annotations:
-      deployment.kubernetes.io/revision: "2"
-    generation: 8
     labels:
-      app: open-qm-plugin-demo
+      app: demo-plugin
       app.kubernetes.io/component: open-qm-plugin-demo
       app.kubernetes.io/instance: open-qm-plugin-demo
+      version: v1
     name: open-qm-plugin-demo
   spec:
     progressDeadlineSeconds: 600
@@ -217,12 +232,15 @@ items:
       metadata:
         annotations:
           openshift.io/generated-by: OpenShiftNewApp
+          sidecar.istio.io/inject: "true"
         creationTimestamp: null
         labels:
+          app: demo-plugin
           deployment: open-qm-plugin-demo
+          version: v1
       spec:
         containers:
-        - image: image-registry.openshift-image-registry.svc:5000/quartermaster/open-qm-plugin-demo:0.0.19-jvm
+        - image: image-registry.openshift-image-registry.svc:5000/quartermaster/open-qm-plugin-demo:0.0.60-native
           imagePullPolicy: IfNotPresent
           name: open-qm-plugin-demo
           ports:
