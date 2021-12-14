@@ -20,10 +20,14 @@
             Response
         </th>
     </tr>
+    {#if config:['quarkus.rest-client.demoService.perform']}
     <tr><th class="text-nowrap">Endpoint 1<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/1</code>)</th><td><code>{response1}</code></td></tr>
     <tr><th class="text-nowrap">Endpoint 2<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/2</code>)</th><td><code>{response2}</code></td></tr>
+    {/if}
+    {#if config:['quarkus.rest-client.demoServiceExternal.perform']}
     <tr><th class="text-nowrap">Endpoint 1 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/1</code>)</th><td><code>{responseExt1}</code></td></tr>
     <tr><th class="text-nowrap">Endpoint 2 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/2</code>)</th><td><code>{responseExt2}</code></td></tr>
+    {/if}
 </table>
 <p>
     Todo:

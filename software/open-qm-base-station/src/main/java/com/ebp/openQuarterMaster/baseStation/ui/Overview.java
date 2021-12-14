@@ -85,41 +85,45 @@ public class Overview extends UiProvider {
             String authHeaderContent = "Bearer " + this.jwt.getRawToken();
             log.info("Performing rest calls to demo services.");
             {
-            java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
+                java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
 
-            completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
-            completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
-            completionStages.put(3, externDemoService.get1(authHeaderContent).toCompletableFuture());
-            completionStages.put(4, externDemoService.get2(authHeaderContent).toCompletableFuture());
-
-            for (Map.Entry<Integer, CompletableFuture<String>> curStage : completionStages.entrySet()) {
-                CompletableFuture<String> future = curStage.getValue();
-
-                String result = null;
-                log.info("Waiting on call {}", curStage.getKey());
-                try {
-                    result = future.get(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.readTimeout", Integer.class), TimeUnit.MILLISECONDS);
-                } catch (Throwable e) {
-                    log.warn("Failed to make call {}: ", curStage.getKey(), e);
-                    result = e.getClass().getName() + " - " + e.getMessage();
+                if (ConfigProvider.getConfig().getValue("quarkus.rest-client.demoService.perform", Boolean.class)) {
+                    completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
+                    completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
                 }
-                log.info("Got result from call {} - {}", curStage.getKey(), result);
-
-                switch (curStage.getKey()) {
-                    case 1:
-                        response1 = result;
-                        break;
-                    case 2:
-                        response2 = result;
-                        break;
-                    case 3:
-                        responseExt1 = result;
-                        break;
-                    case 4:
-                        responseExt2 = result;
-                        break;
+                if (ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.perform", Boolean.class)) {
+                    completionStages.put(3, externDemoService.get1(authHeaderContent).toCompletableFuture());
+                    completionStages.put(4, externDemoService.get2(authHeaderContent).toCompletableFuture());
                 }
-            }
+
+                for (Map.Entry<Integer, CompletableFuture<String>> curStage : completionStages.entrySet()) {
+                    CompletableFuture<String> future = curStage.getValue();
+
+                    String result = null;
+                    log.info("Waiting on call {}", curStage.getKey());
+                    try {
+                        result = future.get(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.readTimeout", Integer.class), TimeUnit.MILLISECONDS);
+                    } catch (Throwable e) {
+                        log.warn("Failed to make call {}: ", curStage.getKey(), e);
+                        result = e.getClass().getName() + " - " + e.getMessage();
+                    }
+                    log.info("Got result from call {} - {}", curStage.getKey(), result);
+
+                    switch (curStage.getKey()) {
+                        case 1:
+                            response1 = result;
+                            break;
+                        case 2:
+                            response2 = result;
+                            break;
+                        case 3:
+                            responseExt1 = result;
+                            break;
+                        case 4:
+                            responseExt2 = result;
+                            break;
+                    }
+                }
             }
             {
 //                if(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoService.perform", Boolean.class)) {
@@ -166,7 +170,7 @@ public class Overview extends UiProvider {
                 MediaType.TEXT_HTML_TYPE
         );
 
-        if(newCookies != null && !newCookies.isEmpty()){
+        if (newCookies != null && !newCookies.isEmpty()) {
             responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
         }
 
