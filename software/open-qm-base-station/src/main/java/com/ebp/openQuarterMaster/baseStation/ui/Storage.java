@@ -27,6 +27,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 
+import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
+
 @Traced
 @Slf4j
 @Path("/")
@@ -92,6 +94,7 @@ public class Storage extends UiProvider {
 
         Response.ResponseBuilder responseBuilder = Response.ok(
                 storage
+                        .data("pageLoadTimestamp", getLoadTimestamp())
                         .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
                         .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                         .data("showSearch", false)

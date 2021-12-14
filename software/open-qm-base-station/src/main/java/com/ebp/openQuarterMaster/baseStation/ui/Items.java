@@ -29,6 +29,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 
+import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
+
 @Traced
 @Slf4j
 @Path("/")
@@ -88,6 +90,7 @@ public class Items extends UiProvider {
 
         Response.ResponseBuilder responseBuilder = Response.ok(
                 items
+                        .data("pageLoadTimestamp", getLoadTimestamp())
                         .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                         .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
                         .data("showSearch", false)

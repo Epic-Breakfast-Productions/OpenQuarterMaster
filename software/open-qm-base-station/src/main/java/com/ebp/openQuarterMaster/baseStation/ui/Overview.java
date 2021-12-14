@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
+
 @Traced
 @Slf4j
 @Path("/")
@@ -160,6 +162,7 @@ public class Overview extends UiProvider {
 
         Response.ResponseBuilder responseBuilder = Response.ok(
                 overview
+                        .data("pageLoadTimestamp", getLoadTimestamp())
                         .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                         .data("numItems", inventoryItemService.count())
                         .data("numStorageBlocks", storageBlockService.count())

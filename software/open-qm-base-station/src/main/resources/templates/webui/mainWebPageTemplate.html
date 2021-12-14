@@ -12,6 +12,7 @@ Ingests:
 - scripts - inserted value, extra references to js scripts
 - pageScript - inserted value, extra page-specific scripts
 - showNavbar* - parameter in include, shows the navbar or not
+- pageLoadTime - the string time that the page was loaded
 !}
 <!doctype html>
 <html lang="en">
@@ -147,13 +148,14 @@ Ingests:
     <hr/>
     <footer id="footer" class="row" role="contentinfo">
         <div class="col-sm-4">
-            <h2 class="footer-header">Open Quarter Master Server</h2>
-            <p>
-                &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
-                Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
-                License</a><br/>
-                <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
-            </p>
+            <span class="h4">Open Quarter Master Server</span><br />
+            &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
+            Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
+            License</a><br/>
+            <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
+            <small class="fw-lighter fst-italic text-muted">
+                Page Loaded: <span id="pageLoadTimestamp">{pageLoadTimestamp}</span> (Server time)
+            </small>
         </div>
         <div id="serverInfo" class="col-sm-4">
             <h2 class="footer-header">
@@ -165,13 +167,9 @@ Ingests:
             </h2>
         </div>
         <div class="col-sm-4">
-            <p>
-                Your privacy is important to the original project. It only creates one cookie, and that is for the login
-                token.
-                The project also only collects what you give it, and it is up to the people running the server to ensure
-                it is handled
-                well. Please contact the folks running the server for more information.
-            </p>
+            Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
+            The project also only collects what you give it, and it is up to the people running the server to ensure
+            it is handled well. Please contact the folks running the server for more information.
             <!-- TODO:: legal disclaimer, etc. -->
         </div>
     </footer>

@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
+import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Traced
@@ -93,7 +94,9 @@ public class Index extends UiProvider {
                     UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
             );
         } else {
-            responseBuilder.entity(index.instance());
+            responseBuilder.entity(
+                    index.data("pageLoadTimestamp", getLoadTimestamp())
+            );
         }
 
         return responseBuilder.build();
@@ -107,6 +110,6 @@ public class Index extends UiProvider {
             @Context SecurityContext securityContext
     ) {
         logRequestContext(jwt, securityContext);
-        return accountCreate.instance();
+        return accountCreate.data("pageLoadTimestamp", getLoadTimestamp());
     }
 }

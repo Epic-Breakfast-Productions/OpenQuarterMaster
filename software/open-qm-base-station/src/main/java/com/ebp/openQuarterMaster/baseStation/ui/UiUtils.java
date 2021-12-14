@@ -6,6 +6,8 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,6 +16,11 @@ import java.util.List;
 @Slf4j
 public class UiUtils {
     public static final int DEFAULT_COOKIE_AGE = 86400; //1 day
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm:ss a LLL dd, uu z");
+
+    public static String getLoadTimestamp(){
+        return ZonedDateTime.now().format(DATE_TIME_FORMATTER);
+    }
 
     public static NewCookie getNewCookie(
             String cookieName,

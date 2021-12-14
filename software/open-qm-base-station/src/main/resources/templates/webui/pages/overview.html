@@ -8,6 +8,7 @@
     {numItems} types of items stored in over {numStorageBlocks} storage blocks
 </p>
 
+{#if config:['quarkus.rest-client.demoService.perform'] == 'true' || config:['quarkus.rest-client.demoServiceExternal.perform'] == 'true'}
 <h3>
     Results from other service(s):
 </h3>
@@ -29,6 +30,7 @@
     <tr><th class="text-nowrap">Endpoint 2 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/2</code>)</th><td><code>{responseExt2}</code></td></tr>
     {/if}
 </table>
+{/if}
 <p>
     Todo:
 <ul>
