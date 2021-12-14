@@ -22,3 +22,7 @@ function fillInQueryForm(queryForm){
     });
     console.log("DONE filling in query form from page query.");
 }
+
+function resetToOne(pageNumInputId){
+    $("#" + pageNumInputId).val(1);
+}
