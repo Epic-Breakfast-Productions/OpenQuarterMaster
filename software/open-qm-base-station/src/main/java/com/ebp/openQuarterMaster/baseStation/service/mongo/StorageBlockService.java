@@ -66,13 +66,13 @@ public class StorageBlockService extends MongoService<StorageBlock> {
             PagingOptions pagingOptions
     ) {
         log.info(
-                "Searching for items with: label=\"{}\", keywords={}",
+                "Searching for storage blocks with: label=\"{}\", keywords={}",
                 label,
                 keywords
         );
         List<Bson> filters = new ArrayList<>();
 
-        SearchUtils.addBasicSearchFilter(filters, "name", label);
+        SearchUtils.addBasicSearchFilter(filters, "label", label);
         SearchUtils.addBasicSearchFilter(filters, "location", location);
 
         //TODO::
