@@ -6,6 +6,7 @@ Inputs:
 - numResults: the number of search results in the current search
 !}
 
+{#if pagingCalculations.getNumPages() > 1 }
 <div class="btn-group" role="group" aria-label="Search Pagination">
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="First page" onclick="paginationClick('{searchFormId}', 1);" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-double-left"></i></button>
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Previous page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getPreviousPage()});" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-left"></i></button>
@@ -17,3 +18,4 @@ Inputs:
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Next page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getNextPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}><i class="fas fa-angle-right"></i></button>
     <button type="button" class="btn btn-sm btn-outline-primary paginationButton" title="Last page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getLastPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}><i class="fas fa-angle-double-right"></i></button>
 </div>
+{/if}
