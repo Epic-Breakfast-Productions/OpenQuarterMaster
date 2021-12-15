@@ -41,20 +41,11 @@ Native-specific tests:
 ```
 
 
-
-
-
-
-
-
-
-
-
-# to look into
+## to look into
 
 - https://medium.com/picovoice/prioritizing-privacy-add-offline-speech-recognition-to-a-java-application-1c864574fb7e
 
-# TODOS:
+## TODOS:
 
 - Storage
   - Finish add
@@ -68,6 +59,12 @@ Native-specific tests:
   - stats
 - Overview
   - stats
+- Image management
+  - page
+  - upload
+  - search
+  - update
+  - delete
 - User
   - external
     - view your infos

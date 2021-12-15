@@ -43,6 +43,7 @@ Ingests:
 	{#insert pageStyle}/* No page css */{/}
 
 
+
     </style>
 </head>
 <body>
@@ -89,17 +90,18 @@ Ingests:
                         {/if}
                     </a>
                 </li>
-                <!--                <li class="nav-item dropdown">-->
-                <!--                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"-->
-                <!--                       aria-haspopup="true" aria-expanded="false">Dropdown</a>-->
-                <!--                    <div class="dropdown-menu">-->
-                <!--                        <a class="dropdown-item" href="#">Action</a>-->
-                <!--                        <a class="dropdown-item" href="#">Another action</a>-->
-                <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
-                <!--                        <div class="dropdown-divider"></div>-->
-                <!--                        <a class="dropdown-item" href="#">Separated link</a>-->
-                <!--                    </div>-->
-                <!--                </li>-->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i
+                            class="fas fa-infinity"></i> Other</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
+                            <i class="fas fa-images"></i> Images
+                            {#if page is 'images'}
+                            <span class="visually-hidden">(current)</span>
+                            {/if}
+                        </a>
+                    </div>
+                </li>
             </ul>
 
             <form class="d-flex me-auto" method="get" action="/items">
@@ -148,7 +150,7 @@ Ingests:
     <hr/>
     <footer id="footer" class="row" role="contentinfo">
         <div class="col-sm-4">
-            <span class="h4">Open Quarter Master Server</span><br />
+            <span class="h4">Open Quarter Master Server</span><br/>
             &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
             Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
             License</a><br/>
@@ -198,6 +200,7 @@ Ingests:
 
 <script>
 {#insert pageScript}{/}
+
 </script>
 
 </body>
