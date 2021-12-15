@@ -178,6 +178,10 @@ items:
             value: "1000"
           - name: runningInfo.hostname
             value: istio-ingressgateway-istio-system-qm.apps.sno-demo.nixon.com
+          - name: quarkus.rest-client.demoService.perform
+            value: "true"
+          - name: quarkus.rest-client.demoServiceExternal.perform
+            value: "false"
           image: image-registry.openshift-image-registry.svc:5000/quartermaster/open-qm-base-station:0.0.60-native
           imagePullPolicy: IfNotPresent
           name: open-qm-base-station
