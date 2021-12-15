@@ -14,7 +14,6 @@ import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -24,6 +23,7 @@ import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserS
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.LocationAssertions.assertOnPage;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserAdminLoggedIn;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserLoggedIn;
+import static com.mongodb.assertions.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
@@ -67,7 +67,9 @@ public class LoginExternalTest extends WebUiTest {
     @Test
     public void testLoginWithReturnPath() throws URISyntaxException {
         User testUser = this.testUserService.getTestUser(false, true);
-        this.webDriverWrapper.goTo(new URIBuilder("/").addParameter("returnPath", "/storage").build().toString());
+        String queryPath = "/storage?label=some&pageNum=1";
+
+        this.webDriverWrapper.goTo(queryPath);
 
         this.webDriverWrapper.waitForPageLoad();
 
@@ -84,6 +86,7 @@ public class LoginExternalTest extends WebUiTest {
         assertUserLoggedIn(this.webDriverWrapper, testUser);
 
         assertOnPage(this.webDriverWrapper, "/storage");
+        assertTrue(this.webDriverWrapper.getWebDriver().getCurrentUrl().endsWith(queryPath));
     }
 
     @Test
