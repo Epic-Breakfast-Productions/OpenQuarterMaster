@@ -75,6 +75,7 @@ public class Index extends UiProvider {
 
         Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
 
+
         if (EXTERNAL.equals(this.authMode)) {
             URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
             String state = UUID.randomUUID().toString();
@@ -87,9 +88,9 @@ public class Index extends UiProvider {
             signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 
             responseBuilder.entity(
-                    index.data(
-                            "signInLink", signInLinkBuilder.build()
-                    )
+                    index
+                            .data("pageLoadTimestamp", getLoadTimestamp())
+                            .data("signInLink", signInLinkBuilder.build())
             ).cookie(
                     UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
             );

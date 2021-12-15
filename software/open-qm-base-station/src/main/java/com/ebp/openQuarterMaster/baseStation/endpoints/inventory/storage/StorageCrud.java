@@ -82,7 +82,7 @@ public class StorageCrud extends EndpointProvider {
     @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createInventoryItem(
+    public Response createStorageBlock(
             @Context SecurityContext securityContext,
             @Valid StorageBlock storageBlock
     ) {
@@ -131,7 +131,7 @@ public class StorageCrud extends EndpointProvider {
                             mediaType = "application/json",
                             schema = @Schema(
                                     type = SchemaType.ARRAY,
-                                    implementation = InventoryItem.class
+                                    implementation = StorageBlock.class
                             )
                     ),
                     @Content(

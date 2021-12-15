@@ -21,7 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = PasswordConstraintValidator.class)
 @Documented
 public @interface ValidPassword {
-    String message() default "Unit was not one of allowed units.";
+    String message() default "Password did not meet strength and complexity requirements.";
 
     Class<?>[] groups() default {};
 
