@@ -3,14 +3,17 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.Validator;
 
+@Slf4j
+@ApplicationScoped
 public class ImageService extends MongoService<Image> {
 
-    private Validator validator;
+//    private Validator validator;
 
     ImageService() {//required for DI
         super(null, null, null, null, null, false, null);
@@ -18,7 +21,7 @@ public class ImageService extends MongoService<Image> {
 
     @Inject
     ImageService(
-            Validator validator,
+//            Validator validator,
             ObjectMapper objectMapper,
             MongoClient mongoClient,
             @ConfigProperty(name = "quarkus.mongodb.database")
@@ -31,6 +34,6 @@ public class ImageService extends MongoService<Image> {
                 Image.class,
                 false
         );
-        this.validator = validator;
+//        this.validator = validator;
     }
 }
