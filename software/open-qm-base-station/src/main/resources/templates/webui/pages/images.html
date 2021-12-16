@@ -85,9 +85,33 @@
         </div>
     </div>
 </div>
+<div class="modal fade" tabindex="-1" id="viewModal" aria-labelledby="viewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalTitle"><span id="viewModalTitleText">View</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col text-center">
+                        <img id="imageViewImage" class="imageViewImage" src="">
+                    </div>
+                </div>
+
+                Image view
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {/modals}
 {#scripts}
+<script src="/res/js/search.js"></script>
 <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
 {/scripts}
 {#pageScript}
@@ -176,22 +200,27 @@ addEditImageForm.submit(function (ev) {
             });
         }
 	});
-
-
-
-	//.then(function (resp) {
-	//	$.ajax({
-	//		url: "/crop_image/store_img_ajax.php",
-	//		type: "POST",
-	//		data: {"image":resp},
-	//		success: function (data) {
-	//			html = '<img style="margin: 20px;" src="' + resp + '" />';
-	//			$("#uploaded-input").html(html);
-	//		}
-	//	});
-	//});
 });
 
+
+var viewModalTitle = $('#viewModalTitle');
+var imageViewImage = $('#imageViewImage');
+
+
+function resetView(){
+    viewModalTitle.text("");
+    imageViewImage.attr('src', '');
+}
+
+function setupViewForImage(id){
+    resetView();
+
+    imageViewImage.attr('src', '/api/media/image/' + id + '/data');
+
+
+
+
+}
 
 
 

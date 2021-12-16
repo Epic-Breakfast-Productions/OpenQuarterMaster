@@ -7,3 +7,7 @@
 .numPerPageInput {
     width: 25px;
 }
+
+.imageViewImage {
+    max-width: 100%;
+}

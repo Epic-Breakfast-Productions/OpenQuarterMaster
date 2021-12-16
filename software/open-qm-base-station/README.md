@@ -77,5 +77,7 @@ Native-specific tests:
       - search users
 - REST
   - handle ParseException for expired, bad tokens for UI
-- Image/thumbnail support
+- Images
+  - tests
+  - view image w/ del, edit buttons
 - Testing
