@@ -51,7 +51,7 @@ function doRestCall({
 
 		if(data.status == 0){ // no response from server
 			if(failNoResponseCheckStatus){
-				getServerStatus();
+				//getServerStatus();
 			}
 			console.info("Failed due to lack of connection to server.");
 			if(failNoResponse != null){

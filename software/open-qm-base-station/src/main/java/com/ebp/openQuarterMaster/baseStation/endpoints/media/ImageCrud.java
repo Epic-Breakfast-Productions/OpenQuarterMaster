@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
+import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -34,6 +35,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 @Traced
@@ -75,11 +78,15 @@ public class ImageCrud extends EndpointProvider {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createImage(
             @Context SecurityContext securityContext,
-            @Valid Image image
-    ) {
+            @Valid ImageCreateRequest icr
+    ) throws IOException {
         logRequestContext(this.jwt, securityContext);
         log.info("Creating new storage block.");
         User user = this.userService.getFromJwt(jwt);
+
+        Image image = new Image(icr);
+
+        this.validator.validate(image);
 
         ObjectId output = imageService.add(image, user);
         log.info("Image created with id: {}", output);
@@ -255,7 +262,7 @@ public class ImageCrud extends EndpointProvider {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         log.info("Image found");
-        return Response.status(Response.Status.FOUND).entity(output.toDataString()).build();
+        return Response.status(Response.Status.FOUND).entity(Base64.getDecoder().decode(output.getData())).type("image/" + output.getType()).build();
     }
 
     @PUT

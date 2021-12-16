@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 public class PagingOptions {
-    public static final int DEFAULT_PAGE_SIZE = 25;
+    public static final int DEFAULT_PAGE_SIZE = 36;
     public static final int DEFAULT_PAGE_NUM = 1;
 
 

@@ -24,7 +24,7 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.0'
 
     //if need ObjectIds, BsonIgnore
-    implementation group: 'org.mongodb', name: 'bson', version: '4.3.3'
+    implementation group: 'org.mongodb', name: 'bson', version: '4.4.0'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'

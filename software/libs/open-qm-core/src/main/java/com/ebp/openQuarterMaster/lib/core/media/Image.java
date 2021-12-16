@@ -1,16 +1,22 @@
 package com.ebp.openQuarterMaster.lib.core.media;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidBase64;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import javax.imageio.ImageIO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -29,11 +35,12 @@ public class Image extends MainObject {
     /**
      * The format to keep the images in
      */
-    public static final String CONVERTED_IMAGE_FORMAT = "jpg";
+    public static final String CONVERTED_IMAGE_FORMAT = "png";
     /**
      * Base64 encoder to use to encode image data for storage and eventual presentation.
      */
-    private static final Base64.Encoder BASE_64_ENCODED = Base64.getEncoder();
+    private static final Base64.Encoder BASE_64_ENCODER = Base64.getEncoder();
+    private static final Base64.Decoder BASE_64_DECODER = Base64.getDecoder();
 
     /**
      * Resizes the given image to what should be held in the object. Resizes image to {@link #IMAGE_SIZE} square.
@@ -74,15 +81,34 @@ public class Image extends MainObject {
         } catch (IOException e) {
             throw new IllegalStateException("Somehow failed to write in-memory.", e);
         }
-        data = BASE_64_ENCODED.encode(data);
+        if(data.length == 0){
+            throw new IllegalStateException("Failed to write data out as " + CONVERTED_IMAGE_FORMAT);
+        }
+        data = BASE_64_ENCODER.encode(data);
         return new String(data);
+    }
+
+    public static BufferedImage bufferedImageFromBase64(String dataString) {
+        BufferedImage image = null;
+        byte[] imageByte;
+        try {
+            imageByte = BASE_64_DECODER.decode(dataString.split(",")[1]);
+            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+            image = ImageIO.read(bis);
+            bis.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read in image from data string.", e);
+        }
+        return image;
     }
 
     @NonNull
     @NotNull
     @NotBlank
+    @Size(max = 20)
     private String title;
 
+    @Size(max = 500)
     private String description;
 
     /**
@@ -119,15 +145,47 @@ public class Image extends MainObject {
         this(title, description, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
     }
 
+    /**
+     * @param title
+     * @param description
+     * @param imageData   base-64 image data formatted as data:image/%s;base64,%s
+     */
+    public Image(String title, String description, String imageData) {
+        this(
+                title,
+                description,
+                bufferedImageFromBase64(imageData)
+        );
+    }
+    public Image(ImageCreateRequest icr) {
+        this(
+                icr.getName(),
+                icr.getDescription(),
+                icr.getImageData()
+        );
+        if(icr.getAtts() != null){
+            this.setAttributes(icr.getAtts());
+        }
+        if(icr.getKeywords() != null){
+            this.setKeywords(icr.getKeywords());
+        }
+    }
+
+    @BsonIgnore
+    @JsonIgnore
     public String toDataString() {
         return String.format("data:image/%s;base64,%s", this.getType(), this.getData());
     }
 
-    public Image setDataWithImage(BufferedImage image) {
-        this.setData(resizeGetBytes(image));
-        return this;
-    }
+//    @BsonIgnore
+//    @JsonIgnore
+//    public Image setDataWithImage(BufferedImage image) {
+//        this.setData(resizeGetBytes(image));
+//        return this;
+//    }
 
+    @BsonIgnore
+    @JsonIgnore
     public int getDataLength() {
         if (this.getData() != null) {
             return this.getData().length();

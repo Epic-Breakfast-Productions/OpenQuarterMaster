@@ -1,10 +1,202 @@
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Images' titleIcon='images' page='images'}
+{#styleSheets}
+<link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+{/styleSheets}
 {#pageStyle}
 
 {/pageStyle}
 {#pageContent}
-
-TODO
+<div class="row mb-2">
+    <div class="col-6 d-grid gap-2 text-center">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
+                class="fas fa-plus"></i> Add Image
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    <i class="fas fa-search"></i> Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    {#imageSearchForm id='mainImageSearch'}
+                    {/imageSearchForm}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="imageSearchresults">
+    {#imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch'
+    pagingCalculations=pagingCalculations}
+    {/imageSearchResults}
+</div>
 
 {/pageContent}
+{#modals}
+<div class="modal fade" tabindex="-1" id="addEditModal" aria-labelledby="addEditModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEditModalTitle"><span id="addEditModalTitleText">Add/Edit</span> Image
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addEditFormMessages">
+                </div>
+                <form id="addEditImageForm">
+                    <input type="hidden" id="addEditFormMode" value="">
+                    <input type="hidden" id="addEditFormId" value="">
+                    <div class="mb-3 row">
+                        <label for="addEditNameInput" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="addEditNameInput" placeholder="Label" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imageUploadInput" class="form-label">Image File</label>
+                        <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
+
+                        <div class="col-md-4 text-center" style="padding-top:30px;">
+                            <div id="upload-input" style="width:350px; height: 400px;"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addEditImageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/modals}
+{#scripts}
+<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+{/scripts}
+{#pageScript}
+{!
+<script> !}
+var addEditImageForm = $("#addEditImageForm");
+var addEditModalTitleText = $("#addEditModalTitleText");
+var addEditFormSubmitButton = $("#addEditFormSubmitButton");
+var addEditFormMessages = $("#addEditFormMessages");
+//inputs
+var addEditFormMode = $("#addEditFormMode");
+var addEditFormId = $("#addEditFormId");
+var addEditNameInput = $("#addEditNameInput");
+var addEditDescriptionInput = $("#addEditDescriptionInput");
+
+$uploadCrop = $('#upload-input').croppie({
+    enableExif: true,
+    viewport: {
+        width: 250,
+        height: 250,
+        type: 'square'
+    },
+    boundary: {
+        width: 300,
+        height: 300
+    }
+});
+
+
+$('#imageUploadInput').on('change', function () {
+	var reader = new FileReader();
+    reader.onload = function (e) {
+    	$uploadCrop.croppie('bind', {
+    		url: e.target.result
+    	}).then(function(){
+    		console.log('jQuery bind complete');
+    	});
+
+    }
+    reader.readAsDataURL(this.files[0]);
+});
+
+function resetAddEdit(){
+    addEditImageForm.trigger("reset");
+    addEditFormMessages.text("");
+}
+
+function setupAddEditForAdd(){
+    console.log("Setting up add/edit form for add.");
+    resetAddEdit();
+    addEditFormMode.val("add");
+    addEditModalTitleText.text("Add");
+    addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Image');
+}
+
+addEditImageForm.submit(function (ev) {
+    ev.preventDefault();
+
+    $uploadCrop.croppie('result', {
+		type: 'base64',
+		size: 'original'
+	}).then(function(imageDataStr){
+        var addEditData = {
+            name: addEditNameInput.val(),
+            description: addEditDescriptionInput.val(),
+            imageData: imageDataStr
+        };
+
+	    console.log("Got image data.");
+
+        if(addEditFormMode.val() == "add"){
+            console.log("Adding new image.");
+            doRestCall({
+                url: "/api/media/image",
+                method: "POST",
+                data: addEditData,
+                async: false,
+                done: function(data) {
+                    console.log("Response from create request: " + JSON.stringify(data));
+                    reloadPageWithMessage("Created image successfully!", "success", "Success!");
+                },
+                fail: function(data) {
+                    console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+                    addMessageToDiv(addEditFormMessages, "danger", "Failed to do action: " + data.responseText, "Failed", null);
+                }
+            });
+        }
+	});
+
+
+
+	//.then(function (resp) {
+	//	$.ajax({
+	//		url: "/crop_image/store_img_ajax.php",
+	//		type: "POST",
+	//		data: {"image":resp},
+	//		success: function (data) {
+	//			html = '<img style="margin: 20px;" src="' + resp + '" />';
+	//			$("#uploaded-input").html(html);
+	//		}
+	//	});
+	//});
+});
+
+
+
+
+{!
+</script> !}
+{/pageScript}
+
 {/include}

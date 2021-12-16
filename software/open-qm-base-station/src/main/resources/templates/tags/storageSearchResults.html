@@ -34,12 +34,14 @@
       <h2>
         No Storage Blocks
       </h2>
+      {#if actionType == 'full'}
       <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
                 data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
                 class="fas fa-plus"></i> Add Storage Block
         </button>
       </div>
+      {/if}
     </td>
   </tr>
   {#else}
