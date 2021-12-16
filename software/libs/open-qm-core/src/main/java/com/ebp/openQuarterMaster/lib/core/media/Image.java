@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.media;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidBase64;
 import lombok.*;
 
 import javax.imageio.ImageIO;
@@ -60,7 +61,7 @@ public class Image extends MainObject {
      * @param image The image to resize, and get the data for
      * @return The image data in base64
      */
-    public static char[] resizeGetBytes(BufferedImage image) {
+    public static String resizeGetBytes(BufferedImage image) {
         BufferedImage resized = resize(image);
 
         byte[] data;
@@ -74,13 +75,15 @@ public class Image extends MainObject {
             throw new IllegalStateException("Somehow failed to write in-memory.", e);
         }
         data = BASE_64_ENCODED.encode(data);
-        return new String(data).toCharArray();
+        return new String(data);
     }
 
     @NonNull
     @NotNull
     @NotBlank
     private String title;
+
+    private String description;
 
     /**
      * The image format of the data held.
@@ -93,29 +96,31 @@ public class Image extends MainObject {
      * <p>
      * TODO:: validator
      */
+    @NonNull
+    @NotNull
+    @NotBlank
     private String type;
 
     /**
      * The base-64 encoded data that makes up the image.
      * <p>
-     * TODO:: validator for valid base64
      */
     @NonNull
     @NotNull
     @NotBlank
-    private char[] data;
+    @ValidBase64
+    private String data;
 
     public Image(String title, BufferedImage image) {
-        this(title, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
+        this(title, null, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
+    }
+
+    public Image(String title, String description, BufferedImage image) {
+        this(title, description, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
     }
 
     public String toDataString() {
-        //TODO:: research the best way to do this
-        StringBuilder sb = new StringBuilder("data:image/");
-        sb.append(this.getType());
-        sb.append(";base64,");
-        sb.append(this.getData());
-        return sb.toString();
+        return String.format("data:image/%s;base64,%s", this.getType(), this.getData());
     }
 
     public Image setDataWithImage(BufferedImage image) {
@@ -125,7 +130,7 @@ public class Image extends MainObject {
 
     public int getDataLength() {
         if (this.getData() != null) {
-            return this.getData().length;
+            return this.getData().length();
         }
         return 0;
     }

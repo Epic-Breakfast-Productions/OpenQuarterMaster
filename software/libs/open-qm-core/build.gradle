@@ -41,6 +41,7 @@ dependencies {
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
     implementation 'org.passay:passay:1.6.1'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
 
 
     testImplementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
@@ -53,7 +54,7 @@ dependencies {
     implementation group: 'tech.uom.lib', name: 'uom-lib-assertj', version: '2.1'
 
     testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.7'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.8'
 }
 
 test {
