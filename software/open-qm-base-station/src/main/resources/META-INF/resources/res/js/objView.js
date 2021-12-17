@@ -60,6 +60,5 @@ function displayObjHistory(container, historyList){
                     addMessageToDiv(imageViewMessages, "danger", "Failed to get info on user: " + data.responseText, "Failed", null);
                 }
             });
-
     });
 }
