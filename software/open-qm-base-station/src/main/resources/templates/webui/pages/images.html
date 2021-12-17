@@ -80,12 +80,12 @@
                     <div class="mb-3">
                         <label class="form-label">Keywords</label> <br />
                         <div id="keywordInputDiv"></div>
-                        <button type="button" class="btn btn-success btn-sm" onclick="addKeywordInput();"><i class="fas fa-plus"></i> Add keyword</button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="addKeywordInput($('#keywordInputDiv'));"><i class="fas fa-plus"></i> Add keyword</button>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Attributes</label> <br />
                         <div id="attInputDiv"></div>
-                        <button type="button" class="btn btn-success btn-sm" onclick="addAttInput();"><i class="fas fa-plus"></i> Add Attribute</button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="addAttInput($('#attInputDiv'));"><i class="fas fa-plus"></i> Add Attribute</button>
                     </div>
                 </form>
             </div>
@@ -157,6 +157,8 @@
 {/modals}
 {#scripts}
 <script src="/res/js/search.js"></script>
+<script src="/res/js/objEdit.js"></script>
+<script src="/res/js/objView.js"></script>
 <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
 {/scripts}
 {#pageScript}
@@ -248,30 +250,8 @@ function setupAddEditForEdit(id){
     	        $uploadCrop.croppie('setZoom', 0);
     	    });
 
-    	    if(data.keywords.length > 0){
-                console.log("had keywords");
-                data.keywords.forEach(function(keyword){
-                    console.log("Keyword: " + keyword);
-
-                    var keywordInputDiv = addKeywordInput();
-
-                    keywordInputDiv.find(":input").val(keyword)
-                });
-            }
-            if(Object.keys(data.attributes).length > 0){
-                console.log("had attributes");
-                viewAttsSection.show();
-
-                Object.entries(data.attributes).forEach(entry => {
-                    const [key, val] = entry;
-                    console.log("Att: " + key + "/" + val);
-
-                    var attInputDiv = addAttInput();
-
-                    attInputDiv.find(".attInputKey").val(key);
-                    attInputDiv.find(".attInputValue").val(val);
-                });
-            }
+            addKeywordInputs(keywordInputDiv, data.keywords);
+            addAttInputs(attInputDiv, data.attributes);
         },
         fail: function(data) {
             console.warn("Bad response from image data get attempt: " + JSON.stringify(data));
@@ -280,32 +260,6 @@ function setupAddEditForEdit(id){
     });
 }
 
-function addKeywordInput(){
-    var newInputDiv = $('<div class="input-group mb-1"> \
-  <input type="text" class="form-control keywordInput" placeholder="Keyword" required> \
-  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);"><i class="fas fa-trash"></i></button> \
-</div>');
-    keywordInputDiv.append(
-        newInputDiv
-    );
-    return newInputDiv;
-}
-function addAttInput(){
-    var newInputDiv = $('<div class="input-group mb-1"> \
-  <input type="text" class="form-control attInputKey" placeholder="key" required> \
-  <input type="text" class="form-control attInputValue" placeholder="value"> \
-  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);"><i class="fas fa-trash"></i></button> \
-</div>');
-    attInputDiv.append(
-        newInputDiv
-    );
-    return newInputDiv;
-}
-
-function keywordsAttsInputRem(target){
-    console.log("Removing keyword or att input row");
-    target.parentElement.remove();
-}
 
 addEditImageForm.submit(function (ev) {
     ev.preventDefault();
@@ -317,19 +271,10 @@ addEditImageForm.submit(function (ev) {
         var addEditData = {
             title: addEditTitleInput.val(),
             description: addEditDescriptionInput.val(),
-            imageData: imageDataStr,
-            keywords: [],
-            attributes: {}
+            imageData: imageDataStr
         };
 
-        keywordInputDiv.find(".keywordInput").each(function(i, keywordInput){
-            addEditData.keywords.push(keywordInput.value);
-        });
-
-        var attValArr = attInputDiv.find(".attInputValue");
-        attInputDiv.find(".attInputKey").each(function(i, attKeyInput){
-            addEditData.attributes[attKeyInput.value] = attValArr[i].value;
-        });
+        addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
 
 	    console.log("Got image data.");
 
@@ -422,31 +367,9 @@ function setupViewForImage(id){
                 viewDescriptionTextSection.show();
                 viewDescriptionText.text(data.description);
             }
-            if(data.keywords.length > 0){
-                console.log("had keywords");
-                viewKeywordsTextSection.show();
-                data.keywords.forEach(function(keyword){
-                    console.log("Keyword: " + keyword);
+            processKeywordDisplay(viewKeywordsTextSection, viewKeywordsText, data.keywords);
 
-                    viewKeywordsText.append(
-                        $('<span class="badge bg-light text-dark m-3">'+keyword+'</span> ')
-                    );
-                });
-            }
-            if(Object.keys(data.attributes).length > 0){
-                console.log("had attributes");
-                viewAttsSection.show();
-
-                Object.entries(data.attributes).forEach(entry => {
-                    const [key, val] = entry;
-                    console.log("Att: " + key + "/" + val);
-
-                    viewAttsSectionText.append(
-                        $('<span class="badge bg-light text-dark">'+key + ' <i class="fas fa-equals"></i> '+ val + '</span> ')
-                    );
-                });
-            }
-
+            processAttDisplay(viewAttsSection, viewAttsSectionText, data.attributes);
 
             imageEditButton.click(function(event){
                 setupAddEditForEdit(id);
