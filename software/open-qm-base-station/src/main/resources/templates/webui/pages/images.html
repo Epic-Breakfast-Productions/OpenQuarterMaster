@@ -191,21 +191,43 @@ $uploadCrop = $('#upload-input').croppie({
         height: 300
     }
 });
+var cropSlider = $uploadCrop.find(":input.cr-slider");
 
-$uploadCrop.croppie('bind', {
-    url: "/media/logo.png"
-});
+function bindCroppie(bindVal){
+    return $uploadCrop.croppie('bind', {
+        url: bindVal
+    }).then(function(){
+        var minVal = cropSlider.attr('min');
+        minVal = minVal === undefined ? 0 : minVal;
+        $uploadCrop.croppie(
+            'setZoom',
+            cropSlider.attr('min')
+        );
+    });
+
+    //$uploadCrop.croppie('bind', {
+    //    url: ,
+    //    zoom: 0
+    //});
+    //$uploadCrop.croppie('bind', {
+    //		    url: "/api/media/image/" + id + "/data",
+    //		    zoom: 0
+    //	    }).then(function(){
+    //	        $uploadCrop.croppie('setZoom', 0);
+    //	    });
+}
+
+bindCroppie("/media/logo.png");
+
+
 
 
 $('#imageUploadInput').on('change', function () {
 	var reader = new FileReader();
     reader.onload = function (e) {
-    	$uploadCrop.croppie('bind', {
-    		url: e.target.result
-    	}).then(function(){
-    		console.log('jQuery bind complete');
+    	bindCroppie(e.target.result).then(function(){
+    		console.log('Loaded image selected by user.');
     	});
-
     }
     reader.readAsDataURL(this.files[0]);
 });
@@ -215,11 +237,7 @@ function resetAddEdit(){
     addEditFormMessages.text("");
     keywordInputDiv.html("");
     attInputDiv.html("");
-    //TODO:: reset cropee
-    $uploadCrop.croppie('bind', {
-        url: "/media/logo.png",
-        zoom: 0
-    });
+    bindCroppie("/media/logo.png");
 }
 
 function setupAddEditForAdd(){
@@ -246,12 +264,8 @@ function setupAddEditForEdit(id){
             console.log("Response from create request: " + JSON.stringify(data));
             addEditTitleInput.val(data.title);
             addEditDescriptionInput.text(data.description);
-            $uploadCrop.croppie('bind', {
-    		    url: "/api/media/image/" + id + "/data",
-    		    zoom: 0
-    	    }).then(function(){
-    	        $uploadCrop.croppie('setZoom', 0);
-    	    });
+
+            bindCroppie("/api/media/image/" + id + "/data");
 
             addKeywordInputs(keywordInputDiv, data.keywords);
             addAttInputs(attInputDiv, data.attributes);
