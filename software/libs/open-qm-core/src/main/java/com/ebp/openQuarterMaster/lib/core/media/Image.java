@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
@@ -159,7 +158,7 @@ public class Image extends MainObject {
     }
     public Image(ImageCreateRequest icr) {
         this(
-                icr.getName(),
+                icr.getTitle(),
                 icr.getDescription(),
                 icr.getImageData()
         );

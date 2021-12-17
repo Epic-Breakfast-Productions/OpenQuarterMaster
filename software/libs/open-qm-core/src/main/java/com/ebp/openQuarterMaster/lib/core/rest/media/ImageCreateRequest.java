@@ -11,7 +11,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageCreateRequest {
-    public String name;
+    public String title;
     public String description;
     public String imageData;
 
