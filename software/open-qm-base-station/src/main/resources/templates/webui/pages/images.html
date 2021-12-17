@@ -141,6 +141,32 @@
                         <p id="viewAttsSectionText"></p>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="accordion col" id="historyAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="historyViewHeading">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#historyCollapse" aria-controls="historyCollapse">
+                                    History
+                                </button>
+                            </h2>
+                            <div id="historyCollapse" class="accordion-collapse collapse" aria-labelledby="historyViewHeading" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>User</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="historyViewContainer"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
@@ -331,6 +357,7 @@ var viewAttsSection = $('#viewAttsSection');
 var viewAttsSectionText = $('#viewAttsSectionText');
 var imageDeleteButton = $('#imageDeleteButton');
 var imageEditButton = $('#imageEditButton');
+var historyViewContainer = $('#historyViewContainer');
 
 function resetView(){
     viewModalTitleText.text("");
@@ -343,6 +370,7 @@ function resetView(){
     viewKeywordsText.text("");
     viewAttsSection.hide();
     viewAttsSectionText.text("");
+    historyViewContainer.text("");
 
     imageDeleteButton.click(null);
 }
@@ -368,8 +396,8 @@ function setupViewForImage(id){
                 viewDescriptionText.text(data.description);
             }
             processKeywordDisplay(viewKeywordsTextSection, viewKeywordsText, data.keywords);
-
             processAttDisplay(viewAttsSection, viewAttsSectionText, data.attributes);
+            displayObjHistory(historyViewContainer, data.history);
 
             imageEditButton.click(function(event){
                 setupAddEditForEdit(id);

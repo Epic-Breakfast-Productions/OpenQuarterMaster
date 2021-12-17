@@ -247,4 +247,42 @@ public class UserCrud extends EndpointProvider {
                 .build();
     }
 
+    @GET
+    @Path("{id}")
+    @Operation(
+            summary = "Gets a particular user's data."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "User retrieved.",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                            implementation = UserGetResponse.class
+                    )
+            )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad request given. Data given could not pass validation.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public Response getUser(
+            @Context SecurityContext securityContext,
+            @org.jboss.resteasy.annotations.jaxrs.PathParam String id
+    ) {
+        logRequestContext(this.jwt, securityContext);
+        log.info("Retrieving user with id {}", id);
+        User output = this.userService.get(id);
+
+        if (output == null) {
+            log.info("User not found.");
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        log.info("User found");
+        return Response.status(Response.Status.OK).entity(UserGetResponse.builder(output).build()).build();
+    }
+
 }
