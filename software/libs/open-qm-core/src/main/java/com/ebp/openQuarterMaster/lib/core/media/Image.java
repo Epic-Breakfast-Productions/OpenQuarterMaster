@@ -162,8 +162,8 @@ public class Image extends MainObject {
                 icr.getDescription(),
                 icr.getImageData()
         );
-        if(icr.getAtts() != null){
-            this.setAttributes(icr.getAtts());
+        if(icr.getAttributes() != null){
+            this.setAttributes(icr.getAttributes());
         }
         if(icr.getKeywords() != null){
             this.setKeywords(icr.getKeywords());

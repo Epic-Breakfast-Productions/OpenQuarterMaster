@@ -16,5 +16,5 @@ public class ImageCreateRequest {
     public String imageData;
 
     public List<String> keywords = null;
-    public Map<String, String> atts = null;
+    public Map<String, String> attributes = null;
 }
