@@ -9,5 +9,20 @@
 }
 
 .imageViewImage {
-    max-width: 100%;
+    width: 500px;
+}
+
+.imageSearchResult:hover {
+    box-shadow: 30px 30px 50px grey inset;
+    cursor: pointer;
+}
+
+.img-75 {
+  width: 375px;
+}
+.img-50 {
+    width: 250px;
+}
+.img-25 {
+    width: 125px;
 }

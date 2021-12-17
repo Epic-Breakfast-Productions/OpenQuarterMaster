@@ -57,15 +57,16 @@
                     <input type="hidden" id="addEditFormMode" value="">
                     <input type="hidden" id="addEditFormId" value="">
                     <div class="mb-3 row">
-                        <label for="addEditNameInput" class="col-sm-3 col-form-label">Name</label>
+                        <label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="addEditNameInput" placeholder="Label" required>
+                            <input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                            <textarea class="form-control" id="addEditDescriptionInput"
+                                      placeholder="Description"></textarea>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -76,11 +77,22 @@
                             <div id="upload-input" style="width:350px; height: 400px;"></div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Keywords</label> <br />
+                        <div id="keywordInputDiv"></div>
+                        <button type="button" class="btn btn-success btn-sm" onclick="addKeywordInput();"><i class="fas fa-plus"></i> Add keyword</button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attributes</label> <br />
+                        <div id="attInputDiv"></div>
+                        <button type="button" class="btn btn-success btn-sm" onclick="addAttInput();"><i class="fas fa-plus"></i> Add Attribute</button>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="addEditImageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>
+                <button type="submit" form="addEditImageForm" class="btn btn-success"
+                        id="addEditFormSubmitButton"></button>
             </div>
         </div>
     </div>
@@ -89,20 +101,53 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewModalTitle"><span id="viewModalTitleText">View</span>
+                <h5 class="modal-title" id="viewModalTitle"><i class="fas fa-image"></i> <span id="viewModalTitleText">View</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col text-center">
-                        <img id="imageViewImage" class="imageViewImage" src="">
+                    <div class="col-lg-7 text-center">
+                        <img class="imageViewImage img-thumbnail" src="">
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="row">
+                            <div class="col-lg-8"><img class="imageViewImage img-thumbnail img-75" src=""></div>
+                            <div class="col-lg-6"><img class="imageViewImage img-thumbnail img-50" src=""></div>
+                            <div class="col-lg-4"><img class="imageViewImage img-thumbnail img-25" src=""></div>
+                        </div>
                     </div>
                 </div>
-
-                Image view
+                <hr/>
+                <div class="row">
+                    <div class="col" id="imageViewMessages">
+                    </div>
+                </div>
+                <div class="row" id="viewDescriptionTextSection">
+                    <div class="col">
+                        <h4>Description:</h4>
+                        <p id="viewDescriptionText"></p>
+                    </div>
+                </div>
+                <div class="row" id="viewKeywordsTextSection">
+                    <div class="col">
+                        <h4>Keywords:</h4>
+                        <p id="viewKeywordsText"></p>
+                    </div>
+                </div>
+                <div class="row" id="viewAttsSection">
+                    <div class="col">
+                        <h4>Attributes:</h4>
+                        <p id="viewAttsSectionText"></p>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#addEditModal" id="imageEditButton"><i class="fas fa-edit"></i> Edit
+                </button>
+                <button type="button" class="btn btn-danger" id="imageDeleteButton"><i class="fas fa-trash"></i> Delete
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -121,10 +166,12 @@ var addEditImageForm = $("#addEditImageForm");
 var addEditModalTitleText = $("#addEditModalTitleText");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
+var keywordInputDiv = $("#keywordInputDiv");
+var attInputDiv = $("#attInputDiv");
 //inputs
 var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
-var addEditNameInput = $("#addEditNameInput");
+var addEditTitleInput = $("#addEditTitleInput");
 var addEditDescriptionInput = $("#addEditDescriptionInput");
 
 $uploadCrop = $('#upload-input').croppie({
@@ -138,6 +185,10 @@ $uploadCrop = $('#upload-input').croppie({
         width: 300,
         height: 300
     }
+});
+
+$uploadCrop.croppie('bind', {
+    url: "/media/logo.png"
 });
 
 
@@ -157,6 +208,13 @@ $('#imageUploadInput').on('change', function () {
 function resetAddEdit(){
     addEditImageForm.trigger("reset");
     addEditFormMessages.text("");
+    keywordInputDiv.html("");
+    attInputDiv.html("");
+    //TODO:: reset cropee
+    $uploadCrop.croppie('bind', {
+        url: "/media/logo.png",
+        zoom: 0
+    });
 }
 
 function setupAddEditForAdd(){
@@ -165,6 +223,59 @@ function setupAddEditForAdd(){
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add");
     addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Image');
+}
+function setupAddEditForEdit(id){
+    console.log("Setting up add/edit form for edit.");
+    resetAddEdit();
+    addEditFormMode.val("edit");
+    addEditModalTitleText.text("Edit");
+    addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Image');
+
+    addEditFormId.val(id);
+
+    doRestCall({
+        url: "/api/media/image/" + id,
+        method: "GET",
+        async: false,
+        done: function(data) {
+            console.log("Response from create request: " + JSON.stringify(data));
+            addEditTitleInput.val(data.title);
+            addEditDescriptionInput.text(data.description);
+            $uploadCrop.croppie('bind', {
+    		    url: "/api/media/image/" + id + "/data",
+    		    zoom: 0
+    	    }).then(function(){
+    	        $uploadCrop.croppie('setZoom', 0);
+    	    });
+        },
+        fail: function(data) {
+            console.warn("Bad response from image data get attempt: " + JSON.stringify(data));
+            addMessageToDiv(imageViewMessages, "danger", "Failed to get info on image: " + data.responseText, "Failed", null);
+        }
+    });
+}
+
+function addKeywordInput(){
+    keywordInputDiv.append(
+        $('<div class="input-group mb-1"> \
+  <input type="text" class="form-control keywordInput" placeholder="Keyword" required> \
+  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);"><i class="fas fa-trash"></i></button> \
+</div>')
+    );
+}
+function addAttInput(){
+    attInputDiv.append(
+        $('<div class="input-group mb-1"> \
+  <input type="text" class="form-control attInputKey" placeholder="key" required> \
+  <input type="text" class="form-control attInputValue" placeholder="value"> \
+  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);"><i class="fas fa-trash"></i></button> \
+</div>')
+    );
+}
+
+function keywordsAttsInputRem(target){
+    console.log("Removing keyword or att input row");
+    target.parentElement.remove();
 }
 
 addEditImageForm.submit(function (ev) {
@@ -175,10 +286,22 @@ addEditImageForm.submit(function (ev) {
 		size: 'original'
 	}).then(function(imageDataStr){
         var addEditData = {
-            name: addEditNameInput.val(),
+            title: addEditTitleInput.val(),
             description: addEditDescriptionInput.val(),
-            imageData: imageDataStr
+            imageData: imageDataStr,
+            keywords: [],
+            attributes: {}
         };
+
+        keywordInputDiv.find(".keywordInput").each(function(i, keywordInput){
+            addEditData.keywords.push(keywordInput.value);
+        });
+
+        //TODO:: fix
+        var attValArr = attInputDiv.find(".attInputValue");
+        attInputDiv.find(".attInputKey").each(function(i, attKeyInput){
+            addEditData.attributes[attKeyInput.value] = attValArr[i].value;
+        });
 
 	    console.log("Got image data.");
 
@@ -198,33 +321,128 @@ addEditImageForm.submit(function (ev) {
                     addMessageToDiv(addEditFormMessages, "danger", "Failed to do action: " + data.responseText, "Failed", null);
                 }
             });
+        } else if(addEditFormMode.val() == "edit"){
+            var id = addEditFormId.val();
+            console.log("Editing image " + id);
+
+
+
+        } else {
+            addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
         }
 	});
 });
 
 
-var viewModalTitle = $('#viewModalTitle');
-var imageViewImage = $('#imageViewImage');
-
+var viewModalTitleText = $('#viewModalTitleText');
+var imageViewImages = $('.imageViewImage');
+var imageViewMessages = $('.imageViewMessages');
+var viewDescriptionTextSection = $('#viewDescriptionTextSection');
+var viewDescriptionText = $('#viewDescriptionText');
+var viewKeywordsTextSection = $('#viewKeywordsTextSection');
+var viewKeywordsText = $('#viewKeywordsText');
+var viewAttsSection = $('#viewAttsSection');
+var viewAttsSectionText = $('#viewAttsSectionText');
+var imageDeleteButton = $('#imageDeleteButton');
+var imageEditButton = $('#imageEditButton');
 
 function resetView(){
-    viewModalTitle.text("");
-    imageViewImage.attr('src', '');
+    viewModalTitleText.text("");
+    imageViewImages.each(function(cur){
+        cur.src = '';
+    });
+    viewDescriptionTextSection.hide();
+    viewDescriptionText.text("");
+    viewKeywordsTextSection.hide();
+    viewKeywordsText.text("");
+    viewAttsSection.hide();
+    viewAttsSectionText.text("");
+
+    imageDeleteButton.click(null);
 }
 
 function setupViewForImage(id){
     resetView();
 
-    imageViewImage.attr('src', '/api/media/image/' + id + '/data');
+    var curUrl = '/api/media/image/' + id + '/data';
+    imageViewImages.each(function(i, cur){
+        cur.src = curUrl;
+    });
+
+    doRestCall({
+        url: "/api/media/image/" + id,
+        method: "GET",
+        async: false,
+        done: function(data) {
+            console.log("Response from create request: " + JSON.stringify(data));
+            viewModalTitleText.text(data.title);
+            if(data.description){
+                console.log("had description");
+                viewDescriptionTextSection.show();
+                viewDescriptionText.text(data.description);
+            }
+            if(data.keywords.length > 0){
+                console.log("had keywords");
+                viewKeywordsTextSection.show();
+                data.keywords.forEach(function(keyword){
+                    console.log("Keyword: " + keyword);
+
+                    viewKeywordsText.append(
+                        $('<span class="badge bg-light text-dark m-3">'+keyword+'</span> ')
+                    );
+                });
+            }
+            if(Object.keys(data.attributes).length > 0){
+                console.log("had attributes");
+                viewAttsSection.show();
+
+                Object.entries(obj).forEach(entry => {
+                    const [key, value] = entry;
+                    console.log("Att: " + key + "/" + val);
+
+                    viewKeywordsText.append(
+                        $('<span class="badge bg-light text-dark">'+key + ' = '+ val + '</span> ')
+                    );
+                });
+            }
 
 
+            imageEditButton.click(function(event){
+                setupAddEditForEdit(id);
+            });
+            imageDeleteButton.click(function(event){
+                console.log("Determining if user really wants to delete image.");
+                if(!confirm("Are you sure you want to delete this image?")){
+                    return false;
+                }
+                console.log("Deleting image " + id);
 
-
+                doRestCall({
+                    url: "/api/media/image/" + id,
+                    method: "DELETE",
+                    async: false,
+                    done: function(data) {
+                        console.log("Response from create request: " + JSON.stringify(data));
+                        reloadPageWithMessage("Delete image successfully!", "success", "Success!");
+                    },
+                    fail: function(data) {
+                        console.warn("Bad response from image delete attempt: " + JSON.stringify(data));
+                        addMessageToDiv(imageViewMessages, "danger", "Failed to remove image: " + data.responseText, "Failed", null);
+                    }
+                });
+            });
+        },
+        fail: function(data) {
+            console.warn("Bad response from image data get attempt: " + JSON.stringify(data));
+            addMessageToDiv(imageViewMessages, "danger", "Failed to get info on image: " + data.responseText, "Failed", null);
+        }
+    });
 }
 
 
 
 {!
+
 </script> !}
 {/pageScript}
 
