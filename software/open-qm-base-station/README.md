@@ -60,15 +60,15 @@ Native-specific tests:
 - Overview
   - stats
 - Image management
-  - page
-  - upload
   - search
-  - update
-  - delete
+  - overall stats
+  - responsive design tweaks
+  - check bug where wrong image deleted
 - User
   - external
     - view your infos
   - self
+    - review acct create
     - view your info
     - give admins
       - add user
@@ -77,7 +77,4 @@ Native-specific tests:
       - search users
 - REST
   - handle ParseException for expired, bad tokens for UI
-- Images
-  - tests
-  - view image w/ del, edit buttons
 - Testing

@@ -4,8 +4,7 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
@@ -147,7 +146,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         Version.Main version = Version.Main.V4_0;
         int port = 27018;
         log.info("Starting Flapdoodle Test Mongo {} on port {}", version, port);
-        IMongodConfig config = new MongodConfigBuilder()
+        MongodConfig config = MongodConfig.builder()
                 .version(version)
                 .net(new Net(port, Network.localhostIsIPv6()))
                 .build();

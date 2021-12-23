@@ -53,7 +53,7 @@ dependencies {
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.0'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.4'
     testImplementation 'com.github.dasniko:testcontainers-keycloak:1.8.1'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.0.3'
