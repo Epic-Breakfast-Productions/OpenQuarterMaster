@@ -347,7 +347,7 @@ function resetView(){
     viewAttsSectionText.text("");
     historyViewContainer.text("");
 
-    imageDeleteButton.click(null);
+    imageDeleteButton.off('click');
 }
 
 function setupViewForImage(id){
