@@ -22,12 +22,19 @@ function fillInQueryForm(queryForm){
 }
 
 function resetToOne(pageNumInputId){
+    console.log("page num input reset to 1");
     $("#" + pageNumInputId).val(1);
 }
 
 $(".pagingSearchForm").each(function(i, form){
+
     var pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
-    form.addEventListener('change', function() {
-             resetToOne(pageNumInputId);
+    $(form).find(":input").each(function(i2, input){
+        if(input.name != "pageNum"){
+            input.addEventListener('change', function() {
+                resetToOne(pageNumInputId);
+            });
+        }
     });
 });
+
