@@ -39,8 +39,8 @@ Accepts:
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#StorageSearchForm id='mainStorageSearch'}
-                    {/StorageSearchForm}
+                    {#search/storage/StorageSearchForm id='mainStorageSearch'}
+                    {/search/storage/StorageSearchForm}
                 </div>
             </div>
         </div>
@@ -49,8 +49,8 @@ Accepts:
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#storageSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
-            {/storageSearchResults}
+            {#search/storage/storageSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
+            {/search/storage/storageSearchResults}
         </table>
     </div>
 </div>
@@ -119,8 +119,8 @@ Accepts:
         </div>
     </div>
 </div>
-{#StorageSearchSelectModal otherModalId="addEditModal"}
-{/StorageSearchSelectModal}
+{#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
+{/search/storage/StorageSearchSelectModal}
 {/modals}
 
 {#scripts}

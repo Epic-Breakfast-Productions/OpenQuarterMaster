@@ -57,7 +57,7 @@ public class StorageCrud extends EndpointProvider {
     JsonWebToken jwt;
 
     @Inject
-    @Location("tags/storageSearchResults.html")
+    @Location("tags/search/storage/storageSearchResults.html")
     Template storageSearchResultsTemplate;
 
     @POST

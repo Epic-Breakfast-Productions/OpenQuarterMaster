@@ -12,8 +12,8 @@ Ingests:
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
       </div>
       <div class="modal-body">
-        {#StorageSearchForm id='storageSearchSelectForm'}
-        {/StorageSearchForm}
+        {#search/storage/StorageSearchForm id='storageSearchSelectForm'}
+        {/search/storage/StorageSearchForm}
         <div class="col table-responsive">
           <table class=" table table-bordered table-striped table-hover table-sm" id="storageSearchSelectResults">
 

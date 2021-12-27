@@ -27,17 +27,16 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#imageSearchForm id='mainImageSearch'}
-                    {/imageSearchForm}
+                    {#search/image/imageSearchForm id='mainImageSearch'}
+                    {/search/image/imageSearchForm}
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="imageSearchresults">
-    {#imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch'
-    pagingCalculations=pagingCalculations}
-    {/imageSearchResults}
+    {#search/image/imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch' pagingCalculations=pagingCalculations}
+    {/search/image/imageSearchResults}
 </div>
 
 {/pageContent}
