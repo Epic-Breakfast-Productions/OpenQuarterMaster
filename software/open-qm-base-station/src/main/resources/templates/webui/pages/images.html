@@ -41,119 +41,98 @@
 
 {/pageContent}
 {#modals}
-<div class="modal fade" tabindex="-1" id="addEditModal" aria-labelledby="addEditModalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addEditModalTitle"><span id="addEditModalTitleText">Add/Edit</span> Image
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="addEditFormMessages">
-                </div>
-                <form id="addEditImageForm">
-                    <input type="hidden" id="addEditFormMode" value="">
-                    <input type="hidden" id="addEditFormId" value="">
-                    <div class="mb-3 row">
-                        <label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
-                        <div class="col-sm-9">
+
+{#modal id='addEdit' title='Add/Edit Image'}
+<div id="addEditFormMessages">
+</div>
+<form id="addEditImageForm">
+    <input type="hidden" id="addEditFormMode" value="">
+    <input type="hidden" id="addEditFormId" value="">
+    <div class="mb-3 row">
+        <label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
+        <div class="col-sm-9">
                             <textarea class="form-control" id="addEditDescriptionInput"
                                       placeholder="Description"></textarea>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="imageUploadInput" class="form-label">Image File</label>
-                        <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
-                        <div class="col-md-4 text-center pt-3">
-                            <div id="upload-input" class="border" style="width:350px;"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Keywords</label> <br />
-                        <div id="keywordInputDiv"></div>
-                        <button type="button" class="btn btn-success btn-sm" onclick="addKeywordInput($('#keywordInputDiv'));"><i class="fas fa-plus"></i> Add keyword</button>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Attributes</label> <br />
-                        <div id="attInputDiv"></div>
-                        <button type="button" class="btn btn-success btn-sm" onclick="addAttInput($('#attInputDiv'));"><i class="fas fa-plus"></i> Add Attribute</button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" form="addEditImageForm" class="btn btn-success"
-                        id="addEditFormSubmitButton"></button>
-            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="imageUploadInput" class="form-label">Image File</label>
+        <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
+        <div class="col-md-4 text-center pt-3">
+            <div id="upload-input" class="border" style="width:350px;"></div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Keywords</label> <br />
+        <div id="keywordInputDiv"></div>
+        <button type="button" class="btn btn-success btn-sm" onclick="addKeywordInput($('#keywordInputDiv'));"><i class="fas fa-plus"></i> Add keyword</button>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Attributes</label> <br />
+        <div id="attInputDiv"></div>
+        <button type="button" class="btn btn-success btn-sm" onclick="addAttInput($('#attInputDiv'));"><i class="fas fa-plus"></i> Add Attribute</button>
+    </div>
+</form>
+<hr />
+<div class="text-end">
+<button type="submit" form="addEditImageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>
+</div>
+{/modal}
+
+{#modal id='view' title='View' large=true}
+<div class="row">
+    <div class="col-lg-7 text-center">
+        <img class="imageViewImage img-thumbnail" src="">
+    </div>
+    <div class="col-lg-5">
+        <div class="row">
+            <div class="col-lg-8"><img class="imageViewImage img-thumbnail img-75" src=""></div>
+            <div class="col-lg-6"><img class="imageViewImage img-thumbnail img-50" src=""></div>
+            <div class="col-lg-4"><img class="imageViewImage img-thumbnail img-25" src=""></div>
         </div>
     </div>
 </div>
-<div class="modal fade" tabindex="-1" id="viewModal" aria-labelledby="viewModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewModalTitle"><i class="fas fa-image"></i> <span id="viewModalTitleText">View</span>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-lg-7 text-center">
-                        <img class="imageViewImage img-thumbnail" src="">
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="row">
-                            <div class="col-lg-8"><img class="imageViewImage img-thumbnail img-75" src=""></div>
-                            <div class="col-lg-6"><img class="imageViewImage img-thumbnail img-50" src=""></div>
-                            <div class="col-lg-4"><img class="imageViewImage img-thumbnail img-25" src=""></div>
-                        </div>
-                    </div>
-                </div>
-                <hr/>
-                <div class="row">
-                    <div class="col" id="imageViewMessages">
-                    </div>
-                </div>
-                <div class="row" id="viewDescriptionTextSection">
-                    <div class="col">
-                        <h4>Description:</h4>
-                        <p id="viewDescriptionText"></p>
-                    </div>
-                </div>
-                <div class="row" id="viewKeywordsTextSection">
-                    <div class="col">
-                        <h4>Keywords:</h4>
-                        <p id="viewKeywordsText"></p>
-                    </div>
-                </div>
-                <div class="row" id="viewAttsSection">
-                    <div class="col">
-                        <h4>Attributes:</h4>
-                        <p id="viewAttsSectionText"></p>
-                    </div>
-                </div>
-                <div class="row">
-                    {#objView/objHistoryView containerId='historyViewContainer'}{/objView/objHistoryView}
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
-                        data-bs-target="#addEditModal" id="imageEditButton"><i class="fas fa-edit"></i> Edit
-                </button>
-                <button type="button" class="btn btn-danger" id="imageDeleteButton"><i class="fas fa-trash"></i> Delete
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
+<hr/>
+<div class="row">
+    <div class="col" id="imageViewMessages">
     </div>
 </div>
+<div class="row" id="viewDescriptionTextSection">
+    <div class="col">
+        <h4>Description:</h4>
+        <p id="viewDescriptionText"></p>
+    </div>
+</div>
+<div class="row" id="viewKeywordsTextSection">
+    <div class="col">
+        <h4>Keywords:</h4>
+        <p id="viewKeywordsText"></p>
+    </div>
+</div>
+<div class="row" id="viewAttsSection">
+    <div class="col">
+        <h4>Attributes:</h4>
+        <p id="viewAttsSectionText"></p>
+    </div>
+</div>
+<div class="row">
+    {#objView/objHistoryView containerId='historyViewContainer'}{/objView/objHistoryView}
+</div>
+<hr />
+<div class="text-end">
+    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
+        data-bs-target="#addEditModal" id="imageEditButton"><i class="fas fa-edit"></i> Edit
+</button>
+<button type="button" class="btn btn-danger" id="imageDeleteButton"><i class="fas fa-trash"></i> Delete
+</button>
+</div>
+{/modal}
 
 {/modals}
 {#scripts}
@@ -168,7 +147,7 @@
 fillInQueryForm($("#mainImageSearch"));
 
 var addEditImageForm = $("#addEditImageForm");
-var addEditModalTitleText = $("#addEditModalTitleText");
+var addEditModalLabel = $("#addEditModalLabel");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
 var keywordInputDiv = $("#keywordInputDiv");
@@ -229,14 +208,14 @@ function setupAddEditForAdd(){
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
     addEditFormMode.val("add");
-    addEditModalTitleText.text("Add");
+    addEditModalLabel.text("Add Image");
     addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Image');
 }
 function setupAddEditForEdit(id){
     console.log("Setting up add/edit form for edit.");
     resetAddEdit();
     addEditFormMode.val("edit");
-    addEditModalTitleText.text("Edit");
+    addEditModalLabel.text("Edit Image");
     addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Image');
 
     addEditFormId.val(id);

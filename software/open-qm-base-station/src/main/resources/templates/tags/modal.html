@@ -1,0 +1,25 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id of the modal, will be formatted as <id>Modal
+- otherModalId - the id of another modal to go to , formatted as <id>Modal . Optional.
+- title - the title to give the modal
+- large - if to make the modal large format
+!}
+<div class="modal fade" id="{id}Modal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="{id}ModalLabel" tabindex="-1" data-bs-inputIdPrepend="" data-bs-otherModalId="{#if otherModalId??}{otherModalId}{/if}">
+    <div class="modal-dialog {#if large??}modal-xl{/if}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{id}ModalLabel">{title}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
+            </div>
+            <div class="modal-body">
+                {nested-content}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}>Back</button>
+            </div>
+        </div>
+    </div>
+</div>
