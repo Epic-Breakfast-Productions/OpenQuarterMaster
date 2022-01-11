@@ -89,7 +89,7 @@ public class Images extends UiProvider {
                 images
                         .data("pageLoadTimestamp", getLoadTimestamp())
                         .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
-                        .data("showSearch", false)
+                        .data("showSearch", searchResults.isHadSearchQuery())
                         .data("searchResult", searchResults)
                         .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults)),
                 MediaType.TEXT_HTML_TYPE

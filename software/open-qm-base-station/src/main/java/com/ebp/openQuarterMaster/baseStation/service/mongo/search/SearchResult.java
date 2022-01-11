@@ -12,4 +12,5 @@ import java.util.List;
 public class SearchResult<T> {
     private List<T> results;
     private long numResultsForEntireQuery;
+    private boolean hadSearchQuery;
 }

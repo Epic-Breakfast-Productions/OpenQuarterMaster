@@ -72,7 +72,8 @@ public class InventoryItemService extends MongoService<InventoryItem> {
 
         return new SearchResult<>(
                 list,
-                this.count(filter)
+                this.count(filter),
+                !filters.isEmpty()
         );
     }
 }

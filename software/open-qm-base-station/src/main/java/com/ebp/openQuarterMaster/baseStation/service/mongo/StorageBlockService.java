@@ -87,7 +87,8 @@ public class StorageBlockService extends MongoService<StorageBlock> {
 
         return new SearchResult<>(
                 list,
-                this.count(filter)
+                this.count(filter),
+                !filters.isEmpty()
         );
     }
 

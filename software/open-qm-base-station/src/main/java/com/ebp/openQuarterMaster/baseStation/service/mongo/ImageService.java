@@ -76,7 +76,8 @@ public class ImageService extends MongoService<Image> {
 
         return new SearchResult<>(
                 list,
-                this.count(filter)
+                this.count(filter),
+                !filters.isEmpty()
         );
     }
 }
