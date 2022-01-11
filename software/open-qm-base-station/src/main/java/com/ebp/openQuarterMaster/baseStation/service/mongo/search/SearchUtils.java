@@ -26,6 +26,14 @@ public class SearchUtils {
         }
     }
 
+    public static void addKeywordSearchFilter(List<Bson> filters, List<String> keywords){
+        if (keywords != null) {
+            for(String keyword : keywords) {
+                filters.add(in("keywords", keyword));
+            }
+        }
+    }
+
     /**
      * TODO:: test
      *
