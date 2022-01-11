@@ -18,6 +18,16 @@ function fillInQueryForm(queryForm){
             $(formInput).val(getParams.get(formInput.name));
         }
     });
+    var keywordAddButton = queryForm.find(".keywordAddButton");
+    getParams.forEach(function(value, key){
+        if(key === "keyword" && keywordAddButton){
+            console.log("Keyword: " + value);
+            keywordAddButton.trigger('click');
+            queryForm.find(".keywordInputDiv").find(":input.keywordInput").last().val(value);
+        }
+    });
+
+
     console.log("DONE filling in query form from page query.");
 }
 

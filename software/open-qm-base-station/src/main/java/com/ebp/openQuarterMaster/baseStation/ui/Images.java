@@ -58,6 +58,8 @@ public class Images extends UiProvider {
     public Response images(
             @Context SecurityContext securityContext,
             @QueryParam("title") String imageTitle,
+            //attKeywords
+            @QueryParam("keyword") List<String> keywords,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
@@ -75,7 +77,7 @@ public class Images extends UiProvider {
 
         SearchResult<Image> searchResults = this.imageService.search(
                 imageTitle,
-                null,
+                keywords,
                 null,
                 sort,
                 pageOptions

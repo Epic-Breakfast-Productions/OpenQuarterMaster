@@ -13,12 +13,14 @@ Ingests:
         {#insert inputs}<!-- No additional inputs -->{/}
         {#if showKeywords?? && showKeywords == true}
         <div class="col">
-            keywords input
+            {#inputs/keywordInput}
+            {/inputs/keywordInput}
         </div>
         {/if}
         {#if showAttributes?? && showAttributes == true}
         <div class="col">
-            attributes input
+            {#inputs/attInput}
+            {/inputs/attInput}
         </div>
         {/if}
     </div>
