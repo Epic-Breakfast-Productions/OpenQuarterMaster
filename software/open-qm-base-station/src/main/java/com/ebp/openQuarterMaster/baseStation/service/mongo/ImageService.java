@@ -62,6 +62,7 @@ public class ImageService extends MongoService<Image> {
 
         SearchUtils.addBasicSearchFilter(filters, "title", title);
         SearchUtils.addKeywordSearchFilter(filters, keywords);
+        SearchUtils.addAttributeSearchFilters(filters, attributes);
 
         //TODO::
 

@@ -60,6 +60,8 @@ public class Images extends UiProvider {
             @QueryParam("title") String imageTitle,
             //attKeywords
             @QueryParam("keyword") List<String> keywords,
+            @QueryParam("attributeKey") List<String> attributeKeys,
+            @QueryParam("attributeValue") List<String> attributeValues,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
@@ -78,7 +80,7 @@ public class Images extends UiProvider {
         SearchResult<Image> searchResults = this.imageService.search(
                 imageTitle,
                 keywords,
-                null,
+                SearchUtils.attListsToMap(attributeKeys, attributeValues),
                 sort,
                 pageOptions
         );

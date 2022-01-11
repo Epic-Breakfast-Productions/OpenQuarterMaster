@@ -26,8 +26,8 @@ function addKeywordInputs(container, keywords){
 function addAttInput(container, key, val){
     console.log("Adding attribute input.");
     var newInputDiv = $('<div class="input-group mb-1"> \
-  <input type="text" class="form-control attInputKey" placeholder="key" required> \
-  <input type="text" class="form-control attInputValue" placeholder="value"> \
+  <input type="text" class="form-control attInputKey" placeholder="key" name="attributeKey" required> \
+  <input type="text" class="form-control attInputValue" placeholder="value" name="attributeValue"> \
   <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);"><i class="fas fa-trash"></i></button> \
 </div>');
     container.append(

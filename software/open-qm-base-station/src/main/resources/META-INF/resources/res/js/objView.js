@@ -40,7 +40,7 @@ function displayObjHistory(container, historyList){
         var curhistRow = $("<tr></tr>");
 
         curhistRow.append($("<td>"+curEvent.timestamp+"</td>"));
-        var userTd = $('<td data-user-id="'+curEvent.userId+'">'+curEvent.userId+"</td>")
+        var userTd = $('<td data-user-id="'+curEvent.userId+'">'+curEvent.userId+"</td>");
         curhistRow.append(userTd);
         curhistRow.append($("<td>"+curEvent.type+"</td>"));
         curhistRow.append($("<td>"+curEvent.description+"</td>"));
@@ -48,17 +48,18 @@ function displayObjHistory(container, historyList){
         container.append(curhistRow);
 
         doRestCall({
-                url: "/api/user/" + curEvent.userId,
-                method: "GET",
-                async: true,
-                done: function(data) {
-                    console.log("Response from create request: " + JSON.stringify(data));
-                    userTd.text(data.username);
-                },
-                fail: function(data) {
-                    console.warn("Bad response from user data get request: " + JSON.stringify(data));
-                    addMessageToDiv(imageViewMessages, "danger", "Failed to get info on user: " + data.responseText, "Failed", null);
-                }
-            });
+            spinnerContainer: container[0],
+            url: "/api/user/" + curEvent.userId,
+            method: "GET",
+            async: true,
+            done: function(data) {
+                console.log("Response from create request: " + JSON.stringify(data));
+                userTd.text(data.username);
+            },
+            fail: function(data) {
+                console.warn("Bad response from user data get request: " + JSON.stringify(data));
+                addMessageToDiv(imageViewMessages, "danger", "Failed to get info on user: " + data.responseText, "Failed", null);
+            }
+        });
     });
 }

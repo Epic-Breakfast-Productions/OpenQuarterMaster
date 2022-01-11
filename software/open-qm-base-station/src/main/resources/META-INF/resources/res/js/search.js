@@ -19,14 +19,27 @@ function fillInQueryForm(queryForm){
         }
     });
     var keywordAddButton = queryForm.find(".keywordAddButton");
-    getParams.forEach(function(value, key){
-        if(key === "keyword" && keywordAddButton){
-            console.log("Keyword: " + value);
-            keywordAddButton.trigger('click');
-            queryForm.find(".keywordInputDiv").find(":input.keywordInput").last().val(value);
-        }
-    });
+    var attributeAddButton = queryForm.find(".attributeAddButton");
 
+    if(keywordAddButton){
+        getParams.getAll("keywords").forEach(function(curKeyword){
+            console.log("Keyword: " + curKeyword);
+            keywordAddButton.trigger('click');
+            queryForm.find(".keywordInputDiv").find(":input.keywordInput").last().val(curKeyword);
+        });
+    }
+    if(attributeAddButton){
+        var attKeys = getParams.getAll("attributeKey");
+        var attVals = getParams.getAll("attributeValue");
+
+        attKeys.forEach(function(curKeyword, i){
+            console.log("attribute: " + curKeyword);
+            attributeAddButton.trigger('click');
+            var attInputDiv = queryForm.find(".attInputDiv");
+            attInputDiv.find(":input.attInputKey").last().val(curKeyword);
+            attInputDiv.find(":input.attInputValue").last().val(attVals[i]);
+        });
+    }
 
     console.log("DONE filling in query form from page query.");
 }

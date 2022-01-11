@@ -2,14 +2,18 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo.search;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.*;
 
+@Slf4j
 public class SearchUtils {
     private static final String ANY_NONE_OR_MANY_CHARS = "[\\s\\S]*";
 
@@ -32,6 +36,42 @@ public class SearchUtils {
                 filters.add(in("keywords", keyword));
             }
         }
+    }
+
+    public static void addAttributeSearchFilters(List<Bson> filters, Map<String, String> attributes){
+        if (attributes != null) {
+            for(Map.Entry<String, String> curAtt : attributes.entrySet()){
+                Bson inFilter = exists("attributes." + curAtt.getKey());
+
+                if(curAtt.getValue() == null || curAtt.getValue().isBlank()){
+                    filters.add(inFilter);
+                } else {
+                    filters.add(and(
+                            inFilter,
+                            eq("attributes." + curAtt.getKey(), curAtt.getValue())
+                    ));
+                }
+            }
+        }
+    }
+
+    public static Map<String, String> attListsToMap(List<String> attributeKeys, List<String> attributeValues){
+        if(attributeKeys == null || attributeValues == null){
+            if(attributeKeys != attributeValues){
+                throw new IllegalArgumentException("Attribute key/ value lists must both exist.");
+            }
+            return null;
+        }
+        if(attributeKeys.size() != attributeValues.size()){
+            throw new IllegalArgumentException("Attribute key/ value lists must both be of the same size.");
+        }
+        Map<String, String> output = new HashMap<>();
+
+        for(int i = 0; i < attributeKeys.size(); i++){
+            output.put(attributeKeys.get(i), attributeValues.get(i));
+        }
+
+        return output;
     }
 
     /**
