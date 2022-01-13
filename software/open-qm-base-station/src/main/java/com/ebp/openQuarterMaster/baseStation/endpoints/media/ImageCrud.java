@@ -3,14 +3,13 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.media;
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.ImageService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.*;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -53,6 +52,9 @@ public class ImageCrud extends EndpointProvider {
     JsonWebToken jwt;
     @Inject
     Validator validator;
+    @Inject
+    @Location("tags/search/image/imageSearchResults.html")
+    Template imageSearchResultsTemplate;
 
     @POST
     @Operation(
@@ -129,20 +131,19 @@ public class ImageCrud extends EndpointProvider {
     public Response listImages(
             @Context SecurityContext securityContext,
             //for actual queries
-            @QueryParam("label") String label,
-            @QueryParam("location") String location,
-            @QueryParam("parents") List<String> parents,
-            @QueryParam("keywords") List<String> keywords,
-            @QueryParam("stores") List<ObjectId> stores,
-            @QueryParam("storedType") StoredType storedType,
+            @QueryParam("title") String imageTitle,
+            //attKeywords
+            @QueryParam("keyword") List<String> keywords,
+            @QueryParam("attributeKey") List<String> attributeKeys,
+            @QueryParam("attributeValue") List<String> attributeValues,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
             //sorting
             @QueryParam("sortBy") String sortField,
             @QueryParam("sortType") SortType sortType,
-            @HeaderParam("accept") String acceptHeaderVal,
             //options for html rendering
+            @HeaderParam("accept") String acceptHeaderVal,
             @HeaderParam("actionType") String actionTypeHeaderVal,
             @HeaderParam("searchFormId") String searchFormIdHeaderVal,
             @HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal,
@@ -152,45 +153,48 @@ public class ImageCrud extends EndpointProvider {
         log.info("Searching for storage blocks with: ");
 
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
-        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
+        PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, (!MediaType.TEXT_HTML.equals(acceptHeaderVal)));
 
-        //TODO
-        return null;
-//
-//        SearchResult<Image> output = this.imageService.list();//TODO
-//
-//        if (output.getResults().isEmpty()) {
-//            return Response.status(Response.Status.NO_CONTENT).build();
-//        }
-//
-//        Response.ResponseBuilder rb = Response
-//                .status(Response.Status.OK)
-//                .header("num-elements", output.getResults().size())
-//                .header("query-num-results", output.getNumResultsForEntireQuery());
-//        log.debug("Accept header value: \"{}\"", acceptHeaderVal);
-//        switch (acceptHeaderVal) {
-//            case MediaType.TEXT_HTML:
-//                log.debug("Requestor wanted html.");
-//                rb = rb.entity(
-//                                this.storageSearchResultsTemplate
-//                                        .data("searchResults", output)
-//                                        .data("actionType", (actionTypeHeaderVal == null || acceptHeaderVal.isBlank() ? "full" : actionTypeHeaderVal))
-//                                        .data("searchFormId", (searchFormIdHeaderVal == null || searchFormIdHeaderVal.isBlank() ? "" : searchFormIdHeaderVal))
-//                                        .data("inputIdPrepend", (inputIdPrependHeaderVal == null || inputIdPrependHeaderVal.isBlank() ? "" : inputIdPrependHeaderVal))
-//                                        .data("otherModalId", (otherModalIdHeaderVal == null || otherModalIdHeaderVal.isBlank() ? "" : otherModalIdHeaderVal))
-//                                        .data("pagingCalculations", new PagingCalculations(pageOptions, output))
+        SearchResult<Image> output = this.imageService.search(
+                imageTitle,
+                keywords,
+                SearchUtils.attListsToMap(attributeKeys, attributeValues),
+                sort,
+                pageOptions
+        );
+
+        if (output.getResults().isEmpty()) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        Response.ResponseBuilder rb = Response
+                .status(Response.Status.OK)
+                .header("num-elements", output.getResults().size())
+                .header("query-num-results", output.getNumResultsForEntireQuery());
+        log.debug("Accept header value: \"{}\"", acceptHeaderVal);
+        switch (acceptHeaderVal) {
+            case MediaType.TEXT_HTML:
+                log.debug("Requestor wanted html.");
+                rb = rb.entity(
+                                this.imageSearchResultsTemplate
+                                        .data("searchResults", output)
+                                        .data("actionType", (actionTypeHeaderVal == null || acceptHeaderVal.isBlank() ? "full" : actionTypeHeaderVal))
+                                        .data("searchFormId", (searchFormIdHeaderVal == null || searchFormIdHeaderVal.isBlank() ? "" : searchFormIdHeaderVal))
+                                        .data("inputIdPrepend", (inputIdPrependHeaderVal == null || inputIdPrependHeaderVal.isBlank() ? "" : inputIdPrependHeaderVal))
+                                        .data("otherModalId", (otherModalIdHeaderVal == null || otherModalIdHeaderVal.isBlank() ? "" : otherModalIdHeaderVal))
+                                        .data("pagingCalculations", new PagingCalculations(pageOptions, output))
 //                                        .data("storageService", this.storageBlockService)
-//                        )
-//                        .type(MediaType.TEXT_HTML_TYPE);
-//                break;
-//            case MediaType.APPLICATION_JSON:
-//            default:
-//                log.debug("Requestor wanted json, or any other form");
-//                rb = rb.entity(output.getResults())
-//                        .type(MediaType.APPLICATION_JSON_TYPE);
-//        }
-//
-//        return rb.build();
+                        )
+                        .type(MediaType.TEXT_HTML_TYPE);
+                break;
+            case MediaType.APPLICATION_JSON:
+            default:
+                log.debug("Requestor wanted json, or any other form");
+                rb = rb.entity(output.getResults())
+                        .type(MediaType.APPLICATION_JSON_TYPE);
+        }
+
+        return rb.build();
     }
 
     @GET

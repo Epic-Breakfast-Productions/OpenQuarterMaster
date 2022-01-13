@@ -15,11 +15,12 @@
 !}
   <thead>
   <tr>
-    <td colspan="5" class="text-center">
+    <td colspan="6" class="text-center">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
   <tr>
+    <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Label</th>
     <th scope="col">Location</th>
     <th scope="col">Parent</th>
@@ -30,7 +31,7 @@
   <tbody>
   {#if searchResults.getResults().isEmpty()}
   <tr>
-    <td colspan="5" class="text-center">
+    <td colspan="6" class="text-center">
       <h2>
         No Storage Blocks
       </h2>
@@ -47,6 +48,11 @@
   {#else}
   {#for result in searchResults.getResults()}
   <tr>
+    <td>
+      {#if !result.getImageIds().isEmpty()}
+      <img src="/api/media/image/{result.getImageIds().get(0)}/data" class="searchResultImage">
+      {/if}
+    </td>
     <td>{result.getLabel()}</td>
     <td>{result.getLocation()}</td>
     <td>{#if result.getParent()??}{storageService.get(result.getParent()).getLabel()}{/if}</td>
@@ -73,7 +79,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="5" class="text-center">
+    <td colspan="6" class="text-center">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>

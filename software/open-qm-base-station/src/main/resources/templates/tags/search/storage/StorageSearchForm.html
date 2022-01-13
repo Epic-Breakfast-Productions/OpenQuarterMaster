@@ -5,45 +5,32 @@ Ingests:
 - id - the id to give the form
 !}
 
-<form id="{id}" action="/storage" method="get" class="pagingSearchForm">
-    <div class="row">
-        <div class="mb-3 col col-3">
-            <label for="{id}-blockLabelInput" class="form-label">Storage Block Label</label>
-            <input type="text" class="form-control" name="label" id="{id}-blockLabelInput"
-                   aria-describedby="{id}-blockLabelInputHelp">
-            <div id="{id}-blockLabelInputHelp" class="form-text">The name of the storage block to find.</div>
-        </div>
-        <div class="mb-3 col col-3">
-            <label for="{id}-blockLocationInput" class="form-label">Location</label>
-            <input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
-                   aria-describedby="{id}-blockLocationInputHelp">
-            <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
-        </div>
-        <div class="mb-3 col col-3">
-            <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
-            <input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput"
-                   aria-describedby="{id}-blockParentNameInputHelp">
-            <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.
-            </div>
-        </div>
-        <div class="mb-3 col col-3">
-            <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
-            <input type="text" class="form-control" name="capacity" id="{id}-blockCapacityInput"
-                   aria-describedby="{id}-blockCapacityInputHelp">
-            <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
-        </div>
+{#include tags/search/searchForm id=id action='/images' showKeywords=true showAttributes=true}
+{#inputs}
+<div class="mb-3 col col-3">
+    <label for="{id}-blockLabelInput" class="form-label">Label</label>
+    <input type="text" class="form-control" name="label" id="{id}-blockLabelInput"
+           aria-describedby="{id}-blockLabelInputHelp">
+    <div id="{id}-blockLabelInputHelp" class="form-text">The name of the storage block to find.</div>
+</div>
+<div class="mb-3 col col-3">
+    <label for="{id}-blockLocationInput" class="form-label">Location</label>
+    <input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
+           aria-describedby="{id}-blockLocationInputHelp">
+    <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
+</div>
+<div class="mb-3 col col-3">
+    <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
+    <input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput"
+           aria-describedby="{id}-blockParentNameInputHelp">
+    <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.
     </div>
-    <div class="row">
-        <div class="col col-2 text-center">
-            <button type="submit" class="btn btn-info mb-1"><i class="fas fa-search"></i> Search</button>
-            <button type="reset" class="btn btn-warning mb-1">Reset</button>
-        </div>
-        <div class="col col-2">
-            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="1">
-            <div class="input-group" title="Number of results per page">
-                <label for="{id}-pageSizeInput" class="input-group-text"><i class="fas fa-hashtag"></i></label>
-                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="25" onchange="resetToOne('{id}-pageNumInput');" value="25"  min="1">
-            </div>
-        </div>
-    </div>
-</form>
+</div>
+<div class="mb-3 col col-3">
+    <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
+    <input type="text" class="form-control" name="capacity" id="{id}-blockCapacityInput"
+           aria-describedby="{id}-blockCapacityInputHelp">
+    <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
+</div>
+{/inputs}
+{/include}

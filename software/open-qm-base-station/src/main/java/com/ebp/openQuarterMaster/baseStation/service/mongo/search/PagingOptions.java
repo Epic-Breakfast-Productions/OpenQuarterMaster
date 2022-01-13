@@ -27,7 +27,7 @@ public class PagingOptions {
             }
         } else {
             if (pageSize == null && pageNum == null) {
-                return null;
+                return new PagingOptions(Integer.MAX_VALUE, 1);
             }
             if (pageSize == null) {
                 throw new IllegalArgumentException("Page size not provided.");

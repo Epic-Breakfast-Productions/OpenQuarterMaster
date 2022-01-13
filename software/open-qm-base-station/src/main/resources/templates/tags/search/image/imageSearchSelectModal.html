@@ -5,11 +5,8 @@ Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
 {#modal id='imageSearchSelect' large=true title='Select an Image' otherModalId=otherModalId}
-{#search/image/imageSearchForm id='storageSearchSelectForm'}
+{#search/image/imageSearchForm id='imageSearchSelectForm'}
 {/search/image/imageSearchForm}
-<div class="col table-responsive">
-  <table class=" table table-bordered table-striped table-hover table-sm" id="imageSearchSelectResults">
-
-  </table>
+<div class="row" id="imageSearchSelectResults">
 </div>
 {/modal}

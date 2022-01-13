@@ -26,3 +26,15 @@
 .img-25 {
     width: 125px;
 }
+
+.selectedImage {
+    width: 50px;
+}
+
+.searchResultImageCol {
+    width: 3em;
+}
+
+.searchResultImage {
+    height: 3em;
+}

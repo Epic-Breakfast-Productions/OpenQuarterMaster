@@ -102,14 +102,11 @@ Accepts:
                     {#search/image/imageSelectFormInput}
                     {/search/image/imageSelectFormInput}
                     <!-- TODO:: Capacity measures -->
-                    <div class="mb-3 row">
-                        <label for="addEditKeywordsInput" class="col-sm-2 col-form-label">Keywords</label>
-                        <div class="col-sm-10">
-                            <textarea class="form-control" id="addEditKeywordsInput" rows="1"
-                                      aria-describedby="addEditKeywordsInputHelp"></textarea>
-                            <div id="addEditKeywordsInputHelp" class="form-text">Comma separated values</div>
-                        </div>
-                    </div>
+
+                    {#inputs/keywordInput}
+                    {/inputs/keywordInput}
+                    {#inputs/attInput}
+                    {/inputs/attInput}
 
                 </form>
             </div>
@@ -130,7 +127,10 @@ Accepts:
 
 {#scripts}
 <script src="/res/js/search.js"></script>
+<script src="/res/js/objEdit.js"></script>
+<script src="/res/js/objView.js"></script>
 <script src="/res/js/storageSearchSelect.js"></script>
+<script src="/res/js/imageSearchSelect.js"></script>
 {/scripts}
     {#pageScript}
 {!
@@ -178,11 +178,14 @@ var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
 var addEditLabelInput = $("#addEditLabelInput");
 var addEditLocationInput = $("#addEditLocationInput");
-var addEditKeywordsInput = $("#addEditKeywordsInput");
 var addEditParentIdInput = $("#addEditParentInputId");
+var imagesSelected = $("#imagesSelected");
+
+//var addEditKeywordsInput = $("#addEditKeywordsInput");
 
 function resetAddEdit(){
     addEditStorageForm.trigger("reset");
+    imagesSelected.html("");
 }
 
 
@@ -200,13 +203,18 @@ addEditStorageForm.submit(function(event){
 
     var addEditData = {
         label: addEditLabelInput.val(),
-        location: addEditLocationInput.val()
+        location: addEditLocationInput.val(),
+        imageIds: []
     };
 
-    var keywordValue = addEditKeywordsInput.val().trim()
-    if(keywordValue){
-        addEditData.keywords = addEditKeywordsInput.val().split(",");
-    }
+    imagesSelected.find(":input").each(function(i, curInput){
+        addEditData.imageIds.push(curInput.value);
+    });
+
+    // var keywordValue = addEditKeywordsInput.val().trim()
+    // if(keywordValue){
+    //     addEditData.keywords = addEditKeywordsInput.val().split(",");
+    // }
 
     if(addEditParentIdInput.val()){
         addEditData.parent = addEditParentIdInput.val();
