@@ -54,12 +54,12 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.4'
-    testImplementation 'com.github.dasniko:testcontainers-keycloak:1.8.1'
+    testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.0.3'
     testImplementation 'com.deque:axe-selenium:3.0'
     testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    testImplementation "org.keycloak:keycloak-admin-client:15.0.2"
+    testImplementation 'org.keycloak:keycloak-admin-client:16.0.0'
 }
 
 group 'com.ebp.openQuarterMaster'
