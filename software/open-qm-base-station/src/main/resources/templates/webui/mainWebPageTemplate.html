@@ -42,8 +42,6 @@ Ingests:
     <style>
 	{#insert pageStyle}/* No page css */{/}
 
-
-
     </style>
 </head>
 <body>
@@ -91,7 +89,8 @@ Ingests:
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true" aria-expanded="false"><i
                             class="fas fa-infinity"></i> Other</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
@@ -104,9 +103,15 @@ Ingests:
                 </li>
             </ul>
 
-            <form class="d-flex me-auto" method="get" action="/items">
-                <input class="form-control me-sm-2" type="text" placeholder="Search Items" name="name">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            <form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
+                <div class="input-group">
+                    <input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
+                    <button class="btn btn-secondary" type="submit">Search</button>
+                    <select class="form-control" id="navSearchSelect" onchange="setNavSearch();">
+                        <option value="/items;name">Items</option>
+                        <option value="/storage;label">Storage</option>
+                    </select>
+                </div>
             </form>
             <ul class="d-flex navbar-nav me-auto">
                 <li class="nav-item dropdown">
@@ -154,7 +159,7 @@ Ingests:
             &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
             Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
             License</a><br/>
-            Version {config:['service.version']}<br />
+            Version {config:['service.version']}<br/>
             <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
             <small class="fw-lighter fst-italic text-muted">
                 Page Loaded: <span id="pageLoadTimestamp">{pageLoadTimestamp}</span> (Server time)
@@ -163,11 +168,11 @@ Ingests:
         <div id="serverInfo" class="col-sm-4">
             <span class="h4">Run by:</span><br/>
             {config:['service.runBy.name']}
-            <br />
+            <br/>
             <span class="h6">Contact Info:</span><br/>
-            {#if config:['service.runBy.email'] != ""}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br />{/if}
-            {#if config:['service.runBy.phone'] != ""}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br />{/if}
-            {#if config:['service.runBy.website'] != ""}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br />{/if}
+            {#if config:['service.runBy.email'] != ""}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br/>{/if}
+            {#if config:['service.runBy.phone'] != ""}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br/>{/if}
+            {#if config:['service.runBy.website'] != ""}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br/>{/if}
         </div>
         <div class="col-sm-4">
             Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
@@ -200,6 +205,7 @@ Ingests:
 
 <script>
 {#insert pageScript}{/}
+
 
 </script>
 

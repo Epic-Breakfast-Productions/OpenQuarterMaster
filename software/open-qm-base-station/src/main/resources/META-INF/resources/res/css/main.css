@@ -42,3 +42,9 @@
 .storageBlockResultRow{
     height: 3em;
 }
+
+/* TODO:: make nav search select small w/o making text input small
+#navSearchSelect{
+    width:25px;
+}
+*/
