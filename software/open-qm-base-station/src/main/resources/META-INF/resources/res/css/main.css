@@ -28,7 +28,7 @@
 }
 
 .selectedImage {
-    width: 50px;
+    width: 75px;
 }
 
 .searchResultImageCol {
@@ -36,5 +36,9 @@
 }
 
 .searchResultImage {
+    height: 3em;
+}
+
+.storageBlockResultRow{
     height: 3em;
 }

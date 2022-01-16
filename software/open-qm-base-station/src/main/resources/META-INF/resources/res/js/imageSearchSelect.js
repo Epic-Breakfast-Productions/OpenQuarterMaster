@@ -10,9 +10,10 @@ function setupImageSearchModal(inputIdPrepend){
 }
 
 function selectImage(imageName, imageId){
-    var newImageSelected = $('<div class="input-group mb-1" onclick="removeSelectedImage(this);"> \
-      <input type="hidden" name="imageId" value="'+imageId+'" required> \
-      <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="selectedImage"> \
+    //TODO:: make move up/back buttons work
+    var newImageSelected = $('<div class="card selectedImage g-0 p-1 m-1 text-center float-start" > \
+        <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this);"> \
+        <div class="input-group m-1 p-1"><button type="button" class="btn btn-sm btn-outline-dark">&lt;</button><button type="button" class="btn btn-sm btn-outline-dark">&gt;</button></div> \
     </div>');
 
     imagesSelected.append(newImageSelected);

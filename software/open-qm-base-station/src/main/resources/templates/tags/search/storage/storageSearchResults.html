@@ -47,7 +47,7 @@
   </tr>
   {#else}
   {#for result in searchResults.getResults()}
-  <tr>
+  <tr class="storageBlockResultRow">
     <td>
       {#if !result.getImageIds().isEmpty()}
       <img src="/api/media/image/{result.getImageIds().get(0)}/data" class="searchResultImage">
