@@ -1,11 +1,11 @@
 
-var navSearchSelect = $('#navSearchSelect');
 var navSearchInput = $('#navSearchInput');
 var navSearchForm = $('#navSearchForm');
+var navSearchSelectButton = $('#navSearchSelectButton');
 
-function setNavSearch(){
-    var split = navSearchSelect.val().split(";");
-    navSearchForm.attr("action", split[0]);
-    navSearchInput.attr("name", split[1]);
+function setNavSearch(action, name, caller){
+    navSearchForm.attr("action", action);
+    navSearchInput.attr("name", name);
+    navSearchSelectButton.text(caller.textContent);
 }
 

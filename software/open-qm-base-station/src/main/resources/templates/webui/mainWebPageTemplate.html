@@ -107,10 +107,11 @@ Ingests:
                 <div class="input-group">
                     <input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
                     <button class="btn btn-secondary" type="submit">Search</button>
-                    <select class="form-control" id="navSearchSelect" onchange="setNavSearch();">
-                        <option value="/items;name">Items</option>
-                        <option value="/storage;label">Storage</option>
-                    </select>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">Items</button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/items', 'name', this);">Items</button></li>
+                        <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/storage', 'label', this);">Storage</button></li>
+                    </ul>
                 </div>
             </form>
             <ul class="d-flex navbar-nav me-auto">
