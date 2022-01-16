@@ -21,6 +21,11 @@ service:
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
     callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
+  runBy:
+    name:
+    email:
+    phone:
+    website:
 
 runningInfo:
   organization: The Testing Organization
@@ -118,4 +123,10 @@ smallrye:
       level: DEBUG
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
+  service:
+    runBy:
+      name: The Developers
+      email: dev@devlopment.dev
+      phone: 111-222-3333
+      website: http://devlopment.dev
 

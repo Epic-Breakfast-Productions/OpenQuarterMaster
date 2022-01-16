@@ -148,31 +148,31 @@ Ingests:
     </main>
 
     <hr/>
-    <footer id="footer" class="row" role="contentinfo">
+    <footer id="footer" class="row mb-3" role="contentinfo">
         <div class="col-sm-4">
             <span class="h4">Open Quarter Master Server</span><br/>
             &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
             Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
             License</a><br/>
+            Version {config:['service.version']}<br />
             <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
             <small class="fw-lighter fst-italic text-muted">
                 Page Loaded: <span id="pageLoadTimestamp">{pageLoadTimestamp}</span> (Server time)
             </small>
         </div>
         <div id="serverInfo" class="col-sm-4">
-            <h2 class="footer-header">
-                Run by:<br/>
-                me
-            </h2>
-            <h2>
-                Contact information:
-            </h2>
+            <span class="h4">Run by:</span><br/>
+            {config:['service.runBy.name']}
+            <br />
+            <span class="h6">Contact Info:</span><br/>
+            {#if config:['service.runBy.email'] != ""}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br />{/if}
+            {#if config:['service.runBy.phone'] != ""}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br />{/if}
+            {#if config:['service.runBy.website'] != ""}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br />{/if}
         </div>
         <div class="col-sm-4">
             Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
             The project also only collects what you give it, and it is up to the people running the server to ensure
             it is handled well. Please contact the folks running the server for more information.
-            <!-- TODO:: legal disclaimer, etc. -->
         </div>
     </footer>
 </div>
