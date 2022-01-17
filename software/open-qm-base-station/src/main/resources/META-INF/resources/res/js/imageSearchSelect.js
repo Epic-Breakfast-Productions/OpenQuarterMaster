@@ -12,7 +12,7 @@ function setupImageSearchModal(inputIdPrepend){
 function selectImage(imageName, imageId){
     //TODO:: make move up/back buttons work
     var newImageSelected = $('<div class="card selectedImage g-0 p-1 m-1 text-center float-start" > \
-        <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this);"> \
+        <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this);" data-bs-imageId="'+imageId+'"> \
         <div class="input-group m-1 p-1"><button type="button" class="btn btn-sm btn-outline-dark">&lt;</button><button type="button" class="btn btn-sm btn-outline-dark">&gt;</button></div> \
     </div>');
 

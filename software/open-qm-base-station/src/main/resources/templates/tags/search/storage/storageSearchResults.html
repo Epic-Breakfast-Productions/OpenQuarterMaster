@@ -47,7 +47,7 @@
   </tr>
   {#else}
   {#for result in searchResults.getResults()}
-  <tr class="storageBlockResultRow">
+  <tr class="storageBlockResultRow align-middle">
     <td>
       {#if !result.getImageIds().isEmpty()}
       <img src="/api/media/image/{result.getImageIds().get(0)}/data" class="searchResultImage">
@@ -59,7 +59,8 @@
     <td></td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal"
+              data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');"><i class="fas fa-eye"></i></button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"

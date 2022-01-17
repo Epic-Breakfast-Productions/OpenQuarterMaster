@@ -11,7 +11,9 @@ Accepts:
 <Unit>> the map of allowed units
     !}
     {#pageStyle}
-
+    #storageBlockViewCarousel{
+        max-width:500px;
+    }
     {/pageStyle}
     {#pageContent}
 
@@ -124,6 +126,24 @@ Accepts:
 {#search/image/imageSearchSelectModal otherModalId="addEditModal"}
 {/search/image/imageSearchSelectModal}
 
+{#modal id='storageBlockView' large=true title='Storage Block View'}
+    <div class="row">
+        {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
+        <div class="col">
+            <h3>Location:</h3>
+            <p id="storageBlockViewLocation"></p>
+            <h3>Parent</h3>
+            <h3>Capacity</h3>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
+        </div>
+    </div>
+{/modal}
+
 {/modals}
 
 {#scripts}
@@ -132,6 +152,7 @@ Accepts:
 <script src="/res/js/objView.js"></script>
 <script src="/res/js/storageSearchSelect.js"></script>
 <script src="/res/js/imageSearchSelect.js"></script>
+<script src="/res/js/carousel.js"></script>
 {/scripts}
     {#pageScript}
 {!
@@ -208,8 +229,8 @@ addEditStorageForm.submit(function(event){
         imageIds: []
     };
 
-    imagesSelected.find(":input").each(function(i, curInput){
-        addEditData.imageIds.push(curInput.value);
+    imagesSelected.find("img").each(function(i, curImg){
+        addEditData.imageIds.push($(curImg).attr('data-bs-imageId'));
     });
 
     // var keywordValue = addEditKeywordsInput.val().trim()
@@ -247,6 +268,66 @@ addEditStorageForm.submit(function(event){
 });
 fillInQueryForm($("#mainStorageSearch"));
 
+var storageBlockViewModal = $('#storageBlockViewModal');
+var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
+var storageBlockViewCarousel = $('#storageBlockViewCarousel');
+var storageBlockHistory = $('#storageBlockHistory');
+var storageBlockViewLocation = $('#storageBlockViewLocation');
+
+function resetView(){
+    storageBlockViewModalLabel.text("");
+    storageBlockViewLocation.text('');
+    storageBlockHistory.text('');
+    clearCarousel(storageBlockViewCarousel);
+}
+
+function setupView(blockId){
+    console.log("Setting up view for storage block " + blockId);
+    resetView();
+    storageBlockViewModalLabel.text(blockId);
+
+    doRestCall({
+    	spinnerContainer: storageBlockViewModal,
+    	url: "/api/storage/" + blockId,
+    	done: function(data){
+            displayObjHistory(storageBlockHistory, data.history);
+            storageBlockViewModalLabel.text(data.label);
+            storageBlockViewLocation.text(data.location);
+            //TODO:: parent
+            //TODO:: capacities
+            //TODO:: keywords
+            //TODO:: attributes
+
+            if(data.imageIds){
+                storageBlockViewCarousel.show();
+                var carouselData = [];
+
+                data.imageIds.forEach(function(id, i){
+                    doRestCall({
+    	                spinnerContainer: storageBlockViewCarousel[0],
+    	                url: "/api/media/image/" + id,
+    	                async: false,
+    	                done: function(data){
+                            carouselData.push({
+                                src: "/api/media/image/" + id + "/data",
+                                alt: data.title,
+                                captionHeading: data.title,
+                                caption: data.description
+                            });
+    	                }
+    	            });
+                });
+
+                setCarouselImages(storageBlockViewCarousel, carouselData);
+            } else {
+                storageBlockViewCarousel.hide();
+            }
+
+    	},
+    	fail: function(){}
+    });
+
+}
 
 {!
 </script> !}

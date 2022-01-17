@@ -1,7 +1,7 @@
 
 
-.paginationButton {
-    /* border: 1px solid black; */
+.bordered {
+    border: 1px solid black;
 }
 
 .numPerPageInput {
@@ -43,8 +43,9 @@
     height: 3em;
 }
 
-/* TODO:: make nav search select small w/o making text input small
-#navSearchSelect{
-    width:25px;
+.carousel{
+    text-shadow: -1px 1px 0 #000,
+    				  1px 1px 0 #000,
+    				 1px -1px 0 #000;
+    				-1px -1px 0 #000;
 }
-*/
