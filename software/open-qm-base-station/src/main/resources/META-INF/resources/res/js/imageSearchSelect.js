@@ -13,10 +13,30 @@ function selectImage(imageName, imageId){
     //TODO:: make move up/back buttons work
     var newImageSelected = $('<div class="card selectedImage g-0 p-1 m-1 text-center float-start" > \
         <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this);" data-bs-imageId="'+imageId+'"> \
-        <div class="input-group m-1 p-1"><button type="button" class="btn btn-sm btn-outline-dark">&lt;</button><button type="button" class="btn btn-sm btn-outline-dark">&gt;</button></div> \
+        <div class="input-group m-1 p-1"> \
+            <button type="button" title="Move image up" class="btn btn-sm btn-outline-dark" onclick="moveImageInputUp(this.parentElement.parentElement);">&lt;</button> \
+            <button type="button" title="Move image down" class="btn btn-sm btn-outline-dark" onclick="moveImageInputDown(this.parentElement.parentElement);">&gt;</button> \
+        </div> \
     </div>');
 
     imagesSelected.append(newImageSelected);
+}
+
+function moveImageInputUp(imageDiv){
+    console.log("Moving image up");
+    if(imageDiv.previousSibling){
+        imageDiv.parentElement.insertBefore(imageDiv, imageDiv.previousSibling);
+    }
+}
+function moveImageInputDown(imageDiv){
+    console.log("Moving image down");
+    if(imageDiv.nextSibling){
+        if(imageDiv.nextSibling.nextSibling){
+            imageDiv.parentElement.insertBefore(imageDiv, imageDiv.nextSibling.nextSibling);
+        } else {
+            imageDiv.parentElement.appendChild(imageDiv);
+        }
+    }
 }
 
 function removeSelectedImage(toRemove){
