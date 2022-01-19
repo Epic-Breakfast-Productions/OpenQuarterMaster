@@ -9,11 +9,19 @@ function displayKeywordsIn(container, keywords){
     });
 }
 
-function processKeywordDisplay(display, container, keywords){
+function clearHideKeywordDisplay(container){
+    container.hide();
+    container.find('.keywordsViewContainer').html("");
+}
+
+function processKeywordDisplay(container, keywords){
+    clearHideKeywordDisplay(container);
     if(keywords.length > 0){
         console.log("had keywords");
-        viewKeywordsTextSection.show();
-        displayKeywordsIn(viewKeywordsText, keywords);
+        container.show();
+        displayKeywordsIn(container.find('.keywordsViewContainer'), keywords);
+    } else {
+        console.log("did not have keywords.");
     }
 }
 
@@ -21,16 +29,23 @@ function displayAttsIn(container, attributes){
     Object.entries(attributes).forEach(entry => {
         const [key, val] = entry;
         console.log("Att: " + key + "/" + val);
-        viewAttsSectionText.append($('<span class="badge bg-light text-dark m-2"><span class="user-select-all">'+key + '</span> <i class="fas fa-equals"></i> <code class="user-select-all">'+ val + '</code></span> '));
+        container.append($('<span class="badge bg-light text-dark m-2"><span class="user-select-all">'+key + '</span> <i class="fas fa-equals"></i> <code class="user-select-all">'+ val + '</code></span> '));
     });
 }
 
-function processAttDisplay(display, container, attributes){
+function clearHideAttDisplay(container){
+    container.hide();
+    container.find('.attsViewContainer').html("");
+}
+
+function processAttDisplay(container, attributes){
+    clearHideAttDisplay(container);
     if(Object.keys(attributes).length > 0){
         console.log("had attributes");
         viewAttsSection.show();
-
-        displayAttsIn(container, attributes)
+        displayAttsIn(container.find('.attsViewContainer'), attributes)
+    } else {
+        console.log("did not have attributes.");
     }
 }
 

@@ -12,7 +12,7 @@ Accepts:
     !}
     {#pageStyle}
     #storageBlockViewCarousel{
-        max-width:500px;
+        max-width:400px;
     }
     {/pageStyle}
     {#pageContent}
@@ -137,6 +137,10 @@ Accepts:
         </div>
     </div>
     <hr />
+    <div class="row">
+        {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+        {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+    </div>
     <div class="row">
         <div class="col">
             {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
@@ -273,12 +277,16 @@ var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
 var storageBlockViewLocation = $('#storageBlockViewLocation');
+var viewKeywordsSection = $('#viewKeywordsSection');
+var viewAttsSection = $('#viewAttsSection');
 
 function resetView(){
     storageBlockViewModalLabel.text("");
     storageBlockViewLocation.text('');
     storageBlockHistory.text('');
     clearCarousel(storageBlockViewCarousel);
+    clearHideKeywordDisplay(viewKeywordsSection);
+    clearHideAttDisplay(viewAttsSection);
 }
 
 function setupView(blockId){
@@ -290,6 +298,8 @@ function setupView(blockId){
     	spinnerContainer: storageBlockViewModal,
     	url: "/api/storage/" + blockId,
     	done: function(data){
+            processKeywordDisplay(viewKeywordsSection, data.keywords);
+            processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(storageBlockHistory, data.history);
             storageBlockViewModalLabel.text(data.label);
             storageBlockViewLocation.text(data.location);
@@ -298,7 +308,8 @@ function setupView(blockId){
             //TODO:: keywords
             //TODO:: attributes
 
-            if(data.imageIds){
+            if(data.imageIds.length){
+                console.log("Storage block had images to show.");
                 storageBlockViewCarousel.show();
                 var carouselData = [];
 
@@ -320,6 +331,7 @@ function setupView(blockId){
 
                 setCarouselImages(storageBlockViewCarousel, carouselData);
             } else {
+                console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();
             }
 
