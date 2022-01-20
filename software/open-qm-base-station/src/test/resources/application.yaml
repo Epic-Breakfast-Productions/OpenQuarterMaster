@@ -1,3 +1,10 @@
+service:
+  runBy:
+    name: The Testing Org
+    email: test@test.org
+    phone: 999-888-7777
+    website: https://test.org
+
 quarkus:
   http:
     port: 8081
