@@ -1,9 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;

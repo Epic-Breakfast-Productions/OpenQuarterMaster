@@ -1,6 +1,7 @@
-package com.ebp.openQuarterMaster.lib.core.storage;
+package com.ebp.openQuarterMaster.lib.core.storage.storageBlock;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.storage.Capacity;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;

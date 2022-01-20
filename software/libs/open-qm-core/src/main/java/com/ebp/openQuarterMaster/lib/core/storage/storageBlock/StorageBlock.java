@@ -1,6 +1,7 @@
-package com.ebp.openQuarterMaster.lib.core.storage;
+package com.ebp.openQuarterMaster.lib.core.storage.storageBlock;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
+import com.ebp.openQuarterMaster.lib.core.storage.Capacity;
 import lombok.*;
 import org.bson.types.ObjectId;
 
