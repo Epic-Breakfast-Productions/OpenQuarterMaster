@@ -6,7 +6,8 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.*;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -336,5 +337,39 @@ public class StorageCrud extends EndpointProvider {
         }
         log.info("Storage block found, deleted.");
         return Response.status(Response.Status.OK).entity(output).build();
+    }
+
+    @GET
+    @Path("tree")
+    @Operation(
+            summary = "Gets a tree of the storage blocks."
+    )
+    @APIResponse(
+            responseCode = "200",
+            description = "Tree retrieved.",
+            content = {
+                    @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = StorageBlockTree.class
+                            )
+                    )
+            }
+    )
+    @APIResponse(
+            responseCode = "204",
+            description = "No items found from query given.",
+            content = @Content(mediaType = "text/plain")
+    )
+    @Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+    @RolesAllowed("user")
+    public StorageBlockTree listStorageBlocks(
+            @Context SecurityContext securityContext,
+            //for actual queries
+            @QueryParam("onlyInclude") List<ObjectId> onlyInclude
+    ) {
+        logRequestContext(this.jwt, securityContext);
+
+        return this.storageBlockService.getStorageBlockTree(onlyInclude);
     }
 }

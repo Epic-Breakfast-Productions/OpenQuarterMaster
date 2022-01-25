@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
-import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidInventoryItem;
@@ -64,13 +63,13 @@ public class InventoryItem extends ImagedMainObject {
      */
     @NonNull
     @ValidUnit
-    private Unit unit = AbstractUnit.ONE;
+    private Unit<?> unit = AbstractUnit.ONE;
 
     /**
      * The total amount of that item in storage, in the {@link #unit} unit.
      */
     @Setter(AccessLevel.PRIVATE)
-    private Quantity total = null;
+    private Quantity<?> total = null;
 
     /**
      * The name of the identifier used for the items tracked.
@@ -90,7 +89,7 @@ public class InventoryItem extends ImagedMainObject {
         this.setStoredType(storedType);
     }
 
-    public InventoryItem(String name, Unit unit) {
+    public InventoryItem(String name, Unit<?> unit) {
         this(name, StoredType.AMOUNT);
         this.setUnit(unit);
     }
@@ -108,8 +107,8 @@ public class InventoryItem extends ImagedMainObject {
      *
      * @return The total amount stored.
      */
-    public Quantity recalcTotal() {
-        Quantity total = Quantities.getQuantity(0, this.getUnit());
+    public Quantity<?> recalcTotal() {
+        Quantity<?> total = Quantities.getQuantity(0, this.getUnit());
         for (List<Stored> storedList : this.getStorageMap().values()) {
             for (Stored stored : storedList) {
                 total = total.add(stored.getAmount());

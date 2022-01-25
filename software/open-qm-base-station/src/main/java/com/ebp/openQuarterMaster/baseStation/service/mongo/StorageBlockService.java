@@ -3,8 +3,10 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.lib.core.storage.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
@@ -14,6 +16,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -92,5 +95,18 @@ public class StorageBlockService extends MongoService<StorageBlock> {
         );
     }
 
+    public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude){
+        StorageBlockTree output = new StorageBlockTree();
+
+
+        FindIterable<StorageBlock> results = getCollection().find();
+        output.add(results.iterator());
+
+        if(!onlyInclude.isEmpty()){
+            output.cleanupStorageBlockTreeNode(onlyInclude);
+        }
+
+        return output;
+    }
 
 }

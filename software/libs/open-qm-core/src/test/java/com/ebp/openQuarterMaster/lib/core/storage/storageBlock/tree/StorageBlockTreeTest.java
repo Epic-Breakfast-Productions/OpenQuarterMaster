@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * TODO:: bulk stress test
+ */
 class StorageBlockTreeTest {
     /*
      *     1       2
@@ -92,6 +95,31 @@ class StorageBlockTreeTest {
         tree.add(block7);
 
         assertTrue(tree.hasOrphans());
+    }
+
+    @Test
+    public void testCleanupStorageBlockTreeNode(){
+        StorageBlockTree tree = new StorageBlockTree();
+        tree.add(block1, block2, block3, block4, block5, block6);
+
+        tree.cleanupStorageBlockTreeNode(List.of(id5));
+
+        assertEquals(1, tree.getRootNodes().size());
+
+        StorageBlockTreeNode cur = tree.getRootNodes().stream().findFirst().get();
+        assertEquals(id2, cur.getBlockId());
+
+        assertEquals(1, cur.getChildren().size());
+        cur = cur.getChildren().stream().findFirst().get();
+
+        assertEquals(id5, cur.getBlockId());
+
+        assertEquals(1, cur.getChildren().size());
+        cur = cur.getChildren().stream().findFirst().get();
+
+        assertEquals(id6, cur.getBlockId());
+
+        assertEquals(0, cur.getChildren().size());
     }
 
 }

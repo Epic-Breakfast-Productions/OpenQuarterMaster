@@ -10,6 +10,11 @@ Accepts:
 <String, List
 <Unit>> the map of allowed units
     !}
+    {#styleSheets}
+    <link rel="stylesheet" href="/res/css/storageTree.css">
+    <link rel="stylesheet" href="/lib/treant-js/Treant.css">
+    <link rel="stylesheet" href="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.css">
+    {/styleSheets}
     {#pageStyle}
     #storageBlockViewCarousel{
         max-width:400px;
@@ -26,6 +31,11 @@ Accepts:
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
         </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="chart" id="OrganiseChart1"></div>
+    </div>
 </div>
 <br/>
 <div class="row">
@@ -157,6 +167,10 @@ Accepts:
 <script src="/res/js/storageSearchSelect.js"></script>
 <script src="/res/js/imageSearchSelect.js"></script>
 <script src="/res/js/carousel.js"></script>
+<script src="/lib/treant-js/vendor/raphael.js"></script>
+<script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="/lib/treant-js/Treant.js"></script>
+<script src="/res/js/storageBlockTree.js"></script>
 {/scripts}
     {#pageScript}
 {!
@@ -340,6 +354,8 @@ function setupView(blockId){
     });
 
 }
+
+showTree();
 
 {!
 </script> !}

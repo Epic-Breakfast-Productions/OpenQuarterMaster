@@ -7,6 +7,8 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -34,10 +36,17 @@ public class Stored {
     private ZonedDateTime expires = null;
 
     /**
+     * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
+     */
+    @Max(100)
+    @Min(0)
+    private Integer condition = null;
+
+    /**
      * The amount of the thing stored.
      * To only be used when {@link #type} is {@link StoredType#AMOUNT}
      */
-    private Quantity amount = null;
+    private Quantity<?> amount = null;
 
     /**
      * Tracked items.
@@ -50,17 +59,17 @@ public class Stored {
     private Stored(StoredType type){
         this.setType(type);
     }
-    public Stored(Quantity amount){
+    public Stored(Quantity<?> amount){
         this(StoredType.AMOUNT);
         if(amount == null){
             throw new NullPointerException("Amount cannot be null when using amount type.");
         }
         this.amount = amount;
     }
-    public Stored(Number amount, Unit unit) {
+    public Stored(Number amount, Unit<?> unit) {
         this(Quantities.getQuantity(amount, unit));
     }
-    public Stored(Unit unit) {
+    public Stored(Unit<?> unit) {
         this(0, unit);
     }
 
