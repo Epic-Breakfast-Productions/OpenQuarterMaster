@@ -8,10 +8,10 @@ var MAIN_CONFIG = {
         },
         hideRootNode:true,
         animation: {
-            nodeAnimation: "easeOutBounce",
-            nodeSpeed: 700,
-            connectorsAnimation: "bounce",
-            connectorsSpeed: 700
+            nodeAnimation: "linear",
+            nodeSpeed: 100,
+            connectorsAnimation: "linear",
+            connectorsSpeed: 100
         }
     },
     nodeStructure: {
@@ -22,10 +22,16 @@ var MAIN_CONFIG = {
 function addChildrenToList(childrenList, curBlock){
     var curNode = {
             text: {
-                name: curBlock.blockLabel
+                name: curBlock.blockLabel,
+                title: curBlock.blockLocation
             },
             children: []
         };
+
+    //TODO:: image
+//    if(curBlock)
+
+
     if(curBlock.children){
         curBlock.children.forEach(function(curChild, i){
             addChildrenToList(curNode.children, curChild);
