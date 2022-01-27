@@ -34,7 +34,7 @@ Accepts:
 </div>
 <div class="row">
     <div class="col">
-        <div class="chart" id="OrganiseChart1"></div>
+        <div class="chart" id="mainTreeChart"></div>
     </div>
 </div>
 <br/>
@@ -169,6 +169,7 @@ Accepts:
 <script src="/res/js/carousel.js"></script>
 <script src="/lib/treant-js/vendor/raphael.js"></script>
 <script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="/lib/treant-js/vendor/jquery.easing.js"></script>
 <script src="/lib/treant-js/Treant.js"></script>
 <script src="/res/js/storageBlockTree.js"></script>
 {/scripts}
@@ -355,8 +356,7 @@ function setupView(blockId){
 
 }
 
-showTree();
-
+showTree("#mainTreeChart");
 {!
 </script> !}
 {/pageScript}
