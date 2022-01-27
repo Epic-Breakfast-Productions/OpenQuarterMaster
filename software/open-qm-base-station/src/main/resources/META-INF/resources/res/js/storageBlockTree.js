@@ -29,7 +29,9 @@ function addChildrenToList(childrenList, curBlock){
         };
 
     //TODO:: image
-//    if(curBlock)
+    if(curBlock.firstImageId){
+        curNode.image = "/api/media/image/"+curBlock.firstImageId+"/data";
+    }
 
 
     if(curBlock.children){
