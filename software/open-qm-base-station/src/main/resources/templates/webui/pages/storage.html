@@ -223,6 +223,9 @@ var addEditLocationInput = $("#addEditLocationInput");
 var addEditParentIdInput = $("#addEditParentInputId");
 var imagesSelected = $("#imagesSelected");
 
+var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
+var attInputDiv = addEditStorageForm.find(".attInputDiv");
+
 //var addEditKeywordsInput = $("#addEditKeywordsInput");
 
 function resetAddEdit(){
@@ -249,14 +252,12 @@ addEditStorageForm.submit(function(event){
         imageIds: []
     };
 
+    addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+
     imagesSelected.find("img").each(function(i, curImg){
         addEditData.imageIds.push($(curImg).attr('data-bs-imageId'));
     });
 
-    // var keywordValue = addEditKeywordsInput.val().trim()
-    // if(keywordValue){
-    //     addEditData.keywords = addEditKeywordsInput.val().split(",");
-    // }
 
     if(addEditParentIdInput.val()){
         addEditData.parent = addEditParentIdInput.val();
@@ -321,8 +322,6 @@ function setupView(blockId){
             storageBlockViewLocation.text(data.location);
             //TODO:: parent
             //TODO:: capacities
-            //TODO:: keywords
-            //TODO:: attributes
 
             if(data.imageIds.length){
                 console.log("Storage block had images to show.");

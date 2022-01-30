@@ -1,3 +1,5 @@
+// https://fperucic.github.io/treant-js/
+
 var MAIN_CONFIG = {
     chart: {
         container: "",
