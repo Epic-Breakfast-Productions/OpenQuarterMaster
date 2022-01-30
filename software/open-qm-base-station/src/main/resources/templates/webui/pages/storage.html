@@ -140,10 +140,17 @@ Accepts:
     <div class="row">
         {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
         <div class="col">
-            <h3>Location:</h3>
-            <p id="storageBlockViewLocation"></p>
-            <h3>Parent</h3>
-            <h3>Capacity</h3>
+            <div id="storageBlockViewLocationContainer">
+                <h3>Location:</h3>
+                <p id="storageBlockViewLocation"></p>
+            </div>
+            <div id="storageBlockViewParentContainer">
+                <h3>Parent</h3>
+                <p id="storageBlockViewParent"></p>
+            </div>
+            <div id="storageBlockViewCapacityContainer">
+                <h3>Capacity</h3>
+            </div>
         </div>
     </div>
     <hr />
@@ -208,9 +215,6 @@ if(!result){
 }
 
 
-
-
-
 var addEditStorageForm = $("#addEditStorageForm");
 var addEditModalTitleText = $("#addEditModalTitleText");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
@@ -225,8 +229,6 @@ var imagesSelected = $("#imagesSelected");
 
 var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
 var attInputDiv = addEditStorageForm.find(".attInputDiv");
-
-//var addEditKeywordsInput = $("#addEditKeywordsInput");
 
 function resetAddEdit(){
     addEditStorageForm.trigger("reset");
@@ -293,13 +295,23 @@ var storageBlockViewModal = $('#storageBlockViewModal');
 var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
+var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
+var storageBlockViewParentContainer = $('#storageBlockViewParentContainer');
+var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
 var storageBlockViewLocation = $('#storageBlockViewLocation');
+var storageBlockViewParent = $('#storageBlockViewParent');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 
 function resetView(){
-    storageBlockViewModalLabel.text("");
+    storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
+
+    storageBlockViewParentContainer.hide();
+    storageBlockViewCapacityContainer.hide();
+
+
+    storageBlockViewModalLabel.text("");
     storageBlockHistory.text('');
     clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
@@ -319,8 +331,17 @@ function setupView(blockId){
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(storageBlockHistory, data.history);
             storageBlockViewModalLabel.text(data.label);
-            storageBlockViewLocation.text(data.location);
-            //TODO:: parent
+
+            if(data.location){
+                storageBlockViewLocation.text(data.location);
+                storageBlockViewLocationContainer.show();
+            }
+            if(data.parent){
+                storageBlockViewParent.text(data.parent);
+                storageBlockViewParentContainer.show();
+                //TODO:: call to replace id with label
+            }
+
             //TODO:: capacities
 
             if(data.imageIds.length){
