@@ -140,13 +140,17 @@ Accepts:
     <div class="row">
         {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
         <div class="col">
-            <div id="storageBlockViewLocationContainer">
-                <h3>Location:</h3>
-                <p id="storageBlockViewLocation"></p>
+            <div class="card" id="storageBlockViewLocationContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Location:</h5>
+                    <p class="card-text" id="storageBlockViewLocation"></p>
+                </div>
             </div>
-            <div id="storageBlockViewParentContainer">
-                <h3>Parent</h3>
-                <p id="storageBlockViewParent"></p>
+            <div class="card" id="storageBlockViewParentContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Parent:</h5>
+                    <p class="card-text" id="storageBlockViewParent"></p>
+                </div>
             </div>
             <div id="storageBlockViewCapacityContainer">
                 <h3>Capacity</h3>
