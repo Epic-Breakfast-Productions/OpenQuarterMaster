@@ -51,9 +51,10 @@ dependencies {
     Test Dependencies
      */
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
     testImplementation 'io.rest-assured:rest-assured'
 
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.2.4'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.3.0'
     testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.0.3'
