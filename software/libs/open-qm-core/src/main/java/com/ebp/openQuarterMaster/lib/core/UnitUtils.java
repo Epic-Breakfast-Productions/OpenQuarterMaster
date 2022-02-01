@@ -15,7 +15,7 @@ public class UnitUtils {
     /**
      * List of units that are applicable to storage.
      */
-    public static final Map<String, List<Unit>> ALLOWED_UNITS_MAP = new LinkedHashMap<>() {{
+    public static final Map<String, List<Unit<?>>> ALLOWED_UNITS_MAP = new LinkedHashMap<>() {{
         put("Number",
                 List.of(
                         AbstractUnit.ONE,
@@ -76,20 +76,20 @@ public class UnitUtils {
                 ));
     }};
 
-    public static final List<Unit> ALLOWED_UNITS = new ArrayList<>();
+    public static final List<Unit<?>> ALLOWED_UNITS = new ArrayList<>();
 
     static {
-        for (List<Unit> curList : ALLOWED_UNITS_MAP.values()) {
+        for (List<Unit<?>> curList : ALLOWED_UNITS_MAP.values()) {
             ALLOWED_UNITS.addAll(curList);
         }
     }
 
-    public static String stringFromUnit(Unit unit) {
+    public static String stringFromUnit(Unit<?> unit) {
         return unit.toString();
     }
 
-    public static Unit unitFromString(String unitStr) {
-        for (Unit curUnit : ALLOWED_UNITS) {
+    public static Unit<?> unitFromString(String unitStr) {
+        for (Unit<?> curUnit : ALLOWED_UNITS) {
             if (stringFromUnit(curUnit).equals(unitStr)) {
                 return curUnit;
             }

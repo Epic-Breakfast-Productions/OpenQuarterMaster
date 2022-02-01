@@ -79,8 +79,8 @@ public class Stored {
     }
 
     //TODO:: test
-    public Quantity getAmount(){
-        switch (this.getType()){
+    public Quantity<?> getAmount() {
+        switch (this.getType()) {
             case AMOUNT:
                 return this.amount;
             case TRACKED:

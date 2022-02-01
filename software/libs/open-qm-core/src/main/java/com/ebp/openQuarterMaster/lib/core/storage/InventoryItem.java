@@ -108,7 +108,7 @@ public class InventoryItem extends ImagedMainObject {
      * @return The total amount stored.
      */
     public Quantity<?> recalcTotal() {
-        Quantity<?> total = Quantities.getQuantity(0, this.getUnit());
+        Quantity total = Quantities.getQuantity(0, this.getUnit());
         for (List<Stored> storedList : this.getStorageMap().values()) {
             for (Stored stored : storedList) {
                 total = total.add(stored.getAmount());

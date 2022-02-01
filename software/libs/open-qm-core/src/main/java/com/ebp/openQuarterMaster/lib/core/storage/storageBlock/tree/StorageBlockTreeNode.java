@@ -26,7 +26,7 @@ public class StorageBlockTreeNode {
                 block.getLabel(),
                 block.getLocation(),
                 block.getId(),
-                (block.getImageIds().isEmpty()? null : block.getImageIds().get(0)),
+                (block.getImageIds().isEmpty() ? null : block.getImageIds().get(0)),
                 block.getParent()
         );
     }

@@ -1,10 +1,10 @@
 package com.ebp.openQuarterMaster.lib.core.storage.storageBlock;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
-import com.ebp.openQuarterMaster.lib.core.storage.Capacity;
 import lombok.*;
 import org.bson.types.ObjectId;
 
+import javax.measure.Quantity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class StorageBlock extends ImagedMainObject {
      */
     @NonNull
     @NotNull
-    private List<@NotNull Capacity> capacityMeasures = new ArrayList<>();
+    private List<@NotNull Quantity<?>> capacityMeasures = new ArrayList<>();
 
     public boolean hasParent(){
         return this.getParent() != null;

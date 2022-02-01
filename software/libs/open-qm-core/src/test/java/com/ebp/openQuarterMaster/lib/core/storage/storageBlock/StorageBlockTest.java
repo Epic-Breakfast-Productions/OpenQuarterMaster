@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.storageBlock;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
-import com.ebp.openQuarterMaster.lib.core.storage.Capacity;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
+import tech.units.indriya.unit.Units;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -28,7 +28,17 @@ class StorageBlockTest extends BasicTest {
                                 FAKER.address().fullAddress(),
                                 null,
                                 new ArrayList<>() {{
-                                    add(new Capacity(Quantities.getQuantity(5, AbstractUnit.ONE)));
+                                    add(Quantities.getQuantity(5, AbstractUnit.ONE));
+                                }}
+                        )
+                ),
+                Arguments.of(
+                        new StorageBlock(
+                                FAKER.name().name(),
+                                FAKER.address().fullAddress(),
+                                null,
+                                new ArrayList<>() {{
+                                    add(Quantities.getQuantity(5, Units.KILOGRAM));
                                 }}
                         )
                 )
