@@ -116,15 +116,12 @@ Accepts:
                     </div>
                     {#search/image/imageSelectFormInput}
                     {/search/image/imageSelectFormInput}
-                    <!-- TODO:: Capacity measures -->
-
                     {#inputs/capacityInput}
                     {/inputs/capacityInput}
                     {#inputs/keywordInput}
                     {/inputs/keywordInput}
                     {#inputs/attInput}
                     {/inputs/attInput}
-
                 </form>
             </div>
             <div class="modal-footer">
@@ -144,22 +141,24 @@ Accepts:
     <div class="row">
         {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
         <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Location in storage:</h5>
+                    <div id="storageBlockViewBreadcrumbContainer">
+                    </div>
+                </div>
+            </div>
             <div class="card" id="storageBlockViewLocationContainer">
                 <div class="card-body">
                     <h5 class="card-title">Location:</h5>
                     <p class="card-text" id="storageBlockViewLocation"></p>
                 </div>
             </div>
-            <div class="card" id="storageBlockViewParentContainer">
-                <div class="card-body">
-                    <h5 class="card-title">Parent:</h5>
-                    <p class="card-text" id="storageBlockViewParent"></p>
-                </div>
-            </div>
             <div class="card" id="storageBlockViewCapacityContainer">
-                <h5 class="card-title">Capacity</h5>
-                <div id="storageBlockViewCapacity">
-
+                <div class="card-body">
+                    <h5 class="card-title">Capacities:</h5>
+                    <div id="storageBlockViewCapacity">
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,6 +184,7 @@ Accepts:
 <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
 <script src="/res/js/obj/media/imageSearchSelect.js"></script>
 <script src="/res/js/obj/units.js"></script>
+<script src="/res/js/obj/getters.js"></script>
 <script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
 
@@ -320,19 +320,19 @@ var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
 var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
-var storageBlockViewParentContainer = $('#storageBlockViewParentContainer');
 var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
 var storageBlockViewLocation = $('#storageBlockViewLocation');
-var storageBlockViewParent = $('#storageBlockViewParent');
 var storageBlockViewCapacity = $('#storageBlockViewCapacity');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
+var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 
 function resetView(){
     storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
+    storageBlockViewBreadcrumbContainer.text('');
 
-    storageBlockViewParentContainer.hide();
+    storageBlockViewCapacity.text('');
     storageBlockViewCapacityContainer.hide();
 
     storageBlockViewModalLabel.text("");
@@ -346,6 +346,7 @@ function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
     storageBlockViewModalLabel.text(blockId);
+    getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
     doRestCall({
     	spinnerContainer: storageBlockViewModal,
@@ -360,19 +361,12 @@ function setupView(blockId){
                 storageBlockViewLocation.text(data.location);
                 storageBlockViewLocationContainer.show();
             }
-            if(data.parent){
-                storageBlockViewParent.text(data.parent);
-                storageBlockViewParentContainer.show();
-                //TODO:: call to replace id with label
-            }
-            if(data.capacityMeasures){
+            if(data.capacityMeasures.length){
                 data.capacityMeasures.forEach(function(curCapacity){
-                    storageBlockViewCapacity.append('<span class="badge bg-light text-dark m-2 user-select-all">'+curCapacity.value+curCapacity.unit+'</span>');
+                    storageBlockViewCapacity.append('<span class="badge bg-secondary m-2 user-select-all">'+curCapacity.value+curCapacity.unit+'</span>');
                 });
                 storageBlockViewCapacityContainer.show();
             }
-
-            //TODO:: capacities
 
             if(data.imageIds.length){
                 console.log("Storage block had images to show.");

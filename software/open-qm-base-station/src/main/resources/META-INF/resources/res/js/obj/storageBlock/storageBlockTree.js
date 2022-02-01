@@ -82,3 +82,31 @@ function showTree(containerSelector){
 
 }
 
+function addCrumbs(cur, crumbList, toKeepId){
+    if(cur.blockId != toKeepId){
+        crumbList.append($('<li class="breadcrumb-item"><a href="#">'+cur.blockLabel+'</a></li>'));
+        addCrumbs(cur.children[0], crumbList, toKeepId);
+    } else {
+        crumbList.append($('<li class="breadcrumb-item"active" aria-current="page">'+cur.blockLabel+' (this)</li>'));
+    }
+}
+
+
+function getBlockBreadcrumbs(crumbContainer, toKeepId){
+    doRestCall({
+            url: "/api/storage/tree?onlyInclude="+toKeepId,
+            done: function(data){
+                console.log("Successfully got tree data.");
+
+                var crumbList = $('<ol class="breadcrumb"></ol>');
+
+                addCrumbs(data.rootNodes[0], crumbList, toKeepId);
+
+
+                var nav = $('<nav aria-label="Storage Block Breadcrumb"></nav>');
+                nav.append(crumbList);
+                crumbContainer.append(nav);
+            },
+            fail: function(){}
+    });
+}
