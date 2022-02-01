@@ -1,22 +1,18 @@
 package com.ebp.openQuarterMaster.baseStation.testResources;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfig;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.KeysMetadataRepresentation;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,13 +24,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.keycloak.crypto.KeyUse.SIG;
 
 /**
- * TODO:: make better with configuration
+ *
  */
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
     public static final String EXTERNAL_AUTH_ARG = "externalAuth";
 
-    private static volatile MongodExecutable MONGO_EXE = null;
+    private static volatile MongoDBContainer MONGO_EXE = null;
     private static volatile KeycloakContainer KEYCLOAK_CONTAINER = null;
 
 	private boolean externalAuth = false;
@@ -47,12 +43,17 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         if (KEYCLOAK_CONTAINER != null) {
             log.info("Keycloak already started.");
         } else {
+            StopWatch sw = StopWatch.createStarted();
+
             KEYCLOAK_CONTAINER = new KeycloakContainer()
 //				.withEnv("hello","world")
                     .withRealmImportFile("keycloak-realm.json");
             KEYCLOAK_CONTAINER.start();
+
+            sw.stop();
             log.info(
-                    "Test keycloak started at endpoint: {}\tAdmin creds: {}:{}",
+                    "Test keycloak started in {} at endpoint: {}\tAdmin creds: {}:{}",
+                    sw,
                     KEYCLOAK_CONTAINER.getAuthServerUrl(),
                     KEYCLOAK_CONTAINER.getAdminUsername(),
                     KEYCLOAK_CONTAINER.getAdminPassword()
@@ -138,29 +139,22 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         );
     }
 
-    public static synchronized void startMongoTestServer() throws IOException {
-        if (MONGO_EXE != null) {
-            log.info("Flapdoodle Mongo already started.");
-            return;
+    public static synchronized Map<String, String> startMongoTestServer() {
+        if (MONGO_EXE != null && MONGO_EXE.isRunning()) {
+            log.info("Mongo already started.");
+            return Map.of();
         }
-        Version.Main version = Version.Main.V4_0;
-        int port = 27018;
-        log.info("Starting Flapdoodle Test Mongo {} on port {}", version, port);
-        MongodConfig config = MongodConfig.builder()
-                .version(version)
-                .net(new Net(port, Network.localhostIsIPv6()))
-                .build();
-        try {
-            MONGO_EXE = MongodStarter.getDefaultInstance().prepare(config);
-            MongodProcess process = MONGO_EXE.start();
-            if (!process.isProcessRunning()) {
-                throw new IOException();
-            }
-        } catch (Throwable e) {
-            log.error("FAILED to start test mongo server: ", e);
-            MONGO_EXE = null;
-            throw e;
-        }
+
+        StopWatch sw = StopWatch.createStarted();
+        MONGO_EXE = new MongoDBContainer(DockerImageName.parse("mongo:5.0.6"));
+
+        MONGO_EXE.start();
+        sw.stop();
+        log.info("Started Test Mongo in {} at: {}", sw, MONGO_EXE.getReplicaSetUrl());
+
+        return Map.of(
+                "quarkus.mongodb.connection-string", MONGO_EXE.getReplicaSetUrl()
+        );
     }
 
     public static synchronized void stopMongoTestServer() {
@@ -171,14 +165,13 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
         MONGO_EXE.stop();
         MONGO_EXE = null;
     }
-
-    public synchronized static void cleanMongo() throws IOException {
-        if (MONGO_EXE == null) {
-            log.warn("Mongo was not started.");
+    public static synchronized void stopKeycloakTestServer() {
+        if (KEYCLOAK_CONTAINER == null) {
+            log.warn("Keycloak was not started.");
             return;
         }
-
-        log.info("Cleaning Mongo of all entries.");
+        KEYCLOAK_CONTAINER.stop();
+        KEYCLOAK_CONTAINER = null;
     }
 
 
@@ -191,13 +184,11 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     public Map<String, String> start() {
         log.info("STARTING test lifecycle resources.");
         Map<String, String> configOverride = new HashMap<>();
-        try {
-            startMongoTestServer();
-        } catch (IOException e) {
-            log.error("Unable to start Flapdoodle Mongo server");
-        }
 
+        configOverride.putAll(startMongoTestServer());
         configOverride.putAll(startKeycloakTestServer());
+
+        log.info("Config overrides: {}", configOverride);
 
         return configOverride;
     }
@@ -206,5 +197,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     public void stop() {
         log.info("STOPPING test lifecycle resources.");
         stopMongoTestServer();
+        stopKeycloakTestServer();
     }
 }
