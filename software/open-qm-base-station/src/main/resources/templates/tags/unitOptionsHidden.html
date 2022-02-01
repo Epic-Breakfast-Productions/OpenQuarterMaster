@@ -1,0 +1,13 @@
+{!
+Template for the options for a select input for units.
+
+Ingests:
+- allowedUnitsMap- Map
+<String, List
+<Unit>> the map of allowed units
+    !}
+
+    <div id="unitSelectOptions" style="display:none">
+        {#unitOptions allowedUnitsMap=allowedUnitsMap}
+        {/unitOptions}
+    </div>

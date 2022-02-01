@@ -286,7 +286,7 @@ public class StorageCrud extends EndpointProvider {
     )
     @RolesAllowed("user")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateInventoryItem(
+    public Response updateStorageBlock(
             @Context SecurityContext securityContext,
             @PathParam String id,
             ObjectNode storageBlockUpdates

@@ -66,6 +66,8 @@ Accepts:
         </table>
     </div>
 </div>
+    {#unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
+    {/unitOptionsHidden}
 
     {/pageContent}
 {#modals}
@@ -116,6 +118,8 @@ Accepts:
                     {/search/image/imageSelectFormInput}
                     <!-- TODO:: Capacity measures -->
 
+                    {#inputs/capacityInput}
+                    {/inputs/capacityInput}
                     {#inputs/keywordInput}
                     {/inputs/keywordInput}
                     {#inputs/attInput}
@@ -152,8 +156,11 @@ Accepts:
                     <p class="card-text" id="storageBlockViewParent"></p>
                 </div>
             </div>
-            <div id="storageBlockViewCapacityContainer">
-                <h3>Capacity</h3>
+            <div class="card" id="storageBlockViewCapacityContainer">
+                <h5 class="card-title">Capacity</h5>
+                <div id="storageBlockViewCapacity">
+
+                </div>
             </div>
         </div>
     </div>
@@ -173,17 +180,19 @@ Accepts:
 
 {#scripts}
 <script src="/res/js/search.js"></script>
-<script src="/res/js/objEdit.js"></script>
-<script src="/res/js/objView.js"></script>
-<script src="/res/js/storageSearchSelect.js"></script>
-<script src="/res/js/imageSearchSelect.js"></script>
+<script src="/res/js/obj/objEdit.js"></script>
+<script src="/res/js/obj/objView.js"></script>
+<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+<script src="/res/js/obj/media/imageSearchSelect.js"></script>
+<script src="/res/js/obj/units.js"></script>
+<script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
 
 <script src="/lib/treant-js/vendor/raphael.js"></script>
 <script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="/lib/treant-js/vendor/jquery.easing.js"></script>
 <script src="/lib/treant-js/Treant.js"></script>
-<script src="/res/js/storageBlockTree.js"></script>
+<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
     {#pageScript}
 {!
@@ -230,6 +239,7 @@ var addEditLabelInput = $("#addEditLabelInput");
 var addEditLocationInput = $("#addEditLocationInput");
 var addEditParentIdInput = $("#addEditParentInputId");
 var imagesSelected = $("#imagesSelected");
+var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
 
 var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
 var attInputDiv = addEditStorageForm.find(".attInputDiv");
@@ -255,10 +265,20 @@ addEditStorageForm.submit(function(event){
     var addEditData = {
         label: addEditLabelInput.val(),
         location: addEditLocationInput.val(),
+        capacityMeasures: [],
         imageIds: []
     };
 
     addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+
+    capacityInputDiv.each(function(i, curCapDiv){
+        var cur = $(curCapDiv);
+        addEditData.capacityMeasures.push({
+            value: cur.find(".capacityInput")[0].value,
+            unit: cur.find(".unitSelect").find(":selected")[0].value,
+            scale: "ABSOLUTE"
+        });
+    });
 
     imagesSelected.find("img").each(function(i, curImg){
         addEditData.imageIds.push($(curImg).attr('data-bs-imageId'));
@@ -304,6 +324,7 @@ var storageBlockViewParentContainer = $('#storageBlockViewParentContainer');
 var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
 var storageBlockViewLocation = $('#storageBlockViewLocation');
 var storageBlockViewParent = $('#storageBlockViewParent');
+var storageBlockViewCapacity = $('#storageBlockViewCapacity');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 
@@ -313,7 +334,6 @@ function resetView(){
 
     storageBlockViewParentContainer.hide();
     storageBlockViewCapacityContainer.hide();
-
 
     storageBlockViewModalLabel.text("");
     storageBlockHistory.text('');
@@ -344,6 +364,12 @@ function setupView(blockId){
                 storageBlockViewParent.text(data.parent);
                 storageBlockViewParentContainer.show();
                 //TODO:: call to replace id with label
+            }
+            if(data.capacityMeasures){
+                data.capacityMeasures.forEach(function(curCapacity){
+                    storageBlockViewCapacity.append('<span class="badge bg-light text-dark m-2 user-select-all">'+curCapacity.value+curCapacity.unit+'</span>');
+                });
+                storageBlockViewCapacityContainer.show();
             }
 
             //TODO:: capacities
