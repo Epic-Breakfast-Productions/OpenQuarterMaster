@@ -30,8 +30,8 @@ import static org.keycloak.crypto.KeyUse.SIG;
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
     public static final String EXTERNAL_AUTH_ARG = "externalAuth";
 
-    private static volatile MongoDBContainer MONGO_EXE = null;
-    private static volatile KeycloakContainer KEYCLOAK_CONTAINER = null;
+    private static MongoDBContainer MONGO_EXE = null;
+    private static KeycloakContainer KEYCLOAK_CONTAINER = null;
 
 	private boolean externalAuth = false;
 
@@ -40,19 +40,18 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
             log.info("No need for keycloak.");
             return Map.of();
         }
-        if (KEYCLOAK_CONTAINER != null) {
+        if (KEYCLOAK_CONTAINER != null && KEYCLOAK_CONTAINER.isRunning()) {
             log.info("Keycloak already started.");
         } else {
             StopWatch sw = StopWatch.createStarted();
 
             KEYCLOAK_CONTAINER = new KeycloakContainer()
-//				.withEnv("hello","world")
                     .withRealmImportFile("keycloak-realm.json");
             KEYCLOAK_CONTAINER.start();
 
             sw.stop();
             log.info(
-                    "Test keycloak started in {} at endpoint: {}\tAdmin creds: {}:{}",
+                    "Started Test Keycloak in {} at endpoint: {}\tAdmin creds: {}:{}",
                     sw,
                     KEYCLOAK_CONTAINER.getAuthServerUrl(),
                     KEYCLOAK_CONTAINER.getAdminUsername(),
@@ -60,7 +59,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
             );
 
         }
-        String clientId;
         String clientSecret;
         String publicKey = "";
         try (
@@ -98,18 +96,10 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
             }
         }
         // write public key
-        // = new File(TestResourceLifecycleManager.class.getResource("/").toURI().toString() + "/security/testKeycloakPublicKey.pem");
         File publicKeyFile;
         try {
             publicKeyFile = File.createTempFile("oqmTestKeycloakPublicKey",".pem");
-//            publicKeyFile = new File(TestResourceLifecycleManager.class.getResource("/").toURI().toString().replace("/classes/java/", "/resources/") + "/security/testKeycloakPublicKey.pem");
             log.info("path of public key: {}", publicKeyFile);
-//            if(publicKeyFile.createNewFile()){
-//                log.info("created new public key file");
-//
-//            } else {
-//                log.info("Public file already exists");
-//            }
             try (
                     FileOutputStream os = new FileOutputStream(
                             publicKeyFile
@@ -134,23 +124,20 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
                 "test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
                 "service.externalAuth.url", keycloakUrl,
                 "mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath()
-
-
         );
     }
 
     public static synchronized Map<String, String> startMongoTestServer() {
-        if (MONGO_EXE != null && MONGO_EXE.isRunning()) {
+        if (MONGO_EXE == null || !MONGO_EXE.isRunning()) {
+            StopWatch sw = StopWatch.createStarted();
+            MONGO_EXE = new MongoDBContainer(DockerImageName.parse("mongo:5.0.6"));
+
+            MONGO_EXE.start();
+            sw.stop();
+            log.info("Started Test Mongo in {} at: {}", sw, MONGO_EXE.getReplicaSetUrl());
+        } else {
             log.info("Mongo already started.");
-            return Map.of();
         }
-
-        StopWatch sw = StopWatch.createStarted();
-        MONGO_EXE = new MongoDBContainer(DockerImageName.parse("mongo:5.0.6"));
-
-        MONGO_EXE.start();
-        sw.stop();
-        log.info("Started Test Mongo in {} at: {}", sw, MONGO_EXE.getReplicaSetUrl());
 
         return Map.of(
                 "quarkus.mongodb.connection-string", MONGO_EXE.getReplicaSetUrl()
@@ -195,8 +182,8 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 
     @Override
     public void stop() {
-        log.info("STOPPING test lifecycle resources.");
-        stopMongoTestServer();
-        stopKeycloakTestServer();
+//        log.info("STOPPING test lifecycle resources.");
+//        stopMongoTestServer();
+//        stopKeycloakTestServer();
     }
 }
