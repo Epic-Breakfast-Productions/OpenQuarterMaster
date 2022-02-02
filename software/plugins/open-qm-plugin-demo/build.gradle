@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-resteasy-jackson'
@@ -21,6 +22,11 @@ dependencies {
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+
+    implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
+
+    //This dependency causes the snakeyaml error
+    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
 }
 
 group 'com.ebp.openQuarterMaster'
