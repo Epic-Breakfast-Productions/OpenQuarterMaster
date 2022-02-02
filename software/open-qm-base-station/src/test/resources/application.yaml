@@ -12,7 +12,6 @@ quarkus:
     level: TRACE
   mongodb:
     database: openQuarterMasterTest
-    connection-string: mongodb://localhost:27018
     write-concern:
       journal: false
   jaeger:

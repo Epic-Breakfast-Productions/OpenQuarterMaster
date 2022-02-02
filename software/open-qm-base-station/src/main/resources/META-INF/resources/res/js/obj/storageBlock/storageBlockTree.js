@@ -30,11 +30,9 @@ function addChildrenToList(childrenList, curBlock){
             children: []
         };
 
-    //TODO:: image
     if(curBlock.firstImageId){
         curNode.image = "/api/media/image/"+curBlock.firstImageId+"/data";
     }
-
 
     if(curBlock.children){
         curBlock.children.forEach(function(curChild, i){
@@ -48,9 +46,6 @@ function showTree(containerSelector){
     chartConfig = $.extend(true,{}, MAIN_CONFIG);
 
     chartConfig.chart.container = containerSelector;
-
-//    new Treant(chartConfig);
-//    return;
 
     doRestCall({
 //        spinnerContainer: $(containerSelector),
@@ -67,19 +62,6 @@ function showTree(containerSelector){
         },
         fail: function(){}
     });
-
-    // {
-//                       text: {name: "Lana"},
-//                       collapsed: true,
-//                       children: [
-//                           {
-//                               text: {name: "Figgis"}
-//                           }
-//                       ]
-//                   }
-
-
-
 }
 
 function addCrumbs(cur, crumbList, toKeepId){
@@ -101,7 +83,6 @@ function getBlockBreadcrumbs(crumbContainer, toKeepId){
                 var crumbList = $('<ol class="breadcrumb"></ol>');
 
                 addCrumbs(data.rootNodes[0], crumbList, toKeepId);
-
 
                 var nav = $('<nav aria-label="Storage Block Breadcrumb"></nav>');
                 nav.append(crumbList);
