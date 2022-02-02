@@ -91,6 +91,7 @@ Accepts:
                 </div>
                 <form id="addEditStorageForm">
                     <input type="hidden" id="addEditFormMode" value="">
+                    <input type="hidden" id="addEditFormId" value="">
                     <div class="mb-3 row">
                         <label for="addEditLabelInput" class="col-sm-2 col-form-label">Label</label>
                         <div class="col-sm-10">
@@ -237,7 +238,8 @@ var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
 var addEditLabelInput = $("#addEditLabelInput");
 var addEditLocationInput = $("#addEditLocationInput");
-var addEditParentIdInput = $("#addEditParentInputId");
+var addEditParentInputId = $("#addEditParentInputId");
+var addEditParentInputName = $("#addEditParentInputName");
 var imagesSelected = $("#imagesSelected");
 var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
 
@@ -246,7 +248,11 @@ var attInputDiv = addEditStorageForm.find(".attInputDiv");
 
 function resetAddEdit(){
     addEditStorageForm.trigger("reset");
+    addEditFormId.val("");
     imagesSelected.html("");
+    keywordInputDiv.text("");
+    attInputDiv.text("");
+    capacityInputDiv.text("");
 }
 
 
@@ -256,6 +262,35 @@ function setupAddEditForAdd(){
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add");
     addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Storage Block');
+}
+
+function setupAddEditForEdit(blockId){
+    console.log("Setting up add/edit form for edit.");
+    resetAddEdit();
+    addEditFormMode.val("edit");
+    addEditModalTitleText.text("Edit");
+    addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Storage Block');
+
+    doRestCall({
+    	spinnerContainer: addEditModal,
+    	url: "/api/storage/" + blockId,
+    	done: function(data){
+    	    addSelectedImages(data.imageIds);
+    	    addEditFormId.val(blockId);
+            addEditLabelInput.val(data.label);
+            addEditLocationInput.val(data.location);
+
+            if(data.parent){
+                addEditParentInputId.val(data.parent);
+                getStorageBlockLabel(data.parent, function(parentLabel){
+                    addEditParentInputName.val(parentLabel);
+                });
+            }
+            addKeywordInputs(keywordInputDiv, data.keywords);
+            addAttInputs(attInputDiv, data.attributes);
+            addCapacityInputs(capacityInputDiv, data.capacityMeasures);
+    	}
+    });
 }
 
 addEditStorageForm.submit(function(event){
@@ -285,16 +320,36 @@ addEditStorageForm.submit(function(event){
     });
 
 
-    if(addEditParentIdInput.val()){
-        addEditData.parent = addEditParentIdInput.val();
+    if(addEditParentInputId.val()){
+        addEditData.parent = addEditParentInputId.val();
     }
 
     var result = false;
+    var verb = "";
     if(addEditFormMode.val() == "add"){
+        verb = "Created";
         console.log("Adding new storage block.");
         doRestCall({
             url: "/api/storage",
             method: "POST",
+            data: addEditData,
+            async: false,
+            done: function(data) {
+                console.log("Response from create request: " + JSON.stringify(data));
+                result = true;
+            },
+            fail: function(data) {
+                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+            }
+        });
+    } else if(addEditFormMode.val() == "edit") {
+        verb = "Edited";
+        addEditData.id = addEditFormId.val();
+        console.log("Editing storage block " + addEditData.id);
+
+        doRestCall({
+            url: "/api/storage/" + addEditData.id,
+            method: "PUT",
             data: addEditData,
             async: false,
             done: function(data) {
@@ -310,7 +365,7 @@ addEditStorageForm.submit(function(event){
     if(!result){
         addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
     } else {
-        reloadPageWithMessage("Created storage block successfully!", "success", "Success!");
+        reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
     }
 });
 fillInQueryForm($("#mainStorageSearch"));

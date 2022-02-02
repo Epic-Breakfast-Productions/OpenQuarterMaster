@@ -12,7 +12,7 @@ function setupImageSearchModal(inputIdPrepend){
 function selectImage(imageName, imageId){
     //TODO:: make move up/back buttons work
     var newImageSelected = $('<div class="card selectedImage g-0 p-1 m-1 text-center float-start" > \
-        <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this);" data-bs-imageId="'+imageId+'"> \
+        <img src="/api/media/image/'+imageId+'/data" alt="'+imageName+'" class="card-img-top" onclick="removeSelectedImage(this.parentElement);" data-bs-imageId="'+imageId+'"> \
         <div class="input-group m-1 p-1"> \
             <button type="button" title="Move image up" class="btn btn-sm btn-outline-dark" onclick="moveImageInputUp(this.parentElement.parentElement);">&lt;</button> \
             <button type="button" title="Move image down" class="btn btn-sm btn-outline-dark" onclick="moveImageInputDown(this.parentElement.parentElement);">&gt;</button> \
@@ -20,6 +20,24 @@ function selectImage(imageName, imageId){
     </div>');
 
     imagesSelected.append(newImageSelected);
+}
+
+function addSelectedImages(imageList){
+    var titleArr = [];
+    imageList.forEach(function(imageId, i){
+        doRestCall({
+            async:false,
+            spinnerContainer: null,
+            url: "/api/media/image/" + imageId,
+            done: function(data){
+                titleArr[i]=data.title
+            }
+        });
+    });
+
+    imageList.forEach(function(imageId, i){
+        selectImage(titleArr[i], imageId);
+    });
 }
 
 function moveImageInputUp(imageDiv){

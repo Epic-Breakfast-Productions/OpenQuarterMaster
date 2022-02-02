@@ -59,9 +59,11 @@
     <td></td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal"
-              data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');"><i class="fas fa-eye"></i></button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');">
+        <i class="fas fa-eye"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">
+        <i class="fas fa-edit"></i>
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
               onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>

@@ -8,3 +8,12 @@ function getStorageBlockLabel(blockId, doneFunc){
         	}
     });
 }
+function getImageName(imageId, doneFunc){
+    doRestCall({
+        	spinnerContainer: null,
+        	url: "/api/media/image/" + imageId,
+        	done: function(data){
+        	    doneFunc(data.title)
+        	}
+    });
+}
