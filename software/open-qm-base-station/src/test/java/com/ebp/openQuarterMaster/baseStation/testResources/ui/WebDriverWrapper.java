@@ -29,6 +29,7 @@ import java.util.List;
 public class WebDriverWrapper implements Closeable {
     static {
         WebDriverManager.firefoxdriver().setup();
+        //TODO:: init web driver at start of tests rather than halfway through
     }
 
     @Getter

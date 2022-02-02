@@ -26,7 +26,7 @@ dependencies {
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
     //This dependency causes the snakeyaml error
-    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
+    testImplementation 'net.datafaker:datafaker:1.1.0'
 }
 
 group 'com.ebp.openQuarterMaster'

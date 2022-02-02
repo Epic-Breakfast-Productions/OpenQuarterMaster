@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 
 public abstract class TestObjectCreator<T> {
 

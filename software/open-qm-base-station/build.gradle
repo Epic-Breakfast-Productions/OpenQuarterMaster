@@ -59,7 +59,7 @@ dependencies {
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.0.3'
     testImplementation 'com.deque:axe-selenium:3.0'
-    testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
+    testImplementation 'net.datafaker:datafaker:1.1.0'
     testImplementation 'org.keycloak:keycloak-admin-client:16.0.0'
 }
 
