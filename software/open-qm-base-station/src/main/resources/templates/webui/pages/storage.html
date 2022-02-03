@@ -198,6 +198,7 @@ Accepts:
     {#pageScript}
 {!
 <script> !}
+fillInQueryForm($("#mainStorageSearch"));
 
 function removeStorageBlock(blockId){
     if(!confirm("Are you sure you want to delete this storage block? This cannot be undone.")){
@@ -306,7 +307,7 @@ addEditStorageForm.submit(function(event){
 
     addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
 
-    capacityInputDiv.each(function(i, curCapDiv){
+    capacityInputDiv.children().each(function(i, curCapDiv){
         var cur = $(curCapDiv);
         addEditData.capacityMeasures.push({
             value: cur.find(".capacityInput")[0].value,
@@ -368,7 +369,6 @@ addEditStorageForm.submit(function(event){
         reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
     }
 });
-fillInQueryForm($("#mainStorageSearch"));
 
 var storageBlockViewModal = $('#storageBlockViewModal');
 var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');

@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.EventType;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -114,6 +116,22 @@ public abstract class MongoService<T extends MainObject> {
         results.into(list);
 
         return list;
+    }
+
+    protected SearchResult<T> searchResult(List<Bson> filters, Bson sort, PagingOptions pagingOptions){
+        Bson filter = (filters.isEmpty() ? null : and(filters));
+
+        List<T> list = this.list(
+                filter,
+                sort,
+                pagingOptions
+        );
+
+        return new SearchResult<>(
+                list,
+                this.count(filter),
+                !filters.isEmpty()
+        );
     }
 
     /**

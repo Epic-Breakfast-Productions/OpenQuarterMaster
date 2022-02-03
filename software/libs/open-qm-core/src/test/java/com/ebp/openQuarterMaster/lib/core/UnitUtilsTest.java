@@ -35,14 +35,14 @@ class UnitUtilsTest {
 
     @ParameterizedTest(name = "testStringMethods[{index}]({0})")
     @MethodSource("unitsAsArgs")
-    public void testStringMethods(Unit unit) {
+    public void testStringMethods(Unit<?> unit) {
         log.info("Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", unit, unit.getName(), unit.getSymbol(), unit.getDimension());
 
         String unitStr = UnitUtils.stringFromUnit(unit);
 
         log.info("Unit String:\"{}\"", unitStr);
 
-        Unit unitBack = UnitUtils.unitFromString(unitStr);
+        Unit<?> unitBack = UnitUtils.unitFromString(unitStr);
 
         assertEquals(unit, unitBack);
     }
@@ -50,12 +50,12 @@ class UnitUtilsTest {
 
     @ParameterizedTest(name = "testUnitSerialization[{index}]({0})")
     @MethodSource("unitsAsArgs")
-    public void testUnitSerialization(Unit unit) throws JsonProcessingException {
+    public void testUnitSerialization(Unit<?> unit) throws JsonProcessingException {
         log.info("Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", unit, unit.getName(), unit.getSymbol(), unit.getDimension());
 
         String serialized = Utils.OBJECT_MAPPER.writeValueAsString(unit);
-        log.info("Serialized unit: {}", serialized);
-        Unit deserialized = Utils.OBJECT_MAPPER.readValue(serialized, Unit.class);
+        log.info("Serialized unit: \"{}\"", serialized);
+        Unit<?> deserialized = Utils.OBJECT_MAPPER.readValue(serialized, Unit.class);
 
         log.info("Deserialized unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", deserialized, deserialized.getName(), deserialized.getSymbol(), deserialized.getDimension());
 

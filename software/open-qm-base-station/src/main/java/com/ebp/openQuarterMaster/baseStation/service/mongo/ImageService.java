@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.mongodb.client.model.Filters.and;
-
 @Slf4j
 @ApplicationScoped
 public class ImageService extends MongoService<Image> {
@@ -66,18 +64,6 @@ public class ImageService extends MongoService<Image> {
 
         //TODO::
 
-        Bson filter = (filters.isEmpty() ? null : and(filters));
-
-        List<Image> list = this.list(
-                filter,
-                sort,
-                pagingOptions
-        );
-
-        return new SearchResult<>(
-                list,
-                this.count(filter),
-                !filters.isEmpty()
-        );
+        return this.searchResult(filters, sort, pagingOptions);
     }
 }

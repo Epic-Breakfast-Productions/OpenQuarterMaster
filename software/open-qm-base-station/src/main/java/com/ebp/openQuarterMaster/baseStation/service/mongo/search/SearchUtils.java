@@ -1,10 +1,15 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo.search;
 
+import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import tech.units.indriya.quantity.Quantities;
 
+import javax.measure.Quantity;
+import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,26 +29,26 @@ public class SearchUtils {
         );
     }
 
-    public static void addBasicSearchFilter(List<Bson> filters, String field, String value){
+    public static void addBasicSearchFilter(List<Bson> filters, String field, String value) {
         if (value != null && !value.isBlank()) {
             filters.add(regex(field, SearchUtils.getSearchTermPattern(value.strip())));
         }
     }
 
-    public static void addKeywordSearchFilter(List<Bson> filters, List<String> keywords){
+    public static void addKeywordSearchFilter(List<Bson> filters, List<String> keywords) {
         if (keywords != null) {
-            for(String keyword : keywords) {
+            for (String keyword : keywords) {
                 filters.add(in("keywords", keyword));
             }
         }
     }
 
-    public static void addAttributeSearchFilters(List<Bson> filters, Map<String, String> attributes){
+    public static void addAttributeSearchFilters(List<Bson> filters, Map<String, String> attributes) {
         if (attributes != null) {
-            for(Map.Entry<String, String> curAtt : attributes.entrySet()){
+            for (Map.Entry<String, String> curAtt : attributes.entrySet()) {
                 Bson inFilter = exists("attributes." + curAtt.getKey());
 
-                if(curAtt.getValue() == null || curAtt.getValue().isBlank()){
+                if (curAtt.getValue() == null || curAtt.getValue().isBlank()) {
                     filters.add(inFilter);
                 } else {
                     filters.add(and(
@@ -55,20 +60,46 @@ public class SearchUtils {
         }
     }
 
-    public static Map<String, String> attListsToMap(List<String> attributeKeys, List<String> attributeValues){
-        if(attributeKeys == null || attributeValues == null){
-            if(attributeKeys != attributeValues){
+    public static Map<String, String> attListsToMap(List<String> attributeKeys, List<String> attributeValues) {
+        if (attributeKeys == null || attributeValues == null) {
+            if (attributeKeys != attributeValues) {
                 throw new IllegalArgumentException("Attribute key/ value lists must both exist.");
             }
             return null;
         }
-        if(attributeKeys.size() != attributeValues.size()){
+        if (attributeKeys.size() != attributeValues.size()) {
             throw new IllegalArgumentException("Attribute key/ value lists must both be of the same size.");
         }
         Map<String, String> output = new HashMap<>();
 
-        for(int i = 0; i < attributeKeys.size(); i++){
+        for (int i = 0; i < attributeKeys.size(); i++) {
             output.put(attributeKeys.get(i), attributeValues.get(i));
+        }
+
+        return output;
+    }
+
+    public static List<Quantity<?>> capacityListsToMap(List<Integer> capacities, List<String> units) {
+        if (capacities == null || units == null) {
+            if (capacities != (Object)units) {
+                throw new IllegalArgumentException("Capacity/ unit lists must both exist.");
+            }
+            return null;
+        }
+        if (capacities.size() != units.size()) {
+            throw new IllegalArgumentException("Capacity/ unit lists must both be of the same size.");
+        }
+        List<Quantity<?>> output = new ArrayList<>(capacities.size());
+
+        for (int i = 0; i < capacities.size(); i++) {
+            try {
+                output.add(Quantities.getQuantity(
+                        capacities.get(i),
+                        (Unit<?>)Utils.OBJECT_MAPPER.readValue( units.get(i) , Unit.class)
+                ));
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException("Unable to parse unit: \"" + units.get(i) + "\"", e);
+            }
         }
 
         return output;
@@ -96,7 +127,7 @@ public class SearchUtils {
     }
 
 
-    public static Bson getKeywordBson(List<String> keywords){
+    public static Bson getKeywordBson(List<String> keywords) {
         return in("keywords", keywords);
     }
 
@@ -116,22 +147,23 @@ public class SearchUtils {
      *         "key2": "value2" || "value3"
      *     }
      * </pre>
-     *
+     * <p>
      * TODO:: test
+     *
      * @param query
      * @return
      */
     public static Bson getAttSearchBson(String query) {
-        if(query == null || query.isBlank()){
+        if (query == null || query.isBlank()) {
             return null;
         }
 
         String[] keywordPairs = query.split("_");
         List<Bson> filters = new ArrayList<>(keywordPairs.length);
 
-        for(String curKvPair : keywordPairs){
+        for (String curKvPair : keywordPairs) {
             String[] keyValue = curKvPair.split("\\.");
-            if(keyValue.length == 0){
+            if (keyValue.length == 0) {
                 throw new IllegalArgumentException("Bad keyword(s) string; extra \"_\"");
             }
             String key = keyValue[0];
@@ -139,7 +171,7 @@ public class SearchUtils {
 
             filters.add(Filters.exists(keyValue[0]));
 
-            for(int i = 1; i < keyValue.length; i++){
+            for (int i = 1; i < keyValue.length; i++) {
                 curKvFilters.add(
                         eq(key, getSearchTermPattern(keyValue[i]))
                 );

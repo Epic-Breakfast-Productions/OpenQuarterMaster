@@ -18,16 +18,18 @@ function fillInQueryForm(queryForm){
             $(formInput).val(getParams.get(formInput.name));
         }
     });
-    var keywordAddButton = queryForm.find(".keywordAddButton");
-    var attributeAddButton = queryForm.find(".attributeAddButton");
 
+    var keywordAddButton = queryForm.find(".keywordAddButton");
     if(keywordAddButton){
-        getParams.getAll("keywords").forEach(function(curKeyword){
+        getParams.getAll("keyword").forEach(function(curKeyword){
             console.log("Keyword: " + curKeyword);
             keywordAddButton.trigger('click');
             queryForm.find(".keywordInputDiv").find(":input.keywordInput").last().val(curKeyword);
         });
+    } else {
+        console.log("no keywords in search");
     }
+    var attributeAddButton = queryForm.find(".attributeAddButton");
     if(attributeAddButton){
         var attKeys = getParams.getAll("attributeKey");
         var attVals = getParams.getAll("attributeValue");
@@ -39,7 +41,26 @@ function fillInQueryForm(queryForm){
             attInputDiv.find(":input.attInputKey").last().val(curKeyword);
             attInputDiv.find(":input.attInputValue").last().val(attVals[i]);
         });
+    } else {
+        console.log("No attributes in search");
     }
+    var capacityAddButton = queryForm.find(".capacityAddButton");
+    if(attributeAddButton){
+        var capacities = getParams.getAll("capacity");
+        var units = getParams.getAll("unit");
+
+        capacities.forEach(function(curCapacity, i){
+            var curUnit = units[i];
+            console.log("Capacity: " + curCapacity + curUnit);
+            capacityAddButton.trigger('click');
+            var capacityInputDiv = queryForm.find(".capacityInputDiv");
+            capacityInputDiv.find(":input.capacityInput").last().val(curCapacity);
+            capacityInputDiv.find(":input.unitSelect").last().val(curUnit);
+        });
+    } else {
+        console.log("No attributes in search");
+    }
+
 
     console.log("DONE filling in query form from page query.");
 }

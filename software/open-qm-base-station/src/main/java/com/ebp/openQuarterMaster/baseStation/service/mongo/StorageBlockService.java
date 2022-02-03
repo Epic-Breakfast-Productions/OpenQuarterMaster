@@ -15,12 +15,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.measure.Quantity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static com.mongodb.client.model.Filters.and;
 
 @Slf4j
 @ApplicationScoped
@@ -50,7 +49,7 @@ public class StorageBlockService extends MongoService<StorageBlock> {
      * Searches for the
      * @param label
      * @param location
-     * @param parents
+     * @param parentLabels
      * @param keywords
      * @param stores
      * @param sort
@@ -60,11 +59,11 @@ public class StorageBlockService extends MongoService<StorageBlock> {
     public SearchResult<StorageBlock> search(
             String label,
             String location,
-            List<String> parents,
+            List<String> parentLabels,
+            List<Quantity<?>> capacities,
+            List<ObjectId> stores,
             List<String> keywords,
             Map<String, String> attributes,
-            List<ObjectId> stores,
-            //TODO:: capacity
             Bson sort,
             PagingOptions pagingOptions
     ) {
@@ -77,22 +76,22 @@ public class StorageBlockService extends MongoService<StorageBlock> {
 
         SearchUtils.addBasicSearchFilter(filters, "label", label);
         SearchUtils.addBasicSearchFilter(filters, "location", location);
+        SearchUtils.addKeywordSearchFilter(filters, keywords);
+        SearchUtils.addAttributeSearchFilters(filters, attributes);
 
-        //TODO::
+        if(parentLabels != null){
+            for(String curParentLabel : parentLabels){
+                //TODO::parent labels
+            }
+        }
 
-        Bson filter = (filters.isEmpty() ? null : and(filters));
+        if(capacities!= null) {
+            for(Quantity<?> curCap : capacities) {
+                //TODO:: capacities with greater than or equal capacity to what was given
+            }
+        }
 
-        List<StorageBlock> list = this.list(
-                filter,
-                sort,
-                pagingOptions
-        );
-
-        return new SearchResult<>(
-                list,
-                this.count(filter),
-                !filters.isEmpty()
-        );
+        return this.searchResult(filters, sort, pagingOptions);
     }
 
     public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude){

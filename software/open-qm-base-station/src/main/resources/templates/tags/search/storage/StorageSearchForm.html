@@ -27,10 +27,8 @@ Ingests:
     </div>
 </div>
 <div class="mb-3 col col-3">
-    <label for="{id}-blockCapacityInput" class="form-label">Capacity</label>
-    <input type="text" class="form-control" name="capacity" id="{id}-blockCapacityInput"
-           aria-describedby="{id}-blockCapacityInputHelp">
-    <div id="{id}-blockCapacityInputHelp" class="form-text">The name of the storage block to find.</div>
+    {#inputs/capacityInput}
+    {/inputs/capacityInput}
 </div>
 {/inputs}
 {/include}
