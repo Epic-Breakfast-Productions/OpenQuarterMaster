@@ -157,10 +157,17 @@ public class StorageCrud extends EndpointProvider {
             //for actual queries
             @QueryParam("label") String label,
             @QueryParam("location") String location,
-            @QueryParam("parents") List<String> parents,
-            @QueryParam("keywords") List<String> keywords,
+            @QueryParam("parentLabel") List<String> parents,
+            //capacities
+            @QueryParam("capacity") List<Integer> capacities,
+            @QueryParam("unit") List<String> units,
+            //TODO
             @QueryParam("stores") List<ObjectId> stores,
             @QueryParam("storedType") StoredType storedType,
+            //attKeywords
+            @QueryParam("keyword") List<String> keywords,
+            @QueryParam("attributeKey") List<String> attributeKeys,
+            @QueryParam("attributeValue") List<String> attributeValues,
             //paging
             @QueryParam("pageSize") Integer pageSize,
             @QueryParam("pageNum") Integer pageNum,
@@ -184,9 +191,10 @@ public class StorageCrud extends EndpointProvider {
                 label,
                 location,
                 parents,
-                keywords,
-                null,
+                SearchUtils.capacityListsToMap(capacities, units),
                 stores,
+                keywords,
+                SearchUtils.attListsToMap(attributeKeys, attributeValues),
                 sort,
                 pageOptions
         );
