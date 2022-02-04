@@ -41,11 +41,16 @@ import static com.mongodb.client.model.Filters.eq;
  */
 @AllArgsConstructor
 public abstract class MongoService<T extends MainObject> {
+    public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
+    /**
+     * TODO:: check if real user. Get userService in constructor?
+     * @param user
+     */
     private static void assertNotNullUser(User user) {
         if (user == null) {
-            throw new IllegalArgumentException("User must exist to perform action.");
+            throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
         }
     }
 
@@ -231,7 +236,7 @@ public abstract class MongoService<T extends MainObject> {
     }
 
     /**
-     * Adds an object to the collection. Adds a created history event and the object's new object id.
+     * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
      *
      * @param object The object to add
      * @return The id of the newly added object.
@@ -239,6 +244,9 @@ public abstract class MongoService<T extends MainObject> {
     public ObjectId add(T object, User user) {
         if (!this.allowNullUserForCreate) {
             assertNotNullUser(user);
+        }
+        if(object == null){
+            throw new NullPointerException("Object cannot be null.");
         }
         if (!object.getHistory().isEmpty()) {
             throw new IllegalArgumentException("Object cannot have history before creation.");
@@ -280,6 +288,8 @@ public abstract class MongoService<T extends MainObject> {
         );
 
         DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
+
+        //TODO:: check result
 
         return toRemove;
     }

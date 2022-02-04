@@ -9,14 +9,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TestMongoService extends MongoService<TestMainObject> {
+public class TestMongoServiceAllowNullUserCreate extends MongoService<TestMainObject> {
 
-    TestMongoService() {//required for DI
-        super(null, null, null, null, null, false, null);
+    TestMongoServiceAllowNullUserCreate() {//required for DI
+        super(null, null, null, null, null, true, null);
     }
 
     @Inject
-    TestMongoService(
+    TestMongoServiceAllowNullUserCreate(
             ObjectMapper objectMapper,
             MongoClient mongoClient,
             @ConfigProperty(name = "quarkus.mongodb.database")
@@ -27,11 +27,11 @@ public class TestMongoService extends MongoService<TestMainObject> {
                 mongoClient,
                 database,
                 TestMainObject.class,
-                false
+                true
         );
     }
 
-    TestMongoService(
+    TestMongoServiceAllowNullUserCreate(
             ObjectMapper objectMapper,
             MongoClient mongoClient,
             String database,
