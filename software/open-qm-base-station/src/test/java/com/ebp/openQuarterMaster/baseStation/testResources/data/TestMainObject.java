@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
@@ -14,5 +15,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class TestMainObject extends MainObject {
     @NotNull
+    @NotEmpty
     private String testField;
 }

@@ -15,6 +15,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -40,6 +41,7 @@ import static com.mongodb.client.model.Filters.eq;
  * @param <T> The type of object stored.
  */
 @AllArgsConstructor
+@Slf4j
 public abstract class MongoService<T extends MainObject> {
     public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
@@ -201,7 +203,7 @@ public abstract class MongoService<T extends MainObject> {
         return this.get(new ObjectId(objectId));
     }
 
-    public <A extends Annotation> T update(ObjectId id, ObjectNode updateJson, User user) {
+    public T update(ObjectId id, ObjectNode updateJson, User user) {
         assertNotNullUser(user);
         if (updateJson.has("history")) {
             throw new IllegalArgumentException("Not allowed to update history of an object manually.");
@@ -209,8 +211,9 @@ public abstract class MongoService<T extends MainObject> {
         T object = this.get(id);
 
         ObjectReader reader = objectMapper.readerForUpdating(object);
+        // reader.getAttributes().withSharedAttribute(ContextAttributes.) //TODO:: figure out how to enforce only available fields
         try {
-            reader.readValue(updateJson);
+            reader.readValue(updateJson, this.clazz);
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
         }
@@ -289,7 +292,14 @@ public abstract class MongoService<T extends MainObject> {
 
         DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
 
-        //TODO:: check result
+        {//TODO: ignore this in coverage
+            if (!result.wasAcknowledged()) {
+                log.warn("Delete of obj {} was not acknowledged.", objectId);
+            }
+            if (result.getDeletedCount() != 1) {
+                log.warn("Selete of obj {} returned delete count != 1: {}", objectId, result.getDeletedCount());
+            }
+        }
 
         return toRemove;
     }

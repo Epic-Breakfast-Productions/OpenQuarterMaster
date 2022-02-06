@@ -10,6 +10,8 @@ import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningSe
 import com.ebp.openQuarterMaster.lib.core.history.EventType;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.model.Sorts;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -22,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
+import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,11 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 class MongoServiceTest extends RunningServerTest {
 
-    //TODO:: config service; allowNullUserForCreate T/F
-
     @Inject
     TestMongoService testMongoService;
 
+    //TODO:: config service; allowNullUserForCreate T/F
     //TODO:: do this properly with inject args?
     @Inject
     TestMongoServiceAllowNullUserCreate testMongoServiceAllowNullUserCreate;
@@ -43,6 +46,7 @@ class MongoServiceTest extends RunningServerTest {
     @Inject
     TestUserService testUserService;
 
+    // <editor-fold desc="Count">
     @Test
     public void testCollectionEmpty() {
         assertTrue(this.testMongoService.collectionEmpty());
@@ -51,7 +55,6 @@ class MongoServiceTest extends RunningServerTest {
 
         assertFalse(this.testMongoService.collectionEmpty());
     }
-
     @Test
     public void testCollectionCount() {
         this.testMongoService.add(new TestMainObject(), this.testUserService.getTestUser());
@@ -65,7 +68,9 @@ class MongoServiceTest extends RunningServerTest {
         assertEquals(6, this.testMongoService.count());
         assertEquals(5, this.testMongoService.count(eq("testField", "hello")));
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Searching">
     @Test
     public void testList() {
         for (int i = 0; i < 5; i++) {
@@ -101,9 +106,9 @@ class MongoServiceTest extends RunningServerTest {
             assertEquals("" + i, result.get(0).getTestField());
         }
     }
+    // </editor-fold>
 
-    //TODO:: get, update, remove
-
+    // <editor-fold desc="Adding">
     @Test
     public void testAddNullObj(){
         Assert.assertThrows(
@@ -194,5 +199,267 @@ class MongoServiceTest extends RunningServerTest {
 
         assertEquals(original, gotten);
     }
+    // </editor-fold>
+
+    // <editor-fold desc="Get">
+    @Test
+    public void testGetByObjectId(){
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoServiceAllowNullUserCreate.add(original, null);
+
+        TestMainObject gotten = testMongoServiceAllowNullUserCreate.get(original.getId());
+
+        assertNotSame(original, gotten);
+        assertEquals(original, gotten);
+    }
+    @Test
+    public void testGetByString(){
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoServiceAllowNullUserCreate.add(original, null);
+
+        TestMainObject gotten = testMongoServiceAllowNullUserCreate.get(original.getId().toHexString());
+
+        assertNotSame(original, gotten);
+        assertEquals(original, gotten);
+    }
+    @Test
+    public void testGetByNullObjectId(){
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoServiceAllowNullUserCreate.add(original, null);
+
+        TestMainObject gotten = testMongoServiceAllowNullUserCreate.get((ObjectId) null);
+
+        assertNull(gotten);
+    }
+    @Test
+    public void testGetByRandomObjectId(){
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoServiceAllowNullUserCreate.add(original, null);
+
+        TestMainObject gotten = testMongoServiceAllowNullUserCreate.get(ObjectId.get());
+
+        assertNull(gotten);
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="Update">
+    @Test
+    public void testUpdate(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.put("testField", "something completely different");
+        ObjectNode atts = update.putObject("attributes");
+        atts.put("some", "val");
+        ArrayNode keywords = update.putArray("keywords");
+        keywords.add("something");
+
+        ZonedDateTime before = ZonedDateTime.now();
+
+        TestMainObject result = this.testMongoService.update(original.getId(), update, user);
+
+        ZonedDateTime after = ZonedDateTime.now();
+
+        assertNotEquals(original, result);
+        assertEquals("something completely different", result.getTestField());
+        assertEquals(result.getAttributes(), Map.of("some", "val"));
+        assertEquals(result.getKeywords(), List.of("something"));
+
+        HistoryEvent ev = result.lastHistoryEvent();
+        assertTrue(before.isBefore(ev.getTimestamp()));
+        assertTrue(after.isAfter(ev.getTimestamp()));
+        assertEquals(user.getId(), ev.getUserId());
+    }
+    @Test
+    public void testUpdateWithString(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.put("testField", "something completely different");
+        ObjectNode atts = update.putObject("attributes");
+        atts.put("some", "val");
+        ArrayNode keywords = update.putArray("keywords");
+        keywords.add("something");
+
+        ZonedDateTime before = ZonedDateTime.now();
+
+        TestMainObject result = this.testMongoService.update(original.getId().toHexString(), update, user);
+
+        ZonedDateTime after = ZonedDateTime.now();
+
+        assertNotEquals(original, result);
+        assertEquals("something completely different", result.getTestField());
+        assertEquals(result.getAttributes(), Map.of("some", "val"));
+        assertEquals(result.getKeywords(), List.of("something"));
+
+        HistoryEvent ev = result.lastHistoryEvent();
+        assertEquals(EventType.UPDATE, ev.getType());
+        assertTrue(before.isBefore(ev.getTimestamp()));
+        assertTrue(after.isAfter(ev.getTimestamp()));
+        assertEquals(user.getId(), ev.getUserId());
+    }
+    @Test
+    public void testUpdateInvalidField(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.put("invalidField", "something");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                ()->{
+                    this.testMongoService.update(original.getId(), update, user);
+                }
+        );
+    }
+
+    @Test
+    public void testUpdateBadFieldValue(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.put("testField", "");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                ()->{
+                    this.testMongoService.update(original.getId(), update, user);
+                }
+        );
+    }
+
+    @Test
+    public void testUpdateHistory(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.putObject("history");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                ()->{
+                    this.testMongoService.update(original.getId(), update, user);
+                }
+        );
+    }
+
+    @Test
+    public void testUpdateNullUser(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.putObject("history");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                ()->{
+                    this.testMongoService.update(original.getId(), update, null);
+                }
+        );
+    }
+    @Test
+    public void testUpdateNonexistantObj(){
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ObjectNode update = OBJECT_MAPPER.createObjectNode();
+        update.putObject("history");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                ()->{
+                    this.testMongoService.update(ObjectId.get(), update, null);
+                }
+        );
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="Remove">
+    @Test
+    public void testRemove() {
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ZonedDateTime before = ZonedDateTime.now();
+
+        TestMainObject result = this.testMongoService.remove(original.getId(), user);
+
+        ZonedDateTime after = ZonedDateTime.now();
+
+        assertEquals(0, this.testMongoService.count());
+
+        assertEquals(original.getId(), result.getId());
+        assertEquals(original.getTestField(), result.getTestField());
+
+
+        HistoryEvent ev = result.lastHistoryEvent();
+        assertEquals(EventType.REMOVE, ev.getType());
+        assertTrue(before.isBefore(ev.getTimestamp()));
+        assertTrue(after.isAfter(ev.getTimestamp()));
+        assertEquals(user.getId(), ev.getUserId());
+    }
+    @Test
+    public void testRemoveWithString() {
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        ZonedDateTime before = ZonedDateTime.now();
+
+        TestMainObject result = this.testMongoService.remove(original.getId().toHexString(), user);
+
+        ZonedDateTime after = ZonedDateTime.now();
+
+        assertEquals(0, this.testMongoService.count());
+
+        assertEquals(original.getId(), result.getId());
+        assertEquals(original.getTestField(), result.getTestField());
+
+
+        HistoryEvent ev = result.lastHistoryEvent();
+        assertEquals(EventType.REMOVE, ev.getType());
+        assertTrue(before.isBefore(ev.getTimestamp()));
+        assertTrue(after.isAfter(ev.getTimestamp()));
+        assertEquals(user.getId(), ev.getUserId());
+    }
+    @Test
+    public void testRemoveNullUser() {
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    this.testMongoService.remove(original.getId().toHexString(), null);
+                }
+        );
+        assertEquals(1, this.testMongoService.count());
+    }
+
+    @Test
+    public void testRemoveNullId() {
+        User user = this.testUserService.getTestUser();
+        TestMainObject original = new TestMainObject("hello world");
+        testMongoService.add(original, user);
+
+        assertNull(this.testMongoService.remove((ObjectId) null, user));
+        assertEquals(1, this.testMongoService.count());
+    }
+    // </editor-fold>
 
 }
