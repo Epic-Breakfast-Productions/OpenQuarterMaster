@@ -1,0 +1,55 @@
+package com.ebp.openQuarterMaster.baseStation.service.mongo.search;
+
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@QuarkusTest
+class PagingOptionsTest {
+
+    public static Stream<Arguments> getFromArgs(){
+        return Stream.of(
+                Arguments.of(1, 1, false, 1, 1, 0, null),
+                Arguments.of(1, 1, true, 1, 1, 0, null),
+                Arguments.of(null, 1, true, PagingOptions.DEFAULT_PAGE_SIZE, 1, 0, null),
+                Arguments.of(1, null, true, 1, PagingOptions.DEFAULT_PAGE_NUM, 0, null),
+                Arguments.of(null, null, false, Integer.MAX_VALUE, 1, 0, null),
+                Arguments.of(null, 1, false, 1, 1, 0, IllegalArgumentException.class),
+                Arguments.of(-1, 1, false, 1, 1, 0, IllegalArgumentException.class),
+                Arguments.of(1, -1, false, 1, 1, 0, IllegalArgumentException.class)
+        );
+    }
+
+    @ParameterizedTest(name = "testFromQueryParams[{index}]")
+    @MethodSource("getFromArgs")
+    public void testFromQueryParams(
+            Integer pageSize,
+            Integer pageNum,
+            boolean defaultsIfNotSet,
+            long expectedPageSize,
+            long expectedPageNum,
+            long expectedSkipVal,
+            Class<Throwable> expectedE
+    ){
+        if(expectedE == null) {
+            PagingOptions ops = PagingOptions.fromQueryParams(pageSize, pageNum, defaultsIfNotSet);
+
+            assertEquals(expectedPageSize, ops.getPageSize());
+            assertEquals(expectedPageNum, ops.getPageNum());
+            assertEquals(expectedSkipVal, ops.getSkipVal());
+        } else {
+            assertThrows(
+                    expectedE,
+                    ()->{
+                        PagingOptions.fromQueryParams(pageSize, pageNum, defaultsIfNotSet);
+                    }
+            );
+        }
+    }
+}

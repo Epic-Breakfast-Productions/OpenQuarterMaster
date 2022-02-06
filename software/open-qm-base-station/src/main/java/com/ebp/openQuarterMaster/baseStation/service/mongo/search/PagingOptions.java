@@ -4,8 +4,6 @@ import lombok.Data;
 
 /**
  * Object to describe paging options.
- *
- * TODO:: test
  */
 @Data
 public class PagingOptions {
@@ -20,8 +18,8 @@ public class PagingOptions {
      * @param pageNum  The page number to get
      * @return A paging options object. Can be null
      */
-    public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum, boolean defaultsIfNotSet) {
-        if(defaultsIfNotSet){
+    public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet) {
+        if(defaultPageSizeIfNotSet){
             if(pageSize == null){
                 pageSize = DEFAULT_PAGE_SIZE;
             }

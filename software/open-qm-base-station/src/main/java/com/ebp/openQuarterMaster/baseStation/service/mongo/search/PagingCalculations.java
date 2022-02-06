@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.Iterator;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
 @Setter(AccessLevel.PROTECTED)
 public class PagingCalculations {
