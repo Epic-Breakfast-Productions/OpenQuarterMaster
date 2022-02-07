@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.TokenCheckResponse;

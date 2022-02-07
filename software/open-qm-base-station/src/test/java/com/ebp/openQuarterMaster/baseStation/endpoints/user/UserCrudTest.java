@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.endpoints.user;
 
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;

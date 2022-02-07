@@ -2,9 +2,9 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.inventory.items;
 
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.user.User;

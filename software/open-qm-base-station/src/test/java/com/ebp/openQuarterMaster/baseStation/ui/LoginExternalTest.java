@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.profiles.ExternalAuthTestProfile;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;

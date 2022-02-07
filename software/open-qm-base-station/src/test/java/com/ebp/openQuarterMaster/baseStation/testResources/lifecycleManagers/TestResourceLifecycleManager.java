@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.testResources;
+package com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;

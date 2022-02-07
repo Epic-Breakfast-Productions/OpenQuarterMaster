@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
-import com.ebp.openQuarterMaster.baseStation.testResources.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoServiceTest;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
 import io.quarkus.test.common.QuarkusTestResource;
