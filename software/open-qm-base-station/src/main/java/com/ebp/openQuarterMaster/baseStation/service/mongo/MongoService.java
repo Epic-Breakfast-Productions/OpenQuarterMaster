@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.EventType;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,8 +36,6 @@ import static com.mongodb.client.model.Filters.eq;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
- * <p>
- * TODO:: fully test
  *
  * @param <T> The type of object stored.
  */
@@ -210,8 +209,9 @@ public abstract class MongoService<T extends MainObject> {
         }
         T object = this.get(id);
 
-        ObjectReader reader = objectMapper.readerForUpdating(object);
-        // reader.getAttributes().withSharedAttribute(ContextAttributes.) //TODO:: figure out how to enforce only available fields
+        ObjectReader reader = objectMapper
+                .readerForUpdating(object)
+                .with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try {
             reader.readValue(updateJson, this.clazz);
         } catch (IOException e) {
