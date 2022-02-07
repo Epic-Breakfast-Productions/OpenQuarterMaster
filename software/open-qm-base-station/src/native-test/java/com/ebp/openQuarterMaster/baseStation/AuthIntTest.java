@@ -1,9 +1,11 @@
 package com.ebp.openQuarterMaster.baseStation;
 
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @QuarkusIntegrationTest
+@QuarkusTestResource(TestResourceLifecycleManager.class)
 public class AuthIntTest {
 
     @Test
