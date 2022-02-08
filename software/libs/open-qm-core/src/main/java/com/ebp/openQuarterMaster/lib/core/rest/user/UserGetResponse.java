@@ -15,7 +15,7 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(builderClassName = "Builder")
+@Builder
 public class UserGetResponse extends MainObject {
     private ObjectId id;
     private String username;

@@ -1,10 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.rest.user;
 
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidPassword;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -18,6 +15,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserCreateRequest {
     @NonNull
     @NotNull
@@ -37,11 +35,12 @@ public class UserCreateRequest {
     private String email;
     @NonNull
     @NotNull
+    @lombok.Builder.Default
     private String title = "";
     @NonNull
     @NotNull
     @ValidPassword
     private String password;
-
+    @lombok.Builder.Default
     private Map<@NotBlank String, String> attributes = new HashMap<>();
 }
