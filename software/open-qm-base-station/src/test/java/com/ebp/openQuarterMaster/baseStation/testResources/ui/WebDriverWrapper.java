@@ -4,8 +4,9 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -22,18 +23,56 @@ import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 //@RequestScoped
 @ApplicationScoped
 public class WebDriverWrapper implements Closeable {
+    private static WebDriver WEB_DRIVER = null;
+    private static final ReentrantLock DRIVER_SEMAPHORE = new ReentrantLock();
+
+    public static void initDriver(){
+        DRIVER_SEMAPHORE.lock();
+        try {
+            if (WEB_DRIVER == null) {
+                log.info("Setting up new firefox window.");
+                StopWatch sw = StopWatch.createStarted();
+                WEB_DRIVER = new FirefoxDriver(new FirefoxOptions().setHeadless(
+                        ConfigProvider.getConfig().getValue("test.selenium.headless", Boolean.class)
+                ));
+                WEB_DRIVER.get("about:logo");
+                sw.stop();
+                log.info("DONE setting up firefox window in: {}", sw);
+            }
+        } catch(Throwable e) {
+            log.error("FAILED to set up new firefox window: ", e);
+        } finally {
+            DRIVER_SEMAPHORE.unlock();
+        }
+    }
+
+    public static WebDriver getStaticWebDriver(){
+        DRIVER_SEMAPHORE.lock();
+        try {
+            if(WEB_DRIVER == null){
+                initDriver();
+            }
+            return WEB_DRIVER;
+        } finally {
+            DRIVER_SEMAPHORE.unlock();
+        }
+    }
+
     static {
         WebDriverManager.firefoxdriver().setup();
+
         //TODO:: init web driver at start of tests rather than halfway through
     }
 
-    @Getter
-    private volatile WebDriver webDriver = null;
+    public WebDriver getWebDriver(){
+        return getStaticWebDriver();
+    }
 
     @ConfigProperty(name = "test.selenium.headless", defaultValue = "true")
     boolean headless;
@@ -49,27 +88,37 @@ public class WebDriverWrapper implements Closeable {
     @PostConstruct
     void setup(){
         log.info("Creating new web driver.");
-        this.webDriver = new FirefoxDriver(new FirefoxOptions().setHeadless(headless));
+        initDriver();
     }
 
     @PreDestroy
     public void close(){
         log.info("Closing out web driver.");
-        this.webDriver.close();
+        DRIVER_SEMAPHORE.lock();
+        try{
+            getWebDriver().close();
+            WEB_DRIVER = null;
+        }finally {
+            DRIVER_SEMAPHORE.unlock();
+        }
     }
 
     public void cleanup(){
         log.info("Cleaning up browser after test.");
 
-        if(this.quickClean) {
-            this.webDriver.manage().deleteAllCookies();
-            this.webDriver.get("about:logo");
-            this.webDriver.navigate().refresh();
-        } else {
-//            this.webDriver.quit();
-            this.webDriver.close();
-            this.webDriver = null;
-            this.setup();
+        DRIVER_SEMAPHORE.lock();
+        try {
+            WebDriver driver = getWebDriver();
+            if (this.quickClean) {
+                driver.manage().deleteAllCookies();
+                driver.get("about:logo");
+                driver.navigate().refresh();
+            } else {
+                this.close();
+                this.setup();
+            }
+        }finally {
+            DRIVER_SEMAPHORE.unlock();
         }
     }
 

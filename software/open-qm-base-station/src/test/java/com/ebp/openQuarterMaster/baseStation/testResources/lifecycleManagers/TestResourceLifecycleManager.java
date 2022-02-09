@@ -33,6 +33,10 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     private static MongoDBContainer MONGO_EXE = null;
     private static KeycloakContainer KEYCLOAK_CONTAINER = null;
 
+    static {
+//        new Thread(WebDriverWrapper::initDriver).start();
+    }
+
 	private boolean externalAuth = false;
 
     public synchronized Map<String, String> startKeycloakTestServer() {
@@ -182,8 +186,8 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 
     @Override
     public void stop() {
-//        log.info("STOPPING test lifecycle resources.");
-//        stopMongoTestServer();
-//        stopKeycloakTestServer();
+        log.info("STOPPING test lifecycle resources.");
+        stopMongoTestServer();
+        stopKeycloakTestServer();
     }
 }
