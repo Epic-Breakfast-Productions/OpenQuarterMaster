@@ -23,6 +23,7 @@ public class AuthIntTest {
 
     @Test
     public void testBadLoginNoUser() throws JsonProcessingException {
+        log.info("INTEGRATION TEST");
         UserLoginRequest ulr = new UserLoginRequest("bad", "login", true);
         ErrorMessage errorMessage = given()
                 .basePath("/api/user/auth")

@@ -79,3 +79,13 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+//task integrationTest(type: Test) {
+//    description = "Runs integration tests"
+//    group = "verification"
+//    useJUnitPlatform()
+//
+//     Include only integration test package
+//    include 'io/quarkus/gradle/integrationtest/*.class'
+//}
+//integrationTest.dependsOn(quarkusBuild)

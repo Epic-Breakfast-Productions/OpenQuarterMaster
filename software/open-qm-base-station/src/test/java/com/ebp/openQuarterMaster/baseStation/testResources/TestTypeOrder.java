@@ -18,6 +18,8 @@ public class TestTypeOrder implements ClassOrderer {
     private static final int ORDER_VAL_TEST_PROFILE_EXTERNAL_AUTH = 3;
     private static final int ORDER_VAL_TEST_PROFILE_OTHER = 4;
 
+//    private static final int INT_TEST_ADD_VAL = 10;
+
     @Override
     public void orderClasses(ClassOrdererContext context) {
         log.info("Getting order for classes.");
@@ -25,13 +27,19 @@ public class TestTypeOrder implements ClassOrderer {
     }
 
     private static int getOrderFor(ClassDescriptor classDescriptor) {
-        int order = getOrder(classDescriptor);
+        int order = getBaseOrder(classDescriptor);
+
+//        Optional<QuarkusIntegrationTest> intTestAnnotation = classDescriptor.findAnnotation(QuarkusIntegrationTest.class);
+//        if(intTestAnnotation.isPresent()){
+//            order += INT_TEST_ADD_VAL;
+//        }
+
         log.info("Order for {}: {}", classDescriptor.getTestClass().getName(), order);
         return order;
     }
 
-    private static int getOrder(ClassDescriptor classDescriptor) {
-        if (!classDescriptor.findAnnotation(QuarkusTestResource.class).isPresent()) {
+    private static int getBaseOrder(ClassDescriptor classDescriptor) {
+        if (classDescriptor.findAnnotation(QuarkusTestResource.class).isEmpty()) {
             return ORDER_VAL_NOT_RUNNING;
         }
 
