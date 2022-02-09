@@ -3,10 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.ui;
 import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.*;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
@@ -80,7 +77,7 @@ public class Items extends UiProvider {
         Bson sort = SearchUtils.getSortBson(sortField, sortType);
         PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
 
-        SearchResult<InventoryItem> searchResult = this.inventoryItemService.search(
+        SearchResult<InventoryItem> searchResults = this.inventoryItemService.search(
                 name,
                 keywords,
                 storedType,
@@ -93,8 +90,9 @@ public class Items extends UiProvider {
                         .data("pageLoadTimestamp", getLoadTimestamp())
                         .data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
                         .data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
-                        .data("showSearch", false)
-                        .data("searchResults", searchResult),
+                        .data("showSearch", searchResults.isHadSearchQuery())
+                        .data("searchResult", searchResults)
+                        .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults)),
                 MediaType.TEXT_HTML_TYPE
         );
 

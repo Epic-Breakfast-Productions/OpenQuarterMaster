@@ -1,8 +1,6 @@
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Items' titleIcon='balance-scale' page='items'}
 {@java.util.Map allowedUnitsMap}
 {#pageContent}
-
-
 <div class="row">
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
@@ -27,7 +25,8 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    Search form here
+                    {#search/item/itemSearchForm id='mainStorageSearch'}
+                    {/search/item/itemSearchForm}
                 </div>
             </div>
         </div>
@@ -36,63 +35,12 @@
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            <thead>
-            <tr>
-                <td colspan="5">
-                    Pagination
-                </td>
-            </tr>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Total Stored</th>
-                <th scope="col" width="125px">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {#if searchResults.getResults().isEmpty()}
-            <tr>
-                <td colspan="3" class="text-center">
-                    <h2>
-                        No Items
-                    </h2>
-                    <div class="col d-grid gap-2">
-                        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
-                                class="fas fa-plus"></i> Add Item
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            {#else}
-            {#for result in searchResults.getResults()}
-            <tr>
-                <td>{result.getName()}</td>
-                <td></td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></button>
-                    <button type="button" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-danger" title="Remove"
-                            onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-            {/for}
-            {/if}
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="3">
-                    Pagination
-                </td>
-            </tr>
-            </tfoot>
+            {#search/item/itemSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
+            {/search/item/itemSearchResults}
         </table>
-
-        <select>
-            {#unitOptions allowedUnitsMap=allowedUnitsMap}
-            {/unitOptions}
-        </select>
     </div>
 </div>
+{#unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
+{/unitOptionsHidden}
 {/pageContent}
 {/include}

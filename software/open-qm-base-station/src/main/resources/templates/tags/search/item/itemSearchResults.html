@@ -1,0 +1,89 @@
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult<com.ebp.openQuarterMaster.lib.core.storage.InventoryItem> searchResults}
+{@com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - itemService - the service to get items
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
+!}
+  <thead>
+  <tr>
+    <td colspan="6" class="text-center">
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    </td>
+  </tr>
+  <tr>
+    <th scope="col" class="searchResultImageCol">Image</th>
+    <th scope="col">Name</th>
+    <th scope="col">Stored Type</th>
+    <th scope="col">Total</th>
+    <th scope="col"># Blocks used</th>
+    <th scope="col" width="125px">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {#if searchResults.getResults().isEmpty()}
+  <tr>
+    <td colspan="6" class="text-center">
+      <h2>
+        No Items
+      </h2>
+      {#if actionType == 'full'}
+      <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
+                class="fas fa-plus"></i> Add Item
+        </button>
+      </div>
+      {/if}
+    </td>
+  </tr>
+  {#else}
+  {#for result in searchResults.getResults()}
+  <tr class="itemResultRow align-middle">
+    <td>
+      {#if !result.getImageIds().isEmpty()}
+      <img src="/api/media/image/{result.getImageIds().get(0)}/data" class="searchResultImage">
+      {/if}
+    </td>
+    <td>{result.getName()}</td>
+    <td>{result.getStoredType()}</td>
+    <td>{result.getTotal()}</td>
+    <td>{result.getStorageMap().size()}</td>
+    {#if actionType == 'full'}
+    <td>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="setupView('{result.getId()}');">
+        <i class="fas fa-eye"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-danger" title="Remove"
+              onclick="removeItem('{result.getId()}');"><i class="fas fa-trash"></i></button>
+    {#else if actionType == 'select'}
+    <td class="d-grid gap-2">
+      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
+              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+              onclick="selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
+        <i class="fas fa-check-circle"></i> Select
+      </button>
+      {/if}
+    </td>
+  </tr>
+  {/for}
+  {/if}
+  </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="6" class="text-center">
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    </td>
+  </tr>
+  </tfoot>

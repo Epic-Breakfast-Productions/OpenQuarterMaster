@@ -14,7 +14,6 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +34,6 @@ public class InventoryItem extends ImagedMainObject {
     @NonNull
     @NotBlank(message = "Name cannot be blank")
     private String name;
-
-    /**
-     * Keywords associated with this item. Used for searching for items.
-     */
-    @NonNull
-    @NotNull
-    private List<@NotBlank String> keywords = new ArrayList<>();
 
     /**
      * The type of storage this item uses.
