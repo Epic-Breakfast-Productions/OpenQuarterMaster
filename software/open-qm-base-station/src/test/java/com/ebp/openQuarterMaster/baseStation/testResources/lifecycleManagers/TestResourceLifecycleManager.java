@@ -33,9 +33,9 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
     private static MongoDBContainer MONGO_EXE = null;
     private static KeycloakContainer KEYCLOAK_CONTAINER = null;
 
-    static {
+//    static {
 //        new Thread(WebDriverWrapper::initDriver).start();
-    }
+//    }
 
 	private boolean externalAuth = false;
 
