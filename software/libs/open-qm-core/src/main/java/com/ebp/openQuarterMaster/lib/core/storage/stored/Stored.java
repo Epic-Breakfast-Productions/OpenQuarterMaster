@@ -32,11 +32,15 @@ public class Stored {
 
     /**
      * When the item(s) held expire. Null if does not expire.
+     * <p>
+     * To only be used when {@link #type} is {@link StoredType#AMOUNT}
      */
     private ZonedDateTime expires = null;
 
     /**
      * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
+     * <p>
+     * To only be used when {@link #type} is {@link StoredType#AMOUNT}
      */
     @Max(100)
     @Min(0)
@@ -44,36 +48,42 @@ public class Stored {
 
     /**
      * The amount of the thing stored.
+     * <p>
      * To only be used when {@link #type} is {@link StoredType#AMOUNT}
      */
     private Quantity<?> amount = null;
 
     /**
      * Tracked items.
+     * <p>
      * Key is the identifying string data, value is the tracked item.
+     * <p>
      * To only be used when {@link #type} is {@link StoredType#TRACKED}
      */
     private Map<@NotBlank String, @NotNull TrackedItem> items = null;
 
     //TODO:: validate unit
-    private Stored(StoredType type){
+    private Stored(StoredType type) {
         this.setType(type);
     }
-    public Stored(Quantity<?> amount){
+
+    public Stored(Quantity<?> amount) {
         this(StoredType.AMOUNT);
-        if(amount == null){
+        if (amount == null) {
             throw new NullPointerException("Amount cannot be null when using amount type.");
         }
         this.amount = amount;
     }
+
     public Stored(Number amount, Unit<?> unit) {
         this(Quantities.getQuantity(amount, unit));
     }
+
     public Stored(Unit<?> unit) {
         this(0, unit);
     }
 
-    public Stored(Map<String, TrackedItem> items){
+    public Stored(Map<String, TrackedItem> items) {
         this(StoredType.TRACKED);
         this.setItems(items);
     }
@@ -91,14 +101,15 @@ public class Stored {
     }
 
     public Stored add(Quantity amount) {
-        if(!StoredType.AMOUNT.equals(this.getType())){
+        if (!StoredType.AMOUNT.equals(this.getType())) {
             throw new IllegalStateException("Cannot add amount to non-amount type.");
         }
         this.setAmount(this.getAmount().add(amount));
         return this;
     }
+
     public Stored add(Map<String, TrackedItem> items) {
-        if(!StoredType.TRACKED.equals(this.getType())){
+        if (!StoredType.TRACKED.equals(this.getType())) {
             throw new IllegalStateException("Cannot add items to non-tracked type.");
         }
         this.getItems().putAll(items);
@@ -106,7 +117,7 @@ public class Stored {
     }
 
     public Stored add(String key, TrackedItem item) {
-        if(!StoredType.TRACKED.equals(this.getType())){
+        if (!StoredType.TRACKED.equals(this.getType())) {
             throw new IllegalStateException("Cannot add item to non-tracked type.");
         }
         this.getItems().put(key, item);
@@ -114,10 +125,10 @@ public class Stored {
     }
 
     public Stored add(Stored other) {
-        if(!this.getType().equals(other.getType())){
+        if (!this.getType().equals(other.getType())) {
             throw new IllegalStateException("Cannot add a stored with one type and another with a different type.");
         }
-        switch (this.getType()){
+        switch (this.getType()) {
             case AMOUNT:
                 this.add(other.getAmount());
                 break;

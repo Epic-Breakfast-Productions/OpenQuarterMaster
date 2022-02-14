@@ -18,7 +18,6 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +31,7 @@ public class StoredTest extends BasicTest {
                 Arguments.of(
                         new Stored(
                                 new HashMap<>(){{
-                                    put(FAKER.idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+                                    put(FAKER.idNumber().valid(), new TrackedItem());
                                 }}
                         )
                 )
@@ -150,7 +149,7 @@ public class StoredTest extends BasicTest {
     @Test
     public void addItemsTest(){
         String key = "hello";
-        TrackedItem val = new TrackedItem(UUID.randomUUID());
+        TrackedItem val = new TrackedItem();
 
         Stored s1 = new Stored(new HashMap<>());
 
@@ -164,7 +163,7 @@ public class StoredTest extends BasicTest {
     @Test
     public void addItemTest(){
         String key = "hello";
-        TrackedItem val = new TrackedItem(UUID.randomUUID());
+        TrackedItem val = new TrackedItem();
 
         Stored s1 = new Stored(new HashMap<>());
 
@@ -187,7 +186,7 @@ public class StoredTest extends BasicTest {
     public void addItemToAmountTest(){
         Stored s = new Stored(Quantities.getQuantity(1, AbstractUnit.ONE));
         assertThrows(IllegalStateException.class, () -> {
-            s.add("hello", new TrackedItem(UUID.randomUUID()));
+            s.add("hello", new TrackedItem());
         });
     }
 
@@ -219,7 +218,7 @@ public class StoredTest extends BasicTest {
     @Test
     public void addStoredItemsTest(){
         String key = "hello";
-        TrackedItem val = new TrackedItem(UUID.randomUUID());
+        TrackedItem val = new TrackedItem();
 
         Stored s1 = new Stored(new HashMap<>());
         Stored s2 = new Stored(new HashMap<>(){{put(key, val);}});

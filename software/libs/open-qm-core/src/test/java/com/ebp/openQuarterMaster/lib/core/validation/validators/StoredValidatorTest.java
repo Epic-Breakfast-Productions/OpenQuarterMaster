@@ -17,7 +17,6 @@ import tech.units.indriya.quantity.Quantities;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator.*;
@@ -33,7 +32,7 @@ class StoredValidatorTest extends ObjectValidatorTest<StoredValidator> {
                 Arguments.of(new Stored(StoredType.TRACKED, null, null, null, new HashMap<>())),
                 Arguments.of(new Stored(StoredType.TRACKED, null, null, null,
                                 new HashMap<>() {{
-                                    put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+                                    put(Faker.instance().idNumber().valid(), new TrackedItem());
                                 }}
                         )
                 )
@@ -42,7 +41,7 @@ class StoredValidatorTest extends ObjectValidatorTest<StoredValidator> {
 
     private static Stream<Arguments> invalidArgs() throws JsonProcessingException {
         Map<String, TrackedItem> validMap = new HashMap<>(){{
-            put(Faker.instance().idNumber().valid(), new TrackedItem(UUID.randomUUID()));
+            put(Faker.instance().idNumber().valid(), new TrackedItem());
         }};
         return Stream.of(
                 Arguments.of(new Stored(StoredType.AMOUNT, null, null, Quantities.getQuantity(50, AbstractUnit.ONE), validMap), new String[]{ITEMS_LIST_NOT_NULL}),

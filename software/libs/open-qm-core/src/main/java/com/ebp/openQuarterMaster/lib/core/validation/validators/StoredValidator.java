@@ -15,6 +15,8 @@ public class StoredValidator extends Validator implements ConstraintValidator<Va
     public static final String AMOUNT_WAS_NULL = "Amount in amount stored was null";
     public static final String ITEM_LIST_WAS_NULL = "Item list in tracked stored was null.";
     public static final String TYPE_WAS_NULL = "Type was null";
+    public static final String CONDITION_NOT_NULL = "Condition was not null";
+    public static final String EXPIRES_NOT_NULL = "Expires was not null";
 
     private void validateAmountStored(Stored stored, List<String> errs) {
         if (stored.getItems() != null) {
@@ -28,6 +30,12 @@ public class StoredValidator extends Validator implements ConstraintValidator<Va
     private void validateTrackedStored(Stored stored, List<String> errs) {
         if (stored.getItems() == null) {
             errs.add(ITEM_LIST_WAS_NULL);
+        }
+        if (stored.getCondition() != null) {
+            errs.add(CONDITION_NOT_NULL);
+        }
+        if (stored.getExpires() != null) {
+            errs.add(EXPIRES_NOT_NULL);
         }
     }
 
