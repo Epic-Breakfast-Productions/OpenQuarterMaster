@@ -43,4 +43,154 @@
 {#unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
 {/unitOptionsHidden}
 {/pageContent}
+{#modals}
+{#modal id='addEdit' large=true title='Item add/edit'}
+<div id="addEditFormMessages"></div>
+<form id="addEditItemForm">
+    <input type="hidden" id="addEditFormMode" value="">
+    <input type="hidden" id="addEditFormId" value="">
+    <div class="mb-3 row">
+        <label for="addEditNameInput" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="addEditNameInput" placeholder="Name" required>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="addEditStoredTypeInput" onchange="addEditStoredTypeInputChanged()">
+                <option value="AMOUNT" selected>Amount</option>
+                <option value="TRACKED">Tracked</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row" id="trackedItemIdentifierNameRow" style="display: none;">
+        <label for="addEditIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="addEditUnitInput">
+                {#unitOptions}
+                {/unitOptions}
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col-sm-2 col-form-label">Stored</div>
+        <div class="col-sm-10">
+            <div id="storedContainer">
+
+            </div>
+            <div class="col d-grid gap-2">
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
+                    <i class="fas fa-plus"></i> Add Associated Storage
+                </button>
+            </div>
+        </div>
+    </div>
+    {#search/image/imageSelectFormInput}
+    {/search/image/imageSelectFormInput}
+    {#inputs/keywordInput}
+    {/inputs/keywordInput}
+    {#inputs/attInput}
+    {/inputs/attInput}
+</form>
+{/modal}
+{#modal id='storageBlockView' large=true title='Storage Block View'}
+<div class="row">
+    {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Location in storage:</h5>
+                <div id="storageBlockViewBreadcrumbContainer">
+                </div>
+            </div>
+        </div>
+        <div class="card" id="storageBlockViewLocationContainer">
+            <div class="card-body">
+                <h5 class="card-title">Location:</h5>
+                <p class="card-text" id="storageBlockViewLocation"></p>
+            </div>
+        </div>
+        <div class="card" id="storageBlockViewCapacityContainer">
+            <div class="card-body">
+                <h5 class="card-title">Capacities:</h5>
+                <div id="storageBlockViewCapacity">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+</div>
+<div class="row">
+    <div class="col">
+        {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
+    </div>
+</div>
+{/modal}
+{#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
+{/search/storage/StorageSearchSelectModal}
+{#search/image/imageSearchSelectModal otherModalId="addEditModal"}
+{/search/image/imageSearchSelectModal}
+{/modals}
+
+{#scripts}
+<script src="/res/js/search.js"></script>
+<script src="/res/js/obj/objEdit.js"></script>
+<script src="/res/js/obj/objView.js"></script>
+<script src="/res/js/obj/media/imageSearchSelect.js"></script>
+<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+<script src="/res/js/obj/units.js"></script>
+<script src="/res/js/obj/getters.js"></script>
+<script src="/res/js/obj/storageBlock/capacities.js"></script>
+<script src="/res/js/carousel.js"></script>
+
+<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+{/scripts}
+{#pageScript}
+
+var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
+var addEditStoredTypeInput = $('#addEditStoredTypeInput');
+
+function resetAddEditForm(){
+}
+
+function setupAddEditForAdd(){
+    resetAddEditForm();
+}
+
+function setIdAttField(){
+    if(addEditStoredTypeInput[0].value == "AMOUNT"){
+        trackedItemIdentifierNameRow.hide();
+    } else {
+        trackedItemIdentifierNameRow.show();
+    }
+}
+
+function addEditStoredTypeInputChanged(){
+    setIdAttField();
+
+    if(addEditStoredTypeInput[0].value == "AMOUNT"){
+        trackedItemIdentifierNameRow.hide();
+    } else {
+        trackedItemIdentifierNameRow.show();
+    }
+}
+
+function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
+    alert("Selected " + blockName);
+}
+
+
+
+{/pageScript}
 {/include}

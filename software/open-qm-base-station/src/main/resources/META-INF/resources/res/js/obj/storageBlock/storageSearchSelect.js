@@ -14,7 +14,6 @@ function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
 
     $("#"+nameInputId).val(blockId);
     $("#"+nameInputName).val(blockName);
-
 }
 
 
@@ -47,9 +46,4 @@ storageSearchSelectForm.on("submit", function(event){
             storageSearchSelectResults.html(data);
     	}
     });
-
-
-
-
-
 });
