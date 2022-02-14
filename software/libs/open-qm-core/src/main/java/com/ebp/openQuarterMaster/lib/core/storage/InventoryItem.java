@@ -47,7 +47,7 @@ public class InventoryItem extends ImagedMainObject {
      */
     @NonNull
     @NotNull
-    private Map<@NonNull ObjectId, List<Stored>> storageMap = new LinkedHashMap<>();
+    private Map<@NonNull ObjectId, @NonNull List<@NonNull Stored>> storageMap = new LinkedHashMap<>();
 
     /**
      * The unit used to measure the item.
