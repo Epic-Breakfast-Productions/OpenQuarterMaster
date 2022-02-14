@@ -1,9 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.testUtils;
 
-import javax.validation.ClockProvider;
-import javax.validation.ConstraintValidatorContext;
 import lombok.Getter;
 
+import javax.validation.ClockProvider;
+import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +31,8 @@ public class TestConstraintValidatorContext implements ConstraintValidatorContex
     public ConstraintViolationBuilder buildConstraintViolationWithTemplate(String messageTemplate) {
         TestConstraintValidatorContext me = this;
         return new ConstraintViolationBuilder() {
-            String message = messageTemplate;
-            TestConstraintValidatorContext parent = me;
+            final String message = messageTemplate;
+            final TestConstraintValidatorContext parent = me;
 
             @Override
             public NodeBuilderDefinedContext addNode(String name) {

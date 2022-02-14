@@ -20,6 +20,8 @@ import java.util.Map;
 
 /**
  * Describes a type of inventory item.
+ * <p>
+ * TODO:: take another crack at generics
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -3,8 +3,8 @@ package com.ebp.openQuarterMaster.lib.core;
 import com.ebp.openQuarterMaster.lib.core.jackson.MongoObjectIdModule;
 import com.ebp.openQuarterMaster.lib.core.jackson.TempQuantityJacksonModule;
 import com.ebp.openQuarterMaster.lib.core.jackson.UnitModule;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import tech.uom.lib.jackson.UnitJacksonModule;
@@ -21,6 +21,7 @@ public class Utils {
     /**
      * Modules needed for proper serialization of lib objects. Registered with {@link #OBJECT_MAPPER}
      */
+    @SuppressWarnings("deprecation")
     public static final Module[] MAPPER_MODULES = {
             new UnitJacksonModule(),
             new JavaTimeModule(),
