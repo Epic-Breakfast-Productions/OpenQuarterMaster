@@ -14,8 +14,8 @@ import java.util.List;
 
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
-    @SuppressWarnings("rawtypes")
-    List<Codec> codecs = List.of(
+
+    List<Codec<?>> codecs = List.of(
             new UUIDCodec(),
             new QuantityCodec(),
             new UnitCodec(),
@@ -31,6 +31,12 @@ public class CustomCodecProvider implements CodecProvider {
                 return (Codec<T>) codec;
             }
         }
+//        if(clazz.getSuperclass().equals(TestSuper.class)){
+//            PojoCodecProvider provider = PojoCodecProvider.builder().build();
+//            return provider.get();
+//        }
         return null;
     }
+
+
 }

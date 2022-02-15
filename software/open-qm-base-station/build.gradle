@@ -30,6 +30,8 @@ dependencies {
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
     implementation 'io.quarkus:quarkus-container-image-jib'
 
+    implementation 'de.bild.backend:polymorphia:2.8.1'
+
     //webjars
     implementation 'org.webjars:jquery:3.6.0'
     implementation 'org.webjars:bootstrap:5.1.3'
