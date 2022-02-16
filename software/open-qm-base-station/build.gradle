@@ -65,6 +65,7 @@ dependencies {
 
     testImplementation "org.testcontainers:mongodb:1.16.3"
     testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
+    //TODO:: https://www.testcontainers.org/modules/webdriver_containers/
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.0.3'
     testImplementation 'com.deque:axe-selenium:3.0'
