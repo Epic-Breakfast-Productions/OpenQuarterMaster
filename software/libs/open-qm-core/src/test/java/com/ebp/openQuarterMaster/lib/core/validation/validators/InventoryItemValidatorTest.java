@@ -1,9 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
-import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectValidatorTest;
 import com.ebp.openQuarterMaster.lib.core.testUtils.TestConstraintValidatorContext;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,8 +1,8 @@
-package com.ebp.openQuarterMaster.lib.core.storage;
+package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;

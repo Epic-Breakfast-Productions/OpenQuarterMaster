@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
-import com.ebp.openQuarterMaster.lib.core.storage.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidInventoryItem;
 import tech.units.indriya.AbstractUnit;
 

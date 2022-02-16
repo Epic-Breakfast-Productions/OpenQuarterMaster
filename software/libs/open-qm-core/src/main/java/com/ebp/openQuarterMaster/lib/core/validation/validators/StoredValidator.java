@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.storage.stored.Stored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidStored;
 
 import javax.validation.ConstraintValidator;

@@ -1,7 +1,8 @@
-package com.ebp.openQuarterMaster.lib.core.storage.stored;
+package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
+import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.StoredValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
