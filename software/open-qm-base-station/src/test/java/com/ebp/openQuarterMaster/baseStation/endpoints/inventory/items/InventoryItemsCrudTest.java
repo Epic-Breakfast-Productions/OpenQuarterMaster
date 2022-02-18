@@ -32,45 +32,46 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTestResource(value = TestResourceLifecycleManager.class)
 @TestHTTPEndpoint(InventoryItemsCrud.class)
 class InventoryItemsCrudTest extends RunningServerTest {
-    @Inject
-    InventoryItemTestObjectCreator testObjectCreator;
-
-    @Inject
-    ObjectMapper objectMapper;
-
-    @Inject
-    InventoryItemService inventoryItemService;
-
-    @Inject
-    JwtService jwtService;
-
-    @Inject
-    TestUserService testUserService;
-
-    @Test
-    public void testCreate() throws JsonProcessingException {
-        User user = this.testUserService.getTestUser(false, true);
-        InventoryItem item = testObjectCreator.getTestObject();
-        ObjectId returned = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(item))
-                .when()
-                .post()
-                .then()
-                .statusCode(Response.Status.CREATED.getStatusCode())
-                .extract().body().as(ObjectId.class);
-        log.info("Got object id back from create request: {}", returned);
-
-        InventoryItem stored = inventoryItemService.get(returned);
-        assertNotNull(stored);
-
-        assertFalse(stored.getHistory().isEmpty());
-        assertEquals(1, stored.getHistory().size());
-
-        item.setHistory(stored.getHistory());
-        item.setId(returned);
-
-
-        assertEquals(item, stored);
-    }
+	
+	@Inject
+	InventoryItemTestObjectCreator testObjectCreator;
+	
+	@Inject
+	ObjectMapper objectMapper;
+	
+	@Inject
+	InventoryItemService inventoryItemService;
+	
+	@Inject
+	JwtService jwtService;
+	
+	@Inject
+	TestUserService testUserService;
+	
+	@Test
+	public void testCreate() throws JsonProcessingException {
+		User user = this.testUserService.getTestUser(false, true);
+		InventoryItem item = testObjectCreator.getTestObject();
+		ObjectId returned = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+			.contentType(ContentType.JSON)
+			.body(objectMapper.writeValueAsString(item))
+			.when()
+			.post()
+			.then()
+			.statusCode(Response.Status.CREATED.getStatusCode())
+			.extract().body().as(ObjectId.class);
+		log.info("Got object id back from create request: {}", returned);
+		
+		InventoryItem stored = inventoryItemService.get(returned);
+		assertNotNull(stored);
+		
+		assertFalse(stored.getHistory().isEmpty());
+		assertEquals(1, stored.getHistory().size());
+		
+		item.setHistory(stored.getHistory());
+		item.setId(returned);
+		
+		
+		assertEquals(item, stored);
+	}
 }

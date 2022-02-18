@@ -11,18 +11,19 @@ import java.util.UUID;
 
 @Singleton
 public class UUIDCodec implements Codec<UUID> {
-    @Override
-    public UUID decode(BsonReader reader, DecoderContext decoderContext) {
-        return UUID.fromString(reader.readString());
-    }
-
-    @Override
-    public void encode(BsonWriter writer, UUID value, EncoderContext encoderContext) {
-        writer.writeString(value.toString());
-    }
-
-    @Override
-    public Class<UUID> getEncoderClass() {
-        return UUID.class;
-    }
+	
+	@Override
+	public UUID decode(BsonReader reader, DecoderContext decoderContext) {
+		return UUID.fromString(reader.readString());
+	}
+	
+	@Override
+	public void encode(BsonWriter writer, UUID value, EncoderContext encoderContext) {
+		writer.writeString(value.toString());
+	}
+	
+	@Override
+	public Class<UUID> getEncoderClass() {
+		return UUID.class;
+	}
 }

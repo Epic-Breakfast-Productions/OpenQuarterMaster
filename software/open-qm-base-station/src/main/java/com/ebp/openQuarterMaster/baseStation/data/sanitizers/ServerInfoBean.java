@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ServerInfoBean {
-    @ConfigProperty(name = "service.authMode")
-    AuthMode authMode;
+	
+	@ConfigProperty(name = "service.authMode")
+	AuthMode authMode;
 }

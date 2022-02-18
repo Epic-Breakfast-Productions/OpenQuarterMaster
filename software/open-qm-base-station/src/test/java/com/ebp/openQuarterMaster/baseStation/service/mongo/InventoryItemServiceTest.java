@@ -18,65 +18,65 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, InventoryItemService> {
-
-    InventoryItemService inventoryItemService;
-
-    InventoryItemTestObjectCreator itemTestObjectCreator;
-
-    @Inject
-    InventoryItemServiceTest(
-            InventoryItemService inventoryItemService,
-            InventoryItemTestObjectCreator itemTestObjectCreator,
-            TestUserService testUserService
-    ) {
-        this.inventoryItemService = inventoryItemService;
-        this.itemTestObjectCreator = itemTestObjectCreator;
-        this.testUserService = testUserService;
-    }
-
-    @Override
-    protected InventoryItem getTestObject() {
-        return itemTestObjectCreator.getTestObject();
-    }
-
-    @Test
-    public void injectTest() {
-        assertNotNull(inventoryItemService);
-    }
-
-    @Test
-    public void listTest() {
-        this.defaultListTest(this.inventoryItemService);
-    }
-
-    @Test
-    public void countTest() {
-        this.defaultCountTest(this.inventoryItemService);
-    }
-
-    @Test
-    public void addTest() {
-        this.defaultAddTest(this.inventoryItemService);
-    }
-
-    @Test
-    public void getObjectIdTest() {
-        this.defaultGetObjectIdTest(this.inventoryItemService);
-    }
-
-    @Test
-    public void getStringTest() {
-        this.defaultGetStringTest(this.inventoryItemService);
-    }
-
-    @Test
-    public void removeAllTest() {
-        this.defaultRemoveAllTest(this.inventoryItemService);
-    }
-
-
-//    @Test
-//    public void listTest(){
-//
-//    }
+	
+	InventoryItemService inventoryItemService;
+	
+	InventoryItemTestObjectCreator itemTestObjectCreator;
+	
+	@Inject
+	InventoryItemServiceTest(
+		InventoryItemService inventoryItemService,
+		InventoryItemTestObjectCreator itemTestObjectCreator,
+		TestUserService testUserService
+	) {
+		this.inventoryItemService = inventoryItemService;
+		this.itemTestObjectCreator = itemTestObjectCreator;
+		this.testUserService = testUserService;
+	}
+	
+	@Override
+	protected InventoryItem getTestObject() {
+		return itemTestObjectCreator.getTestObject();
+	}
+	
+	@Test
+	public void injectTest() {
+		assertNotNull(inventoryItemService);
+	}
+	
+	@Test
+	public void listTest() {
+		this.defaultListTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void countTest() {
+		this.defaultCountTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void addTest() {
+		this.defaultAddTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void getObjectIdTest() {
+		this.defaultGetObjectIdTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void getStringTest() {
+		this.defaultGetStringTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void removeAllTest() {
+		this.defaultRemoveAllTest(this.inventoryItemService);
+	}
+	
+	
+	//    @Test
+	//    public void listTest(){
+	//
+	//    }
 }

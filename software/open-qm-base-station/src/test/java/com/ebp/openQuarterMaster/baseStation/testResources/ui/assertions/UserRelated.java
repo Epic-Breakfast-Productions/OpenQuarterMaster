@@ -11,18 +11,18 @@ import static org.junit.Assert.assertEquals;
 
 @Slf4j
 public class UserRelated {
-
-    public static void assertUserLoggedIn(WebDriverWrapper wrapper, User testUser){
-        WebElement usernameDisplay = wrapper.waitFor(General.USERNAME_DISPLAY);
-
-        assertEquals(testUser.getUsername(), usernameDisplay.getText());
-    }
-
-    public static void assertUserAdminLoggedIn(WebDriverWrapper wrapper, User testUser){
-        assertUserLoggedIn(wrapper, testUser);
-
-        wrapper.waitFor(General.USERNAME_DISPLAY).click();
-
-        wrapper.waitFor(USER_ADMIN_LINK);
-    }
+	
+	public static void assertUserLoggedIn(WebDriverWrapper wrapper, User testUser) {
+		WebElement usernameDisplay = wrapper.waitFor(General.USERNAME_DISPLAY);
+		
+		assertEquals(testUser.getUsername(), usernameDisplay.getText());
+	}
+	
+	public static void assertUserAdminLoggedIn(WebDriverWrapper wrapper, User testUser) {
+		assertUserLoggedIn(wrapper, testUser);
+		
+		wrapper.waitFor(General.USERNAME_DISPLAY).click();
+		
+		wrapper.waitFor(USER_ADMIN_LINK);
+	}
 }

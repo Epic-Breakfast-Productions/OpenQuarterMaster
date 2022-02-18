@@ -9,8 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 @Liveness
 @ApplicationScoped
 public class ServiceRunningHealthCheck implements HealthCheck {
-    @Override
-    public HealthCheckResponse call() {
-        return HealthCheckResponse.up("Service is running");
-    }
+	
+	@Override
+	public HealthCheckResponse call() {
+		return HealthCheckResponse.up("Service is running");
+	}
 }

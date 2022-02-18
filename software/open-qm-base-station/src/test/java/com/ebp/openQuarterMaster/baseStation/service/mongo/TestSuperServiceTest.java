@@ -21,36 +21,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-class TestSuperServiceTest  extends MongoServiceTest<TestSuper, TestSuperService> {
-
-    @Inject
-    TestSuperService testSuperService;
-
-    @Override
-    protected TestSuper getTestObject() {
-        return null;
-    }
-
-    public static Stream<Arguments> getObjs() {
-        return Stream.of(
-                Arguments.of(new TestOne("something")),
-                Arguments.of(new TestTwo(3))
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getObjs")
-    public void persistenceTest(TestSuper<?> obj) {
-        log.info("Object: {}", obj);
-        log.info("Class: {}", obj.getClass());
-        log.info("Original obj type: {}", obj.getType());
-        ObjectId id = testSuperService.add(obj, null);
-        log.info("Object id: {}", id);
-
-        TestSuper<?> gotten = testSuperService.get(id);
-        log.info("Deserialized object: {}", obj);
-        log.info("Deserialized class: {}", obj.getClass());
-        log.info("Deserialized obj type: {}", gotten.getType());
-        assertEquals(obj, gotten);
-    }
+class TestSuperServiceTest extends MongoServiceTest<TestSuper, TestSuperService> {
+	
+	@Inject
+	TestSuperService testSuperService;
+	
+	@Override
+	protected TestSuper getTestObject() {
+		return null;
+	}
+	
+	public static Stream<Arguments> getObjs() {
+		return Stream.of(
+			Arguments.of(new TestOne("something")),
+			Arguments.of(new TestTwo(3))
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getObjs")
+	public void persistenceTest(TestSuper<?> obj) {
+		log.info("Object: {}", obj);
+		log.info("Class: {}", obj.getClass());
+		log.info("Original obj type: {}", obj.getType());
+		ObjectId id = testSuperService.add(obj, null);
+		log.info("Object id: {}", id);
+		
+		TestSuper<?> gotten = testSuperService.get(id);
+		log.info("Deserialized object: {}", obj);
+		log.info("Deserialized class: {}", obj.getClass());
+		log.info("Deserialized obj type: {}", gotten.getType());
+		assertEquals(obj, gotten);
+	}
 }

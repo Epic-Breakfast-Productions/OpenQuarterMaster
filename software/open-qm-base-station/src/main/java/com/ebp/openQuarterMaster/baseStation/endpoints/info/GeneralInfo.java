@@ -28,60 +28,60 @@ import java.util.Map;
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
 @ApplicationScoped
 public class GeneralInfo extends EndpointProvider {
-//
-//    @Inject
-//    ServerInfoBean infoBean;
-//
-//    @GET
-//    @Path("server")
-//    @Operation(
-//            summary = "Gets a set of information about the server."
-//    )
-//    @APIResponse(
-//            responseCode = "200",
-//            description = "Got the list.",
-//            content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(
-//                            implementation = ServerInfoBean.class
-//                    )
-//            )
-//    )
-////    @SecurityRequirement(name = "JwtAuth")
-//    @PermitAll
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getServerInfo(@Context SecurityContext ctx) {
-//        log.info("Getting server info.");
-//
-//        return Response.ok(
-//                this.infoBean
-//        ).build();
-//    }
-
-    @GET
-    @Path("units")
-    @Operation(
-            summary = "Gets the list of supported units."
-    )
-    @APIResponse(
-            responseCode = "200",
-            description = "Got the list.",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                            //TODO: better
-                            implementation = Map.class
-                    )
-            )
-    )
-//    @SecurityRequirement(name = "JwtAuth")
-    @PermitAll
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUnits(@Context SecurityContext ctx) {
-        log.info("Getting valid unit list.");
-        return Response.ok(
-                UnitUtils.ALLOWED_UNITS_MAP
-        ).build();
-    }
-
+	//
+	//    @Inject
+	//    ServerInfoBean infoBean;
+	//
+	//    @GET
+	//    @Path("server")
+	//    @Operation(
+	//            summary = "Gets a set of information about the server."
+	//    )
+	//    @APIResponse(
+	//            responseCode = "200",
+	//            description = "Got the list.",
+	//            content = @Content(
+	//                    mediaType = "application/json",
+	//                    schema = @Schema(
+	//                            implementation = ServerInfoBean.class
+	//                    )
+	//            )
+	//    )
+	////    @SecurityRequirement(name = "JwtAuth")
+	//    @PermitAll
+	//    @Produces(MediaType.APPLICATION_JSON)
+	//    public Response getServerInfo(@Context SecurityContext ctx) {
+	//        log.info("Getting server info.");
+	//
+	//        return Response.ok(
+	//                this.infoBean
+	//        ).build();
+	//    }
+	
+	@GET
+	@Path("units")
+	@Operation(
+		summary = "Gets the list of supported units."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the list.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				//TODO: better
+				implementation = Map.class
+			)
+		)
+	)
+	//    @SecurityRequirement(name = "JwtAuth")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUnits(@Context SecurityContext ctx) {
+		log.info("Getting valid unit list.");
+		return Response.ok(
+			UnitUtils.ALLOWED_UNITS_MAP
+		).build();
+	}
+	
 }

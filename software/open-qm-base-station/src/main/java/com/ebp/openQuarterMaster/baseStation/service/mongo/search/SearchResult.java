@@ -10,7 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchResult<T> {
-    private List<T> results;
-    private long numResultsForEntireQuery;
-    private boolean hadSearchQuery;
+	
+	private List<T> results;
+	private long numResultsForEntireQuery;
+	private boolean hadSearchQuery;
 }

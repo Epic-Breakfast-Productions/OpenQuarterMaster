@@ -19,51 +19,51 @@ import java.util.Map;
 @Slf4j
 @ApplicationScoped
 public class ImageService extends MongoService<Image> {
-
-//    private Validator validator;
-
-    ImageService() {//required for DI
-        super(null, null, null, null, null, false, null);
-    }
-
-    @Inject
-    ImageService(
-//            Validator validator,
-            ObjectMapper objectMapper,
-            MongoClient mongoClient,
-            @ConfigProperty(name = "quarkus.mongodb.database")
-                    String database
-    ) {
-        super(
-                objectMapper,
-                mongoClient,
-                database,
-                Image.class,
-                false
-        );
-//        this.validator = validator;
-    }
-
-    public SearchResult<Image> search(
-            String title,
-            List<String> keywords,
-            Map<String, String> attributes,
-            Bson sort,
-            PagingOptions pagingOptions
-    ) {
-        log.info(
-                "Searching for items with: title=\"{}\", keywords={}",
-                title,
-                keywords
-        );
-        List<Bson> filters = new ArrayList<>();
-
-        SearchUtils.addBasicSearchFilter(filters, "title", title);
-        SearchUtils.addKeywordSearchFilter(filters, keywords);
-        SearchUtils.addAttributeSearchFilters(filters, attributes);
-
-        //TODO::
-
-        return this.searchResult(filters, sort, pagingOptions);
-    }
+	
+	//    private Validator validator;
+	
+	ImageService() {//required for DI
+		super(null, null, null, null, null, false, null);
+	}
+	
+	@Inject
+	ImageService(
+		//            Validator validator,
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		@ConfigProperty(name = "quarkus.mongodb.database")
+			String database
+	) {
+		super(
+			objectMapper,
+			mongoClient,
+			database,
+			Image.class,
+			false
+		);
+		//        this.validator = validator;
+	}
+	
+	public SearchResult<Image> search(
+		String title,
+		List<String> keywords,
+		Map<String, String> attributes,
+		Bson sort,
+		PagingOptions pagingOptions
+	) {
+		log.info(
+			"Searching for items with: title=\"{}\", keywords={}",
+			title,
+			keywords
+		);
+		List<Bson> filters = new ArrayList<>();
+		
+		SearchUtils.addBasicSearchFilter(filters, "title", title);
+		SearchUtils.addKeywordSearchFilter(filters, keywords);
+		SearchUtils.addAttributeSearchFilters(filters, attributes);
+		
+		//TODO::
+		
+		return this.searchResult(filters, sort, pagingOptions);
+	}
 }

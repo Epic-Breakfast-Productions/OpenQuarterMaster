@@ -9,32 +9,32 @@ import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
 
 public class TestSuperDecoder implements Codec<TestSuper> {
-
-    private final CodecRegistry registry;
-
-    public TestSuperDecoder(CodecRegistry registry) {
-        this.registry = registry;
-    }
-
-
-    @Override
-    public TestSuper decode(BsonReader reader, DecoderContext decoderContext) {
-
-        return null;
-    }
-
-    @Override
-    public void encode(BsonWriter writer, TestSuper value, EncoderContext encoderContext) {
-//        this.registry.get(value.getClass())
-//                .encode(
-//                        writer,
-//                        (value.getClass()).cast(value),
-//                        encoderContext
-//                );
-    }
-
-    @Override
-    public Class<TestSuper> getEncoderClass() {
-        return TestSuper.class;
-    }
+	
+	private final CodecRegistry registry;
+	
+	public TestSuperDecoder(CodecRegistry registry) {
+		this.registry = registry;
+	}
+	
+	
+	@Override
+	public TestSuper decode(BsonReader reader, DecoderContext decoderContext) {
+		
+		return null;
+	}
+	
+	@Override
+	public void encode(BsonWriter writer, TestSuper value, EncoderContext encoderContext) {
+		//        this.registry.get(value.getClass())
+		//                .encode(
+		//                        writer,
+		//                        (value.getClass()).cast(value),
+		//                        encoderContext
+		//                );
+	}
+	
+	@Override
+	public Class<TestSuper> getEncoderClass() {
+		return TestSuper.class;
+	}
 }

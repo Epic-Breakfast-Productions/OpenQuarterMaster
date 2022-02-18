@@ -7,12 +7,13 @@ import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryItem> {
-    @Override
-    public InventoryItem<?> getTestObject() {
-        InventoryItem<?> item = new AmountItem();
-
-        item.setName(faker.commerce().productName());
-
-        return item;
-    }
+	
+	@Override
+	public InventoryItem<?> getTestObject() {
+		InventoryItem<?> item = new AmountItem();
+		
+		item.setName(faker.commerce().productName());
+		
+		return item;
+	}
 }

@@ -37,80 +37,80 @@ import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class Index extends UiProvider {
-
-    @Inject
-    @Location("webui/pages/index")
-    Template index;
-    @Inject
-    @Location("webui/pages/accountCreate")
-    Template accountCreate;
-
-    @Inject
-    JsonWebToken jwt;
-
-    @ConfigProperty(name = "service.authMode")
-    AuthMode authMode;
-
-    @ConfigProperty(name = "service.externalAuth.interactionBase", defaultValue = "")
-    String externInteractionBase;
-    @ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
-    String externInteractionClientId;
-    @ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
-    String externInteractionCallbackUrl;
-
-    @GET
-    @PermitAll
-    @Produces(MediaType.TEXT_HTML)
-    public Response index(
-            @Context SecurityContext securityContext,
-            @QueryParam("returnPath") String returnPath
-    ) throws MalformedURLException, URISyntaxException {
-        logRequestContext(jwt, securityContext);
-
-        String redirectUri = externInteractionCallbackUrl;
-
-        if(returnPath != null && !returnPath.isBlank()){
-            redirectUri = new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString();
-        }
-
-        Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
-
-
-        if (EXTERNAL.equals(this.authMode)) {
-            URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
-            String state = UUID.randomUUID().toString();
-
-            signInLinkBuilder.setParameter("response_type", "code");
-            signInLinkBuilder.setParameter("scope", "openid");
-            signInLinkBuilder.setParameter("audience", "account");
-            signInLinkBuilder.setParameter("state", state);
-            signInLinkBuilder.setParameter("client_id", externInteractionClientId);
-            signInLinkBuilder.setParameter("redirect_uri", redirectUri);
-
-            responseBuilder.entity(
-                    index
-                            .data("pageLoadTimestamp", getLoadTimestamp())
-                            .data("signInLink", signInLinkBuilder.build())
-            ).cookie(
-                    UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
-            );
-        } else {
-            responseBuilder.entity(
-                    index.data("pageLoadTimestamp", getLoadTimestamp())
-            );
-        }
-
-        return responseBuilder.build();
-    }
-
-    @GET
-    @Path("/accountCreate")
-    @PermitAll
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance accountCreate(
-            @Context SecurityContext securityContext
-    ) {
-        logRequestContext(jwt, securityContext);
-        return accountCreate.data("pageLoadTimestamp", getLoadTimestamp());
-    }
+	
+	@Inject
+	@Location("webui/pages/index")
+	Template index;
+	@Inject
+	@Location("webui/pages/accountCreate")
+	Template accountCreate;
+	
+	@Inject
+	JsonWebToken jwt;
+	
+	@ConfigProperty(name = "service.authMode")
+	AuthMode authMode;
+	
+	@ConfigProperty(name = "service.externalAuth.interactionBase", defaultValue = "")
+	String externInteractionBase;
+	@ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
+	String externInteractionClientId;
+	@ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
+	String externInteractionCallbackUrl;
+	
+	@GET
+	@PermitAll
+	@Produces(MediaType.TEXT_HTML)
+	public Response index(
+		@Context SecurityContext securityContext,
+		@QueryParam("returnPath") String returnPath
+	) throws MalformedURLException, URISyntaxException {
+		logRequestContext(jwt, securityContext);
+		
+		String redirectUri = externInteractionCallbackUrl;
+		
+		if (returnPath != null && !returnPath.isBlank()) {
+			redirectUri = new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString();
+		}
+		
+		Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
+		
+		
+		if (EXTERNAL.equals(this.authMode)) {
+			URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
+			String state = UUID.randomUUID().toString();
+			
+			signInLinkBuilder.setParameter("response_type", "code");
+			signInLinkBuilder.setParameter("scope", "openid");
+			signInLinkBuilder.setParameter("audience", "account");
+			signInLinkBuilder.setParameter("state", state);
+			signInLinkBuilder.setParameter("client_id", externInteractionClientId);
+			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
+			
+			responseBuilder.entity(
+				index
+					.data("pageLoadTimestamp", getLoadTimestamp())
+					.data("signInLink", signInLinkBuilder.build())
+			).cookie(
+				UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
+			);
+		} else {
+			responseBuilder.entity(
+				index.data("pageLoadTimestamp", getLoadTimestamp())
+			);
+		}
+		
+		return responseBuilder.build();
+	}
+	
+	@GET
+	@Path("/accountCreate")
+	@PermitAll
+	@Produces(MediaType.TEXT_HTML)
+	public TemplateInstance accountCreate(
+		@Context SecurityContext securityContext
+	) {
+		logRequestContext(jwt, securityContext);
+		return accountCreate.data("pageLoadTimestamp", getLoadTimestamp());
+	}
 }

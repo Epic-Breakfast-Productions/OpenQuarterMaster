@@ -14,29 +14,29 @@ import java.util.List;
 
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
-
-    List<Codec<?>> codecs = List.of(
-            new UUIDCodec(),
-            new QuantityCodec(),
-            new UnitCodec(),
-            new ZonedDateTimeCodec()
-    );
-
-    @Override
-    public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-        //noinspection rawtypes
-        for(Codec codec : codecs){
-            if (clazz == codec.getEncoderClass()) {
-                //noinspection unchecked
-                return (Codec<T>) codec;
-            }
-        }
-//        if(clazz.getSuperclass().equals(TestSuper.class)){
-//            PojoCodecProvider provider = PojoCodecProvider.builder().build();
-//            return provider.get();
-//        }
-        return null;
-    }
-
-
+	
+	List<Codec<?>> codecs = List.of(
+		new UUIDCodec(),
+		new QuantityCodec(),
+		new UnitCodec(),
+		new ZonedDateTimeCodec()
+	);
+	
+	@Override
+	public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
+		//noinspection rawtypes
+		for (Codec codec : codecs) {
+			if (clazz == codec.getEncoderClass()) {
+				//noinspection unchecked
+				return (Codec<T>) codec;
+			}
+		}
+		//        if(clazz.getSuperclass().equals(TestSuper.class)){
+		//            PojoCodecProvider provider = PojoCodecProvider.builder().build();
+		//            return provider.get();
+		//        }
+		return null;
+	}
+	
+	
 }

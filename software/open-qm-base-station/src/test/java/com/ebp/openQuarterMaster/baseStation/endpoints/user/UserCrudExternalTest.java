@@ -26,39 +26,40 @@ import static io.restassured.RestAssured.given;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value="true"), restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"), restrictToAnnotatedClass = true)
 @TestHTTPEndpoint(UserCrud.class)
 class UserCrudExternalTest extends RunningServerTest {
-    @Inject
-    ObjectMapper objectMapper;
-    @Inject
-    TestUserService testUserService;
-
-    @Test
-    public void testCreateUserAttempt() throws JsonProcessingException {
-        User testUser = this.testUserService.getTestUser(false, false);
-
-        UserCreateRequest ucr = new UserCreateRequest(
-                testUser.getFirstName(),
-                testUser.getLastName(),
-                testUser.getUsername(),
-                testUser.getEmail(),
-                testUser.getTitle(),
-                "1!Letmein",
-                testUser.getAttributes()
-        );
-
-        String errorMessage = given()
-                .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(ucr))
-                .when()
-                .post()
-                .then()
-                .statusCode(Response.Status.FORBIDDEN.getStatusCode())
-                .extract().body().toString();
-
-        log.info("Error Message: {}", errorMessage);
-//        assertEquals("User not found.", errorMessage.getError());
-    }
-
+	
+	@Inject
+	ObjectMapper objectMapper;
+	@Inject
+	TestUserService testUserService;
+	
+	@Test
+	public void testCreateUserAttempt() throws JsonProcessingException {
+		User testUser = this.testUserService.getTestUser(false, false);
+		
+		UserCreateRequest ucr = new UserCreateRequest(
+			testUser.getFirstName(),
+			testUser.getLastName(),
+			testUser.getUsername(),
+			testUser.getEmail(),
+			testUser.getTitle(),
+			"1!Letmein",
+			testUser.getAttributes()
+		);
+		
+		String errorMessage = given()
+			.contentType(ContentType.JSON)
+			.body(objectMapper.writeValueAsString(ucr))
+			.when()
+			.post()
+			.then()
+			.statusCode(Response.Status.FORBIDDEN.getStatusCode())
+			.extract().body().toString();
+		
+		log.info("Error Message: {}", errorMessage);
+		//        assertEquals("User not found.", errorMessage.getError());
+	}
+	
 }

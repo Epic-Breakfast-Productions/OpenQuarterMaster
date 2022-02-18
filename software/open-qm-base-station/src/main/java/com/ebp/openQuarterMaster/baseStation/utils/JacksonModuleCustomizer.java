@@ -9,9 +9,9 @@ import javax.inject.Singleton;
 
 @Singleton
 public class JacksonModuleCustomizer implements ObjectMapperCustomizer {
-
-    public void customize(ObjectMapper mapper) {
-        Utils.setupObjectMapper(mapper);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    }
+	
+	public void customize(ObjectMapper mapper) {
+		Utils.setupObjectMapper(mapper);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+	}
 }

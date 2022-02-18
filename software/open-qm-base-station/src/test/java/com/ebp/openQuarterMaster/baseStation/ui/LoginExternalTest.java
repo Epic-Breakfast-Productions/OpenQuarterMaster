@@ -28,102 +28,103 @@ import static com.mongodb.assertions.Assertions.assertTrue;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name=TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value="true"), restrictToAnnotatedClass = true)
+@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"), restrictToAnnotatedClass = true)
 public class LoginExternalTest extends WebUiTest {
-    @Inject
-    TestUserService testUserService;
-
-    @Inject
-    WebDriverWrapper webDriverWrapper;
-
-    @Test
-    public void testLogin() throws InterruptedException {
-        User testUser = this.testUserService.getTestUser(false, true);
-        this.webDriverWrapper.goToIndex();
-
-        this.webDriverWrapper.waitForPageLoad();
-
-        this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
-
-        log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
-
-        this.webDriverWrapper.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
-        this.webDriverWrapper.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
-
-        this.webDriverWrapper.findElement(KeycloakLogin.LOGIN_BUTTON).click();
-
-        this.webDriverWrapper.waitForPageLoad();
-        assertUserLoggedIn(this.webDriverWrapper, testUser);
-        assertOnPage(this.webDriverWrapper, "/overview");
-
-        //test refresh keys
-        this.webDriverWrapper.getWebDriver().navigate().refresh();
-
-        this.webDriverWrapper.waitForPageLoad();
-        assertUserLoggedIn(this.webDriverWrapper, testUser);
-
-    }
-
-    @Test
-    public void testLoginWithReturnPath() throws URISyntaxException {
-        User testUser = this.testUserService.getTestUser(false, true);
-        String queryPath = "/storage?label=some&pageNum=1";
-
-        this.webDriverWrapper.goTo(queryPath);
-
-        this.webDriverWrapper.waitForPageLoad();
-
-        this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
-
-        log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
-
-        this.webDriverWrapper.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
-        this.webDriverWrapper.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
-
-        this.webDriverWrapper.findElement(KeycloakLogin.LOGIN_BUTTON).click();
-
-        this.webDriverWrapper.waitForPageLoad();
-        assertUserLoggedIn(this.webDriverWrapper, testUser);
-
-        assertOnPage(this.webDriverWrapper, "/storage");
-        assertTrue(this.webDriverWrapper.getWebDriver().getCurrentUrl().endsWith(queryPath));
-    }
-
-    @Test
-    public void testLoginWithToken() throws InterruptedException {
-        User testUser = this.testUserService.getTestUser(false, true);
-        String userJwt = this.testUserService.getTestUserToken(testUser);
-        this.webDriverWrapper.goToIndex();
-
-        this.webDriverWrapper.waitForPageLoad();
-
-        this.webDriverWrapper.findElement(Root.JWT_INPUT).sendKeys(userJwt);
-        this.webDriverWrapper.findElement(Root.SIGN_IN_BUTTON).click();
-        this.webDriverWrapper.waitForPageLoad();
-
-        assertUserLoggedIn(this.webDriverWrapper, testUser);
-    }
-
-    @Test
-    public void testLoginAdminWithToken() throws InterruptedException {
-        User testUser = this.testUserService.getTestUser(true, true);
-
-        this.webDriverWrapper.loginUser(testUser);
-
-        assertUserAdminLoggedIn(this.webDriverWrapper, testUser);
-    }
-
-    @Test
-    public void testLogout() throws InterruptedException {
-        User testUser = this.testUserService.getTestUser(true, true);
-
-        this.webDriverWrapper.loginUser(testUser);
-
-        this.webDriverWrapper.waitFor(General.USERNAME_DISPLAY).click();
-        this.webDriverWrapper.waitFor(General.LOGOUT_BUTTON).click();
-
-        this.webDriverWrapper.waitFor(Root.SIGN_IN_BUTTON);
-
-        assertOnPage(this.webDriverWrapper, "/");
-    }
+	
+	@Inject
+	TestUserService testUserService;
+	
+	@Inject
+	WebDriverWrapper webDriverWrapper;
+	
+	@Test
+	public void testLogin() throws InterruptedException {
+		User testUser = this.testUserService.getTestUser(false, true);
+		this.webDriverWrapper.goToIndex();
+		
+		this.webDriverWrapper.waitForPageLoad();
+		
+		this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
+		
+		log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
+		
+		this.webDriverWrapper.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+		this.webDriverWrapper.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
+		
+		this.webDriverWrapper.findElement(KeycloakLogin.LOGIN_BUTTON).click();
+		
+		this.webDriverWrapper.waitForPageLoad();
+		assertUserLoggedIn(this.webDriverWrapper, testUser);
+		assertOnPage(this.webDriverWrapper, "/overview");
+		
+		//test refresh keys
+		this.webDriverWrapper.getWebDriver().navigate().refresh();
+		
+		this.webDriverWrapper.waitForPageLoad();
+		assertUserLoggedIn(this.webDriverWrapper, testUser);
+		
+	}
+	
+	@Test
+	public void testLoginWithReturnPath() throws URISyntaxException {
+		User testUser = this.testUserService.getTestUser(false, true);
+		String queryPath = "/storage?label=some&pageNum=1";
+		
+		this.webDriverWrapper.goTo(queryPath);
+		
+		this.webDriverWrapper.waitForPageLoad();
+		
+		this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
+		
+		log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
+		
+		this.webDriverWrapper.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+		this.webDriverWrapper.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
+		
+		this.webDriverWrapper.findElement(KeycloakLogin.LOGIN_BUTTON).click();
+		
+		this.webDriverWrapper.waitForPageLoad();
+		assertUserLoggedIn(this.webDriverWrapper, testUser);
+		
+		assertOnPage(this.webDriverWrapper, "/storage");
+		assertTrue(this.webDriverWrapper.getWebDriver().getCurrentUrl().endsWith(queryPath));
+	}
+	
+	@Test
+	public void testLoginWithToken() throws InterruptedException {
+		User testUser = this.testUserService.getTestUser(false, true);
+		String userJwt = this.testUserService.getTestUserToken(testUser);
+		this.webDriverWrapper.goToIndex();
+		
+		this.webDriverWrapper.waitForPageLoad();
+		
+		this.webDriverWrapper.findElement(Root.JWT_INPUT).sendKeys(userJwt);
+		this.webDriverWrapper.findElement(Root.SIGN_IN_BUTTON).click();
+		this.webDriverWrapper.waitForPageLoad();
+		
+		assertUserLoggedIn(this.webDriverWrapper, testUser);
+	}
+	
+	@Test
+	public void testLoginAdminWithToken() throws InterruptedException {
+		User testUser = this.testUserService.getTestUser(true, true);
+		
+		this.webDriverWrapper.loginUser(testUser);
+		
+		assertUserAdminLoggedIn(this.webDriverWrapper, testUser);
+	}
+	
+	@Test
+	public void testLogout() throws InterruptedException {
+		User testUser = this.testUserService.getTestUser(true, true);
+		
+		this.webDriverWrapper.loginUser(testUser);
+		
+		this.webDriverWrapper.waitFor(General.USERNAME_DISPLAY).click();
+		this.webDriverWrapper.waitFor(General.LOGOUT_BUTTON).click();
+		
+		this.webDriverWrapper.waitFor(Root.SIGN_IN_BUTTON);
+		
+		assertOnPage(this.webDriverWrapper, "/");
+	}
 }

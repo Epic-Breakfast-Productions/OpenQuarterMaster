@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TestMainObject extends MainObject {
-    @NotNull
-    @NotEmpty
-    private String testField;
+	
+	@NotNull
+	@NotEmpty
+	private String testField;
 }

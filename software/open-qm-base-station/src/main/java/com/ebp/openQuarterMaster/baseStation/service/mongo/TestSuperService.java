@@ -12,28 +12,28 @@ import javax.inject.Inject;
 @Slf4j
 @ApplicationScoped
 public class TestSuperService extends MongoService<TestSuper> {
-
-//    private Validator validator;
-
-    TestSuperService() {//required for DI
-        super(null, null, null, null, null, true, null);
-    }
-
-    @Inject
-    TestSuperService(
-//            Validator validator,
-            ObjectMapper objectMapper,
-            MongoClient mongoClient,
-            @ConfigProperty(name = "quarkus.mongodb.database")
-                    String database
-    ) {
-        super(
-                objectMapper,
-                mongoClient,
-                database,
-                TestSuper.class,
-                true
-        );
-//        this.validator = validator;
-    }
+	
+	//    private Validator validator;
+	
+	TestSuperService() {//required for DI
+		super(null, null, null, null, null, true, null);
+	}
+	
+	@Inject
+	TestSuperService(
+		//            Validator validator,
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		@ConfigProperty(name = "quarkus.mongodb.database")
+			String database
+	) {
+		super(
+			objectMapper,
+			mongoClient,
+			database,
+			TestSuper.class,
+			true
+		);
+		//        this.validator = validator;
+	}
 }

@@ -15,31 +15,31 @@ import java.io.IOException;
 @Slf4j
 @Provider
 public class LoggingFilter implements ContainerResponseFilter, ContainerRequestFilter {
-
-    @Context
-    UriInfo uriInfo;
-
-    @Context
-    HttpServerRequest request;
-
-    @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        log.info(
-                "Request from {} - {}:{}  ssl?: {}",
-                request.remoteAddress().toString(),
-                requestContext.getMethod(),
-                uriInfo.getPath(),
-                request.isSSL()
-        );
-    }
-
-    @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        log.info(
-                "Response:: Type: {}  status: {}",
-                responseContext.getMediaType(),
-                responseContext.getStatus()
-        );
-    }
-
+	
+	@Context
+	UriInfo uriInfo;
+	
+	@Context
+	HttpServerRequest request;
+	
+	@Override
+	public void filter(ContainerRequestContext requestContext) throws IOException {
+		log.info(
+			"Request from {} - {}:{}  ssl?: {}",
+			request.remoteAddress().toString(),
+			requestContext.getMethod(),
+			uriInfo.getPath(),
+			request.isSSL()
+		);
+	}
+	
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+		log.info(
+			"Response:: Type: {}  status: {}",
+			responseContext.getMediaType(),
+			responseContext.getStatus()
+		);
+	}
+	
 }
