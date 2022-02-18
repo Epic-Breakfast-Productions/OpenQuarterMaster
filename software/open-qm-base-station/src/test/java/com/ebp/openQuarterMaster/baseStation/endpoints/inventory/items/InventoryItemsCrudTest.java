@@ -6,7 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTes
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
-import com.ebp.openQuarterMaster.lib.core.storage.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,9 @@ import javax.ws.rs.core.Response;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.setupJwtCall;
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @QuarkusTest
