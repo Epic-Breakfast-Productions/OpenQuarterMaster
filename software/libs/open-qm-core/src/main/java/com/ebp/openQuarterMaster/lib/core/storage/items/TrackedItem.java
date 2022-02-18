@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -21,7 +21,6 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
 
     /**
@@ -38,7 +37,8 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
     public TrackedItem() {
         super(StoredType.TRACKED);
     }
-
+    
+    @JsonIgnore
     @Override
     public @NonNull Unit<?> getUnit() {
         return AbstractUnit.ONE;

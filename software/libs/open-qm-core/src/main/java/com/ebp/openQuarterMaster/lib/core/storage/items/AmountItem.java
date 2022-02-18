@@ -1,6 +1,8 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,15 +18,22 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@ValidHeldStoredUnits
 public class AmountItem extends InventoryItem<List<@NotNull AmountStored>> {
-
+    
+    
     /**
      * The unit used to measure the item.
      */
     @NonNull
     @ValidUnit
     private Unit<?> unit = AbstractUnit.ONE;
-
+    
+    public AmountItem() {
+        super(StoredType.AMOUNT);
+    }
+    
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Quantity<?> recalcTotal() {
         //TODO:: try parallel streams

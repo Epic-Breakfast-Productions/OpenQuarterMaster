@@ -4,7 +4,12 @@ import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 
@@ -64,33 +69,31 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
     @NonNull
     @NotNull
     private Map<@NonNull ObjectId, @NonNull T> storageMap = new LinkedHashMap<>();
-
+    
     /**
-     * The total amount of that item in storage, in the {@link #unit} unit.
+     * The total amount of that item in storage, in the {@link #getUnit()} unit.
      */
     @Setter(AccessLevel.PROTECTED)
     private Quantity<?> total = null;
-
-    {
-        this.recalcTotal();
-    }
-
+    
+    
     /**
-     * Private constructor to make Lombok happy.
+     * Constructor to make Lombok happy.
      * <p>
      * Disregard, not intended to be used
      */
-    private InventoryItem() {
+    public InventoryItem() {
         //noinspection ConstantConditions
         this.storedType = null;
+        throw new UnsupportedOperationException();
     }
 
     protected InventoryItem(StoredType type) {
         this.storedType = type;
     }
-
+    
     public abstract @NonNull Unit<?> getUnit();
-
+    
     /**
      * Recalculates the total amount of the item stored.
      * <p>
@@ -99,14 +102,21 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
      * @return The total amount stored.
      */
     public abstract Quantity<?> recalcTotal();
-
+    
+    public Quantity<?> getTotal() {
+        if (total == null) {
+            this.recalcTotal();
+        }
+        return this.total;
+    }
+    
     /**
      * Gets the number of individual entities stored
      *
      * @return the number of individual entities stored
      */
     public abstract long numStored();
-
+    
     //TODO:: add stored
     //TODO:: remove stored
     //TODO:: transfer

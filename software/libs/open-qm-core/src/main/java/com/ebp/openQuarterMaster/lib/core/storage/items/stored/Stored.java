@@ -1,7 +1,11 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
-import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidStored;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.Max;
@@ -20,7 +24,6 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ValidStored
 @Setter(AccessLevel.PRIVATE)
 public abstract class Stored {
     /**

@@ -1,31 +1,38 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidPassword;
-import org.passay.*;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.EnglishSequenceData;
+import org.passay.IllegalSequenceRule;
+import org.passay.LengthRule;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.Rule;
+import org.passay.RuleResult;
 
-import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 /**
  * Validates Passwords coming in.
  * <p>
  * List of rules described in {@link #DEFAULT_RULES}
- *
+ * <p>
  * https://www.baeldung.com/registration-password-strength-and-rules
- *
+ * <p>
  * http://www.passay.org/reference/
  */
-public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
-
+public class PasswordConstraintValidator extends Validator<ValidPassword, String> {
+    
     private static final Rule[] DEFAULT_RULES = {
-            new LengthRule(8, 256),
-            new CharacterRule(EnglishCharacterData.UpperCase, 1),
-            new CharacterRule(EnglishCharacterData.LowerCase, 1),
-            new CharacterRule(EnglishCharacterData.Digit, 1),
-            new CharacterRule(EnglishCharacterData.Special, 1),
-            new IllegalSequenceRule(EnglishSequenceData.Alphabetical, 5, false),
-            new IllegalSequenceRule(EnglishSequenceData.Numerical, 5, false),
-            new IllegalSequenceRule(EnglishSequenceData.USQwerty, 5, false)
+        new LengthRule(8, 256),
+        new CharacterRule(EnglishCharacterData.UpperCase, 1),
+        new CharacterRule(EnglishCharacterData.LowerCase, 1),
+        new CharacterRule(EnglishCharacterData.Digit, 1),
+        new CharacterRule(EnglishCharacterData.Special, 1),
+        new IllegalSequenceRule(EnglishSequenceData.Alphabetical, 5, false),
+        new IllegalSequenceRule(EnglishSequenceData.Numerical, 5, false),
+        new IllegalSequenceRule(EnglishSequenceData.USQwerty, 5, false)
     };
 
     private static PasswordValidator VALIDATOR = new PasswordValidator(DEFAULT_RULES);
