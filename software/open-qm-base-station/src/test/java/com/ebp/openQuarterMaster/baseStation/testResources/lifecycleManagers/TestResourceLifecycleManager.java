@@ -4,6 +4,7 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Rule;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -40,6 +41,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	private static MongoDBContainer MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
+	@Rule //TODO:: play with this in the test classes
 	private static BrowserWebDriverContainer<?> BROWSER_CONTAINER = null;
 	
 	static {
