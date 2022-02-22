@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorMessage {
-    private String error;
-    private String detail = "";
-
-    public ErrorMessage(String error) {
-        this.error = error;
-    }
+	
+	private String error;
+	private String detail = "";
+	
+	public ErrorMessage(String error) {
+		this.error = error;
+	}
 }

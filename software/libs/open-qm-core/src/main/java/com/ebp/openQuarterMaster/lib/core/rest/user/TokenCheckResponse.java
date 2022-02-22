@@ -13,8 +13,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenCheckResponse {
-    private boolean hadToken = false;
-    private boolean tokenSecure = false;
-    private boolean expired = true;
-    private Date expirationDate = null;
+	
+	private boolean hadToken = false;
+	private boolean tokenSecure = false;
+	private boolean expired = true;
+	private Date expirationDate = null;
 }

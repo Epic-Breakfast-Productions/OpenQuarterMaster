@@ -11,10 +11,11 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageCreateRequest {
-    public String title;
-    public String description;
-    public String imageData;
-
-    public List<String> keywords = null;
-    public Map<String, String> attributes = null;
+	
+	public String title;
+	public String description;
+	public String imageData;
+	
+	public List<String> keywords = null;
+	public Map<String, String> attributes = null;
 }

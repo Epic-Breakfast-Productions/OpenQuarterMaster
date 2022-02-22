@@ -13,32 +13,32 @@ import java.util.Collection;
 @AllArgsConstructor
 @Getter
 public class StorageBlockTreeNode {
-
-    private final Collection<StorageBlockTreeNode> children = new ArrayList<>();
-    private final String blockLabel;
-    private final String blockLocation;
-    private final ObjectId blockId;
-    private final ObjectId firstImageId;
-    private final ObjectId parentId;
-
-    public StorageBlockTreeNode(StorageBlock block) {
-        this(
-                block.getLabel(),
-                block.getLocation(),
-                block.getId(),
-                (block.getImageIds().isEmpty() ? null : block.getImageIds().get(0)),
-                block.getParent()
-        );
-    }
-
-
-    public boolean hasChildren() {
-        return !this.children.isEmpty();
-    }
-
-    public StorageBlockTreeNode addChild(StorageBlockTreeNode newChild) {
-        this.children.add(newChild);
-        return this;
-    }
-
+	
+	private final Collection<StorageBlockTreeNode> children = new ArrayList<>();
+	private final String blockLabel;
+	private final String blockLocation;
+	private final ObjectId blockId;
+	private final ObjectId firstImageId;
+	private final ObjectId parentId;
+	
+	public StorageBlockTreeNode(StorageBlock block) {
+		this(
+			block.getLabel(),
+			block.getLocation(),
+			block.getId(),
+			(block.getImageIds().isEmpty() ? null : block.getImageIds().get(0)),
+			block.getParent()
+		);
+	}
+	
+	
+	public boolean hasChildren() {
+		return !this.children.isEmpty();
+	}
+	
+	public StorageBlockTreeNode addChild(StorageBlockTreeNode newChild) {
+		this.children.add(newChild);
+		return this;
+	}
+	
 }

@@ -26,42 +26,43 @@ import java.util.Map;
 @AllArgsConstructor
 @Setter(AccessLevel.PRIVATE)
 public abstract class Stored {
-    /**
-     * When the item(s) held expire. Null if it does not expire.
-     */
-    private ZonedDateTime expires = null;
-
-    /**
-     * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
-     */
-    @Max(100)
-    @Min(0)
-    private Integer condition = null;
-
-    /**
-     * Notes on the condition on the thing(s) stored.
-     */
-    private String conditionNotes = null;
-
-    /**
-     * List of images related to the object.
-     */
-    @NonNull
-    @NotNull
-    List<@NonNull ObjectId> imageIds = new ArrayList<>();
-
-    /**
-     * Attributes related to the item
-     */
-    private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
-
-    /**
-     * Keywords for the item
-     */
-    @NotNull
-    @NonNull
-    private List<@NotBlank String> keywords = new ArrayList<>();
-
-    //TODO:: get item at key
-    //TODO:: removes
+	
+	/**
+	 * When the item(s) held expire. Null if it does not expire.
+	 */
+	private ZonedDateTime expires = null;
+	
+	/**
+	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
+	 */
+	@Max(100)
+	@Min(0)
+	private Integer condition = null;
+	
+	/**
+	 * Notes on the condition on the thing(s) stored.
+	 */
+	private String conditionNotes = null;
+	
+	/**
+	 * List of images related to the object.
+	 */
+	@NonNull
+	@NotNull
+	List<@NonNull ObjectId> imageIds = new ArrayList<>();
+	
+	/**
+	 * Attributes related to the item
+	 */
+	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
+	
+	/**
+	 * Keywords for the item
+	 */
+	@NotNull
+	@NonNull
+	private List<@NotBlank String> keywords = new ArrayList<>();
+	
+	//TODO:: get item at key
+	//TODO:: removes
 }

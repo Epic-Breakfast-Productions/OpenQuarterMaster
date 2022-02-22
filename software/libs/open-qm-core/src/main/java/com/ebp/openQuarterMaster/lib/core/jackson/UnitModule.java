@@ -17,37 +17,38 @@ import java.io.IOException;
  * Jackson module to handle the Mongodb ObjectId in a reasonable manner
  */
 public class UnitModule extends SimpleModule {
-    public UnitModule() {
-        super();
-        addSerializer(Unit.class, new UnitSerializer());
-        addDeserializer(Unit.class, new UnitDeserializer());
-    }
-    
-    public static class UnitSerializer extends JsonSerializer<Unit> {
-        
-        @Override
-        public void serialize(Unit value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            if (!UnitUtils.ALLOWED_UNITS.contains(value)) {
-                serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
-            } else {
-                gen.writeString(UnitUtils.stringFromUnit(value));
-            }
-        }
-    }
-    
-    public static class UnitDeserializer extends JsonDeserializer<Unit> {
-        
-        @Override
-        public Unit<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            Unit<?> output = UnitUtils.unitFromString(p.getValueAsString());
-            
-            if (output == null) {
-                output = (Unit<?>) ctxt.findNonContextualValueDeserializer(
-                    Utils.OBJECT_MAPPER.constructType(Unit.class)).deserialize(p, ctxt);
-            }
-            return output;
-        }
-    }
-
-
+	
+	public UnitModule() {
+		super();
+		addSerializer(Unit.class, new UnitSerializer());
+		addDeserializer(Unit.class, new UnitDeserializer());
+	}
+	
+	public static class UnitSerializer extends JsonSerializer<Unit> {
+		
+		@Override
+		public void serialize(Unit value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+			if (!UnitUtils.ALLOWED_UNITS.contains(value)) {
+				serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
+			} else {
+				gen.writeString(UnitUtils.stringFromUnit(value));
+			}
+		}
+	}
+	
+	public static class UnitDeserializer extends JsonDeserializer<Unit> {
+		
+		@Override
+		public Unit<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+			Unit<?> output = UnitUtils.unitFromString(p.getValueAsString());
+			
+			if (output == null) {
+				output = (Unit<?>) ctxt.findNonContextualValueDeserializer(
+					Utils.OBJECT_MAPPER.constructType(Unit.class)).deserialize(p, ctxt);
+			}
+			return output;
+		}
+	}
+	
+	
 }

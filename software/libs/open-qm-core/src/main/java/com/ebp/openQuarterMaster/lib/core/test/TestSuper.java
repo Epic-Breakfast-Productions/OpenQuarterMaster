@@ -12,19 +12,20 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 @Data
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TestOne.class, name = "ONE"),
-        @JsonSubTypes.Type(value = TestTwo.class, name = "TWO")
+	@JsonSubTypes.Type(value = TestOne.class, name = "ONE"),
+	@JsonSubTypes.Type(value = TestTwo.class, name = "TWO")
 })
 @BsonDiscriminator
 public class TestSuper<T> extends MainObject {
-    private final ClassType type;
-
-    private T value;
-
-    //for Lombok, never to be used
-    private TestSuper(){
-        this.type = null;
-    }
+	
+	private final ClassType type;
+	
+	private T value;
+	
+	//for Lombok, never to be used
+	private TestSuper() {
+		this.type = null;
+	}
 }

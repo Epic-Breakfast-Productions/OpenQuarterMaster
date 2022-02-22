@@ -1,7 +1,11 @@
 package com.ebp.openQuarterMaster.lib.core;
 
 import com.ebp.openQuarterMaster.lib.core.history.Historied;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotBlank;
@@ -16,19 +20,20 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MainObject extends Historied {
-    /**
-     * The id of this object in the Mongodb.
-     */
-    private ObjectId id;
-    /**
-     * Attributes this object might have, usable for any purpose.
-     */
-    private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
-
-    /**
-     * Keywords for the object
-     */
-    @NotNull
-    @NonNull
-    private List<@NotBlank String> keywords = new ArrayList<>();
+	
+	/**
+	 * The id of this object in the Mongodb.
+	 */
+	private ObjectId id;
+	/**
+	 * Attributes this object might have, usable for any purpose.
+	 */
+	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
+	
+	/**
+	 * Keywords for the object
+	 */
+	@NotNull
+	@NonNull
+	private List<@NotBlank String> keywords = new ArrayList<>();
 }

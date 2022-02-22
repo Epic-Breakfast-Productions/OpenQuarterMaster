@@ -13,6 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginResponse {
-    private String token;
-    private Instant expires;
+	
+	private String token;
+	private Instant expires;
 }

@@ -20,43 +20,43 @@ import java.util.List;
 @Data
 @ValidHeldStoredUnits
 public class AmountItem extends InventoryItem<List<@NotNull AmountStored>> {
-    
-    
-    /**
-     * The unit used to measure the item.
-     */
-    @NonNull
-    @ValidUnit
-    private Unit<?> unit = AbstractUnit.ONE;
-    
-    public AmountItem() {
-        super(StoredType.AMOUNT);
-    }
-    
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Override
-    public Quantity<?> recalcTotal() {
-        //TODO:: try parallel streams
-        Quantity<?> total = Quantities.getQuantity(0, this.getUnit());
-        for (List<AmountStored> storedList : this.getStorageMap().values()) {
-            for (AmountStored amtStored : storedList) {
-                Quantity amount = amtStored.getAmount();
-                if (amount == null) {
-                    continue;
-                }
-                total = total.add(amount);
-            }
-        }
-        this.setTotal(total);
-        return this.getTotal();
-    }
-
-    @Override
-    public long numStored() {
-        return this.getStorageMap()
-                .values()
-                .parallelStream()
-                .mapToLong(List::size)
-                .sum();
-    }
+	
+	
+	/**
+	 * The unit used to measure the item.
+	 */
+	@NonNull
+	@ValidUnit
+	private Unit<?> unit = AbstractUnit.ONE;
+	
+	public AmountItem() {
+		super(StoredType.AMOUNT);
+	}
+	
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	@Override
+	public Quantity<?> recalcTotal() {
+		//TODO:: try parallel streams
+		Quantity<?> total = Quantities.getQuantity(0, this.getUnit());
+		for (List<AmountStored> storedList : this.getStorageMap().values()) {
+			for (AmountStored amtStored : storedList) {
+				Quantity amount = amtStored.getAmount();
+				if (amount == null) {
+					continue;
+				}
+				total = total.add(amount);
+			}
+		}
+		this.setTotal(total);
+		return this.getTotal();
+	}
+	
+	@Override
+	public long numStored() {
+		return this.getStorageMap()
+				   .values()
+				   .parallelStream()
+				   .mapToLong(List::size)
+				   .sum();
+	}
 }

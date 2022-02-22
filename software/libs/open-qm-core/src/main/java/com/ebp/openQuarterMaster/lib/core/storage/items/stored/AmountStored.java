@@ -13,8 +13,9 @@ import javax.measure.Quantity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AmountStored extends Stored {
-    /**
-     * The amount of the thing stored.
-     */
-    private Quantity<?> amount = null;
+	
+	/**
+	 * The amount of the thing stored.
+	 */
+	private Quantity<?> amount = null;
 }

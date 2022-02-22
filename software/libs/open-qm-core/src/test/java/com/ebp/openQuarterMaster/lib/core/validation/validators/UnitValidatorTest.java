@@ -19,44 +19,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class UnitValidatorTest extends ObjectValidatorTest<UnitValidator> {
-
-    private static Stream<Arguments> validUnits() {
-        return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
-    }
-
-    private static Stream<Arguments> invalidUnits() {
-        return Stream.of(
-                Arguments.of(Units.AMPERE),
-                Arguments.of(Units.DAY),
-                Arguments.of(Units.CANDELA)
-        );
-    }
-
-    @BeforeEach
-    public void setUp() {
-        validator = new UnitValidator();
-    }
-
-    @Test
-    public void nullUnitTest() {
-        assertTrue(this.validator.isValid(null, null));
-    }
-
-    @ParameterizedTest(name = "validTest[{index}]")
-    @MethodSource("validUnits")
-    public void validTest(Unit testUnit) {
-        log.info("Testing that \"{}\" is considered a valid unit.", testUnit);
-        assertTrue(this.validator.isValid(testUnit, null));
-    }
-
-    @ParameterizedTest(name = "invalidTest[{index}]")
-    @MethodSource("invalidUnits")
-    public void invalidTest(Unit testUnit) {
-        log.info("Testing that {} is considered an invalid unit.", testUnit);
-        TestConstraintValidatorContext ctx = new TestConstraintValidatorContext();
-        boolean result = this.validator.isValid(testUnit, ctx);
-        assertFalse(result);
-        assertHasErrorMessages(ctx, "Invalid unit");
-    }
-
+	
+	private static Stream<Arguments> validUnits() {
+		return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
+	}
+	
+	private static Stream<Arguments> invalidUnits() {
+		return Stream.of(
+			Arguments.of(Units.AMPERE),
+			Arguments.of(Units.DAY),
+			Arguments.of(Units.CANDELA)
+		);
+	}
+	
+	@BeforeEach
+	public void setUp() {
+		validator = new UnitValidator();
+	}
+	
+	@Test
+	public void nullUnitTest() {
+		assertTrue(this.validator.isValid(null, null));
+	}
+	
+	@ParameterizedTest(name = "validTest[{index}]")
+	@MethodSource("validUnits")
+	public void validTest(Unit testUnit) {
+		log.info("Testing that \"{}\" is considered a valid unit.", testUnit);
+		assertTrue(this.validator.isValid(testUnit, null));
+	}
+	
+	@ParameterizedTest(name = "invalidTest[{index}]")
+	@MethodSource("invalidUnits")
+	public void invalidTest(Unit testUnit) {
+		log.info("Testing that {} is considered an invalid unit.", testUnit);
+		TestConstraintValidatorContext ctx = new TestConstraintValidatorContext();
+		boolean result = this.validator.isValid(testUnit, ctx);
+		assertFalse(result);
+		assertHasErrorMessages(ctx, "Invalid unit");
+	}
+	
 }
