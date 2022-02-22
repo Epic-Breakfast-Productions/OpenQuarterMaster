@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.ui;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
+import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
@@ -83,6 +84,10 @@ public class WebDriverWrapper implements Closeable {
 	int defaultWait;
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String baseUrl;
+	@ConfigProperty(name = "service.externalAuth.interactionBase")
+	String keycloakInteractionBase;
+	@ConfigProperty(name = "service.authMode")
+	AuthMode authMode;
 	@Inject
 	TestUserService testUserService;
 	
@@ -97,8 +102,10 @@ public class WebDriverWrapper implements Closeable {
 		log.info("Closing out web driver.");
 		DRIVER_SEMAPHORE.lock();
 		try {
-			getWebDriver().close();
+			getWebDriver().quit();
 			WEB_DRIVER = null;
+		} catch(Throwable e){
+			log.error("Failed to close web driver: ", e);
 		} finally {
 			DRIVER_SEMAPHORE.unlock();
 		}
@@ -111,7 +118,13 @@ public class WebDriverWrapper implements Closeable {
 		try {
 			WebDriver driver = getWebDriver();
 			if (this.quickClean) {
+				if(AuthMode.EXTERNAL.equals(this.authMode)){
+					driver.get(this.keycloakInteractionBase + "/logout");
+					driver.manage().deleteAllCookies();
+				}
+				this.goToIndex();
 				driver.manage().deleteAllCookies();
+				
 				driver.get("about:logo");
 				driver.navigate().refresh();
 			} else {

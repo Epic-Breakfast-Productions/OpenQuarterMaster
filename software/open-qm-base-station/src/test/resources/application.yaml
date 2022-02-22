@@ -23,7 +23,7 @@ test:
   profile: test
   selenium:
     headless: true
-    quickClean: false
+    quickClean: true
     defaultWait: 5 # seconds
 
 
