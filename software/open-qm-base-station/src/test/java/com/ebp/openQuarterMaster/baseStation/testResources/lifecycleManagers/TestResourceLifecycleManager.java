@@ -10,6 +10,10 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.KeysMetadataRepresentation;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import org.testcontainers.utility.DockerImageName;
@@ -22,6 +26,7 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.keycloak.crypto.KeyUse.SIG;
+import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 /**
  *
@@ -30,15 +35,19 @@ import static org.keycloak.crypto.KeyUse.SIG;
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
 	
 	public static final String EXTERNAL_AUTH_ARG = "externalAuth";
+	public static final String UI_TEST_ARG = "uiTest";
+	public static final String HOST_TESTCONTAINERS_INTERNAL = "host.testcontainers.internal";
 	
 	private static MongoDBContainer MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
+	private static BrowserWebDriverContainer<?> BROWSER_CONTAINER = null;
 	
-	//    static {
-	//        new Thread(WebDriverWrapper::initDriver).start();
-	//    }
+	static {
+		Testcontainers.exposeHostPorts(8081, 8085);
+	}
 	
 	private boolean externalAuth = false;
+	private boolean uiTest = false;
 	
 	public synchronized Map<String, String> startKeycloakTestServer() {
 		if (!this.externalAuth) {
@@ -50,9 +59,17 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		} else {
 			StopWatch sw = StopWatch.createStarted();
 			
+//			Consumer<CreateContainerCmd> cmd = e->e.withPortBindings(new PortBinding(
+//				Ports.Binding.bindPort(80),
+//				new ExposedPort(8085)
+//			));
+			//			HostConfig config = new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(80), new ExposedPort(8085)));
 			KEYCLOAK_CONTAINER = new KeycloakContainer()
+//				.withCreateContainerCmdModifier(cmd)
 				.withRealmImportFile("keycloak-realm.json");
 			KEYCLOAK_CONTAINER.start();
+			
+			Testcontainers.exposeHostPorts(KEYCLOAK_CONTAINER.getHttpPort());
 			
 			sw.stop();
 			log.info(
@@ -120,11 +137,17 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			throw new IllegalStateException("Failed to create public key file", e);
 		}
 		
-		String keycloakUrl = KEYCLOAK_CONTAINER.getAuthServerUrl().replace("/auth", "");
+		String authServerUrl = KEYCLOAK_CONTAINER.getAuthServerUrl();
+		
+		if (uiTest) {
+			authServerUrl = authServerUrl.replace("localhost", HOST_TESTCONTAINERS_INTERNAL);
+		}
+		
+		String keycloakUrl = authServerUrl.replace("/auth", "");
 		
 		return Map.of(
 			"test.keycloak.url", keycloakUrl,
-			"test.keycloak.authUrl", KEYCLOAK_CONTAINER.getAuthServerUrl(),
+			"test.keycloak.authUrl", authServerUrl,
 			"test.keycloak.adminName", KEYCLOAK_CONTAINER.getAdminUsername(),
 			"test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
 			"service.externalAuth.url", keycloakUrl,
@@ -149,6 +172,29 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		);
 	}
 	
+	public synchronized Map<String, String> startSeleniumWebDriverServer() {
+		if (!this.uiTest) {
+			log.info("Tests not asking for ui.");
+			return Map.of();
+		}
+		if (BROWSER_CONTAINER == null || !BROWSER_CONTAINER.isRunning()) {
+			
+			File recordingDir = new File("build/seleniumRecordings/");
+			
+			recordingDir.mkdir();
+			
+			BROWSER_CONTAINER = new BrowserWebDriverContainer<>()
+				.withCapabilities(new FirefoxOptions())
+				//									.withAccessToHost(true)
+				.withRecordingMode(RECORD_ALL, recordingDir);
+			BROWSER_CONTAINER.start();
+		}
+		return Map.of(
+			"runningInfo.hostname",
+			HOST_TESTCONTAINERS_INTERNAL
+		);
+	}
+	
 	public static synchronized void stopMongoTestServer() {
 		if (MONGO_EXE == null) {
 			log.warn("Mongo was not started.");
@@ -167,10 +213,35 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		KEYCLOAK_CONTAINER = null;
 	}
 	
+	public static synchronized void stopSeleniumTestServer() {
+		if (BROWSER_CONTAINER == null) {
+			log.warn("Web browser was not started.");
+			return;
+		}
+		BROWSER_CONTAINER.stop();
+		BROWSER_CONTAINER = null;
+	}
+	
+	public static WebDriver getWebDriver() {
+		if (BROWSER_CONTAINER == null) {
+			log.error("No browser started.");
+			return null;
+		}
+		log.info("Getting web driver.");
+		try {
+			WebDriver driver = BROWSER_CONTAINER.getWebDriver();
+			log.info("Got web driver.");
+			return driver;
+		} catch(Exception e) {
+			log.error("Failed to get web driver: ", e);
+			throw e;
+		}
+	}
 	
 	@Override
 	public void init(Map<String, String> initArgs) {
 		this.externalAuth = Boolean.parseBoolean(initArgs.getOrDefault(EXTERNAL_AUTH_ARG, Boolean.toString(this.externalAuth)));
+		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(UI_TEST_ARG, Boolean.toString(this.uiTest)));
 	}
 	
 	@Override
@@ -180,6 +251,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		
 		configOverride.putAll(startMongoTestServer());
 		configOverride.putAll(startKeycloakTestServer());
+		configOverride.putAll(startSeleniumWebDriverServer());
 		
 		log.info("Config overrides: {}", configOverride);
 		
@@ -191,5 +263,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		log.info("STOPPING test lifecycle resources.");
 		stopMongoTestServer();
 		stopKeycloakTestServer();
+		stopSeleniumTestServer();
 	}
 }

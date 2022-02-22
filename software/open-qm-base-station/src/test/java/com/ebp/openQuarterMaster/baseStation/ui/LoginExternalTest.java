@@ -28,7 +28,14 @@ import static com.mongodb.assertions.Assertions.assertTrue;
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, initArgs = @ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"), restrictToAnnotatedClass = true)
+@QuarkusTestResource(
+	value = TestResourceLifecycleManager.class,
+	initArgs = {
+		@ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"),
+		@ResourceArg(name = TestResourceLifecycleManager.UI_TEST_ARG, value = "true")
+	},
+	restrictToAnnotatedClass = true
+)
 public class LoginExternalTest extends WebUiTest {
 	
 	@Inject
@@ -74,11 +81,15 @@ public class LoginExternalTest extends WebUiTest {
 		
 		this.webDriverWrapper.waitForPageLoad();
 		
+		log.info(
+			"Login link url: {}",
+			this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).getAttribute("href")
+		);
+		
 		this.webDriverWrapper.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
 		
-		log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
-		
 		this.webDriverWrapper.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+		log.info("Went to keycloak at: {}", this.webDriverWrapper.getWebDriver().getCurrentUrl());
 		this.webDriverWrapper.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
 		
 		this.webDriverWrapper.findElement(KeycloakLogin.LOGIN_BUTTON).click();

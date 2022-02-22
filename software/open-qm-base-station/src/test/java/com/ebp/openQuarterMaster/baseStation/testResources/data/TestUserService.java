@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.HOST_TESTCONTAINERS_INTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.SELF;
 
@@ -112,7 +113,7 @@ public class TestUserService {
 		} else if (EXTERNAL.equals(this.authMode)) {
 			try (
 				Keycloak keycloak = KeycloakBuilder.builder()
-												   .serverUrl(ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class))
+												   .serverUrl(ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class).replace(HOST_TESTCONTAINERS_INTERNAL, "localhost"))
 												   .realm("master")
 												   .grantType(OAuth2Constants.PASSWORD)
 												   .clientId("admin-cli")

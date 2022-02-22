@@ -22,7 +22,7 @@ quarkus:
 test:
   profile: test
   selenium:
-    headless: true
+    headless: false
     quickClean: false
     defaultWait: 5 # seconds
 

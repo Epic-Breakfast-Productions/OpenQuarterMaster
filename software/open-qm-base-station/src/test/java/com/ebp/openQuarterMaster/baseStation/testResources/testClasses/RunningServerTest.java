@@ -42,7 +42,7 @@ public abstract class RunningServerTest extends WebServerTest {
 					log.warn("Cannot access field: {}. ", curField, e);
 					return (WebDriverWrapper) null;
 				}
-				log.debug("Value: {}", cur);
+				log.debug("Value: {}", cur.getClass());
 				
 				if (WebDriverWrapper.class.isAssignableFrom(cur.getClass())) {
 					log.debug("Was regular WebDriverWrapper!");
@@ -52,7 +52,7 @@ public abstract class RunningServerTest extends WebServerTest {
 				return (WebDriverWrapper) null;
 			}).collect(Collectors.toList())
 		);
-		log.info("Found {} web driver wrappers: {}", webDriverWrapperList.size(), webDriverWrapperList);
+		log.info("Found {} web driver wrappers.", webDriverWrapperList.size());
 		
 		for (WebDriverWrapper curWrapper : webDriverWrapperList) {
 			if (curWrapper == null) {
