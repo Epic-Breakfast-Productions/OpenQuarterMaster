@@ -1,13 +1,20 @@
 package com.ebp.openQuarterMaster.baseStation.ui;
 
 import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.ws.rs.core.SecurityContext;
+import java.time.ZonedDateTime;
 
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
@@ -63,6 +70,28 @@ public abstract class UiProvider {
 		log.info("Got response from keycloak on token refresh request: {}", response);
 		
 		return response;
+	}
+	
+	protected TemplateInstance setupPageTemplate(Template template) {
+		return template
+			.data("generateDatetime", ZonedDateTime.now())
+			.data("dateTimeFormatter", UiUtils.DATE_TIME_FORMATTER);
+	}
+	
+	protected TemplateInstance setupPageTemplate(Template template, UserGetResponse userInfo) {
+		return this.setupPageTemplate(template).data(USER_INFO_DATA_KEY, userInfo);
+	}
+	
+	protected TemplateInstance setupPageTemplate(
+		Template template,
+		UserGetResponse userInfo,
+		SearchResult<?> searchResults,
+		PagingOptions pageOptions
+	) {
+		return this.setupPageTemplate(template, userInfo)
+				   .data("showSearch", searchResults.isHadSearchQuery())
+				   .data("searchResult", searchResults)
+				   .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults));
 	}
 	
 }

@@ -26,6 +26,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
+
 @Slf4j
 //@RequestScoped
 @ApplicationScoped
@@ -118,7 +120,7 @@ public class WebDriverWrapper implements Closeable {
 		try {
 			WebDriver driver = getWebDriver();
 			if (this.quickClean) {
-				if(AuthMode.EXTERNAL.equals(this.authMode)){
+				if(EXTERNAL.equals(this.authMode)){
 					driver.get(this.keycloakInteractionBase + "/logout");
 					driver.manage().deleteAllCookies();
 				}
@@ -178,7 +180,12 @@ public class WebDriverWrapper implements Closeable {
 		
 		this.waitForPageLoad();
 		
-		this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+		if(EXTERNAL.equals(this.authMode)) {
+			this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+		} else {
+			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
+			this.getWebDriver().findElement(Root.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+		}
 		this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
 		this.waitForPageLoad();
 	}

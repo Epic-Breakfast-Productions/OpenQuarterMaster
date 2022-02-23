@@ -88,16 +88,13 @@ public class Index extends UiProvider {
 			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 			
 			responseBuilder.entity(
-				index
-					.data("pageLoadTimestamp", getLoadTimestamp())
+				this.setupPageTemplate(index)
 					.data("signInLink", signInLinkBuilder.build())
 			).cookie(
 				UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
 			);
 		} else {
-			responseBuilder.entity(
-				index.data("pageLoadTimestamp", getLoadTimestamp())
-			);
+			responseBuilder.entity(this.setupPageTemplate(index));
 		}
 		
 		return responseBuilder.build();
