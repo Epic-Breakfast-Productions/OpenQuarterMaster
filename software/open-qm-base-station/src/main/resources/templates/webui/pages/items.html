@@ -40,8 +40,8 @@
         </table>
     </div>
 </div>
-{#unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
-{/unitOptionsHidden}
+{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
+{/inputs/units/unitOptionsHidden}
 {/pageContent}
 {#modals}
 {#modal id='addEdit' large=true title='Item add/edit'}
@@ -74,8 +74,8 @@
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
             <select class="form-select" id="addEditUnitInput">
-                {#unitOptions}
-                {/unitOptions}
+                {#inputs/units/unitOptionsGroups}
+                {/inputs/units/unitOptionsGroups}
             </select>
         </div>
     </div>

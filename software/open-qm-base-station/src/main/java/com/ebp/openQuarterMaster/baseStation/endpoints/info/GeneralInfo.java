@@ -2,6 +2,10 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.info;
 
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -13,13 +17,19 @@ import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.measure.Unit;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Variant;
+import java.util.List;
 import java.util.Map;
 
 @Traced
@@ -28,6 +38,14 @@ import java.util.Map;
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
 @ApplicationScoped
 public class GeneralInfo extends EndpointProvider {
+	
+	@Inject
+	ObjectMapper mapper;
+	
+	@Inject
+	@Location("tags/inputs/units/unitOptions")
+	Template optionsTemplate;
+	
 	//
 	//    @Inject
 	//    ServerInfoBean infoBean;
@@ -74,14 +92,74 @@ public class GeneralInfo extends EndpointProvider {
 			)
 		)
 	)
-	//    @SecurityRequirement(name = "JwtAuth")
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUnits(@Context SecurityContext ctx) {
+	public Map<String, List<Unit<?>>> getUnits(@Context SecurityContext ctx) {
 		log.info("Getting valid unit list.");
-		return Response.ok(
-			UnitUtils.ALLOWED_UNITS_MAP
-		).build();
+		return UnitUtils.ALLOWED_UNITS_MAP;
 	}
+	
+	@GET
+	@Path("unitCompatibility")
+	@Operation(
+		summary = "Gets the set of compatible units."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the list.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				//TODO: better
+				implementation = Map.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<Unit<?>, List<Unit<?>>> getUnitCompatibleMap(@Context SecurityContext ctx) {
+		log.info("Getting unit set with lists of compatible units.");
+		return UnitUtils.UNIT_COMPATIBILITY_MAP;
+	}
+	
+	@GET
+	@Path("unitCompatibility/{unit}")
+	@Operation(
+		summary = "Gets the compatible units of the unit given"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the list.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				//TODO: better
+				implementation = Map.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Response getUnitCompatible(
+		@Context SecurityContext ctx,
+		@HeaderParam("accept") String acceptHeaderVal,
+		@PathParam("unit") String unit
+	) throws JsonProcessingException {
+		log.info("Getting unit set with lists of compatible units. Accept header: {}", acceptHeaderVal);
+		List<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(mapper.readValue(unit, Unit.class));
+		
+		switch (acceptHeaderVal == null? "" : acceptHeaderVal.strip()){
+			case MediaType.APPLICATION_JSON:
+			case "":
+				return Response.ok(units).build();
+			case MediaType.TEXT_HTML:
+				return Response.ok(
+					optionsTemplate.data("units", units)
+				).build();
+			default:
+				return Response.notAcceptable(Variant.encodings(MediaType.APPLICATION_JSON, MediaType.TEXT_HTML).build()).build();
+		}
+	}
+	
 	
 }
