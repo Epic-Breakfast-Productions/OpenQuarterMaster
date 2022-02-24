@@ -30,9 +30,19 @@ class GeneralInfoTest extends RunningServerTest {
 	
 	@ParameterizedTest
 	@MethodSource("getUnitsArgs")
-	public void testGetCompatibleUnits(Unit<?> unit) throws JsonProcessingException {
+	public void testGetCompatibleUnitsJson(Unit<?> unit) throws JsonProcessingException {
 		given()
 			.accept(MediaType.APPLICATION_JSON)
+			.get("unitCompatibility/" + mapper.writeValueAsString(unit))
+			.then()
+			.statusCode(200);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getUnitsArgs")
+	public void testGetCompatibleUnitsHtml(Unit<?> unit) throws JsonProcessingException {
+		given()
+			.accept(MediaType.TEXT_HTML)
 			.get("unitCompatibility/" + mapper.writeValueAsString(unit))
 			.then()
 			.statusCode(200);
