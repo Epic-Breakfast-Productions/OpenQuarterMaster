@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Traced
@@ -108,6 +107,6 @@ public class Index extends UiProvider {
 		@Context SecurityContext securityContext
 	) {
 		logRequestContext(jwt, securityContext);
-		return accountCreate.data("pageLoadTimestamp", getLoadTimestamp());
+		return this.setupPageTemplate(accountCreate);
 	}
 }

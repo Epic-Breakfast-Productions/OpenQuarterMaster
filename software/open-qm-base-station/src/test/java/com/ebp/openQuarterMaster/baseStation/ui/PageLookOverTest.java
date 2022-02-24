@@ -23,7 +23,11 @@ public class PageLookOverTest extends WebUiTest {
 	@Inject
 	WebDriverWrapper webDriverWrapper;
 	
-	private static final String[] PAGES = new String[]{
+	private static final String[] PRE_LOGIN_PAGES = new String[]{
+		"/accountCreate"
+	};
+	
+	private static final String[] LOGGED_IN_PAGES = new String[]{
 		"/overview",
 		"/images",
 		"/storage",
@@ -37,9 +41,15 @@ public class PageLookOverTest extends WebUiTest {
 	public void testPages() {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
+		for (String curPage : PRE_LOGIN_PAGES) {
+			log.info("Attempting page: {}", curPage);
+			this.webDriverWrapper.goTo(curPage);
+			this.webDriverWrapper.waitForPageLoad();
+		}
+		
 		this.webDriverWrapper.loginUser(testUser);
 		
-		for (String curPage : PAGES) {
+		for (String curPage : LOGGED_IN_PAGES) {
 			log.info("Attempting page: {}", curPage);
 			this.webDriverWrapper.goTo(curPage);
 			this.webDriverWrapper.waitForPageLoad();
