@@ -3,6 +3,7 @@ package com.ebp.openQuarterMaster.lib.core;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.UnitValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -79,6 +80,11 @@ class UnitUtilsTest {
 		
 		assertEquals(unit, deserialized);
 		assertTrue(this.unitValidator.isValid(deserialized, null));
+	}
+	
+	@Test
+	public void testUnitCompatibilityMap() {
+		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
 	}
 	
 	//TODO:: figure out how to serialize invalid units

@@ -87,9 +87,22 @@ public class UnitUtils {
 	
 	public static final List<Unit<?>> ALLOWED_UNITS = new ArrayList<>();
 	
+	public static final Map<Unit<?>, List<Unit<?>>> UNIT_COMPATIBILITY_MAP = new LinkedHashMap<>();
+	
 	static {
 		for (List<Unit<?>> curList : ALLOWED_UNITS_MAP.values()) {
 			ALLOWED_UNITS.addAll(curList);
+		}
+		for (Unit<?> curUnit : ALLOWED_UNITS) {
+			List<Unit<?>> compatibleList = new ArrayList<>();
+			
+			for (Unit<?> curComparison : ALLOWED_UNITS) {
+				if (curUnit.isCompatible(curComparison)) {
+					compatibleList.add(curComparison);
+				}
+			}
+			
+			UNIT_COMPATIBILITY_MAP.put(curUnit, compatibleList);
 		}
 	}
 	

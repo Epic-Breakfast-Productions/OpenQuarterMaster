@@ -20,7 +20,6 @@ public class Base64Validator extends Validator<ValidBase64, String> {
 				errs.add("Invalid base 64 string.");
 			}
 		}
-		
 		return this.processValidationResults(errs, constraintValidatorContext);
 	}
 }
