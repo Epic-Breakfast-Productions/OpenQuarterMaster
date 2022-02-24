@@ -58,7 +58,7 @@
     <div class="mb-3 row">
         <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditStoredTypeInput" onchange="addEditStoredTypeInputChanged()">
+            <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT" onchange="addEditStoredTypeInputChanged()">
                 <option value="AMOUNT" selected>Amount</option>
                 <option value="TRACKED">Tracked</option>
             </select>
@@ -70,7 +70,7 @@
             <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
         </div>
     </div>
-    <div class="mb-3 row">
+    <div class="mb-3 row" id="unitNameRow">
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
             <select class="form-select" id="addEditUnitInput">
@@ -79,6 +79,7 @@
             </select>
         </div>
     </div>
+    <hr />
     <div class="mb-3 row">
         <div class="col-sm-2 col-form-label">Stored</div>
         <div class="col-sm-10">
@@ -92,6 +93,7 @@
             </div>
         </div>
     </div>
+    <hr />
     {#search/image/imageSelectFormInput}
     {/search/image/imageSelectFormInput}
     {#inputs/keywordInput}
@@ -159,7 +161,9 @@
 {#pageScript}
 
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
+var unitNameRow = $('#unitNameRow');
 var addEditStoredTypeInput = $('#addEditStoredTypeInput');
+var storedContainer = $('#storedContainer');
 
 function resetAddEditForm(){
 }
@@ -169,25 +173,32 @@ function setupAddEditForAdd(){
 }
 
 function setIdAttField(){
+    storedContainer.html("");
     if(addEditStoredTypeInput[0].value == "AMOUNT"){
         trackedItemIdentifierNameRow.hide();
+        unitNameRow.show();
+        addEditStoredTypeInput.attr('data-current', "AMOUNT");
     } else {
+        unitNameRow.hide();
         trackedItemIdentifierNameRow.show();
+        addEditStoredTypeInput.attr('data-current', "TRACKED");
     }
 }
 
 function addEditStoredTypeInputChanged(){
-    setIdAttField();
-
-    if(addEditStoredTypeInput[0].value == "AMOUNT"){
-        trackedItemIdentifierNameRow.hide();
-    } else {
-        trackedItemIdentifierNameRow.show();
+    if(storedContainer.children().length > 0 && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
+        addEditStoredTypeInput.val(
+            addEditStoredTypeInput.attr('data-current')
+        );
+        return;
     }
+    
+    setIdAttField();
 }
 
 function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
-    alert("Selected " + blockName);
+    console.log("Selected " + blockId + " - " + blockName);
+    storedContainer.append($("<div>"+blockName+"</div>"));
 }
 
 
