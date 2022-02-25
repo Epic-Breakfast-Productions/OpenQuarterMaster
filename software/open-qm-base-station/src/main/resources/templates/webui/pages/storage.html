@@ -194,9 +194,8 @@ Accepts:
 <script src="/lib/treant-js/Treant.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
-    {#pageScript}
-{!
-<script> !}
+{#pageScript}
+<script>
 fillInQueryForm($("#mainStorageSearch"));
 
 function removeStorageBlock(blockId){
@@ -456,8 +455,7 @@ function setupView(blockId){
 }
 
 showTree("#mainTreeChart");
-{!
-</script> !}
+</script>
 {/pageScript}
 
     {/include}

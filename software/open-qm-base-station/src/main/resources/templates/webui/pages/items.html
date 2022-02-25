@@ -87,7 +87,7 @@
 
             </div>
             <div class="col d-grid gap-2">
-                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
+                <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
                     <i class="fas fa-plus"></i> Add Associated Storage
                 </button>
             </div>
@@ -159,7 +159,7 @@
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
-
+<script>
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
 var addEditStoredTypeInput = $('#addEditStoredTypeInput');
@@ -196,12 +196,34 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
-function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
-    console.log("Selected " + blockId + " - " + blockName);
-    storedContainer.append($("<div>"+blockName+"</div>"));
+function addStorageBlockAccord(blockName, blockId){
+    var accordId = "storageAssoc-" + blockId;
+    //TODO:: check for id already existing
+    //TODO:: move root accord to container
+    var accordHeaderId = accordId + "-header";
+    var accordCollapseId = accordId + "-collapse";
+    storedContainer.append(
+    $('<div class="col accordion mt-2" id="'+accordId+'">\n' +
+      '    <div class="accordion-item">\n'+
+      '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
+      '            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
+      '              '+blockName+'\n'+
+      '            </button>\n'+
+      '        </h2>\n'+
+      '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#'+accordId+'">\n' +
+      '            <div class="accordion-body">\n'+
+      '                \n'+
+      '            </div>\n'+
+      '        </div>\n'+
+      '    </div>\n'+
+      '</div>'
+    ));
 }
 
-
-
+function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
+    console.log("Selected " + blockId + " - " + blockName);
+    addStorageBlockAccord(blockName, blockId);
+}
+</script>
 {/pageScript}
 {/include}

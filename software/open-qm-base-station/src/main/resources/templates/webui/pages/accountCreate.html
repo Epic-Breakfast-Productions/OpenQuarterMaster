@@ -40,6 +40,7 @@
 </div>
 {/pageContent}
 {#pageScript}
+    <script>
 assertNotLoggedIn();
 
 $("#userAccountCreateForm").submit(function(event){
@@ -89,6 +90,6 @@ addMessageToDiv($("#createMessageDiv"), "warning", errMessages, "Failed to regis
 });
 console.log("Done.");
 });
-
+    </script>
 {/pageScript}
 {/include}

@@ -48,8 +48,7 @@
 
 {/pageContent}
 {#pageScript}
-{!
-<script> // !}
+<script>
 assertNotLoggedIn();
 
 var signInForm = $("#signInForm");
@@ -80,8 +79,6 @@ addMessage("danger", "Login failed", "Login Failed", null);
 login(result, rememberUser);
 }
 });
-
-{!
-</script> !}
+</script>
 {/pageScript}
 {/include}
