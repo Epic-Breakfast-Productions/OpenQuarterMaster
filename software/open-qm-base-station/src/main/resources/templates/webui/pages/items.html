@@ -83,7 +83,7 @@
     <div class="mb-3 row">
         <div class="col-sm-2 col-form-label">Stored</div>
         <div class="col-sm-10">
-            <div id="storedContainer">
+            <div class="accordion mt-2" id="storedContainer">
 
             </div>
             <div class="col d-grid gap-2">
@@ -199,24 +199,22 @@ function addEditStoredTypeInputChanged(){
 function addStorageBlockAccord(blockName, blockId){
     var accordId = "storageAssoc-" + blockId;
     //TODO:: check for id already existing
-    //TODO:: move root accord to container
     var accordHeaderId = accordId + "-header";
     var accordCollapseId = accordId + "-collapse";
     storedContainer.append(
-    $('<div class="col accordion mt-2" id="'+accordId+'">\n' +
-      '    <div class="accordion-item">\n'+
+    $('   <div class="accordion-item" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
-      '            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
-      '              '+blockName+'\n'+
+      '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
+      '                <img class="accordion-thumb" src="/api/media/image/forStorageBlock/'+blockId+'">\n'+
+      '                '+blockName+'\n'+
       '            </button>\n'+
       '        </h2>\n'+
-      '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#'+accordId+'">\n' +
+      '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
       '            <div class="accordion-body">\n'+
       '                \n'+
       '            </div>\n'+
       '        </div>\n'+
-      '    </div>\n'+
-      '</div>'
+      '    </div>\n'
     ));
 }
 

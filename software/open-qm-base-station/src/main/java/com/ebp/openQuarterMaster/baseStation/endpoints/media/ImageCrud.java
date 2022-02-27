@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.media;
 
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.ImageService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
@@ -10,6 +11,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
+import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
@@ -47,6 +49,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Base64;
 import java.util.List;
 
@@ -61,6 +65,8 @@ public class ImageCrud extends EndpointProvider {
 	ImageService imageService;
 	@Inject
 	UserService userService;
+	@Inject
+	StorageBlockService storageBlockService;
 	@Inject
 	JsonWebToken jwt;
 	@Inject
@@ -302,7 +308,7 @@ public class ImageCrud extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Storage block updated.",
+		description = "Image updated.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -370,4 +376,56 @@ public class ImageCrud extends EndpointProvider {
 		return Response.status(Response.Status.OK).entity(output).build();
 	}
 	
+	@GET
+	@Path("forStorageBlock/{id}")
+	@Operation(
+		summary = "Gets the image data for the first image held of a storage block."
+	)
+	//    @APIResponse(
+	//            responseCode = "200",
+	//            description = "Image retrieved."
+	////            content = @Content( //TODO
+	//            )
+	//    )
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	//    @Produces(MediaType.)//TODO
+	@RolesAllowed("user")
+	public Response getImageDataForStorageBlock(
+		@Context SecurityContext securityContext,
+		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
+	) throws URISyntaxException {
+		logRequestContext(this.jwt, securityContext);
+		log.info("Retrieving image for storage block of id \"{}\"", id);
+		
+		StorageBlock storageBlock = this.storageBlockService.get(id);
+		
+		if (storageBlock == null) {
+			log.info("Storage Block not found.");
+			return Response.status(Response.Status.NOT_FOUND).entity("Storage block not found.").build();
+		}
+		
+		if (storageBlock.getImageIds().isEmpty()) {
+			log.info("Storage block has no images. Returning blank placeholder image.");
+			return Response.seeOther(new URI("/media/empty.svg")).build();
+		}
+		
+		ObjectId imageId = storageBlock.getImageIds().get(0);
+		
+		Image output = this.imageService.get(imageId);
+		
+		if (output == null) {
+			log.info("Image not found.");
+			return Response.status(Response.Status.NOT_FOUND).entity("Image not found.").build();
+		}
+		
+		log.info("Image found");
+		return Response.status(Response.Status.OK)
+					   .entity(Base64.getDecoder().decode(output.getData()))
+					   .type("image/" + output.getType())
+					   .build();
+	}
 }
