@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +18,13 @@ import java.util.stream.Stream;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class, restrictToAnnotatedClass = true)
+@QuarkusTestResource(
+	value = TestResourceLifecycleManager.class,
+	initArgs = {
+		@ResourceArg(name = TestResourceLifecycleManager.UI_TEST_ARG, value = "true")
+	},
+	restrictToAnnotatedClass = true
+)
 public class PageLookOverTest extends WebUiTest {
 	
 	public static Stream<Arguments> getPages(){

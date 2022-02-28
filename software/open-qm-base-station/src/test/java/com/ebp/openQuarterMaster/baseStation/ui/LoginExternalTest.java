@@ -14,10 +14,13 @@ import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.lifecycle.TestDescription;
 
 import javax.inject.Inject;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.LocationAssertions.assertOnPage;
@@ -43,6 +46,11 @@ public class LoginExternalTest extends WebUiTest {
 	
 	@Inject
 	WebDriverWrapper webDriverWrapper;
+	
+	@AfterEach
+	public void after(TestDescription description, Optional<Throwable> throwable){
+		TestResourceLifecycleManager.triggerRecord(description, throwable);
+	}
 	
 	@Test
 	public void testLogin() throws InterruptedException {

@@ -16,6 +16,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.lifecycle.TestDescription;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import org.testcontainers.utility.DockerImageName;
 
@@ -24,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.keycloak.crypto.KeyUse.SIG;
@@ -240,7 +242,12 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		}
 	}
 	
-	@Override
+	
+	public static void triggerRecord(TestDescription description, Optional<Throwable> throwable) {
+		BROWSER_CONTAINER.afterTest(description, throwable);
+	}
+		
+		@Override
 	public void init(Map<String, String> initArgs) {
 		this.externalAuth = Boolean.parseBoolean(initArgs.getOrDefault(EXTERNAL_AUTH_ARG, Boolean.toString(this.externalAuth)));
 		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(UI_TEST_ARG, Boolean.toString(this.uiTest)));
