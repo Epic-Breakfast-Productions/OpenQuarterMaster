@@ -198,7 +198,13 @@ function addEditStoredTypeInputChanged(){
 
 function addStorageBlockAccord(blockName, blockId){
     var accordId = "storageAssoc-" + blockId;
-    //TODO:: check for id already existing
+    var existantAccord = storedContainer.find("#" + accordId);
+    if(existantAccord.length){
+        console.log("Already had association with storage block " + blockId);
+        //TODO:: open block section instead of alerting
+        alert("Storage block already present.");
+        return;
+    }
     var accordHeaderId = accordId + "-header";
     var accordCollapseId = accordId + "-collapse";
     storedContainer.append(
