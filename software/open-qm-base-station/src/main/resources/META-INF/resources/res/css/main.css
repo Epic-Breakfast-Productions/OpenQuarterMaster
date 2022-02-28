@@ -64,5 +64,6 @@
 	width: 40px;
 	display: inline;
 	margin-right: 5px;
+	border-radius: 2px;
 	/*border: 1px solid black;*/
 }

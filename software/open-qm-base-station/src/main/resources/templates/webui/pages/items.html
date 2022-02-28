@@ -196,37 +196,76 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
+function addNewAmountStored(formContentId){
+    alert('Adding amount form listing');
+}
+function addNewTrackedStored(formContentId){
+    alert('Adding tracked form listing');
+}
+
+
 function addStorageBlockAccord(blockName, blockId){
-    var accordId = "storageAssoc-" + blockId;
+    var accordId = "addEditItemStorageAssoc-" + blockId;
     var existantAccord = storedContainer.find("#" + accordId);
     if(existantAccord.length){
         console.log("Already had association with storage block " + blockId);
         //TODO:: open block section instead of alerting
         alert("Storage block already present.");
-        return;
+        return null;
     }
     var accordHeaderId = accordId + "-header";
     var accordCollapseId = accordId + "-collapse";
-    storedContainer.append(
+    var accordBodyId = accordId + "-body";
+    var accordFormContentId = accordId + "-formContent";
+    var accordButtonWrapperId = accordId + "-formAddButtonWraper";
+    
+    var newStorage =
     $('   <div class="accordion-item" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
-      '                <img class="accordion-thumb" src="/api/media/image/forStorageBlock/'+blockId+'">\n'+
+      '                <img class="accordion-thumb" src="/api/media/image/forStorageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
       '                '+blockName+'\n'+
       '            </button>\n'+
       '        </h2>\n'+
       '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
-      '            <div class="accordion-body">\n'+
-      '                \n'+
+      '            <div class="accordion-body" id="'+accordBodyId+'">\n'+
+      '                <div id="'+accordFormContentId+'" class="row"></div>\n'+
+      '                <div id="'+accordButtonWrapperId+'" class="col d-grid gap-2"></div>\n'+
       '            </div>\n'+
       '        </div>\n'+
       '    </div>\n'
-    ));
+    );
+    storedContainer.append(newStorage);
+    var newAccordBody = newStorage.find("#" + accordBodyId);
+    
+    switch (addEditStoredTypeInput[0].value){
+        case "AMOUNT":
+            console.log("Setting up storage for AMOUNT");
+            
+            newAccordBody.find("#"+accordButtonWrapperId).append($(
+                '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\');">\n'+
+                '    <i class="fas fa-plus"></i> Add\n'+
+                '</button>'
+            ));
+            break;
+        case "TRACKED":
+            console.log("Setting up storage for TRACKED");
+            newAccordBody.find("#"+accordButtonWrapperId).append($(
+                    '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewTrackedStored(\''+accordFormContentId+'\');">\n'+
+                    '    <i class="fas fa-plus"></i> Add\n'+
+                    '</button>'
+            ));
+            break;
+    }
+    
+    return newAccordBody;
 }
 
 function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
     console.log("Selected " + blockId + " - " + blockName);
-    addStorageBlockAccord(blockName, blockId);
+    var newStorageBody = addStorageBlockAccord(blockName, blockId);
+    
+    
 }
 </script>
 {/pageScript}
