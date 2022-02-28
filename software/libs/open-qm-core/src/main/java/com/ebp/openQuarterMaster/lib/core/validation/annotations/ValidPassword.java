@@ -8,7 +8,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -21,9 +23,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = PasswordConstraintValidator.class)
 @Documented
 public @interface ValidPassword {
-    String message() default "Password did not meet strength and complexity requirements.";
-
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
+	
+	String message() default "Password did not meet strength and complexity requirements.";
+	
+	Class<?>[] groups() default {};
+	
+	Class<? extends Payload>[] payload() default {};
 }

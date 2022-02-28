@@ -1,6 +1,5 @@
 package com.ebp.openQuarterMaster.lib.core.testUtils;
 
-import com.github.javafaker.Bool;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -12,30 +11,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public abstract class ObjectValidatorTest<T> {
-
-    protected T validator;
-
-    protected static void assertHasErrorMessages(TestConstraintValidatorContext ctx, String... message){
-        Map<String, Boolean> foundMap = new HashMap<>();
-
-        log.debug("Got error message(s): {}", ctx.getErrorMessages());
-        for(String curExpected : message) {
-            foundMap.put(curExpected, false);
-            for (String curErr : ctx.getErrorMessages()) {
-                if (curErr.contains(curExpected)) {
-                    foundMap.put(curExpected, true);
-                }
-            }
-        }
-        List<String> notFound = new ArrayList<>(foundMap.size());
-
-        for(Map.Entry<String, Boolean> curExpected : foundMap.entrySet()){
-            if(!curExpected.getValue()){
-                notFound.add(curExpected.getKey());
-            }
-        }
-
-        assertTrue(notFound.isEmpty(), "Error message not found: " + notFound.toString());
-    }
-
+	
+	protected T validator;
+	
+	protected static void assertHasErrorMessages(TestConstraintValidatorContext ctx, String... message) {
+		Map<String, Boolean> foundMap = new HashMap<>();
+		
+		log.debug("Got error message(s): {}", ctx.getErrorMessages());
+		for (String curExpected : message) {
+			foundMap.put(curExpected, false);
+			for (String curErr : ctx.getErrorMessages()) {
+				if (curErr.contains(curExpected)) {
+					foundMap.put(curExpected, true);
+				}
+			}
+		}
+		List<String> notFound = new ArrayList<>(foundMap.size());
+		
+		for (Map.Entry<String, Boolean> curExpected : foundMap.entrySet()) {
+			if (!curExpected.getValue()) {
+				notFound.add(curExpected.getKey());
+			}
+		}
+		
+		assertTrue(notFound.isEmpty(), "Error message not found: " + notFound.toString());
+	}
+	
 }

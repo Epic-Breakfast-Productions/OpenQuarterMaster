@@ -29,27 +29,28 @@
  */
 package com.ebp.openQuarterMaster.lib.core.jackson;
 
-import com.ebp.openQuarterMaster.lib.core.jackson.QuantityJsonDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import javax.measure.Quantity;
 
 /**
- * Configures Jackson to (de)serialize JSR 385 Unit objects using their UCUM representation, since the actual objects don't
- * translate well into JSON.
+ * Configures Jackson to (de)serialize JSR 385 Unit objects using their UCUM representation, since the actual objects don't translate well
+ * into JSON.
+ *
  * @version 2.1
  */
 @Deprecated
 public class TempQuantityJacksonModule extends SimpleModule {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 7601584599518016604L;
-
-    public TempQuantityJacksonModule() {
-        super();
-        addDeserializer(Quantity.class, new QuantityJsonDeserializer());
-    }
-
-
+	
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7601584599518016604L;
+	
+	public TempQuantityJacksonModule() {
+		super();
+		addDeserializer(Quantity.class, new QuantityJsonDeserializer());
+	}
+	
+	
 }

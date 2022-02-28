@@ -5,11 +5,16 @@ import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.Tes
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,6 +25,9 @@ import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Slf4j
 //@RequestScoped
@@ -44,10 +52,6 @@ public class WebDriverWrapper implements Closeable {
 	boolean quickClean;
 	@ConfigProperty(name = "test.selenium.defaultWait", defaultValue = "5")
 	int defaultWait;
-	@ConfigProperty(name = "test.selenium.hostIp", defaultValue = "localhost")
-	String hostIp;
-	@ConfigProperty(name = "runningInfo.port")
-	int port;
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String baseUrl;
 	@ConfigProperty(name = "service.externalAuth.interactionBase")
@@ -72,18 +76,21 @@ public class WebDriverWrapper implements Closeable {
 	public void cleanup() {
 		log.info("Cleaning up browser after test.");
 		
-		if (this.quickClean) {
-			if(AuthMode.EXTERNAL.equals(this.authMode)){
-				driver.get(this.keycloakInteractionBase + "/logout");
+			WebDriver driver = getWebDriver();
+			if (this.quickClean) {
+				if(EXTERNAL.equals(this.authMode)){
+					driver.get(this.keycloakInteractionBase + "/logout");
+					driver.manage().deleteAllCookies();
+				}
+				this.goToIndex();
 				driver.manage().deleteAllCookies();
+				
+				driver.get("about:logo");
+				driver.navigate().refresh();
+			} else {
+				this.close();
+				this.setup();
 			}
-			driver.manage().deleteAllCookies();
-			driver.get("about:logo");
-			driver.navigate().refresh();
-		} else {
-			this.close();
-			this.setup();
-		}
 	}
 	
 	public WebElement findElement(By by) {
@@ -128,7 +135,12 @@ public class WebDriverWrapper implements Closeable {
 		
 		this.waitForPageLoad();
 		
-		this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+		if(EXTERNAL.equals(this.authMode)) {
+			this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+		} else {
+			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
+			this.getWebDriver().findElement(Root.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+		}
 		this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
 		this.waitForPageLoad();
 	}

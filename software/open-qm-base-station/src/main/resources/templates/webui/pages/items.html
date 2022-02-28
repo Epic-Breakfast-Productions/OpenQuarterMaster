@@ -40,8 +40,8 @@
         </table>
     </div>
 </div>
-{#unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
-{/unitOptionsHidden}
+{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
+{/inputs/units/unitOptionsHidden}
 {/pageContent}
 {#modals}
 {#modal id='addEdit' large=true title='Item add/edit'}
@@ -58,7 +58,7 @@
     <div class="mb-3 row">
         <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditStoredTypeInput" onchange="addEditStoredTypeInputChanged()">
+            <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT" onchange="addEditStoredTypeInputChanged()">
                 <option value="AMOUNT" selected>Amount</option>
                 <option value="TRACKED">Tracked</option>
             </select>
@@ -70,28 +70,30 @@
             <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
         </div>
     </div>
-    <div class="mb-3 row">
+    <div class="mb-3 row" id="unitNameRow">
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
             <select class="form-select" id="addEditUnitInput">
-                {#unitOptions}
-                {/unitOptions}
+                {#inputs/units/unitOptionsGroups}
+                {/inputs/units/unitOptionsGroups}
             </select>
         </div>
     </div>
+    <hr />
     <div class="mb-3 row">
         <div class="col-sm-2 col-form-label">Stored</div>
         <div class="col-sm-10">
-            <div id="storedContainer">
+            <div class="accordion mt-2" id="storedContainer">
 
             </div>
             <div class="col d-grid gap-2">
-                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
+                <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
                     <i class="fas fa-plus"></i> Add Associated Storage
                 </button>
             </div>
         </div>
     </div>
+    <hr />
     {#search/image/imageSelectFormInput}
     {/search/image/imageSelectFormInput}
     {#inputs/keywordInput}
@@ -157,9 +159,11 @@
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
-
+<script>
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
+var unitNameRow = $('#unitNameRow');
 var addEditStoredTypeInput = $('#addEditStoredTypeInput');
+var storedContainer = $('#storedContainer');
 
 function resetAddEditForm(){
 }
@@ -169,28 +173,100 @@ function setupAddEditForAdd(){
 }
 
 function setIdAttField(){
+    storedContainer.html("");
     if(addEditStoredTypeInput[0].value == "AMOUNT"){
         trackedItemIdentifierNameRow.hide();
+        unitNameRow.show();
+        addEditStoredTypeInput.attr('data-current', "AMOUNT");
     } else {
+        unitNameRow.hide();
         trackedItemIdentifierNameRow.show();
+        addEditStoredTypeInput.attr('data-current', "TRACKED");
     }
 }
 
 function addEditStoredTypeInputChanged(){
-    setIdAttField();
-
-    if(addEditStoredTypeInput[0].value == "AMOUNT"){
-        trackedItemIdentifierNameRow.hide();
-    } else {
-        trackedItemIdentifierNameRow.show();
+    if(storedContainer.children().length > 0 && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
+        addEditStoredTypeInput.val(
+            addEditStoredTypeInput.attr('data-current')
+        );
+        return;
     }
+    
+    setIdAttField();
+}
+
+function addNewAmountStored(formContentId){
+    alert('Adding amount form listing');
+}
+function addNewTrackedStored(formContentId){
+    alert('Adding tracked form listing');
+}
+
+
+function addStorageBlockAccord(blockName, blockId){
+    var accordId = "addEditItemStorageAssoc-" + blockId;
+    var existantAccord = storedContainer.find("#" + accordId);
+    if(existantAccord.length){
+        console.log("Already had association with storage block " + blockId);
+        //TODO:: open block section instead of alerting
+        alert("Storage block already present.");
+        return null;
+    }
+    var accordHeaderId = accordId + "-header";
+    var accordCollapseId = accordId + "-collapse";
+    var accordBodyId = accordId + "-body";
+    var accordFormContentId = accordId + "-formContent";
+    var accordButtonWrapperId = accordId + "-formAddButtonWraper";
+    
+    var newStorage =
+    $('   <div class="accordion-item" id="'+accordId+'">\n'+
+      '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
+      '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
+      '                <img class="accordion-thumb" src="/api/media/image/forStorageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
+      '                '+blockName+'\n'+
+      '            </button>\n'+
+      '        </h2>\n'+
+      '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
+      '            <div class="accordion-body" id="'+accordBodyId+'">\n'+
+      '                <div id="'+accordFormContentId+'" class="row"></div>\n'+
+      '                <div id="'+accordButtonWrapperId+'" class="col d-grid gap-2"></div>\n'+
+      '            </div>\n'+
+      '        </div>\n'+
+      '    </div>\n'
+    );
+    storedContainer.append(newStorage);
+    var newAccordBody = newStorage.find("#" + accordBodyId);
+    
+    switch (addEditStoredTypeInput[0].value){
+        case "AMOUNT":
+            console.log("Setting up storage for AMOUNT");
+            
+            newAccordBody.find("#"+accordButtonWrapperId).append($(
+                '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\');">\n'+
+                '    <i class="fas fa-plus"></i> Add\n'+
+                '</button>'
+            ));
+            break;
+        case "TRACKED":
+            console.log("Setting up storage for TRACKED");
+            newAccordBody.find("#"+accordButtonWrapperId).append($(
+                    '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewTrackedStored(\''+accordFormContentId+'\');">\n'+
+                    '    <i class="fas fa-plus"></i> Add\n'+
+                    '</button>'
+            ));
+            break;
+    }
+    
+    return newAccordBody;
 }
 
 function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
-    alert("Selected " + blockName);
+    console.log("Selected " + blockId + " - " + blockName);
+    var newStorageBody = addStorageBlockAccord(blockName, blockId);
+    
+    
 }
-
-
-
+</script>
 {/pageScript}
 {/include}

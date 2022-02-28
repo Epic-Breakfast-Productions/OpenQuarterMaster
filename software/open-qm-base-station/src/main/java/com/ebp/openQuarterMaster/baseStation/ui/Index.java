@@ -27,7 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Traced
@@ -88,16 +87,13 @@ public class Index extends UiProvider {
 			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 			
 			responseBuilder.entity(
-				index
-					.data("pageLoadTimestamp", getLoadTimestamp())
+				this.setupPageTemplate(index)
 					.data("signInLink", signInLinkBuilder.build())
 			).cookie(
 				UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
 			);
 		} else {
-			responseBuilder.entity(
-				index.data("pageLoadTimestamp", getLoadTimestamp())
-			);
+			responseBuilder.entity(this.setupPageTemplate(index));
 		}
 		
 		return responseBuilder.build();
@@ -111,6 +107,6 @@ public class Index extends UiProvider {
 		@Context SecurityContext securityContext
 	) {
 		logRequestContext(jwt, securityContext);
-		return accountCreate.data("pageLoadTimestamp", getLoadTimestamp());
+		return this.setupPageTemplate(accountCreate);
 	}
 }

@@ -15,14 +15,15 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginRequest {
-    @NonNull
-    @NotNull
-    @NotBlank
-    private String usernameEmail;
-    @NonNull
-    @NotNull
-    @NotBlank
-    private String password;
-    @NotNull
-    private boolean extendedExpire = false;
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	private String usernameEmail;
+	@NonNull
+	@NotNull
+	@NotBlank
+	private String password;
+	@NotNull
+	private boolean extendedExpire = false;
 }

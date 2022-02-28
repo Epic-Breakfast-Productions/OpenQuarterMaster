@@ -3,7 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.ui;
 import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.ImageService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
@@ -35,8 +34,6 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
-
-import static com.ebp.openQuarterMaster.baseStation.ui.UiUtils.getLoadTimestamp;
 
 @Traced
 @Slf4j
@@ -98,12 +95,7 @@ public class Images extends UiProvider {
 		);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			images
-				.data("pageLoadTimestamp", getLoadTimestamp())
-				.data(USER_INFO_DATA_KEY, UserGetResponse.builder(user).build())
-				.data("showSearch", searchResults.isHadSearchQuery())
-				.data("searchResult", searchResults)
-				.data("pagingCalculations", new PagingCalculations(pageOptions, searchResults)),
+			this.setupPageTemplate(images, UserGetResponse.builder(user).build(), searchResults, pageOptions),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

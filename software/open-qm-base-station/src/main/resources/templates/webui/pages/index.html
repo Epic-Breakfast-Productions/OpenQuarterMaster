@@ -40,7 +40,7 @@
             <button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton"><i class="fas fa-sign-in-alt"></i> Sign in
             </button>
 
-            <p class="mt-5 mb-3 text-muted">&copy; 2021–2021</p>
+            <p class="mt-5 mb-3 text-muted">&copy; 2021–{generateDatetime.getYear()}</p>
         </div>
     </form>
 </div>
@@ -48,8 +48,7 @@
 
 {/pageContent}
 {#pageScript}
-{!
-<script> // !}
+<script>
 assertNotLoggedIn();
 
 var signInForm = $("#signInForm");
@@ -80,11 +79,6 @@ addMessage("danger", "Login failed", "Login Failed", null);
 login(result, rememberUser);
 }
 });
-
-{!
-
-
-
-</script> !}
+</script>
 {/pageScript}
 {/include}

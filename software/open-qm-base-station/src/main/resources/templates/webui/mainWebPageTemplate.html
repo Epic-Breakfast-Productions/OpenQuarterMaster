@@ -157,13 +157,13 @@ Ingests:
     <footer id="footer" class="row mb-3" role="contentinfo">
         <div class="col-sm-4">
             <span class="h4">Open Quarter Master Server</span><br/>
-            &copy; 2021 <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
+            &copy; {generateDatetime.getYear()} <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
             Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
             License</a><br/>
             Version {config:['service.version']}<br/>
             <a href="https://github.com/GregJohnStewart/task-timekeeper" target="_blank">Github</a><br/>
             <small class="fw-lighter fst-italic text-muted">
-                Page Loaded: <span id="pageLoadTimestamp">{pageLoadTimestamp}</span> (Server time)
+                Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span> (Server time)
             </small>
         </div>
         <div id="serverInfo" class="col-sm-4">
@@ -204,11 +204,7 @@ Ingests:
 {/if}
 !}
 
-<script>
 {#insert pageScript}{/}
-
-
-</script>
 
 </body>
 </html>

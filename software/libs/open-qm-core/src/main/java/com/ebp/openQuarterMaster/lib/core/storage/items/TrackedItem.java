@@ -22,45 +22,45 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
-
-    /**
-     * The name of the identifier used for the items tracked.
-     * <p>
-     * Example might be serial number.
-     */
-    @NonNull
-    @NotNull
-    @Size(max = 50)
-    @NotBlank
-    private String trackedItemIdentifierName;
-
-    public TrackedItem() {
-        super(StoredType.TRACKED);
-    }
-    
-    @JsonIgnore
-    @Override
-    public @NonNull Unit<?> getUnit() {
-        return AbstractUnit.ONE;
-    }
-
-    @Override
-    public Quantity<?> recalcTotal() {
-        this.setTotal(
-                Quantities.getQuantity(
-                        this.getStorageMap()
-                                .values()
-                                .parallelStream()
-                                .mapToLong(Map::size)
-                                .sum(),
-                        this.getUnit()
-                )
-        );
-        return this.getTotal();
-    }
-
-    @Override
-    public long numStored() {
-        return (long) this.getTotal().getValue();
-    }
+	
+	/**
+	 * The name of the identifier used for the items tracked.
+	 * <p>
+	 * Example might be serial number.
+	 */
+	@NonNull
+	@NotNull
+	@Size(max = 50)
+	@NotBlank
+	private String trackedItemIdentifierName;
+	
+	public TrackedItem() {
+		super(StoredType.TRACKED);
+	}
+	
+	@JsonIgnore
+	@Override
+	public @NonNull Unit<?> getUnit() {
+		return AbstractUnit.ONE;
+	}
+	
+	@Override
+	public Quantity<?> recalcTotal() {
+		this.setTotal(
+			Quantities.getQuantity(
+				this.getStorageMap()
+					.values()
+					.parallelStream()
+					.mapToLong(Map::size)
+					.sum(),
+				this.getUnit()
+			)
+		);
+		return this.getTotal();
+	}
+	
+	@Override
+	public long numStored() {
+		return (long) this.getTotal().getValue();
+	}
 }

@@ -14,6 +14,12 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 		//TODO:: test in native mode and go through to include all needed classes
 	}
 )
-public class MyReflectionConfiguration {
+public final class MyReflectionConfiguration {
+	
+	/**
+	 * Prevent instantiation
+	 */
+	private MyReflectionConfiguration(){
+	}
 
 }
