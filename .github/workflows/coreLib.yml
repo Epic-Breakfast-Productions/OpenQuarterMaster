@@ -9,10 +9,12 @@ on:
     branches: [ "**" ]
     paths:
       - "software/libs/open-qm-core/**"
+      - ".github/workflows/coreLib.yml"
   pull_request:
     branches: [ "**" ]
     paths:
       - "software/libs/open-qm-core/**"
+      - ".github/workflows/coreLib.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -43,4 +45,4 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1.3
         if: always()
         with:
-          files: test-results/**/*.xml
+          files: "software/libs/open-qm-core/test-results/**/*.xml"
