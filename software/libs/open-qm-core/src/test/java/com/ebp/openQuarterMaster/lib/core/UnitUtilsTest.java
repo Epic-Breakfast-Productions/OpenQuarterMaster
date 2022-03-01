@@ -13,7 +13,6 @@ import javax.measure.Unit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * TODO:: test invalid unit de/serialization
@@ -87,10 +86,10 @@ class UnitUtilsTest {
 		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
 	}
 	
-	@Test
-	public void testFail() {
-		assertTrue(false);
-	}
+	//	@Test
+	//	public void testFail() {
+	//		assertTrue(false);
+	//	}
 	
 	//TODO:: figure out how to serialize invalid units
 	//    @ParameterizedTest(name = "invalidUnitSerialization[{index}]({0})")
