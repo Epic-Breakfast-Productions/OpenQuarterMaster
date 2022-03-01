@@ -37,7 +37,5 @@ jobs:
       # Runs a single command using the runners shell
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble
-      - uses: gradle/gradle-build-action@v2
-        with:
           arguments: check
+          build-root-directory: "software/libs/open-qm-core"
