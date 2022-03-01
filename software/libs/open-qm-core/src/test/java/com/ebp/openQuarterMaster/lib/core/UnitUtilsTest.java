@@ -12,8 +12,8 @@ import tech.units.indriya.unit.Units;
 import javax.measure.Unit;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.AssertTrue.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * TODO:: test invalid unit de/serialization
