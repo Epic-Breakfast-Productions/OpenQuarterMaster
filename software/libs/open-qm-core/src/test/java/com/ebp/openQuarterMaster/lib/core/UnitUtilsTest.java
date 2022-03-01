@@ -12,6 +12,7 @@ import tech.units.indriya.unit.Units;
 import javax.measure.Unit;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.AssertTrue.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
