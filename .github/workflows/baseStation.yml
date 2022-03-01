@@ -9,10 +9,12 @@ on:
     branches: [ "**" ]
     paths:
       - "software/open-qm-base-station/**"
+      - ".github/workflows/baseStation.yml"
   pull_request:
     branches: [ "**" ]
     paths:
       - "software/open-qm-base-station/**"
+      - ".github/workflows/baseStation.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
