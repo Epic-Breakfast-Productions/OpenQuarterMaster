@@ -46,4 +46,4 @@ jobs:
         if: always()
         with:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "software/libs/open-qm-core/test-results/**/*.xml"
+          files: "software/libs/open-qm-core/build/test-results/**/*.xml"
