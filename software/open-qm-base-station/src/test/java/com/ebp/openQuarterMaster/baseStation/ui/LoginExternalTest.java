@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.LocationAssertions.assertOnPage;
-import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserAdminLoggedIn;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated.assertUserLoggedIn;
 import static com.mongodb.assertions.Assertions.assertTrue;
 
@@ -101,30 +100,6 @@ public class LoginExternalTest extends WebUiTest {
 	}
 	
 	@Test
-	public void testLoginWithToken() {
-		User testUser = this.testUserService.getTestUser(false, true);
-		String userJwt = this.testUserService.getTestUserToken(testUser);
-		this.webDriverWrapper.goToIndex();
-		
-		this.webDriverWrapper.waitForPageLoad();
-		
-		this.webDriverWrapper.findElement(Root.JWT_INPUT).sendKeys(userJwt);
-		this.webDriverWrapper.findElement(Root.SIGN_IN_BUTTON).click();
-		this.webDriverWrapper.waitForPageLoad();
-		
-		assertUserLoggedIn(this.webDriverWrapper, testUser);
-	}
-	
-	@Test
-	public void testLoginAdminWithToken() {
-		User testUser = this.testUserService.getTestUser(true, true);
-		
-		this.webDriverWrapper.loginUser(testUser);
-		
-		assertUserAdminLoggedIn(this.webDriverWrapper, testUser);
-	}
-	
-	@Test
 	public void testLogout() {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
@@ -133,8 +108,10 @@ public class LoginExternalTest extends WebUiTest {
 		this.webDriverWrapper.waitFor(General.USERNAME_DISPLAY).click();
 		this.webDriverWrapper.waitFor(General.LOGOUT_BUTTON).click();
 		
-		this.webDriverWrapper.waitFor(Root.SIGN_IN_BUTTON);
+		this.webDriverWrapper.waitFor(Root.LOGIN_WITH_EXTERNAL_LINK);
 		
 		assertOnPage(this.webDriverWrapper, "/");
+		
+		//TODO:: assert message saying logged out
 	}
 }

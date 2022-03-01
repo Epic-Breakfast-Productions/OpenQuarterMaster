@@ -1,84 +1,71 @@
 {#include webui/mainWebPageTemplate title='Login' showNavbar=false showTitle=false}
-{#pageContent}
-<br />
-<div class="row justify-content-center ">
-    <form class="col align-self-center col-6 card text-center" id="signInForm">
-        <div class="card-header">
-            <img src="/media/logo.png" alt="" width="72">
-            <h1>Please sign in</h1>
-            {#if config:['service.authMode'] == 'SELF'}
-            <a href="/accountCreate">Or, Create account</a>
-            {/if}
-        </div>
-        <div class="card-body">
-            {#if config:['service.authMode'] == 'SELF'}
-            <div class="form-floating">
-                <input type="text" class="form-control" id="emailUsernameInput" placeholder="name@example.com">
-                <label for="emailUsernameInput">Email address or Username</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="passwordInput" placeholder="Password">
-                <label for="passwordInput">Password</label>
-            </div>
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" value="remember-me" id="rememberUserCheckbox"> Remember me
-                </label>
-            </div>
-            {#else}
-            <a href="{signInLink}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
-                <i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
-            </a>
-            <br />
-            <br />
-            <h3>Or, Enter your JWT:</h3>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="tokenInput" placeholder="Token">
-                <label for="tokenInput">JWT Token from {config:['service.externalAuth.name']}</label>
-            </div>
-            {/if}
-            <button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton"><i class="fas fa-sign-in-alt"></i> Sign in
-            </button>
+	{#pageContent}
+		<br/>
+		<div class="row justify-content-center ">
+		<form class="col align-self-center col-6 card text-center" id="signInForm">
+		<div class="card-header">
+			<img src="/media/logo.png" alt="" width="72px">
+			<h1>Please sign in</h1>
+			{#if config:['service.authMode'] == 'SELF'}
+				<a href="/accountCreate">Or, Create account</a>
+			{/if}
+		</div>
+		<div class="card-body">
+		{#if config:['service.authMode'] == 'SELF'}
+			<div class="form-floating">
+				<input type="text" class="form-control" id="emailUsernameInput" placeholder="name@example.com">
+				<label for="emailUsernameInput">Email address or Username</label>
+			</div>
+			<div class="form-floating">
+				<input type="password" class="form-control" id="passwordInput" placeholder="Password">
+				<label for="passwordInput">Password</label>
+			</div>
+			<div class="checkbox mb-3">
+				<label>
+					<input type="checkbox" value="remember-me" id="rememberUserCheckbox"> Remember me
+				</label>
+			</div>
+			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton"><i
+						class="fas fa-sign-in-alt"></i> Sign in
+			</button>
+			{#else}
+				<a href="{signInLink}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
+				<i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
+			</a>
+		{/if}
+		
+		<p class="mt-5 mb-3 text-muted">&copy; 2021–{generateDatetime.getYear()}</p>
+		</div>
+		</form>
+		</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+			assertNotLoggedIn();
 
-            <p class="mt-5 mb-3 text-muted">&copy; 2021–{generateDatetime.getYear()}</p>
-        </div>
-    </form>
-</div>
+			var signInForm = $("#signInForm");
 
+			signInForm.submit(function (event) {
+				event.preventDefault();
+				{#if config:['service.authMode'] == 'SELF'}
+				console.log("Submitting login form.");
 
-{/pageContent}
-{#pageScript}
-<script>
-assertNotLoggedIn();
+				var result = false;
+				var rememberUser = $("#rememberUserCheckbox").is(":checked");
+				
+				result = getToken(
+					$("#emailUsernameInput").val(),
+					$("#passwordInput").val(),
+					rememberUser
+				);
 
-var signInForm = $("#signInForm");
-
-signInForm.submit(function(event){
-    event.preventDefault();
-console.log("Submitting login form.");
-
-var result = false;
-var rememberUser = $("#rememberUserCheckbox").is(":checked");
-
-{#if config:['service.authMode'] == 'SELF'}
-result = getToken(
-$("#emailUsernameInput").val(),
-$("#passwordInput").val(),
-rememberUser
-);
-{#else}
-result = $("#tokenInput").val();
-if(!checkToken(result)){
-result = null;
-}
-{/if}
-
-if(!result){
-addMessage("danger", "Login failed", "Login Failed", null);
-} else {
-login(result, rememberUser);
-}
-});
-</script>
-{/pageScript}
+				if (!result) {
+					addMessage("danger", "Login failed", "Login Failed", null);
+				} else {
+					login(result, rememberUser);
+				}
+				{/if}
+			});
+		</script>
+	{/pageScript}
 {/include}

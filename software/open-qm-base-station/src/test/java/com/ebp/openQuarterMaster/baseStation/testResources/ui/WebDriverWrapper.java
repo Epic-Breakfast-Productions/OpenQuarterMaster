@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.ui;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -21,6 +22,7 @@ import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
 
+import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Slf4j
@@ -139,17 +141,23 @@ public class WebDriverWrapper implements Closeable {
 		this.waitForPageLoad();
 		
 		if (EXTERNAL.equals(this.authMode)) {
-			this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
-			log.info("Entered user's JWT.");
+			this.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
+			
+			log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
+			
+			this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+			this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
+			
+			this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
 		} else {
 			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
 			this.getWebDriver()
 				.findElement(Root.PASSWORD_INPUT)
 				.sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
 			log.info("Entered user's credentials.");
+			this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
+			log.info("Clicked the sign in button.");
 		}
-		this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
-		log.info("Clicked the sign in button.");
 		this.waitForPageLoad();
 	}
 }

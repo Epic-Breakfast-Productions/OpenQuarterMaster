@@ -225,7 +225,7 @@ public class TestUserService {
 				Keycloak keycloak = KeycloakBuilder.builder()
 												   .serverUrl(
 													   ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class)
-														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
+//														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
 												   )
 												   .realm(this.keycloakRealm)
 												   .clientId(this.keycloakClientId)
@@ -235,7 +235,9 @@ public class TestUserService {
 												   .password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
 												   .build()
 			) {
-				keycloak.realms();
+//				keycloak.realms();
+				
+				//Issuer (iss) claim value (http://localhost:49649/auth/realms/apps) doesn't match expected value of http://host.testcontainers.internal:49649/auth/realms/apps]
 				
 				AccessTokenResponse response = keycloak
 					.tokenManager()
@@ -243,8 +245,9 @@ public class TestUserService {
 				
 				log.info("Get user token response: {}", response.getSessionState());
 				
-				
-				return response.getToken();
+				String token = response.getToken();
+				log.info("Test user's token: {}", token);
+				return token;
 			} catch(Exception e) {
 				log.error("FAILED to get token for user: ", e);
 				throw e;
