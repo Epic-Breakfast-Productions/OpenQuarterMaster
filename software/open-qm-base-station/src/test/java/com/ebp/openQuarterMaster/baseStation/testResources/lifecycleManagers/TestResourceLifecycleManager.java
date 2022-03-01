@@ -4,7 +4,6 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Rule;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -43,7 +42,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	private static MongoDBContainer MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
-	@Rule //TODO:: play with this in the test classes
+	//@Rule //TODO:: play with this in the test classes
 	private static BrowserWebDriverContainer<?> BROWSER_CONTAINER = null;
 	
 	static {
@@ -150,12 +149,14 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		String keycloakUrl = authServerUrl.replace("/auth", "");
 		
 		return Map.of(
+			"test.keycloak.port", KEYCLOAK_CONTAINER.getHttpPort()+"",
 			"test.keycloak.url", keycloakUrl,
 			"test.keycloak.authUrl", authServerUrl,
 			"test.keycloak.adminName", KEYCLOAK_CONTAINER.getAdminUsername(),
 			"test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
 			"service.externalAuth.url", keycloakUrl,
-			"mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath()
+			"mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath(),
+			"quarkus.rest-client.keycloak.url", "http://localhost:" + KEYCLOAK_CONTAINER.getHttpPort() + "${service.externalAuth.tokenPath:}"
 		);
 	}
 	

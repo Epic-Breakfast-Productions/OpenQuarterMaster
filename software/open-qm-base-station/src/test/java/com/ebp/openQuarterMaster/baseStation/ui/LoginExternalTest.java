@@ -14,13 +14,9 @@ import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.lifecycle.TestDescription;
 
 import javax.inject.Inject;
-import java.net.URISyntaxException;
-import java.util.Optional;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService.TEST_PASSWORD_ATT_KEY;
 import static com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.LocationAssertions.assertOnPage;
@@ -47,13 +43,8 @@ public class LoginExternalTest extends WebUiTest {
 	@Inject
 	WebDriverWrapper webDriverWrapper;
 	
-	@AfterEach
-	public void after(TestDescription description, Optional<Throwable> throwable){
-		TestResourceLifecycleManager.triggerRecord(description, throwable);
-	}
-	
 	@Test
-	public void testLogin() throws InterruptedException {
+	public void testLogin() {
 		User testUser = this.testUserService.getTestUser(false, true);
 		this.webDriverWrapper.goToIndex();
 		
@@ -81,7 +72,7 @@ public class LoginExternalTest extends WebUiTest {
 	}
 	
 	@Test
-	public void testLoginWithReturnPath() throws URISyntaxException {
+	public void testLoginWithReturnPath() {
 		User testUser = this.testUserService.getTestUser(false, true);
 		String queryPath = "/storage?label=some&pageNum=1";
 		
@@ -110,7 +101,7 @@ public class LoginExternalTest extends WebUiTest {
 	}
 	
 	@Test
-	public void testLoginWithToken() throws InterruptedException {
+	public void testLoginWithToken() {
 		User testUser = this.testUserService.getTestUser(false, true);
 		String userJwt = this.testUserService.getTestUserToken(testUser);
 		this.webDriverWrapper.goToIndex();
@@ -125,7 +116,7 @@ public class LoginExternalTest extends WebUiTest {
 	}
 	
 	@Test
-	public void testLoginAdminWithToken() throws InterruptedException {
+	public void testLoginAdminWithToken() {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
 		this.webDriverWrapper.loginUser(testUser);
@@ -134,7 +125,7 @@ public class LoginExternalTest extends WebUiTest {
 	}
 	
 	@Test
-	public void testLogout() throws InterruptedException {
+	public void testLogout() {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
 		this.webDriverWrapper.loginUser(testUser);

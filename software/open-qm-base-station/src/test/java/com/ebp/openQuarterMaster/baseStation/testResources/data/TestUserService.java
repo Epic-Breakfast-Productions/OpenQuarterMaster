@@ -113,7 +113,9 @@ public class TestUserService {
 		} else if (EXTERNAL.equals(this.authMode)) {
 			try (
 				Keycloak keycloak = KeycloakBuilder.builder()
-												   .serverUrl(ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class).replace(HOST_TESTCONTAINERS_INTERNAL, "localhost"))
+												   .serverUrl(ConfigProvider.getConfig()
+																			.getValue("test.keycloak.authUrl", String.class)
+																			.replace(HOST_TESTCONTAINERS_INTERNAL, "localhost"))
 												   .realm("master")
 												   .grantType(OAuth2Constants.PASSWORD)
 												   .clientId("admin-cli")
@@ -221,7 +223,10 @@ public class TestUserService {
 		} else if (EXTERNAL.equals(this.authMode)) {
 			try (
 				Keycloak keycloak = KeycloakBuilder.builder()
-												   .serverUrl(ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class))
+												   .serverUrl(
+													   ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class)
+														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
+												   )
 												   .realm(this.keycloakRealm)
 												   .clientId(this.keycloakClientId)
 												   .clientSecret(this.keycloakClientSecret)

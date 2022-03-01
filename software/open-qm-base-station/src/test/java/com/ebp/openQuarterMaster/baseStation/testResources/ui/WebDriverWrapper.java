@@ -5,16 +5,11 @@ import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.Tes
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.user.User;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.StopWatch;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -25,7 +20,6 @@ import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
@@ -35,7 +29,7 @@ import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 public class WebDriverWrapper implements Closeable {
 	
 	static {
-//		WebDriverManager.firefoxdriver().setup();
+		//		WebDriverManager.firefoxdriver().setup();
 		
 		//TODO:: init web driver at start of tests rather than halfway through
 	}
@@ -76,21 +70,30 @@ public class WebDriverWrapper implements Closeable {
 	public void cleanup() {
 		log.info("Cleaning up browser after test.");
 		
-			WebDriver driver = getWebDriver();
-			if (this.quickClean) {
-				if(EXTERNAL.equals(this.authMode)){
-					driver.get(this.keycloakInteractionBase + "/logout");
-					driver.manage().deleteAllCookies();
-				}
-				this.goToIndex();
+		WebDriver driver = getWebDriver();
+		log.info(
+			"Last Page: \"{}\" {}",
+			driver.getTitle(),
+			driver.getCurrentUrl()
+		);
+		log.debug("page html: \n{}", driver.getPageSource());
+		
+		if (this.quickClean) {
+			if (EXTERNAL.equals(this.authMode)) {
+				String logoutUrl = this.keycloakInteractionBase + "/logout";
+				log.info("Logging out of Keycloak at: {}", logoutUrl);
+				driver.get(logoutUrl);
 				driver.manage().deleteAllCookies();
-				
-				driver.get("about:logo");
-				driver.navigate().refresh();
-			} else {
-				this.close();
-				this.setup();
 			}
+			this.goToIndex();
+			driver.manage().deleteAllCookies();
+			
+			driver.get("about:logo");
+			driver.navigate().refresh();
+		} else {
+			this.close();
+			this.setup();
+		}
 	}
 	
 	public WebElement findElement(By by) {
@@ -135,13 +138,18 @@ public class WebDriverWrapper implements Closeable {
 		
 		this.waitForPageLoad();
 		
-		if(EXTERNAL.equals(this.authMode)) {
+		if (EXTERNAL.equals(this.authMode)) {
 			this.getWebDriver().findElement(Root.JWT_INPUT).sendKeys(this.testUserService.getTestUserToken(testUser));
+			log.info("Entered user's JWT.");
 		} else {
 			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
-			this.getWebDriver().findElement(Root.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+			this.getWebDriver()
+				.findElement(Root.PASSWORD_INPUT)
+				.sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+			log.info("Entered user's credentials.");
 		}
 		this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
+		log.info("Clicked the sign in button.");
 		this.waitForPageLoad();
 	}
 }

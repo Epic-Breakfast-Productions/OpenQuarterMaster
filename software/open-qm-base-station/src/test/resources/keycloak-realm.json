@@ -678,18 +678,20 @@
     {
       "id": "72ad7380-e1b8-40bc-8044-32720b693b6d",
       "clientId": "quartermaster",
-      "rootUrl": "http://localhost:8081/",
-      "adminUrl": "http://localhost:8081/",
+      "rootUrl": "http://host.testcontainers.internal:8081/",
+      "adminUrl": "http://host.testcontainers.internal:8081/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "12abaab8-0b4f-4ccb-a068-668764593c06",
       "redirectUris": [
-        "http://localhost:8081/*"
+        "http://localhost:8081/*",
+        "http://host.testcontainers.internal:8081/*"
       ],
       "webOrigins": [
-        "http://localhost:8081"
+        "http://localhost:8081",
+        "http://host.testcontainers.internal:8081"
       ],
       "notBefore": 0,
       "bearerOnly": false,
