@@ -63,13 +63,13 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		} else {
 			StopWatch sw = StopWatch.createStarted();
 			
-//			Consumer<CreateContainerCmd> cmd = e->e.withPortBindings(new PortBinding(
-//				Ports.Binding.bindPort(80),
-//				new ExposedPort(8085)
-//			));
+			//			Consumer<CreateContainerCmd> cmd = e->e.withPortBindings(new PortBinding(
+			//				Ports.Binding.bindPort(80),
+			//				new ExposedPort(8085)
+			//			));
 			//			HostConfig config = new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(80), new ExposedPort(8085)));
 			KEYCLOAK_CONTAINER = new KeycloakContainer()
-//				.withCreateContainerCmdModifier(cmd)
+				//				.withCreateContainerCmdModifier(cmd)
 				.withRealmImportFile("keycloak-realm.json");
 			KEYCLOAK_CONTAINER.start();
 			
@@ -244,10 +244,13 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	
 	public static void triggerRecord(TestDescription description, Optional<Throwable> throwable) {
-		BROWSER_CONTAINER.afterTest(description, throwable);
+		if (BROWSER_CONTAINER != null) {
+			log.info("Triggering browser container to save recording of test.");
+			BROWSER_CONTAINER.afterTest(description, throwable);
+		}
 	}
-		
-		@Override
+	
+	@Override
 	public void init(Map<String, String> initArgs) {
 		this.externalAuth = Boolean.parseBoolean(initArgs.getOrDefault(EXTERNAL_AUTH_ARG, Boolean.toString(this.externalAuth)));
 		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(UI_TEST_ARG, Boolean.toString(this.uiTest)));

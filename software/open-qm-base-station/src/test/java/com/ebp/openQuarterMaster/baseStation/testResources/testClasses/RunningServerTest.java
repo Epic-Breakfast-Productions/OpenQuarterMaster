@@ -17,10 +17,16 @@ import java.util.stream.Collectors;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
+	//TODO:: this with params
 	@AfterEach
-	public void afterEach() {
+	public void afterEach(
+//		TestDescription description, Optional<Throwable> throwable
+	) {
+		log.info("Running after method.");
 		findAndCleanupMongoServices();
 		findAndCleanupWebDriverWrapper();
+//		TestResourceLifecycleManager.triggerRecord(description, throwable);
+		log.info("Completed after step.");
 	}
 	
 	private void findAndCleanupWebDriverWrapper() {
