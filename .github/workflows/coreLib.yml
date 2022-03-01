@@ -45,4 +45,5 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1.3
         if: always()
         with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
           files: "software/libs/open-qm-core/test-results/**/*.xml"
