@@ -45,14 +45,6 @@ jobs:
         with:
           arguments: javadoc jar javadocJar sourcesJar
           build-root-directory: "software/libs/open-qm-core"
-      - name: Add coverage
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.2
-        with:
-          paths: "software/libs/open-qm-core/build/reports/jacoco/test/jacocoTestReport.xml"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 60
-          min-coverage-changed-files: 80
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
@@ -81,6 +73,14 @@ jobs:
           name: Test Report            # Name of the check run which will be created
           path: "software/libs/open-qm-core/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
+      - name: Add coverage
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: "software/libs/open-qm-core/build/reports/jacoco/test/jacocoTestReport.xml"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 60
+          min-coverage-changed-files: 80
           
 #      - name: Publish Unit Test Results
 #        uses: EnricoMi/publish-unit-test-result-action@v1.3
