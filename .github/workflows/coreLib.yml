@@ -41,6 +41,10 @@ jobs:
         with:
           arguments: check
           build-root-directory: "software/libs/open-qm-core"
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: javadoc
+          build-root-directory: "software/libs/open-qm-core"
       - name: Add coverage
         id: jacoco
         uses: madrapps/jacoco-report@v1.2
