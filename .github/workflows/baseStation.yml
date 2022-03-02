@@ -47,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Code Coverage Report
-          path: "software/open-qm-base-station/build/reports/jacoco/test/html"
+          path: "software/open-qm-base-station/build/reports/jacoco-report"
       - name: Archive Test Report
         uses: actions/upload-artifact@v2
         with:
@@ -92,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Native Code Coverage Report
-          path: "software/open-qm-base-station/build/reports/jacoco/testNative/html"
+          path: "software/open-qm-base-station/build/reports/jacoco-report"
       - name: Archive Native Test Report
         uses: actions/upload-artifact@v2
         with:
