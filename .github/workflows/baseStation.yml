@@ -78,6 +78,16 @@ jobs:
           name: Native Test Report            # Name of the check run which will be created
           path: "software/open-qm-base-station/build/test-results/testNative/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Code Coverage Report
+          path: "software/open-qm-base-station/build/reports/jacoco/test/html"
+      - name: Archive Junit Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Junit Test Report
+          path: "software/open-qm-base-station/build/reports/tests/test"
           
 #      - name: Publish Unit Test Results
 #        uses: EnricoMi/publish-unit-test-result-action@v1.3
