@@ -41,9 +41,9 @@ jobs:
         with:
           arguments: check
           build-root-directory: "software/libs/open-qm-core"
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1.3
-        if: always()
-        with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: "software/libs/open-qm-core/build/test-results/**/*.xml"
+#      - name: Publish Unit Test Results
+#        uses: EnricoMi/publish-unit-test-result-action@v1.3
+#        if: always()
+#        with:
+#          github_token: "${{ secrets.GITHUB_TOKEN }}"
+#          files: "software/libs/open-qm-core/build/test-results/**/*.xml"
