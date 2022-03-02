@@ -52,8 +52,13 @@ jobs:
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
-          name: code-coverage-report
+          name: Code Coverage Report
           path: "software/libs/open-qm-core/build/reports/jacoco/test/html"
+      - name: Archive Javadocs
+        uses: actions/upload-artifact@v2
+        with:
+          name: Javadocs
+          path: "software/libs/open-qm-core/build/docs/javadoc"
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
         uses: dorny/test-reporter@v1
