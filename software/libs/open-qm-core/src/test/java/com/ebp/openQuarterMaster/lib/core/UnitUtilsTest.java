@@ -88,11 +88,6 @@ class UnitUtilsTest {
 		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
 	}
 	
-	@Test
-	public void testFail() {
-		fail();
-	}
-	
 	//TODO:: figure out how to serialize invalid units
 	//    @ParameterizedTest(name = "invalidUnitSerialization[{index}]({0})")
 	//    @MethodSource("invalidUnits")
