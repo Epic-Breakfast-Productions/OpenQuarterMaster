@@ -58,6 +58,11 @@ jobs:
         with:
           name: Code Coverage Report
           path: "software/libs/open-qm-core/build/reports/jacoco/test/html"
+      - name: Archive Junit Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Junit Test Report
+          path: "software/libs/open-qm-core/build/reports/tests/test"
       - name: Archive Javadocs
         uses: actions/upload-artifact@v2
         with:
