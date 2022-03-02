@@ -90,7 +90,7 @@ class UnitUtilsTest {
 	
 	@Test
 	public void testFail() {
-//		fail();
+		fail();
 	}
 	
 	//TODO:: figure out how to serialize invalid units
