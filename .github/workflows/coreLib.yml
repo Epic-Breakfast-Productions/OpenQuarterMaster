@@ -45,7 +45,7 @@ jobs:
         id: jacoco
         uses: madrapps/jacoco-report@v1.2
         with:
-          paths: "software/libs/open-qm-core/build/reports/jacoco/testCoverage/testCoverage.xml"
+          paths: "software/libs/open-qm-core/build/reports/jacoco/test/testCoverage.xml"
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 60
           min-coverage-changed-files: 80
