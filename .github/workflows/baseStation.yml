@@ -43,6 +43,16 @@ jobs:
         with:
           arguments: check
           build-root-directory: "software/open-qm-base-station"
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Code Coverage Report
+          path: "software/open-qm-base-station/build/reports/jacoco/test/html"
+      - name: Archive Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Report
+          path: "software/open-qm-base-station/build/reports/tests/test"
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
         uses: dorny/test-reporter@v1
@@ -81,13 +91,13 @@ jobs:
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
-          name: Code Coverage Report
-          path: "software/open-qm-base-station/build/reports/jacoco/test/html"
-      - name: Archive Junit Test Report
+          name: Native Code Coverage Report
+          path: "software/open-qm-base-station/build/reports/jacoco/testNative/html"
+      - name: Archive Native Test Report
         uses: actions/upload-artifact@v2
         with:
-          name: Junit Test Report
-          path: "software/open-qm-base-station/build/reports/tests/test"
+          name: Native Test Report
+          path: "software/open-qm-base-station/build/reports/tests/testNative"
           
 #      - name: Publish Unit Test Results
 #        uses: EnricoMi/publish-unit-test-result-action@v1.3
