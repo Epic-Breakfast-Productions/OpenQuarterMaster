@@ -4,6 +4,9 @@ import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -133,9 +137,18 @@ class ImageTest {
 		assertEquals(colorOrig, colorOut);
 	}
 	
-	@Test
-	public void resizeImageTest() throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+	public static Stream<Arguments> getTestImages() {
+		return Stream.of(
+			Arguments.of("/test_image.png"),
+			Arguments.of("/test_image_big.png"),
+			Arguments.of("/test_image_big_tall.png")
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getTestImages")
+	public void resizeImageTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
 		
 		StopWatch sw = StopWatch.createStarted();
 		BufferedImage imageOut = Image.resize(imageIn);
@@ -147,9 +160,10 @@ class ImageTest {
 		}
 	}
 	
-	@Test
-	public void imageFromDataTest() throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+	@ParameterizedTest()
+	@MethodSource("getTestImages")
+	public void imageFromDataTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
 		String imageData = new Image("", "", imageIn).toDataString();
 		
 		StopWatch sw = StopWatch.createStarted();
@@ -165,9 +179,10 @@ class ImageTest {
 		//        }
 	}
 	
-	@Test
-	public void constructorTest() throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+	@ParameterizedTest()
+	@MethodSource("getTestImages")
+	public void constructorTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
 		
 		StopWatch sw = StopWatch.createStarted();
 		Image image = new Image("Test image", imageIn);
@@ -177,10 +192,10 @@ class ImageTest {
 		//TODO:: determine that data is correctly base64 encoded
 	}
 	
-	
-	@Test
-	public void constructorFromDataTest() throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+	@ParameterizedTest()
+	@MethodSource("getTestImages")
+	public void constructorFromDataTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
 		String imageData = new Image("", "", imageIn).toDataString();
 		
 		StopWatch sw = StopWatch.createStarted();
@@ -198,9 +213,10 @@ class ImageTest {
 		//        }
 	}
 	
-	@Test
-	public void constructorFromIcrTest() throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream("/test_image.png"));
+	@ParameterizedTest()
+	@MethodSource("getTestImages")
+	public void constructorFromIcrTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
 		//        String imageData = new Image("", "", imageIn).toDataString();
 		
 		ImageCreateRequest icr = new ImageCreateRequest(
@@ -227,7 +243,7 @@ class ImageTest {
 	}
 	
 	@Test
-	public static void testGetMineType() {
+	public static void testGetMimeType() {
 		assertEquals(
 			"image/png",
 			new Image().setType("png").getMimeType()
