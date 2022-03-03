@@ -60,7 +60,7 @@ import java.util.List;
 @Traced
 @Slf4j
 @Path("/api/media/image")
-@Tags({@Tag(name = "Media", description = "Endpoints media CRUD")})
+@Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RequestScoped
 public class ImageCrud extends EndpointProvider {
 	
