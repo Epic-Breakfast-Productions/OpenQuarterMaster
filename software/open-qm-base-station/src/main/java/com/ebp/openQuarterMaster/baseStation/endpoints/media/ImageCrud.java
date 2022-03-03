@@ -422,10 +422,10 @@ public class ImageCrud extends EndpointProvider {
 			return Response.status(Response.Status.NOT_FOUND).entity("Image not found.").build();
 		}
 		
-		log.info("Image found");
+		log.info("Image found ({}) {}", output.getType(), output.getId());
 		return Response.status(Response.Status.OK)
 					   .entity(Base64.getDecoder().decode(output.getData()))
-					   .type("image/" + output.getType())
+					   .type(output.getMimeType())
 					   .build();
 	}
 }
