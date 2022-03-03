@@ -48,9 +48,6 @@ Native-specific tests:
 ## TODOS:
 
 - Storage
-  - Finish add
-  - do edit
-  - do view
   - do all stats
 - Items
   - Add item
@@ -60,10 +57,8 @@ Native-specific tests:
 - Overview
   - stats
 - Image management
-  - search
   - overall stats
   - responsive design tweaks
-  - check bug where wrong image deleted
 - User
   - external
     - view your infos
