@@ -226,5 +226,12 @@ class ImageTest {
 		//        }
 	}
 	
+	@Test
+	public static void testGetMineType() {
+		assertEquals(
+			"image/png",
+			new Image().setType("png").getMimeType()
+		);
+	}
 	
 }

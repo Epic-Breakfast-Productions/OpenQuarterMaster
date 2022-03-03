@@ -46,6 +46,7 @@ public class Image extends MainObject {
 	 */
 	private static final Base64.Encoder BASE_64_ENCODER = Base64.getEncoder();
 	private static final Base64.Decoder BASE_64_DECODER = Base64.getDecoder();
+	public static final String MIMETYPE_FORMAT = "image/%s";
 	
 	/**
 	 * Resizes the given image to what should be held in the object. Resizes image to {@link #IMAGE_SIZE} square.
@@ -183,6 +184,10 @@ public class Image extends MainObject {
 	@JsonIgnore
 	public String toDataString() {
 		return String.format("data:image/%s;base64,%s", this.getType(), this.getData());
+	}
+	
+	public String getMimeType() {
+		return String.format(MIMETYPE_FORMAT, this.getType());
 	}
 	
 	//    @BsonIgnore
