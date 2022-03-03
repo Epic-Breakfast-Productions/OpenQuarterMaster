@@ -16,6 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
@@ -61,6 +62,7 @@ public abstract class MongoService<T extends MainObject> {
 	protected final MongoClient mongoClient;
 	protected final String database;
 	protected final String collectionName;
+	@Getter
 	protected final Class<T> clazz;
 	protected final boolean allowNullUserForCreate;
 	

@@ -2,6 +2,8 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.media;
 
 import com.ebp.openQuarterMaster.baseStation.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.ImageService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
@@ -9,9 +11,10 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
-import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.rest.storage.IMAGED_OBJ_TYPE_NAME;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
@@ -61,12 +64,24 @@ import java.util.List;
 @RequestScoped
 public class ImageCrud extends EndpointProvider {
 	
+	private static final URI EMPTY_IMAGE_URI;
+	
+	static {
+		try {
+			EMPTY_IMAGE_URI = new URI("/media/empty.svg");
+		} catch(URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	@Inject
 	ImageService imageService;
 	@Inject
 	UserService userService;
 	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
+	InventoryItemService itemService;
 	@Inject
 	JsonWebToken jwt;
 	@Inject
@@ -102,7 +117,7 @@ public class ImageCrud extends EndpointProvider {
 		@Valid ImageCreateRequest icr
 	) throws IOException {
 		logRequestContext(this.jwt, securityContext);
-		log.info("Creating new storage block.");
+		log.info("Creating new image.");
 		User user = this.userService.getFromJwt(jwt);
 		
 		Image image = new Image(icr);
@@ -113,7 +128,6 @@ public class ImageCrud extends EndpointProvider {
 		log.info("Image created with id: {}", output);
 		return Response.status(Response.Status.CREATED).entity(output).build();
 	}
-	
 	
 	@GET
 	@Operation(
@@ -376,50 +390,36 @@ public class ImageCrud extends EndpointProvider {
 		return Response.status(Response.Status.OK).entity(output).build();
 	}
 	
-	@GET
-	@Path("forStorageBlock/{id}")
-	@Operation(
-		summary = "Gets the image data for the first image held of a storage block."
-	)
-	//    @APIResponse(
-	//            responseCode = "200",
-	//            description = "Image retrieved."
-	////            content = @Content( //TODO
-	//            )
-	//    )
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	//    @Produces(MediaType.)//TODO
-	@RolesAllowed("user")
-	public Response getImageDataForStorageBlock(
-		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
-	) throws URISyntaxException {
-		logRequestContext(this.jwt, securityContext);
-		log.info("Retrieving image for storage block of id \"{}\"", id);
+	private Response getImageFromObject(MongoService<? extends ImagedMainObject> service, String id) {
+		String objTypeName = service.getClazz().getSimpleName();
+		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
 		
-		StorageBlock storageBlock = this.storageBlockService.get(id);
+		ImagedMainObject object = service.get(id);
 		
-		if (storageBlock == null) {
-			log.info("Storage Block not found.");
-			return Response.status(Response.Status.NOT_FOUND).entity("Storage block not found.").build();
+		if (object == null) {
+			log.info("{} not found.", objTypeName);
+			return Response.status(Response.Status.NOT_FOUND)
+				.type(MediaType.TEXT_PLAIN_TYPE)
+				.entity(objTypeName + " not found.").build();
 		}
 		
-		if (storageBlock.getImageIds().isEmpty()) {
+		if (object.getImageIds().isEmpty()) {
 			log.info("Storage block has no images. Returning blank placeholder image.");
-			return Response.seeOther(new URI("/media/empty.svg")).build();
+			return Response
+				.seeOther(EMPTY_IMAGE_URI)
+				.build();
 		}
 		
-		ObjectId imageId = storageBlock.getImageIds().get(0);
+		ObjectId imageId = object.getImageIds().get(0);
 		
 		Image output = this.imageService.get(imageId);
 		
 		if (output == null) {
 			log.info("Image not found.");
-			return Response.status(Response.Status.NOT_FOUND).entity("Image not found.").build();
+			return Response
+				.status(Response.Status.NOT_FOUND)
+				.type(MediaType.TEXT_PLAIN_TYPE)
+				.entity("Image not found.").build();
 		}
 		
 		log.info("Image found ({}) {}", output.getType(), output.getId());
@@ -427,5 +427,37 @@ public class ImageCrud extends EndpointProvider {
 					   .entity(Base64.getDecoder().decode(output.getData()))
 					   .type(output.getMimeType())
 					   .build();
+	}
+	
+	@GET
+	@Path("for/{object}/{id}")
+	@Operation(
+		summary = "Gets the image data for the first image held of a storage block."
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces({
+		"image/png",
+		"text/plain"
+	})
+	@RolesAllowed("user")
+	public Response getImageDataForStorageBlock(
+		@Context SecurityContext securityContext,
+		@org.jboss.resteasy.annotations.jaxrs.PathParam IMAGED_OBJ_TYPE_NAME object,
+		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
+	) {
+		logRequestContext(this.jwt, securityContext);
+		log.info("Retrieving image for storage block of id \"{}\"", id);
+		
+		switch (object){
+			case storageBlock:
+				return this.getImageFromObject(this.storageBlockService, id);
+			case item:
+				return this.getImageFromObject(this.itemService, id);
+		}
+		return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN_TYPE).entity("No imaged object of type \"" + object + "\"").build();
 	}
 }
