@@ -11,16 +11,19 @@ import java.time.ZonedDateTime;
 /**
  * Required to tell GraalVm to keep classes around.
  * <p>
- * If running in native mode and get errors about reflection, etc, add the erring class here
+ * If running in native mode and get errors about classes, reflection, etc, add the erring class here
+ * TODO:: test in native mode and go through to include all needed classes
  */
 @RegisterForReflection(
-	targets = {
+	targets = { // Classes we know about go here
 		ErrorMessage.class,
 		ZonedDateTime.class,
 		User.class,
 		StorageBlock.class,
-		SearchResult.class
-		//TODO:: test in native mode and go through to include all needed classes
+		SearchResult.class,
+	},
+	classNames = { //proxy classes go here
+		"com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService_ClientProxy"
 	}
 )
 public final class MyReflectionConfiguration {
