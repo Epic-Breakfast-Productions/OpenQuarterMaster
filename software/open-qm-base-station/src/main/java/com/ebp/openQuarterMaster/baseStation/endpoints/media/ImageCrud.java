@@ -458,6 +458,7 @@ public class ImageCrud extends EndpointProvider {
 			case item:
 				return this.getImageFromObject(this.itemService, id);
 		}
+		log.error("Should not have gotten to this point... server error.");
 		return Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN_TYPE).entity("No imaged object of type \"" + object + "\"").build();
 	}
 }

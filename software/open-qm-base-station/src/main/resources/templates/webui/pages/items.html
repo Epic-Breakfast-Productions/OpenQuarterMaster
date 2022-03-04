@@ -196,10 +196,27 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
-function addNewAmountStored(formContentId){
-    alert('Adding amount form listing');
+var numAmountStoredClicked=0;
+function addNewAmountStored(formContentId, accordionId){
+    var id="addEditAmountStoredEntry-"+(numAmountStoredClicked++);
+    var collapseId = id + "-collapse";
+    
+    $('#'+formContentId).append($(
+            '<div class="accordion-item">\n'+
+            '    <h2 class="accordion-header" id="'+id+'">\n'+
+            '        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
+            '          <span class="addEditAmountDisplay">0</span><span class="addEditUnitDisplay"></span> '+id+'\n'+
+            '        </button>\n'+
+            '    </h2>\n'+
+            '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+accordionId+'">\n'+
+            '        <div class="accordion-body">\n'+
+            '            Form elements\n'+
+            '        </div>\n'+
+            '    </div>\n'+
+            '</div>'
+    ));
 }
-function addNewTrackedStored(formContentId){
+function addNewTrackedStored(formContentId, caller){
     alert('Adding tracked form listing');
 }
 
@@ -223,13 +240,13 @@ function addStorageBlockAccord(blockName, blockId){
     $('   <div class="accordion-item" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
-      '                <img class="accordion-thumb" src="/api/media/image/forStorageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
+      '                <img class="accordion-thumb" src="/api/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
       '                '+blockName+'\n'+
       '            </button>\n'+
       '        </h2>\n'+
       '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
       '            <div class="accordion-body" id="'+accordBodyId+'">\n'+
-      '                <div id="'+accordFormContentId+'" class="row"></div>\n'+
+      '                <div id="'+accordFormContentId+'" class="accordion"></div>\n'+
       '                <div id="'+accordButtonWrapperId+'" class="col d-grid gap-2"></div>\n'+
       '            </div>\n'+
       '        </div>\n'+
@@ -243,7 +260,7 @@ function addStorageBlockAccord(blockName, blockId){
             console.log("Setting up storage for AMOUNT");
             
             newAccordBody.find("#"+accordButtonWrapperId).append($(
-                '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\');">\n'+
+                '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
                 '    <i class="fas fa-plus"></i> Add\n'+
                 '</button>'
             ));
@@ -251,9 +268,12 @@ function addStorageBlockAccord(blockName, blockId){
         case "TRACKED":
             console.log("Setting up storage for TRACKED");
             newAccordBody.find("#"+accordButtonWrapperId).append($(
-                    '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewTrackedStored(\''+accordFormContentId+'\');">\n'+
-                    '    <i class="fas fa-plus"></i> Add\n'+
-                    '</button>'
+                    '<div class="input-group mt-2">\n'+
+                    '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
+                    '    <button class="btn btn-outline-success" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
+                    '        <i class="fas fa-plus"></i> Add\n'+
+                    '    </button>\n'+
+                    '</div>'
             ));
             break;
     }

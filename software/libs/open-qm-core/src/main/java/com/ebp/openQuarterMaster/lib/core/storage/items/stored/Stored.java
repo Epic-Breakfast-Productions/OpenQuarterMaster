@@ -62,7 +62,4 @@ public abstract class Stored {
 	@NotNull
 	@NonNull
 	private List<@NotBlank String> keywords = new ArrayList<>();
-	
-	//TODO:: get item at key
-	//TODO:: removes
 }

@@ -50,7 +50,7 @@
   <tr class="storageBlockResultRow align-middle">
     <td>
       {#if !result.getImageIds().isEmpty()}
-      <img src="/api/media/image/{result.getImageIds().get(0)}/data" class="searchResultImage">
+      <img src="/api/media/image/for/storageBlock/{result.getId()}" class="searchResultImage">
       {/if}
     </td>
     <td>{result.getLabel()}</td>
