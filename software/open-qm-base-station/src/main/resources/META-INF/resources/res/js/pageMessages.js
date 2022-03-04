@@ -10,7 +10,7 @@ function addMessageToDiv(jqueryObj, type, message, heading, id){
 	}else{
 		id = "";
 	}
-	$('<div '+id+' class="alert alert-'+type+' alert-dismissible fade show alertMessage" role="alert">\n'+
+	$('<div '+id+' class="alert alert-'+type+' alert-dismissible fade show alertMessage m-1" role="alert">\n'+
 		'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
 		heading + "\n" +
 		'<span class="message">\n' +
