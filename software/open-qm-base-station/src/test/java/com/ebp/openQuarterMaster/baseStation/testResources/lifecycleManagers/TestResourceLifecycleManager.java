@@ -15,6 +15,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.containers.VncRecordingContainer;
 import org.testcontainers.lifecycle.TestDescription;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import org.testcontainers.utility.DockerImageName;
@@ -22,6 +23,8 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -149,14 +152,22 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		String keycloakUrl = authServerUrl.replace("/auth", "");
 		
 		return Map.of(
-			"test.keycloak.port", KEYCLOAK_CONTAINER.getHttpPort()+"",
-			"test.keycloak.url", keycloakUrl,
-			"test.keycloak.authUrl", authServerUrl,
-			"test.keycloak.adminName", KEYCLOAK_CONTAINER.getAdminUsername(),
-			"test.keycloak.adminPass", KEYCLOAK_CONTAINER.getAdminPassword(),
-			"service.externalAuth.url", keycloakUrl,
-			"mp.jwt.verify.publickey.location", publicKeyFile.getAbsolutePath(),
-			"quarkus.rest-client.keycloak.url", "http://localhost:" + KEYCLOAK_CONTAINER.getHttpPort() + "${service.externalAuth.tokenPath:}"
+			"test.keycloak.port",
+			KEYCLOAK_CONTAINER.getHttpPort() + "",
+			"test.keycloak.url",
+			keycloakUrl,
+			"test.keycloak.authUrl",
+			authServerUrl,
+			"test.keycloak.adminName",
+			KEYCLOAK_CONTAINER.getAdminUsername(),
+			"test.keycloak.adminPass",
+			KEYCLOAK_CONTAINER.getAdminPassword(),
+			"service.externalAuth.url",
+			keycloakUrl,
+			"mp.jwt.verify.publickey.location",
+			publicKeyFile.getAbsolutePath(),
+			"quarkus.rest-client.keycloak.url",
+			"http://localhost:" + KEYCLOAK_CONTAINER.getHttpPort() + "${service.externalAuth.tokenPath:}"
 		);
 	}
 	
@@ -184,14 +195,19 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		}
 		if (BROWSER_CONTAINER == null || !BROWSER_CONTAINER.isRunning()) {
 			
-			File recordingDir = new File("build/seleniumRecordings/");
-			
-			recordingDir.mkdir();
+			File recordingDir = new File(
+				"build/seleniumRecordings/" +
+				new SimpleDateFormat("yyyyMMddHHmm").format(new Date())
+			);
+			recordingDir.mkdirs();
 			
 			BROWSER_CONTAINER = new BrowserWebDriverContainer<>()
 				.withCapabilities(new FirefoxOptions())
-				//									.withAccessToHost(true)
-				.withRecordingMode(RECORD_ALL, recordingDir);
+				.withRecordingMode(
+					RECORD_ALL,
+					recordingDir,
+					VncRecordingContainer.VncRecordingFormat.MP4
+				);
 			BROWSER_CONTAINER.start();
 		}
 		return Map.of(

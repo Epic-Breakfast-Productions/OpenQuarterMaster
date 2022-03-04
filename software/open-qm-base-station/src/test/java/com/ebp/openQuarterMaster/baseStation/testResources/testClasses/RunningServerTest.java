@@ -2,30 +2,41 @@ package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.OurTestDescription;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
+	
 	//TODO:: this with params
 	@AfterEach
 	public void afterEach(
-//		TestDescription description, Optional<Throwable> throwable
+		TestInfo testInfo
 	) {
 		log.info("Running after method.");
 		findAndCleanupMongoServices();
 		findAndCleanupWebDriverWrapper();
-//		TestResourceLifecycleManager.triggerRecord(description, throwable);
+		
+		TestResourceLifecycleManager.triggerRecord(
+			new OurTestDescription(testInfo),
+			//TODO:: actually pass something real https://stackoverflow.com/questions/71354431/junit5-get-results-from-test-in-aftereach
+			Optional.empty()
+		);
+		
 		log.info("Completed after step.");
 	}
 	
