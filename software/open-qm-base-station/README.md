@@ -49,6 +49,7 @@ Native-specific tests:
 
 - Storage
   - do all stats
+  - handle breadcrumb links
 - Items
   - Add item
   - edit item

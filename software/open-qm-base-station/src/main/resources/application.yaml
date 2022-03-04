@@ -22,10 +22,10 @@ service:
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
     callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
   runBy:
-    name:
-    email:
-    phone:
-    website:
+    name: " "
+    email: " "
+    phone: " "
+    website: " "
 
 runningInfo:
   organization: The Testing Organization
@@ -36,26 +36,26 @@ runningInfo:
   hostnamePort: ${runningInfo.hostname}:${quarkus.http.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
 
+demo:
+  connectTimeout: 1500
+  readTimeout: 1500
+  perform: false
+
 quarkus:
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
       scope: javax.inject.Singleton
-
     # for demo
     demoService:
       url: http://localhost:8082
       scope: javax.inject.Singleton
-      connectTimeout: 1500
-      readTimeout: 1500
-      perform: false
     demoServiceExternal:
       url: http://localhost:8082
       scope: javax.inject.Singleton
-      connectTimeout: 1500
-      readTimeout: 1500
-      perform: false
-
+  native:
+    resources:
+      includes: security/*
   log:
     level: DEBUG
     console:

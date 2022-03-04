@@ -91,11 +91,11 @@ public class Overview extends UiProvider {
 			{
 				java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
 				
-				if (ConfigProvider.getConfig().getValue("quarkus.rest-client.demoService.perform", Boolean.class)) {
+				if (ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
 					completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
 					completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
 				}
-				if (ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.perform", Boolean.class)) {
+				if (ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
 					completionStages.put(3, externDemoService.get1(authHeaderContent).toCompletableFuture());
 					completionStages.put(4, externDemoService.get2(authHeaderContent).toCompletableFuture());
 				}
@@ -135,7 +135,7 @@ public class Overview extends UiProvider {
 				}
 			}
 			{
-				//                if(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoService.perform", Boolean.class)) {
+				//                if(ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
 				//                    try {
 				//                        response1 = demoService.get1(authHeaderContent);
 				//                    } catch (Throwable e) {
@@ -149,7 +149,7 @@ public class Overview extends UiProvider {
 				//                        response2 = e.getMessage();
 				//                    }
 				//                }
-				//                if(ConfigProvider.getConfig().getValue("quarkus.rest-client.demoServiceExternal.perform", Boolean.class)) {
+				//                if(ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
 				//                    try {
 				//                        responseExt1 = externDemoService.get1(authHeaderContent);
 				//                    } catch (Throwable e) {

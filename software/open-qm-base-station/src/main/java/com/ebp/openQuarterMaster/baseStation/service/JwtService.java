@@ -45,8 +45,11 @@ public class JwtService {
 		this.sigKeyId = privateKeyLocation;
 		this.issuer = issuer;
 		
+		log.info("Private key location: {}", privateKeyLocation);
 		this.privateKey =
-			KeyUtils.readPrivateKey(privateKeyLocation); //KeyUtils.readPrivateKey(privateKeyLocation); //     StaticUtils.resourceAsUrl(privateKeyLocation).toString());
+			KeyUtils.readPrivateKey(
+				privateKeyLocation
+			); //KeyUtils.readPrivateKey(privateKeyLocation); //     StaticUtils.resourceAsUrl(privateKeyLocation).toString());
 	}
 	
 	/**
