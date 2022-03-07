@@ -39,7 +39,7 @@ runningInfo:
 demo:
   connectTimeout: 1500
   readTimeout: 1500
-  perform: false
+  perform: true
 
 quarkus:
   rest-client:

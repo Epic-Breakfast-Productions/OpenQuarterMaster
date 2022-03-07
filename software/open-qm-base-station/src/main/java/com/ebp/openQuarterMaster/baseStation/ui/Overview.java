@@ -109,7 +109,7 @@ public class Overview extends UiProvider {
 						result =
 							future.get(
 								ConfigProvider.getConfig()
-											  .getValue("quarkus.rest-client.demoServiceExternal.readTimeout", Integer.class),
+											  .getValue("demo.readTimeout", Integer.class),
 								TimeUnit.MILLISECONDS
 							);
 					} catch(Throwable e) {
