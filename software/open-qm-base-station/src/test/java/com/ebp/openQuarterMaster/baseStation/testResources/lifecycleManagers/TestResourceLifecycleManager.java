@@ -194,10 +194,9 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			return Map.of();
 		}
 		if (BROWSER_CONTAINER == null || !BROWSER_CONTAINER.isRunning()) {
-			
 			File recordingDir = new File(
-				"build/seleniumRecordings/" +
-				new SimpleDateFormat("yyyyMMddHHmm").format(new Date())
+				"build/seleniumRecordings/"
+				+ new SimpleDateFormat("yyyyMMddHHmm").format(new Date())
 			);
 			recordingDir.mkdirs();
 			

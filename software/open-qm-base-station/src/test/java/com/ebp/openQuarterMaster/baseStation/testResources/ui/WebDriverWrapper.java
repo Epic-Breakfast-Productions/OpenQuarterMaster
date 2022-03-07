@@ -89,7 +89,6 @@ public class WebDriverWrapper implements Closeable {
 			}
 			this.goToIndex();
 			driver.manage().deleteAllCookies();
-			
 			driver.get("about:logo");
 			driver.navigate().refresh();
 		} else {

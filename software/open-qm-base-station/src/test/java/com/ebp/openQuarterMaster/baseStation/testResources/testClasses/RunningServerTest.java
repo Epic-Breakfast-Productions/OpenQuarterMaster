@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
-	
 	//TODO:: this with params
 	@AfterEach
 	public void afterEach(
