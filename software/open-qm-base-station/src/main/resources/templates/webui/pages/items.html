@@ -73,7 +73,7 @@
     <div class="mb-3 row" id="unitNameRow">
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditUnitInput">
+            <select class="form-select" id="addEditUnitInput" onchange="updateCompatibleUnits();">
                 {#inputs/units/unitOptionsGroups}
                 {/inputs/units/unitOptionsGroups}
             </select>
@@ -162,8 +162,23 @@
 <script>
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
+var addEditUnitInput = $('#addEditUnitInput');
 var addEditStoredTypeInput = $('#addEditStoredTypeInput');
 var storedContainer = $('#storedContainer');
+var compatibleUnitOptions = "";
+
+function updateCompatibleUnits(){
+    var curSelected = addEditUnitInput.val();
+    
+    //TODO: finish
+    doRestCall({
+        url: "/api/info/unitCompatibility/" + curSelected
+    });
+    
+    
+    //TODO:: update stored selects
+}
+updateCompatibleUnits();
 
 function resetAddEditForm(){
 }
@@ -196,6 +211,18 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
+function getCommonStoredFormElements(){
+    return '';// TODO
+}
+
+function addEditUpdateAmountStoredHeader(caller, headerId){
+    var parentElem = $($(caller).parent().get(0));
+    var header = $("#"+headerId);
+    
+    header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).value);
+    header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value);
+}
+
 var numAmountStoredClicked=0;
 function addNewAmountStored(formContentId, accordionId){
     var id="addEditAmountStoredEntry-"+(numAmountStoredClicked++);
@@ -205,12 +232,16 @@ function addNewAmountStored(formContentId, accordionId){
             '<div class="accordion-item">\n'+
             '    <h2 class="accordion-header" id="'+id+'">\n'+
             '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
-            '          <span class="addEditAmountDisplay">0</span><span class="addEditUnitDisplay"></span> '+id+'\n'+
+            '          <span class="addEditAmountDisplay">0</span><span class="addEditUnitDisplay"></span>\n'+ //TODO:: expires
             '        </button>\n'+
             '    </h2>\n'+
             '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+accordionId+'">\n'+
             '        <div class="accordion-body">\n'+
-            '            Form elements\n'+
+            '            <div class="input-group mt-2">\n'+
+            '                <input type="text" class="form-control amountStoredValueInput" placeholder="Value" value="0" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')">\n'+
+            '                <select class="form-select amountStoredUnitInput" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')"></select>\n'+ //TODO:: populate
+            '            </div>'+
+            '            ' + getCommonStoredFormElements() +
             '        </div>\n'+
             '    </div>\n'+
             '</div>'
