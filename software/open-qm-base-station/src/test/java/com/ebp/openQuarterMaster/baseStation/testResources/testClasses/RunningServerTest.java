@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
+//@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
 	
 	//TODO:: this with params

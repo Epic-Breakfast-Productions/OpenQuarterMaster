@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.testcontainers.lifecycle.TestDescription;
 
 @Slf4j
@@ -11,24 +12,36 @@ public class OurTestDescription implements TestDescription {
 	
 	private final String name;
 	
-	public OurTestDescription(TestInfo info){
-		String nameShort = info.getTestMethod().get().getName();
-		
+	public OurTestDescription(String methodName, String displayName) {
 		String dirtyName = String.format(
 			NAME_FORMAT,
-			nameShort,
-			info.getDisplayName()
+			methodName,
+			displayName
 		);
 		
 		log.info("Dirty name: {}", dirtyName);
 		
 		//TODO:: improve
 		this.name = dirtyName
-						.replaceAll("\\[","-")
-						.replaceAll("]","-")
-						.replaceAll("\\W+", "");
+			.replaceAll("\\[", "-")
+			.replaceAll("]", "-")
+			.replaceAll("\\W+", "");
 		
 		log.info("Clean name: {}", this.name);
+	}
+	
+	public OurTestDescription(ExtensionContext context) {
+		this(
+			context.getTestMethod().get().getName(),
+			context.getDisplayName()
+		);
+	}
+	
+	public OurTestDescription(TestInfo info) {
+		this(
+			info.getTestMethod().get().getName(),
+			info.getDisplayName()
+		);
 	}
 	
 	@Override

@@ -58,6 +58,7 @@ Native-specific tests:
 - Overview
   - stats
 - Image management
+  - Check title in view
   - overall stats
   - responsive design tweaks
   - testing for large images

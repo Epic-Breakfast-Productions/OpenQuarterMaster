@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
-public class WebUiTest extends RunningServerTest {
+//@ExtendWith(SeleniumRecordingTriggerExtension.class)
+public abstract class WebUiTest extends RunningServerTest {
 
 }
