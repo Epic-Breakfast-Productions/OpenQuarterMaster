@@ -159,7 +159,7 @@ items:
           - name: quarkus.oidc.authentication.scopes
             value: profile,address,email,address,phone,offline_access,microprofile-jwt
           - name: quarkus.rest-client.demoService.url
-            value: http://demo-plugin:8080
+            value: http://demo-plugin:8082
           - name: quarkus.rest-client.demoServiceExternal.url
             value: http://docker-laptop:8080
           - name: runningInfo.baseUrl
@@ -248,7 +248,7 @@ items:
           imagePullPolicy: IfNotPresent
           name: open-qm-plugin-demo
           ports:
-          - containerPort: 8080
+          - containerPort: 8082
             protocol: TCP
           - containerPort: 8778
             protocol: TCP

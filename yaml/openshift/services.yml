@@ -30,9 +30,9 @@ items:
   spec:
     ports:
     - name: http
-      port: 8080
+      port: 8082
       protocol: TCP
-      targetPort: 8080
+      targetPort: 8082
     selector:
       deployment: open-qm-plugin-demo
     sessionAffinity: None
