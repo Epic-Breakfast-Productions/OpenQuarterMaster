@@ -287,7 +287,7 @@ addEditImageForm.submit(function (ev) {
 });
 
 
-var viewModalTitleText = $('#viewModalTitleText');
+var viewModalLabel = $('#viewModalLabel');
 var imageViewImages = $('.imageViewImage');
 var imageViewMessages = $('.imageViewMessages');
 var viewDescriptionTextSection = $('#viewDescriptionTextSection');
@@ -299,7 +299,7 @@ var imageEditButton = $('#imageEditButton');
 var historyViewContainer = $('#historyViewContainer');
 
 function resetView(){
-    viewModalTitleText.text("");
+    viewModalLabel.text("");
     imageViewImages.each(function(cur){
         cur.src = '';
     });
@@ -326,7 +326,7 @@ function setupViewForImage(id){
         async: false,
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
-            viewModalTitleText.text(data.title);
+            viewModalLabel.text(data.title);
             if(data.description){
                 console.log("had description");
                 viewDescriptionTextSection.show();
