@@ -130,5 +130,5 @@ smallrye:
       email: dev@devlopment.dev
       phone: 111-222-3333
       website: http://devlopment.dev
-      image: /media/dev/developers.jpeg
+      image: ../../../../dev/developers.jpeg
 
