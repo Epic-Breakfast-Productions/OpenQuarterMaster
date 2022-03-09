@@ -2,7 +2,10 @@ package com.ebp.openQuarterMaster.lib.core.media;
 
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,6 +16,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
@@ -145,6 +149,12 @@ class ImageTest {
 		);
 	}
 	
+	@BeforeEach
+	@AfterEach
+	public void triggerGC() {
+		System.gc();
+	}
+	
 	@ParameterizedTest
 	@MethodSource("getTestImages")
 	public void resizeImageTest(String imageFile) throws IOException {
@@ -216,13 +226,12 @@ class ImageTest {
 	@ParameterizedTest()
 	@MethodSource("getTestImages")
 	public void constructorFromIcrTest(String imageFile) throws IOException {
-		BufferedImage imageIn = ImageIO.read(ImageTest.class.getResourceAsStream(imageFile));
-		//        String imageData = new Image("", "", imageIn).toDataString();
+		Base64InputStream base64Is = new Base64InputStream(ImageTest.class.getResourceAsStream(imageFile), true);
 		
 		ImageCreateRequest icr = new ImageCreateRequest(
 			"hello",
 			"world",
-			PNG_IMAGE_DATA,
+			"data:image/png;base64," + new String(base64Is.readAllBytes()),
 			new ArrayList<>(),
 			new HashMap<>()
 		);

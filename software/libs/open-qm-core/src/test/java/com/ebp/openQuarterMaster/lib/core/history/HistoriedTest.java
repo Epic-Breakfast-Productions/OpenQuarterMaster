@@ -129,7 +129,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void timeSerializationWithMany() throws JsonProcessingException {
-		int numEvents = 1_000;
+		int numEvents = 10_000;
 		
 		TestHistoried obj = this.getBasicTestItem();
 		
@@ -141,7 +141,7 @@ class HistoriedTest extends BasicTest {
 					)
 		);
 		
-		for (int i = 0; i < numEvents; i++) {
+		for (int i = 1; i < numEvents; i++) {
 			obj.updated(new HistoryEvent(
 				EventType.UPDATE,
 				ObjectId.get(),

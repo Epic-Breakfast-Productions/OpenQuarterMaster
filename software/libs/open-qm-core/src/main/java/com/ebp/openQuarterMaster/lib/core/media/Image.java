@@ -98,14 +98,22 @@ public class Image extends MainObject {
 	
 	public static BufferedImage bufferedImageFromBase64(String dataString) {
 		BufferedImage image = null;
-		byte[] imageByte;
-		try {
-			imageByte = BASE_64_DECODER.decode(dataString.split(",")[1]);
-			ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-			image = ImageIO.read(bis);
-			bis.close();
-		} catch(Exception e) {
-			throw new RuntimeException("Failed to read in image from data string.", e);
+		{
+			byte[] imageByte;
+			{
+				String[] split = dataString
+					.replaceAll("\\s", "")
+					.split(",");
+				imageByte = BASE_64_DECODER.decode(split[(split.length == 2 ? 1 : 0)]);
+			}
+			System.gc();
+			try (
+				ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+			) {
+				image = ImageIO.read(bis);
+			} catch(Exception e) {
+				throw new RuntimeException("Failed to read in image from data string.", e);
+			}
 		}
 		return image;
 	}
