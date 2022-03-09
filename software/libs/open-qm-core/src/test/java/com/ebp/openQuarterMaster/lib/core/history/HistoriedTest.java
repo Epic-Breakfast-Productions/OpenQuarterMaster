@@ -1,6 +1,11 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
+import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,11 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Slf4j
 class HistoriedTest extends BasicTest {
 	
-	public Historied getBasicTestItem() {
-		return new Historied() {
-		};
+	@NoArgsConstructor
+	public static class TestHistoried extends Historied {
+	
+	}
+	
+	public TestHistoried getBasicTestItem() {
+		return new TestHistoried();
 	}
 	
 	@Test
@@ -114,9 +124,45 @@ class HistoriedTest extends BasicTest {
 		);
 		
 		ZonedDateTime eventTime = o.lastHistoryEventTime();
-		
 		assertEquals(o.getHistory().get(0).getTimestamp(), eventTime);
 	}
 	
-	
+	@Test
+	public void timeSerializationWithMany() throws JsonProcessingException {
+		int numEvents = 1_000;
+		
+		TestHistoried obj = this.getBasicTestItem();
+		
+		obj.updated(new HistoryEvent(
+						EventType.CREATE,
+						ObjectId.get(),
+						ZonedDateTime.now(),
+						FAKER.lorem().sentence()
+					)
+		);
+		
+		for (int i = 0; i < numEvents; i++) {
+			obj.updated(new HistoryEvent(
+				EventType.UPDATE,
+				ObjectId.get(),
+				ZonedDateTime.now(),
+				FAKER.lorem().sentence()
+			));
+		}
+		log.info("Created {} history events.", numEvents);
+		
+		StopWatch sw = StopWatch.createStarted();
+		String data = Utils.OBJECT_MAPPER.writeValueAsString(obj);
+		sw.stop();
+		
+		log.info("Serialized data. Length: {}. Took {} to serialize.", data.length(), sw);
+		
+		sw = StopWatch.createStarted();
+		TestHistoried deserialized = Utils.OBJECT_MAPPER.readValue(data, TestHistoried.class);
+		sw.stop();
+		
+		log.info("Deserialized data. Took {} to deserialize.", sw);
+		
+		assertEquals(obj, deserialized);
+	}
 }
