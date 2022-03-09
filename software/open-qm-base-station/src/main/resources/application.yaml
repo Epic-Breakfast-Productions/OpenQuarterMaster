@@ -26,6 +26,7 @@ service:
     email: " "
     phone: " "
     website: " "
+    image: " "
 
 runningInfo:
   organization: The Testing Organization
@@ -129,4 +130,5 @@ smallrye:
       email: dev@devlopment.dev
       phone: 111-222-3333
       website: http://devlopment.dev
+      image: /media/dev/developers.jpeg
 

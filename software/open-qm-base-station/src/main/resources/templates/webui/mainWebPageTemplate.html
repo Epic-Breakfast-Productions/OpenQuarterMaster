@@ -166,13 +166,20 @@ Ingests:
             </small>
         </div>
         <div id="serverInfo" class="col-sm-4">
+            {#if config:['service.runBy.image'] != " "}
+            <img src="{config:['service.runBy.image']}" style="float:right; max-width: 30%;" class="img-thumbnail">
+            {/if}
+            {#if config:['service.runBy.name'] != " "}
             <span class="h4">Run by:</span><br/>
             {config:['service.runBy.name']}
+            {/if}
             <br/>
+            {#if config:['service.runBy.email'] != " " || config:['service.runBy.phone'] != " " || config:['service.runBy.website'] != " "}
             <span class="h6">Contact Info:</span><br/>
-            {#if config:['service.runBy.email'] != ""}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br/>{/if}
-            {#if config:['service.runBy.phone'] != ""}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br/>{/if}
-            {#if config:['service.runBy.website'] != ""}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br/>{/if}
+            {#if config:['service.runBy.email'] != " "}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br/>{/if}
+            {#if config:['service.runBy.phone'] != " "}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br/>{/if}
+            {#if config:['service.runBy.website'] != " "}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br/>{/if}
+            {/if}
         </div>
         <div class="col-sm-4">
             Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
