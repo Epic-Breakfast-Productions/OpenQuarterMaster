@@ -4,5 +4,5 @@ import com.github.javafaker.Faker;
 
 public abstract class BasicTest {
 	
-	protected static final Faker FAKER = Faker.instance();
+	public static final Faker FAKER = Faker.instance();
 }

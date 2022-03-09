@@ -38,14 +38,18 @@ dependencies {
     implementation 'systems.uom:systems-common:2.1'
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
-    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
+//    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
+
     implementation 'org.passay:passay:1.6.1'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
 
-
-    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
-    testImplementation 'org.hibernate.validator:hibernate-validator-cdi:7.0.1.Final'
+    testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
+    testImplementation 'javax.el:javax.el-api:3.0.0'
+    testImplementation 'org.glassfish.web:javax.el:2.2.4'
+//    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
+//    testImplementation 'org.hibernate:hibernate-validator:7.0.3.Final'
+//    testImplementation 'org.hibernate.validator:hibernate-validator-cdi:7.0.1.Final'
 
 //    implementation 'org.abego.treelayout:org.abego.treelayout.core:1.0.3'
 
