@@ -5,6 +5,12 @@
 		<form class="col align-self-center col-md-6 card text-center" id="signInForm">
 		<div class="card-header">
 			<img src="/media/logo.svg" alt="Open QuarterMaster Logo" style="width: 100%;">
+			{#if config:['service.runBy.name'] != " "}
+			<h3>As Run By {config:['service.runBy.name']}</h3>
+			{/if}
+			{#if config:['service.runBy.image'] != " "}
+				<img src="{config:['service.runBy.image']}" style="max-height: 150px;">
+			{/if}
 			<h1>
 				Please sign in
 			</h1>
