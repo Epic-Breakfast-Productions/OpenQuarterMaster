@@ -126,6 +126,11 @@ EXTERNAL
 | ${service.externalAuth.realmBase}
 | The issuer of JWT's. For SELF auth, the value given in a JWT. For external auth, must match what the external JWT provider gives (For keycloak it is the value held at `${service.externalAuth.realmBase}`)
 
+| service.externalAuth.name
+|
+| Workshop Keycloak
+| The name to give the Authentication server. Used for display purposes only on login screen.
+
 | service.externalAuth.url
 |
 | http://localhost:49185
