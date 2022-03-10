@@ -6,6 +6,7 @@ service:
   nameFull: Open Quarter Master Base Station
   authMode: SELF # SELF or EXTERNAL
   # Not used if authMode = SELF
+  # TODO:: move data that doesn't need to be here
   externalAuth:
     name: Keycloak
     url: http://localhost:49185
@@ -29,10 +30,9 @@ service:
     logo: " "
     banner: ${service.runBy.logo}
     
+# TODO:: move this into `service` config
 runningInfo:
-  organization: The Testing Organization
   protocol: http
-  serverName: ${runningInfo.organization}
   hostname: localhost
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${quarkus.http.port}
@@ -103,11 +103,14 @@ quarkus:
 mp:
   jwt:
     verify:
+      # TODO:: mode packaged keys outside of resources, similar to dev image
+      # TODO:: move to dev mode configuration
       privatekey:
         location: security/packagedPrivateKeyPkcs8.pem
       publickey:
         location: security/packagedPublicKey.pem
-      issuer: ${runningInfo.organization} - ${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+      issuer: ${service.runBy.name} - ${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+    # TODO:: verify persist through Native
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
