@@ -1,4 +1,11 @@
 = Building and Deployment
+:toc:
+:sectnums:
+:sectanchors:
 
-[Back](README.md)
+link:README.md[Back]
+
+== Building
+
+== Deployment
 
