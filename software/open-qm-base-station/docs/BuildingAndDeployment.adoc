@@ -99,6 +99,8 @@ For more configuration: https://quarkus.io/guides/opentracing#configuration-refe
 
 All values for `service.externalAuth.*` are only used when doing external auth.
 
+More information on how authorization works can be found link:UsersAndAuth.md[here]
+
 |===
 | Config | Default | Examples | Explain
 
@@ -123,11 +125,6 @@ EXTERNAL
 | ${service.runBy.name} - ${service.nameShort}
 | ${service.externalAuth.realmBase}
 | The issuer of JWT's. For SELF auth, the value given in a JWT. For external auth, must match what the external JWT provider gives (For keycloak it is the value held at `${service.externalAuth.realmBase}`)
-
-| quarkus.oidc.authentication.scopes
-|
-| profile,address,email,address,phone,offline_access,microprofile-jwt
-| TODO:: figure out what this is
 
 | service.externalAuth.url
 |
