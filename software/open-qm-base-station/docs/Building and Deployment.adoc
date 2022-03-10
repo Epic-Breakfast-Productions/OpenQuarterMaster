@@ -9,3 +9,24 @@ link:README.md[Back]
 
 == Deployment
 
+=== Configuration
+
+This is a list of relevant config values for configuring a running instance of Open QuarterMaster Base Station
+
+==== Service Info
+
+==== Database
+
+|===
+| Config | Default | Example | Explain
+
+| quarkus.mongodb.connection-string
+| mongodb://localhost:27017
+|
+| The Connection string to connect to a MongoDb instance
+
+|===
+
+* `quarkus.mongodb.connection-string`
+
+==== Auth
