@@ -26,8 +26,9 @@ service:
     email: " "
     phone: " "
     website: " "
-    image: " "
-
+    logo: " "
+    banner: ${service.runBy.logo}
+    
 runningInfo:
   organization: The Testing Organization
   protocol: http
@@ -130,5 +131,5 @@ smallrye:
       email: dev@devlopment.dev
       phone: 111-222-3333
       website: http://devlopment.dev
-      image: ../../../../dev/developers.jpeg
+      logo: ../../../../dev/developers.jpeg
 

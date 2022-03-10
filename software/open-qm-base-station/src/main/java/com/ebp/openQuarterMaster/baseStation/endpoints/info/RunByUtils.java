@@ -17,6 +17,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -26,7 +28,7 @@ import java.io.FileNotFoundException;
 
 @Traced
 @Slf4j
-@Path("/api/media/runByImage")
+@Path("/api/media/runBy")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RequestScoped
 public class RunByUtils extends EndpointProvider {
@@ -34,44 +36,59 @@ public class RunByUtils extends EndpointProvider {
 	@Inject
 	JsonWebToken jwt;
 	
-	@ConfigProperty(name = "service.runBy.image", defaultValue = "/")
-	File runByImage;
+	@ConfigProperty(name = "service.runBy.logo", defaultValue = "/")
+	File runByLogo;
+	@ConfigProperty(name = "service.runBy.banner", defaultValue = "/")
+	File runByBanner;
 	
-	@GET
-	@Operation(
-		summary = "Gets a particular image's data string for use in html images."
-	)
-	//    @APIResponse(
-	//            responseCode = "200",
-	//            description = "Image retrieved."
-	////            content = @Content( //TODO
-	//            )
-	//    )
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	//    @Produces(MediaType.)//TODO
-	@PermitAll
-	public Response getImageData(
-		@Context SecurityContext securityContext
-	) throws FileNotFoundException {
-		logRequestContext(this.jwt, securityContext);
-		log.info("Getting image data for {}", this.runByImage);
+	
+	private static Response getImage(File image) throws FileNotFoundException {
 		
-		if (!runByImage.exists() || !runByImage.isFile()) {
-//			log.info("PWD: {}", System.getProperty("user.dir"));
-			log.info("Image isFile? {}  Exists? {}", runByImage.isFile(), runByImage.exists());
-			return Response.status(Response.Status.NOT_FOUND).build();
+		if (!image.exists() || !image.isFile()) {
+			//			log.info("PWD: {}", System.getProperty("user.dir"));
+			log.info("Image isFile? {}  Exists? {}", image.isFile(), image.exists());
+			return Response.status(Response.Status.NOT_FOUND).entity("No valid file set for image.").build();
 		}
 		
-		//TODO:: restrict to only image types
+		//TODO:: restrict to only image types, throw 500 if not valid
 		
 		return Response.status(Response.Status.OK)
-					   .entity(new FileInputStream(runByImage))
-					   .type("image/" +FilenameUtils.getExtension(runByImage.getName()))
+					   .entity(new FileInputStream(image))
+					   .type("image/" + FilenameUtils.getExtension(image.getName()))
 					   .build();
 	}
 	
+	
+	@GET
+	@Path("{image}")
+	@Operation(
+		summary = "Gets a particular image's data string for use in html images."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(mediaType = "image/*")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given. No runBy image.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@PermitAll
+	@Produces({"image/*", "text/plain"})
+	public Response getImageData(
+		@Context SecurityContext securityContext,
+		@PathParam("image") String runByImage
+	) throws FileNotFoundException {
+		logRequestContext(this.jwt, securityContext);
+		log.info("Getting image data for {}", runByImage);
+		
+		switch (runByImage) {
+			case "logo":
+				return getImage(this.runByLogo);
+			case "banner":
+				return getImage(this.runByBanner);
+		}
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
 }
