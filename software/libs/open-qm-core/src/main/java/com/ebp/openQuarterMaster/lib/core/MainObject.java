@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,10 +21,10 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MainObject extends Historied {
-	
 	/**
 	 * The id of this object in the Mongodb.
 	 */
+	@Schema(example = "ObjectId hex string")
 	private ObjectId id;
 	/**
 	 * Attributes this object might have, usable for any purpose.

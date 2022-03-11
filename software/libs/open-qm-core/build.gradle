@@ -39,6 +39,7 @@ dependencies {
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 //    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '2.0.2'
+    implementation "org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1"
 
     implementation 'org.passay:passay:1.6.1'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
