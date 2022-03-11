@@ -73,7 +73,7 @@
     <div class="mb-3 row" id="unitNameRow">
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditUnitInput" onchange="updateCompatibleUnits();">
+            <select class="form-select" id="addEditUnitInput" onchange="handleItemUnitChange();">
                 {#inputs/units/unitOptionsGroups}
                 {/inputs/units/unitOptionsGroups}
             </select>
@@ -167,18 +167,38 @@ var addEditStoredTypeInput = $('#addEditStoredTypeInput');
 var storedContainer = $('#storedContainer');
 var compatibleUnitOptions = "";
 
+function haveStored(){
+    return storedContainer.children().length > 0;
+}
+
 function updateCompatibleUnits(){
     var curSelected = addEditUnitInput.val();
     
-    //TODO: finish
     doRestCall({
-        url: "/api/info/unitCompatibility/" + curSelected
+        url: "/api/info/unitCompatibility/" + curSelected,
+        extraHeaders: { accept:"text/html" },
+        done: function (data){
+            compatibleUnitOptions = data;
+            
+            storedContainer.find(".unitInput").each(function (i, selectInput){
+                var selectInputJq = $(selectInput);
+                selectInputJq.html(compatibleUnitOptions);
+                selectInputJq.change();
+            });
+        }
     });
-    
-    
-    //TODO:: update stored selects
 }
 updateCompatibleUnits();
+
+function handleItemUnitChange(){
+    if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
+        //TODO:: handle changing back to old value
+    } else {
+        updateCompatibleUnits();
+    }
+}
+
+
 
 function resetAddEditForm(){
 }
@@ -201,7 +221,7 @@ function setIdAttField(){
 }
 
 function addEditStoredTypeInputChanged(){
-    if(storedContainer.children().length > 0 && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
+    if(haveStored() && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
         addEditStoredTypeInput.val(
             addEditStoredTypeInput.attr('data-current')
         );
@@ -220,7 +240,7 @@ function addEditUpdateAmountStoredHeader(caller, headerId){
     var header = $("#"+headerId);
     
     header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).value);
-    header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value);
+    header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value.replaceAll("\"", ""));
 }
 
 var numAmountStoredClicked=0;
@@ -228,7 +248,7 @@ function addNewAmountStored(formContentId, accordionId){
     var id="addEditAmountStoredEntry-"+(numAmountStoredClicked++);
     var collapseId = id + "-collapse";
     
-    $('#'+formContentId).append($(
+    var output = $(
             '<div class="accordion-item">\n'+
             '    <h2 class="accordion-header" id="'+id+'">\n'+
             '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
@@ -239,13 +259,17 @@ function addNewAmountStored(formContentId, accordionId){
             '        <div class="accordion-body">\n'+
             '            <div class="input-group mt-2">\n'+
             '                <input type="text" class="form-control amountStoredValueInput" placeholder="Value" value="0" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')">\n'+
-            '                <select class="form-select amountStoredUnitInput" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')"></select>\n'+ //TODO:: populate
+            '                <select class="form-select amountStoredUnitInput unitInput" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
             '            </div>'+
             '            ' + getCommonStoredFormElements() +
             '        </div>\n'+
             '    </div>\n'+
             '</div>'
-    ));
+    );
+    
+    $('#'+formContentId).append(output);
+    addEditUpdateAmountStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
+    return output;
 }
 function addNewTrackedStored(formContentId, caller){
     alert('Adding tracked form listing');

@@ -31,6 +31,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Variant;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Traced
 @Slf4j
@@ -45,36 +46,6 @@ public class GeneralInfo extends EndpointProvider {
 	@Inject
 	@Location("tags/inputs/units/unitOptions")
 	Template optionsTemplate;
-	
-	//
-	//    @Inject
-	//    ServerInfoBean infoBean;
-	//
-	//    @GET
-	//    @Path("server")
-	//    @Operation(
-	//            summary = "Gets a set of information about the server."
-	//    )
-	//    @APIResponse(
-	//            responseCode = "200",
-	//            description = "Got the list.",
-	//            content = @Content(
-	//                    mediaType = "application/json",
-	//                    schema = @Schema(
-	//                            implementation = ServerInfoBean.class
-	//                    )
-	//            )
-	//    )
-	////    @SecurityRequirement(name = "JwtAuth")
-	//    @PermitAll
-	//    @Produces(MediaType.APPLICATION_JSON)
-	//    public Response getServerInfo(@Context SecurityContext ctx) {
-	//        log.info("Getting server info.");
-	//
-	//        return Response.ok(
-	//                this.infoBean
-	//        ).build();
-	//    }
 	
 	@GET
 	@Path("units")
@@ -117,7 +88,7 @@ public class GeneralInfo extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<Unit<?>, List<Unit<?>>> getUnitCompatibleMap(@Context SecurityContext ctx) {
+	public Map<Unit<?>, Set<Unit<?>>> getUnitCompatibleMap(@Context SecurityContext ctx) {
 		log.info("Getting unit set with lists of compatible units.");
 		return UnitUtils.UNIT_COMPATIBILITY_MAP;
 	}
@@ -146,7 +117,7 @@ public class GeneralInfo extends EndpointProvider {
 		@PathParam("unit") String unit
 	) throws JsonProcessingException {
 		log.info("Getting unit set with lists of compatible units. Accept header: {}", acceptHeaderVal);
-		List<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(mapper.readValue(unit, Unit.class));
+		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(mapper.readValue(unit, Unit.class));
 		
 		switch (acceptHeaderVal == null? "" : acceptHeaderVal.strip()){
 			case MediaType.APPLICATION_JSON:

@@ -7,8 +7,10 @@ import tech.units.indriya.unit.Units;
 import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class UnitUtils {
 	
@@ -87,14 +89,16 @@ public class UnitUtils {
 	
 	public static final List<Unit<?>> ALLOWED_UNITS = new ArrayList<>();
 	
-	public static final Map<Unit<?>, List<Unit<?>>> UNIT_COMPATIBILITY_MAP = new LinkedHashMap<>();
+	public static final Map<Unit<?>, Set<Unit<?>>> UNIT_COMPATIBILITY_MAP = new LinkedHashMap<>();
 	
 	static {
 		for (List<Unit<?>> curList : ALLOWED_UNITS_MAP.values()) {
 			ALLOWED_UNITS.addAll(curList);
 		}
 		for (Unit<?> curUnit : ALLOWED_UNITS) {
-			List<Unit<?>> compatibleList = new ArrayList<>();
+			Set<Unit<?>> compatibleList = new LinkedHashSet<>();
+			
+			compatibleList.add(curUnit);
 			
 			for (Unit<?> curComparison : ALLOWED_UNITS) {
 				if (curUnit.isCompatible(curComparison)) {
