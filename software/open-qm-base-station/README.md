@@ -55,6 +55,7 @@ Native-specific tests:
   - edit item
   - delete item
   - stats
+  - fix image selection
 - Overview
   - stats
 - Image management

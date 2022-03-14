@@ -42,6 +42,12 @@
 </div>
 {#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
 {/inputs/units/unitOptionsHidden}
+{#inputs/attInputHidden}
+{/inputs/attInputHidden}
+{#inputs/keywordInputHidden}
+{/inputs/keywordInputHidden}
+{#search/image/imageSelectFormInputHidden}
+{/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
 {#modal id='addEdit' large=true title='Item add/edit'}
@@ -160,6 +166,9 @@
 {/scripts}
 {#pageScript}
 <script>
+var keywordInputTemplate = $('#keywordInputTemplate');
+var attInputTemplate = $('#attInputTemplate');
+var imageInputTemplate = $('#imageInputTemplate');
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
 var addEditUnitInput = $('#addEditUnitInput');
@@ -198,8 +207,6 @@ function handleItemUnitChange(){
     }
 }
 
-
-
 function resetAddEditForm(){
 }
 
@@ -231,16 +238,51 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
-function getCommonStoredFormElements(){
-    return '';// TODO
+function getCommonStoredFormElements(headerId) {
+    return  '<div class="mb-3 ">\n'+
+            '    <label class="form-label">Condition Percentage</label>\n' +
+            '    <div class="input-group">\n'+
+            '        <input type="number" max="100" min="0" class="form-control storedConditionPercentageInput" name="condition" onchange="addEditUpdateStoredHeader($(this).parent(), \''+headerId+'\')">\n'+ //TODO:: better label of better to worse
+            '        <span class="input-group-text" id="addon-wrapping">%</span>\n'+ //TODO:: better label of better to worse
+            '    </div>\n'+
+            '</div>\n' +
+            '<div class="mb-3">\n'+
+            '    <label class="form-label">Condition Details</label>\n' +
+            '    <textarea class="form-control" name=""></textarea>\n'+
+            '</div>\n' +
+            '<div class="mb-3">\n'+
+            '    <label class="form-label">Expires</label>\n' +
+            '    <input type="date" class="form-control storedExpiredInput" name="expires" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">\n'+ //TODO:: enforce future date?
+            //TODO:: note to leave blank if not applicable
+            '</div>\n' +
+            imageInputTemplate.html() +
+            keywordInputTemplate.html() +
+            attInputTemplate.html();
 }
 
-function addEditUpdateAmountStoredHeader(caller, headerId){
-    var parentElem = $($(caller).parent().get(0));
+function addEditUpdateStoredHeader(caller, headerId){
+    var parentElem = $($(caller).parent().parent().get(0));
     var header = $("#"+headerId);
     
     header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).value);
     header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value.replaceAll("\"", ""));
+    
+    var storedPercInput = parentElem.find(".storedConditionPercentageInput").get(0);
+    if(storedPercInput.value){
+        header.find(".addEditConditionDisplayText").text(storedPercInput.value);
+        header.find(".addEditConditionDisplay").show();
+    } else {
+        header.find(".addEditConditionDisplay").hide();
+    }
+    
+    var storedExpInput = parentElem.find(".storedExpiredInput").get(0);
+    if(storedExpInput.value){
+        header.find(".addEditExpiresDisplayText").text(storedExpInput.value);
+        header.find(".addEditExpiresDisplay").show();
+    } else {
+        header.find(".addEditExpiresDisplay").hide();
+    }
+    
 }
 
 var numAmountStoredClicked=0;
@@ -252,23 +294,26 @@ function addNewAmountStored(formContentId, accordionId){
             '<div class="accordion-item">\n'+
             '    <h2 class="accordion-header" id="'+id+'">\n'+
             '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
-            '          <span class="addEditAmountDisplay">0</span><span class="addEditUnitDisplay"></span>\n'+ //TODO:: expires
+            '          <span class="addEditAmountDisplay">0</span>\n' +
+            '          <span class="addEditUnitDisplay"></span>&nbsp;&nbsp;\n'+
+            '          <span class="addEditConditionDisplay">Condition: <span class="addEditConditionDisplayText"></span>%&nbsp;&nbsp;</span>\n'+
+            '          <span class="addEditExpiresDisplay">Expires: <span class="addEditExpiresDisplayText"></span></span>\n'+ //TODO:: expires
             '        </button>\n'+
             '    </h2>\n'+
             '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+accordionId+'">\n'+
             '        <div class="accordion-body">\n'+
-            '            <div class="input-group mt-2">\n'+
-            '                <input type="text" class="form-control amountStoredValueInput" placeholder="Value" value="0" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')">\n'+
-            '                <select class="form-select amountStoredUnitInput unitInput" onchange="addEditUpdateAmountStoredHeader(this, \''+id+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
+            '            <div class="input-group mt-2 mb-3">\n'+
+            '                <input type="text" class="form-control amountStoredValueInput" placeholder="Value" value="0" onchange="addEditUpdateStoredHeader(this, \''+id+'\')">\n'+
+            '                <select class="form-select amountStoredUnitInput unitInput" onchange="addEditUpdateStoredHeader(this, \''+id+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
             '            </div>'+
-            '            ' + getCommonStoredFormElements() +
+            '            ' + getCommonStoredFormElements(id) +
             '        </div>\n'+
             '    </div>\n'+
             '</div>'
     );
     
     $('#'+formContentId).append(output);
-    addEditUpdateAmountStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
+    addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
     return output;
 }
 function addNewTrackedStored(formContentId, caller){
