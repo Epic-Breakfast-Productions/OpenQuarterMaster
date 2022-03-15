@@ -34,7 +34,7 @@ import static org.keycloak.crypto.KeyUse.SIG;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 /**
- *
+ * https://www.testcontainers.org/features/networking/
  */
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
@@ -46,6 +46,9 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	private static MongoDBContainer MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
 	//@Rule //TODO:: play with this in the test classes
+	/**
+	 * https://www.testcontainers.org/modules/webdriver_containers/
+	 */
 	private static BrowserWebDriverContainer<?> BROWSER_CONTAINER = null;
 	
 	static {

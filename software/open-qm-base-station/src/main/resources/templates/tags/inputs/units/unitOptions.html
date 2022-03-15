@@ -5,5 +5,5 @@ Ingests:
 - units - list of units
     !}
 {#for unit in units}
-	<option value="&quot;{unit.toString()}&quot;">{unit.toString()}</option>
+	<option value="&quot;{unit.toString()}&quot;" data-symbol="{unit.getSymbol()}">{unit.getName()}</option>
 {/for}
