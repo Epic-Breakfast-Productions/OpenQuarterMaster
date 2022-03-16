@@ -89,7 +89,7 @@ public class UnitUtils {
 				List.of(
 					Units.LITRE,
 					getUnitWithNameSymbol(Units.CUBIC_METRE, "Meter Cubed", Units.CUBIC_METRE.toString()),
-					getUnitWithNameSymbol(USCustomary.LITER, null, USCustomary.LITER.toString()),
+//					getUnitWithNameSymbol(USCustomary.LITER, null, USCustomary.LITER.toString()), // same as LITRE
 					getUnitWithNameSymbol(USCustomary.CUBIC_INCH, "Cubic Inch", USCustomary.CUBIC_INCH.toString()),
 					getUnitWithNameSymbol(USCustomary.CUBIC_FOOT, "Cubic Foot", USCustomary.CUBIC_FOOT.toString()),
 					getUnitWithNameSymbol(USCustomary.ACRE_FOOT, null, "ac⋅ft"),
