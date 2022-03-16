@@ -125,9 +125,11 @@ public class UnitUtils {
 	public static final Map<Unit<?>, Set<Unit<?>>> UNIT_COMPATIBILITY_MAP = new LinkedHashMap<>();
 	
 	static {
+		//flatten map to list
 		for (List<Unit<?>> curList : ALLOWED_UNITS_MAP.values()) {
 			ALLOWED_UNITS.addAll(curList);
 		}
+		// build map of compatible units for each unit
 		for (Unit<?> curUnit : ALLOWED_UNITS) {
 			Set<Unit<?>> compatibleList = new LinkedHashSet<>();
 			
