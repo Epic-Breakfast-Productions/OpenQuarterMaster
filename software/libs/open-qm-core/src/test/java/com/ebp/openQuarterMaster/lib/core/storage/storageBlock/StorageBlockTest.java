@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.storageBlock;
 
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,7 +29,7 @@ class StorageBlockTest extends BasicTest {
 					FAKER.address().fullAddress(),
 					null,
 					new ArrayList<>() {{
-						add(Quantities.getQuantity(5, AbstractUnit.ONE));
+						add(Quantities.getQuantity(5, UnitUtils.UNIT));
 					}}
 				)
 			),

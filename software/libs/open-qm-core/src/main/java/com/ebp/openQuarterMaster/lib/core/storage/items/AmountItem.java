@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
@@ -27,7 +28,7 @@ public class AmountItem extends InventoryItem<List<@NotNull AmountStored>> {
 	 */
 	@NonNull
 	@ValidUnit
-	private Unit<?> unit = AbstractUnit.ONE;
+	private Unit<?> unit = UnitUtils.UNIT;
 	
 	public AmountItem() {
 		super(StoredType.AMOUNT);

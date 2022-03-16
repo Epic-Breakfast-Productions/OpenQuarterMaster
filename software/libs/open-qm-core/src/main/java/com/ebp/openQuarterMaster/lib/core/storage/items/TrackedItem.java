@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
+import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,7 +42,7 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 	@JsonIgnore
 	@Override
 	public @NonNull Unit<?> getUnit() {
-		return AbstractUnit.ONE;
+		return UnitUtils.UNIT;
 	}
 	
 	@Override
