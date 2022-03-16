@@ -32,7 +32,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/tech.units/indriya
     //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-    implementation group: 'tech.units', name: 'indriya', version: '2.1.2'
+    implementation group: 'tech.units', name: 'indriya', version: '2.1.3'
     // https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
     implementation group: 'tech.uom.lib', name: 'uom-lib-jackson', version: '2.1'
     implementation 'systems.uom:systems-common:2.1'
@@ -61,7 +61,7 @@ dependencies {
     implementation group: 'tech.uom.lib', name: 'uom-lib-assertj', version: '2.1'
 
     testImplementation group: 'com.github.javafaker', name: 'javafaker', version: '1.0.2'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
 }
 
 test {

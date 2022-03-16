@@ -13,8 +13,8 @@ import javax.measure.Unit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * TODO:: test invalid unit de/serialization
@@ -86,6 +86,20 @@ class UnitUtilsTest {
 	@Test
 	public void testUnitCompatibilityMap() {
 		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
+	}
+	
+	@ParameterizedTest(name = "testUnitHasNameSymbol[{index}]({0})")
+	@MethodSource("unitsAsArgs")
+	public void testUnitHasNameSymbol(Unit<?> unit) {
+		log.info(
+			"Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"",
+			unit,
+			unit.getName(),
+			unit.getSymbol(),
+			unit.getDimension()
+		);
+		assertNotNull(unit.getName(), "Unit had no name");
+		assertNotNull(unit.getSymbol(), "Unit had no symbol");
 	}
 	
 	//TODO:: figure out how to serialize invalid units
