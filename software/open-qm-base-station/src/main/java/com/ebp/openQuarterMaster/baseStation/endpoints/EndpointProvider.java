@@ -22,9 +22,10 @@ public abstract class EndpointProvider {
 			log.info("Processing request with no JWT; ssh:{}", context.isSecure());
 		} else {
 			log.info(
-				"Processing request with JWT; User:{} ssh:{}",
+				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {}",
 				context.getUserPrincipal().getName(),
-				context.isSecure()
+				context.isSecure(),
+				jwt.getIssuer()
 			);
 			if (context.isSecure()) {
 				log.warn("Request with JWT made without HTTPS");

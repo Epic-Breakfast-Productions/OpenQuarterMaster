@@ -109,7 +109,7 @@ mp:
         location: security/packagedPrivateKeyPkcs8.pem
       publickey:
         location: security/packagedPublicKey.pem
-      issuer: ${service.runBy.name} - ${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
     # TODO:: verify persist through Native
     expiration:
       default: 86400 # 1 day
