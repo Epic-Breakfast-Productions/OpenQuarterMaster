@@ -201,7 +201,7 @@ updateCompatibleUnits();
 
 function handleItemUnitChange(){
     if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
-        //TODO:: handle changing back to old value
+        //TODO:: handle changing back to old value3+
     } else {
         updateCompatibleUnits();
     }
@@ -264,7 +264,7 @@ function addEditUpdateStoredHeader(caller, headerId){
     var parentElem = $($(caller).parent().parent().get(0));
     var header = $("#"+headerId);
     
-    header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).value);
+    header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).dataset.symbol);
     header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value.replaceAll("\"", ""));
     
     var storedPercInput = parentElem.find(".storedConditionPercentageInput").get(0);
@@ -291,7 +291,7 @@ function addNewAmountStored(formContentId, accordionId){
     var collapseId = id + "-collapse";
     
     var output = $(
-            '<div class="accordion-item">\n'+
+            '<div class="accordion-item storedItem">\n'+
             '    <h2 class="accordion-header" id="'+id+'">\n'+
             '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
             '          <span class="addEditAmountDisplay">0</span>\n' +
@@ -314,12 +314,21 @@ function addNewAmountStored(formContentId, accordionId){
     
     $('#'+formContentId).append(output);
     addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
+    updateStorageNumHeld(output);
     return output;
 }
 function addNewTrackedStored(formContentId, caller){
     alert('Adding tracked form listing');
 }
 
+function updateStorageNumHeld(caller){
+    //TODO:: search for parent with class (not working)
+    var parentAccord = $(caller).parent(".storedAccordion");
+    
+    parentAccord.find(".storageNumHeld").get(0).text(
+            parentAccord.find(".storedItem").length
+    );
+}
 
 function addStorageBlockAccord(blockName, blockId){
     var accordId = "addEditItemStorageAssoc-" + blockId;
@@ -337,11 +346,12 @@ function addStorageBlockAccord(blockName, blockId){
     var accordButtonWrapperId = accordId + "-formAddButtonWraper";
     
     var newStorage =
-    $('   <div class="accordion-item" id="'+accordId+'">\n'+
+    $('   <div class="accordion-item storedAccordion" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
       '                <img class="accordion-thumb" src="/api/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
       '                '+blockName+'\n'+
+      '                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
       '            </button>\n'+
       '        </h2>\n'+
       '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +

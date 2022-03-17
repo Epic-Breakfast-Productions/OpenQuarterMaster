@@ -117,7 +117,7 @@ public class GeneralInfo extends EndpointProvider {
 		@PathParam("unit") String unit
 	) throws JsonProcessingException {
 		log.info("Getting unit set with lists of compatible units. Accept header: {}", acceptHeaderVal);
-		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(mapper.readValue(unit, Unit.class));
+		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(UnitUtils.unitFromString(unit));
 		
 		switch (acceptHeaderVal == null? "" : acceptHeaderVal.strip()){
 			case MediaType.APPLICATION_JSON:

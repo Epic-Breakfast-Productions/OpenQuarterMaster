@@ -2,7 +2,6 @@ package com.ebp.openQuarterMaster.baseStation.endpoints.info;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -30,20 +29,20 @@ class GeneralInfoTest extends RunningServerTest {
 	
 	@ParameterizedTest
 	@MethodSource("getUnitsArgs")
-	public void testGetCompatibleUnitsJson(Unit<?> unit) throws JsonProcessingException {
+	public void testGetCompatibleUnitsJson(Unit<?> unit) {
 		given()
 			.accept(MediaType.APPLICATION_JSON)
-			.get("unitCompatibility/" + mapper.writeValueAsString(unit))
+			.get("unitCompatibility/" + UnitUtils.stringFromUnit(unit))
 			.then()
 			.statusCode(200);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("getUnitsArgs")
-	public void testGetCompatibleUnitsHtml(Unit<?> unit) throws JsonProcessingException {
+	public void testGetCompatibleUnitsHtml(Unit<?> unit) {
 		given()
 			.accept(MediaType.TEXT_HTML)
-			.get("unitCompatibility/" + mapper.writeValueAsString(unit))
+			.get("unitCompatibility/" + UnitUtils.stringFromUnit(unit))
 			.then()
 			.statusCode(200);
 	}
