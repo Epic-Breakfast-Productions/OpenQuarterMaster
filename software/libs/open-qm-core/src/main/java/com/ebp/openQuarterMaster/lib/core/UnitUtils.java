@@ -147,17 +147,4 @@ public class UnitUtils {
 		}
 	}
 	
-	public static String stringFromUnit(Unit<?> unit) {
-		return unit.toString();
-	}
-	
-	public static Unit<?> unitFromString(String unitStr) {
-		for (Unit<?> curUnit : ALLOWED_UNITS) {
-			if (stringFromUnit(curUnit).equals(unitStr)) {
-				return curUnit;
-			}
-		}
-		return null;
-	}
-	
 }
