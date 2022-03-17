@@ -35,6 +35,26 @@ class UnitUtilsTest {
 	
 	private final UnitValidator unitValidator = new UnitValidator();
 	
+	@ParameterizedTest(name = "testStringMethods[{index}]({0})")
+	@MethodSource("unitsAsArgs")
+	public void testStringMethods(Unit<?> unit) {
+		log.info(
+			"Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"",
+			unit,
+			unit.getName(),
+			unit.getSymbol(),
+			unit.getDimension()
+		);
+		
+		String unitStr = UnitUtils.stringFromUnit(unit);
+		
+		log.info("Unit String:\"{}\"", unitStr);
+		
+		Unit<?> unitBack = UnitUtils.unitFromString(unitStr);
+		
+		assertEquals(unit, unitBack);
+	}
+	
 	@ParameterizedTest(name = "testUnitSerialization[{index}]({0})")
 	@MethodSource("unitsAsArgs")
 	public void testUnitSerialization(Unit<?> unit) throws JsonProcessingException {

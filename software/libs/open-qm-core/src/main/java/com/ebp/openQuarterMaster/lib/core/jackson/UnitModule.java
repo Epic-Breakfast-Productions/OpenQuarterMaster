@@ -15,6 +15,7 @@ import javax.measure.Unit;
 import java.io.IOException;
 
 import static com.ebp.openQuarterMaster.lib.core.UnitUtils.ALLOWED_UNITS;
+import static com.ebp.openQuarterMaster.lib.core.UnitUtils.unitFromString;
 
 /**
  * Jackson module to handle the Mongodb ObjectId in a reasonable manner
@@ -37,22 +38,13 @@ public class UnitModule extends SimpleModule {
 				serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
 			} else {
 				ObjectNode node = Utils.OBJECT_MAPPER.createObjectNode();
-				node.put(STRING_TOKEN, value.toString());
+				node.put(STRING_TOKEN, UnitUtils.stringFromUnit(value));
 				node.put("name", value.getName());
 				node.put("symbol", value.getSymbol());
 				
 				gen.writeTree(node);
 			}
 		}
-	}
-	
-	private static Unit<?> unitFromString(String unitStr) {
-		for (Unit<?> curUnit : ALLOWED_UNITS) {
-			if (curUnit.toString().equals(unitStr)) {
-				return curUnit;
-			}
-		}
-		return null;
 	}
 	
 	public static class UnitDeserializer extends JsonDeserializer<Unit> {
