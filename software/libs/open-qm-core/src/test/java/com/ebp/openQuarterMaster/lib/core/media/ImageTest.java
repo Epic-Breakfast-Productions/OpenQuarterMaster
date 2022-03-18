@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.media;
 
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.lang3.time.StopWatch;
@@ -12,9 +13,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.imageio.ImageIO;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -23,6 +28,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test image facts:
@@ -149,9 +155,73 @@ class ImageTest {
 		);
 	}
 	
+	
+	public static Stream<Arguments> getValidImages() {
+		return Stream.of(
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().paragraph(),
+				"png",
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			))
+		);
+	}
+	
+	public static Stream<Arguments> getInvalidImages() {
+		return Stream.of(
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().paragraph(),
+				"",
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			)),
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().paragraph(),
+				BasicTest.FAKER.random().hex(),
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			)),
+			Arguments.of(new Image(
+				"",
+				BasicTest.FAKER.lorem().paragraph(),
+				"png",
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			)),
+			Arguments.of(new Image(
+				" ",
+				BasicTest.FAKER.lorem().paragraph(),
+				"png",
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			)),
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().characters(501),
+				"png",
+				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
+			)),
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().paragraph(),
+				"png",
+				""
+			)),
+			Arguments.of(new Image(
+				BasicTest.FAKER.job().title(),
+				BasicTest.FAKER.lorem().paragraph(),
+				"png",
+				BasicTest.FAKER.lorem().paragraph()
+			))
+		);
+	}
+	
+	
+	private Validator validator;
+	
 	@BeforeEach
 	@AfterEach
 	public void triggerGC() {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
 		System.gc();
 	}
 	
@@ -252,11 +322,25 @@ class ImageTest {
 	}
 	
 	@Test
-	public static void testGetMimeType() {
+	public void testGetMimeType() {
 		assertEquals(
 			"image/png",
 			new Image().setType("png").getMimeType()
 		);
 	}
+	
+	
+	@ParameterizedTest
+	@MethodSource("getValidImages")
+	public void testValidationValid(Image image) {
+		assertTrue(this.validator.validate(image).isEmpty());
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getInvalidImages")
+	public void testValidationInvalid(Image image) {
+		assertFalse(this.validator.validate(image).isEmpty());
+	}
+	
 	
 }

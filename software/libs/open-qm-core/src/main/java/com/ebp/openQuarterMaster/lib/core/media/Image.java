@@ -15,6 +15,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import javax.imageio.ImageIO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -136,11 +137,11 @@ public class Image extends MainObject {
 	 *     <li>png</li>
 	 * </ul>
 	 * <p>
-	 * TODO:: validator
 	 */
 	@NonNull
 	@NotNull
 	@NotBlank
+	@Pattern(regexp = "^(png|jpg|jpeg|gif)$")
 	private String type;
 	
 	/**
