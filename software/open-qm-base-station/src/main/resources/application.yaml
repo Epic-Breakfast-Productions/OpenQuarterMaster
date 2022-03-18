@@ -95,7 +95,7 @@ quarkus:
     service-name: ${service.nameShort}v${service.apiVersion}
     sampler-type: const
     sampler-param: 1
-#    metrics:
+  #    metrics:
 #      enabled: true
   http:
     auth:
@@ -128,6 +128,11 @@ smallrye:
       level: DEBUG
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
+    jaeger:
+      agent-host-port:
+    #TODO
+#      endpoint: http://localhost:8091/api/
+#      agent-host-port: localhost:8091
   service:
     runBy:
       name: The Developers

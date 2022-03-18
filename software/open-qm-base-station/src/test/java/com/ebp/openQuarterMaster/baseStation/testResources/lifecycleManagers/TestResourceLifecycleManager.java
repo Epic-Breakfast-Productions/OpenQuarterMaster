@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import io.jaegertracing.testcontainers.JaegerAllInOne;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -45,6 +46,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	private static MongoDBContainer MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
+	private static JaegerAllInOne JAEGER_CONTAINER = null;
 	//@Rule //TODO:: play with this in the test classes
 	/**
 	 * https://www.testcontainers.org/modules/webdriver_containers/
@@ -218,6 +220,24 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		);
 	}
 	
+	public static synchronized Map<String, String> startJaegerTestServer() {
+		if (JAEGER_CONTAINER == null || !JAEGER_CONTAINER.isRunning()) {
+			StopWatch sw = StopWatch.createStarted();
+			JAEGER_CONTAINER = new JaegerAllInOne("jaegertracing/all-in-one:latest");
+			
+			JAEGER_CONTAINER.start();
+			sw.stop();
+			log.info("Started Test Jaeger in {} at: {}", sw, JAEGER_CONTAINER.getQueryPort());
+		} else {
+			log.info("Jaeger already started.");
+		}
+		
+		return Map.of(
+			// TODO
+			"quarkus.jaeger.agent-host-port", JAEGER_CONTAINER.getContainerIpAddress() + ":" + JAEGER_CONTAINER.getCollectorThriftPort()
+		);
+	}
+	
 	public static synchronized void stopMongoTestServer() {
 		if (MONGO_EXE == null) {
 			log.warn("Mongo was not started.");
@@ -243,6 +263,14 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		}
 		BROWSER_CONTAINER.stop();
 		BROWSER_CONTAINER = null;
+	}
+	public static synchronized void stopJaegerTestServer() {
+		if (JAEGER_CONTAINER == null) {
+			log.warn("Jaeger was not started.");
+			return;
+		}
+		JAEGER_CONTAINER.stop();
+		JAEGER_CONTAINER = null;
 	}
 	
 	public static WebDriver getWebDriver() {
@@ -283,6 +311,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		configOverride.putAll(startMongoTestServer());
 		configOverride.putAll(startKeycloakTestServer());
 		configOverride.putAll(startSeleniumWebDriverServer());
+		configOverride.putAll(startJaegerTestServer());
 		
 		log.info("Config overrides: {}", configOverride);
 		
@@ -295,5 +324,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		stopMongoTestServer();
 		stopKeycloakTestServer();
 		stopSeleniumTestServer();
+		stopJaegerTestServer();
 	}
 }

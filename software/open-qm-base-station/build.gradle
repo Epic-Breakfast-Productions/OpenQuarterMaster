@@ -65,6 +65,7 @@ dependencies {
 
     testImplementation "org.testcontainers:mongodb:1.16.3"
     testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
+    testImplementation group: 'io.jaegertracing', name: 'jaeger-testcontainers', version: '0.7.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.1.0'
     testImplementation "org.testcontainers:selenium:1.16.3"
     testImplementation 'com.deque:axe-selenium:3.0'
