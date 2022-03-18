@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.exception.mappers;
 
-import com.ebp.openQuarterMaster.baseStation.ui.UiUtils;
+import com.ebp.openQuarterMaster.baseStation.interfaces.ui.UiUtils;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
