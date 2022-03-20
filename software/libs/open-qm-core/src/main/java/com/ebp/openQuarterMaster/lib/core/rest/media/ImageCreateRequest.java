@@ -8,6 +8,7 @@ import lombok.NonNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +22,10 @@ public class ImageCreateRequest {
 	@NonNull
 	@NotNull
 	@NotBlank
+	@Size(max = 30)
 	public String title;
-	@NonNull
-	@NotNull
+	
+	@Size(max = 500)
 	public String description = "";
 	@NonNull
 	@NotNull
@@ -36,5 +38,5 @@ public class ImageCreateRequest {
 	public List<@NotNull String> keywords = new ArrayList<>();
 	@NonNull
 	@NotNull
-	public Map<@NotNull String, @NotNull String> attributes = new HashMap<>();
+	public Map<@NotNull @NotBlank String, @NotNull String> attributes = new HashMap<>();
 }

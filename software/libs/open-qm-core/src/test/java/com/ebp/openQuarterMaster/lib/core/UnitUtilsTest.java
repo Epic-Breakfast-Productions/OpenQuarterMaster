@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * TODO:: test invalid unit de/serialization
@@ -35,7 +36,7 @@ class UnitUtilsTest {
 	
 	private final UnitValidator unitValidator = new UnitValidator();
 	
-	@ParameterizedTest(name = "testStringMethods[{index}]({0})")
+	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testStringMethods(Unit<?> unit) {
 		log.info(
@@ -55,7 +56,30 @@ class UnitUtilsTest {
 		assertEquals(unit, unitBack);
 	}
 	
-	@ParameterizedTest(name = "testUnitSerialization[{index}]({0})")
+	@ParameterizedTest
+	@MethodSource("unitsAsArgs")
+	public void testNoDuplicates(Unit<?> unit) {
+		log.info(
+			"Testing unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"",
+			unit,
+			unit.getName(),
+			unit.getSymbol(),
+			unit.getDimension()
+		);
+		
+		boolean found = false;
+		for (Unit<?> curUnit : UnitUtils.ALLOWED_UNITS) {
+			if (unit.equals(curUnit)) {
+				if (found) {
+					fail("Unit is in the list more than once.");
+				} else {
+					found = true;
+				}
+			}
+		}
+	}
+	
+	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testUnitSerialization(Unit<?> unit) throws JsonProcessingException {
 		log.info(
@@ -87,7 +111,7 @@ class UnitUtilsTest {
 		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
 	}
 	
-	@ParameterizedTest(name = "testUnitHasNameSymbol[{index}]({0})")
+	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testUnitHasNameSymbol(Unit<?> unit) {
 		log.info(

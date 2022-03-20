@@ -122,11 +122,11 @@ public class Image extends MainObject {
 	@NonNull
 	@NotNull
 	@NotBlank
-	@Size(max = 20)
+	@Size(max = 30)
 	private String title;
 	
 	@Size(max = 500)
-	private String description;
+	private String description = "";
 	
 	/**
 	 * The image format of the data held.
