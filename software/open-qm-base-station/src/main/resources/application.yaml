@@ -129,9 +129,9 @@ smallrye:
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     jaeger:
-      agent-host-port:
+#      agent-host-port:
     #TODO
-#      endpoint: http://localhost:8091/api/
+      endpoint: http://localhost:8091/api/traces
 #      agent-host-port: localhost:8091
   service:
     runBy:
