@@ -233,8 +233,8 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		}
 		
 		return Map.of(
-			// TODO
-			"quarkus.jaeger.agent-host-port", JAEGER_CONTAINER.getContainerIpAddress() + ":" + JAEGER_CONTAINER.getCollectorThriftPort()
+			"quarkus.jaeger.endpoint",
+			"http://" + JAEGER_CONTAINER.getContainerIpAddress() + ":" + JAEGER_CONTAINER.getCollectorThriftPort() + "/api/traces"
 		);
 	}
 	

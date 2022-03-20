@@ -92,7 +92,7 @@ quarkus:
   # https://quarkus.io/guides/opentracing
   jaeger:
     enabled: true
-    service-name: ${service.nameShort}v${service.apiVersion}
+    service-name: ${service.nameShort}V${service.apiVersion}
     sampler-type: const
     sampler-param: 1
   #    metrics:
@@ -129,10 +129,7 @@ smallrye:
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     jaeger:
-#      agent-host-port:
-    #TODO
       endpoint: http://localhost:8091/api/traces
-#      agent-host-port: localhost:8091
   service:
     runBy:
       name: The Developers

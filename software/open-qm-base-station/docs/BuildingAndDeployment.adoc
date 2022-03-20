@@ -38,6 +38,11 @@ https
 |
 | The hostname of the url the service should use to reference itself
 
+| runningInfo.port
+| ${quarkus.http.port}
+| 8080
+| The port of the url the service should use to reference itself
+
 |===
 
 ===== "Run By" information
@@ -92,6 +97,11 @@ For more configuration: https://quarkus.io/guides/opentracing#configuration-refe
 | mongodb://localhost:27017
 |
 | The Connection string to connect to a MongoDb instance
+
+| quarkus.jaeger.endpoint
+|
+| http://localhost:8091/api/traces
+| The url of the Jaeger connector endpoint to send spans to.
 
 |===
 

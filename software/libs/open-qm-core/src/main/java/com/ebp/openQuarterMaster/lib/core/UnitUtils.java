@@ -151,12 +151,18 @@ public class UnitUtils {
 		return unit.toString();
 	}
 	
-	public static Unit<?> unitFromString(String unitStr) {
+	/**
+	 * Gets a unit from the string given.
+	 * @param unitStr The string to get the actual unit from
+	 * @return The unit the string given represents
+	 * @throws IllegalArgumentException If the unit string given is not in the set of valid units, {@link #ALLOWED_UNITS}
+	 */
+	public static Unit<?> unitFromString(String unitStr) throws IllegalArgumentException {
 		for (Unit<?> curUnit : ALLOWED_UNITS) {
 			if (stringFromUnit(curUnit).equals(unitStr)) {
 				return curUnit;
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("Unit string given does not represent any of the possible valid units.");
 	}
 }

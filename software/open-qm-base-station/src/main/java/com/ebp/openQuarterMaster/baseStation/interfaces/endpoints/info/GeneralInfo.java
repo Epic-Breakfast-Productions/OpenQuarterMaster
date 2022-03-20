@@ -114,12 +114,22 @@ public class GeneralInfo extends EndpointProvider {
 	public Response getUnitCompatible(
 		@Context SecurityContext ctx,
 		@HeaderParam("accept") String acceptHeaderVal,
-		@PathParam("unit") String unit
+		@PathParam("unit") String unitString
 	) throws JsonProcessingException {
 		log.info("Getting unit set with lists of compatible units. Accept header: {}", acceptHeaderVal);
-		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(UnitUtils.unitFromString(unit));
+		Unit<?> unit;
+		try {
+			unit = UnitUtils.unitFromString(unitString);
+		} catch(IllegalArgumentException e) {
+			//TODO:: determine proper return code
+			return Response.status(Response.Status.NOT_ACCEPTABLE)
+						   .type(MediaType.TEXT_PLAIN_TYPE)
+						   .entity("Invalid Unit String given: \"" + unitString + "\"")
+						   .build();
+		}
+		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(unit);
 		
-		switch (acceptHeaderVal == null? "" : acceptHeaderVal.strip()){
+		switch (acceptHeaderVal == null ? "" : acceptHeaderVal.strip()) {
 			case MediaType.APPLICATION_JSON:
 			case "":
 				return Response.ok(units).build();

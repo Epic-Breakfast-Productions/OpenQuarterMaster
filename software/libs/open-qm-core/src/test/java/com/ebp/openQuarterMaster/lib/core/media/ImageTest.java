@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.imageio.ImageIO;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -333,13 +335,20 @@ class ImageTest {
 	@ParameterizedTest
 	@MethodSource("getValidImages")
 	public void testValidationValid(Image image) {
-		assertTrue(this.validator.validate(image).isEmpty());
+		Set<ConstraintViolation<Image>> validationErrors = this.validator.validate(image);
+		assertTrue(
+			validationErrors.isEmpty(),
+			"Had validation errors: " + validationErrors.toString()
+		);
 	}
 	
 	@ParameterizedTest
 	@MethodSource("getInvalidImages")
 	public void testValidationInvalid(Image image) {
-		assertFalse(this.validator.validate(image).isEmpty());
+		assertFalse(
+			this.validator.validate(image).isEmpty(),
+			"Had no validation errors."
+		);
 	}
 	
 	
