@@ -8,6 +8,7 @@ on:
   push:
     branches: [ "**" ]
     paths:
+      - "software/libs/open-qm-core/**"
       - "software/open-qm-base-station/**"
       - ".github/workflows/baseStation.yml"
   pull_request:
