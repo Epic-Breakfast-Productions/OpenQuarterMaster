@@ -2,8 +2,11 @@ package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.List;
  * Describes an object that has a history.
  */
 @Data
+@NoArgsConstructor
 public abstract class Historied {
 	
 	/**
@@ -19,7 +23,9 @@ public abstract class Historied {
 	 * <p>
 	 * Don't directly modify the values in this list, use {@link #updated(HistoryEvent)} to add a new event.
 	 */
-	private List<HistoryEvent> history = new ArrayList<>(List.of());
+	@NonNull
+	@NotNull
+	private List<@NotNull HistoryEvent> history = new ArrayList<>();
 	
 	/**
 	 * Adds a history event to the set held, to the front of the list.
@@ -29,7 +35,7 @@ public abstract class Historied {
 	 * @return This historied object.
 	 */
 	@JsonIgnore
-	public Historied updated(HistoryEvent event) {
+	public Historied updated(@NonNull HistoryEvent event) {
 		if (this.history.isEmpty() && !EventType.CREATE.equals(event.getType())) {
 			throw new IllegalArgumentException("First event must be CREATE");
 		}

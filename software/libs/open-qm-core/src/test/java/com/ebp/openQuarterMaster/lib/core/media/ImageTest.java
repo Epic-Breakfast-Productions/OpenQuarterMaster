@@ -160,73 +160,10 @@ class ImageTest extends BasicTest {
 		);
 	}
 	
-	
-	public static Stream<Arguments> getValidImages() {
-		return Stream.of(
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			))
-		);
-	}
-	
-	public static Stream<Arguments> getInvalidImages() {
-		return Stream.of(
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				"",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			)),
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				BasicTest.FAKER.random().hex(),
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			)),
-			Arguments.of(new Image(
-				"",
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			)),
-			Arguments.of(new Image(
-				" ",
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			)),
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().characters(501),
-				"png",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			)),
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				""
-			)),
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				BasicTest.FAKER.lorem().paragraph()
-			))
-		);
-	}
-	
-	
-	private Validator validator;
-	
 	@BeforeEach
 	@AfterEach
 	public void triggerGC() {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		validator = factory.getValidator();
+		log.info("Triggering Garbage Collector.");
 		System.gc();
 	}
 	
@@ -333,26 +270,4 @@ class ImageTest extends BasicTest {
 			new Image().setType("png").getMimeType()
 		);
 	}
-	
-	
-	@ParameterizedTest
-	@MethodSource("getValidImages")
-	public void testValidationValid(Image image) {
-		Set<ConstraintViolation<Image>> validationErrors = this.validator.validate(image);
-		assertTrue(
-			validationErrors.isEmpty(),
-			"Had validation errors: " + validationErrors.toString()
-		);
-	}
-	
-	@ParameterizedTest
-	@MethodSource("getInvalidImages")
-	public void testValidationInvalid(Image image) {
-		assertFalse(
-			this.validator.validate(image).isEmpty(),
-			"Had no validation errors."
-		);
-	}
-	
-	
 }

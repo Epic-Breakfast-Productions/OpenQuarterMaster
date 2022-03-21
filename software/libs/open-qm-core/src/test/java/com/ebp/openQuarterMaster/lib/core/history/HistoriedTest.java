@@ -126,43 +126,4 @@ class HistoriedTest extends BasicTest {
 		ZonedDateTime eventTime = o.lastHistoryEventTime();
 		assertEquals(o.getHistory().get(0).getTimestamp(), eventTime);
 	}
-	
-	@Test
-	public void timeSerializationWithMany() throws JsonProcessingException {
-		int numEvents = 10_000;
-		
-		TestHistoried obj = this.getBasicTestItem();
-		
-		obj.updated(new HistoryEvent(
-						EventType.CREATE,
-						ObjectId.get(),
-						ZonedDateTime.now(),
-						FAKER.lorem().sentence()
-					)
-		);
-		
-		for (int i = 1; i < numEvents; i++) {
-			obj.updated(new HistoryEvent(
-				EventType.UPDATE,
-				ObjectId.get(),
-				ZonedDateTime.now(),
-				FAKER.lorem().sentence()
-			));
-		}
-		log.info("Created {} history events.", numEvents);
-		
-		StopWatch sw = StopWatch.createStarted();
-		String data = Utils.OBJECT_MAPPER.writeValueAsString(obj);
-		sw.stop();
-		
-		log.info("Serialized data. Length: {}. Took {} to serialize.", data.length(), sw);
-		
-		sw = StopWatch.createStarted();
-		TestHistoried deserialized = Utils.OBJECT_MAPPER.readValue(data, TestHistoried.class);
-		sw.stop();
-		
-		log.info("Deserialized data. Took {} to deserialize.", sw);
-		
-		assertEquals(obj, deserialized);
-	}
 }

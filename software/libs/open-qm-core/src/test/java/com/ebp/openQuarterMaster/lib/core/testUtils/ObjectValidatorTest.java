@@ -14,8 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 public abstract class ObjectValidatorTest<T> extends BasicTest {
 	
-	protected static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
-	
 	protected T oldValidator;
 	
 	protected static void assertHasErrorMessages(TestConstraintValidatorContext ctx, String... message) {
