@@ -26,10 +26,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<HistoriedSerial
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(
-				new TestHistoried(),
-				true
-			),
+			Arguments.of(new TestHistoried()),
 			Arguments.of(
 				new TestHistoried() {{
 					int numEvents = 10_000;
@@ -50,8 +47,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<HistoriedSerial
 							FAKER.lorem().sentence()
 						));
 					}
-				}},
-				false
+				}}
 			)
 		);
 	}
