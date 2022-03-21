@@ -125,6 +125,7 @@ public class Image extends MainObject {
 	@Size(max = 30)
 	private String title;
 	
+	@lombok.Builder.Default
 	@Size(max = 500)
 	private String description = "";
 	

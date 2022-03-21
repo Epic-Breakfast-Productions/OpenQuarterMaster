@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
+@Deprecated
 class TestSuperTest {
 	
 	public static Stream<Arguments> getObjs() {

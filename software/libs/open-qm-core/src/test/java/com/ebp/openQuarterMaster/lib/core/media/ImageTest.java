@@ -8,6 +8,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * - center color: FF0000 - TL quad:      00FF00 - TR quad:      0000FF - BL quad:      000000 - TR quad:      FFFF00
  */
 @Slf4j
-class ImageTest {
+@Execution(ExecutionMode.SAME_THREAD)
+class ImageTest extends BasicTest {
 	
 	private static final Color COLOR_CENTER = new Color(255, 0, 0);
 	private static final Color COLOR_TOP_LEFT = new Color(0, 255, 0);

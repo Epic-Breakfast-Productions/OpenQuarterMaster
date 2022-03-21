@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core;
 
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.ebp.openQuarterMaster.lib.core.validation.validators.UnitValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * TODO:: test invalid unit de/serialization
  */
 @Slf4j
-class UnitUtilsTest {
+class UnitUtilsTest extends BasicTest {
 	
 	private static Stream<Arguments> unitsAsArgs() {
 		return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);

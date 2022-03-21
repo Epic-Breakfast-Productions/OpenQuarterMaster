@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * TODO:: make other validator tests use this real validator as opposed to how they currently operate
  */
 @Slf4j
-class ImageCreateRequestTest {
+class ImageCreateRequestTest extends BasicTest {
 	
 	private Validator validator;
 	

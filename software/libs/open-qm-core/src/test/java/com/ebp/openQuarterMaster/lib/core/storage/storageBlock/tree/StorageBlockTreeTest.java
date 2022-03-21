@@ -1,13 +1,16 @@
 package com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree;
 
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import org.assertj.core.api.Fail;
+import org.bson.BasicBSONCallback;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * TODO:: bulk stress test
  */
-class StorageBlockTreeTest {
+class StorageBlockTreeTest extends BasicTest {
 	
 	/*
 	 *     1       2

@@ -2,6 +2,8 @@ package com.ebp.openQuarterMaster.lib.core.testUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +12,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-public abstract class ObjectValidatorTest<T> {
+public abstract class ObjectValidatorTest<T> extends BasicTest {
 	
-	protected T validator;
+	protected static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+	
+	protected T oldValidator;
 	
 	protected static void assertHasErrorMessages(TestConstraintValidatorContext ctx, String... message) {
 		Map<String, Boolean> foundMap = new HashMap<>();

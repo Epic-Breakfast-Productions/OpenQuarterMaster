@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Deprecated
 public class TestOne extends TestSuper<String> {
 	
 	public TestOne() {

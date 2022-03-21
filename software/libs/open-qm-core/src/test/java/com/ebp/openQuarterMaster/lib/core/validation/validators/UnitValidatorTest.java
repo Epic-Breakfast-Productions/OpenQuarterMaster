@@ -34,19 +34,19 @@ class UnitValidatorTest extends ObjectValidatorTest<UnitValidator> {
 	
 	@BeforeEach
 	public void setUp() {
-		validator = new UnitValidator();
+		oldValidator = new UnitValidator();
 	}
 	
 	@Test
 	public void nullUnitTest() {
-		assertTrue(this.validator.isValid(null, null));
+		assertTrue(this.oldValidator.isValid(null, null));
 	}
 	
 	@ParameterizedTest(name = "validTest[{index}]")
 	@MethodSource("validUnits")
 	public void validTest(Unit testUnit) {
 		log.info("Testing that \"{}\" is considered a valid unit.", testUnit);
-		assertTrue(this.validator.isValid(testUnit, null));
+		assertTrue(this.oldValidator.isValid(testUnit, null));
 	}
 	
 	@ParameterizedTest(name = "invalidTest[{index}]")
@@ -54,7 +54,7 @@ class UnitValidatorTest extends ObjectValidatorTest<UnitValidator> {
 	public void invalidTest(Unit testUnit) {
 		log.info("Testing that {} is considered an invalid unit.", testUnit);
 		TestConstraintValidatorContext ctx = new TestConstraintValidatorContext();
-		boolean result = this.validator.isValid(testUnit, ctx);
+		boolean result = this.oldValidator.isValid(testUnit, ctx);
 		assertFalse(result);
 		assertHasErrorMessages(ctx, "Invalid unit");
 	}

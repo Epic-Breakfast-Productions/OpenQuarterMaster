@@ -18,6 +18,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 	@JsonSubTypes.Type(value = TestTwo.class, name = "TWO")
 })
 @BsonDiscriminator
+@Deprecated
 public class TestSuper<T> extends MainObject {
 	
 	private final ClassType type;
