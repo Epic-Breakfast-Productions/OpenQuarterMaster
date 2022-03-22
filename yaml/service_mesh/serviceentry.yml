@@ -19,6 +19,19 @@ items:
 - apiVersion: networking.istio.io/v1beta1
   kind: ServiceEntry
   metadata:
+    name: jaeger-ext
+  spec:
+    hosts:
+    - jaeger-collector.istio-system-qm
+    location: MESH_EXTERNAL
+    ports:
+    - name: http
+      number: 14268
+      protocol: HTTP
+    resolution: DNS
+- apiVersion: networking.istio.io/v1beta1
+  kind: ServiceEntry
+  metadata:
     name: external-demo
   spec:
     hosts:
