@@ -25,12 +25,15 @@ public class LoggingFilter implements ContainerResponseFilter, ContainerRequestF
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		log.info(
-			"Request from {} - {}:{}  ssl?: {}",
+			"Incoming Request from {} - {}:{}  ssl?: {}  Headers ({}): {}",
 			request.remoteAddress().toString(),
 			requestContext.getMethod(),
 			uriInfo.getPath(),
-			request.isSSL()
+			request.isSSL(),
+			request.headers().size(),
+			request.headers()
 		);
+		
 	}
 	
 	@Override

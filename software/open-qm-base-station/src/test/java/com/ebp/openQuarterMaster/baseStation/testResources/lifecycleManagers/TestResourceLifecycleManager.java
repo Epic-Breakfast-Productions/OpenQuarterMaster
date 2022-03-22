@@ -223,6 +223,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	public static synchronized Map<String, String> startJaegerTestServer() {
 		if (JAEGER_CONTAINER == null || !JAEGER_CONTAINER.isRunning()) {
 			StopWatch sw = StopWatch.createStarted();
+			// https://hub.docker.com/r/jaegertracing/all-in-one/tags
 			JAEGER_CONTAINER = new JaegerAllInOne("jaegertracing/all-in-one:latest");
 			
 			JAEGER_CONTAINER.start();
