@@ -68,7 +68,7 @@ dependencies {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '0.0.1'
+version '1.0.0-DEV'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
