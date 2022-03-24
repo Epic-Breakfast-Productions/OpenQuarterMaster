@@ -1,9 +1,14 @@
 from flask import Flask
 from flask import request
 from colormap import rgb2hex
+from flask_cors import CORS
 import serial
+import threading
+
+mutex = threading.Lock()
 
 app = Flask(__name__)
+CORS(app)
 
 port="/dev/ttyACM0"
 returnChar='^'
@@ -29,8 +34,10 @@ def postMessage():
     
     print("Message: " + message)
     
+    mutex.acquire()
     serialPort.write(message.encode("UTF-8"));
     serialPort.write(b'\n');
+    mutex.release()
     return "OK";
     
 @app.route('/getState', methods=['GET'])
@@ -39,12 +46,14 @@ def getState():
     serialPort.write(b'$S\n');
     
     latestResponseLine = None
+    mutex.acquire()
     while serialPort.inWaiting() != 0 or latestResponseLine is None:
     	curRead = serialPort.readline().decode("UTF-8")
     	print("Got message from device: " + curRead)
     	if len(curRead) > 0 and curRead[0] == returnChar:
     		print("Got new response line")
     		latestResponseLine = curRead
+    mutex.release()
     print("Final Message from device: " + latestResponseLine)
     if latestResponseLine is None:
     	print("ERRROR:: unable to read response.")

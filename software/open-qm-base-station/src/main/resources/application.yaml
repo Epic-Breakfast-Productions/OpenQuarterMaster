@@ -56,7 +56,7 @@ quarkus:
       url: http://localhost:8082
       scope: javax.inject.Singleton
     demoHostConnection:
-      url: http://localhost:8083
+      url: http://localhost:5000
   native:
     resources:
       includes: security/*

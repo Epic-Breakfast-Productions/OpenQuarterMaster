@@ -10,6 +10,7 @@ function doRestCall(
 		authorization = false,
 		extraHeaders = {},
 		async = true,
+		crossDomain= false,
 		done,
 		fail = function () {
 		},
@@ -17,14 +18,15 @@ function doRestCall(
 		failNoResponseCheckStatus = true,
 	} = {}
 ) {
-	console.log("Making rest call.");
+	console.log("Making rest call to " + url);
 	var spinner = (spinnerContainer === null ? null : new Spin.Spinner(spinnerOpts).spin(spinnerContainer));
 
 	var ajaxOps = {
 		url: url,
 		method: method,
 		timeout: timeout,
-		async: async
+		async: async,
+		crossDomain: crossDomain
 	};
 
 	if (data != null) {
@@ -38,6 +40,12 @@ function doRestCall(
 		extraHeaders = {
 			...extraHeaders,
 			...{Authorization: "Bearer " + authorization}
+		}
+	}
+	if(crossDomain){
+		extraHeaders = {
+			...extraHeaders,
+			...{"Access-Control-Allow-Origin":"*"}
 		}
 	}
 
