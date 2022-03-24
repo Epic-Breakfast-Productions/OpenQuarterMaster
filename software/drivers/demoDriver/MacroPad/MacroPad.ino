@@ -77,7 +77,7 @@ void setup() {
   Serial.println("Done with setup.");
 }
 
-uint8_t j = 0;
+double j = 0;
 String dataFromSerial = "";
 String displayData = "";
 
@@ -162,7 +162,7 @@ void loop() {
   }
 
   for(int i=0; i< pixels.numPixels(); i++) {
-    pixels.setPixelColor(i, Wheel(((i * 256 / pixels.numPixels()) + j) & 255));
+    pixels.setPixelColor(i, Wheel((int)((i * 256 / pixels.numPixels()) + j) & 255));
   }
   
   for (int i=1; i<=12; i++) {
@@ -179,7 +179,7 @@ void loop() {
 
   // show neopixels, incredment swirl
   pixels.show();
-  j += 2;
+  j += (double)encoder_pos / 3.0;
 
   // display oled
   display.display();
