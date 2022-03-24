@@ -4,7 +4,7 @@
 
 The software in this repository follows [Semantic Versioning](https://semver.org/):
 
-`{MAJOR}.{MINOR}.{PATCH}`
+`{MAJOR}.{MINOR}.{PATCH}[-{LABEL}]`
 
 > Given a version number MAJOR.MINOR.PATCH, increment the:
 > 
@@ -16,5 +16,16 @@ The software in this repository follows [Semantic Versioning](https://semver.org
 
 The labels we typically use are below:
 
-- `-FINAL`, to denote a particular version is the last of the major/minor version number.
-- `-DEV`, to denote the particular version is in development; don't use 'for real'
+- `FINAL`, to denote a particular version is the last of the major/minor version number.
+- `DEV`, to denote the particular version is in development; don't use 'for real'
+
+## Branching Strategy
+
+This project will adhere to the following branch strategy:
+
+- `master`
+  - `v{MAJOR}`
+    - `v{MAJOR}.lib`
+    - `v{MAJOR}.base`
+    - `v{MAJOR}.plugin`
+    - `v{MAJOR}.env`

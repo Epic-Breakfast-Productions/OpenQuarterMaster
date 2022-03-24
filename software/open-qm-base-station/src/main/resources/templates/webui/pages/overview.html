@@ -1,6 +1,10 @@
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
 {#pageStyle}
-
+.buttonCell{
+    border: 1px solid black;
+    height: 50px;
+    width: 50px;
+}
 {/pageStyle}
 {#pageContent}
 
@@ -28,6 +32,50 @@
     <tr><th class="text-nowrap">Endpoint 2 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/2</code>)</th><td><code>{responseExt2}</code></td></tr>
     
 </table>
+    <h3>
+        Host Device Connector:
+    </h3>
+<div class="row">
+    <div class="col-4">
+        <p>
+            Message: <span id="messageSpan"></span>
+        </p>
+        <p>
+            Encoder Value: <span id="encoderValSpan"></span>
+        </p>
+        <p>
+            Encoder button pressed? <span id="encoderPressedSpan"></span>
+        </p>
+        <table style="border: 1px solid black;">
+            <tr>
+                <td id="buttonCell12" class="buttonCell">12</td>
+                <td id="buttonCell11" class="buttonCell">11</td>
+                <td id="buttonCell10" class="buttonCell">10</td>
+            </tr>
+            <tr>
+                <td id="buttonCell9" class="buttonCell">9</td>
+                <td id="buttonCell8" class="buttonCell">8</td>
+                <td id="buttonCell7" class="buttonCell">7</td>
+            </tr>
+            <tr>
+                <td id="buttonCell6" class="buttonCell">6</td>
+                <td id="buttonCell5" class="buttonCell">5</td>
+                <td id="buttonCell4" class="buttonCell">4</td>
+            </tr>
+            <tr>
+                <td id="buttonCell3" class="buttonCell">3</td>
+                <td id="buttonCell2" class="buttonCell">2</td>
+                <td id="buttonCell1" class="buttonCell">1</td>
+            </tr>
+        </table>
+        <form id="deviceMessageSendForm" class="mt-3">
+            <div class="input-group">
+                <input type="text" class="form-control" maxlength="10" id="messageSendTextInput">
+                <button type="submit" class="btn btn-success">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
 {/if}
 <p>
     Todo:
@@ -39,4 +87,72 @@
 </p>
 
 {/pageContent}
+{#pageScript}
+    <script>
+        var hostDeviceUrl = "{hostDeviceUrl}";
+        var messageSpan = $("#messageSpan");
+        var encoderValSpan = $("#encoderValSpan");
+        var encoderPressedSpan = $("#encoderPressedSpan");
+        var buttCellArr = [
+            $("#buttonCell1"),
+            $("#buttonCell2"),
+            $("#buttonCell3"),
+            $("#buttonCell4"),
+            $("#buttonCell5"),
+            $("#buttonCell6"),
+            $("#buttonCell7"),
+            $("#buttonCell8"),
+            $("#buttonCell9"),
+            $("#buttonCell10"),
+            $("#buttonCell11"),
+            $("#buttonCell12"),
+        ];
+        var messageSendTextInput = $("#messageSendTextInput");
+        var updateSleeping = false;
+        var sendingMessage = false;
+        
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        async function doUpdating(){
+            console.log("Starting worker.");
+            while(true){
+                console.log("Looping");
+                doRestCall({
+                    url:hostDeviceUrl + "/getState",
+                    method:"GET",
+                    async: false,
+                    done: function (data){
+                        //TODO:: update data on page
+                    }
+                });
+                updateSleeping = true;
+                await sleep(100);
+                while(sendingMessage){
+                    await sleep(50);
+                }
+                updateSleeping = false;
+            }
+        }
+        doUpdating();
+        
+        var deviceMessageSendForm = $('#deviceMessageSendForm');
+        deviceMessageSendForm.on('submit', function (event){
+            event.preventDefault();
+            while(!updateSleeping){
+                sendingMessage=true;
+            }
+            doRestCall({
+                url:hostDeviceUrl + "/sendMessage",
+                method:"POST",
+                data:{
+                    message:messageSendTextInput.val()
+                }
+            });
+            sendingMessage=false;
+        });
+        
+    </script>
+{/pageScript}
 {/include}

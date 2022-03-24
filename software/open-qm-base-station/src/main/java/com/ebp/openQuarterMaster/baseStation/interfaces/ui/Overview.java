@@ -12,6 +12,7 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -67,6 +68,8 @@ public class Overview extends UiProvider {
 	@Inject
 	@RestClient
 	DemoExternalServiceCaller externDemoService;
+	@ConfigProperty(name="quarkus.rest-client.demoHostConnection.url")
+	String demoHostConnection;
 	
 	@GET
 	@Path("overview")
@@ -141,6 +144,7 @@ public class Overview extends UiProvider {
 			this.setupPageTemplate(overview,  UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
+				.data("hostDeviceUrl", demoHostConnection)
 				.data("response1", response1)
 				.data("response2", response2)
 				.data("responseExt1", responseExt1)
