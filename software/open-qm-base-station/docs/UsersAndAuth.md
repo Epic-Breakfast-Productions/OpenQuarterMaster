@@ -18,6 +18,10 @@ user management.
 
 ### JWT
 
+- https://quarkus.io/guides/security-keycloak-authorization
+- https://quarkus.io/guides/security-openid-connect-web-authentication
+- https://quarkus.io/guides/security-oauth2
+
 #### Claims
 
 The following claims are considered in this application:

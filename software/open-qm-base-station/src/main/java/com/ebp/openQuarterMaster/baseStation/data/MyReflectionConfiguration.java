@@ -12,6 +12,9 @@ import java.time.ZonedDateTime;
  * Required to tell GraalVm to keep classes around.
  * <p>
  * If running in native mode and get errors about classes, reflection, etc, add the erring class here
+ *
+ * https://quarkus.io/guides/writing-native-applications-tips#including-resources
+ *
  * TODO:: test in native mode and go through to include all needed classes
  */
 @RegisterForReflection(

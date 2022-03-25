@@ -126,6 +126,16 @@ class UnitUtilsTest extends BasicTest {
 		assertNotNull(unit.getSymbol(), "Unit had no symbol");
 	}
 	
+	//	@ParameterizedTest
+	//	@MethodSource("unitsAsArgs")
+	//	public void testFormat(Unit<?> unit) {
+	//		log.info(
+	//			"Format for {}: \"{}\"",
+	//			unit,
+	//			SimpleUnitFormat.getInstance().format(unit)
+	//		);
+	//	}
+	
 	//TODO:: figure out how to serialize invalid units
 	//    @ParameterizedTest(name = "invalidUnitSerialization[{index}]({0})")
 	//    @MethodSource("invalidUnits")

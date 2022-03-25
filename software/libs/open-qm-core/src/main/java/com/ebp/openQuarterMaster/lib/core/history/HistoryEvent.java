@@ -23,11 +23,14 @@ public class HistoryEvent {
 	 * The type of event that occurred
 	 */
 	@NonNull
+	@NotNull
 	private EventType type;
+	
 	/**
-	 * The user that performed the event
+	 * The user that performed the event Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
 	private ObjectId userId;
+	
 	/**
 	 * When the event occurred
 	 */
@@ -35,6 +38,7 @@ public class HistoryEvent {
 	@NonNull
 	@NotNull
 	private ZonedDateTime timestamp = ZonedDateTime.now();
+	
 	/** Description of the event */
 	@Builder.Default
 	@NonNull
