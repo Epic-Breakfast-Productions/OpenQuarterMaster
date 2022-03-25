@@ -21,22 +21,16 @@ import static com.ebp.openQuarterMaster.lib.core.UnitUtils.unitFromString;
 /**
  * Jackson module to handle the Mongodb ObjectId in a reasonable manner
  */
-public class UnitModule extends SimpleModule {
+public class UnitModule extends TestableModule<Unit> {
 	
 	public static final String STRING_TOKEN = "string";
 	
-	@Getter
-	private final UnitSerializer serializer;
-	@Getter
-	private final UnitDeserializer deserializer;
-	
-	
 	public UnitModule() {
-		super();
-		this.serializer = new UnitSerializer();
-		this.deserializer = new UnitDeserializer();
-		addSerializer(Unit.class, this.getSerializer());
-		addDeserializer(Unit.class, this.getDeserializer());
+		super(
+			Unit.class,
+			new UnitSerializer(),
+			new UnitDeserializer()
+		);
 	}
 	
 	public static class UnitSerializer extends JsonSerializer<Unit> {

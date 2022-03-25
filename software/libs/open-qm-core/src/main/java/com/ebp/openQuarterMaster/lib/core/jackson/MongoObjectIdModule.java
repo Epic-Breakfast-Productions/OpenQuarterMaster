@@ -15,16 +15,17 @@ import java.io.IOException;
 /**
  * Jackson module to handle the Mongodb ObjectId in a reasonable manner
  */
-public class MongoObjectIdModule extends SimpleModule {
+public class MongoObjectIdModule extends TestableModule<ObjectId> {
 	
 	public MongoObjectIdModule() {
-		super();
-		addSerializer(ObjectId.class, new ObjectIdSerializer());
-		addDeserializer(ObjectId.class, new ObjectIdDeserializer());
+		super(
+			ObjectId.class,
+			new ObjectIdSerializer(),
+			new ObjectIdDeserializer()
+		);
 	}
 	
 	public static class ObjectIdSerializer extends JsonSerializer<ObjectId> {
-		
 		@Override
 		public void serialize(ObjectId value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 			gen.writeString(value.toHexString());
@@ -34,7 +35,7 @@ public class MongoObjectIdModule extends SimpleModule {
 	public static class ObjectIdDeserializer extends JsonDeserializer<ObjectId> {
 		
 		@Override
-		public ObjectId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+		public ObjectId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 			return new ObjectId(p.getValueAsString());
 		}
 	}
