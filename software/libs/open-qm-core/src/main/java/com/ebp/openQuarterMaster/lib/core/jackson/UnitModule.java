@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.Getter;
 
 import javax.measure.Unit;
 import java.io.IOException;
@@ -24,10 +25,18 @@ public class UnitModule extends SimpleModule {
 	
 	public static final String STRING_TOKEN = "string";
 	
+	@Getter
+	private final UnitSerializer serializer;
+	@Getter
+	private final UnitDeserializer deserializer;
+	
+	
 	public UnitModule() {
 		super();
-		addSerializer(Unit.class, new UnitSerializer());
-		addDeserializer(Unit.class, new UnitDeserializer());
+		this.serializer = new UnitSerializer();
+		this.deserializer = new UnitDeserializer();
+		addSerializer(Unit.class, this.getSerializer());
+		addDeserializer(Unit.class, this.getDeserializer());
 	}
 	
 	public static class UnitSerializer extends JsonSerializer<Unit> {
