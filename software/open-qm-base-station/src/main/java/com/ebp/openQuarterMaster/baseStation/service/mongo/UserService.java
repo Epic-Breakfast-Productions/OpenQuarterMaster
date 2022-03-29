@@ -96,6 +96,7 @@ public class UserService extends MongoService<User> {
 			return user;
 		}
 		
+		//TODO:: verify has all these fields & throw exception
 		User.Builder userBuilder = User.builder()
 									   .firstName(jwt.getClaim(Claims.given_name))
 									   .lastName(jwt.getClaim(Claims.family_name))
@@ -141,11 +142,11 @@ public class UserService extends MongoService<User> {
 	 * @return The user the jwt was for. Null if no user found.
 	 */
 	public User getFromJwt(JsonWebToken jwt) {
-		String userId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
 		
 		switch (this.authMode) {
 			case SELF:
 				log.debug("Getting user data from self.");
+				String userId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
 				return this.get(userId);
 			case EXTERNAL:
 				log.debug("Getting external user data ");

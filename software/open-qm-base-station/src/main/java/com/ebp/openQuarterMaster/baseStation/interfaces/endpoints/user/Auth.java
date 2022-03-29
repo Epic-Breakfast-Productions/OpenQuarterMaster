@@ -244,6 +244,7 @@ public class Auth extends EndpointProvider {
 			e.printStackTrace();
 			throw new IllegalStateException("Failed to get token from Keycloak", e);
 		}
+		log.info("Performed call to get JWT from issuer.");
 		
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(returned);
 		

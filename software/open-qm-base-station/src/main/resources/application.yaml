@@ -35,7 +35,7 @@ runningInfo:
   protocol: http
   hostname: localhost
   port: ${quarkus.http.port}
-  hostnamePort: ${runningInfo.hostname}:${quarkus.http.port}
+  hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
 
 demo:
