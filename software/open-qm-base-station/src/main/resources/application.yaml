@@ -4,6 +4,7 @@ service:
   apiVersion: 1.0.0
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
+  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
   authMode: SELF # SELF or EXTERNAL
   # Not used if authMode = SELF
   # TODO:: move data that doesn't need to be here
@@ -80,9 +81,9 @@ quarkus:
     #    info-terms-of-service: <url>
     info-contact-email: contact@gjstewart.net
     info-contact-name: Greg Stewart
-    info-contact-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+    info-contact-url: ${service.gitLink}
     info-license-name: GNU General Public License v3.0
-    info-license-url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE
+    info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
 
