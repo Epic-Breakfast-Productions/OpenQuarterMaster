@@ -4,7 +4,6 @@ import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.internal.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +17,7 @@ import javax.validation.ValidatorFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 class ImageCreateRequestTest extends BasicTest {
+	
+	private static final Base64.Encoder ENCODER = Base64.getEncoder();
 	
 	private Validator validator;
 	
@@ -43,14 +45,14 @@ class ImageCreateRequestTest extends BasicTest {
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
-				Base64.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)),
+				new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
 			)),
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
-				"data:image/png;base64," + Base64.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)),
+				"data:image/png;base64," + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
 			))
@@ -62,7 +64,7 @@ class ImageCreateRequestTest extends BasicTest {
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
-				"foo\\bard" + Base64.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)),
+				"foo\\bard" + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
 			)),
@@ -70,7 +72,8 @@ class ImageCreateRequestTest extends BasicTest {
 				"{" +
 				"   \"title\": \"\"," +
 				"   \"description\": \"" + BasicTest.FAKER.lorem().sentence() + "\"," +
-				"   \"imageData\": \"" + Base64.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)) + "\"," +
+				"   \"imageData\": \"" + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))) +
+				"\"," +
 				"   \"keywords\": []," +
 				"   \"attributes\": {}" +
 				"}",
@@ -80,7 +83,7 @@ class ImageCreateRequestTest extends BasicTest {
 				"{" +
 				"   \"title\": \" \"," +
 				"   \"description\": \"" + BasicTest.FAKER.lorem().sentence() + "\"," +
-				"   \"imageData\": \"" + Base64.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)) + "\"," +
+				"   \"imageData\": \"" + ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8)) + "\"," +
 				"   \"keywords\": []," +
 				"   \"attributes\": {}" +
 				"}",
