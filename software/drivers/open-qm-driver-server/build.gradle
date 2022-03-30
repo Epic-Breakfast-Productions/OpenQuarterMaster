@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id "io.freefair.lombok" version "6.3.0"
 }
 
 repositories {
@@ -10,11 +11,18 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-arc'
+
+    implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
+    implementation 'com.fazecast:jSerialComm:2.9.1'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+
 }
 
 group 'com.ebp.openQuarterMaster'
