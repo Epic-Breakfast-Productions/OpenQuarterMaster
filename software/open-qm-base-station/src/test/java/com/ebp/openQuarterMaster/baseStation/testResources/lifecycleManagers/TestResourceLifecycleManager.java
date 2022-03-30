@@ -78,6 +78,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			KEYCLOAK_CONTAINER = new KeycloakContainer()
 				//				.withCreateContainerCmdModifier(cmd)
 				.withRealmImportFile("keycloak-realm.json");
+			log.info("Starting keycloak container with image name: {}", KEYCLOAK_CONTAINER.getDockerImageName());
 			KEYCLOAK_CONTAINER.start();
 			
 			Testcontainers.exposeHostPorts(KEYCLOAK_CONTAINER.getHttpPort());
