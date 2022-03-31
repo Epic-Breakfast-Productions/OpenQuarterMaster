@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.testUtils;
+package com.ebp.openQuarterMaster.lib.driver.testUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;

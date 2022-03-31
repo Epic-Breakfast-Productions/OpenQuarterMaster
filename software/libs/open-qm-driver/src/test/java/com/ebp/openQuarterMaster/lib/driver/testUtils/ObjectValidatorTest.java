@@ -1,9 +1,7 @@
-package com.ebp.openQuarterMaster.lib.core.testUtils;
+package com.ebp.openQuarterMaster.lib.driver.testUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

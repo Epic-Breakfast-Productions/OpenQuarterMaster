@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.testUtils;
+package com.ebp.openQuarterMaster.lib.driver.testUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -15,6 +16,7 @@ import java.util.List;
 @Builder
 public class State {
 	
+	@NotNull
 	private String serialNo;
 	private boolean online;
 	
