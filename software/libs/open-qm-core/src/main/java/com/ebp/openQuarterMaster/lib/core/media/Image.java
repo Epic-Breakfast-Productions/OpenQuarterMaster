@@ -196,6 +196,7 @@ public class Image extends MainObject {
 		return String.format("data:image/%s;base64,%s", this.getType(), this.getData());
 	}
 	
+	@JsonIgnore
 	public String getMimeType() {
 		return String.format(MIMETYPE_FORMAT, this.getType());
 	}

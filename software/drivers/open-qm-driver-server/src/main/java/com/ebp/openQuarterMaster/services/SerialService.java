@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Singleton;
+import java.awt.*;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Semaphore;
 
@@ -118,6 +119,11 @@ public class SerialService {
 			State.Builder builder = State.builder();
 			
 			//TODO
+//			Color your_color = new Color(128,128,128,128);
+
+//			String buf = Integer.toHexString(your_color.getRGB());
+//			String hex = "#"+buf.substring(buf.length()-6);
+//			new Color();
 			
 			return builder.build();
 		} finally {
