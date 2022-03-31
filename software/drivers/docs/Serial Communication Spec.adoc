@@ -18,7 +18,7 @@ This specification defines how the Open QuarterMaster system interacts with stor
 
 The context of how this specification is used is as follows. Most Arduino (and similar) consumer microcontroller hardware can communicate with a full computer with Serial over USB connection. This specification is meant to define how the OpenQuarterMaster system interacts with the hardware over that Serial conection.
 
-This is currently implemented for the system in the (../open-qm-driver-server/)[Open QuarterMaster DriverServer].
+This is currently implemented for the system in the ../open-qm-driver-server/[Open QuarterMaster DriverServer].
 
 == Specification
 
@@ -62,10 +62,28 @@ A simple ping command to ensure the hardware is alive and properly processing co
 
 Returns information about the hardware module. Used to identify, determine the capabilities of, and check that the hardware is op
 
+===== Returns
+
+`$I|<serialNo>|<numStorageBlocks>`
+
 ==== Get State
+
+`$S`
+
+Returns information about the current state of the hardware.
+
+===== Returns
+
+`$S|<message>|<binLightCsv>`
 
 === Commands the driving software accepts
 
 == Hardware Requirements
 
+=== Responsiveness
+
+=== Log messages
+
 == Driving Software Requirements
+
+=== Log messages from hardware
