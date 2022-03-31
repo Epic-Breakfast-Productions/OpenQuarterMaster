@@ -3,6 +3,7 @@ package com.ebp.openQuarterMaster.lib.driver;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -14,6 +15,9 @@ import java.util.List;
 public class State {
 	
 	private String serialNo;
+	private boolean online;
+	
+	//for demo
 	private String currentMessage;
 	private int encoderVal;
 	private boolean encoderPressed;

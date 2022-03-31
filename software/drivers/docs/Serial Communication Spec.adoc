@@ -1,0 +1,71 @@
+= Open QuarterMaster Serial Driver Specification V1.0.0
+AsciidocFX
+:doctype: article
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
+
+:imagesdir: images
+
+<<<
+
+== Introduction
+
+This specification defines how the Open QuarterMaster system interacts with storage hardware.
+
+=== Context
+
+The context of how this specification is used is as follows. Most Arduino (and similar) consumer microcontroller hardware can communicate with a full computer with Serial over USB connection. This specification is meant to define how the OpenQuarterMaster system interacts with the hardware over that Serial conection.
+
+This is currently implemented for the system in the (../open-qm-driver-server/)[Open QuarterMaster DriverServer].
+
+== Specification
+
+=== In general
+
+==== The treatment of Serial output from hardware
+
+==== What gets sent to the hardware
+
+==== The treatment of Serial output from hardware
+
+=== General Command Structure
+
+This is the general command structure, both to and from the hardware:
+
+`$<command code>|[<command content>[|<second command content>]]\n`
+
+Where:
+
+* `$` Denotes the start of a command
+* `<command code>` Is a single character command code, which are defined below.
+* `<command content>` Is the command content. Specific to the command given. Must contain UTF-8 compatible characters, excluding `|`, and `\n`
+* `|` Is the command content separator. Use to denote separation between command sections.
+* `\n` Denotes the end of the command. All commands are separated from each other (and other serial I/O) by a newline character.
+
+=== Commands the hardware accepts
+
+==== Liveliness Ping
+
+`$P`
+
+A simple ping command to ensure the hardware is alive and properly processing commands
+
+===== Returns
+
+`$P`
+
+==== Get Info
+
+`$I`
+
+Returns information about the hardware module. Used to identify, determine the capabilities of, and check that the hardware is op
+
+==== Get State
+
+=== Commands the driving software accepts
+
+== Hardware Requirements
+
+== Driving Software Requirements
