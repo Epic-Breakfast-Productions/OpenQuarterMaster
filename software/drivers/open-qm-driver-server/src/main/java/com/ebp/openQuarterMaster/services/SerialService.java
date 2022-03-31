@@ -11,6 +11,9 @@ import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Semaphore;
 
+/**
+ * https://fazecast.github.io/jSerialComm/
+ */
 @Slf4j
 @Singleton
 public class SerialService {
@@ -48,6 +51,10 @@ public class SerialService {
 		}
 	}
 	
+	/**
+	 * TODO:: do with scanner?
+	 * @return
+	 */
 	private String readLine() {
 		StringBuilder sb = new StringBuilder();
 		byte[] buffer = new byte[1];
