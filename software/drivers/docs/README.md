@@ -2,5 +2,5 @@
 
 [Back](../)
 
-- [Serial CommunicationSpec.adoc](Serial Communication Spec)
+- [Serial Communication Spec.adoc](Serial Communication Spec)
 - 
