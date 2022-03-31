@@ -42,6 +42,7 @@ dependencies {
 //    implementation 'org.webjars:spin-js:2.1.0'
 
     implementation 'com.ebp.openQuarterMaster.lib:open-qm-lib-core:1.+'
+    implementation 'com.ebp.openQuarterMaster.lib:open-qm-lib-driver:1.+'
 
     // https://mvnrepository.com/artifact/tech.units/indriya
     //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
