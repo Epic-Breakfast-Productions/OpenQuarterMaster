@@ -122,7 +122,7 @@ public class Image extends MainObject {
 	@NonNull
 	@NotNull
 	@NotBlank
-	@Size(max = 30)
+	@Size(max = 35)
 	private String title;
 	
 	@lombok.Builder.Default
