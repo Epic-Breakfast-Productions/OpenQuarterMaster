@@ -1,10 +1,13 @@
 package com.ebp.openQuarterMaster.interfaces.rest;
 
+import com.ebp.openQuarterMaster.lib.driver.State;
+import com.ebp.openQuarterMaster.lib.driver.rest.PostMessageRequest;
 import com.ebp.openQuarterMaster.services.SerialService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fazecast.jSerialComm.SerialPort;
+import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -30,7 +33,7 @@ public class SerialManagerInterface {
 	@Path("/getState")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Uni<State> getState() throws InterruptedException, IOException {
-		return this.serialService.getState();
+		return this.serialService.getStateUni();
 	}
 	
 	@POST

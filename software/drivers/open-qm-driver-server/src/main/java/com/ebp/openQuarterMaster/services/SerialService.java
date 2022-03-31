@@ -1,7 +1,9 @@
 package com.ebp.openQuarterMaster.services;
 
+import com.ebp.openQuarterMaster.lib.driver.State;
 import com.fazecast.jSerialComm.SerialPort;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.unchecked.Unchecked;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -65,7 +67,7 @@ public class SerialService {
 	}
 	
 	
-	public void setMessage(String message) throws InterruptedException {
+	public Void setMessage(String message) throws InterruptedException {
 		assertSerialOpen();
 		try {
 			this.serialSemaphore.acquire();
@@ -77,10 +79,14 @@ public class SerialService {
 		} finally {
 			this.serialSemaphore.release();
 		}
+		return null;
 	}
 	
 	public Uni<Void> setMessageUni(String message) throws InterruptedException {
-		return Uni.createFrom().item(()->{return this.setMessage(message);});
+		return Uni.createFrom()
+				  .item(
+					  Unchecked.supplier(()->this.setMessage(message)
+					  ));
 	}
 	
 	public State getState() throws InterruptedException {
@@ -102,8 +108,9 @@ public class SerialService {
 				}
 			}
 			
-			StateBuilder builder;
+			State.Builder builder = State.builder();
 			
+			//TODO
 			
 			return builder.build();
 		} finally {
@@ -113,6 +120,6 @@ public class SerialService {
 	}
 	
 	public Uni<State> getStateUni() throws InterruptedException {
-		return Uni.createFrom().item(()->this.getState());
+		return Uni.createFrom().item(Unchecked.supplier(this::getState));
 	}
 }
