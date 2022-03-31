@@ -46,7 +46,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: check
-          build-root-directory: "software/open-qm-base-station"
+          build-root-directory: "software/drivers/open-qm-driver-server"
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
