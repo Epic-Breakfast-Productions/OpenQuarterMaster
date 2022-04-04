@@ -32,8 +32,8 @@ public class SerialManagerInterface {
 	@GET
 	@Path("/getState")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<State> getState() throws InterruptedException, IOException {
-		return this.serialService.getStateUni();
+	public State getState() throws InterruptedException, IOException {
+		return this.serialService.getState();
 	}
 	
 	@POST
@@ -43,7 +43,7 @@ public class SerialManagerInterface {
 		PostMessageRequest pmr
 	) throws InterruptedException, IOException {
 		return Response.ok(
-			this.serialService.setMessageUni(pmr.getMessage())
+			this.serialService.setMessage(pmr.getMessage())
 		).build();
 	}
 }

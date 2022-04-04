@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.services;
 
 import com.ebp.openQuarterMaster.lib.driver.State;
+import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
 import com.fazecast.jSerialComm.SerialPort;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.unchecked.Unchecked;
@@ -10,7 +11,10 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.inject.Singleton;
 import java.awt.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.Semaphore;
+import java.util.stream.Collectors;
 
 /**
  * https://fazecast.github.io/jSerialComm/
@@ -115,8 +119,29 @@ public class SerialService {
 					response = cur;
 				}
 			}
+			response = response.strip();
 			
 			State.Builder builder = State.builder();
+			
+			String[] parts = response.split("\\" + Commands.Parts.SEPARATOR_CHAR);
+			
+			log.debug("Parts: {}", (Object) parts);
+			
+			builder.online(true);
+			builder.serialNo(UUID.randomUUID().toString());
+			builder.encoderVal(Integer.parseInt(parts[1]));
+			builder.encoderPressed(Boolean.parseBoolean(parts[2]));
+			builder.currentMessage(parts[3]);
+			builder.pixelColors(
+				Arrays.stream(Arrays.copyOfRange(parts, 4, parts.length))
+					.map(
+						(String colorIntStr)->{
+							int colorInt = Integer.parseInt(colorIntStr);
+							Color color = new Color(colorInt);
+							return "#"+Integer.toHexString(color.getRGB()).substring(2);
+						}
+					).collect(Collectors.toList())
+			);
 			
 			//TODO
 //			Color your_color = new Color(128,128,128,128);
@@ -124,6 +149,7 @@ public class SerialService {
 //			String buf = Integer.toHexString(your_color.getRGB());
 //			String hex = "#"+buf.substring(buf.length()-6);
 //			new Color();
+			log.info("Response: {}", response);
 			
 			return builder.build();
 		} finally {

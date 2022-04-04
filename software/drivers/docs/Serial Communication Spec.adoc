@@ -82,6 +82,10 @@ Returns information about the current state of the hardware.
 
 === Responsiveness
 
+==== When receiving a command
+
+While the hardware is receiving data from the host, it is not to send any command messages back. The next non-log message sent will be the returning command.
+
 === Log messages
 
 == Driving Software Requirements
