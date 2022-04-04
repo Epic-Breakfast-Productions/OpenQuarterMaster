@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster;
+package com.ebp.openQuarterMaster.driverServer;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster;
+package com.ebp.openQuarterMaster.driverServer;
 
+import com.ebp.openQuarterMaster.driverServer.ReactiveGreetingResourceTest;
 import io.quarkus.test.junit.NativeImageTest;
 
 @NativeImageTest

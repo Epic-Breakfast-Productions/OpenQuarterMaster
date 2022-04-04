@@ -1,15 +1,9 @@
-package com.ebp.openQuarterMaster.interfaces.rest;
+package com.ebp.openQuarterMaster.driverServer.interfaces.rest;
 
 import com.ebp.openQuarterMaster.lib.driver.State;
 import com.ebp.openQuarterMaster.lib.driver.rest.PostMessageRequest;
-import com.ebp.openQuarterMaster.services.SerialService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fazecast.jSerialComm.SerialPort;
-import io.smallrye.mutiny.Uni;
+import com.ebp.openQuarterMaster.driverServer.services.SerialService;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

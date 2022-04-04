@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.services;
+package com.ebp.openQuarterMaster.driverServer.services;
 
 import com.ebp.openQuarterMaster.lib.driver.State;
 import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
