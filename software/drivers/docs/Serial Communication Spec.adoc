@@ -44,6 +44,12 @@ Where:
 * `|` Is the command content separator. Use to denote separation between command sections.
 * `\n` Denotes the end of the command. All commands are separated from each other (and other serial I/O) by a newline character.
 
+==== Data types
+
+===== Color
+
+===== Brightness
+
 === Commands the hardware accepts
 
 ==== Liveliness Ping
@@ -76,7 +82,25 @@ Returns information about the current state of the hardware.
 
 `$S|<message>|<binLightCsv>`
 
+==== Set Storage Block light
+
+`$L|<storage block number>|on[|<color>][|<brightness>]`
+
+===== Returns
+
+`$O`
+
+(That's the letter O, as in, OK)
+
 === Commands the driving software accepts
+
+These commands are meant to alert the driver software of physical events. These are less commands, and more alerts so they do not require responses from the driving software.
+
+These are mostly for future implementation, ideas listed for now.
+
+==== Report Storage Block Opened/Cosed
+
+==== Report Storage Block weight change
 
 == Hardware Requirements
 
@@ -88,6 +112,12 @@ While the hardware is receiving data from the host, it is not to send any comman
 
 === Log messages
 
+Log messages are quite valid to be reported from the Serial device. Any line sent without the command start character (`$`) is to be interpreted as a log. These log messages are meant to be logged by the hardware, further outlined below.
+
 == Driving Software Requirements
 
 === Log messages from hardware
+
+Log messages are sent from the hardware to be reported by the driving software (see more above). Each log line should be logged by the driving software in the same manner that driving software logs itself, along with each line the serial number and port of the hardware.
+
+As these log lines can build up over time in buffer memory, the driving software should periodically read all lines in buffer, report the logs, and do any additional processing. Anytime a command is sent or alerts are listened for are also candidate areas to read in log lines.

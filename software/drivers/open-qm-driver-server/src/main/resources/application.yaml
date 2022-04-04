@@ -10,3 +10,8 @@ quarkus:
     cors:
       ~: true
       origins: "*"
+
+"%dev":
+  quarkus:
+    http:
+      port: 8085

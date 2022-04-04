@@ -78,6 +78,22 @@ public class SerialService {
 		return sb.toString();
 	}
 	
+	private String getResponse(){
+		String response = null;
+		
+		while (response == null) {
+			String cur = readLine();
+			if (
+				!cur.isBlank() &&
+				cur.charAt(0) == RETURN_START_CHAR
+			) {
+				response = cur;
+			}
+		}
+		response = response.strip();
+		return response;
+	}
+	
 	
 	public Void setMessage(String message) throws InterruptedException {
 		assertSerialOpen();
@@ -108,23 +124,13 @@ public class SerialService {
 			
 			this.serialPort.writeBytes(GET_STATUS_MESSAGE, GET_STATUS_MESSAGE.length);
 			
-			String response = null;
-			
-			while (response == null) {
-				String cur = readLine();
-				if (
-					!cur.isBlank() &&
-					cur.charAt(0) == RETURN_START_CHAR
-				) {
-					response = cur;
-				}
-			}
-			response = response.strip();
+			String response = getResponse();
 			
 			State.Builder builder = State.builder();
 			
 			String[] parts = response.split("\\" + Commands.Parts.SEPARATOR_CHAR);
 			
+			log.info("Response: {}", response);
 			log.debug("Parts: {}", (Object) parts);
 			
 			builder.online(true);
@@ -142,14 +148,6 @@ public class SerialService {
 						}
 					).collect(Collectors.toList())
 			);
-			
-			//TODO
-//			Color your_color = new Color(128,128,128,128);
-
-//			String buf = Integer.toHexString(your_color.getRGB());
-//			String hex = "#"+buf.substring(buf.length()-6);
-//			new Color();
-			log.info("Response: {}", response);
 			
 			return builder.build();
 		} finally {
