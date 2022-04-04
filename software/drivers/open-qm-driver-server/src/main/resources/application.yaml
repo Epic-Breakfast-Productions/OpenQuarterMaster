@@ -6,7 +6,7 @@ serial:
 
 quarkus:
   http:
-    port: 8085
+    port: 8080
     cors:
       ~: true
       origins: "*"
