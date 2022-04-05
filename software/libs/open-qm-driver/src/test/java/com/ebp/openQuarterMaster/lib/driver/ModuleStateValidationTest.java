@@ -7,18 +7,18 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-class StateValidationTest extends ObjectValidationTest<State> {
+class ModuleStateValidationTest extends ObjectValidationTest<ModuleState> {
 	
 	public static Stream<Arguments> getValid() {
 		return Stream.of(
-			Arguments.of(new State().setSerialNo(UUID.randomUUID().toString()))
+			Arguments.of(new ModuleState().setSerialNo(UUID.randomUUID().toString()))
 		);
 	}
 	
 	public static Stream<Arguments> getInvalid() {
 		return Stream.of(
 			Arguments.of(
-				new State(),
+				new ModuleState(),
 				new HashMap<>() {{
 					put("serialNo", "must not be null");
 				}}

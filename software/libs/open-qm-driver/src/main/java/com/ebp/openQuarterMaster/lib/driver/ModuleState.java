@@ -1,28 +1,33 @@
 package com.ebp.openQuarterMaster.lib.driver;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class State {
+public class ModuleState {
 	
 	@NotNull
 	private String serialNo;
 	private boolean online;
 	
-	//for demo
+	@lombok.Builder.Default
+	private List<@NotNull BlockLightSetting> lightSettings = new ArrayList<>();
 	private String currentMessage;
+	
+	//for demo
 	private int encoderVal;
 	private boolean encoderPressed;
-	private List<String> pixelColors;
+	@lombok.Builder.Default
+	private List<String> pixelColors = new ArrayList<>();
 }

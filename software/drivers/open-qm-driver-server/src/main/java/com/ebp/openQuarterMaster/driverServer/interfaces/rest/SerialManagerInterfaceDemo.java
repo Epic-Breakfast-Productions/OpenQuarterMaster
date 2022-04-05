@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.driverServer.interfaces.rest;
 
-import com.ebp.openQuarterMaster.lib.driver.State;
+import com.ebp.openQuarterMaster.lib.driver.ModuleState;
 import com.ebp.openQuarterMaster.lib.driver.rest.PostMessageRequest;
 import com.ebp.openQuarterMaster.driverServer.services.SerialService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class SerialManagerInterfaceDemo {
 	@GET
 	@Path("/getState")
 	@Produces(MediaType.APPLICATION_JSON)
-	public State getState() throws InterruptedException {
+	public ModuleState getState() throws InterruptedException {
 		return this.serialService.getState();
 	}
 	

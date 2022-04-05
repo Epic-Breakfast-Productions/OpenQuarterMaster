@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.driverServer.services;
 
-import com.ebp.openQuarterMaster.lib.driver.State;
+import com.ebp.openQuarterMaster.lib.driver.ModuleState;
 import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
 import com.fazecast.jSerialComm.SerialPort;
 import io.smallrye.mutiny.Uni;
@@ -117,7 +117,7 @@ public class SerialService {
 					  ));
 	}
 	
-	public State getState() throws InterruptedException {
+	public ModuleState getState() throws InterruptedException {
 		assertSerialOpen();
 		try {
 			this.serialSemaphore.acquire();
@@ -126,14 +126,13 @@ public class SerialService {
 			
 			String response = getResponse();
 			
-			State.Builder builder = State.builder();
+			ModuleState.Builder builder = ModuleState.builder();
 			
 			String[] parts = response.split("\\" + Commands.Parts.SEPARATOR_CHAR);
 			
 			log.info("Response: {}", response);
 			log.debug("Parts: {}", (Object) parts);
 			
-			builder.online(true);
 			builder.serialNo(UUID.randomUUID().toString());
 			builder.encoderVal(Integer.parseInt(parts[1]));
 			builder.encoderPressed(Boolean.parseBoolean(parts[2]));
@@ -156,7 +155,7 @@ public class SerialService {
 		
 	}
 	
-	public Uni<State> getStateUni() throws InterruptedException {
+	public Uni<ModuleState> getStateUni() throws InterruptedException {
 		return Uni.createFrom().item(Unchecked.supplier(this::getState));
 	}
 }
