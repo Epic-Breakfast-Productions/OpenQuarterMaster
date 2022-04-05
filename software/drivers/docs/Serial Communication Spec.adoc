@@ -16,7 +16,7 @@ This specification defines how the Open QuarterMaster system interacts with stor
 
 === Context
 
-The context of how this specification is used is as follows. Most Arduino (and similar) consumer microcontroller hardware can communicate with a full computer with Serial over USB connection. This specification is meant to define how the OpenQuarterMaster system interacts with the hardware over that Serial conection.
+The context of how this specification is used is as follows. Most Arduino (and similar) consumer microcontroller hardware can communicate with a full computer with https://learn.sparkfun.com/tutorials/serial-communication/all[Serial over USB connection]. This specification is meant to define how the OpenQuarterMaster system interacts with the hardware over that Serial conection.
 
 This is currently implemented for the system in the ../open-qm-driver-server/[Open QuarterMaster DriverServer].
 
@@ -110,6 +110,8 @@ These are mostly for future implementation, ideas listed for now.
 
 While the hardware is receiving data from the host, it is not to send any command messages back. The next non-log message sent will be the returning command.
 
+TODO: when to give up on a command; on second command char
+
 === Log messages
 
 Log messages are quite valid to be reported from the Serial device. Any line sent without the command start character (`$`) is to be interpreted as a log. These log messages are meant to be logged by the hardware, further outlined below.
@@ -121,3 +123,7 @@ Log messages are quite valid to be reported from the Serial device. Any line sen
 Log messages are sent from the hardware to be reported by the driving software (see more above). Each log line should be logged by the driving software in the same manner that driving software logs itself, along with each line the serial number and port of the hardware.
 
 As these log lines can build up over time in buffer memory, the driving software should periodically read all lines in buffer, report the logs, and do any additional processing. Anytime a command is sent or alerts are listened for are also candidate areas to read in log lines.
+
+=== Message Error Handling
+
+todo: retries, how long to wait for response, etc.

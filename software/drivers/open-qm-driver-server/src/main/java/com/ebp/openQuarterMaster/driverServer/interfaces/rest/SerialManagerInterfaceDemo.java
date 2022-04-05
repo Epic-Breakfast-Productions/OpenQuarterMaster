@@ -19,14 +19,14 @@ import java.io.IOException;
 @Path("/")
 @Singleton
 @Slf4j
-public class SerialManagerInterface {
+public class SerialManagerInterfaceDemo {
 	@Inject
 	SerialService serialService;
 	
 	@GET
 	@Path("/getState")
 	@Produces(MediaType.APPLICATION_JSON)
-	public State getState() throws InterruptedException, IOException {
+	public State getState() throws InterruptedException {
 		return this.serialService.getState();
 	}
 	
@@ -35,7 +35,7 @@ public class SerialManagerInterface {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postMessage(
 		PostMessageRequest pmr
-	) throws InterruptedException, IOException {
+	) throws InterruptedException {
 		return Response.ok(
 			this.serialService.setMessage(pmr.getMessage())
 		).build();
