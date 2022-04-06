@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class PostMessageRequest {
-	@Max(30)
+	@Size(max = 30)
 	private String message;
 }
