@@ -89,6 +89,8 @@
 {/pageContent}
 {#pageScript}
     <script>
+    
+{#if config:['demo.perform'] == 'true'}
         var hostDeviceUrl = "{hostDeviceUrl}";
         var messageSpan = $("#messageSpan");
         var encoderValSpan = $("#encoderValSpan");
@@ -174,7 +176,7 @@
         $(document).ready(function(){
             doUpdating();
         });
-        
+        {/if}
     </script>
 {/pageScript}
 {/include}
