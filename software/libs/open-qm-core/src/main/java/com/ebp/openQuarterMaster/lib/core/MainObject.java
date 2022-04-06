@@ -26,9 +26,12 @@ public class MainObject extends Historied {
 	 */
 	@Schema(example = "ObjectId hex string")
 	private ObjectId id;
+	
 	/**
 	 * Attributes this object might have, usable for any purpose.
 	 */
+	@NotNull
+	@NonNull
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**

@@ -40,7 +40,7 @@ public abstract class ObjectValidationTest<T> extends BasicTest {
 		T object,
 		Map<String, String> expectedFieldMessageMap
 	) {
-		log.info("Testing object: {}", object);
+		log.info("Testing invalid object: {}", object);
 		
 		Set<ConstraintViolation<T>> violations = VALIDATOR.validate(object);
 		
