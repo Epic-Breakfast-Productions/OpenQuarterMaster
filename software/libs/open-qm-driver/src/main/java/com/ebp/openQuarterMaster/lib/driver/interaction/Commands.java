@@ -13,6 +13,7 @@ public class Commands {
 		public static final char COMMAND_START_CHAR = '$';
 		public static final char RETURN_START_CHAR = '^';
 		public static final char SEPARATOR_CHAR = '|';
+		public static final char COMMAND_SEPARATOR_CHAR = '\n';
 	}
 	
 	public static class CommandChars {
