@@ -2,7 +2,6 @@ package com.ebp.openQuarterMaster.driverServer.testUtils.serial;
 
 import com.ebp.openQuarterMaster.driverServer.serial.SerialPortWrapper;
 import com.ebp.openQuarterMaster.lib.driver.BlockLightSetting;
-import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,10 +39,9 @@ public class ReferenceStorageHardwareImplementation implements Closeable {
 			return;
 		}
 		if(line.equals("$P")){
+			this.portWrapper.writeLine("Got ping request.");
 			this.portWrapper.writeLine("$P");
 		}
-		
-		
 	}
 	
 	public int processPortData() throws InterruptedException {
@@ -51,7 +49,6 @@ public class ReferenceStorageHardwareImplementation implements Closeable {
 		this.portWrapper.acquireLock();
 		try {
 			int processedLines = 0;
-			//TODO:: read from port, do processing, log, return.
 			
 			String curLine = this.portWrapper.readLine();
 			while (!curLine.isBlank()) {

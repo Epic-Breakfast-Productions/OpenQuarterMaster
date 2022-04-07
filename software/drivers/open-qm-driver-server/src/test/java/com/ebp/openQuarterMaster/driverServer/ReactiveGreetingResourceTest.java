@@ -53,6 +53,10 @@ public class ReactiveGreetingResourceTest extends RunningServerTest {
         
         String returned = wrapper.readLine();
         
+        assertEquals("Got ping request.", returned);
+    
+        returned = wrapper.readLine();
+        
         assertEquals("$P", returned);
     }
 
