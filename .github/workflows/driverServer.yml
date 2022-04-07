@@ -85,7 +85,8 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      # Runs a single command using the runners shell
+      - name: Install socat
+        run: sudo apt-get install -y socat
       - run: ./gradlew publishToMavenLocal
         working-directory: "software/libs/open-qm-core"
       - run: ./gradlew publishToMavenLocal
