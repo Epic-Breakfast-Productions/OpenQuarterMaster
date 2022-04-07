@@ -15,11 +15,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.VncRecordingContainer;
 import org.testcontainers.lifecycle.TestDescription;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
-import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +42,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	public static final String UI_TEST_ARG = "uiTest";
 	public static final String HOST_TESTCONTAINERS_INTERNAL = "host.testcontainers.internal";
 	
-	private static MongoDBContainer MONGO_EXE = null;
+	private static MongoDbServerManager MONGO_EXE = null;
 	private static KeycloakContainer KEYCLOAK_CONTAINER = null;
 	private static JaegerAllInOne JAEGER_CONTAINER = null;
 	//@Rule //TODO:: play with this in the test classes
@@ -177,22 +175,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		);
 	}
 	
-	public static synchronized Map<String, String> startMongoTestServer() {
-		if (MONGO_EXE == null || !MONGO_EXE.isRunning()) {
-			StopWatch sw = StopWatch.createStarted();
-			MONGO_EXE = new MongoDBContainer(DockerImageName.parse("mongo:5.0.6"));
-			
-			MONGO_EXE.start();
-			sw.stop();
-			log.info("Started Test Mongo in {} at: {}", sw, MONGO_EXE.getReplicaSetUrl());
-		} else {
-			log.info("Mongo already started.");
-		}
-		
-		return Map.of(
-			"quarkus.mongodb.connection-string", MONGO_EXE.getReplicaSetUrl()
-		);
-	}
 	
 	public synchronized Map<String, String> startSeleniumWebDriverServer() {
 		if (!this.uiTest) {
@@ -238,15 +220,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 			"quarkus.jaeger.endpoint",
 			"http://" + JAEGER_CONTAINER.getContainerIpAddress() + ":" + JAEGER_CONTAINER.getCollectorThriftPort() + "/api/traces"
 		);
-	}
-	
-	public static synchronized void stopMongoTestServer() {
-		if (MONGO_EXE == null) {
-			log.warn("Mongo was not started.");
-			return;
-		}
-		MONGO_EXE.stop();
-		MONGO_EXE = null;
 	}
 	
 	public static synchronized void stopKeycloakTestServer() {
@@ -310,7 +283,9 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		log.info("STARTING test lifecycle resources.");
 		Map<String, String> configOverride = new HashMap<>();
 		
-		configOverride.putAll(startMongoTestServer());
+		MONGO_EXE = new MongoDbServerManager();
+		
+		configOverride.putAll(MONGO_EXE.start());
 		configOverride.putAll(startKeycloakTestServer());
 		configOverride.putAll(startSeleniumWebDriverServer());
 		configOverride.putAll(startJaegerTestServer());
@@ -323,7 +298,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	@Override
 	public void stop() {
 		log.info("STOPPING test lifecycle resources.");
-		stopMongoTestServer();
+		MONGO_EXE.stop();
 		stopKeycloakTestServer();
 		stopSeleniumTestServer();
 		stopJaegerTestServer();
