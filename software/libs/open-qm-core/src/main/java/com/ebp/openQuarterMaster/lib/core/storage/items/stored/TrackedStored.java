@@ -2,6 +2,10 @@ package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+
+import javax.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
 
 /**
  * Stored object to describe an individual, tracked item.
@@ -17,4 +21,11 @@ public class TrackedStored extends Stored {
 	 * Some extra details to help identify this exact item.
 	 */
 	private String identifyingDetails;
+	
+	/**
+	 * The value of this particular tracked item.
+	 */
+	@NonNull
+	@DecimalMin("0.0")
+	private BigDecimal value = BigDecimal.ZERO;
 }

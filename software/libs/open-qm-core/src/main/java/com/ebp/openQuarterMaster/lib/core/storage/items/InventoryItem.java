@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -17,6 +18,8 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -116,6 +119,25 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 * @return the number of individual entities stored
 	 */
 	public abstract long numStored();
+	
+	/**
+	 * Gets the total value of all items/ amounts stored.
+	 *
+	 * @return The value of all items/amounts stored.
+	 */
+	public abstract BigDecimal valueOfStored();
+	
+	/**
+	 * @return
+	 */
+	protected abstract T newTInstance();
+	
+	protected T getStoredForStorage(ObjectId storageId) {
+		if (!this.getStorageMap().containsKey(storageId)) {
+			this.getStorageMap().put(storageId, this.newTInstance());
+		}
+		return this.getStorageMap().get(storageId);
+	}
 	
 	//TODO:: add stored
 	//TODO:: remove stored
