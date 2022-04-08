@@ -1,16 +1,15 @@
 package com.ebp.openQuarterMaster.driverServer.testUtils.serial;
 
 import com.ebp.openQuarterMaster.driverServer.serial.SerialPortWrapper;
+import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 import java.io.Closeable;
 import java.io.IOException;
@@ -18,19 +17,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 @Singleton
-public class TestSerialPortManager implements Closeable {
+public class TestSerialPortManager implements QuarkusTestResourceLifecycleManager {
+	
+	public static final String NUM_SERIAL_PORTS_ARG = "externalAuth";
 	private static final String[] NEW_SERIAL_COMMAND = {
 		"socat", "-d", "-d", "pty,raw,echo=0", "pty,raw,echo=0"
 	};
 	private static final Pattern DEVICE_FIND_PATTERN = Pattern.compile("\\/\\w+\\/\\w+\\/\\w+$");
 	
+	private int numPorts = 1;
+	@Getter
 	private Collection<PortObjects> portObjects = new ArrayList<>();
 	
 	
@@ -108,17 +113,38 @@ public class TestSerialPortManager implements Closeable {
 		}
 	}
 	
-	@PreDestroy
+	@SneakyThrows
 	@Override
-	public void close() throws IOException {
+	public Map<String, String> start() {
+		log.info("STARTING test lifecycle resources.");
+		Map<String, String> configOverride = new HashMap<>();
+		
+		List<String> testSerialPorts = this.createNewHardware(this.numPorts);
+		configOverride.put("serial.extraPorts", StringUtils.joinWith(",", testSerialPorts.toArray()));
+		
+		log.info("Config overrides: {}", configOverride);
+		return configOverride;
+	}
+	
+	@Override
+	public void stop() {
 		for(PortObjects cur : this.portObjects){
-			cur.close();
+			try {
+				cur.close();
+			} catch(IOException e) {
+				log.error("FAILED to close port: {}", cur);
+			}
 		}
+	}
+	
+	@Override
+	public void init(Map<String, String> initArgs) {
+		this.numPorts = Integer.parseInt(initArgs.getOrDefault(NUM_SERIAL_PORTS_ARG, Integer.toString(this.numPorts)));
 	}
 	
 	@Data
 	@AllArgsConstructor
-	private static class PortObjects implements Closeable{
+	public static class PortObjects implements Closeable{
 		private final String outSerialPort;
 		private final Process process;
 		private final ReferenceStorageHardwareImplementation hw;

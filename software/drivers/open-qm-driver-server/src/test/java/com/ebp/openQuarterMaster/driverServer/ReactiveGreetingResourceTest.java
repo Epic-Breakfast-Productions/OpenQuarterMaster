@@ -2,15 +2,18 @@ package com.ebp.openQuarterMaster.driverServer;
 
 import com.ebp.openQuarterMaster.driverServer.serial.SerialPortWrapper;
 import com.ebp.openQuarterMaster.driverServer.testUtils.lifecycleManagers.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.driverServer.testUtils.serial.TestSerialPortManager;
 import com.ebp.openQuarterMaster.driverServer.testUtils.testClasses.RunningServerTest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,13 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     value = TestResourceLifecycleManager.class,
     initArgs = {
 //        @ResourceArg(name = TestResourceLifecycleManager.NUM_SERIAL_PORTS_ARG, value = "2")
-    },
-    restrictToAnnotatedClass = true
+    }
 )
 public class ReactiveGreetingResourceTest extends RunningServerTest {
 
-    @ConfigProperty(name = "serial.extraPorts", defaultValue = "")
-    List<String> serialPorts;
+    List<String> serialPorts = TestResourceLifecycleManager.getPortManager().getPortObjects().stream()
+                                   .map(TestSerialPortManager.PortObjects::getOutSerialPort).collect(Collectors.toList());
     
     @Test
     public void testHelloEndpoint() {

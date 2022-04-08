@@ -15,21 +15,15 @@ import java.util.Map;
  */
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
-	
-	public static final String NUM_SERIAL_PORTS_ARG = "externalAuth";
-	
-	private int numPorts = 1;
-	
 	private static TestSerialPortManager PORT_MANAGER = new TestSerialPortManager();
 	
 	public static TestSerialPortManager getPortManager(){
 		return PORT_MANAGER;
 	}
 	
-	
 	@Override
 	public void init(Map<String, String> initArgs) {
-		this.numPorts = Integer.parseInt(initArgs.getOrDefault(NUM_SERIAL_PORTS_ARG, Integer.toString(this.numPorts)));
+		PORT_MANAGER.init(initArgs);
 	}
 	
 	@SneakyThrows
@@ -38,8 +32,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		log.info("STARTING test lifecycle resources.");
 		Map<String, String> configOverride = new HashMap<>();
 		
-		List<String> testSerialPorts = PORT_MANAGER.createNewHardware(this.numPorts);
-		configOverride.put("serial.extraPorts", StringUtils.joinWith(",", testSerialPorts.toArray()));
+		configOverride.putAll(PORT_MANAGER.start());
 		
 		log.info("Config overrides: {}", configOverride);
 		return configOverride;
@@ -50,6 +43,6 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	public void stop() {
 		log.info("STOPPING test lifecycle resources.");
 		
-		PORT_MANAGER.close();
+		PORT_MANAGER.stop();
 	}
 }

@@ -18,3 +18,5 @@ quarkus:
   quarkus:
     http:
       port: 8085
+    log:
+      level: DEBUG
