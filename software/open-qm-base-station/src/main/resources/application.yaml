@@ -30,6 +30,8 @@ service:
     website: " "
     logo: " "
     banner: ${service.runBy.logo}
+  ops:
+    currency: "USD" # anything that works with `Currency.getInstance("<value>")`
     
 # TODO:: move this into `service` config
 runningInfo:

@@ -3,10 +3,10 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.info;
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Variant;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,11 +42,27 @@ import java.util.Set;
 public class GeneralInfo extends EndpointProvider {
 	
 	@Inject
-	ObjectMapper mapper;
-	
-	@Inject
 	@Location("tags/inputs/units/unitOptions")
 	Template optionsTemplate;
+	
+	@ConfigProperty(name = "service.ops.currency")
+	Currency currency;
+	
+	@GET
+	@Path("currency")
+	@Operation(
+		summary = "The currency the base station is set to operate with."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Currency getCurrency(@Context SecurityContext ctx) {
+		log.info("Getting currency of server.");
+		return this.currency;
+	}
 	
 	@GET
 	@Path("units")

@@ -15,6 +15,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.ws.rs.core.SecurityContext;
 import java.time.ZonedDateTime;
+import java.util.Currency;
 
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
@@ -75,6 +76,7 @@ public abstract class UiProvider {
 	
 	protected TemplateInstance setupPageTemplate(Template template) {
 		return template
+			.data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
 			.data("generateDatetime", ZonedDateTime.now())
 			.data("dateTimeFormatter", UiUtils.DATE_TIME_FORMATTER);
 	}

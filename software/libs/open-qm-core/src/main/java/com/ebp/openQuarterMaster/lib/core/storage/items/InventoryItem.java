@@ -128,6 +128,7 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	public abstract BigDecimal valueOfStored();
 	
 	/**
+	 * Gets a new instance of what holds the T value.
 	 * @return
 	 */
 	protected abstract T newTInstance();
