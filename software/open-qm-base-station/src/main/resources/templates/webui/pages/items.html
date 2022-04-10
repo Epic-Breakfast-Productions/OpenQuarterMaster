@@ -85,6 +85,15 @@
             </select>
         </div>
     </div>
+    <div class="mb-3 row" id="pricePerUnitNameRow">
+        <label for="addEditPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
+                <input type="number" class="form-control" id="addEditPricePerUnitInput" placeholder="PricePerUnit" required>
+            </div>
+        </div>
+    </div>
     <hr />
     <div class="mb-3 row">
         <div class="col-sm-2 col-form-label">Stored</div>
@@ -171,7 +180,9 @@ var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
+var pricePerUnitNameRow = $('#pricePerUnitNameRow');
 var addEditUnitInput = $('#addEditUnitInput');
+var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
 var addEditStoredTypeInput = $('#addEditStoredTypeInput');
 var storedContainer = $('#storedContainer');
 var compatibleUnitOptions = "";
@@ -219,9 +230,11 @@ function setIdAttField(){
     if(addEditStoredTypeInput[0].value == "AMOUNT"){
         trackedItemIdentifierNameRow.hide();
         unitNameRow.show();
+        pricePerUnitNameRow.show();
         addEditStoredTypeInput.attr('data-current', "AMOUNT");
     } else {
         unitNameRow.hide();
+        pricePerUnitNameRow.hide();
         trackedItemIdentifierNameRow.show();
         addEditStoredTypeInput.attr('data-current', "TRACKED");
     }

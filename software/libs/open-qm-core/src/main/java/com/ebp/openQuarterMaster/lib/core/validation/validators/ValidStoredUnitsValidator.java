@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.storage.items.AmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 
@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ValidStoredUnitsValidator extends Validator<ValidHeldStoredUnits, AmountItem> {
+public class ValidStoredUnitsValidator extends Validator<ValidHeldStoredUnits, ListAmountItem> {
 	
 	public static final String INVALID_UNITS_FOUND_FORMAI = "Found %d stored objects with units incompatible with the item's.";
 	
 	@Override
-	public boolean isValid(AmountItem item, ConstraintValidatorContext constraintValidatorContext) {
+	public boolean isValid(ListAmountItem item, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> validationErrs = new ArrayList<>();
 		
 		long invalidCount = item

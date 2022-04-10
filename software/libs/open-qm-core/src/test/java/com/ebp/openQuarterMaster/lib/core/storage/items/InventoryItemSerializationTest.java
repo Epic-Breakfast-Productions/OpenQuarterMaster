@@ -15,10 +15,10 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 		super(InventoryItem.class);
 	}
 	
-	private static List<AmountItem> getAmountItems() {
+	private static List<ListAmountItem> getAmountItems() {
 		return List.of(
-			(AmountItem) new AmountItem().setName(FAKER.name().name()),
-			(AmountItem) new AmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
+			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
 		);
 	}
 	

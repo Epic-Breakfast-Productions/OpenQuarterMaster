@@ -2,7 +2,6 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -19,7 +18,6 @@ import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,7 +32,8 @@ import java.util.Map;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = AmountItem.class, name = "AMOUNT"),
+	@JsonSubTypes.Type(value = SimpleAmountItem.class, name = "AMOUNT_SIMPLE"),
+	@JsonSubTypes.Type(value = ListAmountItem.class, name = "AMOUNT_LIST"),
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
 @BsonDiscriminator

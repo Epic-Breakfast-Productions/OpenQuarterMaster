@@ -13,17 +13,17 @@ import java.util.stream.Stream;
 @Slf4j
 class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 	
-	private static List<AmountItem> getAmountItemsValid() {
+	private static List<ListAmountItem> getAmountItemsValid() {
 		return List.of(
-			(AmountItem) new AmountItem().setName(FAKER.name().name()),
-			(AmountItem) new AmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
+			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
 		);
 	}
 	
-	private static List<Map.Entry<AmountItem, Map<String, String>>> getAmountItemsInvalid() {
+	private static List<Map.Entry<ListAmountItem, Map<String, String>>> getAmountItemsInvalid() {
 		return List.of(
 			Map.entry(
-				(AmountItem) new AmountItem().setName(""),
+				(ListAmountItem) new ListAmountItem().setName(""),
 				new HashMap<>() {{
 					put("name", "Name cannot be blank");
 				}}

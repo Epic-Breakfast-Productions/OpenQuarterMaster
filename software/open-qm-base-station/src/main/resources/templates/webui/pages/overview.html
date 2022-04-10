@@ -11,6 +11,15 @@
 <p>
     {numItems} types of items stored in over {numStorageBlocks} storage blocks
 </p>
+<p>
+    Currency info:
+    <ul>
+    <li>Currency name: {currency.getDisplayName()}</li>
+    <li>Currency symbol: {currency.getSymbol()}</li>
+    <li>Currency code: {currency.getCurrencyCode()}</li>
+</ul>
+</p>
+
 
 {#if config:['demo.perform'] == 'true'}
 <h3>

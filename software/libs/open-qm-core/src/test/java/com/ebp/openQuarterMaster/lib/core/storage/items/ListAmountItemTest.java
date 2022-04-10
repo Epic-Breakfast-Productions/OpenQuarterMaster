@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AmountItemTest extends BasicTest {
+class ListAmountItemTest extends BasicTest {
 	
 	//TODO:: adding of different compatible units
 	//TODO:: test with double values
@@ -23,25 +23,25 @@ class AmountItemTest extends BasicTest {
 		ObjectId id = ObjectId.get();
 		return Stream.of(
 			Arguments.of(
-				new AmountItem(),
+				new ListAmountItem(),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new AmountItem().add(ObjectId.get(), new AmountStored()),
+				new ListAmountItem().add(ObjectId.get(), new AmountStored()),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new AmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new ListAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new AmountItem()
+				new ListAmountItem()
 					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
 					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new AmountItem()
+				new ListAmountItem()
 					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
 					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
 					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
@@ -55,54 +55,54 @@ class AmountItemTest extends BasicTest {
 		ObjectId id = ObjectId.get();
 		return Stream.of(
 			Arguments.of(
-				new AmountItem(),
+				new ListAmountItem(),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new AmountItem().add(ObjectId.get(), new AmountStored()),
+				new ListAmountItem().add(ObjectId.get(), new AmountStored()),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new AmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new ListAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
-				BigDecimal.valueOf(1.0)
-			),
-			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT))),
-				BigDecimal.valueOf(1.0)
-			),
-			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT))),
-				BigDecimal.valueOf(1.0)
-			),
-			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT))),
-				BigDecimal.valueOf(1.0)
-			),
-			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
+				new ListAmountItem()
 					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.setValuePerUnit(BigDecimal.ONE),
+				BigDecimal.valueOf(1.0)
+			),
+			Arguments.of(
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
+				BigDecimal.valueOf(1.0)
+			),
+			Arguments.of(
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
+				BigDecimal.valueOf(1.0)
+			),
+			Arguments.of(
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
+				BigDecimal.valueOf(1.0)
+			),
+			Arguments.of(
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
 				BigDecimal.valueOf(2.0)
 			),
 			Arguments.of(
-				new AmountItem()
-					.setValuePerUnit(BigDecimal.ONE)
+				new ListAmountItem()
 					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
 					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
 				BigDecimal.valueOf(3.0)
 			)
 		);
@@ -110,7 +110,7 @@ class AmountItemTest extends BasicTest {
 	
 	@ParameterizedTest
 	@MethodSource("getTotalArguments")
-	public void testTotalTest(AmountItem item, Quantity<?> quantityExpected) {
+	public void testTotalTest(ListAmountItem item, Quantity<?> quantityExpected) {
 		assertEquals(
 			quantityExpected,
 			item.getTotal()
@@ -119,7 +119,7 @@ class AmountItemTest extends BasicTest {
 	
 	@ParameterizedTest
 	@MethodSource("getValueArguments")
-	public void testGetValue(AmountItem item, BigDecimal valueExpected) {
+	public void testGetValue(ListAmountItem item, BigDecimal valueExpected) {
 		assertEquals(
 			valueExpected,
 			item.valueOfStored()
