@@ -13,7 +13,6 @@ import javax.measure.Quantity;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ValidHeldStoredUnits
 public class SimpleAmountItem extends AmountItem<AmountStored> {
 	
 	public SimpleAmountItem() {

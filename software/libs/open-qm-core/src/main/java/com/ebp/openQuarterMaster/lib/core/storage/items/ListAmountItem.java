@@ -15,14 +15,12 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ValidHeldStoredUnits
 public class ListAmountItem extends AmountItem<List<@NotNull AmountStored>> {
 	
 	public ListAmountItem() {
