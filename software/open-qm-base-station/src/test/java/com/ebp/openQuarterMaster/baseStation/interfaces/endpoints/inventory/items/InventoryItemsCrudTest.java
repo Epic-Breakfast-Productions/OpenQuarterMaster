@@ -7,6 +7,9 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +17,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
@@ -48,19 +52,27 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@Inject
 	TestUserService testUserService;
 	
-	@Test
-	public void testCreate() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
-		InventoryItem item = testObjectCreator.getTestObject();
-		ObjectId returned = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
+		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
 			.contentType(ContentType.JSON)
 			.body(objectMapper.writeValueAsString(item))
 			.when()
 			.post()
-			.then()
-			.statusCode(Response.Status.CREATED.getStatusCode())
-			.extract().body().as(ObjectId.class);
+			.then();
+		
+		response.statusCode(Response.Status.CREATED.getStatusCode());
+		
+		ObjectId returned = response.extract().body().as(ObjectId.class);
+		
 		log.info("Got object id back from create request: {}", returned);
+		return returned;
+	}
+	
+	@Test
+	public void testCreateSimpleAmountItem() throws JsonProcessingException {
+		User user = this.testUserService.getTestUser(false, true);
+		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
+		ObjectId returned = create(user, item);
 		
 		InventoryItem stored = inventoryItemService.get(returned);
 		assertNotNull(stored);
@@ -71,6 +83,44 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		item.setHistory(stored.getHistory());
 		item.setId(returned);
 		
+		
+		assertEquals(item, stored);
+	}
+	
+	@Test
+	public void testCreateListAmountItem() throws JsonProcessingException {
+		User user = this.testUserService.getTestUser(false, true);
+		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
+		ObjectId returned = create(user, item);
+		
+		InventoryItem stored = inventoryItemService.get(returned);
+		assertNotNull(stored);
+		
+		assertFalse(stored.getHistory().isEmpty());
+		assertEquals(1, stored.getHistory().size());
+		
+		item.setHistory(stored.getHistory());
+		item.setId(returned);
+		
+		assertEquals(item, stored);
+	}
+	
+	@Test
+	public void testCreateTrackedItem() throws JsonProcessingException {
+		User user = this.testUserService.getTestUser(false, true);
+		TrackedItem item = (TrackedItem) new TrackedItem()
+			.setTrackedItemIdentifierName("id")
+			.setName(FAKER.commerce().productName());
+		ObjectId returned = create(user, item);
+		
+		InventoryItem stored = inventoryItemService.get(returned);
+		assertNotNull(stored);
+		
+		assertFalse(stored.getHistory().isEmpty());
+		assertEquals(1, stored.getHistory().size());
+		
+		item.setHistory(stored.getHistory());
+		item.setId(returned);
 		
 		assertEquals(item, stored);
 	}

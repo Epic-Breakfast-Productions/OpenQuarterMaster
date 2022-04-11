@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.ebp.openQuarterMaster.lib.core.storage.items.AmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -10,7 +10,7 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 	
 	@Override
 	public InventoryItem<?> getTestObject() {
-		InventoryItem<?> item = new AmountItem();
+		InventoryItem<?> item = new SimpleAmountItem();
 		
 		item.setName(faker.commerce().productName());
 		
