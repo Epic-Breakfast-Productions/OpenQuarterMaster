@@ -73,12 +73,12 @@ public class WebDriverWrapper implements Closeable {
 		log.info("Cleaning up browser after test.");
 		
 		WebDriver driver = getWebDriver();
+		log.debug("Last Page html: \n{}", driver.getPageSource());
 		log.info(
 			"Last Page: \"{}\" {}",
 			driver.getTitle(),
 			driver.getCurrentUrl()
 		);
-		log.debug("page html: \n{}", driver.getPageSource());
 		
 		if (this.quickClean) {
 			if (EXTERNAL.equals(this.authMode)) {
@@ -95,6 +95,7 @@ public class WebDriverWrapper implements Closeable {
 			this.close();
 			this.setup();
 		}
+		log.info("Completed cleanup of webdriver wrapper.");
 	}
 	
 	public WebElement findElement(By by) {

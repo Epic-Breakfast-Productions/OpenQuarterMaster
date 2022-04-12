@@ -289,7 +289,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		configOverride.putAll(MONGO_EXE.start());
 		configOverride.putAll(startKeycloakTestServer());
 		configOverride.putAll(startSeleniumWebDriverServer());
-		configOverride.putAll(startJaegerTestServer());
+//		configOverride.putAll(startJaegerTestServer());
 		
 		log.info("Config overrides: {}", configOverride);
 		
