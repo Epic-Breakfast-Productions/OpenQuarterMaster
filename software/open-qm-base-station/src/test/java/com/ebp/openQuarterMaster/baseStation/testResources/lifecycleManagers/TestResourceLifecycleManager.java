@@ -196,6 +196,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 					VncRecordingContainer.VncRecordingFormat.MP4
 				);
 			BROWSER_CONTAINER.start();
+			log.info("Started selenuim testcontainer: {}", BROWSER_CONTAINER.getDockerImageName());
 		}
 		return Map.of(
 			"runningInfo.hostname",

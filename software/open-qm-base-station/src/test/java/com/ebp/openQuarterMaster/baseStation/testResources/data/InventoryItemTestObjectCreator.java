@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -10,9 +10,10 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 	
 	@Override
 	public InventoryItem<?> getTestObject() {
-		InventoryItem<?> item = new SimpleAmountItem();
+		TrackedItem item = new TrackedItem();//TODO:: use a regular SimpleAmountItem once we know how to do that
 		
 		item.setName(faker.commerce().productName());
+		item.setTrackedItemIdentifierName("id");
 		
 		return item;
 	}
