@@ -1,10 +1,10 @@
 
 serial:
+  extraPorts: "None" # list of extra port locations to consider
+  preferredPaud: 115200
   # for demo
   port: /dev/ttyACM0
   baud: 115200
-  extraPorts: "None"# list of extra port locations to consider
-  preferredPaud: 115200
   
 
 quarkus:
