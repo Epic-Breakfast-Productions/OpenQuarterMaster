@@ -5,10 +5,12 @@ import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
+import javax.validation.constraints.NotNull;
 
 
 @EqualsAndHashCode(callSuper = true)

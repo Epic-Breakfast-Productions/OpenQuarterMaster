@@ -3,7 +3,11 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,11 +15,45 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 class TrackedItemTest extends BasicTest {
+	
+	public static TrackedItem getLargeTrackedItem() {
+		TrackedItem item = new TrackedItem();
+		item.setTrackedItemIdentifierName("id");
+		
+		InventoryItemTest.fillCommon(item);
+		
+		List<ObjectId> storageIds = InventoryItemTest.getStorageList();
+		
+		for (ObjectId id : storageIds) {
+			item.getStorageMap().put(
+				id,
+				new HashMap<>()
+			);
+		}
+		
+		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
+			TrackedStored stored = new TrackedStored();
+			InventoryItemTest.fillCommon(stored);
+			stored.setIdentifyingDetails(FAKER.lorem().paragraph());
+			stored.setValue(BigDecimal.valueOf(RandomUtils.nextDouble(5, 1_000_000)));
+			
+			item.getStorageMap().get(storageIds.get(RandomUtils.nextInt(0, storageIds.size()))).put(
+				UUID.randomUUID().toString(),
+				stored
+			);
+		}
+		
+		return item;
+	}
 	
 	public static Stream<Arguments> getTotalArguments() {
 		ObjectId id = ObjectId.get();
@@ -87,5 +125,16 @@ class TrackedItemTest extends BasicTest {
 			valueExpected,
 			item.valueOfStored()
 		);
+	}
+	
+	@Test
+	public void testLargeItemTotalCalculation() {
+		TrackedItem item = getLargeTrackedItem();
+		
+		StopWatch sw = StopWatch.createStarted();
+		item.recalcTotal();
+		sw.stop();
+		
+		log.info("Recalculating totals took {}", sw);
 	}
 }

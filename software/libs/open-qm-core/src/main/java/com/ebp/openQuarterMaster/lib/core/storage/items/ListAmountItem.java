@@ -1,19 +1,14 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
-import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
-import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
-import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
-import javax.measure.Unit;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +26,38 @@ public class ListAmountItem extends AmountItem<List<@NotNull AmountStored>> {
 	@Override
 	public Quantity<?> recalcTotal() {
 		//TODO:: try parallel streams
-		Quantity<?> total = Quantities.getQuantity(0, this.getUnit());
-		for (List<AmountStored> storedList : this.getStorageMap().values()) {
-			for (AmountStored amtStored : storedList) {
-				Quantity amount = amtStored.getAmount();
-				if (amount == null) {
-					continue;
+		var ref = new Object() {
+			Quantity<?> total = Quantities.getQuantity(0, getUnit());
+		};
+		
+		this.getStorageMap().values().parallelStream()
+			.map((storedList)->{
+				Quantity curTotal = Quantities.getQuantity(0, this.getUnit());
+				for (AmountStored amtStored : storedList) {
+					Quantity amount = amtStored.getAmount();
+					if (amount == null) {
+						continue;
+					}
+					curTotal = curTotal.add(amount);
 				}
-				total = total.add(amount);
-			}
-		}
-		this.setTotal(total);
+				return curTotal;
+			})
+			.sequential()
+			.forEach((curTotal)->{
+				ref.total = ref.total.add(curTotal);
+			});
+		
+		//		for (List<AmountStored> storedList : this.getStorageMap().values()) {
+		//			for (AmountStored amtStored : storedList) {
+		//				Quantity amount = amtStored.getAmount();
+		//				if (amount == null) {
+		//					continue;
+		//				}
+		//				ref.total = total.add(amount);
+		//			}
+		//		}
+		
+		this.setTotal(ref.total);
 		return this.getTotal();
 	}
 	

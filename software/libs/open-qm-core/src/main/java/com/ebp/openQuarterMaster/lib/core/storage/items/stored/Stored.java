@@ -24,7 +24,6 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter(AccessLevel.PRIVATE)
 public abstract class Stored {
 	
 	/**

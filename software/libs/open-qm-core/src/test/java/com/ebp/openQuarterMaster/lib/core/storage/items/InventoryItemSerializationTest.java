@@ -11,6 +11,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItemTest.getLargeListAmountItem;
+import static com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItemTest.getLargeSimpleAmountItem;
+
 @Slf4j
 class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryItem> {
 	
@@ -23,7 +26,8 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name()),
 			(SimpleAmountItem) new SimpleAmountItem()
 				.add(ObjectId.get(), new AmountStored()).setName(FAKER.name().name()),
-			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
+			getLargeSimpleAmountItem()
 		);
 	}
 	
@@ -32,7 +36,8 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
 			(ListAmountItem) new ListAmountItem()
 				.add(ObjectId.get(), new AmountStored()).setName(FAKER.name().name()),
-			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
+			getLargeListAmountItem()
 		);
 	}
 	
@@ -42,7 +47,8 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(TrackedItem) new TrackedItem()
 				.add(ObjectId.get(), "1234", new TrackedStored())
 				.setTrackedItemIdentifierName(FAKER.name().name())
-				.setName(FAKER.name().name())
+				.setName(FAKER.name().name()),
+			TrackedItemTest.getLargeTrackedItem()
 		);
 	}
 	

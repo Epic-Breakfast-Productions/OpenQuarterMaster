@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.testUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +22,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 	
 	/** The speed of the theoretical connection. Used to calculate {@link #SERIALIZED_SIZE_THRESHOLD}. In bytes per second. */
 	private static final int TRANSFER_SPEED = 100_000_000;
-	/** The max time we would want a transfer to take. Used to calculate {@link #SERIALIZED_SIZE_THRESHOLD}. */
+	/** The max time in seconds we would want a transfer to take. Used to calculate {@link #SERIALIZED_SIZE_THRESHOLD}. */
 	private static final int MAX_TRANSFER_TIME = 1;
 	/**
 	 * The max size of a json document we want to make (triggers warning if over this). Calculated based on how long it would take to
@@ -51,6 +52,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		}
 		
 		log.info("Length of json string: {}", json.length());
+		log.info("Would take {}s to send over {}bps connection.", (double) json.length() / (double) TRANSFER_SPEED, TRANSFER_SPEED);
 		
 		if (json.length() > SERIALIZED_SIZE_THRESHOLD) {
 			log.warn("Length of JSON string very, very long.");

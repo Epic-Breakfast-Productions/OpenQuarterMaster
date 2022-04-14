@@ -18,13 +18,13 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2'
 
 	//if need ObjectIds, BsonIgnore
-	implementation 'org.mongodb:bson:4.4.0'
+	implementation 'org.mongodb:bson:4.3.4' //matched to quarkus version
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.22'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
@@ -38,7 +38,7 @@ dependencies {
 	implementation 'systems.uom:systems-common:2.1'
 
 	implementation 'javax.validation:validation-api:2.0.1.Final'
-	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1'
+	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
 
 	implementation 'org.passay:passay:1.6.1'
 	implementation 'commons-io:commons-io:2.11.0'

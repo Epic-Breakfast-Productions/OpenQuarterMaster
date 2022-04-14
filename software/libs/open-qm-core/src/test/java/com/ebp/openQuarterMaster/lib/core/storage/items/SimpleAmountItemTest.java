@@ -2,8 +2,13 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,11 +16,36 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 class SimpleAmountItemTest extends BasicTest {
+	
+	public static SimpleAmountItem getLargeSimpleAmountItem() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		InventoryItemTest.fillCommon(item);
+		
+		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
+			AmountStored stored = new AmountStored();
+			InventoryItemTest.fillCommon(stored);
+			stored.setAmount(Quantities.getQuantity(
+				RandomUtils.nextInt(0, 501),
+				item.getUnit()
+			));
+			item.getStorageMap().put(
+				ObjectId.get(),
+				stored
+			);
+		}
+		
+		return item;
+	}
 	
 	//TODO:: adding of different compatible units
 	//TODO:: test with double values
@@ -107,5 +137,17 @@ class SimpleAmountItemTest extends BasicTest {
 			valueExpected,
 			item.valueOfStored()
 		);
+	}
+	
+	
+	@Test
+	public void testLargeItemTotalCalculation() {
+		SimpleAmountItem item = getLargeSimpleAmountItem();
+		
+		StopWatch sw = StopWatch.createStarted();
+		item.recalcTotal();
+		sw.stop();
+		
+		log.info("Recalculating totals took {}", sw);
 	}
 }
