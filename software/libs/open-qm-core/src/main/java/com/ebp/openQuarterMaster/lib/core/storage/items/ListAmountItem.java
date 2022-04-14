@@ -25,9 +25,12 @@ public class ListAmountItem extends AmountItem<List<@NotNull AmountStored>> {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public Quantity<?> recalcTotal() {
-		//TODO:: try parallel streams
 		var ref = new Object() {
 			Quantity<?> total = Quantities.getQuantity(0, getUnit());
+			
+			public synchronized void addToTotal(Quantity quantity) {
+				this.total = this.total.add(quantity);
+			}
 		};
 		
 		this.getStorageMap().values().parallelStream()
@@ -42,20 +45,7 @@ public class ListAmountItem extends AmountItem<List<@NotNull AmountStored>> {
 				}
 				return curTotal;
 			})
-			.sequential()
-			.forEach((curTotal)->{
-				ref.total = ref.total.add(curTotal);
-			});
-		
-		//		for (List<AmountStored> storedList : this.getStorageMap().values()) {
-		//			for (AmountStored amtStored : storedList) {
-		//				Quantity amount = amtStored.getAmount();
-		//				if (amount == null) {
-		//					continue;
-		//				}
-		//				ref.total = total.add(amount);
-		//			}
-		//		}
+			.forEach(ref::addToTotal);
 		
 		this.setTotal(ref.total);
 		return this.getTotal();

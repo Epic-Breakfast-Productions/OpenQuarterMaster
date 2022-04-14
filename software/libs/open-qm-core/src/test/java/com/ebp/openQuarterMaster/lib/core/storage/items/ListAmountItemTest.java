@@ -145,6 +145,51 @@ class ListAmountItemTest extends BasicTest {
 					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
 					.setValuePerUnit(BigDecimal.ONE),
 				BigDecimal.valueOf(3.0)
+			),
+			Arguments.of(
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.setValuePerUnit(BigDecimal.ONE),
+				BigDecimal.valueOf(40.0)
 			)
 		);
 	}
@@ -173,9 +218,10 @@ class ListAmountItemTest extends BasicTest {
 		ListAmountItem item = getLargeListAmountItem();
 		
 		StopWatch sw = StopWatch.createStarted();
-		item.recalcTotal();
+		Quantity first = item.recalcTotal();
 		sw.stop();
-		
 		log.info("Recalculating totals took {}", sw);
+		
+		assertEquals(first, item.recalcTotal());
 	}
 }
