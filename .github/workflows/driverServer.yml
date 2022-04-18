@@ -103,11 +103,11 @@ jobs:
           name: Native Test Report            # Name of the check run which will be created
           path: "software/drivers/open-qm-driver-server/build/test-results/quarkusIntTest/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
-      - name: Archive Packaged Test Report
+      - name: Archive Integration Test Report
         uses: actions/upload-artifact@v2
         with:
           name: Native Test Report
-          path: "software/drivers/open-qm-driver-server/build/reports/tests/testNative"
+          path: "software/drivers/open-qm-driver-server/build/reports/tests/quarkusIntTest"
       # TODO:: save off image file
 
           
