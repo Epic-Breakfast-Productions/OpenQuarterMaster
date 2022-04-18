@@ -3,19 +3,15 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 import com.ebp.openQuarterMaster.lib.core.history.EventType;
 import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryItemTest extends BasicTest {
-	
 	private static final int NUM_ATTS = 50;
 	private static final int NUM_KEYWORDS = 25;
 	private static final int NUM_IMAGES = 10;

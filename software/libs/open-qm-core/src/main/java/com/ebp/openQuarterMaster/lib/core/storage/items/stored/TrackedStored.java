@@ -20,7 +20,7 @@ public class TrackedStored extends Stored {
 	/**
 	 * Some extra details to help identify this exact item.
 	 */
-	private String identifyingDetails;
+	private String identifyingDetails = "";
 	
 	/**
 	 * The value of this particular tracked item.

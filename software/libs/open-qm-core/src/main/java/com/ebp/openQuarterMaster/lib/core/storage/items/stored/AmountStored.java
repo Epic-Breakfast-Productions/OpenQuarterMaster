@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
+import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidQuantity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ public class AmountStored extends Stored {
 	/**
 	 * The amount of the thing stored.
 	 */
+	@ValidQuantity
 	private Quantity<?> amount = null;
 }
