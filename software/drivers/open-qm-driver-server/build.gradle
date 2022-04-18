@@ -45,3 +45,24 @@ compileJava {
 compileTestJava {
     options.encoding = 'UTF-8'
 }
+
+//tasks.withType(Test) {
+//    // Configuration for all test tasks
+//    //makes the standard streams (err and out) visible at console when running tests
+//    testLogging {
+//        displayGranularity -1
+//        minGranularity -1
+//        maxGranularity -1
+//        showStandardStreams true
+//        showStackTraces true
+//        showExceptions true
+//        showCauses true
+//        exceptionFormat "full"
+//        stackTraceFilters "truncate", "groovy"
+//        events "passed", "failed", "skipped"
+//    }
+//
+//    reports {
+//        junitXml.outputPerTestCase = true
+//    }
+//}

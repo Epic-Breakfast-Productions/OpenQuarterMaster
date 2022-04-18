@@ -73,7 +73,7 @@ jobs:
         with:
           name: Selenium Recordings
           path: "software/drivers/open-qm-driver-server/build/seleniumRecordings"
-  nativeTest:
+  packagedTest:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -93,21 +93,22 @@ jobs:
         working-directory: "software/libs/open-qm-driver"
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: testNative
+          arguments: quarkusIntTest -Dquarkus.package.type=native -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
           build-root-directory: "software/drivers/open-qm-driver-server"
       # https://github.com/marketplace/actions/test-reporter
-      - name: Native Test Report
+      - name: Packaged Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Native Test Report            # Name of the check run which will be created
           path: "software/drivers/open-qm-driver-server/build/test-results/testNative/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
-      - name: Archive Native Test Report
+      - name: Archive Packaged Test Report
         uses: actions/upload-artifact@v2
         with:
           name: Native Test Report
           path: "software/drivers/open-qm-driver-server/build/reports/tests/testNative"
+      # TODO:: save off image file
 
           
 #      - name: Publish Unit Test Results
