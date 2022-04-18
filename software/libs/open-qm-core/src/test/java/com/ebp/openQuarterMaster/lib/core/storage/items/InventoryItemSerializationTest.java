@@ -6,6 +6,8 @@ import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectSerializationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import static com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItemTes
 import static com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItemTest.getLargeSimpleAmountItem;
 
 @Slf4j
+@Execution(ExecutionMode.SAME_THREAD)
 class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryItem> {
 	
 	protected InventoryItemSerializationTest() {
