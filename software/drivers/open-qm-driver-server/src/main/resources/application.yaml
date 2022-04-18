@@ -13,6 +13,8 @@ quarkus:
     cors:
       ~: true
       origins: "*"
+    access-log:
+      enabled: true
 
 "%dev":
   quarkus:
