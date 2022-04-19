@@ -1,8 +1,6 @@
 package com.ebp.openQuarterMaster.driverServer.acceptance;
 
 import io.quarkiverse.cucumber.CucumberOptions;
-import io.quarkiverse.cucumber.CucumberQuarkusIntegrationTest;
-import io.quarkiverse.cucumber.CucumberQuarkusTest;
 import io.quarkiverse.cucumber.CucumberQuarkusTestCoptInt;
 
 @CucumberOptions(
