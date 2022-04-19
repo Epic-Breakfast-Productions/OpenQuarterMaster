@@ -10,7 +10,7 @@ public class Commands {
 	
 	public static class Parts {
 		public static final char COMMAND_START_CHAR = '$';
-		public static final char RETURN_START_CHAR = '^';
+		public static final char RETURN_START_CHAR = COMMAND_START_CHAR;
 		public static final char SEPARATOR_CHAR = '|';
 		public static final char COMMAND_SEPARATOR_CHAR = '\n';
 	}

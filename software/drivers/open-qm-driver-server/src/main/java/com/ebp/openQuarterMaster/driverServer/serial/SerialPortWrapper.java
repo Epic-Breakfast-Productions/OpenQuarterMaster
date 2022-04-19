@@ -68,10 +68,16 @@ public class SerialPortWrapper implements Closeable {
 		
 		boolean run = true;
 		do {
-			if (this.port.readBytes(buffer, 1) > 0) {
+			int read = this.port.readBytes(buffer, 1);
+//			log.debug("Read {} bytes ({})", read, (char)buffer[0]);
+			if (read > 0) {
 				if (buffer[0] == '\n') {
 					log.info("Got Newline.");
 					break;
+				}
+				//ignore carriage returns
+				if (buffer[0] == '\r') {
+					continue;
 				}
 				sb.append((char) buffer[0]);
 			} else {
@@ -80,7 +86,7 @@ public class SerialPortWrapper implements Closeable {
 		} while (run);
 		
 		String output = sb.toString();
-		log.info("Got line: {}", output);
+		log.info("Got line: \"{}\"", output);
 		return output;
 	}
 	
@@ -89,6 +95,34 @@ public class SerialPortWrapper implements Closeable {
 		
 		byte[] buff = (line + Commands.Parts.COMMAND_SEPARATOR_CHAR).getBytes(StandardCharsets.UTF_8);
 		this.port.writeBytes(buff, buff.length);
+	}
+	
+	public String readLatestResponse(){
+		String latestResponse = null;
+		String curLine = null;
+		while(!"".equals(curLine) || latestResponse == null){
+			curLine = this.readLine();
+			if(!curLine.isEmpty()) {
+				if (curLine.charAt(0) == Commands.Parts.RETURN_START_CHAR) {
+					latestResponse = curLine;
+				}
+			}
+		}
+		return latestResponse;
+	}
+	
+	public String sendCommandWithReturn(String command){
+		this.writeLine(command);
+		return this.readLatestResponse();
+	}
+	
+	public void sendCommandWithoutReturn(String command){
+		this.writeLine(command);
+		String response = this.readLatestResponse();
+		
+		if(!"$O".equals(response)){
+			throw new IllegalStateException("Not OK from command: " + response);
+		}
 	}
 	
 	@Override

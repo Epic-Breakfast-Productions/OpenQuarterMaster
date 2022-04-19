@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.driverServer.services;
 
+import com.ebp.openQuarterMaster.driverServer.serial.SerialPortWrapper;
 import com.ebp.openQuarterMaster.lib.driver.ModuleState;
 import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
 import com.fazecast.jSerialComm.SerialPort;
@@ -23,13 +24,11 @@ import java.util.stream.Collectors;
 @Singleton
 public class SerialService {
 	
-	private static final byte[] GET_STATUS_MESSAGE = "$S\n".getBytes(StandardCharsets.UTF_8);
+	private static final String GET_STATUS_MESSAGE = "$S\n";
 	private static final char RETURN_START_CHAR = '^';
 	
 	private final Semaphore serialSemaphore = new Semaphore(1);
-	private final String serialPortStr;
-	private final int serialPortBaud;
-	private SerialPort serialPort;
+	private SerialPortWrapper serialPort;
 	
 	SerialService(
 		@ConfigProperty(name = "serial.port")
@@ -37,75 +36,15 @@ public class SerialService {
 		@ConfigProperty(name = "serial.baud")
 			Integer serialBaud
 	) {
-		this.serialPortStr = serialPort;
-		this.serialPortBaud = serialBaud;
-		
-		this.initSerialPort();
+		this.serialPort = new SerialPortWrapper(serialPort, serialBaud);
 	}
-	
-	private void initSerialPort() {
-		this.serialPort = SerialPort.getCommPort(this.serialPortStr);
-		this.serialPort.setBaudRate(this.serialPortBaud);
-		this.serialPort.openPort();
-	}
-	
-	
-	private void assertSerialOpen() {
-		if (!this.serialPort.isOpen()) {
-			throw new IllegalStateException("Serial port was not open.");
-		}
-	}
-	
-	/**
-	 * TODO:: do with scanner?
-	 * @return
-	 */
-	private String readLine() {
-		StringBuilder sb = new StringBuilder();
-		byte[] buffer = new byte[1];
-		log.info("Trying to read a line from serial port...");
-		
-		do {
-			if (this.serialPort.readBytes(buffer, 1) > 0) {
-				if (buffer[0] == '\n') {
-					break;
-				}
-				sb.append((char) buffer[0]);
-			}
-		} while (true);
-		
-		log.info("Got line: {}", sb.toString());
-		return sb.toString();
-	}
-	
-	private String getResponse(){
-		String response = null;
-		
-		while (response == null) {
-			String cur = readLine();
-			if (
-				!cur.isBlank() &&
-				cur.charAt(0) == RETURN_START_CHAR
-			) {
-				response = cur;
-			}
-		}
-		response = response.strip();
-		return response;
-	}
-	
 	
 	public Void setMessage(String message) throws InterruptedException {
-		assertSerialOpen();
 		try {
-			this.serialSemaphore.acquire();
-			
-			//TODO:: make this a command instead of just writing the message
-			byte[] messageBytes = (message + '\n').getBytes(StandardCharsets.UTF_8);
-			this.serialPort.writeBytes(messageBytes, messageBytes.length);
-			
+			this.serialPort.acquireLock();
+			this.serialPort.sendCommandWithoutReturn(Commands.Parts.COMMAND_START_CHAR + "M|" + message.strip());
 		} finally {
-			this.serialSemaphore.release();
+			this.serialPort.releaseLock();
 		}
 		return null;
 	}
@@ -118,13 +57,10 @@ public class SerialService {
 	}
 	
 	public ModuleState getState() throws InterruptedException {
-		assertSerialOpen();
 		try {
-			this.serialSemaphore.acquire();
+			this.serialPort.acquireLock();
 			
-			this.serialPort.writeBytes(GET_STATUS_MESSAGE, GET_STATUS_MESSAGE.length);
-			
-			String response = getResponse();
+			String response = this.serialPort.sendCommandWithReturn(GET_STATUS_MESSAGE);
 			
 			ModuleState.Builder builder = ModuleState.builder();
 			
@@ -150,9 +86,8 @@ public class SerialService {
 			
 			return builder.build();
 		} finally {
-			this.serialSemaphore.release();
+			this.serialPort.releaseLock();
 		}
-		
 	}
 	
 	public Uni<ModuleState> getStateUni() throws InterruptedException {

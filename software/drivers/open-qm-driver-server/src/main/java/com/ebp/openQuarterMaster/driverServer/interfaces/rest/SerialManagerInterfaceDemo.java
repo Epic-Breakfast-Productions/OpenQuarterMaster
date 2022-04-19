@@ -26,16 +26,16 @@ public class SerialManagerInterfaceDemo {
 	@GET
 	@Path("/getState")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ModuleState> getState() throws InterruptedException {
-		return this.serialService.getStateUni();
+	public ModuleState getState() throws InterruptedException {
+		return this.serialService.getState();
 	}
 	
 	@POST
 	@Path("/postMessage")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Uni<Void> postMessage(
+	public Void postMessage(
 		@Valid PostMessageRequest pmr
 	) throws InterruptedException {
-		return this.serialService.setMessageUni(pmr.getMessage());
+		return this.serialService.setMessage(pmr.getMessage());
 	}
 }
