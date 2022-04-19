@@ -50,6 +50,19 @@ Where:
 
 ===== Brightness
 
+=== General Command Conventions
+
+==== No-return, acknowledgement of commands
+
+`$O`
+
+==== Error
+
+`$E[|<errMessage>]`
+
+This is the way to return an error status when a command fails.
+
+
 === Commands the hardware accepts
 
 ==== Liveliness Ping
@@ -92,6 +105,17 @@ Returns information about the current state of the hardware.
 
 (That's the letter O, as in, OK)
 
+==== Set Message
+
+`$M|<message to display>`
+
+===== Returns
+
+`$O` If the message was displayed
+
+`$E[|<errMessage>]` If the message could not be displayed
+
+
 === Commands the driving software accepts
 
 These commands are meant to alert the driver software of physical events. These are less commands, and more alerts so they do not require responses from the driving software.
@@ -111,6 +135,10 @@ These are mostly for future implementation, ideas listed for now.
 While the hardware is receiving data from the host, it is not to send any command messages back. The next non-log message sent will be the returning command.
 
 TODO: when to give up on a command; on second command char
+
+===== Characters to Ignore
+
+`\r`
 
 === Log messages
 
