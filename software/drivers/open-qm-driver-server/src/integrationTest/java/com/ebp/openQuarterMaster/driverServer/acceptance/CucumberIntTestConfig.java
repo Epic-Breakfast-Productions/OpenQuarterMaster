@@ -1,7 +1,9 @@
 package com.ebp.openQuarterMaster.driverServer.acceptance;
 
+import com.ebp.openQuarterMaster.driverServer.testUtils.lifecycleManagers.TestResourceLifecycleManager;
 import io.quarkiverse.cucumber.CucumberOptions;
-import io.quarkiverse.cucumber.CucumberQuarkusTestCoptInt;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.common.ResourceArg;
 
 @CucumberOptions(
 	features = "acceptanceFeatures",
@@ -13,6 +15,15 @@ import io.quarkiverse.cucumber.CucumberQuarkusTestCoptInt;
 		"html:build/test-results/quarkusIntTest/cucumber/report.html",
 	}
 )
-public class CucumberIntTestConfig extends CucumberQuarkusTestCoptInt {
-
+@QuarkusTestResource(
+	value = TestResourceLifecycleManager.class,
+	initArgs = {
+		@ResourceArg(name = TestResourceLifecycleManager.OTHER_PORT_ARG, value = "true")
+	}
+)
+public class CucumberIntTestConfig extends CucumberQuarkusIntegrationTest {
+	
+	public static void main(String[] args) {
+		runMain(CucumberIntTestConfig.class, args);
+	}
 }

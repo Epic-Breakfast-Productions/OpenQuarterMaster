@@ -32,6 +32,15 @@ public class ReactiveGreetingResourceTest extends RunningServerTest {
     List<String> serialPorts = TestResourceLifecycleManager.getPortManager().getPortObjects().stream()
                                    .map(TestSerialPortManager.PortObjects::getOutSerialPort).collect(Collectors.toList());
     
+    
+    @ConfigProperty(name = "quarkus.http.port")
+    int port;
+    
+    @Test
+    public void logPort(){
+        log.info("Port: {}", port);
+    }
+    
     @Test
     public void testHelloEndpoint() {
         given()

@@ -15,15 +15,21 @@ import java.util.Map;
  */
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
+	public static final String OTHER_PORT_ARG = "diffPort";
+	
 	private static TestSerialPortManager PORT_MANAGER = new TestSerialPortManager();
 	
 	public static TestSerialPortManager getPortManager(){
 		return PORT_MANAGER;
 	}
 	
+	private boolean diffPort = false;
+	
 	@Override
 	public void init(Map<String, String> initArgs) {
 		PORT_MANAGER.init(initArgs);
+		
+		this.diffPort = Boolean.parseBoolean(initArgs.getOrDefault(OTHER_PORT_ARG, Boolean.toString(this.diffPort)));
 	}
 	
 	@SneakyThrows
@@ -33,6 +39,11 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 		Map<String, String> configOverride = new HashMap<>();
 		
 		configOverride.putAll(PORT_MANAGER.start());
+		
+//		if(this.diffPort){
+//			log.info("Setting different port");
+//			configOverride.put("quarkus.http.port", "8082");
+//		}
 		
 		log.info("Config overrides: {}", configOverride);
 		return configOverride;

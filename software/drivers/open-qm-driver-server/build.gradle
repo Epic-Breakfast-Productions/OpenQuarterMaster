@@ -28,11 +28,10 @@ dependencies {
     testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
-
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
