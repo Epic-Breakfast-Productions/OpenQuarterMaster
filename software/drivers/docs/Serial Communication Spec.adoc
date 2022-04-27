@@ -46,6 +46,12 @@ Where:
 
 ==== Data types
 
+===== Date
+
+In the ISO-8601 format: `uuuu-MM-dd`
+
+Example: `2022-04-27`
+
 ===== Color
 
 ===== Brightness
@@ -55,6 +61,8 @@ Where:
 ==== No-return, acknowledgement of commands
 
 `$O`
+
+As in, "Ok"
 
 ==== Error
 
@@ -83,11 +91,11 @@ Returns information about the hardware module. Used to identify, determine the c
 
 ===== Returns
 
-`$I|<serialNo>|<numStorageBlocks>`
+`$I|<serialNo>|<manufactureDate>|<Comm Spec version>|<numStorageBlocks>`
 
 ==== Get State
 
-`$S`
+`$S|`
 
 Returns information about the current state of the hardware.
 
@@ -97,13 +105,11 @@ Returns information about the current state of the hardware.
 
 ==== Set Storage Block light
 
-`$L|<storage block number>|on[|<color>][|<brightness>]`
+`$L|<storage block number>|on/off[|<color>][|<brightness>]`
 
 ===== Returns
 
 `$O`
-
-(That's the letter O, as in, OK)
 
 ==== Set Message
 
@@ -113,7 +119,7 @@ Returns information about the current state of the hardware.
 
 `$O` If the message was displayed
 
-`$E[|<errMessage>]` If the message could not be displayed
+`$E[|<errMessage>]` If the message could not be displayed (No screen to display on, for example)
 
 
 === Commands the driving software accepts

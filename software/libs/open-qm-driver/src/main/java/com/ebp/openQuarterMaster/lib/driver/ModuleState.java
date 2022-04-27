@@ -14,12 +14,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class ModuleState {
 	
-	@NotNull
-	private String serialNo;
-	private boolean online;
+	private boolean online = true;
 	
 	@lombok.Builder.Default
 	private List<@NotNull BlockLightSetting> lightSettings = new ArrayList<>();
