@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.driverServer.serial;
 
-import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.AccessLevel;
 import lombok.Getter;

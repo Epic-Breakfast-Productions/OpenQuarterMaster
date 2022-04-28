@@ -2,8 +2,7 @@ package com.ebp.openQuarterMaster.driverServer.services;
 
 import com.ebp.openQuarterMaster.driverServer.serial.SerialPortWrapper;
 import com.ebp.openQuarterMaster.lib.driver.ModuleState;
-import com.ebp.openQuarterMaster.lib.driver.interaction.Commands;
-import com.fazecast.jSerialComm.SerialPort;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +68,6 @@ public class SerialService {
 			log.info("Response: {}", response);
 			log.debug("Parts: {}", (Object) parts);
 			
-			builder.serialNo(UUID.randomUUID().toString());
 			builder.encoderVal(Integer.parseInt(parts[1]));
 			builder.encoderPressed(Boolean.parseBoolean(parts[2]));
 			builder.currentMessage(parts[3]);
