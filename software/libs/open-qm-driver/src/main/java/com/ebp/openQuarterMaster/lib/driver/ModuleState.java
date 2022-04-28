@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -17,15 +18,21 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class ModuleState {
 	
+	@lombok.Builder.Default
 	private boolean online = true;
 	
 	@lombok.Builder.Default
 	private List<@NotNull BlockLightSetting> lightSettings = new ArrayList<>();
-	private String currentMessage;
+	
+	@NotNull
+	@NonNull
+	@lombok.Builder.Default
+	private String currentMessage = "";
 	
 	//for demo
 	private int encoderVal;
 	private boolean encoderPressed;
+	
 	@lombok.Builder.Default
 	private List<String> pixelColors = new ArrayList<>();
 }
