@@ -17,7 +17,6 @@ import java.util.concurrent.Callable;
 public class SerialPortModuleCommander implements ModuleCommander {
 	
 	private final SerialPortWrapper wrapper;
-	private final Queue<Command> receivedCommands = new LinkedList<>();
 	
 	public SerialPortModuleCommander(SerialPortWrapper wrapper) {
 		this.wrapper = wrapper;
@@ -40,30 +39,15 @@ public class SerialPortModuleCommander implements ModuleCommander {
 	
 	@Override
 	public Queue<Command> processLines() {
-		this.lockAndDo(()->{
-			String curLine;
-			do {
-				curLine = wrapper.readLine();
-				
-				if (Commands.isLog(curLine)) {
-					log.info("LOG FROM MODULE: {}", curLine);
-				}
-				if (Commands.isCommand(curLine)) {
-					this.receivedCommands.add(CommandParsingUtils.parse(curLine));
-				}
-			} while (curLine != null);
-			return null;
-		});
-		return this.receivedCommands;
+		return this.lockAndDo(this.wrapper::getReceivedCommands);
 	}
 	
 	@Override
 	public void ping() {
 		this.lockAndDo(()->{
-			wrapper.writeLine(PingCommand.getInstance().serialLine());
-			String response = wrapper.readLatestResponse();
+			Command response = wrapper.sendCommandWithReturn(PingCommand.getInstance());
 			
-			if (!PingCommand.getInstance().serialLine().equals(response)) {
+			if (!PingCommand.getInstance().equals(response)) {
 				throw new IllegalStateException("Did not get expected response from module.");//TODO:: appropriate exception
 			}
 			

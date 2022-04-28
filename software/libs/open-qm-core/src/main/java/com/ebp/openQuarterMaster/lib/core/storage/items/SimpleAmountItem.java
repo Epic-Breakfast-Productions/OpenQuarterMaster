@@ -12,10 +12,10 @@ import tech.units.indriya.quantity.Quantities;
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SimpleAmountItem extends AmountItem<AmountStored> {
+@BsonDiscriminator(value = "AMOUNT_SIMPLE")
+public class SimpleAmountItem extends AmountItem<@NotNull AmountStored> {
 	
 	public SimpleAmountItem() {
 		super(StoredType.AMOUNT_SIMPLE);

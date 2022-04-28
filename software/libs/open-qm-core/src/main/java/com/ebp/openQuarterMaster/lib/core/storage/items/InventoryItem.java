@@ -36,7 +36,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = ListAmountItem.class, name = "AMOUNT_LIST"),
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
-@BsonDiscriminator
+@BsonDiscriminator(key="storedType")
 public abstract class InventoryItem<T> extends ImagedMainObject {
 	
 	/**

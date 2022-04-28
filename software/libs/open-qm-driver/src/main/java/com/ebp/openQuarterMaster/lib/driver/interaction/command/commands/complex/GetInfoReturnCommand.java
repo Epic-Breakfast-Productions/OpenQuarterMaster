@@ -5,10 +5,14 @@ import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetInfoReturnCommand extends Command {
 	
 	@Getter
@@ -44,7 +48,7 @@ public class GetInfoReturnCommand extends Command {
 	@Override
 	public String serialLine() {
 		return Commands.getComplexCommandString(
-			this.getType().commandChar,
+			this.getType(),
 			this.info.getSerialNo(),
 			this.info.getManufactureDate().toString(),
 			this.info.getCommSpecVersion(),

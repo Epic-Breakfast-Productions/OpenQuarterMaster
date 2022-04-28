@@ -5,14 +5,22 @@ import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class ErrorCommand extends Command {
 	
-	private ModuleInfo info;
+	@Getter
+	@Setter
+	private String errInfo = null;
 	
-	protected ErrorCommand() {
+	public ErrorCommand() {
 		super(CommandType.ERROR);
 	}
 	
@@ -20,37 +28,21 @@ public class ErrorCommand extends Command {
 		this();
 		String[] returnedParts = CommandParsingUtils.getAndAssertCommand(this.getType(), line);
 		
-		if (returnedParts.length != 4) {
+		if (returnedParts.length > 2) {
 			throw new IllegalArgumentException("Wrong number of parts given in command.");//TODO: proper exception
 		}
-		
-		ModuleInfo.Builder builder = ModuleInfo.builder();
-		
-		builder.serialNo(returnedParts[0]);
-		builder.manufactureDate(LocalDate.parse(returnedParts[1]));
-		builder.commSpecVersion(returnedParts[2]);
-		builder.numBlocks(Integer.parseInt(returnedParts[3]));
-		
-		this.info = builder.build();
+		if (returnedParts.length == 2) {
+			this.errInfo = returnedParts[1];
+		}
 	}
 	
-	public ErrorCommand(ModuleInfo info) {
-		this();
-		this.info = info;
-	}
-	
-	public ModuleInfo getModuleInfo() {
-		return this.info.toBuilder().build();
-	}
 	
 	@Override
 	public String serialLine() {
-		return Commands.getComplexCommandString(
-			this.getType().commandChar,
-			this.info.getSerialNo(),
-			this.info.getManufactureDate().toString(),
-			this.info.getCommSpecVersion(),
-			Integer.toString(this.info.getNumBlocks())
-		);
+		if (this.errInfo == null) {
+			return Commands.getSimpleCommandString(this.getType());
+		} else {
+			return Commands.getComplexCommandString(this.getType(), this.getErrInfo());
+		}
 	}
 }

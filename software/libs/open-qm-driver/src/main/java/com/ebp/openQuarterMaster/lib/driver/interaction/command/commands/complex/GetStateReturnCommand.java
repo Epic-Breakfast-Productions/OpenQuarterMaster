@@ -6,10 +6,14 @@ import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetStateReturnCommand extends Command {
 	
 	@Getter
@@ -28,7 +32,6 @@ public class GetStateReturnCommand extends Command {
 		}
 		
 		ModuleState.Builder builder = ModuleState.builder();
-		
 		//TODO
 		
 		this.info = builder.build();
@@ -42,7 +45,7 @@ public class GetStateReturnCommand extends Command {
 	@Override
 	public String serialLine() {
 		return Commands.getComplexCommandString(
-			this.getType().commandChar
+			this.getType()
 			//TODO:: this
 		);
 	}

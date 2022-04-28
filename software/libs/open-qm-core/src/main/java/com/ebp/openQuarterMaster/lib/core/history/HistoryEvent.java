@@ -18,6 +18,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Builder
 public class HistoryEvent {
+	//TODO:: extend for add/remove
 	
 	/**
 	 * The type of event that occurred

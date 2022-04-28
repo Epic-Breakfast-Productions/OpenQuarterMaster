@@ -2,7 +2,9 @@ package com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.simple
 
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class PingCommand extends SimpleCommand {
 	

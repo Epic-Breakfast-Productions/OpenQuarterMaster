@@ -16,6 +16,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@BsonDiscriminator(value = "AMOUNT_LIST")
 public class ListAmountItem extends AmountItem<List<@NotNull AmountStored>> {
 	
 	public ListAmountItem() {

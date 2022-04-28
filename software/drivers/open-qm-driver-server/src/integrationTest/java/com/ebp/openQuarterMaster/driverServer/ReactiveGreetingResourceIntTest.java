@@ -6,14 +6,14 @@ import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 
-@QuarkusTestResource(
-	value = TestResourceLifecycleManager.class,
-	initArgs = {
-//		        @ResourceArg(name = TestResourceLifecycleManager.OTHER_PORT_ARG, value = "true")
-	}
-)
-@QuarkusIntegrationTest
-@Slf4j
-public class ReactiveGreetingResourceIntTest extends ReactiveGreetingResourceTest {
-
-}
+//@QuarkusTestResource(
+//	value = TestResourceLifecycleManager.class,
+//	initArgs = {
+////		        @ResourceArg(name = TestResourceLifecycleManager.OTHER_PORT_ARG, value = "true")
+//	}
+//)
+//@QuarkusIntegrationTest
+//@Slf4j
+//public class ReactiveGreetingResourceIntTest extends ReactiveGreetingResourceTest {
+//
+//}

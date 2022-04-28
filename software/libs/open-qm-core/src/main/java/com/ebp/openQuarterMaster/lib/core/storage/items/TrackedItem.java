@@ -25,6 +25,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@BsonDiscriminator("TRACKED")
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
 	
 	/**

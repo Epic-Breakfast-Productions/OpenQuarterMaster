@@ -1,6 +1,8 @@
 package com.ebp.openQuarterMaster.lib.driver.interaction.serial;
 
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
+
+import static com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType.OKAY;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,6 +28,9 @@ public class SerialPortWrapper implements Closeable {
 	
 	private final Semaphore serialSemaphore = new Semaphore(1);
 	private boolean hasLock = false;
+	
+	@Getter
+	private final LinkedList<Command> receivedCommands = new LinkedList<>();
 	
 	public SerialPortWrapper(SerialPort port) {
 		this.port = port;
@@ -61,6 +70,7 @@ public class SerialPortWrapper implements Closeable {
 		this.hasLock = false;
 	}
 	
+	
 	public String readLine() {
 		assertHasLock();
 		//TODO:: smarter way to accomplish?
@@ -92,6 +102,47 @@ public class SerialPortWrapper implements Closeable {
 		return output;
 	}
 	
+	public Queue<Command> processLines() {
+		this.assertHasLock();
+		
+		String curLine;
+		do {
+			curLine = this.readLine();
+			
+			if (Commands.isLog(curLine)) {
+				log.info("LOG FROM MODULE: {}", curLine);
+			}
+			if (Commands.isCommand(curLine)) {
+				this.receivedCommands.add(CommandParsingUtils.parse(curLine));
+			}
+		} while (curLine != null);
+		
+		return this.receivedCommands;
+	}
+	
+	public Command readLatestResponse() {
+		Command latestResponse = null;
+		long start = System.currentTimeMillis();
+		while (true) {
+			this.processLines();
+			
+			if (!this.receivedCommands.isEmpty()) {
+				latestResponse = this.receivedCommands.removeLast();
+				break;
+			}
+			//timeout if we've been waiting for no response.
+			if (System.currentTimeMillis() - start > TIMEOUT) {
+				break;
+			}
+		}
+		
+		if (latestResponse == null) {
+			throw new IllegalStateException("Failed to read command from module.");//TODO:: proper exception
+		}
+		return latestResponse;
+	}
+	
+	
 	public void writeLine(String line) {
 		assertHasLock();
 		
@@ -99,30 +150,21 @@ public class SerialPortWrapper implements Closeable {
 		this.port.writeBytes(buff, buff.length);
 	}
 	
-	public String readLatestResponse() {
-		String latestResponse = null;
-		String curLine = null;
-		while (!"".equals(curLine) || latestResponse == null) {
-			curLine = this.readLine();
-			if (!curLine.isEmpty()) {
-				if (curLine.charAt(0) == Commands.Parts.RETURN_START_CHAR) {
-					latestResponse = curLine;
-				}
-			}
-		}
-		return latestResponse;
+	public void writeCommand(Command command) {
+		this.writeLine(command.serialLine());
 	}
 	
-	public String sendCommandWithReturn(String command) {
-		this.writeLine(command);
+	
+	public Command sendCommandWithReturn(Command command) {
+		this.writeCommand(command);
 		return this.readLatestResponse();
 	}
 	
 	public void sendCommandWithoutReturn(String command) {
 		this.writeLine(command);
-		String response = this.readLatestResponse();
+		Command response = this.readLatestResponse();
 		
-		if (!"$O".equals(response)) {
+		if (OKAY != response.getType()) {
 			throw new IllegalStateException("Not OK from command: " + response);
 		}
 	}

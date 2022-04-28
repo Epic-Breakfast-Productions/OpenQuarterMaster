@@ -5,7 +5,9 @@ import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public abstract class SimpleCommand extends Command {
 	
@@ -13,7 +15,7 @@ public abstract class SimpleCommand extends Command {
 	
 	protected SimpleCommand(CommandType type) {
 		super(type);
-		serialLine = Commands.getSimpleCommandString(Commands.Parts.COMMAND_START_CHAR);
+		this.serialLine = Commands.getSimpleCommandString(this.getType());
 	}
 	
 	@Override

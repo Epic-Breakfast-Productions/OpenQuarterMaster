@@ -97,7 +97,7 @@ quarkus:
   # https://quarkus.io/guides/opentracing
   jaeger:
     enabled: true
-    service-name: ${service.nameShort}V${service.apiVersion}
+    service-name: ${service.nameShort}V${service.apiVersion} ${quarkus.uuid}
     sampler-type: const
     sampler-param: 1
   #    metrics:
@@ -105,6 +105,8 @@ quarkus:
   http:
     auth:
       proactive: false
+    access-log:
+      enabled: true
 mp:
   jwt:
     verify:

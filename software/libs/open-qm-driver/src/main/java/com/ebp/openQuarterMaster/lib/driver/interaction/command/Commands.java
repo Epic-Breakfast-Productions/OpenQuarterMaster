@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.driver.interaction.command;
 
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,12 +15,12 @@ public class Commands {
 		public static final char COMMAND_SEPARATOR_CHAR = '\n';
 	}
 	
-	public static String getSimpleCommandString(char commandChar) {
-		return ("" + Parts.COMMAND_START_CHAR + commandChar);
+	public static String getSimpleCommandString(CommandType type) {
+		return ("" + Parts.COMMAND_START_CHAR + type.commandChar);
 	}
 	
-	public static String getComplexCommandString(char commandChar, String... parts) {
-		return getSimpleCommandString(commandChar) + Parts.SEPARATOR_CHAR + String.join("" + Parts.SEPARATOR_CHAR, parts);
+	public static String getComplexCommandString(CommandType type, String... parts) {
+		return getSimpleCommandString(type) + Parts.SEPARATOR_CHAR + String.join("" + Parts.SEPARATOR_CHAR, parts);
 	}
 	
 	

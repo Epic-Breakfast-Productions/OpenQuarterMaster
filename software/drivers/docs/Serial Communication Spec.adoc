@@ -95,7 +95,7 @@ Returns information about the hardware module. Used to identify, determine the c
 
 ==== Get State
 
-`$S|`
+`$S`
 
 Returns information about the current state of the hardware.
 

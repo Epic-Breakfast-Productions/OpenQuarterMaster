@@ -2,7 +2,9 @@ package com.ebp.openQuarterMaster.lib.driver.interaction.command.commands;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @EqualsAndHashCode
 public abstract class Command {
 	
