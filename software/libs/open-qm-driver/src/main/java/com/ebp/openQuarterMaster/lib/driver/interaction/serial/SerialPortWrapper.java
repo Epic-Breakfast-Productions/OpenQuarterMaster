@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.lib.driver.interaction.serial;
 
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
-import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParser;
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -113,7 +113,7 @@ public class SerialPortWrapper implements Closeable {
 				log.info("LOG FROM MODULE: {}", curLine);
 			}
 			if (Commands.isCommand(curLine)) {
-				this.receivedCommands.add(CommandParsingUtils.parse(curLine));
+				this.receivedCommands.add(CommandParser.parse(curLine));
 			}
 		} while (curLine != null);
 		

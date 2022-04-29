@@ -15,6 +15,6 @@ public class GetStateCommand extends SimpleCommand {
 	}
 	
 	protected GetStateCommand() {
-		super(CommandType.PING);
+		super(CommandType.GET_STATE);
 	}
 }

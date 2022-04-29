@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Semaphore;
 
@@ -30,6 +29,7 @@ public class SerialPortWrapper implements Closeable {
 			TIMEOUT,
 			TIMEOUT
 		);
+		
 	}
 	
 	public SerialPortWrapper(String portLocation, Integer baudRate){

@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParsingUtils;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType;
+import com.ebp.openQuarterMaster.lib.driver.interaction.exceptions.CommandParseException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,19 +16,13 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class GetInfoReturnCommand extends Command {
 	
-	@Getter
-	private ModuleInfo info;
+	private static final CommandType TYPE = CommandType.GET_INFO;
 	
-	protected GetInfoReturnCommand() {
-		super(CommandType.GET_INFO);
-	}
-	
-	public GetInfoReturnCommand(String line) {
-		this();
-		String[] returnedParts = CommandParsingUtils.getAndAssertCommand(this.getType(), line);
+	public static GetInfoReturnCommand fromSerialLine(String line) {
+		String[] returnedParts = CommandParsingUtils.getPartsAndAssertCommand(TYPE, line);
 		
 		if (returnedParts.length != 4) {
-			throw new IllegalArgumentException("Wrong number of parts given in command.");//TODO: proper exception
+			throw new CommandParseException("Wrong number of parts given in command.");
 		}
 		
 		ModuleInfo.Builder builder = ModuleInfo.builder();
@@ -37,7 +32,14 @@ public class GetInfoReturnCommand extends Command {
 		builder.commSpecVersion(returnedParts[2]);
 		builder.numBlocks(Integer.parseInt(returnedParts[3]));
 		
-		this.info = builder.build();
+		return new GetInfoReturnCommand(builder.build());
+	}
+	
+	@Getter
+	private ModuleInfo info;
+	
+	protected GetInfoReturnCommand() {
+		super(CommandType.GET_INFO);
 	}
 	
 	public GetInfoReturnCommand(ModuleInfo info) {

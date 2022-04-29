@@ -30,6 +30,7 @@ public class ModuleState {
 	private String currentMessage = "";
 	
 	//for demo
+	
 	private int encoderVal;
 	private boolean encoderPressed;
 	

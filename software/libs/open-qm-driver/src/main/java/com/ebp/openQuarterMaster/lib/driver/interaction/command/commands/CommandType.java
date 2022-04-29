@@ -7,7 +7,8 @@ public enum CommandType {
 	ERROR('E'),
 	PING('P'),
 	GET_INFO('I'),
-	GET_STATE('S');
+	GET_STATE('S'),
+	MESSAGE('M');
 	
 	public final char commandChar;
 	

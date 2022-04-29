@@ -12,6 +12,8 @@ public class Commands {
 		public static final char COMMAND_START_CHAR = '$';
 		public static final char RETURN_START_CHAR = COMMAND_START_CHAR;
 		public static final char SEPARATOR_CHAR = '|';
+		public static final char INNER_SEPARATOR_CHAR = ';';
+		public static final char COMPOSITE_SEPARATOR_CHAR = ',';
 		public static final char COMMAND_SEPARATOR_CHAR = '\n';
 	}
 	

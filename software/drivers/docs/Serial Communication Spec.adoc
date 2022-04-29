@@ -42,9 +42,14 @@ Where:
 * `<command code>` Is a single character command code, which are defined below.
 * `<command content>` Is the command content. Specific to the command given. Must contain UTF-8 compatible characters, excluding `|`, and `\n`
 * `|` Is the command content separator. Use to denote separation between command sections.
+* `;` Is used to separate sections within a particular part of a command.
 * `\n` Denotes the end of the command. All commands are separated from each other (and other serial I/O) by a newline character.
 
 ==== Data types
+
+===== Light number
+
+Int value, identifies the light being addressed, based on the index in the device's storage array.
 
 ===== Date
 
@@ -54,7 +59,69 @@ Example: `2022-04-27`
 
 ===== Color
 
+Standard hex color format (six char);
+
+`FFFFFF`
+
 ===== Brightness
+
+Integer value, `0`-`255`
+
+===== Bin Light Setting
+
+`<"ON", "OFF", or "FLASHING">,<color>,<brightness>`
+
+This composite value is a CSV of the settings to set a bin light with. This is intended to be processed one at a time, each tweaking the setting as it goes through.
+
+====== Examples:
+
+All:
+
+`ON,FFFFFF,255,true`
+
+- State: ON
+- Color: FFFFFF
+- Brightness: 255
+
+Off:
+
+`OFF`
+
+- State: OFF
+- Color: <unchanged>
+- Brightness: <unchanged>
+
+On:
+
+`ON`
+
+- State: ON
+- Color: <unchanged>
+- Brightness <unchanged>
+
+Color setting:
+
+`FFFFFF`
+
+- State: <unchanged>
+- Color: FFFFFF
+- Brightness <unchanged>
+
+Brightness setting:
+
+`50`
+
+- State: <unchanged>
+- Color: <unchanged>
+- Brightness 50
+
+Last as Off:
+
+`FFFFFF,50,OFF`
+
+- State: OFF
+- Color: FFFFFF
+- Brightness 50
 
 === General Command Conventions
 
@@ -101,11 +168,13 @@ Returns information about the current state of the hardware.
 
 ===== Returns
 
-`$S|<message>|<binLightCsv>`
+`$S|<message>|<binLightSettings>`
+
+(returns as many bin light settings as there are; separated by `;`. Ordered list of light settings reflecting how they are stored on device.)
 
 ==== Set Storage Block light
 
-`$L|<storage block number>|on/off[|<color>][|<brightness>]`
+`$L|<light number>;<lightSettings>[|... <more light number/settings>]`
 
 ===== Returns
 

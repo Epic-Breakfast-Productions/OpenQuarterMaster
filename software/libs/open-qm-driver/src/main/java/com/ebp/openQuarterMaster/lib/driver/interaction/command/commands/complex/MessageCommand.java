@@ -10,46 +10,42 @@ import lombok.ToString;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class ErrorCommand extends Command {
+public class MessageCommand extends Command {
 	
-	private static final CommandType TYPE = CommandType.ERROR;
+	private static final CommandType TYPE = CommandType.MESSAGE;
 	
-	public static ErrorCommand fromSerialLine(String line) {
+	public static MessageCommand fromSerialLine(String line) {
 		String[] returnedParts = CommandParsingUtils.getPartsAndAssertCommand(TYPE, line);
 		
-		if (returnedParts.length > 1) {
+		if (returnedParts.length != 1) {
 			throw new IllegalArgumentException("Wrong number of parts given in command.");//TODO: proper exception
 		}
-		if (returnedParts.length == 1) {
-			return new ErrorCommand(returnedParts[0]);
-		}
-		return new ErrorCommand();
+		return new MessageCommand(returnedParts[0]);
 	}
 	
 	@Getter
-	private String errInfo = null;
+	private String message = null;
 	
-	public ErrorCommand() {
+	public MessageCommand() {
 		super(TYPE);
 	}
 	
-	public ErrorCommand(String message) {
+	public MessageCommand(String message) {
 		this();
-		this.setErrInfo(message);
+		this.setMessage(message);
 	}
-	
 	
 	@Override
 	public String serialLine() {
-		if (this.errInfo == null) {
-			return Commands.getSimpleCommandString(this.getType());
+		if (this.message == null) {
+			throw new IllegalArgumentException("No message given to send.");//TODO:: proper exception
 		} else {
-			return Commands.getComplexCommandString(this.getType(), this.getErrInfo());
+			return Commands.getComplexCommandString(this.getType(), this.message);
 		}
 	}
 	
-	public ErrorCommand setErrInfo(String errInfo) {
-		this.errInfo = errInfo.strip();
+	public MessageCommand setMessage(String message) {
+		this.message = message.strip();
 		return this;
 	}
 }
