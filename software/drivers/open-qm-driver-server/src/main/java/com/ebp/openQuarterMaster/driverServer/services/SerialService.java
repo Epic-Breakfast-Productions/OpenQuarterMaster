@@ -10,14 +10,12 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Singleton;
 import java.awt.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 /**
- * https://fazecast.github.io/jSerialComm/
+ * <a href="https://fazecast.github.io/jSerialComm/">https://fazecast.github.io/jSerialComm/</a>
  */
 @Slf4j
 @Singleton
