@@ -1,5 +1,8 @@
 package com.ebp.openQuarterMaster.lib.driver.interaction.exceptions;
 
+/**
+ * Exception denoting there was an issue parsing a command.
+ */
 public class CommandParseException extends IllegalArgumentException {
 	
 	public CommandParseException() {

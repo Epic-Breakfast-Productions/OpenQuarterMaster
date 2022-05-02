@@ -12,18 +12,26 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Describes the state of a module.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class ModuleState {
 	
-	@lombok.Builder.Default
-	private boolean online = true;
-	
+	/**
+	 * The light settings of the module.
+	 * <p>
+	 * Ordered list, matching the size and order of what is held by the module.
+	 */
 	@lombok.Builder.Default
 	private List<@NotNull BlockLightSetting> lightSettings = new ArrayList<>();
 	
+	/**
+	 * The message currently displayed by the module.
+	 */
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default

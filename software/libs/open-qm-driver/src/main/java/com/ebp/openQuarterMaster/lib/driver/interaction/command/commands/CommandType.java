@@ -2,6 +2,9 @@ package com.ebp.openQuarterMaster.lib.driver.interaction.command.commands;
 
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 
+/**
+ * Enum of the various command types available.
+ */
 public enum CommandType {
 	OKAY('O'),
 	ERROR('E'),

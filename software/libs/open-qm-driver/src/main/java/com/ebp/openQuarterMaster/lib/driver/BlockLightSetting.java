@@ -13,30 +13,46 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.awt.*;
 
+/**
+ * This describes a storage block's light settings.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class BlockLightSetting {
 	
+	/**
+	 * The power state of the light.
+	 */
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
 	private BlockLightPowerState powerState = BlockLightPowerState.OFF;
 	
+	/**
+	 * The color of the light.
+	 */
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
 	private Color color = Color.WHITE;
 	
+	/**
+	 * The brightness of the light (higher value, the brighter).
+	 */
 	@Min(0)
 	@Max(255)
 	@lombok.Builder.Default
 	private int brightness = 127;// 0xFF / 2
 	
-	@lombok.Builder.Default
-	private boolean flashing = false;
-	
+	/**
+	 * Applies a specific setting string (from the specification).
+	 *
+	 * @param setting The setting string to use.
+	 *
+	 * @return This setting object.
+	 */
 	public BlockLightSetting applySetting(String setting) {
 		Object settingObj = CommandParsingUtils.getLightSettingAsObj(setting);
 		

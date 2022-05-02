@@ -24,9 +24,6 @@ public class GetStateReturnCommand extends Command {
 		
 		ModuleState.Builder builder = ModuleState.builder();
 		
-		builder.online(true);
-		
-		
 		//TODO
 		
 		return new GetStateReturnCommand(builder.build());

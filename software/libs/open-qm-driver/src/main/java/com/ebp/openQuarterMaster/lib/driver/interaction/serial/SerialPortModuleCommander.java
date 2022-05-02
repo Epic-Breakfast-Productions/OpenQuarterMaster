@@ -45,7 +45,7 @@ public class SerialPortModuleCommander implements ModuleCommander {
 	@Override
 	public void ping() {
 		this.lockAndDo(()->{
-			Command response = wrapper.sendCommandWithReturn(PingCommand.getInstance());
+			Command response = wrapper.sendCommand(PingCommand.getInstance());
 			
 			if (!PingCommand.getInstance().equals(response)) {
 				throw new IllegalStateException("Did not get expected response from module.");//TODO:: appropriate exception
@@ -57,11 +57,21 @@ public class SerialPortModuleCommander implements ModuleCommander {
 	
 	@Override
 	public ModuleInfo getInfo() {
+		//TODO
 		return null;
 	}
 	
 	@Override
 	public ModuleState getState() {
+		//TODO
 		return null;
+	}
+	
+	public void setMessage(String message) {
+		//TODO
+	}
+	
+	public void setLightSetting(String message) {
+		//TODO
 	}
 }

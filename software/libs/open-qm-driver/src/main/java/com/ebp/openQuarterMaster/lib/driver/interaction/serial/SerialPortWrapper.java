@@ -3,6 +3,11 @@ package com.ebp.openQuarterMaster.lib.driver.interaction.serial;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.Commands;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.Command;
 import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandParser;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.complex.ErrorCommand;
+import com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.simple.OkCommand;
+import com.ebp.openQuarterMaster.lib.driver.interaction.exceptions.CommandAssertionError;
+import com.ebp.openQuarterMaster.lib.driver.interaction.exceptions.CommandReturnedErrorException;
+import com.ebp.openQuarterMaster.lib.driver.interaction.exceptions.SerialInteractionUnlockedException;
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,14 +20,20 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
-import static com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType.OKAY;
+import static com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.CommandType.ERROR;
 
+/**
+ * Wrapper for a bare {@link SerialPort}, to provide additional utilities and functionalities.
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SerialPortWrapper implements Closeable {
 	
-	private static final int TIMEOUT = 500;
+	private static final int TIMEOUT = 500;//ms
 	
+	/**
+	 * The actual serial port to interact with.
+	 */
 	@Getter
 	private SerialPort port;
 	
@@ -54,26 +65,65 @@ public class SerialPortWrapper implements Closeable {
 		this(portLocation, null);
 	}
 	
+	/**
+	 * Acquires the lock on this object/serial port.
+	 * <p>
+	 * Required for most interactions with the serial port.
+	 * <p>
+	 * To release the lock, see {@link #releaseLock()}
+	 * <p>
+	 * Best used in the following manner:
+	 * <pre>
+	 *     wrapper.acquireLock();
+	 *     try{
+	 *         wrapper...
+	 *         ...
+	 *     } finally {
+	 *         wrapper.releaseLock();
+	 *     }
+	 * </pre>
+	 *
+	 * @throws InterruptedException
+	 */
 	public void acquireLock() throws InterruptedException {
 		this.serialSemaphore.acquire();
 		this.hasLock = true;
 	}
 	
-	public void assertHasLock() {
+	/**
+	 * Releases the mutex lock held by this object.
+	 * <p>
+	 * See {@link #acquireLock()} for more details.
+	 */
+	public void releaseLock() {
+		this.hasLock = false;
+		this.serialSemaphore.release();
+	}
+	
+	/**
+	 * Asserts that the lock is held by this thread.
+	 *
+	 * @throws SerialInteractionUnlockedException If the lock is not held by this thread.
+	 */
+	public void assertHasLock() throws SerialInteractionUnlockedException {
 		if (!this.hasLock) {
-			throw new IllegalStateException("Lock not acquired to talk to serial port " + this.port.getDescriptivePortName() + ".");
+			throw new SerialInteractionUnlockedException(
+				"Lock not acquired to talk to serial port " + this.port.getDescriptivePortName() + "."
+			);
 		}
 	}
 	
-	public void releaseLock() {
-		this.serialSemaphore.release();
-		this.hasLock = false;
-	}
-	
-	
-	public String readLine() {
+	/**
+	 * Reads a single line from the serial port.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @return The line from the serial port.
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 */
+	public String readLine() throws SerialInteractionUnlockedException {
 		assertHasLock();
-		//TODO:: smarter way to accomplish?
+		//TODO:: smarter way to accomplish? Scanner?
 		StringBuilder sb = new StringBuilder();
 		byte[] buffer = new byte[1];
 		log.info("Trying to read a line from serial port...");
@@ -102,7 +152,15 @@ public class SerialPortWrapper implements Closeable {
 		return output;
 	}
 	
-	public Queue<Command> processLines() {
+	/**
+	 * Processes all lines waiting to be read sent from the module.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @return The queue of commands received from the module. Same object as {@link #getReceivedCommands()}
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 */
+	public Queue<Command> processLines() throws SerialInteractionUnlockedException {
 		this.assertHasLock();
 		
 		String curLine;
@@ -120,7 +178,15 @@ public class SerialPortWrapper implements Closeable {
 		return this.receivedCommands;
 	}
 	
-	public Command readLatestResponse() {
+	/**
+	 * Calls {@link #processLines()} until at least one command is returned. Returns the last received command from the module.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @return The last received command from the module.
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 */
+	public Command readLatestResponse() throws SerialInteractionUnlockedException {
 		Command latestResponse = null;
 		long start = System.currentTimeMillis();
 		while (true) {
@@ -142,33 +208,88 @@ public class SerialPortWrapper implements Closeable {
 		return latestResponse;
 	}
 	
-	
-	public void writeLine(String line) {
+	/**
+	 * Writes a command to the serial port, adding {@link Commands.Parts#COMMAND_SEPARATOR_CHAR} to the end.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @param command The command to write to the serial port.
+	 *
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 */
+	public void writeLine(String command) throws SerialInteractionUnlockedException {
 		assertHasLock();
 		
-		byte[] buff = (line + Commands.Parts.COMMAND_SEPARATOR_CHAR).getBytes(StandardCharsets.UTF_8);
+		byte[] buff = (command + Commands.Parts.COMMAND_SEPARATOR_CHAR).getBytes(StandardCharsets.UTF_8);
 		this.port.writeBytes(buff, buff.length);
 	}
 	
-	public void writeCommand(Command command) {
+	/**
+	 * Writes a command to the serial port.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @param command The command to write to the serial port.
+	 *
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 */
+	public void writeCommand(Command command) throws SerialInteractionUnlockedException {
 		this.writeLine(command.serialLine());
 	}
 	
-	
-	public Command sendCommandWithReturn(Command command) {
+	/**
+	 * Writes a command to the serial port, and waits/reads the response from the module.
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @param command The command to write to the serial port.
+	 * @param assertOk Assert that the returned command is
+	 *    {@link com.ebp.openQuarterMaster.lib.driver.interaction.command.commands.simple.OkCommand}
+	 *
+	 * @return The command returned by the module.
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 * @throws CommandReturnedErrorException If the command returned by the module was an error.
+	 * @throws CommandAssertionError If asserting returned is OK, and was not OK.
+	 */
+	public Command sendCommand(Command command, boolean assertOk) throws SerialInteractionUnlockedException,
+																			 CommandReturnedErrorException, CommandAssertionError {
 		this.writeCommand(command);
-		return this.readLatestResponse();
-	}
-	
-	public void sendCommandWithoutReturn(String command) {
-		this.writeLine(command);
-		Command response = this.readLatestResponse();
+		Command returned = this.readLatestResponse();
 		
-		if (OKAY != response.getType()) {
-			throw new IllegalStateException("Not OK from command: " + response);
+		if (ERROR.equals(returned.getType())) {
+			throw new CommandReturnedErrorException((ErrorCommand) returned, "Command result was in error.");
 		}
+		
+		if (assertOk) {
+			if (!OkCommand.getInstance().equals(returned)) {
+				throw new CommandAssertionError(command, "Returned command was not OKAY.");
+			}
+		}
+		
+		return returned;
 	}
 	
+	/**
+	 * Writes a command to the serial port, and waits/reads the response from the module.
+	 * <p>
+	 * Wrapper for {@link #sendCommand(Command, boolean)}
+	 * <p>
+	 * Requires locked status, see {@link #acquireLock()}.
+	 *
+	 * @param command The command to write to the serial port.
+	 *
+	 * @return The command returned by the module.
+	 * @throws SerialInteractionUnlockedException If the lock on the serial port is not held.
+	 * @throws CommandReturnedErrorException If the command returned by the module was an error.
+	 */
+	public Command sendCommand(Command command) throws SerialInteractionUnlockedException,
+														   CommandReturnedErrorException {
+		return this.sendCommand(command, false);
+	}
+	
+	/**
+	 * Closes the held serial port.
+	 */
 	@Override
 	public void close() {
 		this.port.closePort();
