@@ -2,7 +2,7 @@
 <div class="mb-3 row">
     <label class="col-sm-2 col-form-label">Images</label>
     <div class="col-sm-10">
-        <div id="imagesSelected"></div>
-        <button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#imageSearchSelectModal" title="Add Image"><i class="fas fa-plus"></i></button>
+        <div class="imagesSelected"></div>
+        <button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#imageSearchSelectModal" title="Add Image" onclick="setupImageSearchModal($(this).parent().find('.imagesSelected'))"><i class="fas fa-plus"></i></button>
     </div>
 </div>
