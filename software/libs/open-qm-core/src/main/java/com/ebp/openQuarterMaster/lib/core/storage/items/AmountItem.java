@@ -15,6 +15,14 @@ import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 
+/**
+ * Describes an inventory item that uses amount measurements.
+ *
+ * Currently unused; see https://jira.mongodb.org/projects/JAVA/issues/JAVA-4578
+ * Waiting on that same jira ticket to use this class.
+ *
+ * @param <T>
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
