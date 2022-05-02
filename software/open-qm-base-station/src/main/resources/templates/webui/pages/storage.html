@@ -239,7 +239,7 @@ var addEditLabelInput = $("#addEditLabelInput");
 var addEditLocationInput = $("#addEditLocationInput");
 var addEditParentInputId = $("#addEditParentInputId");
 var addEditParentInputName = $("#addEditParentInputName");
-var imagesSelected = $("#imagesSelected");
+var imagesSelected = $(".imagesSelected");
 var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
 
 var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
@@ -274,7 +274,7 @@ function setupAddEditForEdit(blockId){
     	spinnerContainer: addEditModal,
     	url: "/api/storage/" + blockId,
     	done: function(data){
-    	    addSelectedImages(data.imageIds);
+    	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
             addEditLabelInput.val(data.label);
             addEditLocationInput.val(data.location);
