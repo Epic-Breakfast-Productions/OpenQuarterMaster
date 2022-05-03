@@ -1,6 +1,6 @@
 #/bin/bash
 
-MINOR_VERSION=78
+MINOR_VERSION=82
 if [ "$1" = "jvm" ]; then
 	VERSION=0.0.${MINOR_VERSION}-jvm
 	NAMESPACE=quartermaster-jvm
@@ -39,7 +39,7 @@ docker login ${REGISTRY} -u kubeadmin -p $(oc whoami -t)
 
 oc project ${NAMESPACE}
 
-docker tag root/open-qm-plugin-demo:0.0.1 ${REGISTRY}/${NAMESPACE}/open-qm-plugin-demo:${VERSION}
+docker tag root/open-qm-plugin-demo:1.0.0-DEV ${REGISTRY}/${NAMESPACE}/open-qm-plugin-demo:${VERSION}
 docker push ${REGISTRY}/${NAMESPACE}/open-qm-plugin-demo:${VERSION}
 
 docker tag root/open-qm-base-station:0.0.1 ${REGISTRY}/${NAMESPACE}/open-qm-base-station:${VERSION}
