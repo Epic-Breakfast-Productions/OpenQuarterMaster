@@ -24,7 +24,7 @@ dependencies {
     implementation 'com.ebp.openQuarterMaster.lib:open-qm-lib-driver:1.+'
     implementation 'com.fazecast:jSerialComm:2.9.1'
 
-    testImplementation 'io.quarkiverse.cucumber:quarkus-cucumber:0.6.0-SNAPSHOT'
+    testImplementation 'io.quarkiverse.cucumber:quarkus-cucumber:0.5.0'
     testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
