@@ -31,7 +31,7 @@ public abstract class RunningServerTest extends WebServerTest {
 		findAndCleanupMongoServices();
 		findAndCleanupWebDriverWrapper();
 		
-		TestResourceLifecycleManager.triggerRecord(
+		TestResourceLifecycleManager.BROWSER_CONTAINER.triggerRecord(
 			new OurTestDescription(testInfo),
 			//TODO:: actually pass something real https://stackoverflow.com/questions/71354431/junit5-get-results-from-test-in-aftereach
 			Optional.empty()

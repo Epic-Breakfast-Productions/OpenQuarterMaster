@@ -30,12 +30,6 @@ import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 @ApplicationScoped
 public class WebDriverWrapper implements Closeable {
 	
-	static {
-		//		WebDriverManager.firefoxdriver().setup();
-		
-		//TODO:: init web driver at start of tests rather than halfway through
-	}
-	
 	private WebDriver driver = null;
 	
 	public WebDriver getWebDriver() {
@@ -65,7 +59,7 @@ public class WebDriverWrapper implements Closeable {
 	@PreDestroy
 	public void close() {
 		log.info("Closing out web driver.");
-		getWebDriver().quit();
+//		getWebDriver().quit();
 		this.driver = null;
 	}
 	
@@ -80,21 +74,17 @@ public class WebDriverWrapper implements Closeable {
 			driver.getCurrentUrl()
 		);
 		
-		if (this.quickClean) {
-			if (EXTERNAL.equals(this.authMode)) {
-				String logoutUrl = this.keycloakInteractionBase + "/logout";
-				log.info("Logging out of Keycloak at: {}", logoutUrl);
-				driver.get(logoutUrl);
-				driver.manage().deleteAllCookies();
-			}
-			this.goToIndex();
+		if (EXTERNAL.equals(this.authMode)) {
+			String logoutUrl = this.keycloakInteractionBase + "/logout";
+			log.info("Logging out of Keycloak at: {}", logoutUrl);
+			driver.get(logoutUrl);
 			driver.manage().deleteAllCookies();
-			driver.get("about:logo");
-			driver.navigate().refresh();
-		} else {
-			this.close();
-			this.setup();
 		}
+		this.goToIndex();
+		driver.manage().deleteAllCookies();
+		driver.get("about:logo");
+		driver.navigate().refresh();
+		
 		log.info("Completed cleanup of webdriver wrapper.");
 	}
 	

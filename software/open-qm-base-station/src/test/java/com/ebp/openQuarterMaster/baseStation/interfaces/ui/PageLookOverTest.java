@@ -16,6 +16,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import javax.inject.Inject;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(
@@ -60,6 +62,9 @@ public class PageLookOverTest extends WebUiTest {
 		log.info("Attempting page: {}", endpoint);
 		this.webDriverWrapper.goTo(endpoint);
 		this.webDriverWrapper.waitForPageLoad();
+		
+		String curUrl = this.webDriverWrapper.getWebDriver().getCurrentUrl();
+		assertTrue(curUrl.endsWith(endpoint), "Not on expected page; actually on: " + curUrl);
 		
 //		List<LogEntry> errs = this.webDriverWrapper
 //			.getWebDriver()
