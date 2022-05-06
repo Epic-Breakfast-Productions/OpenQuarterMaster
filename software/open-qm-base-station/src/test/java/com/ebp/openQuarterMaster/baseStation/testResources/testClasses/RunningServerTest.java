@@ -3,6 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.OurTestDescription;
+import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.SeleniumGridServerManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +30,15 @@ public abstract class RunningServerTest extends WebServerTest {
 	) {
 		log.info("Running after method.");
 		findAndCleanupMongoServices();
-		findAndCleanupWebDriverWrapper();
 		
-		TestResourceLifecycleManager.BROWSER_CONTAINER.triggerRecord(
-			new OurTestDescription(testInfo),
-			//TODO:: actually pass something real https://stackoverflow.com/questions/71354431/junit5-get-results-from-test-in-aftereach
-			Optional.empty()
-		);
+		if(SeleniumGridServerManager.RECORD) {
+			TestResourceLifecycleManager.BROWSER_CONTAINER.triggerRecord(
+				new OurTestDescription(testInfo),
+				//TODO:: actually pass something real https://stackoverflow.com/questions/71354431/junit5-get-results-from-test-in-aftereach
+				Optional.empty()
+			);
+		}
+		findAndCleanupWebDriverWrapper();
 		
 		log.info("Completed after step.");
 	}

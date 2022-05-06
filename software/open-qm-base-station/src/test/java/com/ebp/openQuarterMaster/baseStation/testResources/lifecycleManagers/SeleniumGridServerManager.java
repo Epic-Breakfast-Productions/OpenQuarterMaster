@@ -22,7 +22,7 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 @Slf4j
 public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleManager {
-	private static final boolean RECORD = true;
+	public static final boolean RECORD = true;
 	
 	private BrowserWebDriverContainer<?> browserWebDriverContainer = null;
 	
@@ -43,6 +43,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 			
 			this.browserWebDriverContainer = new BrowserWebDriverContainer<>()
 									.withCapabilities(new FirefoxOptions());
+			
 			if(RECORD) {
 				File recordingDir = new File(
 					"build/seleniumRecordings/"
@@ -105,4 +106,8 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 		QuarkusTestResourceLifecycleManager.super.init(initArgs);
 		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(UI_TEST_ARG, Boolean.toString(this.uiTest)));
 	}
+	
+//	public WebDriver getDriver() {
+//		return this.browserWebDriverContainer.getWebDriver();
+//	}
 }

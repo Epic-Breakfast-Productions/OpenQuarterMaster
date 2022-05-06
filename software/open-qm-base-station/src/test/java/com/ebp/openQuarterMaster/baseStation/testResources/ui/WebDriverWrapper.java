@@ -59,7 +59,7 @@ public class WebDriverWrapper implements Closeable {
 	@PreDestroy
 	public void close() {
 		log.info("Closing out web driver.");
-//		getWebDriver().quit();
+		getWebDriver().quit();
 		this.driver = null;
 	}
 	

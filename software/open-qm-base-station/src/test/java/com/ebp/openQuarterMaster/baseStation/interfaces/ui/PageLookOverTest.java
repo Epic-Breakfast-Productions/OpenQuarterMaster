@@ -31,12 +31,12 @@ public class PageLookOverTest extends WebUiTest {
 	
 	public static Stream<Arguments> getPages(){
 		return Stream.of(
-			Arguments.of(false, "/"),
-			Arguments.of(false, "/accountCreate"),
-			Arguments.of(true,  "/overview"),
-			Arguments.of(true,  "/images"),
-			Arguments.of(true,  "/storage"),
-			Arguments.of(true,  "/items")
+			Arguments.of(false, "/", "Login"),
+			Arguments.of(false, "/accountCreate", "Account Create"),
+			Arguments.of(true,  "/overview", "Overview"),
+			Arguments.of(true,  "/images", "Images"),
+			Arguments.of(true,  "/storage", "Storage"),
+			Arguments.of(true,  "/items", "Items")
 		);
 	}
 	
@@ -51,7 +51,7 @@ public class PageLookOverTest extends WebUiTest {
 	 */
 	@ParameterizedTest
 	@MethodSource("getPages")
-	public void testPages(boolean loggedIn, String endpoint) {
+	public void testPages(boolean loggedIn, String endpoint, String expectedTitle) {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
 		if(loggedIn){
@@ -65,6 +65,12 @@ public class PageLookOverTest extends WebUiTest {
 		
 		String curUrl = this.webDriverWrapper.getWebDriver().getCurrentUrl();
 		assertTrue(curUrl.endsWith(endpoint), "Not on expected page; actually on: " + curUrl);
+		
+		String curTitle = this.webDriverWrapper.getWebDriver().getTitle();
+		assertTrue(curTitle.contains(expectedTitle), "Title was unexpected: " + curTitle);
+		
+		log.debug("HTML: {}", this.webDriverWrapper.getWebDriver().getPageSource());
+		
 		
 //		List<LogEntry> errs = this.webDriverWrapper
 //			.getWebDriver()
