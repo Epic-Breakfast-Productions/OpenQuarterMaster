@@ -10,6 +10,8 @@ import java.util.Map;
 @Slf4j
 public class JaegerServerManager implements QuarkusTestResourceLifecycleManager {
 	
+	public static final String JAEGER_IMAGE_TAG = "jaegertracing/all-in-one:latest";
+	
 	private JaegerAllInOne JAEGER_CONTAINER = null;
 	
 	@Override
@@ -17,7 +19,7 @@ public class JaegerServerManager implements QuarkusTestResourceLifecycleManager 
 		if (JAEGER_CONTAINER == null || !JAEGER_CONTAINER.isRunning()) {
 			org.apache.commons.lang3.time.StopWatch sw = StopWatch.createStarted();
 			// https://hub.docker.com/r/jaegertracing/all-in-one/tags
-			JAEGER_CONTAINER = new JaegerAllInOne("jaegertracing/all-in-one:latest");
+			JAEGER_CONTAINER = new JaegerAllInOne(JAEGER_IMAGE_TAG);
 			
 			JAEGER_CONTAINER.start();
 			sw.stop();
