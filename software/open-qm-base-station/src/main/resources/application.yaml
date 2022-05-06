@@ -1,6 +1,6 @@
 # https://quarkus.io/guides/config-reference
 service:
-  version: ${quarkus.application.version:0.0.0-TEST} # shouldn't need to default this for testing but here we are. https://github.com/quarkusio/quarkus/issues/15013
+  version: ${quarkus.application.version}
   apiVersion: 1.0.0
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
