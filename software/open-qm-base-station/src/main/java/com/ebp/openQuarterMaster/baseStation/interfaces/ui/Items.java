@@ -12,6 +12,7 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,9 @@ public class Items extends UiProvider {
 	@RestClient
 	KeycloakServiceCaller ksc;
 	
+	@Inject
+	Tracer tracer;
+	
 	@GET
 	@Path("items")
 	@RolesAllowed("user")
@@ -95,7 +99,7 @@ public class Items extends UiProvider {
 		);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(items, UserGetResponse.builder(user).build(), searchResults, pageOptions)
+			this.setupPageTemplate(items, tracer, UserGetResponse.builder(user).build(), searchResults, pageOptions)
 				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP),
 			MediaType.TEXT_HTML_TYPE
 		);

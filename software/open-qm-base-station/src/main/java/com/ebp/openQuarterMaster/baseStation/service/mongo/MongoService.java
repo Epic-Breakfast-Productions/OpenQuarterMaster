@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -42,6 +43,7 @@ import static com.mongodb.client.model.Filters.eq;
  */
 @AllArgsConstructor
 @Slf4j
+@Traced
 public abstract class MongoService<T extends MainObject> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";

@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.ui;
 
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -47,6 +48,9 @@ public class Index extends UiProvider {
 	@Inject
 	JsonWebToken jwt;
 	
+	@Inject
+	Tracer tracer;
+	
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
 	
@@ -87,13 +91,13 @@ public class Index extends UiProvider {
 			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 			
 			responseBuilder.entity(
-				this.setupPageTemplate(index)
+				this.setupPageTemplate(index, tracer)
 					.data("signInLink", signInLinkBuilder.build())
 			).cookie(
 				UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
 			);
 		} else {
-			responseBuilder.entity(this.setupPageTemplate(index));
+			responseBuilder.entity(this.setupPageTemplate(index, tracer));
 		}
 		
 		return responseBuilder.build();
@@ -107,6 +111,6 @@ public class Index extends UiProvider {
 		@Context SecurityContext securityContext
 	) {
 		logRequestContext(jwt, securityContext);
-		return this.setupPageTemplate(accountCreate);
+		return this.setupPageTemplate(accountCreate, tracer);
 	}
 }

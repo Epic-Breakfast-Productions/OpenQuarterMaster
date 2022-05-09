@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.opentracing.Tracer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -74,24 +75,26 @@ public abstract class UiProvider {
 		return response;
 	}
 	
-	protected TemplateInstance setupPageTemplate(Template template) {
+	protected TemplateInstance setupPageTemplate(Template template, Tracer tracer) {
 		return template
-			.data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
-			.data("generateDatetime", ZonedDateTime.now())
-			.data("dateTimeFormatter", UiUtils.DATE_TIME_FORMATTER);
+				   .data("traceId", tracer.activeSpan().context().toTraceId())
+				   .data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
+				   .data("generateDatetime", ZonedDateTime.now())
+				   .data("dateTimeFormatter", UiUtils.DATE_TIME_FORMATTER);
 	}
 	
-	protected TemplateInstance setupPageTemplate(Template template, UserGetResponse userInfo) {
-		return this.setupPageTemplate(template).data(USER_INFO_DATA_KEY, userInfo);
+	protected TemplateInstance setupPageTemplate(Template template, Tracer tracer, UserGetResponse userInfo) {
+		return this.setupPageTemplate(template, tracer).data(USER_INFO_DATA_KEY, userInfo);
 	}
 	
 	protected TemplateInstance setupPageTemplate(
 		Template template,
+		Tracer tracer,
 		UserGetResponse userInfo,
 		SearchResult<?> searchResults,
 		PagingOptions pageOptions
 	) {
-		return this.setupPageTemplate(template, userInfo)
+		return this.setupPageTemplate(template, tracer, userInfo)
 				   .data("showSearch", searchResults.isHadSearchQuery())
 				   .data("searchResult", searchResults)
 				   .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults));

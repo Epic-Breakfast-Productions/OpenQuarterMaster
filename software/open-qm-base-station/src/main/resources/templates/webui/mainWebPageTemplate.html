@@ -160,10 +160,19 @@ Ingests:
             License</a><br/>
             Version {config:['service.version']}<br/>
             <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
+    
             <small class="fw-lighter fst-italic text-muted">
-                Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span> (Server time)
-                {!TODO:: make this dropdown, add jaeger trace num !} <br />
-                {config:['quarkus.jaeger.service-name']}
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pageLoadInfoCollapse" aria-expanded="false" aria-controls="pageLoadInfoCollapse">
+                        Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span> (Server time)
+                    </button>
+                </div>
+                <div class="collapse" id="pageLoadInfoCollapse">
+                    <div class="card card-body">
+                        Service id: <code class="user-select-all" id="traceServiceName">{config:['quarkus.jaeger.service-name']}</code><br />
+                        Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
+                    </div>
+                </div>
             </small>
         </div>
         <div id="serverInfo" class="col-sm-4">
@@ -202,6 +211,12 @@ Ingests:
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
 <script src="/res/js/main.js"></script>
+<script>
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl)
+    })
+</script>
 {#insert scripts}{/}
 {!
 {#if styleSheets??}

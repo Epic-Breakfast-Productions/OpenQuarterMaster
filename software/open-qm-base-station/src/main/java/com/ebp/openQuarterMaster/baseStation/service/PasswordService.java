@@ -3,6 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.service;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.opentracing.Traced;
 import org.wildfly.common.codec.DecodeException;
 import org.wildfly.security.password.PasswordFactory;
 import org.wildfly.security.password.WildFlyElytronPasswordProvider;
@@ -22,6 +23,7 @@ import java.security.spec.InvalidKeySpecException;
  */
 @ApplicationScoped
 @Slf4j
+@Traced
 public class PasswordService {
 	
 	private static SecureRandom SECURE_RANDOM = null;

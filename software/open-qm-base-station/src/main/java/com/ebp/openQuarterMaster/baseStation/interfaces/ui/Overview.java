@@ -8,6 +8,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,9 @@ public class Overview extends UiProvider {
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;
+	
+	@Inject
+	Tracer tracer;
 	
 	@Inject
 	@RestClient
@@ -141,7 +145,7 @@ public class Overview extends UiProvider {
 		}
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview,  UserGetResponse.builder(user).build())
+			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("hostDeviceUrl", demoHostConnection)

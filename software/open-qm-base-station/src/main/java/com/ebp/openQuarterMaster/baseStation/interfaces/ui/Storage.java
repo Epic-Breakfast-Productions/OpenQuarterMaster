@@ -12,6 +12,7 @@ import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,9 @@ public class Storage extends UiProvider {
 	@RestClient
 	KeycloakServiceCaller ksc;
 	
+	@Inject
+	Tracer tracer;
+	
 	@GET
 	@Path("storage")
 	@RolesAllowed("user")
@@ -110,7 +114,7 @@ public class Storage extends UiProvider {
 		);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(storage, UserGetResponse.builder(user).build(), searchResults, pageOptions)
+			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults, pageOptions)
 				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService),

@@ -8,6 +8,7 @@ import io.smallrye.jwt.util.KeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.PrivateKey;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Slf4j
 @ApplicationScoped
+@Traced
 public class JwtService {
 	
 	public static final String JWT_USER_ID_CLAIM = "userId";
