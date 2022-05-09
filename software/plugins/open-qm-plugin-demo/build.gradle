@@ -19,14 +19,15 @@ dependencies {
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
     implementation 'io.quarkus:quarkus-container-image-jib'
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
     implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
-    //This dependency causes the snakeyaml error
-    testImplementation 'net.datafaker:datafaker:1.1.0'
+    testImplementation 'net.datafaker:datafaker:1.3.0'
 }
 
 group 'com.ebp.openQuarterMaster'

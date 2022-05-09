@@ -42,8 +42,9 @@ runningInfo:
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
 
 demo:
-  connectTimeout: 1500
-  readTimeout: 1500
+  connectTimeout: 10000
+  readTimeout: 10000
+  recurseLevel: 10
   perform: false
 
 quarkus:
@@ -146,4 +147,6 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
+#  demo:
+#    perform: true
 

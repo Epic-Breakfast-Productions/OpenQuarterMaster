@@ -90,21 +90,26 @@ public class Overview extends UiProvider {
 		//FOR DEMO PURPOSES ONLY
 		String response1 = null;
 		String response2 = null;
+		String recurse = null;
 		String responseExt1 = null;
 		String responseExt2 = null;
+		String recurseExt = null;
 		{
 			String authHeaderContent = "Bearer " + this.jwt.getRawToken();
 			log.info("Performing rest calls to demo services.");
 			{
-				java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(4);
+				java.util.Map<Integer, CompletableFuture<String>> completionStages = new HashMap<>(6);
 				
 				if (ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
 					completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
 					completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
-				}
-				if (ConfigProvider.getConfig().getValue("demo.perform", Boolean.class)) {
-					completionStages.put(3, externDemoService.get1(authHeaderContent).toCompletableFuture());
-					completionStages.put(4, externDemoService.get2(authHeaderContent).toCompletableFuture());
+					completionStages.put(3,
+										 demoService.recurse(ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
+					
+					completionStages.put(4, externDemoService.get1(authHeaderContent).toCompletableFuture());
+					completionStages.put(5, externDemoService.get2(authHeaderContent).toCompletableFuture());
+					completionStages.put(6,
+										 demoService.recurse(ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
 				}
 				
 				for (Map.Entry<Integer, CompletableFuture<String>> curStage : completionStages.entrySet()) {
@@ -133,10 +138,16 @@ public class Overview extends UiProvider {
 							response2 = result;
 							break;
 						case 3:
-							responseExt1 = result;
+							recurse = result;
 							break;
 						case 4:
 							responseExt2 = result;
+							break;
+						case 5:
+							responseExt1 = result;
+							break;
+						case 6:
+							recurseExt = result;
 							break;
 					}
 				}
@@ -151,8 +162,10 @@ public class Overview extends UiProvider {
 				.data("hostDeviceUrl", demoHostConnection)
 				.data("response1", response1)
 				.data("response2", response2)
+				.data("recurse", recurse)
 				.data("responseExt1", responseExt1)
-				.data("responseExt2", responseExt2),
+				.data("responseExt2", responseExt2)
+				.data("recurseExt", recurseExt),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

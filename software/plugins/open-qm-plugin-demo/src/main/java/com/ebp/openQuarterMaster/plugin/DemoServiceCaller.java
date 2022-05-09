@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.demo;
+package com.ebp.openQuarterMaster.plugin;
 
+import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.ws.rs.GET;
@@ -10,25 +11,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.CompletionStage;
 
+@Traced
 @Path("/demo")
 @RegisterRestClient(configKey = "demoService")
 public interface DemoServiceCaller {
 	
 	@GET
-	@Path("1")
-	@Produces(MediaType.TEXT_PLAIN)
-	CompletionStage<String> get1(@HeaderParam("authorization") String id);
-	
-	@GET
-	@Path("2")
-	@Produces(MediaType.TEXT_PLAIN)
-	CompletionStage<String> get2(@HeaderParam("authorization") String id);
-	
-	@GET
 	@Path("recursive/{current}")
 	@Produces(MediaType.TEXT_PLAIN)
-	CompletionStage<String> recurse(
+	String recurse(
 		@PathParam("current") int current
 	);
-	
 }
