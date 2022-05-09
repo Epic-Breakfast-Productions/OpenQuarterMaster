@@ -13,6 +13,7 @@ import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.ws.rs.core.SecurityContext;
 import java.time.ZonedDateTime;
@@ -20,6 +21,7 @@ import java.util.Currency;
 
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
+@Traced
 @Slf4j
 public abstract class UiProvider {
 	

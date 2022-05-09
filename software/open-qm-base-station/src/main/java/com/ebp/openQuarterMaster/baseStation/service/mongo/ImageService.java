@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Traced
 @Slf4j
 @ApplicationScoped
 public class ImageService extends MongoService<Image> {

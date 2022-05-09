@@ -3,10 +3,12 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.SecurityContext;
 
+@Traced
 @Slf4j
 public abstract class EndpointProvider {
 	

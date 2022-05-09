@@ -136,6 +136,7 @@ smallrye:
       info-title: Open QuarterMaster Base Station API (DEV)
     jaeger:
       endpoint: http://localhost:8091/api/traces
+      service-name: ${service.nameShort} - V${service.apiVersion} - DEV
     mongodb:
       connection-string: mongodb://localhost:27017
   service:

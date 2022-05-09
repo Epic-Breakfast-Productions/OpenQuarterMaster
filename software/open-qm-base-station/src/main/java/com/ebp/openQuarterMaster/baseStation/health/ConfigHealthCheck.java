@@ -19,8 +19,6 @@ import java.util.Map;
 public class ConfigHealthCheck implements HealthCheck {
 	private static final String HEALTH_CHECK_NAME = "Config Sanity health check";
 	
-//	@ConfigProperty()
-	
 	private Map<String, String> checkAuthConfig(){
 		Map<String, String> invalidConfigs = new HashMap<>();
 		//TODO
@@ -34,10 +32,9 @@ public class ConfigHealthCheck implements HealthCheck {
 				"Built self-referencing url: {}",
 				new URL(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class))
 			);
-			new URL(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class));
 		} catch(IllegalArgumentException|MalformedURLException e){
 			log.error("Failed to build url to reference self: ", e);
-			invalidConfigs.put("runningInfo.*", "Could not build a self-referencing url from config:: " + e.getMessage());
+			invalidConfigs.put("runningInfo.baseUrl", "Could not build a self-referencing url from config:: " + e.getMessage());
 		}
 		
 		return invalidConfigs;
