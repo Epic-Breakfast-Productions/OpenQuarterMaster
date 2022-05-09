@@ -1,8 +1,11 @@
 package com.ebp.openQuarterMaster.baseStation.filters;
 
+import io.opentracing.Tracer;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -21,6 +24,12 @@ public class LoggingFilter implements ContainerResponseFilter, ContainerRequestF
 	
 	@Context
 	HttpServerRequest request;
+	
+	@Inject
+	Tracer tracer;
+	
+	@ConfigProperty(name = "quarkus.jaeger.service-name")
+	String serviceId;
 	
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -43,6 +52,8 @@ public class LoggingFilter implements ContainerResponseFilter, ContainerRequestF
 			responseContext.getMediaType(),
 			responseContext.getStatus()
 		);
+		responseContext.getHeaders().add("serviceId", this.serviceId);
+		responseContext.getHeaders().add("traceId", this.tracer.activeSpan().context().toTraceId());
 	}
 	
 }

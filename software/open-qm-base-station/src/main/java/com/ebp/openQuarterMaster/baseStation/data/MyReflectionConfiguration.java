@@ -5,6 +5,8 @@ import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
 
@@ -12,9 +14,9 @@ import java.time.ZonedDateTime;
  * Required to tell GraalVm to keep classes around.
  * <p>
  * If running in native mode and get errors about classes, reflection, etc, add the erring class here
- *
+ * <p>
  * https://quarkus.io/guides/writing-native-applications-tips#including-resources
- *
+ * <p>
  * TODO:: test in native mode and go through to include all needed classes
  */
 @RegisterForReflection(
@@ -29,12 +31,7 @@ import java.time.ZonedDateTime;
 		"com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService_ClientProxy"
 	}
 )
+@NoArgsConstructor(access = AccessLevel.PRIVATE)//prevent instantiation
 public final class MyReflectionConfiguration {
-	
-	/**
-	 * Prevent instantiation
-	 */
-	private MyReflectionConfiguration() {
-	}
-	
+
 }
