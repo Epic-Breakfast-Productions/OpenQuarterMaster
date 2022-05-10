@@ -141,10 +141,10 @@ public class Overview extends UiProvider {
 							recurse = result;
 							break;
 						case 4:
-							responseExt2 = result;
+							responseExt1 = result;
 							break;
 						case 5:
-							responseExt1 = result;
+							responseExt2 = result;
 							break;
 						case 6:
 							recurseExt = result;
