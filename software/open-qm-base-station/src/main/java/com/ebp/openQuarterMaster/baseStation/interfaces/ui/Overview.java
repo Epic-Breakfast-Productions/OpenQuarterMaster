@@ -104,12 +104,12 @@ public class Overview extends UiProvider {
 					completionStages.put(1, demoService.get1(authHeaderContent).toCompletableFuture());
 					completionStages.put(2, demoService.get2(authHeaderContent).toCompletableFuture());
 					completionStages.put(3,
-										 demoService.recurse(ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
+										 demoService.recurse(authHeaderContent, ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
 					
 					completionStages.put(4, externDemoService.get1(authHeaderContent).toCompletableFuture());
 					completionStages.put(5, externDemoService.get2(authHeaderContent).toCompletableFuture());
 					completionStages.put(6,
-										 demoService.recurse(ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
+										 externDemoService.recurse(ConfigProvider.getConfig().getValue("demo.recurseLevel", Integer.class)).toCompletableFuture());
 				}
 				
 				for (Map.Entry<Integer, CompletableFuture<String>> curStage : completionStages.entrySet()) {

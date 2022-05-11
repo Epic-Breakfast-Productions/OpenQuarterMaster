@@ -28,6 +28,7 @@ public interface DemoServiceCaller {
 	@Path("recursive/{current}")
 	@Produces(MediaType.TEXT_PLAIN)
 	CompletionStage<String> recurse(
+			@HeaderParam("authorization") String id,
 		@PathParam("current") int current
 	);
 	

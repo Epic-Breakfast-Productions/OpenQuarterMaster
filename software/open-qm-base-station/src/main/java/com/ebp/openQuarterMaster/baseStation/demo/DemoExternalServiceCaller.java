@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.CompletionStage;
 
@@ -24,5 +25,11 @@ public interface DemoExternalServiceCaller {
 	@Produces(MediaType.TEXT_PLAIN)
 	CompletionStage<String> get2(@HeaderParam("authorization") String id);
 	//    String get2(@HeaderParam("authorization") String id);
+        @GET
+        @Path("recursive/{current}")
+        @Produces(MediaType.TEXT_PLAIN)
+        CompletionStage<String> recurse(
+                @PathParam("current") int current
+        );
 	
 }
