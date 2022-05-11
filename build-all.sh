@@ -1,6 +1,6 @@
 #/bin/bash
 
-MINOR_VERSION=95
+MINOR_VERSION=99
 if [ "$1" = "jvm" ]; then
 	VERSION=0.0.${MINOR_VERSION}-jvm
 	NAMESPACE=quartermaster-jvm
