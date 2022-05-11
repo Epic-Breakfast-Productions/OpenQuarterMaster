@@ -1,10 +1,18 @@
 # OpenQuarterMaster
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+<!--TODO:: fix images to make this work well ![Open Quartermaster Logo](media/logo/Quarter Master Main Logo_fixed.svg)-->
+
+![Lib - Core](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/coreLib.yml/badge.svg)
+![Base station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-![Lib - Core](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/coreLib.yml/badge.svg)
-![Base station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)
+Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable.
+
+See the [software](software) folder for more information!
+
+We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests!
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
