@@ -25,6 +25,16 @@
         "tool",
         "test"
       ]
+    },
+    {
+      "login": "anixon-rh",
+      "name": "Anthony Nixon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55244503?v=4",
+      "profile": "https://github.com/anixon-rh",
+      "contributions": [
+        "infra",
+        "mentoring"
+      ]
     }
   ],
   "contributorsPerLine": 7,
