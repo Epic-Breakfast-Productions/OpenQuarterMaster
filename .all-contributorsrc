@@ -1,0 +1,36 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "GregJohnStewart",
+      "name": "Greg Stewart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7083701?v=4",
+      "profile": "http://gjstewart.net",
+      "contributions": [
+        "bug",
+        "business",
+        "code",
+        "content",
+        "data",
+        "doc",
+        "design",
+        "ideas",
+        "infra",
+        "maintenance",
+        "projectManagement",
+        "tool",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "OpenQuarterMaster",
+  "projectOwner": "Epic-Breakfast-Productions",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
