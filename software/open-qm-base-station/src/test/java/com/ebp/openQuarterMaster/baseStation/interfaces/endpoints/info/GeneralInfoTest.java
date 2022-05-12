@@ -6,6 +6,7 @@ import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.ValidatableResponse;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("integration")
 @QuarkusTest
 @TestHTTPEndpoint(GeneralInfo.class)
 class GeneralInfoTest extends RunningServerTest {

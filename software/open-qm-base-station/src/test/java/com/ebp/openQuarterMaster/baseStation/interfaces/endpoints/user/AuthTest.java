@@ -16,6 +16,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Tag("integration")
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)

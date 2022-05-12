@@ -15,6 +15,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -22,7 +23,8 @@ import javax.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
 
-
+@Tag("integration")
+@Tag("externalAuth")
 @Slf4j
 @QuarkusTest
 @TestProfile(ExternalAuthTestProfile.class)
