@@ -3,7 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.ui;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest;
-import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
@@ -45,9 +44,6 @@ public class PageLookOverTest extends WebUiTest {
 	
 	@Inject
 	TestUserService testUserService;
-	
-	@Inject
-	WebDriverWrapper webDriverWrapper;
 	
 	/**
 	 * Sanity-check type test to prove all pages load

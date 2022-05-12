@@ -15,7 +15,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.time.Duration;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserS
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Slf4j
-@ApplicationScoped
 public class WebDriverWrapper {
 	
 	@Getter

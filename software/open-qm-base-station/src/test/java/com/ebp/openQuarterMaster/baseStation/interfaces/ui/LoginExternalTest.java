@@ -4,7 +4,6 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.profiles.ExternalAuthTestProfile;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest;
-import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.General;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
@@ -41,9 +40,6 @@ public class LoginExternalTest extends WebUiTest {
 	
 	@Inject
 	TestUserService testUserService;
-	
-	@Inject
-	WebDriverWrapper webDriverWrapper;
 	
 	@Test
 	public void testLogin() {
