@@ -91,6 +91,9 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 		this.browserWebDriverContainer.close();
 		this.browserWebDriverContainer.stop();
 		
+		this.driver = null;
+		this.browserWebDriverContainer = null;
+		
 		log.info("Stopped web driver server.");
 	}
 	

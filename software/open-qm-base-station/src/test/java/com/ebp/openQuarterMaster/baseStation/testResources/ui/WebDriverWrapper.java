@@ -6,18 +6,16 @@ import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogi
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
 
@@ -25,38 +23,19 @@ import static com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserS
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 
 @Slf4j
-//@RequestScoped
 @ApplicationScoped
-public class WebDriverWrapper implements Closeable {
+public class WebDriverWrapper {
 	
-	private WebDriver driver = null;
+	@Getter
+	private WebDriver webDriver = null;
 	
-	public WebDriver getWebDriver() {
-		return this.driver;
-	}
+	private final int defaultWait = ConfigProvider.getConfig().getValue("test.selenium.defaultWait", Integer.class);
+	private final String baseUrl = ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class);
+	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("service.externalAuth.interactionBase", String.class);
+	private final AuthMode authMode = ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class);
 	
-	@ConfigProperty(name = "test.selenium.defaultWait", defaultValue = "5")
-	int defaultWait;
-	
-	@ConfigProperty(name = "runningInfo.baseUrl")
-	String baseUrl;
-	
-	@ConfigProperty(name = "service.externalAuth.interactionBase")
-	String keycloakInteractionBase;
-	
-	@ConfigProperty(name = "service.authMode")
-	AuthMode authMode;
-	
-	@PostConstruct
-	void setup() {
-		this.driver = TestResourceLifecycleManager.getWebDriver();
-	}
-	
-	@PreDestroy
-	public void close() {
-		log.info("Closing out web driver.");
-		getWebDriver().quit();
-		this.driver = null;
+	public WebDriverWrapper(){
+		this.webDriver = TestResourceLifecycleManager.getWebDriver();
 	}
 	
 	public void cleanup() {
