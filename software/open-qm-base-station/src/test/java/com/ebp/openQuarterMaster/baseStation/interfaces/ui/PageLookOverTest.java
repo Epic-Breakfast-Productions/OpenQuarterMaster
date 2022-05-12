@@ -73,18 +73,5 @@ public class PageLookOverTest extends WebUiTest {
 		assertTrue(curTitle.contains(expectedTitle), "Title was unexpected: " + curTitle);
 		
 		log.debug("HTML: {}", this.webDriverWrapper.getWebDriver().getPageSource());
-		
-		
-//		List<LogEntry> errs = this.webDriverWrapper
-//			.getWebDriver()
-//			.manage()
-//			.logs()
-//			.get("err")
-//			.getAll();
-//
-//		assertEquals(
-//			Collections.emptyList(),
-//			errs
-//		);
 	}
 }

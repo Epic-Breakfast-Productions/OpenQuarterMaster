@@ -17,7 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.List;
@@ -36,20 +35,17 @@ public class WebDriverWrapper implements Closeable {
 		return this.driver;
 	}
 	
-	@ConfigProperty(name = "test.selenium.headless", defaultValue = "true")
-	boolean headless;
-	@ConfigProperty(name = "test.selenium.quickClean", defaultValue = "true")
-	boolean quickClean;
 	@ConfigProperty(name = "test.selenium.defaultWait", defaultValue = "5")
 	int defaultWait;
+	
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String baseUrl;
+	
 	@ConfigProperty(name = "service.externalAuth.interactionBase")
 	String keycloakInteractionBase;
+	
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
-	@Inject
-	TestUserService testUserService;
 	
 	@PostConstruct
 	void setup() {
