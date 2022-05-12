@@ -23,17 +23,21 @@ test:
   profile: test
   selenium:
     defaultWait: 5 # seconds
-
+  keycloak:
+    url: " "
+    authUrl: " "
+    adminName: " "
+    adminPass: " "
 
 "%externalAuth":
   test:
     profile: externalAuth
     keycloak:
       # These values populated by `TestResourceLifecycleManager`
-      url:
-      authUrl:
-      adminName:
-      adminPass:
+      url: " "
+      authUrl: " "
+      adminName: " "
+      adminPass: " "
   service:
     authMode: EXTERNAL
     externalAuth:

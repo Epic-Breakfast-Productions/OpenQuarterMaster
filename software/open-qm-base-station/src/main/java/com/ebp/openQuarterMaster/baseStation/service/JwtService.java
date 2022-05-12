@@ -34,13 +34,13 @@ public class JwtService {
 	
 	public JwtService(
 		@ConfigProperty(name = "mp.jwt.verify.privatekey.location")
-			String privateKeyLocation,
+		String privateKeyLocation,
 		@ConfigProperty(name = "mp.jwt.expiration.default")
-			long defaultExpiration,
+		long defaultExpiration,
 		@ConfigProperty(name = "mp.jwt.expiration.extended")
-			long extendedExpiration,
+		long extendedExpiration,
 		@ConfigProperty(name = "mp.jwt.verify.issuer")
-			String issuer
+		String issuer
 	) throws Exception {
 		this.defaultExpiration = defaultExpiration;
 		this.extendedExpiration = extendedExpiration;
@@ -48,10 +48,9 @@ public class JwtService {
 		this.issuer = issuer;
 		
 		log.info("Private key location: {}", privateKeyLocation);
-		this.privateKey =
-			KeyUtils.readPrivateKey(
-				privateKeyLocation
-			); //KeyUtils.readPrivateKey(privateKeyLocation); //     StaticUtils.resourceAsUrl(privateKeyLocation).toString());
+		this.privateKey = KeyUtils.readPrivateKey(
+			privateKeyLocation
+		);
 	}
 	
 	/**
