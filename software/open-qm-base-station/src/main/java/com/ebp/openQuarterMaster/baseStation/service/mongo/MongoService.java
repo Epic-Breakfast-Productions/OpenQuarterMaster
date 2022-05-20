@@ -45,6 +45,9 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @Traced
 public abstract class MongoService<T extends MainObject> {
+	public static String getCollectionName(Class<?> clazz){
+		return clazz.getSimpleName();
+	}
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
@@ -82,7 +85,7 @@ public abstract class MongoService<T extends MainObject> {
 			objectMapper,
 			mongoClient,
 			database,
-			clazz.getSimpleName(),
+			getCollectionName(clazz),
 			clazz,
 			allowNullUserForCreate,
 			null

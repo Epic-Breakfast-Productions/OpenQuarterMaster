@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
+import com.ebp.openQuarterMaster.baseStation.testResources.data.MongoTestConnector;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.OurTestDescription;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.SeleniumGridServerManager;
@@ -34,8 +34,9 @@ public abstract class RunningServerTest extends WebServerTest {
 	public void afterEach(
 		TestInfo testInfo
 	) {
-		log.info("Running after method.");
-		findAndCleanupMongoServices();
+		log.info("Running after method for test {}", testInfo.getDisplayName());
+		
+		MongoTestConnector.getInstance().clearDb();
 		
 		if(SeleniumGridServerManager.RECORD) {
 			TestResourceLifecycleManager.BROWSER_CONTAINER.triggerRecord(
@@ -123,61 +124,5 @@ public abstract class RunningServerTest extends WebServerTest {
 			}
 			curWrapper.cleanup();
 		}
-	}
-	
-	private void findAndCleanupMongoServices() {
-		log.info("Searching for MongoServices to use in cleanup: {}", this.getClass());
-		List<MongoService> svcList = (
-			allFieldsForSelf().filter((Field curField)->{
-				log.debug("Field: {}", curField.getType());
-				return MongoService.class.isAssignableFrom(curField.getType()) ||
-					   curField.getType().isAssignableFrom(TestUserService.class);
-			}).map((Field curField)->{
-				Object cur;
-				log.debug("Mongo service field: {}", curField.getType());
-				try {
-					if (!curField.canAccess(this)) {
-						curField.setAccessible(true);
-					}
-					cur = curField.get(this);
-				} catch(IllegalAccessException e) {
-					log.warn("Cannot access field: {}. ", curField, e);
-					return (MongoService) null;
-				}
-				if(cur == null){
-					log.debug("Null value from field.");
-					return null;
-				}
-				log.debug("Value({}): {}", cur.getClass(), cur);
-				
-				if (MongoService.class.isAssignableFrom(cur.getClass())) {
-					log.debug("Was regular MongoService!");
-					return (MongoService) cur;
-				} else if (cur instanceof TestUserService) {
-					log.debug("Was testUser service!");
-					return ((TestUserService) cur).getUserService();
-				}
-				log.warn("Was not a service we recognize!");
-				return (MongoService) null;
-			}).collect(Collectors.toList())
-		);
-		log.info("Found {} services to cleanup entries from: {}", svcList.size(), svcList);
-		this.cleanup(svcList.toArray(new MongoService[svcList.size()]));
-	}
-	
-	public void cleanup(MongoService... services) {
-		log.info("Cleaning up test env.");
-		
-		long totalNumCleaned = 0;
-		for (MongoService service : services) {
-			if (service == null) {
-				log.debug("Null service!");
-				continue;
-			}
-			long numCleaned = service.removeAll();
-			totalNumCleaned += numCleaned;
-			log.info("Cleaned {} entries from service: {}", numCleaned, service.getClass());
-		}
-		log.info("Cleaned a total of {} entries from {} services.", totalNumCleaned, services.length);
 	}
 }
