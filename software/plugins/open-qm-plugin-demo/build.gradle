@@ -24,6 +24,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+    implementation 'io.opentracing.contrib:opentracing-mongo-common'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
