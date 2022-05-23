@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.plugin;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 
@@ -11,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @QuarkusIntegrationTest
 public class ConfigTest {
 
-	@ConfigProperty(name = "quarkus.mongodb.connection-string")
-	String mongoConnString;
+	String mongoConnString = ConfigProvider.getConfig().getValue("quarkus.mongodb.connection-string", String.class);
 	
 	@Test
 	public void testConfig(){
