@@ -64,7 +64,7 @@
     <div class="mb-3 row">
         <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT" onchange="addEditStoredTypeInputChanged()">
+            <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
                 <option value="AMOUNT_SIMPLE" selected>Amount</option>
                 <option value="AMOUNT_LIST">Amount List</option>
                 <option value="TRACKED">Tracked</option>
@@ -91,7 +91,7 @@
         <div class="col-sm-10">
             <div class="input-group">
                 <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
-                <input type="number" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
+                <input type="number" min="0" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
             </div>
         </div>
     </div>
@@ -252,15 +252,15 @@ function addEditStoredTypeInputChanged(){
     setIdAttField();
 }
 
-function removeStored(clicked){
+function removeStored(toRemoveId){
     if(!confirm("Are you sure? This can't be undone.")){
         return;
     }
     console.log("Removing.");
-    $(clicked).parent().parent().parent().parent().remove();
+    $(toRemoveId).remove();
 }
 
-function getCommonStoredFormElements(headerId) {
+function getCommonStoredFormElements(headerId, toRemoveId) {
     return  '<div class="mb-3 ">\n'+
             '    <label class="form-label">Condition Percentage</label>\n' +
             '    <div class="input-group">\n'+
@@ -281,17 +281,22 @@ function getCommonStoredFormElements(headerId) {
             keywordInputTemplate.html() +
             attInputTemplate.html() +
             '<div class="mb-3 ">\n'+
-            '    <button type="button" class="btn btn-danger" onclick="removeStored(this);">Remove Stored</button> '+
+            '    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');"><i class="fas fa-trash-alt"></i> Remove Stored</button> '+
             '</div>\n'
             ;
 }
 
-function getAmountStoredFormElements(headerId) {
+/**
+ *
+ * @param headerId
+ * @returns \{string}
+ */
+function getAmountStoredFormElements(headerId, toRemoveId) {
     return '<div class="input-group mt-2 mb-3">\n'+
            '     <input type="number" class="form-control amountStoredValueInput" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">\n'+
            '     <select class="form-select amountStoredUnitInput unitInput" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
            '</div>\n'+
-            getCommonStoredFormElements(headerId);
+            getCommonStoredFormElements(headerId, toRemoveId);
 }
 
 function addEditUpdateStoredHeader(caller, headerId){
@@ -320,13 +325,14 @@ function addEditUpdateStoredHeader(caller, headerId){
 }
 
 var numAmountStoredClicked=0;
-function addNewAmountStored(formContentId, accordionId){
+function addNewAmountStored(formContentId, parentId){
     var id="addEditAmountStoredEntry-"+(numAmountStoredClicked++);
+    var headerId=id+"-header";
     var collapseId = id + "-collapse";
     
     var output = $(
-            '<div class="accordion-item storedItem">\n'+
-            '    <h2 class="accordion-header" id="'+id+'">\n'+
+            '<div class="accordion-item storedItem" id="'+id+'">\n'+
+            '    <h2 class="accordion-header" id="'+headerId+'">\n'+
             '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
             '          <span class="addEditAmountDisplay">0</span>\n' +
             '          <span class="addEditUnitDisplay"></span>&nbsp;&nbsp;\n'+
@@ -334,9 +340,9 @@ function addNewAmountStored(formContentId, accordionId){
             '          <span class="addEditExpiresDisplay">Expires: <span class="addEditExpiresDisplayText"></span></span>\n'+ //TODO:: expires
             '        </button>\n'+
             '    </h2>\n'+
-            '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+accordionId+'">\n'+
+            '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+parentId+'">\n'+
             '        <div class="accordion-body">\n'+
-            '            ' + getAmountStoredFormElements(id) +
+            '            ' + getAmountStoredFormElements(headerId, id) +
             '        </div>\n'+
             '    </div>\n'+
             '</div>'
@@ -394,20 +400,32 @@ function addStorageBlockAccord(blockName, blockId){
     );
     storedContainer.append(newStorage);
     var newAccordBody = newStorage.find("#" + accordBodyId);
+    var accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
     
     switch (addEditStoredTypeInput[0].value){
+        case "AMOUNT_SIMPLE":
+            console.log("Setting up storage for AMOUNT_SIMPLE");
+    
+            accordBodyButtonWrapper.append($(
+                    getAmountStoredFormElements(accordHeaderId, accordId)
+            ));
+            
+            break;
         case "AMOUNT_LIST":
             console.log("Setting up storage for AMOUNT_LIST");
-            
-            newAccordBody.find("#"+accordButtonWrapperId).append($(
-                '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
-                '    <i class="fas fa-plus"></i> Add\n'+
-                '</button>'
+    
+            accordBodyButtonWrapper.append($(
+                    '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
+                    '    <i class="fas fa-plus"></i> Add\n'+
+                    '</button>\n'+
+            		'<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){$(\'#'+accordId+'\').remove();}">\n'+
+            		'    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+            		'</button>'
             ));
             break;
         case "TRACKED":
             console.log("Setting up storage for TRACKED");
-            newAccordBody.find("#"+accordButtonWrapperId).append($(
+            accordBodyButtonWrapper.append($(
                     '<div class="input-group mt-2">\n'+
                     '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
                     '    <button class="btn btn-outline-success" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
