@@ -158,9 +158,7 @@ Ingests:
             &copy; {generateDatetime.getYear()} <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
             Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
             License</a><br/>
-            Version {config:['service.version']}<br/>
-            <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
-    
+            Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
             <small class="fw-lighter fst-italic text-muted">
                 <div class="d-grid gap-2">
                     <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pageLoadInfoCollapse" aria-expanded="false" aria-controls="pageLoadInfoCollapse">
@@ -192,9 +190,7 @@ Ingests:
             {/if}
         </div>
         <div class="col-sm-4">
-            Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
-            The project also only collects what you give it, and it is up to the people running the server to ensure
-            it is handled well. Please contact the folks running the server for more information.
+            {config:['service.runBy.motd']}
         </div>
     </footer>
 </div>

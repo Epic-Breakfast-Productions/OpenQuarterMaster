@@ -84,6 +84,13 @@ All are optional, and mainly used for display on the web ui.
 | /some/dir/banner.png
 | A banner to show representing your group on the login screen. Defaults to the logo.
 
+| service.runBy.motd
+| `Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
+The project also only collects what you give it, and it is up to the people running the server to ensure
+it is handled well. Please contact the folks running the server for more information.`
+|
+| A message that is shown to your users at the bottom of the screen.
+
 |===
 
 ==== Database & Other External Tooling

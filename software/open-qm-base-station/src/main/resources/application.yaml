@@ -30,6 +30,10 @@ service:
     website: " "
     logo: " "
     banner: ${service.runBy.logo}
+    motd: >
+      Your privacy is important to the original project. It only creates minor cookies, and that is for the login
+      functionality. The project also only collects what you give it, and it is up to the people running the server to
+      ensure it is handled well. Please contact the folks running the server for more information.
   ops:
     currency: "USD" # anything that works with `Currency.getInstance("<value>")`
     
