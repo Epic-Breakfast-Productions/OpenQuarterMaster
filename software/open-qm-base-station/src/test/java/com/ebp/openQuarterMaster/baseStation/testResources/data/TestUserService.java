@@ -43,7 +43,7 @@ public class TestUserService {
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
 	
-	private final MongoTestConnector mongoTestConnector = MongoTestConnector.getInstance();
+	private final MongoTestConnector mongoTestConnector = new MongoTestConnector();
 	private final PasswordService passwordService = new PasswordService();
 	
 	private final JwtService jwtService;

@@ -19,7 +19,7 @@ service:
     realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
     interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
-#    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
+    #    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
     callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
@@ -36,7 +36,7 @@ service:
       ensure it is handled well. Please contact the folks running the server for more information.
   ops:
     currency: "USD" # anything that works with `Currency.getInstance("<value>")`
-    
+
 # TODO:: move this into `service` config
 runningInfo:
   protocol: http
@@ -77,8 +77,8 @@ quarkus:
     tracing:
       enabled: true
   #  package:
-#    type: uber-jar
-
+  #    type: uber-jar
+  
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API
@@ -92,7 +92,7 @@ quarkus:
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
-
+  
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
@@ -105,7 +105,7 @@ quarkus:
     sampler-type: const
     sampler-param: 1
   #    metrics:
-#      enabled: true
+  #      enabled: true
   http:
     auth:
       proactive: false

@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.Sel
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
@@ -36,7 +37,11 @@ public abstract class RunningServerTest extends WebServerTest {
 	) {
 		log.info("Running after method for test {}", testInfo.getDisplayName());
 		
-		MongoTestConnector.getInstance().clearDb();
+		if(ConfigProvider.getConfig().getOptionalValue("quarkus.mongodb.connection-string", String.class).isEmpty()){
+			log.info("Mongo not started.");
+		} else {
+			MongoTestConnector.getInstance().clearDb();
+		}
 		
 		if(SeleniumGridServerManager.RECORD) {
 			TestResourceLifecycleManager.BROWSER_CONTAINER.triggerRecord(

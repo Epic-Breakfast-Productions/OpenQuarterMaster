@@ -18,7 +18,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class MongoTestConnector {
 	
 	private final static MongoTestConnector INSTANCE = new MongoTestConnector();
@@ -27,8 +27,15 @@ public class MongoTestConnector {
 		return INSTANCE;
 	}
 	
-	private final String mongoConnectionString = ConfigProvider.getConfig().getValue("quarkus.mongodb.connection-string", String.class);
+	private String mongoConnectionString = null;
 	public final String mongoDatabaseName = ConfigProvider.getConfig().getValue("quarkus.mongodb.database", String.class);
+	
+	private String getMongoConnectionString(){
+		if(this.mongoConnectionString == null){
+			this.mongoConnectionString = ConfigProvider.getConfig().getValue("quarkus.mongodb.connection-string", String.class);
+		}
+		return this.mongoConnectionString;
+	}
 	
 	private static CodecRegistry getRegistry() {
 		CodecRegistry registry = CodecRegistries.fromRegistries(
@@ -56,9 +63,7 @@ public class MongoTestConnector {
 	public MongoClient getClient() {
 		MongoClientSettings.Builder clientSettingsBuilder = MongoClientSettings.builder();
 		
-		clientSettingsBuilder = clientSettingsBuilder.applyConnectionString(new ConnectionString(this.mongoConnectionString));
-		
-		
+		clientSettingsBuilder = clientSettingsBuilder.applyConnectionString(new ConnectionString(this.getMongoConnectionString()));
 		clientSettingsBuilder = clientSettingsBuilder.codecRegistry(getRegistry());
 		
 		return MongoClients.create(clientSettingsBuilder.build());
@@ -68,7 +73,7 @@ public class MongoTestConnector {
 		log.info("Clearing database of all entries.");
 		long totalDeleted = 0;
 		try (MongoClient client = this.getClient()) {
-			MongoDatabase db = client.getDatabase(mongoDatabaseName);
+			MongoDatabase db = client.getDatabase(this.mongoDatabaseName);
 			
 			for (String curCollectionName : db.listCollectionNames()) {
 				log.info("Clearing collection {}", curCollectionName);

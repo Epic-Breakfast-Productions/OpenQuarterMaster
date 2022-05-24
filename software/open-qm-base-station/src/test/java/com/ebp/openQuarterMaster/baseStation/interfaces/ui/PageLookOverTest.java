@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.inject.Inject;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,8 +41,7 @@ public class PageLookOverTest extends WebUiTest {
 		);
 	}
 	
-	@Inject
-	TestUserService testUserService;
+	TestUserService testUserService = new TestUserService();
 	
 	/**
 	 * Sanity-check type test to prove all pages load

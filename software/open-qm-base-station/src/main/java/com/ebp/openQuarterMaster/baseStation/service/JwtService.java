@@ -45,7 +45,7 @@ public class JwtService {
 		this.defaultExpiration = defaultExpiration;
 		this.extendedExpiration = extendedExpiration;
 		this.sigKeyId = privateKeyLocation;
-		this.issuer = issuer;
+		this.issuer = issuer.trim();
 		
 		log.info("Private key location: {}", privateKeyLocation);
 		this.privateKey = KeyUtils.readPrivateKey(
