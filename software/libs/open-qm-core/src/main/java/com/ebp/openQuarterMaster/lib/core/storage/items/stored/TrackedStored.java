@@ -24,8 +24,9 @@ public class TrackedStored extends Stored {
 	
 	/**
 	 * The value of this particular tracked item.
+	 * <p>
+	 * If not set (null), will default to the default value held in the item during calculations.
 	 */
-	@NonNull
 	@DecimalMin("0.0")
-	private BigDecimal value = BigDecimal.ZERO;
+	private BigDecimal value = null;
 }

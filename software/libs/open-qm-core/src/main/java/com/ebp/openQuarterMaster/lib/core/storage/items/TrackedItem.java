@@ -13,6 +13,7 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,6 +39,13 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 	@Size(max = 50)
 	@NotBlank
 	private String trackedItemIdentifierName;
+	
+	/**
+	 * The default value of an item held, if unspecified.
+	 */
+	@NonNull
+	@DecimalMin("0.0")
+	private BigDecimal defaultValue = BigDecimal.ZERO;
 	
 	public TrackedItem() {
 		super(StoredType.TRACKED);
@@ -74,10 +82,9 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 		return this.getStorageMap()
 				   .values()
 				   .stream()
-				   .flatMap((map)->{
-					   return map.values().stream();
-				   })
+				   .flatMap((map)->map.values().stream())
 				   .map(TrackedStored::getValue)
+				   .map((BigDecimal d)->d == null ? this.getDefaultValue() : d) //TODO:: test this line
 				   .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	
