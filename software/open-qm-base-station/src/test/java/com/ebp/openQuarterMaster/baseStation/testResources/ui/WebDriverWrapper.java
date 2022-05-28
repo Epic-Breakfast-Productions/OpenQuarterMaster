@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.ui;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRelated;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
@@ -40,12 +41,12 @@ public class WebDriverWrapper {
 		log.info("Cleaning up browser after test.");
 		
 		WebDriver driver = getWebDriver();
-		log.debug("Last Page html: \n{}", driver.getPageSource());
 		log.info(
 			"Last Page: \"{}\" {}",
 			driver.getTitle(),
 			driver.getCurrentUrl()
 		);
+		log.debug("Last Page html: \n{}", driver.getPageSource());
 		
 		if (EXTERNAL.equals(this.authMode)) {
 			String logoutUrl = this.keycloakInteractionBase + "/logout";
@@ -99,11 +100,13 @@ public class WebDriverWrapper {
 	}
 	
 	public void loginUser(User testUser) {
+		log.info("Logging in user {}.", testUser.getUsername());
 		this.goToIndex();
 		
 		this.waitForPageLoad();
 		
 		if (EXTERNAL.equals(this.authMode)) {
+			log.info("Logging in via external means.");
 			this.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
 			
 			log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
@@ -113,6 +116,7 @@ public class WebDriverWrapper {
 			
 			this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
 		} else {
+			log.info("Logging in via self.");
 			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
 			this.getWebDriver()
 				.findElement(Root.PASSWORD_INPUT)
@@ -122,5 +126,10 @@ public class WebDriverWrapper {
 			log.info("Clicked the sign in button.");
 		}
 		this.waitForPageLoad();
+		//TODO:: log page messages
+		
+		UserRelated.assertUserLoggedIn(this, testUser);
+		
+		log.info("Logged in user.");
 	}
 }

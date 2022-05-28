@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.HOST_TESTCONTAINERS_INTERNAL;
+import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.Utils.HOST_TESTCONTAINERS_INTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.EXTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.utils.AuthMode.SELF;
 

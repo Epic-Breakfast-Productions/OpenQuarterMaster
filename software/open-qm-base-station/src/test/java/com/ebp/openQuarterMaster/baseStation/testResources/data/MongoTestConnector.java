@@ -32,6 +32,7 @@ public class MongoTestConnector {
 	
 	private String getMongoConnectionString(){
 		if(this.mongoConnectionString == null){
+//			this.mongoConnectionString = ConfigProvider.getConfig().getValue(MongoDbServerManager.TEST_RES_CONNECTION_STRING_CONFIG_KEY, String.class);
 			this.mongoConnectionString = ConfigProvider.getConfig().getValue("quarkus.mongodb.connection-string", String.class);
 		}
 		return this.mongoConnectionString;

@@ -52,7 +52,6 @@ public class PageLookOverTest extends WebUiTest {
 		User testUser = this.testUserService.getTestUser(true, true);
 		
 		if(loggedIn){
-			log.info("Logging in user.");
 			this.webDriverWrapper.loginUser(testUser);
 		}
 		

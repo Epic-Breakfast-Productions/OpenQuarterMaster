@@ -16,8 +16,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.HOST_TESTCONTAINERS_INTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.UI_TEST_ARG;
+import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.Utils.HOST_TESTCONTAINERS_INTERNAL;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 @Slf4j

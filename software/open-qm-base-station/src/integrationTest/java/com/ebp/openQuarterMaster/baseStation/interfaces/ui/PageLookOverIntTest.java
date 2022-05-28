@@ -9,7 +9,8 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
 @QuarkusTestResource(
 	value = TestResourceLifecycleManager.class,
 	initArgs = {
-		@ResourceArg(name = TestResourceLifecycleManager.UI_TEST_ARG, value = "true")
+		@ResourceArg(name = TestResourceLifecycleManager.UI_TEST_ARG, value = "true"),
+		@ResourceArg(name = TestResourceLifecycleManager.INT_TEST_ARG, value = "true")
 	},
 	restrictToAnnotatedClass = true
 )

@@ -13,8 +13,8 @@ import static org.junit.Assert.assertEquals;
 public class UserRelated {
 	
 	public static void assertUserLoggedIn(WebDriverWrapper wrapper, User testUser) {
+		log.info("Asserting that test user {} is logged in.", testUser.getUsername());
 		WebElement usernameDisplay = wrapper.waitFor(General.USERNAME_DISPLAY);
-		
 		assertEquals(testUser.getUsername(), usernameDisplay.getText());
 	}
 	

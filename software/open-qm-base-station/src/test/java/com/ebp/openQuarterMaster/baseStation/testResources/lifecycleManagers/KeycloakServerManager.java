@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.EXTERNAL_AUTH_ARG;
-import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.HOST_TESTCONTAINERS_INTERNAL;
 import static com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager.UI_TEST_ARG;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.keycloak.crypto.KeyUse.SIG;
@@ -123,10 +122,7 @@ public class KeycloakServerManager implements QuarkusTestResourceLifecycleManage
 		}
 		
 		String authServerUrl = KEYCLOAK_CONTAINER.getAuthServerUrl();
-		
-		if (uiTest) {
-			authServerUrl = authServerUrl.replace("localhost", HOST_TESTCONTAINERS_INTERNAL);
-		}
+		authServerUrl = Utils.replaceLocalWithTCInternalIf(uiTest, authServerUrl);
 		
 		String keycloakUrl = authServerUrl.replace("/auth", "");
 		

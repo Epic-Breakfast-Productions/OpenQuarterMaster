@@ -18,8 +18,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	
 	public static final String EXTERNAL_AUTH_ARG = "externalAuth";
 	public static final String UI_TEST_ARG = "uiTest";
-	
-	public static final String HOST_TESTCONTAINERS_INTERNAL = "host.testcontainers.internal";
+	public static final String INT_TEST_ARG = "intTest";
 	
 	
 	//@Rule //TODO:: play with this in the test classes
@@ -32,7 +31,7 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	private static final JaegerServerManager JAEGER_SERVER_MANAGER = new JaegerServerManager();
 	
 	private static final Collection<QuarkusTestResourceLifecycleManager> managersAsList = new ArrayList<>(){{
-		add(MONGO_DB_SERVER_MANAGER);
+//		add(MONGO_DB_SERVER_MANAGER);
 		add(KEYCLOAK_CONTAINER);
 		add(BROWSER_CONTAINER);
 		add(JAEGER_SERVER_MANAGER);
