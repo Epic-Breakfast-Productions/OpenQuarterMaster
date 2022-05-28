@@ -299,6 +299,7 @@ function getAmountStoredFormElements(headerId, toRemoveId) {
             '</div>\n'+
             getCommonStoredFormElements(headerId, toRemoveId);
 }
+
 /**
  *
  * @param headerId
@@ -308,7 +309,7 @@ function getAmountStoredFormElements(headerId, toRemoveId) {
 function getTrackedStoredFormElements(headerId, toRemoveId) {
     return '<div class="mb-3">\n'+
             '    <label class="form-label">Identifier:</label>\n' +
-            '    <input class="form-control" type="text" name="identifier" required>\n'+ // TODO:: populate
+            '    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')" required>\n'+ // TODO:: populate
             '</div>\n' +
             '<div class="mb-3">\n'+
             '    <label class="form-label">Identifying Details</label>\n' +
@@ -318,28 +319,49 @@ function getTrackedStoredFormElements(headerId, toRemoveId) {
 }
 
 function addEditUpdateStoredHeader(caller, headerId){
-    var parentElem = $($(caller).parent().parent().get(0));
-    var header = $("#"+headerId);
+    let parentElem = $($(caller).parent().parent().get(0));
+    let header = $("#"+headerId);
     
-    header.find(".addEditAmountDisplay").text(parentElem.find(".amountStoredValueInput").get(0).value);//.dataset.symbol);
-    header.find(".addEditUnitDisplay").text(parentElem.find(".amountStoredUnitInput").get(0).value.replaceAll("\"", ""));
+    let headerAmountDisplay = header.find(".addEditAmountDisplay");
+    let headerUnitDisplay = header.find(".addEditUnitDisplay");
+    let conditionDisplay = header.find(".addEditConditionDisplay");
+    let addEditExpiresDisplay = header.find(".addEditExpiresDisplay");
     
-    var storedPercInput = parentElem.find(".storedConditionPercentageInput").get(0);
-    if(storedPercInput.value){
-        header.find(".addEditConditionDisplayText").text(storedPercInput.value);
-        header.find(".addEditConditionDisplay").show();
-    } else {
-        header.find(".addEditConditionDisplay").hide();
+    let itemIdentifierDisplay = header.find(".itemIdentifierDisplay");
+    
+    if(headerAmountDisplay.length){
+        headerAmountDisplay.text(parentElem.find(".amountStoredValueInput").get(0).value);//.dataset.symbol);
+    }
+    if(headerUnitDisplay.length) {
+        headerUnitDisplay.text(parentElem.find(".amountStoredUnitInput").get(0).value.replaceAll("\"", ""));
     }
     
-    var storedExpInput = parentElem.find(".storedExpiredInput").get(0);
-    if(storedExpInput.value){
-        header.find(".addEditExpiresDisplayText").text(storedExpInput.value);
-        header.find(".addEditExpiresDisplay").show();
-    } else {
-        header.find(".addEditExpiresDisplay").hide();
+    if(conditionDisplay.length) {
+        let storedPercInput = parentElem.find(".storedConditionPercentageInput").get(0);
+        if (storedPercInput.value) {
+            header.find(".addEditConditionDisplayText").text(storedPercInput.value);
+            conditionDisplay.show();
+        } else {
+            conditionDisplay.hide();
+        }
     }
     
+    if(addEditExpiresDisplay.length) {
+        let storedExpInput = parentElem.find(".storedExpiredInput").get(0);
+        if (storedExpInput.value) {
+            header.find(".addEditExpiresDisplayText").text(storedExpInput.value);
+            addEditExpiresDisplay.show();
+        } else {
+            addEditExpiresDisplay.hide();
+        }
+    }
+    
+    if(itemIdentifierDisplay.length){
+        let itemIdInput = parentElem.find("[name=identifier]");
+        if(itemIdInput.length) {
+            itemIdentifierDisplay.text(itemIdInput.get(0).value);
+        }
+    }
 }
 
 var numAmountStoredClicked=0;
@@ -376,6 +398,7 @@ var numTrackedStoredClicked=0;
 function addNewTrackedStored(formContentId, caller){
     console.log("Adding new tracked storage item");
     
+    let formContent = $('#'+formContentId);
     let trackedStoredIdInput = $(caller).parent().find('.identifierValueInput').get(0);
     let trackedId = trackedStoredIdInput.value.trim();
     
@@ -383,6 +406,18 @@ function addNewTrackedStored(formContentId, caller){
         console.warn("No user input for id.");
         return;
     }
+    let exists = false;
+    storedContainer.find("[name=identifier]").each(function(i){
+        if(this.value.trim() === trackedId){
+            exists = true;
+        }
+    });
+    if(exists){
+        console.warn("Id already exists.");
+        alert("Identifier already exists");
+        return;
+    }
+
     //TODO:: check for validity; already present, etc.
     
     trackedStoredIdInput.value = "";
@@ -393,7 +428,7 @@ function addNewTrackedStored(formContentId, caller){
     let output = $(
             '<div class="accordion-item storedItem" id="'+id+'">\n'+
             '    <h2 class="accordion-header" id="'+headerId+'">\n'+
-            '        <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
+            '        <button class="accordion-button thinAccordion collapsed itemIdentifierDisplay" type="button" data-bs-toggle="collapse" data-bs-target="#'+collapseId+'" aria-expanded="false" aria-controls="'+collapseId+'">\n'+
             '          ' + trackedId + '\n' +
             '        </button>\n'+
             '    </h2>\n'+
@@ -406,7 +441,7 @@ function addNewTrackedStored(formContentId, caller){
     );
     output.find("[name=identifier]").val(trackedId);
     
-    $('#'+formContentId).append(output);
+    formContent.append(output);
     addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
     updateStorageNumHeld(output);
     return output;
