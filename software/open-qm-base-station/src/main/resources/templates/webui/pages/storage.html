@@ -299,11 +299,11 @@ addEditStorageForm.submit(function(event){
     var addEditData = {
         label: addEditLabelInput.val(),
         location: addEditLocationInput.val(),
-        capacityMeasures: [],
-        imageIds: []
+        capacityMeasures: []
     };
 
     addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+    addImagesToData(addEditData, imagesSelected);
 
     capacityInputDiv.children().each(function(i, curCapDiv){
         var cur = $(curCapDiv);
@@ -312,10 +312,6 @@ addEditStorageForm.submit(function(event){
             unit: cur.find(".unitSelect").find(":selected")[0].value,
             scale: "ABSOLUTE"
         });
-    });
-
-    imagesSelected.find("img").each(function(i, curImg){
-        addEditData.imageIds.push($(curImg).attr('data-bs-imageId'));
     });
 
 

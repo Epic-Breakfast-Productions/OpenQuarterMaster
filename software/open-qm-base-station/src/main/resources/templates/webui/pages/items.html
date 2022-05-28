@@ -50,7 +50,7 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-{#modal id='addEdit' large=true title='Item add/edit'}
+{#modal id='addEdit' large=true title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
 <div id="addEditFormMessages"></div>
 <form id="addEditItemForm">
     <input type="hidden" id="addEditFormMode" value="">
@@ -59,6 +59,12 @@
         <label for="addEditNameInput" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" id="addEditNameInput" placeholder="Name" required>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
         </div>
     </div>
     <div class="mb-3 row">
@@ -118,9 +124,9 @@
     {/inputs/attInput}
 </form>
 {/modal}
-{#modal id='storageBlockView' large=true title='Storage Block View'}
+{#modal id='itemView' large=true title='Item View'}
 <div class="row">
-    {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
+    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
     <div class="col">
         <div class="card">
             <div class="card-body">
@@ -179,13 +185,24 @@
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
+
+var addEditModalLabel = $('#addEditModalLabel');
+var addEditFormMode = $('#addEditFormMode');
+var addEditItemForm = $('#addEditItemForm');
+var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
+var addEditAttDiv = addEditItemForm.find(".attInputDiv");
+var addEditNameInput = $('#addEditNameInput');
+var addEditDescriptionInput = $('#addEditDescriptionInput');
+var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
+var addEditStoredTypeInput = $('#addEditStoredTypeInput');
+var addEditUnitInput = $('#addEditUnitInput');
+var addEditIdentifyingAttInput = $('#addEditIdentifyingAttInput');
+var addEditImagesSelected = addEditItemForm.find(".imagesSelected");
+
+var storedContainer = $('#storedContainer');
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
 var pricePerUnitNameRow = $('#pricePerUnitNameRow');
-var addEditUnitInput = $('#addEditUnitInput');
-var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
-var addEditStoredTypeInput = $('#addEditStoredTypeInput');
-var storedContainer = $('#storedContainer');
 var compatibleUnitOptions = "";
 
 function haveStored(){
@@ -220,10 +237,26 @@ function handleItemUnitChange(){
 }
 
 function resetAddEditForm(){
+    addEditNameInput.val("");
+    addEditDescriptionInput.val("");
+    addEditModalLabel.text("Item");
+    addEditPricePerUnitInput.val("0.00");
+    addEditIdentifyingAttInput.val("");
+    addEditStoredTypeInput.val($("#addEditStoredTypeInput option:first").val());
+    addEditUnitInput.val($("#addEditUnitInput option:first").val());
+    
+    setIdAttField();
+    updateCompatibleUnits();
+    
+    addEditImagesSelected.text("");
+    addEditKeywordDiv.text("");
+    addEditAttDiv.text("");
 }
 
 function setupAddEditForAdd(){
     resetAddEditForm();
+    addEditModalLabel.text("Item Add");
+    addEditFormMode.val("add");
 }
 
 function setIdAttField(){
@@ -232,12 +265,18 @@ function setIdAttField(){
     addEditStoredTypeInput.attr('data-current', "AMOUNT_SIMPLE");
     if(value === "AMOUNT_SIMPLE" || value === "AMOUNT_LIST") {
         trackedItemIdentifierNameRow.hide();
+        addEditIdentifyingAttInput.prop('required', false);
         unitNameRow.show();
+        addEditUnitInput.prop('required',true);
         pricePerUnitNameRow.show();
+        addEditPricePerUnitInput.prop('required',true);
     } else if(value === "TRACKED"){
         unitNameRow.hide();
         pricePerUnitNameRow.hide();
+        addEditPricePerUnitInput.prop('required',false);
+        addEditUnitInput.prop('required',false);
         trackedItemIdentifierNameRow.show();
+        addEditIdentifyingAttInput.prop('required', true);
         addEditStoredTypeInput.attr('data-current', "TRACKED");
     }
 }
@@ -417,8 +456,6 @@ function addNewTrackedStored(formContentId, caller){
         alert("Identifier already exists");
         return;
     }
-
-    //TODO:: check for validity; already present, etc.
     
     trackedStoredIdInput.value = "";
     let id="addEditTrackedStoredEntry-"+(numTrackedStoredClicked++);
@@ -535,9 +572,29 @@ function addStorageBlockAccord(blockName, blockId){
 function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
     console.log("Selected " + blockId + " - " + blockName);
     var newStorageBody = addStorageBlockAccord(blockName, blockId);
-    
-    
 }
+
+addEditItemForm.submit(function(event) {
+    event.preventDefault();
+    console.log("Submitting add/edit form.");
+    
+    let addEditData = {
+        name: addEditNameInput.val(),
+        description: addEditDescriptionInput.val(),
+        storedType: addEditStoredTypeInput.val(),
+        storageMap: new Map()
+    };
+    
+    addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
+    addImagesToData(addEditData, addEditImagesSelected);
+    
+    //TODO:: read in for each stored
+    
+    //TODO:: submit data
+    console.log("Data submitted: " + JSON.stringify(addEditData));
+});
+
+
 </script>
 {/pageScript}
 {/include}

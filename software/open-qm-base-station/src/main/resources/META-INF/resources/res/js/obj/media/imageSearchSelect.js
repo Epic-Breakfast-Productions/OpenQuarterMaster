@@ -60,15 +60,19 @@ function removeSelectedImage(toRemove) {
 	toRemove.remove();
 }
 
+function addImagesToData(data, selectedImageDiv){
+	data.imageIds = [];
+	selectedImageDiv.find("img").each(function(i, curImg){
+		data.imageIds.push($(curImg).attr('data-bs-imageId'));
+	});
+}
+
 imageSearchSelectForm.on("submit", function (event) {
 	event.preventDefault();
 	console.log("Submitting search form.");
 
 	var searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
-
-
-	var result = null;
 
 	doRestCall({
 		spinnerContainer: imageSearchSelectModal.get(0),
