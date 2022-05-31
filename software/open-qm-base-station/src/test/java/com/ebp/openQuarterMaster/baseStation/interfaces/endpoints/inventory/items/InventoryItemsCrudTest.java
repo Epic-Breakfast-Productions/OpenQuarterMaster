@@ -10,6 +10,7 @@ import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,9 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.util.stream.Stream;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.setupJwtCall;
 import static io.restassured.RestAssured.given;
@@ -70,10 +76,24 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		return returned;
 	}
 	
-	@Test
-	public void testCreateSimpleAmountItem() throws JsonProcessingException {
+	public static Stream<Arguments> getSimpleAmountItems(){
+		return Stream.of(
+			Arguments.of(
+				new SimpleAmountItem().setName(FAKER.commerce().productName())
+			),
+			Arguments.of(
+				new SimpleAmountItem(){{
+					this.getStorageMap().put(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(0, this.getUnit())));
+				}}.setName(FAKER.commerce().productName())
+			)
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getSimpleAmountItems")
+	public void testCreateSimpleAmountItem(SimpleAmountItem item) throws JsonProcessingException {
 		User user = this.testUserService.getTestUser(false, true);
-		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
+		
 		ObjectId returned = create(user, item);
 		
 		InventoryItem stored = inventoryItemService.get(returned);

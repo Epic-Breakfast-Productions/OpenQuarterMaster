@@ -5,13 +5,18 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoServiceTest;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.inject.Inject;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
@@ -57,6 +62,21 @@ class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, Inventory
 	@Test
 	public void addTest() {
 		this.defaultAddTest(this.inventoryItemService);
+	}
+	
+	@Test
+	public void testAddComplexObj(){
+		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem(){{
+			this.getStorageMap().put(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(0, this.getUnit())));
+		}}.setName(FAKER.commerce().productName());
+		
+		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		
+		assertNotNull(item.getId());
+		assertEquals(id, item.getId());
+		
+		log.info("num in collection: {}", inventoryItemService.list().size());
+		assertEquals(1, inventoryItemService.list().size());
 	}
 	
 	@Test

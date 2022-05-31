@@ -56,8 +56,8 @@ function doRestCall(
 	).done(function (data, status, xhr) {
 		console.log("Got successful response (trace id: "+xhr.getResponseHeader("traceId")+"): " + JSON.stringify(data));
 		done(data);
-	}).fail(function (data, status, xhr) {
-		console.warn("Request failed (trace id: "+xhr.getResponseHeader("traceId")+"): " + JSON.stringify(data));
+	}).fail(function (data, status, statusStr) {
+		console.warn("Request failed (trace id: "+data.getResponseHeader("traceId")+"): " + JSON.stringify(data));
 
 		var response = data.responseJSON;
 

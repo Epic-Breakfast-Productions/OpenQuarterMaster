@@ -1,11 +1,15 @@
 
 
+function getQuantityObj(value, unit){
+	let output = {
+		unit: {
+			string: unit
+		},
+		scale: "ABSOLUTE",
+		value: value
+	};
 
-class ItemEditor {
 
 
-}
-
-class TrackedItemEditor extends ItemEditor {
-
+	return output;
 }

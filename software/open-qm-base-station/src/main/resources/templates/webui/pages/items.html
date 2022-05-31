@@ -178,14 +178,18 @@
 <script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
 
+<script src="/res/js/item/ItemEditing.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
 <script>
+const STORAGE_CLASS = "storageBlock";
+
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
 
+var addEditFormMessages = $("#addEditFormMessages");
 var addEditModalLabel = $('#addEditModalLabel');
 var addEditFormMode = $('#addEditFormMode');
 var addEditItemForm = $('#addEditItemForm');
@@ -309,7 +313,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
             '</div>\n' +
             '<div class="mb-3">\n'+
             '    <label class="form-label">Condition Details</label>\n' +
-            '    <textarea class="form-control" name=""></textarea>\n'+
+            '    <textarea class="form-control" name="conditionDetails"></textarea>\n'+
             '</div>\n' +
             '<div class="mb-3">\n'+
             '    <label class="form-label">Expires</label>\n' +
@@ -333,8 +337,8 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
  */
 function getAmountStoredFormElements(headerId, toRemoveId) {
     return '<div class="input-group mt-2 mb-3">\n'+
-            '     <input type="number" class="form-control amountStoredValueInput" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">\n'+
-            '     <select class="form-select amountStoredUnitInput unitInput" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
+            '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">\n'+
+            '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
             '</div>\n'+
             getCommonStoredFormElements(headerId, toRemoveId);
 }
@@ -420,7 +424,7 @@ function addNewAmountStored(formContentId, parentId){
             '        </button>\n'+
             '    </h2>\n'+
             '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+parentId+'">\n'+
-            '        <div class="accordion-body">\n'+
+            '        <div class="accordion-body storedContainer">\n'+
             '            ' + getAmountStoredFormElements(headerId, id) +
             '        </div>\n'+
             '    </div>\n'+
@@ -470,7 +474,7 @@ function addNewTrackedStored(formContentId, caller){
             '        </button>\n'+
             '    </h2>\n'+
             '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+formContentId+'">\n'+
-            '        <div class="accordion-body">\n'+
+            '        <div class="accordion-body storedContainer">\n'+
             '            ' + getTrackedStoredFormElements(headerId, id) +
             '        </div>\n'+
             '    </div>\n'+
@@ -494,21 +498,21 @@ function updateStorageNumHeld(caller){
 }
 
 function addStorageBlockAccord(blockName, blockId){
-    var accordId = "addEditItemStorageAssoc-" + blockId;
-    var existantAccord = storedContainer.find("#" + accordId);
+    let accordId = "addEditItemStorageAssoc-" + blockId;
+    let existantAccord = storedContainer.find("#" + accordId);
     if(existantAccord.length){
         console.log("Already had association with storage block " + blockId);
         //TODO:: open block section instead of alerting
         alert("Storage block already present.");
         return null;
     }
-    var accordHeaderId = accordId + "-header";
-    var accordCollapseId = accordId + "-collapse";
-    var accordBodyId = accordId + "-body";
-    var accordFormContentId = accordId + "-formContent";
-    var accordButtonWrapperId = accordId + "-formAddButtonWraper";
+    let accordHeaderId = accordId + "-header";
+    let accordCollapseId = accordId + "-collapse";
+    let accordBodyId = accordId + "-body";
+    let accordFormContentId = accordId + "-formContent";
+    let accordButtonWrapperId = accordId + "-formAddButtonWraper";
     
-    var newStorage =
+    let newStorage =
     $('   <div class="accordion-item storedAccordion" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
@@ -519,24 +523,24 @@ function addStorageBlockAccord(blockName, blockId){
       '        </h2>\n'+
       '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
       '            <div class="accordion-body" id="'+accordBodyId+'">\n'+
-      '                <div id="'+accordFormContentId+'" class="accordion"></div>\n'+
+      '                <div id="'+accordFormContentId+'" class="accordion '+STORAGE_CLASS+'" data-storageBlockId="'+blockId+'"></div>\n'+
       '                <div id="'+accordButtonWrapperId+'" class="col d-grid gap-2"></div>\n'+
       '            </div>\n'+
       '        </div>\n'+
       '    </div>\n'
     );
     storedContainer.append(newStorage);
-    var newAccordBody = newStorage.find("#" + accordBodyId);
-    var accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
+    let newAccordBody = newStorage.find("#" + accordBodyId);
+    let accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
+    let accordBodyFormContentWrapper = newAccordBody.find("#"+accordFormContentId);
     
     switch (addEditStoredTypeInput[0].value){
         case "AMOUNT_SIMPLE":
             console.log("Setting up storage for AMOUNT_SIMPLE");
     
-            accordBodyButtonWrapper.append($(
+            accordBodyFormContentWrapper.append($(
                     getAmountStoredFormElements(accordHeaderId, accordId)
             ));
-            
             break;
         case "AMOUNT_LIST":
             console.log("Setting up storage for AMOUNT_LIST");
@@ -574,6 +578,45 @@ function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
     var newStorageBody = addStorageBlockAccord(blockName, blockId);
 }
 
+function buildStoredObj(storedContainer){
+    let output = {};
+    
+    {
+        let amountInput = storedContainer.find("[name=amountStored]");
+        if (amountInput.length) {
+            output["amount"] = getQuantityObj(
+                    amountInput.get(0).value,
+                    storedContainer.find("[name=amountStoredUnit]").get(0).value
+            );
+        }
+    }
+    
+    
+    {
+        let input = storedContainer.find("[name=condition]");
+        if (input.length) {
+            output["condition"] = input.get(0).value;
+        }
+    }
+    {
+        let input = storedContainer.find("[name=conditionDetails]");
+        if (input.length) {
+            output["conditionNotes"] = input.get(0).value;
+        }
+    }
+    {
+        let input = storedContainer.find("[name=expires]");
+        if (input.length) {
+            output["expires"] = input.get(0).value;
+        }
+    }
+    addKeywordAttData(output, $(storedContainer.find(".keywordInputDiv").get(0)), $(storedContainer.find(".attInputDiv").get(0)));
+    addImagesToData(output, $(storedContainer.find(".imagesSelected").get(0)));
+    
+    
+    return output;
+}
+
 addEditItemForm.submit(function(event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
@@ -582,16 +625,72 @@ addEditItemForm.submit(function(event) {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
         storedType: addEditStoredTypeInput.val(),
-        storageMap: new Map()
+        storageMap: {}
     };
     
     addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
     addImagesToData(addEditData, addEditImagesSelected);
     
-    //TODO:: read in for each stored
+    let list = addEditStoredTypeInput[0].value !== "AMOUNT_SIMPLE";
+    storedContainer.find(".storageBlock").each(function (i, storageBlockElement) {
+        let storageBlockElementJq = $(storageBlockElement);
+        let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
+        let storedVal;
+        if(list){
+            storedVal = [];
+            storageBlockElementJq.find(".").each(function (j, storedElement){
+                storedVal.append(buildStoredObj($(storedElement)));
+            });
+        } else {
+            storedVal = buildStoredObj(storageBlockElementJq);
+        }
+        addEditData.storageMap[curStorageId] = storedVal;
+    });
     
     //TODO:: submit data
     console.log("Data submitted: " + JSON.stringify(addEditData));
+    let result = false;
+    if(addEditFormMode.val() === "add"){
+        verb = "Created";
+        console.log("Adding new item.");
+        doRestCall({
+            url: "/api/inventory/item",
+            method: "POST",
+            data: addEditData,
+            async: false,
+            done: function(data) {
+                console.log("Response from create request: " + JSON.stringify(data));
+                result = true;
+            },
+            fail: function(data) {
+                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+            }
+        });
+    } else if(addEditFormMode.val() == "edit") {
+        verb = "Edited";
+        addEditData.id = addEditFormId.val();
+        console.log("Editing storage block " + addEditData.id);
+        
+        doRestCall({
+            url: "/api/storage/" + addEditData.id,
+            method: "PUT",
+            data: addEditData,
+            async: false,
+            done: function(data) {
+                console.log("Response from create request: " + JSON.stringify(data));
+                result = true;
+            },
+            fail: function(data) {
+                console.warn("Bad response from create request: " + JSON.stringify(data));
+            }
+        });
+    }
+    
+    if(!result){
+        addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+    } else {
+        reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+    }
 });
 
 

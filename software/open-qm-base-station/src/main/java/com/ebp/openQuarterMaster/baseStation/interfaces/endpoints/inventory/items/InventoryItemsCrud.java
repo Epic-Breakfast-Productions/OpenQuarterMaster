@@ -84,7 +84,7 @@ public class InventoryItemsCrud extends EndpointProvider {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createInventoryItem(
 		@Context SecurityContext securityContext,
-		@Valid InventoryItem item
+		@Valid InventoryItem<?> item
 	) {
 		logRequestContext(this.jwt, securityContext);
 		log.info("Creating new item.");
