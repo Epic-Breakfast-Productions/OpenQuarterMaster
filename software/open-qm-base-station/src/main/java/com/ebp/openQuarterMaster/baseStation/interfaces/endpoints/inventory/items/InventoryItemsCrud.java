@@ -264,7 +264,7 @@ public class InventoryItemsCrud extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		log.info("Deleting item with id {}", id);
 		User user = this.userService.getFromJwt(jwt);
-		InventoryItem output = inventoryItemService.remove(id, user);
+		InventoryItem<?> output = inventoryItemService.remove(id, user);
 		
 		if (output == null) {
 			log.info("Item not found.");

@@ -617,6 +617,34 @@ function buildStoredObj(storedContainer){
     return output;
 }
 
+function removeItem(itemId){
+    if(!confirm("Are you sure you want to delete this item? This cannot be undone.")){
+        return;
+    }
+    
+    console.log("Removing item " + itemId);
+    
+    let result = false;
+    doRestCall({
+        url: "/api/inventory/item/" + itemId,
+        method: "DELETE",
+        async: false,
+        done: function(data) {
+            console.log("Response from remove request: " + JSON.stringify(data));
+            result = true;
+        },
+        fail: function(data) {
+            console.warn("Bad response from remove attempt: " + JSON.stringify(data));
+        }
+    });
+    
+    if(!result){
+        addMessageToDiv(addEditFormMessages, "danger", "Failed to remove item.", "Failed", null);
+    } else {
+        reloadPageWithMessage("Removed item successfully!", "success", "Success!");
+    }
+}
+
 addEditItemForm.submit(function(event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
