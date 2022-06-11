@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.inject.Inject;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,17 +67,17 @@ class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, Inventory
 	
 	@Test
 	public void testAddComplexObj(){
-		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem(){{
-			this.getStorageMap().put(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(0, this.getUnit())));
-		}}.setName(FAKER.commerce().productName());
+		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
+		item.getStorageMap().put(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(0, item.getUnit())));
 		
 		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
 		
-		log.info("num in collection: {}", inventoryItemService.list().size());
-		assertEquals(1, inventoryItemService.list().size());
+		List<InventoryItem> list = inventoryItemService.list();
+		log.info("num in collection: {}", list.size());
+		assertEquals(1, list.size(), "Unexpected number of objects in collection.");
 	}
 	
 	@Test

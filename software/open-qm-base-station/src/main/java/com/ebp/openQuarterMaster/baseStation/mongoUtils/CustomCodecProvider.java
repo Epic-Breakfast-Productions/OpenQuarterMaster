@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.UUIDCodec;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.UnitCodec;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.ZonedDateTimeCodec;
 import org.bson.codecs.Codec;
+import org.bson.codecs.MapCodec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
@@ -19,7 +20,8 @@ public class CustomCodecProvider implements CodecProvider {
 		new UUIDCodec(),
 		new QuantityCodec(),
 		new UnitCodec(),
-		new ZonedDateTimeCodec()
+		new ZonedDateTimeCodec(),
+		new MapCodec()
 	);
 	
 	@Override
@@ -31,10 +33,6 @@ public class CustomCodecProvider implements CodecProvider {
 				return (Codec<T>) codec;
 			}
 		}
-		//        if(clazz.getSuperclass().equals(TestSuper.class)){
-		//            PojoCodecProvider provider = PojoCodecProvider.builder().build();
-		//            return provider.get();
-		//        }
 		return null;
 	}
 	

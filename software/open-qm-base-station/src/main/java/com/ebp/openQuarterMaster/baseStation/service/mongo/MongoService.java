@@ -198,7 +198,10 @@ public abstract class MongoService<T extends MainObject> {
 	 * @return The object found. Null if not found.
 	 */
 	public T get(ObjectId objectId) {
-		T found = getCollection().find(eq("_id", objectId)).first();
+		T found = getCollection()
+					  .find(eq("_id", objectId))
+					  .limit(1)
+					  .first();
 		return found;
 	}
 	

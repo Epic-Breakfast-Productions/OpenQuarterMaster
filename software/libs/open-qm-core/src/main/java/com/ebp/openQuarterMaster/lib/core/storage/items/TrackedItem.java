@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.units.indriya.quantity.Quantities;
 
@@ -26,7 +27,6 @@ import java.util.Map;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@BsonDiscriminator("TRACKED")
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
 	
 	/**
@@ -51,6 +51,7 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 		super(StoredType.TRACKED);
 	}
 	
+	@BsonIgnore
 	@JsonIgnore
 	@Override
 	public @NonNull Unit<?> getUnit() {

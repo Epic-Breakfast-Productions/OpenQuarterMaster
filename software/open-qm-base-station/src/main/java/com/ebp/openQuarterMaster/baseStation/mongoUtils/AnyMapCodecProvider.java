@@ -11,12 +11,13 @@ import org.bson.codecs.pojo.TypeWithTypeParameters;
 import java.util.Map;
 
 public class AnyMapCodecProvider implements PropertyCodecProvider, CodecProvider {
-	
+
 	@Override
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public <T> Codec<T> get(final TypeWithTypeParameters<T> type, final PropertyCodecRegistry registry) {
 		if (Map.class.isAssignableFrom(type.getType()) && type.getTypeParameters().size() == 2) {
 			return new AnyMapCodec(
+				type.getTypeParameters().get(0).getType(),
 				type.getType(),
 				registry.get(type.getTypeParameters().get(0)),
 				registry.get(type.getTypeParameters().get(1))
@@ -24,11 +25,12 @@ public class AnyMapCodecProvider implements PropertyCodecProvider, CodecProvider
 		}
 		return null;
 	}
-	
+
 	@Override
 	public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
 		if (Map.class.isAssignableFrom(clazz) && clazz.getTypeParameters().length == 2) {
 			return new AnyMapCodec(
+				clazz.getTypeParameters()[0].getClass(),
 				clazz,
 				registry.get(clazz.getTypeParameters()[0].getGenericDeclaration()),
 				registry.get(clazz.getTypeParameters()[1].getGenericDeclaration())

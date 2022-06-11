@@ -9,20 +9,21 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecConfigurationException;
-import org.bson.json.JsonReader;
+import org.bson.types.ObjectId;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 
 public class AnyMapCodec<K, T> implements Codec<Map<K, T>> {
 	
+	private final Class<K> keyClass;
 	private final Class<Map<K, T>> encoderClass;
 	private final Codec<K> keyCodec;
 	private final Codec<T> valueCodec;
 	
-	public AnyMapCodec(Class<Map<K, T>> encoderClass, Codec<K> keyCodec, Codec<T> valueCodec) {
+	public AnyMapCodec(Class<K> keyClass, Class<Map<K, T>> encoderClass, Codec<K> keyCodec, Codec<T> valueCodec) {
+		this.keyClass = keyClass;
 		this.encoderClass = encoderClass;
 		this.keyCodec = keyCodec;
 		this.valueCodec = valueCodec;
@@ -34,11 +35,14 @@ public class AnyMapCodec<K, T> implements Codec<Map<K, T>> {
 			dummyWriter.writeStartDocument();
 			writer.writeStartDocument();
 			for (final Map.Entry<K, T> entry : map.entrySet()) {
-				var dummyId = UUID.randomUUID().toString();
-				dummyWriter.writeName(dummyId);
-				keyCodec.encode(dummyWriter, entry.getKey(), encoderContext);
-				//TODO: could it be simpler by something like JsonWriter?
-				writer.writeName(dummyWriter.getDocument().asDocument().get(dummyId).asString().getValue());
+				
+				String name;
+				if(keyClass.isAssignableFrom(ObjectId.class)){
+					name = ((ObjectId)entry.getKey()).toHexString();
+				} else {
+					name = entry.getKey().toString();
+				}
+				writer.writeName(name);
 				valueCodec.encode(writer, entry.getValue(), encoderContext);
 			}
 			dummyWriter.writeEndDocument();
@@ -51,17 +55,19 @@ public class AnyMapCodec<K, T> implements Codec<Map<K, T>> {
 		reader.readStartDocument();
 		Map<K, T> map = getInstance();
 		while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-			//TODO: what if the key is not a String aka not wrapped in double quotes?
-			var nameReader = new JsonReader("{\"key:\":\"" + reader.readName() + "\"}");
-			nameReader.readStartDocument();
-			nameReader.readBsonType();
-			if (reader.getCurrentBsonType() == BsonType.NULL) {
-				map.put(keyCodec.decode(nameReader, context), null);
-				reader.readNull();
+			String keyString = reader.readName();
+			T value = valueCodec.decode(reader, context);
+			K key;
+			
+			if(this.keyClass.isAssignableFrom(ObjectId.class)){
+				key = (K) new ObjectId(keyString);
+			} else if(this.keyClass.isAssignableFrom(String.class)){
+				key = (K) keyString;
 			} else {
-				map.put(keyCodec.decode(nameReader, context), valueCodec.decode(reader, context));
+				throw new IllegalArgumentException("Cannot decode map with key type " + this.keyClass.getName());
 			}
-			nameReader.readEndDocument();
+			
+			map.put(key, value);
 		}
 		reader.readEndDocument();
 		return map;
