@@ -7,6 +7,7 @@ import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ class TrackedStoredValidationTest extends ObjectValidationTest<TrackedStored> {
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
-					.setExpires(ZonedDateTime.now())
+					.setExpires(LocalDate.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
 			)

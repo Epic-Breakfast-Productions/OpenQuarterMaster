@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class InventoryItemTest extends BasicTest {
 	public static void fillCommon(Stored stored) {
 		stored.setCondition(RandomUtils.nextInt(0, 101));
 		stored.setConditionNotes(FAKER.lorem().paragraph());
-		stored.setExpires(ZonedDateTime.now());
+		stored.setExpires(LocalDate.now());
 		
 		for (int j = 0; j < NUM_IMAGES; j++) {
 			stored.getImageIds().add(

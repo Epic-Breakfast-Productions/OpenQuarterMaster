@@ -264,7 +264,7 @@ function setupAddEditForAdd(){
 }
 
 function setupAddEditForEdit(blockId){
-    console.log("Setting up add/edit form for edit.");
+    console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit");
@@ -321,7 +321,7 @@ addEditStorageForm.submit(function(event){
 
     var result = false;
     var verb = "";
-    if(addEditFormMode.val() == "add"){
+    if(addEditFormMode.val() === "add"){
         verb = "Created";
         console.log("Adding new storage block.");
         doRestCall({
@@ -337,7 +337,7 @@ addEditStorageForm.submit(function(event){
                 console.warn("Bad response from token check attempt: " + JSON.stringify(data));
             }
         });
-    } else if(addEditFormMode.val() == "edit") {
+    } else if(addEditFormMode.val() === "edit") {
         verb = "Edited";
         addEditData.id = addEditFormId.val();
         console.log("Editing storage block " + addEditData.id);

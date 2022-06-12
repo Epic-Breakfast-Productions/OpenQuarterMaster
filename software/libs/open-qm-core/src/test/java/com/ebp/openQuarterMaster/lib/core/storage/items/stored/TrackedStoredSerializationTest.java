@@ -4,6 +4,7 @@ import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectSerializationTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ class TrackedStoredSerializationTest extends ObjectSerializationTest<TrackedStor
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
-					.setExpires(ZonedDateTime.now())
+					.setExpires(LocalDate.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
 			)

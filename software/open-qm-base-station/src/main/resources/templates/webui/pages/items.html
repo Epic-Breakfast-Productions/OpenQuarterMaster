@@ -209,6 +209,29 @@ var unitNameRow = $('#unitNameRow');
 var pricePerUnitNameRow = $('#pricePerUnitNameRow');
 var compatibleUnitOptions = "";
 
+
+function foreachStoredType(
+        whenAmountSimple,
+        whenAmountList,
+        whenTracked
+){
+    let value = addEditStoredTypeInput[0].value;
+    
+    if(value === "AMOUNT_SIMPLE"){
+        if(whenAmountSimple !== null) {
+            whenAmountSimple();
+        }
+    } else if(value === "AMOUNT_LIST"){
+        if(whenAmountList !== null) {
+            whenAmountList();
+        }
+    } else if(value === "TRACKED"){
+        if(whenTracked !== null) {
+            whenTracked();
+        }
+    }
+}
+
 function haveStored(){
     return storedContainer.children().length > 0;
 }
@@ -258,31 +281,74 @@ function resetAddEditForm(){
 }
 
 function setupAddEditForAdd(){
+    console.log("Setting up add/edit form for add.");
     resetAddEditForm();
     addEditModalLabel.text("Item Add");
     addEditFormMode.val("add");
 }
 
+function setupAddEditForEdit(itemId){
+    console.log("Setting up add/edit form for editing item " + itemId);
+    resetAddEditForm();
+    addEditModalLabel.text("Item Edit");
+    addEditFormMode.val("edit");
+    
+    doRestCall({
+        spinnerContainer: addEditModal,
+        url: "/api/inventory/item/" + blockId,
+        done: function(data){
+            addSelectedImages(imagesSelected, data.imageIds);
+            addKeywordInputs(keywordInputDiv, data.keywords);
+            addAttInputs(attInputDiv, data.attributes);
+            
+            // addEditFormId.val(blockId);
+            // addEditLabelInput.val(data.label);
+            // addEditLocationInput.val(data.location);
+            //
+            // if(data.parent){
+            //     addEditParentInputId.val(data.parent);
+            //     getStorageBlockLabel(data.parent, function(parentLabel){
+            //         addEditParentInputName.val(parentLabel);
+            //     });
+            // }
+        }
+    });
+    
+}
+
 function setIdAttField(){
     storedContainer.html("");
-    var value = addEditStoredTypeInput[0].value;
-    addEditStoredTypeInput.attr('data-current', "AMOUNT_SIMPLE");
-    if(value === "AMOUNT_SIMPLE" || value === "AMOUNT_LIST") {
+    let value = addEditStoredTypeInput[0].value;
+    
+    if(addEditStoredTypeInput.attr('data-current') == null){
+        addEditStoredTypeInput.attr('data-current', "AMOUNT_SIMPLE");
+    } else {
+        addEditStoredTypeInput.attr('data-current', value);
+    }
+    
+    
+    let whenAmount = function (){
         trackedItemIdentifierNameRow.hide();
         addEditIdentifyingAttInput.prop('required', false);
         unitNameRow.show();
         addEditUnitInput.prop('required',true);
         pricePerUnitNameRow.show();
         addEditPricePerUnitInput.prop('required',true);
-    } else if(value === "TRACKED"){
-        unitNameRow.hide();
-        pricePerUnitNameRow.hide();
-        addEditPricePerUnitInput.prop('required',false);
-        addEditUnitInput.prop('required',false);
-        trackedItemIdentifierNameRow.show();
-        addEditIdentifyingAttInput.prop('required', true);
-        addEditStoredTypeInput.attr('data-current', "TRACKED");
     }
+    
+    foreachStoredType(
+            whenAmount,
+            whenAmount,
+            function(){
+                unitNameRow.hide();
+                pricePerUnitNameRow.hide();
+                addEditPricePerUnitInput.prop('required',false);
+                addEditUnitInput.prop('required',false);
+                trackedItemIdentifierNameRow.show();
+                addEditIdentifyingAttInput.prop('required', true);
+                addEditStoredTypeInput.attr('data-current', "TRACKED");
+            }
+    );
 }
 
 function addEditStoredTypeInputChanged(){
@@ -423,7 +489,7 @@ function addNewAmountStored(formContentId, parentId){
             '          <span class="addEditExpiresDisplay">Expires: <span class="addEditExpiresDisplayText"></span></span>\n'+ //TODO:: expires
             '        </button>\n'+
             '    </h2>\n'+
-            '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+parentId+'">\n'+
+            '    <div id="'+collapseId+'" class="accordion-collapse collapse storage-list-entry" aria-labelledby="'+id+'" data-bs-parent="#'+parentId+'">\n'+
             '        <div class="accordion-body storedContainer">\n'+
             '            ' + getAmountStoredFormElements(headerId, id) +
             '        </div>\n'+
@@ -473,7 +539,7 @@ function addNewTrackedStored(formContentId, caller){
             '          ' + trackedId + '\n' +
             '        </button>\n'+
             '    </h2>\n'+
-            '    <div id="'+collapseId+'" class="accordion-collapse collapse" aria-labelledby="'+id+'" data-bs-parent="#'+formContentId+'">\n'+
+            '    <div id="'+collapseId+'" class="accordion-collapse collapse storage-list-entry" aria-labelledby="'+id+'" data-bs-parent="#'+formContentId+'">\n'+
             '        <div class="accordion-body storedContainer">\n'+
             '            ' + getTrackedStoredFormElements(headerId, id) +
             '        </div>\n'+
@@ -534,41 +600,41 @@ function addStorageBlockAccord(blockName, blockId){
     let accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
     let accordBodyFormContentWrapper = newAccordBody.find("#"+accordFormContentId);
     
-    switch (addEditStoredTypeInput[0].value){
-        case "AMOUNT_SIMPLE":
-            console.log("Setting up storage for AMOUNT_SIMPLE");
+    foreachStoredType(
+            function(){
+                console.log("Setting up storage for AMOUNT_SIMPLE");
     
-            accordBodyFormContentWrapper.append($(
-                    getAmountStoredFormElements(accordHeaderId, accordId)
-            ));
-            break;
-        case "AMOUNT_LIST":
-            console.log("Setting up storage for AMOUNT_LIST");
+                accordBodyFormContentWrapper.append($(
+                        getAmountStoredFormElements(accordHeaderId, accordId)
+                ));
+            },
+            function(){
+                console.log("Setting up storage for AMOUNT_LIST");
     
-            accordBodyButtonWrapper.append($(
-                    '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
-                    '    <i class="fas fa-plus"></i> Add\n'+
-                    '</button>\n'+
-            		'<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-            		'    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
-            		'</button>'
-            ));
-            break;
-        case "TRACKED":
-            console.log("Setting up storage for TRACKED");
-            accordBodyButtonWrapper.append($(
-                    '<div class="input-group mt-2">\n'+
-                    '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
-                    '    <button class="btn btn-outline-success" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
-                    '        <i class="fas fa-plus"></i> Add\n'+
-                    '    </button>\n'+
-                    '</div>'+
-            		'<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-            		'    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
-            		'</button>'
-            ));
-            break;
-    }
+                accordBodyButtonWrapper.append($(
+                        '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
+                        '    <i class="fas fa-plus"></i> Add\n'+
+                        '</button>\n'+
+                        '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
+                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '</button>'
+                ));
+            },
+            function(){
+                console.log("Setting up storage for TRACKED");
+                accordBodyButtonWrapper.append($(
+                        '<div class="input-group mt-2">\n'+
+                        '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
+                        '    <button class="btn btn-outline-success" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
+                        '        <i class="fas fa-plus"></i> Add\n'+
+                        '    </button>\n'+
+                        '</div>'+
+                        '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
+                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '</button>'
+                ));
+            }
+    );
     
     return newAccordBody;
 }
@@ -590,7 +656,6 @@ function buildStoredObj(storedContainer){
             );
         }
     }
-    
     
     {
         let input = storedContainer.find("[name=condition]");
@@ -648,6 +713,7 @@ function removeItem(itemId){
 addEditItemForm.submit(function(event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
+    let storedType = addEditStoredTypeInput[0].value;
     
     let addEditData = {
         name: addEditNameInput.val(),
@@ -656,27 +722,50 @@ addEditItemForm.submit(function(event) {
         storageMap: {}
     };
     
+    let setAmountStoredVars = function(){
+        addEditData["unit"] = addEditUnitInput.val();
+        addEditData["valuePerUnit"] = addEditPricePerUnitInput.val();
+    };
+
+    foreachStoredType(
+            setAmountStoredVars,
+            setAmountStoredVars,
+            function(){
+                addEditData["trackedItemIdentifierName"] = addEditIdentifyingAttInput.val();
+            }
+    );
+    
     addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
     addImagesToData(addEditData, addEditImagesSelected);
     
-    let list = addEditStoredTypeInput[0].value !== "AMOUNT_SIMPLE";
     storedContainer.find(".storageBlock").each(function (i, storageBlockElement) {
         let storageBlockElementJq = $(storageBlockElement);
         let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
         let storedVal;
-        if(list){
-            storedVal = [];
-            storageBlockElementJq.find(".").each(function (j, storedElement){
-                storedVal.append(buildStoredObj($(storedElement)));
-            });
-        } else {
-            storedVal = buildStoredObj(storageBlockElementJq);
-        }
+    
+        foreachStoredType(
+                function(){
+                    storedVal = buildStoredObj(storageBlockElementJq);
+                },
+                function (){
+                    storedVal = [];
+                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
+                        storedVal.push(buildStoredObj($(storedElement)));
+                    });
+                },
+                function(){
+                    storedVal = {};
+                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
+                        let elementJq = $(storedElement);
+                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq);
+                    });
+                }
+        );
+        
         addEditData.storageMap[curStorageId] = storedVal;
     });
     
-    //TODO:: submit data
-    console.log("Data submitted: " + JSON.stringify(addEditData));
+    console.log("Data being submitted: " + JSON.stringify(addEditData));
     let result = false;
     if(addEditFormMode.val() === "add"){
         verb = "Created";
