@@ -850,8 +850,8 @@ function setupView(itemId){
                         done: function(data){
                             carouselData.push({
                                 src: "/api/media/image/" + id + "/data",
-                                alt: data.title,
-                                captionHeading: data.title,
+                                alt: data.name,
+                                captionHeading: data.name,
                                 caption: data.description
                             });
                         }
