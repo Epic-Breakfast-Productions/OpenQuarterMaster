@@ -195,7 +195,7 @@ public class InventoryItemsCrud extends EndpointProvider {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 		log.info("Item found");
-		return Response.status(Response.Status.FOUND).entity(output).build();
+		return Response.status(Response.Status.OK).entity(output).build();
 	}
 	
 	@PUT

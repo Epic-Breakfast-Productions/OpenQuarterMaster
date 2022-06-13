@@ -128,13 +128,6 @@
 <div class="row">
     {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
     <div class="col">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Location in storage:</h5>
-                <div id="storageBlockViewBreadcrumbContainer">
-                </div>
-            </div>
-        </div>
         <div class="card" id="storageBlockViewLocationContainer">
             <div class="card-body">
                 <h5 class="card-title">Location:</h5>
@@ -157,7 +150,7 @@
 </div>
 <div class="row">
     <div class="col">
-        {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
+        {#objView/objHistoryView containerId='itemHistory'}{/objView/objHistoryView}
     </div>
 </div>
 {/modal}
@@ -809,6 +802,73 @@ addEditItemForm.submit(function(event) {
         reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
     }
 });
+
+var itemViewModal = $("#itemViewModal");
+var itemViewModalLabel = $("#itemViewModalLabel");
+
+var itemViewCarousel = $("#itemViewCarousel");
+
+var viewKeywordsSection = $("#viewKeywordsSection");
+var viewAttsSection = $("#viewAttsSection");
+var itemHistory = $("#itemHistory");
+
+function resetView(){
+    itemViewModalLabel.text("");
+    
+    itemHistory.text('');
+    clearCarousel(itemViewCarousel);
+    clearHideKeywordDisplay(viewKeywordsSection);
+    clearHideAttDisplay(viewAttsSection);
+}
+
+function setupView(itemId){
+    console.log("Setting up view for item " + itemId);
+    resetView();
+    
+    itemViewModalLabel.text(itemId);
+    
+    doRestCall({
+        spinnerContainer: itemViewModal,
+        url: "/api/inventory/item/" + itemId,
+        done: function(data){
+            processKeywordDisplay(viewKeywordsSection, data.keywords);
+            processAttDisplay(viewAttsSection, data.attributes);
+            displayObjHistory(itemHistory, data.history);
+            itemViewModalLabel.text(data.name);
+            
+            
+            if(data.imageIds.length){
+                console.log("Item had images to show.");
+                itemViewCarousel.show();
+                var carouselData = [];
+                
+                data.imageIds.forEach(function(id, i){
+                    doRestCall({
+                        spinnerContainer: itemViewCarousel[0],
+                        url: "/api/media/image/" + id,
+                        async: false,
+                        done: function(data){
+                            carouselData.push({
+                                src: "/api/media/image/" + id + "/data",
+                                alt: data.title,
+                                captionHeading: data.title,
+                                caption: data.description
+                            });
+                        }
+                    });
+                });
+                
+                setCarouselImages(itemViewCarousel, carouselData);
+            } else {
+                console.log("Storage block had no images to show.");
+                itemViewCarousel.hide();
+            }
+        },
+        fail: function(){}
+    });
+    
+    
+}
 
 
 </script>
