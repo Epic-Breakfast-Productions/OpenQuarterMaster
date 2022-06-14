@@ -79,14 +79,18 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 	}
 	
 	@Override
-	public BigDecimal valueOfStored() {
-		return this.getStorageMap()
-				   .values()
-				   .stream()
-				   .flatMap((map)->map.values().stream())
-				   .map(TrackedStored::getValue)
-				   .map((BigDecimal d)->d == null ? this.getDefaultValue() : d) //TODO:: test this line
-				   .reduce(BigDecimal.ZERO, BigDecimal::add);
+	public BigDecimal recalcValueOfStored() {
+		this.recalcTotal();
+		this.setValueOfStored(
+			this.getStorageMap()
+				.values()
+				.stream()
+				.flatMap((map)->map.values().stream())
+				.map(TrackedStored::getValue)
+				.map((BigDecimal d)->d == null ? this.getDefaultValue() : d) //TODO:: test this line
+				.reduce(BigDecimal.ZERO, BigDecimal::add)
+		);
+		return this.getValueOfStored();
 	}
 	
 	@Override

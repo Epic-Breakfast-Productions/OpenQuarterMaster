@@ -2,7 +2,6 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -18,9 +17,6 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -138,7 +134,7 @@ class SimpleAmountItemTest extends BasicTest {
 	public void testGetValue(SimpleAmountItem item, BigDecimal valueExpected) {
 		assertEquals(
 			valueExpected,
-			item.valueOfStored()
+			item.getValueOfStored()
 		);
 	}
 	

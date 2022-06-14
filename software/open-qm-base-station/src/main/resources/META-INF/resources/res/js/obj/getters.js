@@ -4,7 +4,7 @@ function getStorageBlockLabel(blockId, doneFunc){
         	spinnerContainer: null,
         	url: "/api/storage/" + blockId,
         	done: function(data){
-        	    doneFunc(data.label)
+        	    doneFunc(data.label);
         	}
     });
 }

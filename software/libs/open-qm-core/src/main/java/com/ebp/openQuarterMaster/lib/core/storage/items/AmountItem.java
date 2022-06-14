@@ -48,7 +48,7 @@ public abstract class AmountItem<T> extends InventoryItem<T> {
 	}
 	
 	@Override
-	public BigDecimal valueOfStored() {
+	public BigDecimal getValueOfStored() {
 		Number totalNum = this.getTotal().getValue();
 		
 		if (totalNum instanceof Double) {

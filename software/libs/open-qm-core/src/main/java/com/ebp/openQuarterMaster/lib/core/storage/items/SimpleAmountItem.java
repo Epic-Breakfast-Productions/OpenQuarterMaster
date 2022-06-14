@@ -49,6 +49,13 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 	}
 	
 	@Override
+	public BigDecimal recalcValueOfStored() {
+		this.recalcTotal();
+		this.setValueOfStored(this.getValuePerUnit().multiply(BigDecimal.valueOf((double) this.getTotal().getValue())));
+		return this.getValueOfStored();
+	}
+	
+	@Override
 	protected AmountStored newTInstance() {
 		throw new UnsupportedOperationException("Don't call this for this class; no reason to need it");
 	}
@@ -80,7 +87,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
 	
 	@Override
-	public BigDecimal valueOfStored() {
+	public BigDecimal getValueOfStored() {
 		Number totalNum = this.getTotal().getValue();
 		
 		if (totalNum instanceof Double) {

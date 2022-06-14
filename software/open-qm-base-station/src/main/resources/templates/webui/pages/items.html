@@ -128,17 +128,54 @@
 <div class="row">
     {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
     <div class="col">
-        <div class="card" id="storageBlockViewLocationContainer">
+        <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Location:</h5>
-                <p class="card-text" id="storageBlockViewLocation"></p>
+                <h5 class="card-title">Storage Type:</h5>
+                <div id="itemViewStorageType">
+                </div>
             </div>
         </div>
-        <div class="card" id="storageBlockViewCapacityContainer">
+        <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Capacities:</h5>
-                <div id="storageBlockViewCapacity">
+                <h5 class="card-title">Description:</h5>
+                <div id="itemViewDescription">
                 </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Held:</h5>
+                <div id="itemViewTotal">
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
+                <div>
+                    {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Value:</h5>
+                <div>
+                    {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col">
+        <div id="itemViewStoredNonePresentContainer">
+            <h4>Nothing Stored</h4>
+        </div>
+        <div id="itemViewStored">
+            <h4>Using <span id="itemViewStoredNum"></span> storage blocks:</h4>
+            <div class="col accordion" id="itemViewStoredAccordion">
             </div>
         </div>
     </div>
@@ -204,25 +241,37 @@ var compatibleUnitOptions = "";
 
 
 function foreachStoredType(
+        storedType,
         whenAmountSimple,
         whenAmountList,
         whenTracked
 ){
-    let value = addEditStoredTypeInput[0].value;
-    
-    if(value === "AMOUNT_SIMPLE"){
+    if(storedType === "AMOUNT_SIMPLE"){
         if(whenAmountSimple !== null) {
             whenAmountSimple();
         }
-    } else if(value === "AMOUNT_LIST"){
+    } else if(storedType === "AMOUNT_LIST"){
         if(whenAmountList !== null) {
             whenAmountList();
         }
-    } else if(value === "TRACKED"){
+    } else if(storedType === "TRACKED"){
         if(whenTracked !== null) {
             whenTracked();
         }
     }
+}
+
+function foreachStoredTypeFromAddEditInput(
+        whenAmountSimple,
+        whenAmountList,
+        whenTracked
+){
+    foreachStoredType(
+            addEditStoredTypeInput[0].value,
+            whenAmountSimple,
+            whenAmountList,
+            whenTracked
+    );
 }
 
 function haveStored(){
@@ -329,7 +378,7 @@ function setIdAttField(){
         addEditPricePerUnitInput.prop('required',true);
     }
     
-    foreachStoredType(
+    foreachStoredTypeFromAddEditInput(
             whenAmount,
             whenAmount,
             function(){
@@ -593,7 +642,7 @@ function addStorageBlockAccord(blockName, blockId){
     let accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
     let accordBodyFormContentWrapper = newAccordBody.find("#"+accordFormContentId);
     
-    foreachStoredType(
+    foreachStoredTypeFromAddEditInput(
             function(){
                 console.log("Setting up storage for AMOUNT_SIMPLE");
     
@@ -720,7 +769,7 @@ addEditItemForm.submit(function(event) {
         addEditData["valuePerUnit"] = addEditPricePerUnitInput.val();
     };
 
-    foreachStoredType(
+    foreachStoredTypeFromAddEditInput(
             setAmountStoredVars,
             setAmountStoredVars,
             function(){
@@ -736,7 +785,7 @@ addEditItemForm.submit(function(event) {
         let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
         let storedVal;
     
-        foreachStoredType(
+        foreachStoredTypeFromAddEditInput(
                 function(){
                     storedVal = buildStoredObj(storageBlockElementJq);
                 },
@@ -805,20 +854,61 @@ addEditItemForm.submit(function(event) {
 
 var itemViewModal = $("#itemViewModal");
 var itemViewModalLabel = $("#itemViewModalLabel");
+var itemViewStoredContainer = $("#itemViewStoredContainer");
+var itemViewStored = $("#itemViewStored");
+var itemViewStoredNonePresentContainer = $("#itemViewStoredNonePresentContainer");
+var itemViewStoredNum = $("#itemViewStoredNum");
+var itemViewStoredAccordion = $("#itemViewStoredAccordion");
+var itemViewTotalVal = $("#itemViewTotalVal");
+var itemViewValPerUnitDefault = $("#itemViewValPerUnitDefault");
+var itemViewValPerUnit = $("#itemViewValPerUnit");
 
 var itemViewCarousel = $("#itemViewCarousel");
+var itemViewStorageType = $("#itemViewStorageType");
+var itemViewDescription = $("#itemViewDescription");
+var itemViewTotal = $("#itemViewTotal");
 
 var viewKeywordsSection = $("#viewKeywordsSection");
 var viewAttsSection = $("#viewAttsSection");
 var itemHistory = $("#itemHistory");
 
 function resetView(){
+    itemViewStoredContainer.text("");
     itemViewModalLabel.text("");
+    itemViewStoredNum.text("");
+    itemViewStored.hide();
+    itemViewStoredNonePresentContainer.hide();
+    itemViewStoredAccordion.text("");
+    itemViewValPerUnitDefault.hide();
+    itemViewValPerUnit.text("");
+    itemViewTotalVal.text("");
+    
+    itemViewStorageType.text("");
+    itemViewDescription.text("");
+    itemViewTotal.text("");
     
     itemHistory.text('');
     clearCarousel(itemViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
+}
+
+function addViewAccordionItem(blockId, content){
+    let accordId = "itemViewAccordBlock" + blockId;
+    itemViewStoredAccordion.append($(
+            '<div class="accordion-item">'+
+            '<h2 class="accordion-header" id="'+accordId+'Header">'+
+                '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordId+'Collapse" aria-expanded="false" aria-controls="'+accordId+'Collapse">'+
+            blockId+ //TODO:: id to real name, image, formatting
+    '</button>'+
+'</h2>'+
+    '<div id="'+accordId+'Collapse" class="accordion-collapse collapse" aria-labelledby="'+accordId+'Header" data-bs-parent="#'+accordId+'Header">'+
+        '<div class="accordion-body">'+
+            content +
+        '</div>'+
+    '</div>'+
+'</div>'
+    ));
 }
 
 function setupView(itemId){
@@ -835,7 +925,10 @@ function setupView(itemId){
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(itemHistory, data.history);
             itemViewModalLabel.text(data.name);
-            
+            itemViewStorageType.text(data.storedType);
+            itemViewDescription.text(data.description);
+            itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
+            itemViewTotalVal.text(data.valueOfStored);
             
             if(data.imageIds.length){
                 console.log("Item had images to show.");
@@ -863,6 +956,54 @@ function setupView(itemId){
                 console.log("Storage block had no images to show.");
                 itemViewCarousel.hide();
             }
+            
+            console.log("Setting up view of stored.");
+            
+            let numStorageBlocks = Object.keys(data.storageMap).length;
+            
+            if(numStorageBlocks === 0){
+                console.log("None stored.");
+                itemViewStoredNonePresentContainer.show();
+            } else {
+                console.log(numStorageBlocks + " stored.");
+                itemViewStoredNum.text(numStorageBlocks);
+                itemViewStored.show();
+            }
+    
+            let showAmountStoredPricePerUnit = function(){
+                itemViewValPerUnit.text(data.valuePerUnit);
+            }
+            foreachStoredType(
+                    data.storedType,
+                    showAmountStoredPricePerUnit,
+                    showAmountStoredPricePerUnit,
+                    function(){
+                        itemViewValPerUnit.text(data.defaultValue);
+                        itemViewValPerUnitDefault.show();
+                    }
+            );
+            
+            
+            
+            Object.keys(data.storageMap).forEach(key =>{
+                console.log("Processing stored under storage block " + key);
+                foreachStoredType(
+                        data.storedType,
+                        function (){
+                            addViewAccordionItem(
+                                    key,
+                                    "hello world simple"
+                            );
+                        },
+                        function (){
+                            addViewAccordionItem(key, "hello world list");
+                        },
+                        function (){
+                            addViewAccordionItem(key, "hello world tracked");
+                        }
+                );
+            });
+            
         },
         fail: function(){}
     });

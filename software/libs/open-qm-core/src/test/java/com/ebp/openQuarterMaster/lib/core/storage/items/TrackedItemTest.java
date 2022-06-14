@@ -126,7 +126,7 @@ class TrackedItemTest extends BasicTest {
 	public void testGetValue(TrackedItem item, BigDecimal valueExpected) {
 		assertEquals(
 			valueExpected,
-			item.valueOfStored()
+			item.getValueOfStored()
 		);
 	}
 	

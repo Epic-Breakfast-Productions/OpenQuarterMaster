@@ -2,6 +2,8 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -78,6 +80,9 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
+	@Setter(AccessLevel.PROTECTED)
+	private BigDecimal valueOfStored = null;
+	
 	
 	/**
 	 * Constructor to make Lombok happy.
@@ -120,11 +125,24 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	public abstract long numStored();
 	
 	/**
+	 * First calls {@link #recalcTotal()}, then calculates the total value of all items stored according to how it should for the type of
+	 * inventory item, and finishes by setting {@link #valueOfStored}.
+	 *
+	 * @return The total that was calculated.
+	 */
+	public abstract BigDecimal recalcValueOfStored();
+	
+	/**
 	 * Gets the total value of all items/ amounts stored.
 	 *
 	 * @return The value of all items/amounts stored.
 	 */
-	public abstract BigDecimal valueOfStored();
+	public BigDecimal getValueOfStored() {
+		if (this.valueOfStored == null) {
+			this.recalcValueOfStored();
+		}
+		return this.valueOfStored;
+	}
 	
 	/**
 	 * Gets a new instance of what holds the T value.

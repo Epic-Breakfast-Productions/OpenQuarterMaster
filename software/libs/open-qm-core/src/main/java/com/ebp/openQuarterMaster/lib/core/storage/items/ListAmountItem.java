@@ -82,6 +82,13 @@ public class ListAmountItem extends InventoryItem<List<@NotNull AmountStored>> {
 		return this;
 	}
 	
+	@Override
+	public BigDecimal recalcValueOfStored() {
+		this.recalcTotal();
+		this.setValueOfStored(this.getValuePerUnit().multiply(BigDecimal.valueOf((double) this.getTotal().getValue())));
+		return this.getValueOfStored();
+	}
+	
 	/*
 	TODO:: use the AmountItem as the superclass, once https://jira.mongodb.org/projects/JAVA/issues/JAVA-4578 resolved.
 	 */
@@ -101,7 +108,7 @@ public class ListAmountItem extends InventoryItem<List<@NotNull AmountStored>> {
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
 	
 	@Override
-	public BigDecimal valueOfStored() {
+	public BigDecimal getValueOfStored() {
 		Number totalNum = this.getTotal().getValue();
 		
 		if (totalNum instanceof Double) {
