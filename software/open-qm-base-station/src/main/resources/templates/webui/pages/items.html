@@ -219,6 +219,7 @@ var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
 
+var addEditFormId = $("#addEditFormId");
 var addEditFormMessages = $("#addEditFormMessages");
 var addEditModalLabel = $('#addEditModalLabel');
 var addEditFormMode = $('#addEditFormMode');
@@ -337,11 +338,30 @@ function setupAddEditForEdit(itemId){
     
     doRestCall({
         spinnerContainer: addEditModal,
-        url: "/api/inventory/item/" + blockId,
+        url: "/api/inventory/item/" + itemId,
         done: function(data){
-            addSelectedImages(imagesSelected, data.imageIds);
-            addKeywordInputs(keywordInputDiv, data.keywords);
-            addAttInputs(attInputDiv, data.attributes);
+            addSelectedImages(addEditImagesSelected, data.imageIds);
+            addKeywordInputs(addEditKeywordDiv, data.keywords);
+            addAttInputs(addEditAttDiv, data.attributes);
+    
+            addEditFormId.val(data.id);
+            addEditNameInput.val(data.name);
+            addEditDescriptionInput.val(data.description);
+            addEditStoredTypeInput.val(data.storedType);
+    
+            let setAmountStoredVars = function(){
+                addEditUnitInput.val(data.unit.string);
+                addEditPricePerUnitInput.val(data.valuePerUnit);
+            };
+    
+            foreachStoredTypeFromAddEditInput(
+                    setAmountStoredVars,
+                    setAmountStoredVars,
+                    function(){
+                        addEditIdentifyingAttInput.val(data.trackedItemIdentifierName);
+                    }
+            );
+            
             
             // addEditFormId.val(blockId);
             // addEditLabelInput.val(data.label);
@@ -896,7 +916,7 @@ function resetView(){
 function addViewAccordionItem(id, content, headerContent, trackedType){
     let accordId = "itemViewAccordBlock" + id;
     
-    //if not string, expected as stored
+    //if not string, expected as stored obj
     if (typeof headerContent !== 'string' && !(headerContent instanceof String)){
         let stored = headerContent;
         headerContent = "";
@@ -988,7 +1008,7 @@ function getStoredViewContent(stored, storedType){
 
 function getAmountStoredContent(stored){
     console.log("Getting view content for simple amount stored.");
-    return getStoredViewContent(stored, storedType);
+    return getStoredViewContent(stored, "AMOUNT_SIMPLE");
 }
 
 function getAmountListStoredContent(blockId, storedList){
