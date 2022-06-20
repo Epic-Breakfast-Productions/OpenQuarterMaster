@@ -54,10 +54,10 @@ function doRestCall(
 	$.ajax(
 		ajaxOps
 	).done(function (data, status, xhr) {
-		console.log("Got successful response (trace id: "+xhr.getResponseHeader("traceId")+"): " + JSON.stringify(data));
+		console.log("Got successful response from "+url+" (trace id: "+xhr.getResponseHeader("traceId")+"): " + JSON.stringify(data));
 		done(data);
 	}).fail(function (data, status, statusStr) {
-		console.warn("Request failed (trace id: "+data.getResponseHeader("traceId")+"): " + JSON.stringify(data));
+		console.warn("Request failed to "+url+" (trace id: "+data.getResponseHeader("traceId")+"): " + JSON.stringify(data));
 
 		var response = data.responseJSON;
 

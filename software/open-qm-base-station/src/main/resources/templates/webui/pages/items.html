@@ -893,13 +893,38 @@ function resetView(){
     clearHideAttDisplay(viewAttsSection);
 }
 
-function addViewAccordionItem(blockId, content){
-    let accordId = "itemViewAccordBlock" + blockId;
-    itemViewStoredAccordion.append($(
-            '<div class="accordion-item">'+
+function addViewAccordionItem(id, content, headerContent, trackedType){
+    let accordId = "itemViewAccordBlock" + id;
+    
+    //if not string, expected as stored
+    if (typeof headerContent !== 'string' && !(headerContent instanceof String)){
+        let stored = headerContent;
+        headerContent = "";
+        
+        let funcForAmount = function (){
+            headerContent += stored.amount.value + stored.amount.unit.symbol;
+        };
+        foreachStoredType(
+                trackedType,
+                funcForAmount,
+                funcForAmount,
+                function (){
+                
+                }
+        );
+    
+        if(stored.condition){
+            headerContent += " Condition: " + stored.condition + "%";
+        }
+        if(stored.expires){
+            headerContent += " Expires: " + stored.expires;
+        }
+    }
+    
+    return '<div class="accordion-item">'+
             '<h2 class="accordion-header" id="'+accordId+'Header">'+
-                '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordId+'Collapse" aria-expanded="false" aria-controls="'+accordId+'Collapse">'+
-            blockId+ //TODO:: id to real name, image, formatting
+                '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordId+'Collapse" aria-expanded="false" aria-controls="'+accordId+'Collapse">'+
+            headerContent+
     '</button>'+
 '</h2>'+
     '<div id="'+accordId+'Collapse" class="accordion-collapse collapse" aria-labelledby="'+accordId+'Header" data-bs-parent="#'+accordId+'Header">'+
@@ -907,8 +932,108 @@ function addViewAccordionItem(blockId, content){
             content +
         '</div>'+
     '</div>'+
-'</div>'
-    ));
+'</div>';
+}
+
+function addViewStorageBlocksAccordionItem(blockId, content, stored){
+    return itemViewStoredAccordion.append($(addViewAccordionItem(blockId, content, stored)));
+}
+
+function getBlockViewCell(name, value){
+    return '<div class="col"><h5>'+name+':</h5><p>'+ value +'</p></div>';
+}
+
+function getStorageBlockAmountHeldView(stored, storedType){
+    if(storedType.includes("AMOUNT")) {
+        return getBlockViewCell("Stored", stored.amount.value + stored.amount.unit.symbol);
+    }
+    return "";
+}
+function getStorageBlockIdentifyingDetailsView(stored, storedType){
+    if(storedType.includes("TRACKED") && stored.identifyingDetails) {
+        return getBlockViewCell("Identifying Details", stored.identifyingDetails);
+    }
+    return "";
+}
+
+function getStorageBlockConditionView(stored){
+    if(stored.condition) {
+        return getBlockViewCell("Condition", stored.condition + "%");
+    }
+    return "";
+}
+function getStorageBlockConditionNotesView(stored){
+    if(stored.conditionNotes) {
+        return getBlockViewCell("Condition Notes", stored.conditionNotes);
+    }
+    return "";
+}
+function getStorageBlockExpiresView(stored){
+    if(stored.expires) {
+        return getBlockViewCell("Expires", stored.expires);
+    }
+    return "";
+}
+
+function getStoredViewContent(stored, storedType){
+    return '<div class="row">' +
+            getStorageBlockAmountHeldView(stored, storedType)+
+            getStorageBlockIdentifyingDetailsView(stored, storedType)+
+            getStorageBlockConditionView(stored)+
+            getStorageBlockConditionNotesView(stored)+
+            getStorageBlockExpiresView(stored)+
+            '</div>';
+    //TODO:: images, keywords, atts
+}
+
+function getAmountStoredContent(stored){
+    console.log("Getting view content for simple amount stored.");
+    return getStoredViewContent(stored, storedType);
+}
+
+function getAmountListStoredContent(blockId, storedList){
+    console.log("Getting view content for list amount stored.");
+    let accordId = "itemViewStored"+blockId+"Accordion";
+    
+    
+    let i = 0;
+    let accordContent = "";
+    storedList.forEach(function (curStored){
+            accordContent += addViewAccordionItem(
+                    accordId + i,
+                    getStoredViewContent(curStored, "AMOUNT_LIST"),
+                    curStored,
+                    "AMOUNT_LIST"
+            );
+            i++;
+    });
+    
+    
+    return '<div class="row"> ' +
+            '<div class="col accordion" id="'+accordId+'">'+
+            accordContent +
+    '</div>'+
+    '</div>';
+}
+
+function getTrackedStoredContent(blockId, trackedMap){
+    console.log("Getting view content for tracked stored.");
+    let accordId = "itemViewStored"+blockId+"Accordion";
+    
+    let accordContent = "";
+    Object.keys(trackedMap).forEach(key => {
+        accordContent += addViewAccordionItem(
+                accordId + key,
+                getStoredViewContent(trackedMap[key], "TRACKED"),
+                key
+        );
+    });
+    
+    return '<div class="row"> ' +
+            '<div class="col accordion" id="'+accordId+'">'+
+            accordContent +
+            '</div>'+
+            '</div>';
 }
 
 function setupView(itemId){
@@ -983,29 +1108,47 @@ function setupView(itemId){
                     }
             );
             
-            
-            
             Object.keys(data.storageMap).forEach(key =>{
                 console.log("Processing stored under storage block " + key);
+                let curBlockName = key;
+                //TODO:: do this after, as async call
+                doRestCall({
+                    spinnerContainer: null,
+                    url: "/api/storage/" + key,
+                    async: false,
+                    done: function(data){
+                        curBlockName = data.label;
+                    }
+                });
+                
                 foreachStoredType(
                         data.storedType,
                         function (){
-                            addViewAccordionItem(
+                            addViewStorageBlocksAccordionItem(
                                     key,
-                                    "hello world simple"
+                                    getAmountStoredContent(data.storageMap[key]),
+                                    curBlockName
                             );
                         },
                         function (){
-                            addViewAccordionItem(key, "hello world list");
+                            addViewStorageBlocksAccordionItem(
+                                    key,
+                                    getAmountListStoredContent(key, data.storageMap[key]),
+                                    curBlockName
+                            );
                         },
                         function (){
-                            addViewAccordionItem(key, "hello world tracked");
+                            addViewStorageBlocksAccordionItem(
+                                    key,
+                                    getTrackedStoredContent(key, data.storageMap[key]),
+                                    curBlockName
+                            );
                         }
                 );
             });
             
         },
-        fail: function(){}
+        fail: function(){ }
     });
     
     
