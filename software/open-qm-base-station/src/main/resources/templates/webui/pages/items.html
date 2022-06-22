@@ -839,7 +839,6 @@ function removeItem(itemId){
 addEditItemForm.submit(function(event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
-    let storedType = addEditStoredTypeInput[0].value;
     
     let addEditData = {
         name: addEditNameInput.val(),
@@ -909,13 +908,13 @@ addEditItemForm.submit(function(event) {
                 console.warn("Bad response from token check attempt: " + JSON.stringify(data));
             }
         });
-    } else if(addEditFormMode.val() == "edit") {
+    } else if(addEditFormMode.val() === "edit") {
         verb = "Edited";
         addEditData.id = addEditFormId.val();
         console.log("Editing storage block " + addEditData.id);
         
         doRestCall({
-            url: "/api/storage/" + addEditData.id,
+            url: "/api/inventory/item/" + addEditData.id,
             method: "PUT",
             data: addEditData,
             async: false,
