@@ -83,6 +83,7 @@
             <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
         </div>
     </div>
+    <!-- TODO:: default value -->
     <div class="mb-3 row" id="unitNameRow">
         <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
         <div class="col-sm-10">
@@ -162,6 +163,14 @@
                 <h5 class="card-title">Total Value:</h5>
                 <div>
                     {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                </div>
+            </div>
+        </div>
+        <div class="card" id="itemViewIdentifyingAttContainer">
+            <div class="card-body">
+                <h5 class="card-title">Identifying Attribute:</h5>
+                <div id="itemViewIdentifyingAtt">
+                
                 </div>
             </div>
         </div>
@@ -330,6 +339,29 @@ function setupAddEditForAdd(){
     addEditFormMode.val("add");
 }
 
+function setStoredItemVales(storedDivJq, storedData){
+    let forAmount = function(){
+        storedDivJq.find("[name=amountStored]")[0].value = storedData.amount.value;
+        storedDivJq.find("[name=amountStoredUnit]")[0].value = storedData.amount.unit.string;
+    };
+    foreachStoredTypeFromAddEditInput(
+            forAmount,
+            forAmount,
+            function(){
+                storedDivJq.find("[name=identifyingDetails]")[0].value = storedData.identifyingDetails;
+    
+            }
+    );
+    
+    storedDivJq.find("[name=condition]")[0].value = storedData.condition;
+    storedDivJq.find("[name=conditionDetails]")[0].value = storedData.conditionNotes;
+    storedDivJq.find("[name=expires]")[0].value = storedData.expires;
+    
+    addSelectedImages(storedDivJq.find(".imagesSelected"), storedData.imageIds);
+    addKeywordInputs(storedDivJq.find(".keywordInputDiv"), storedData.keywords);
+    addAttInputs(storedDivJq.find(".attInputDiv"), storedData.attributes);
+}
+
 function setupAddEditForEdit(itemId){
     console.log("Setting up add/edit form for editing item " + itemId);
     resetAddEditForm();
@@ -348,6 +380,7 @@ function setupAddEditForEdit(itemId){
             addEditNameInput.val(data.name);
             addEditDescriptionInput.val(data.description);
             addEditStoredTypeInput.val(data.storedType);
+            addEditStoredTypeInputChanged();
     
             let setAmountStoredVars = function(){
                 addEditUnitInput.val(data.unit.string);
@@ -361,18 +394,49 @@ function setupAddEditForEdit(itemId){
                         addEditIdentifyingAttInput.val(data.trackedItemIdentifierName);
                     }
             );
-            
-            
-            // addEditFormId.val(blockId);
-            // addEditLabelInput.val(data.label);
-            // addEditLocationInput.val(data.location);
-            //
-            // if(data.parent){
-            //     addEditParentInputId.val(data.parent);
-            //     getStorageBlockLabel(data.parent, function(parentLabel){
-            //         addEditParentInputName.val(parentLabel);
-            //     });
-            // }
+    
+            Object.keys(data.storageMap).forEach(curStorageBlockId => {
+                let newStorageBody = addStorageBlockAccord("", curStorageBlockId);
+                
+                getStorageBlockLabel(curStorageBlockId, function (blockName){
+                    newStorageBody.parent().parent().find(".storageBlockName").text(blockName);
+                });
+                
+                let storageBlockEntriesContainer = newStorageBody.find(".storageBlockEntriesContainer");
+                
+                foreachStoredTypeFromAddEditInput(
+                        function(){
+                            setStoredItemVales(newStorageBody, data.storageMap[curStorageBlockId]);
+                        },
+                        function (){
+                            data.storageMap[curStorageBlockId].forEach(function(curStorageBlock){
+                                newStorageBody.find(".addAmountStoredButton").trigger("click");
+    
+                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
+                                setStoredItemVales(
+                                        $(storedContList[storedContList.length - 1]),
+                                        curStorageBlock
+                                );
+                            });
+                        },
+                        function(){
+                            let addItemField = newStorageBody.find(".identifierValueInput")[0];
+                            let addItemButton = newStorageBody.find(".addTrackedItemButton")[0];
+                            Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
+                                addItemField.value = curItemIdentifier;
+                                addItemButton.click();
+                                
+                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
+                                setStoredItemVales(
+                                        $(storedContList[storedContList.length - 1]),
+                                        data.storageMap[curStorageBlockId][curItemIdentifier]
+                                );
+                            });
+                            addItemField.value = "";
+                        }
+                );
+                
+            });
         }
     });
     
@@ -618,11 +682,11 @@ function addNewTrackedStored(formContentId, caller){
 
 function updateStorageNumHeld(caller){
     //TODO:: search for parent with class (not working)
-    var parentAccord = $(caller).parent(".storedAccordion");
-    
-    parentAccord.find(".storageNumHeld").get(0).text(
-            parentAccord.find(".storedItem").length
-    );
+    // var parentAccord = $(caller).parent(".storedAccordion");
+    //
+    // parentAccord.find(".storageNumHeld").get(0).text(
+    //         parentAccord.find(".storedItem").length
+    // );
 }
 
 function addStorageBlockAccord(blockName, blockId){
@@ -645,13 +709,13 @@ function addStorageBlockAccord(blockName, blockId){
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
       '                <img class="accordion-thumb" src="/api/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
-      '                '+blockName+'\n'+
+      '                <span class="storageBlockName">'+blockName+'</span>\n'+
       '                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
       '            </button>\n'+
       '        </h2>\n'+
       '        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#storedContainer">\n' +
       '            <div class="accordion-body" id="'+accordBodyId+'">\n'+
-      '                <div id="'+accordFormContentId+'" class="accordion '+STORAGE_CLASS+'" data-storageBlockId="'+blockId+'"></div>\n'+
+      '                <div id="'+accordFormContentId+'" class="accordion '+STORAGE_CLASS+' storageBlockEntriesContainer" data-storageBlockId="'+blockId+'"></div>\n'+
       '                <div id="'+accordButtonWrapperId+'" class="col d-grid gap-2"></div>\n'+
       '            </div>\n'+
       '        </div>\n'+
@@ -674,7 +738,7 @@ function addStorageBlockAccord(blockName, blockId){
                 console.log("Setting up storage for AMOUNT_LIST");
     
                 accordBodyButtonWrapper.append($(
-                        '<button type="button" class="btn btn-sm btn-success mt-2" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
+                        '<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
                         '    <i class="fas fa-plus"></i> Add\n'+
                         '</button>\n'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
@@ -687,7 +751,7 @@ function addStorageBlockAccord(blockName, blockId){
                 accordBodyButtonWrapper.append($(
                         '<div class="input-group mt-2">\n'+
                         '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
-                        '    <button class="btn btn-outline-success" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
+                        '    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
                         '        <i class="fas fa-plus"></i> Add\n'+
                         '    </button>\n'+
                         '</div>'+
@@ -707,7 +771,7 @@ function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
 }
 
 function buildStoredObj(storedContainer){
-    let output = {};
+    let output = { };
     
     {
         let amountInput = storedContainer.find("[name=amountStored]");
@@ -781,7 +845,7 @@ addEditItemForm.submit(function(event) {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
         storedType: addEditStoredTypeInput.val(),
-        storageMap: {}
+        storageMap: { }
     };
     
     let setAmountStoredVars = function(){
@@ -887,6 +951,8 @@ var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
 var itemViewDescription = $("#itemViewDescription");
 var itemViewTotal = $("#itemViewTotal");
+var itemViewIdentifyingAttContainer = $("#itemViewIdentifyingAttContainer");
+var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
 
 var viewKeywordsSection = $("#viewKeywordsSection");
 var viewAttsSection = $("#viewAttsSection");
@@ -902,6 +968,9 @@ function resetView(){
     itemViewValPerUnitDefault.hide();
     itemViewValPerUnit.text("");
     itemViewTotalVal.text("");
+    
+    itemViewIdentifyingAttContainer.hide();
+    itemViewIdentifyingAtt.text("");
     
     itemViewStorageType.text("");
     itemViewDescription.text("");
@@ -1125,6 +1194,9 @@ function setupView(itemId){
                     function(){
                         itemViewValPerUnit.text(data.defaultValue);
                         itemViewValPerUnitDefault.show();
+    
+                        itemViewIdentifyingAtt.text(data.trackedItemIdentifierName);
+                        itemViewIdentifyingAttContainer.show();
                     }
             );
             

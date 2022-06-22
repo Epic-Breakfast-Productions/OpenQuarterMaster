@@ -35,6 +35,7 @@ dependencies {
 
     // https://quarkus.io/guides/logging
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
     //webjars
     implementation 'org.webjars:jquery:3.6.0'
     implementation 'org.webjars:bootstrap:5.1.3'
