@@ -11,9 +11,11 @@ import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -33,6 +35,7 @@ import javax.ws.rs.core.Response;
 import java.util.stream.Stream;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.setupJwtCall;
+import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -62,15 +65,30 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
 		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
-			.contentType(ContentType.JSON)
-			.body(objectMapper.writeValueAsString(item))
-			.when()
-			.post()
-			.then();
+										   .contentType(ContentType.JSON)
+										   .body(objectMapper.writeValueAsString(item))
+										   .when()
+										   .post()
+										   .then();
 		
 		response.statusCode(Response.Status.CREATED.getStatusCode());
 		
 		ObjectId returned = response.extract().body().as(ObjectId.class);
+		
+		log.info("Got object id back from create request: {}", returned);
+		return returned;
+	}
+	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
+		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+										   .contentType(ContentType.JSON)
+										   .body(objectMapper.writeValueAsString(updateData))
+										   .when()
+										   .put(id.toHexString())
+										   .then();
+		
+		response.statusCode(Response.Status.OK.getStatusCode());
+		
+		InventoryItem returned = response.extract().body().as(InventoryItem.class);
 		
 		log.info("Got object id back from create request: {}", returned);
 		return returned;
@@ -145,5 +163,19 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		item.setId(returned);
 		
 		assertEquals(item, stored);
+	}
+	
+	@Test
+	public void testUpdateTrackedItem() throws JsonProcessingException {
+		User user = this.testUserService.getTestUser(false, true);
+		TrackedItem item = (TrackedItem) new TrackedItem()
+											 .setTrackedItemIdentifierName("id")
+											 .setName(FAKER.commerce().productName());
+		item.add(ObjectId.get(), "1", new TrackedStored());
+		ObjectId returned = create(user, item);
+		
+		ObjectNode updateData = OBJECT_MAPPER.createObjectNode();
+		updateData.put("name", FAKER.commerce().productName());
+		
 	}
 }

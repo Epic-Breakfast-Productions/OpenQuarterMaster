@@ -321,6 +321,7 @@ function resetAddEditForm(){
     addEditModalLabel.text("Item");
     addEditPricePerUnitInput.val("0.00");
     addEditIdentifyingAttInput.val("");
+    addEditStoredTypeInput.prop( "disabled", false );
     addEditStoredTypeInput.val($("#addEditStoredTypeInput option:first").val());
     addEditUnitInput.val($("#addEditUnitInput option:first").val());
     
@@ -367,6 +368,7 @@ function setupAddEditForEdit(itemId){
     resetAddEditForm();
     addEditModalLabel.text("Item Edit");
     addEditFormMode.val("edit");
+    addEditStoredTypeInput.prop( "disabled", true );
     
     doRestCall({
         spinnerContainer: addEditModal,
@@ -848,7 +850,9 @@ addEditItemForm.submit(function(event) {
     };
     
     let setAmountStoredVars = function(){
-        addEditData["unit"] = addEditUnitInput.val();
+        addEditData["unit"] = {
+            string:addEditUnitInput.val()
+        };
         addEditData["valuePerUnit"] = addEditPricePerUnitInput.val();
     };
 
@@ -910,11 +914,11 @@ addEditItemForm.submit(function(event) {
         });
     } else if(addEditFormMode.val() === "edit") {
         verb = "Edited";
-        addEditData.id = addEditFormId.val();
-        console.log("Editing storage block " + addEditData.id);
+        let id = addEditFormId.val();
+        console.log("Editing storage block " + id);
         
         doRestCall({
-            url: "/api/inventory/item/" + addEditData.id,
+            url: "/api/inventory/item/" + id,
             method: "PUT",
             data: addEditData,
             async: false,

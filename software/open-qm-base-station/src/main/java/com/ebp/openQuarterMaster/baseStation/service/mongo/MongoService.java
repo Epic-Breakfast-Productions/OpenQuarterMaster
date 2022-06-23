@@ -220,16 +220,24 @@ public abstract class MongoService<T extends MainObject> {
 	
 	public T update(ObjectId id, ObjectNode updateJson, User user) {
 		assertNotNullUser(user);
+		if (updateJson.has("id")) {
+			throw new IllegalArgumentException("Not allowed to update id of an object manually.");
+		}
 		if (updateJson.has("history")) {
 			throw new IllegalArgumentException("Not allowed to update history of an object manually.");
 		}
 		T object = this.get(id);
 		
+		if(object == null){
+			throw new IllegalArgumentException("Object to update does not exist.");
+		}
+		
 		ObjectReader reader = objectMapper
 			.readerForUpdating(object)
 			.with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
-			reader.readValue(updateJson, this.clazz);
+			//TODO:: enable different types, for InventoryItem (fails to deal with the abstract type)
+			reader.readValue(updateJson, object.getClass());
 		} catch(IOException e) {
 			throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
 		}
