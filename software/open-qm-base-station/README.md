@@ -47,15 +47,21 @@ Native-specific tests:
 
 ## TODOS:
 
+- Overview
+  - create "explore" and "stats" section; start at explore.
+  - explore
+    - start at all top-level storage blocks, allow drilling down to items held
+    - search for items/blocks, show there
+  - stats
+    - \# of items, blocks
+    - come up with helpful stats to show
 - Storage
   - do all stats
   - handle breadcrumb links
 - Items
-  - Add item
-  - edit item
-  - delete item
   - stats
-  - fix image selection
+  - UI tweaks
+    - view improvements
 - Overview
   - stats
 - Image management
