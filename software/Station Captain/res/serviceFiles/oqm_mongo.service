@@ -1,0 +1,15 @@
+[Unit]
+Description=Mongo server for Open Quartermaster
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || /usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/db/oqm_mongo/:/data/db -d mongo"
+ExecStart=/usr/bin/docker start -a oqm_mongo
+ExecStop=/usr/bin/docker stop -t 10 oqm_mongo
+
+[Install]
+WantedBy=multi-user.target

@@ -41,4 +41,4 @@ If you want to learn more about building native executables, please consult http
 
 `docker run --name jaeger -p 8090:16686 -p 8091:14268 jaegertracing/all-in-one:latest`
 
-`xdocker start oqm_mongo jaeger`
+`docker start oqm_mongo jaeger`

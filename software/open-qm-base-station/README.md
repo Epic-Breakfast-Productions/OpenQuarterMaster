@@ -68,6 +68,7 @@ Native-specific tests:
   - overall stats
   - responsive design tweaks
   - testing for large images
+  - Allow for image upload on image select
 - User
   - external
     - view your infos
@@ -81,4 +82,5 @@ Native-specific tests:
       - search users
 - REST
   - handle ParseException for expired, bad tokens for UI
+  - in self mode, kill session for users that don't exist
 - Testing
