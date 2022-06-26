@@ -7,6 +7,12 @@
 # https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
 #
 
+# requires:
+#  - dialog
+#  - podman
+#  - hwinfo
+
+
 CAPT_VERSION="1.0.0-DEV"
 HOME_GIT="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
 SHARED_CONFIG_DIR="/etc/oqm/"
@@ -15,6 +21,7 @@ AUTO_UPDATE_HOST_CRONTAB_FILE="autoUpdateOs"
 SELECTION=""
 DEFAULT_WIDTH=55
 DEFAULT_HEIGHT=15
+WIDE_WIDTH=80
 # How the user is interacting with this script. Either "ui" or "direct"
 INTERACT_MODE="ui";
 
@@ -25,6 +32,7 @@ DIALOG=dialog
 function exitProg(){
 	clear;
 	echo "Exiting."
+	rm "$USER_SELECT_FILE";
 	exit
 }
 
@@ -35,11 +43,12 @@ function updateSelection(){
 
 
 function displayBaseOsInfo(){
-	# TODO:: parse out most relevant os info
-	# TODO:: get hardware info
+	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
+	# TODO: format better
 	$DIALOG --title "Host OS Info" \
-	--msgbox "$(cat /etc/os-release)" 30 $DEFAULT_WIDTH
+	--msgbox "Ip Address(es): $(hostname -I)\n\n$(cat /etc/os-release)\n\n$(uname -a)\n\nhwinfo:\n$(hwinfo --short)\n\nUSB devices:\n$(lsusb)\n\nDisk usage:\n$(df -H)" 30 $WIDE_WIDTH
 }
+
 function displayOQMInfo(){
 	# TODO:: parse out most relevant OQM info
 	$DIALOG --title "Open QuarterMaster Info" \
@@ -69,9 +78,26 @@ function getInfo(){
 
 function updateBaseSystem(){
 	$DIALOG --infobox "Updating Base OS. Please wait." 3 $DEFAULT_WIDTH
-	# TODO:: update base system, based on what distro we are on
-	sleep 2
+	# update base system, based on what distro we are on
+	result="";
+	resultReturn=0;
+	# TODO::: why no work? error during apt, but no err captured
+	if [ -n "$(command -v yum)"]; then
+		result="$(yum update -y)";
+		resultReturn=$?;
+	elif [ -n "$(command -v apt)"]; then
+		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)";
+		resultReturn=$?;
+	else
+		$DIALOG --title "ERROR: could not update" \
+	--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." 30 $DEFAULT_WIDTH
+	fi
 	
+	if [ $resultReturn -ne 0 ]; then
+		$DIALOG --title "ERROR: Failed to update" \
+	--msgbox "Error updating. Output from command:\n\n${result}" 30 $WIDE_WIDTH
+	fi
+		
 	$DIALOG --title "OS Updates Complete"  --yesno "Restart?" 6 $DEFAULT_WIDTH
 	
 	case $? in
@@ -126,25 +152,28 @@ function mainUi(){
 	while true; do
 		$DIALOG --title "Open QuarterMaster Station Captain V${CAPT_VERSION}" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT\
-		1 "Info" \
-		2 "Overall Settings" \
-		3 "Manage Base Station" \
-		4 "Manage Plugins" \
-		5 "Manage Base OS" \
+		1 "Status" \
+		2 "Info" \
+		3 "Overall Settings" \
+		4 "Manage Base Station" \
+		5 "Manage Plugins" \
+		6 "Manage Base OS" \
 		2>$USER_SELECT_FILE
 		
 		updateSelection;
 		
 		case $SELECTION in
-			1) getInfo
+			1) getInfo # TODO: status of system
 			;;
-			2) # TODO: overall settings
+			2) getInfo
 			;;
-			3) # TODO: Manage base station
+			3) # TODO: overall settings
 			;;
-			4) # TODO: manage plugins
+			4) # TODO: Manage base station
 			;;
-			5) baseOsDialog
+			5) # TODO: manage plugins
+			;;
+			6) baseOsDialog
 			;;
 			*) return
 			;;
