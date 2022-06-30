@@ -339,11 +339,11 @@ addEditStorageForm.submit(function(event){
         });
     } else if(addEditFormMode.val() === "edit") {
         verb = "Edited";
-        addEditData.id = addEditFormId.val();
-        console.log("Editing storage block " + addEditData.id);
+        let id = addEditFormId.val();
+        console.log("Editing storage block " + id);
 
         doRestCall({
-            url: "/api/storage/" + addEditData.id,
+            url: "/api/storage/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
