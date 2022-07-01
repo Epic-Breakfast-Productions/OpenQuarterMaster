@@ -50,7 +50,7 @@ demo:
   readTimeout: 10000
   recurseLevel: 10
   perform: false
-
+  
 quarkus:
   rest-client:
     keycloak:
@@ -107,6 +107,8 @@ quarkus:
   #    metrics:
   #      enabled: true
   http:
+    limits:
+      max-body-size: 95M
     auth:
       proactive: false
     access-log:

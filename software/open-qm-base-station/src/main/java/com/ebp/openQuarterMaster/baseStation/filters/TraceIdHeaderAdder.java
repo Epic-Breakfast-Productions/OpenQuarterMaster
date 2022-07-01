@@ -24,6 +24,14 @@ public class TraceIdHeaderAdder implements ContainerResponseFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		responseContext.getHeaders().add("serviceId", this.serviceId);
-		responseContext.getHeaders().add("traceId", this.tracer.activeSpan().context().toTraceId());
+		
+		String traceId = "";
+		if(this.tracer.activeSpan() != null) {
+			traceId = this.tracer
+				.activeSpan()
+				.context()
+				.toTraceId();
+		}
+		responseContext.getHeaders().add("traceId", traceId);
 	}
 }

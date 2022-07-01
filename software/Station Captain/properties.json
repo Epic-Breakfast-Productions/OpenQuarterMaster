@@ -1,3 +1,19 @@
 {
-	"version":"1.0.0-DEV"
+	"packageName":"Open-QuarterMaster-Station-Captain",
+	"version":"1.0.0-DEV",
+	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
+	"maintainer": {
+		"name":"EBP"
+	},
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain",
+	"dependencies": {
+		"deb":"bash, hwinfo",
+		"rpm":"bash, hwinfo"
+	},
+	"copyright": {
+		"contact":"Greg Stewart <contact@gjstewart.net>",
+		"copyright":"2021-2022 Greg Stewart",
+		"licence":"GPL-3+"
+	}
+	
 }

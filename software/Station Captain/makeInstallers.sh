@@ -12,6 +12,7 @@
 #   - dpkg-dev
 #   - rpm
 #   - rpmlint
+#   - jq
 #
 
 configFile="properties.json"
@@ -23,7 +24,7 @@ debDir="StationCaptainDeb"
 # Clean
 #
 
-rm -rf "$buildDir/*"
+rm -rf "$buildDir"
 
 #
 # Setup
@@ -41,20 +42,35 @@ mkdir "$buildDir/$debDir/din"
 
 cp oqm-captain.sh "$buildDir/$debDir/din/oqm-captain"
 
-# TODO:: reoplace with real info
+# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/control"
-Package: Open-QuarterMaster-Station-Captain
-Version: 1.0.0-DEV
-Maintainer: EBP
+Package: $(cat "$configFile" | jq -r '.packageName')
+Version: $(cat "$configFile" | jq -r '.version')
+Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all
-Description: hello world
-Homepage: homepage
-Depends: bash, hwinfo
+Description: $(cat "$configFile" | jq -r '.description')
+Homepage: $(cat "$configFile" | jq -r '.homepage')
+Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
+Licence: $(cat "$configFile" | jq -r '.copyright.licence')
+EOT
+
+cat <<EOT >> "$buildDir/$debDir/DEBIAN/copyright"
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Open QuarterMaster Station Captain
+Upstream-Contact: $(cat "$configFile" | jq -r '.copyright.contact')
+Source: $(cat "$configFile" | jq -r '.homepage')
+
+Files: *
+Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
+License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
 dpkg-deb --build "$buildDir/$debDir" "bin/"
 
 
+#
+# RPM build
+#
 
 
