@@ -220,8 +220,8 @@ public abstract class MongoService<T extends MainObject> {
 	
 	public T update(ObjectId id, ObjectNode updateJson, User user) {
 		assertNotNullUser(user);
-		if (updateJson.has("id")) {
-			throw new IllegalArgumentException("Not allowed to update id of an object manually.");
+		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
+			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
 		if (updateJson.has("history")) {
 			throw new IllegalArgumentException("Not allowed to update history of an object manually.");
