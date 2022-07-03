@@ -110,6 +110,15 @@ function updateBaseSystem(){
 	esac
 }
 
+# https://www.cyberciti.biz/faq/how-to-set-up-automatic-updates-for-ubuntu-linux-18-04/
+# https://fedoraproject.org/wiki/AutoUpdates
+function enableAutoUpdate(){
+	echo "TODO";
+}
+function disableAutoUpdate(){
+	echo "TODO";
+}
+
 function enableAutomaticOsUpdates(){
 	$DIALOG --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	#TODO:: this

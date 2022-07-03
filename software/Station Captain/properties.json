@@ -7,7 +7,7 @@
 	},
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain",
 	"dependencies": {
-		"deb":"bash, hwinfo",
+		"deb":"bash, hwinfo, unattended-upgrades, apt-listchanges, bsd-mailx",
 		"rpm":"bash, hwinfo"
 	},
 	"copyright": {

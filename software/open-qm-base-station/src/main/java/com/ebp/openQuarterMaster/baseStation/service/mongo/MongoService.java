@@ -26,6 +26,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -50,7 +51,13 @@ public abstract class MongoService<T extends MainObject> {
 	}
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
-	private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+	private static final Validator VALIDATOR;//TODO:: move to constructor?
+	
+	static {
+		try(ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()){
+			VALIDATOR = validatorFactory.getValidator();
+		}
+	}
 	
 	/**
 	 * TODO:: check if real user. Get userService in constructor?
