@@ -1,5 +1,12 @@
+# Service file for running an instance of Jaeger.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  TODO:: how to update image used?
+
 [Unit]
 Description=Jaeger server for Open Quartermaster
+Documentation=
 After=docker.service
 Wants=network-online.target docker.socket
 Requires=docker.socket
