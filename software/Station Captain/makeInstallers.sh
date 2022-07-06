@@ -38,9 +38,9 @@ mkdir "$buildDir"
 
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
-mkdir "$buildDir/$debDir/din"
+mkdir "$buildDir/$debDir/bin"
 
-cp oqm-captain.sh "$buildDir/$debDir/din/oqm-captain"
+cp oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
