@@ -1,0 +1,10 @@
+{
+	"maintainer": {
+		"name":"EBP"
+	},
+	"copyright": {
+		"contact":"Greg Stewart <contact@gjstewart.net>",
+		"copyright":"2021-2022 Greg Stewart",
+		"licence":"GPL-3+"
+	}
+}

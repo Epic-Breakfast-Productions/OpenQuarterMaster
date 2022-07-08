@@ -1,0 +1,6 @@
+{
+	"packageName":"Open-QuarterMaster-Mongo",
+	"version":"1.0.0",
+	"description":"MongoDb instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo"
+}
