@@ -54,24 +54,49 @@ for curPackage in ${packages[@]}; do
 	cat <<EOT >> "$packageDebDir/DEBIAN/control"
 Package: $(cat "$packageConfigFile" | jq -r '.packageName')
 Version: $(cat "$packageConfigFile" | jq -r '.version')
+Section: Open QuarterMaster
 Maintainer: $(cat "$mainConfigFile" | jq -r '.maintainer.name')
+Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
 Depends: docker
-Licence: $(cat "$mainConfigFile" | jq -r '.copyright.licence')
 EOT
-	# TODO:: enable service after install
-#	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
-#Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-#Upstream-Name: Open QuarterMaster Station Captain
-#Upstream-Contact: $(cat "$mainConfigFile" | jq -r '.copyright.contact')
-#Source: $(cat "$packageConfigFile" | jq -r '.homepage')
-#
-#Files: *
-#Copyright: $(cat "$mainConfigFile" | jq -r '.copyright.copyright')
-#License: $(cat "$mainConfigFile" | jq -r '.copyright.licence')
-#EOT
+
+	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: $(cat "$packageConfigFile" | jq -r '.packageName')
+Upstream-Contact: $(cat "$mainConfigFile" | jq -r '.copyright.contact')
+Source: $(cat "$packageConfigFile" | jq -r '.homepage')
+
+Files: *
+Copyright: $(cat "$mainConfigFile" | jq -r '.copyright.copyright')
+License: $(cat "$mainConfigFile" | jq -r '.copyright.licence')
+
+EOT
+
+	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
+#!/bin/bash
+
+systemctl enable oqm_$curPackage.service
+systemctl start oqm_$curPackage.service
+EOT
+	chmod +x "$packageDebDir/DEBIAN/postinst"
+	
+	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
+#!/bin/bash
+
+systemctl disable oqm_$curPackage.service
+systemctl stop oqm_$curPackage.service
+EOT
+	chmod +x "$packageDebDir/DEBIAN/prerm"
+	
+	cat <<EOT >> "$packageDebDir/DEBIAN/postrm"
+#!/bin/bash
+
+# Remove docker image?
+EOT
+	chmod +x "$packageDebDir/DEBIAN/postrm"
 	
 	dpkg-deb --build "$packageDebDir" "$buildDir"
 	
