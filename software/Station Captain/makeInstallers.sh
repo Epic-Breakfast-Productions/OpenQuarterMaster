@@ -47,6 +47,7 @@ cp oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/control"
 Package: $(cat "$configFile" | jq -r '.packageName')
 Version: $(cat "$configFile" | jq -r '.version')
+Section: Open QuarterMaster
 Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all
 Description: $(cat "$configFile" | jq -r '.description')
