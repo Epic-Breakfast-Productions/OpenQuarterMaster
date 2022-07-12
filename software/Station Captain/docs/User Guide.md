@@ -17,6 +17,8 @@ This is an explanation of the menus.
     - Enable/disable automatic updates
     - Update now
   - Update this tool
+- Captain Settings
+  - allow pre-release
 
 
 ## Other

@@ -23,13 +23,14 @@ GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarte
 GIT_RELEASES="$GIT_API_BASE/releases"
 
 # files
+TMP_DIR="/tmp/oqm"
 SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
 RELEASE_LIST_FILE_WORKING="$META_INFO_DIR/releases_unfinished.json"
 
 # Selection
-USER_SELECT_FILE="/tmp/oqm-captain-input"
+USER_SELECT_FILE="$TMP_DIR/oqm-captain-input"
 AUTO_UPDATE_HOST_CRONTAB_FILE="autoUpdateOs"
 SELECTION=""
 DEFAULT_WIDTH=55
@@ -45,7 +46,7 @@ DIALOG=dialog
 SW_PREFIX_STATION_CAP="Manager-Station_Captain"
 SW_PREFIX_INFRA=("Infra-Jaeger" "Infra-MongoDB")
 
-VERSION_FLAG_PRIORITY=("DEV" "" "FINAL")
+VERSION_FLAG_PRIORITY=("NIGHTLY" "DEV" "" "FINAL")
 
 VERSION_FLAG_CAP="DEV"
 
@@ -62,18 +63,21 @@ VERSION_FLAG_CAP="DEV"
 ###
 #
 
-
-
-
 # TODO:: take arg to return
 function exitProg(){
-	clear;
-	echo "Exiting."
-	rm "$USER_SELECT_FILE";
+	
+	if [ -f "$USER_SELECT_FILE" ]; then
+		rm "$USER_SELECT_FILE";
+	fi
 	
  	if [ "$1" = "" ]; then
+		echo "Exiting."
+		clear;
  		exit;
  	else
+ 		echo "ERROR:: $2";
+ 		$DIALOG --title "Unrecoverable Error" --msgbox "$2" 30 $WIDE_WIDTH
+ 		clear
 		exit $1
 	fi
 }
@@ -189,8 +193,7 @@ function compareVersions(){
 	local ver2Arr=(${fullVer2//-/ })
 	
 	if [ "${ver1Arr[0]}" != "${ver2Arr[0]}" ] || [ "${ver1Arr[1]}" != "${ver2Arr[1]}" ]; then
-		echo "ERROR:: Versions given are not comparable \"$fullVer1\", \"$fullVer2\". Please let the developers know of this issue.";
-		exitProg 66;
+		exitProg 66 "ERROR:: Versions given are not comparable \"$fullVer1\", \"$fullVer2\". Please let the developers know of this issue.";
 	fi
 	
 	
@@ -234,75 +237,87 @@ function refreshReleaseList(){
 []
 EOT
 	#echo "DEBUG:: cur len of releases file: $(stat --printf="%s" "$RELEASE_LIST_FILE_WORKING")";
+	local keepCalling=true
 	local curGitResponseLen=-1
 	local curPage=1;
-	while [ "$curGitResponseLen" -ne "0" ] ; do
-		#echo "DEBUG:: Hitting: $GIT_RELEASES?page=$curPage"
-		local curResponse="$(curl -H "Accept: application/vnd.github+json" "$GIT_RELEASES?per_page=100&page=$curPage" )"
+	while [ "$keepCalling" = true ] ; do
+		#echo "DEBUG:: Hitting: $GIT_RELEASES?per_page=100&page=$curPage"
 		
-		curGitResponseLen=$(echo "$curResponse" | jq ". | length")
+		local curResponse="$(curl -s -w "%{http_code}" -H "Accept: application/vnd.github+json" "$GIT_RELEASES?per_page=100&page=$curPage" )"
+		local httpCode=$(tail -n1 <<< "$curResponse")
+		local curResponseJson=$(sed '$ d' <<< "$curResponse")
 		
-		#echo "DEBUG:: Cur git response: \"\"$curResponse\"\"";
+		#echo "DEBUG:: Cur git response: $curResponseJson";
+		
+		if [ "$httpCode" != "200" ]; then
+			exitProg 1 "Error: Failed to call Git for releases ($httpCode): $curResponseJson";
+		fi
+		
+		curGitResponseLen=$(echo "$curResponseJson" | jq ". | length")
 		#cat "$RELEASE_LIST_FILE_WORKING"
-		echo "DEBUG:: Cur git response len: \"$curGitResponseLen\""
+		echo "Made call to Git. Cur git response len: \"$curGitResponseLen\""
 		
-		cat "$RELEASE_LIST_FILE_WORKING" | jq -c --argjson newReleases "$curResponse" '. |= . + $newReleases' | sponge "$RELEASE_LIST_FILE_WORKING"
+		jq -c --argjson newReleases "$curResponseJson" '. |= . + $newReleases' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 		
 		#echo "DEBUG:: cur len of releases file: $(stat --printf="%s" "$RELEASE_LIST_FILE_WORKING")";
+		
+		if [ "$curGitResponseLen" -lt 100 ]; then
+			keepCalling=false
+		fi
 		
 		curPage=$((curPage+1))
 	done
 	
 	echo "No more releases from Git.";
-	echo "Removing Pre-releases.";
-	# TODO
-	echo "Done removing drafts."
+	
+	# TODO:: add setting to enable/disable
+	#echo "Removing Pre-releases.";
+	#jq -c 'map(select(.prerelease==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
+	#echo "Done removing Pre-releases."
+	
 	echo "Removing drafts.";
-	# TODO
-	echo "Done removing drafts."
+	jq -c 'map(select(.draft==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
+	echo "Done removing drafts.";
 	
 	echo "Sorting releases.";
-	cat "$RELEASE_LIST_FILE_WORKING" | jq -c 'sort_by(.published_at) | reverse' | sponge "$RELEASE_LIST_FILE_WORKING"
+	jq -c 'sort_by(.published_at) | reverse' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 	echo "Done sorting releases."
 	#cat "$RELEASE_LIST_FILE_WORKING"
 	
 	mv "$RELEASE_LIST_FILE_WORKING" "$RELEASE_LIST_FILE"
-	echo "DONE Refreshing release list. $(cat "$RELEASE_LIST_FILE" | jq ". | length") releases returned. Release file $(stat --printf="%s" "$RELEASE_LIST_FILE") bytes"
+	echo "DONE Refreshing release list. $(jq ". | length" "$RELEASE_LIST_FILE") relevant releases returned. Release file $(stat --printf="%s" "$RELEASE_LIST_FILE") bytes in length."
 }
 
 #
 # Gets the latest release version for the given software.
-# Usage: getReleasesFor <return var> <software prefix>
+# Usage: getReleasesFor <software prefix>
 #
 function getReleasesFor(){
-	local __return=$1
-	local softwareReleaseToFind="$2"
+	local softwareReleaseToFind="$1"
 	
-	echo "getting all releases for $softwareReleaseToFind"
+	#echo "getting all releases for $softwareReleaseToFind"
 	
-	local releases="[$(cat "$RELEASE_LIST_FILE" | jq -c ".[] | select(.name | contains(\"$softwareReleaseToFind\"))")]"
+	local releases="$(jq -c "map(select(.name | contains(\"$softwareReleaseToFind\")))" "$RELEASE_LIST_FILE")"
 	
-	#echo "DEBUG:: got releases: $releases"
+	#echo "DEBUG:: got releases for $softwareReleaseToFind: $releases"
 	
-	eval $__return="$releases"
+	echo "$releases"
 }
 
 #
 # Gets the latest release version for the given software.
 # Usage: getLatestReleaseFor <return var> <software prefix>
-# Returns Tag to update to, or empty string if none needed
+# Returns Tag json of the latest release
 #
 function getLatestReleaseFor(){
-	local __return=$1
-	local softwareReleaseToFind="$2"
+	local softwareReleaseToFind="$1"
 		
-	releasesFor=""
-	getReleasesFor releasesFor "$softwareReleaseToFind"
+	releasesFor="$(getReleasesFor "$softwareReleaseToFind")"
 	
-	echo "DEBUG:: number of releases: $(echo "$statCapReleases" | jq ". | length")"
-	echo "DEBUG:: releases: $releasesFor"
+	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
+	#echo "DEBUG:: releases: $releasesFor"
 	
-	eval $__return="$(echo "$releases" | jq '.[0]')"
+	echo "$releasesFor" | jq -c '.[0]'
 }
 
 
@@ -312,18 +327,34 @@ function getLatestReleaseFor(){
 # Returns "" if not needed, json for release to update to.
 #
 function needsUpdated() {
-	local curTag="$1"
-	local curTagArr=(${curTag//-/ })
+	local curTagVersion="$1"
+	local curTagArr=(${curTagVersion//-/ })
 	
 	local curMajVersion="$(getMajorVersion "${curTagArr[2]}")"
+	local curTag="${curTagArr[0]}-${curTagArr[1]}"
 	
 	output=""
 	case "${curTagArr[0]}" in
-		"Manager" | "Infra")
+		"Manager" | "Infra") # Prefixes we always want to be latest
+			latestRelease="$(getLatestReleaseFor "$curTag")"
 			
+			#echo "DEBUG:: Latest release: $latestRelease"
+			
+			if [ -z "$latestRelease" ];then
+				#echo "No release found for tag prefix $curTag";
+				output=""
+			else
+				latestReleaseTag="$(echo "$latestRelease" | jq -c -r '.name')"
+				#echo "DEBUG:: Latest release: \"$latestReleaseTag\" current release: \"$curTagVersion\""
+				local compareResult="$(compareVersions "$curTag" "$latestReleaseTag")"
+				if [ "$compareResult" = "<" ]; then
+					output="$latestRelease"
+				fi
+			fi	
 			;;
-		
+		#TODO:: base station, plugins
 	esac
+	echo "$output"
 }
 
 
@@ -340,8 +371,7 @@ function needsUpdated() {
 function displayBaseOsInfo(){
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 	# TODO: format better
-	$DIALOG --title "Host OS Info" \
-	--msgbox "Ip Address(es): $(hostname -I)\n\n$(cat /etc/os-release)\n\n$(uname -a)\n\nhwinfo:\n$(hwinfo --short)\n\nUSB devices:\n$(lsusb)\n\nDisk usage:\n$(df -H)" 30 $WIDE_WIDTH
+	$DIALOG --title "Host OS Info" --msgbox "Ip Address(es): $(hostname -I)\n\n$(cat /etc/os-release)\n\n$(uname -a)\n\nhwinfo:\n$(hwinfo --short)\n\nUSB devices:\n$(lsusb)\n\nDisk usage:\n$(df -H)" 30 $WIDE_WIDTH
 }
 
 function displayOQMInfo(){
@@ -503,6 +533,11 @@ function mainUi(){
 #
 
 mkdir -p "$META_INFO_DIR"
+mkdir -p "$TMP_DIR"
+
+#
+# TODO:: add captain settings file, prepopulate
+#
 
 # Update release list. Only call here 
 refreshReleaseList
@@ -510,16 +545,14 @@ refreshReleaseList
 #
 # Check updatedness of this script
 #
-latestStatCapRelease=""
-getLatestReleaseFor latestStatCapRelease "$SW_PREFIX_STATION_CAP"
-
-echo "DEBUG:: latest release: \"$latestStatCapRelease\""
+latestStatCapRelease="$(needsUpdated "$SCRIPT_VERSION_RELEASE")"
 
 # If no releases found
 if [ "$latestStatCapRelease" = "" ]; then
-	echo "NO RELEASE FOUND."
+	echo "Station Captain up tp date."
 else
-	SCRIPT_VERSION_RELEASE
+	echo "Station captain has a new release!";
+	# TODO:: update
 fi
 
 echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
