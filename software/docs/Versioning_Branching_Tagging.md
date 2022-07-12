@@ -34,7 +34,7 @@ This project will adhere to the following branch strategy:
 
 ## Releases
 
-Each piece of software here will get it's own release tag scheme. Generally speaking, each will follow the following format: `{TYPE}-{PROJECT}-v{VERSION}`, where "type" refers to what kind of project it is.
+Each piece of software here will get it's own release tag scheme. Generally speaking, each will follow the following format: `{TYPE}-{PROJECT}-{VERSION}`, where "type" refers to what kind of project it is.
 
 Example for each project:
 
