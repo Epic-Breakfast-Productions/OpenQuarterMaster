@@ -202,13 +202,13 @@ function compareVersions(){
 	local ver1Flag="${ver1Arr[3]}"
 	local ver2Flag="${ver2Arr[3]}"
 	
-	echo "DEBUG:: Version 1: $ver1Num / \"$ver1Flag\""
-	echo "DEBUG:: Version 2: $ver2Num / \"$ver2Flag\""
+	#echo "DEBUG:: Version 1: $ver1Num / \"$ver1Flag\""
+	#echo "DEBUG:: Version 2: $ver2Num / \"$ver2Flag\""
 	
 	local result="$(compareVersionNumbers "$ver1Num" "$ver2Num")"
 
 	if [ "$result" = "=" ]; then
-		echo "DEBUG:: same version number. Checking flag.";
+		#echo "DEBUG:: same version number. Checking flag.";
 		result="$(compareVersionFlags "$ver1Flag" "$ver2Flag")"
 	fi
 	
@@ -253,6 +253,8 @@ EOT
 			exitProg 1 "Error: Failed to call Git for releases ($httpCode): $curResponseJson";
 		fi
 		
+		# TODO:: experiment removing data: https://stackoverflow.com/questions/33895076/exclude-column-from-jq-json-output
+		
 		curGitResponseLen=$(echo "$curResponseJson" | jq ". | length")
 		#cat "$RELEASE_LIST_FILE_WORKING"
 		echo "Made call to Git. Cur git response len: \"$curGitResponseLen\""
@@ -269,6 +271,7 @@ EOT
 	done
 	
 	echo "No more releases from Git.";
+	
 	
 	# TODO:: add setting to enable/disable
 	#echo "Removing Pre-releases.";
@@ -345,9 +348,10 @@ function needsUpdated() {
 				output=""
 			else
 				latestReleaseTag="$(echo "$latestRelease" | jq -c -r '.name')"
-				#echo "DEBUG:: Latest release: \"$latestReleaseTag\" current release: \"$curTagVersion\""
-				local compareResult="$(compareVersions "$curTag" "$latestReleaseTag")"
-				if [ "$compareResult" = "<" ]; then
+				#echo "DEBUG:: current release: \"$curTagVersion\" Latest release: \"$latestReleaseTag\""
+				local compareResult="$(compareVersions "$curTagVersion" "$latestReleaseTag")"
+				#echo "DEBUG:: compare result: \"$compareResult\""
+				if [[ "$compareResult" == \<* ]]; then
 					output="$latestRelease"
 				fi
 			fi	
@@ -547,6 +551,8 @@ refreshReleaseList
 #
 latestStatCapRelease="$(needsUpdated "$SCRIPT_VERSION_RELEASE")"
 
+echo "DEBUG:: has new release return: $latestStatCapRelease"
+
 # If no releases found
 if [ "$latestStatCapRelease" = "" ]; then
 	echo "Station Captain up tp date."
@@ -555,7 +561,7 @@ else
 	# TODO:: update
 fi
 
-echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
+#echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
 
 #
 # Interact with User
