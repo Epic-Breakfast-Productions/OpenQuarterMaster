@@ -87,6 +87,37 @@ function updateSelection(){
 	SELECTION=$(cat $USER_SELECT_FILE);
 }
 
+
+function determineSystemPackMan() {
+	local return="$1"
+	local result=""
+	if [ -n "$(command -v yum)" ]; then
+		result="yum";
+	elif [ -n "$(command -v apt)" ]; then
+		result="apt";
+	fi
+	eval $return="$result"
+}
+function determineSystemPackFileFormat() {
+	local return="$1"
+	
+	pacMan=""
+	determineSystemPackMan pacMan
+	
+	local result=""
+	
+	case "$pacMan" in
+		"apt")
+			result=".deb"
+			;;
+		"yum")
+			result=".rpm"
+			;;
+	esac
+	
+	eval $return="$result"
+}
+
 #
 # Version Utility Functions
 #
@@ -361,7 +392,36 @@ function needsUpdated() {
 	echo "$output"
 }
 
+#
+# Gets the json of the asset to install from the release based on which needs to be used to install.
+# Usage: selectAssetToInstall "<release json>"
+# Returns the json of the asset to install, or empty string if none applicable
+#
+function getAssetToInstall(){
+	local releaseJson="$1"
+	installerFormat=""
+	determineSystemPackFileFormat installerFormat
+	
+	local matchingAssets="$(echo "$releaseJson" | jq -c ".assets" | jq -c "map(select(.browser_download_url | endswith(\"$installerFormat\")))")"
+	
+	local matchingAssetsLen=$(echo "$matchingAssets" | jq ". | length")
+	# todo:: check len?
+	
+	echo "$matchingAssets" | jq -c '.[0]'
+}
 
+#
+# Gets the appropriate installer from Git, installs it
+# Usage: installFromGit "<json of release to install>"
+#
+function installFromGit(){
+	local releaseJson="$1"
+	# TODO:: this https://stackoverflow.com/questions/11836238/using-curl-to-download-file-and-view-headers-and-status-code
+	
+	local assetToInstall="$(getAssetToInstall "$releaseJson")"
+	echo "Installing asset $assetToInstall"
+	# TODO:: download, install
+}
 
 
 
@@ -550,14 +610,22 @@ refreshReleaseList
 # Check updatedness of this script
 #
 latestStatCapRelease="$(needsUpdated "$SCRIPT_VERSION_RELEASE")"
+#echo "DEBUG:: has new release return: $latestStatCapRelease"
 
-echo "DEBUG:: has new release return: $latestStatCapRelease"
-
-# If no releases found
 if [ "$latestStatCapRelease" = "" ]; then
-	echo "Station Captain up tp date."
+	echo "Station Captain up to date."
 else
-	echo "Station captain has a new release!";
+	echo "Station Captain has a new release!";
+	$DIALOG --title "Station Captain new Release" --yesno "Station captain has a new release out. Install it?" 6 $DEFAULT_WIDTH
+	case $? in
+		0)
+			echo "Updating Station captain."
+			installFromGit "$latestStatCapRelease"
+		;;
+		*)
+			echo "Not updating Station Captain.";
+		;;
+	esac
 	# TODO:: update
 fi
 
