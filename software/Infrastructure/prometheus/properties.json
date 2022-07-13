@@ -1,0 +1,6 @@
+{
+	"packageName":"Open-QuarterMaster-Prometheus",
+	"version":"1.0.0",
+	"description":"Prometheus instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus"
+}

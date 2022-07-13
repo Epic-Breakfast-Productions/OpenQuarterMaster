@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo")
+packages=("jaeger" "mongo" "prometheus")
 
 #
 # Clean
@@ -78,6 +78,7 @@ EOT
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 #!/bin/bash
 
+systemctl daemon-reload
 systemctl enable oqm_$curPackage.service
 systemctl start oqm_$curPackage.service
 EOT
@@ -94,7 +95,12 @@ EOT
 	cat <<EOT >> "$packageDebDir/DEBIAN/postrm"
 #!/bin/bash
 
-# Remove docker image?
+systemctl daemon-reload
+# Remove docker image
+if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" == "" ]]; then
+  docker rmi oqm_$curPackage
+fi
+
 EOT
 	chmod +x "$packageDebDir/DEBIAN/postrm"
 	

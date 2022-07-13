@@ -16,7 +16,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run --name oqm_jaeger -p 8090:16686 -p 8091:14268 jaegertracing/all-in-one:1"
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run --name oqm_jaeger -p 8090:16686 -p 8091:14268 -d jaegertracing/all-in-one:1"
 ExecStart=/usr/bin/docker start -a oqm_jaeger
 ExecStop=/usr/bin/docker stop -t 10 oqm_jaeger
 

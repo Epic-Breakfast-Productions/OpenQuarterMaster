@@ -7,7 +7,7 @@
 #  TODO:: how to update image used?
 
 [Unit]
-Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "5".
+Description=Prometheus server for Open Quartermaster. Version ${version}, using Prometheus tagged to "v2.36.2".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -16,9 +16,9 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || /usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/db/oqm/mongo/:/data/db -d mongo:5"
-ExecStart=/usr/bin/docker start -a oqm_mongo
-ExecStop=/usr/bin/docker stop -t 10 oqm_mongo
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_prometheus 2> /dev/null || /usr/bin/docker run --name oqm_prometheus -p 8092:9090 -d prom/prometheus:v2.36.2"
+ExecStart=/usr/bin/docker start -a oqm_prometheus
+ExecStop=/usr/bin/docker stop -t 10 oqm_prometheus
 
 [Install]
 WantedBy=multi-user.target
