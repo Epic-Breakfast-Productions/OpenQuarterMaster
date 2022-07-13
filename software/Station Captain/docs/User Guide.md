@@ -5,9 +5,12 @@
 This is an explanation of the menus.
 
 (main menu)
-- Status
 - Info
-- Installation
+  - Status
+  - versions
+- Manage Installation
+  - Core
+  - Plugins
 - Updates / Versions
   - Host Updates
     - Enable/disable automatic updates
@@ -16,7 +19,6 @@ This is an explanation of the menus.
     - Select OQM major version
     - Enable/disable automatic updates
     - Update now
-  - Update this tool
 - Captain Settings
   - allow pre-release
 

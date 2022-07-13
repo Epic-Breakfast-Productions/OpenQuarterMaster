@@ -9,7 +9,7 @@
 
 # requires:
 #  - dialog
-#  - podman
+#  - docker
 #  - hwinfo
 #  - sponge (from moreutils)
 
@@ -24,6 +24,7 @@ GIT_RELEASES="$GIT_API_BASE/releases"
 
 # files
 TMP_DIR="/tmp/oqm"
+DOWNLOAD_DIR="$TMP_DIR/download"
 SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
@@ -42,7 +43,7 @@ INTERACT_MODE="ui";
 DIALOG=dialog
 #test -n "$DISPLAY" && DIALOG=xdialog
 
-# Software name prefixes
+# Software release name prefixes
 SW_PREFIX_STATION_CAP="Manager-Station_Captain"
 SW_PREFIX_INFRA=("Infra-Jaeger" "Infra-MongoDB")
 
@@ -419,8 +420,30 @@ function installFromGit(){
 	# TODO:: this https://stackoverflow.com/questions/11836238/using-curl-to-download-file-and-view-headers-and-status-code
 	
 	local assetToInstall="$(getAssetToInstall "$releaseJson")"
-	echo "Installing asset $assetToInstall"
+	echo "DEBUG:: Installing asset $assetToInstall"
 	# TODO:: download, install
+	local downloadUrl="$(echo "$assetToInstall" | jq -cr '.browser_download_url')"
+	local filename="$(echo "$assetToInstall" | jq -cr '.name')"
+	local fileLocation="$DOWNLOAD_DIR/$filename"
+	
+	if [ -f "$fileLocation" ]; then
+		rm "$fileLocation"
+	fi
+	
+	echo "Downloading file \"$filename\" to \"$fileLocation\" from URL: $downloadUrl"
+	
+	local downloadResult="$(curl -s -L -o "$fileLocation" "$downloadUrl")"
+	
+	# TODO:: check filesize is as expected
+	#if [  ]; then	
+	#fi
+	
+	dpkg -i "$fileLocation"
+	local installResult=$?
+	
+	if [ $installResult -ne 0 ]; then
+		exitProg 3 "Failed to install package \"$fileLocation\"!"
+	fi
 }
 
 
@@ -593,11 +616,19 @@ function mainUi(){
 #
 
 #
+# Check for sudo
+#
+if [ "$EUID" -ne 0 ]; then
+	exitProg 1 "Please run as root! (sudo $0)"
+fi
+
+#
 # Ensure dirs exist
 #
 
 mkdir -p "$META_INFO_DIR"
 mkdir -p "$TMP_DIR"
+mkdir -p "$DOWNLOAD_DIR"
 
 #
 # TODO:: add captain settings file, prepopulate
@@ -621,6 +652,8 @@ else
 		0)
 			echo "Updating Station captain."
 			installFromGit "$latestStatCapRelease"
+			echo "Update installed! Please rerun the script."
+			exitProg;
 		;;
 		*)
 			echo "Not updating Station Captain.";
