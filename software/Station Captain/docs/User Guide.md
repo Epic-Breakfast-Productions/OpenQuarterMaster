@@ -9,18 +9,26 @@ This is an explanation of the menus.
   - Status
   - versions
 - Manage Installation
+  - Select OQM major version
   - Core
   - Plugins
-- Updates / Versions
+  - Cleanup
+    - Docker (`docker system prune --volumes`)
+- Backups
+  - Choose backup location
+  - Run backups now
+  - Automatic backup settings
+    - Enable/disable automatic backups
+    - Frequency
+- Updates
   - Host Updates
     - Enable/disable automatic updates
     - Update now
   - OQM Updates
-    - Select OQM major version
     - Enable/disable automatic updates
     - Update now
 - Captain Settings
-  - allow pre-release
+  - allow pre-release versions
 
 
 ## Other
