@@ -75,6 +75,15 @@ License: $(cat "$mainConfigFile" | jq -r '.copyright.licence')
 
 EOT
 
+	cat <<EOT >> "$packageDebDir/DEBIAN/preinst"
+#!/bin/bash
+
+#mkdir -p "/data/oqm/db/mongo"
+#mkdir -p "/data/oqm/prometheus"
+EOT
+
+	chmod +x "$packageDebDir/DEBIAN/preinst"
+	
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 #!/bin/bash
 
@@ -97,9 +106,19 @@ EOT
 
 systemctl daemon-reload
 # Remove docker image
-if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" == "" ]]; then
-  docker rmi oqm_$curPackage
+if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" != "" ]]; then
+	docker rmi oqm_$curPackage
+	echo "Removed docker image."
+else
+	echo "Docker image was already gone."
 fi
+if [ $( docker ps -a | grep oqm_$curPackage | wc -l ) -gt 0 ]; then
+	docker rm oqm_$curPackage
+	echo "Removed docker container."
+else
+	echo "Docker container was already gone."
+fi
+
 
 EOT
 	chmod +x "$packageDebDir/DEBIAN/postrm"

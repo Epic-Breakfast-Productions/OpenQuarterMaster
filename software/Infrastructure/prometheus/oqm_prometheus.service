@@ -16,7 +16,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_prometheus 2> /dev/null || /usr/bin/docker run --name oqm_prometheus -p 8092:9090 -d prom/prometheus:v2.36.2"
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_prometheus 2> /dev/null || /usr/bin/docker run --name oqm_prometheus -p 8092:9090 -v /data/oqm/prometheus:/etc/prometheus -d prom/prometheus:v2.36.2"
 ExecStart=/usr/bin/docker start -a oqm_prometheus
 ExecStop=/usr/bin/docker stop -t 10 oqm_prometheus
 

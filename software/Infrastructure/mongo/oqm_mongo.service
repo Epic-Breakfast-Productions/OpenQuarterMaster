@@ -16,7 +16,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || /usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/db/oqm/mongo/:/data/db -d mongo:5"
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || /usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/oqm/db/mongo/:/data/db -d mongo:5"
 ExecStart=/usr/bin/docker start -a oqm_mongo
 ExecStop=/usr/bin/docker stop -t 10 oqm_mongo
 
