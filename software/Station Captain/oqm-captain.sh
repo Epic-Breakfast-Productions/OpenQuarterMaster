@@ -13,7 +13,7 @@
 #  - hwinfo
 #  - sponge (from moreutils)
 
-SCRIPT_VERSION="1.0.0-DEV"
+SCRIPT_VERSION="1.0.2-DEV"
 SCRIPT_VERSION_RELEASE="Manager-Station_Captain-$SCRIPT_VERSION"
 
 
@@ -35,8 +35,11 @@ USER_SELECT_FILE="$TMP_DIR/oqm-captain-input"
 AUTO_UPDATE_HOST_CRONTAB_FILE="autoUpdateOs"
 SELECTION=""
 DEFAULT_WIDTH=55
-DEFAULT_HEIGHT=15
 WIDE_WIDTH=80
+SUPER_WIDE_WIDTH=160
+DEFAULT_HEIGHT=15
+TALL_HEIGHT=30
+SUPER_TALL_HEIGHT=60
 # How the user is interacting with this script. Either "ui" or "direct"
 INTERACT_MODE="ui";
 
@@ -77,7 +80,7 @@ function exitProg(){
  		exit;
  	else
  		echo "ERROR:: $2";
- 		$DIALOG --title "Unrecoverable Error" --msgbox "$2" 30 $WIDE_WIDTH
+ 		$DIALOG --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
  		clear
 		exit $1
 	fi
@@ -458,13 +461,47 @@ function installFromGit(){
 function displayBaseOsInfo(){
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 	# TODO: format better
-	$DIALOG --title "Host OS Info" --msgbox "Ip Address(es): $(hostname -I)\n\n$(cat /etc/os-release)\n\n$(uname -a)\n\nhwinfo:\n$(hwinfo --short)\n\nUSB devices:\n$(lsusb)\n\nDisk usage:\n$(df -H)" 30 $WIDE_WIDTH
+
+	clear;
+	echo "Retrieving system information..."
+
+	echo "Getting general system info..."
+	local ipAddrs="$(hostname -I)"
+	ipAddrs="$(echo "$ipAddrs" | sed -e 's/^/    /')"
+	ipAddrs="${ipAddrs//$'\n'/\\n}"
+	local release="$(cat /etc/os-release)"
+	release="$(echo "$release" | sed -e 's/^/    /')"
+	release="${release//$'\n'/\\n}"
+	local uname="$(uname -a)"
+	uname="$(echo "$uname" | sed -e 's/^/    /')"
+	uname="${uname//$'\n'/\\n}"
+
+	echo "Getting hardware info..."
+	local hwInfo="$(hwinfo --short)"
+	hwInfo="$(echo "$hwInfo" | sed -e 's/^/    /')"
+	hwInfo="${hwInfo//$'\n'/\\n}"
+	local usbDevs="$(lsusb)"
+	usbDevs="$(echo "$usbDevs" | sed -e 's/^/    /')"
+	usbDevs="${usbDevs//$'\n'/\\n}"
+
+	echo "Getting disk usage info..."
+	local diskUsage="$(df -H)"
+	diskUsage="$(echo "$diskUsage" | sed -e 's/^/    /')"
+	diskUsage="${diskUsage//$'\n'/\\n}"
+
+\t\t
+	local sysInfo="Ip Address(es):\n$ipAddrs\n\nOS Info:\n$release\n\n$uname\n\nHardware Info:\n$hwInfo\n\nUSB devices:\n$usbDevs\n\nDisk usage:\n$diskUsage"
+
+
+	echo "Done retrieving system info."
+
+	$DIALOG --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
 function displayOQMInfo(){
 	# TODO:: parse out most relevant OQM info
 	$DIALOG --title "Open QuarterMaster Info" \
-	--msgbox "Url: $HOME_GIT" 30 70
+	--msgbox "Url: $HOME_GIT" $TALL_HEIGHT 70
 }
 
 function getInfo(){
@@ -494,20 +531,20 @@ function updateBaseSystem(){
 	result="";
 	resultReturn=0;
 	# TODO::: why no work? error during apt, but no err captured
-	if [ -n "$(command -v yum)"]; then
+	if [ -n "$(command -v yum)" ]; then
 		result="$(yum update -y)";
 		resultReturn=$?;
-	elif [ -n "$(command -v apt)"]; then
+	elif [ -n "$(command -v apt)" ]; then
 		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)";
 		resultReturn=$?;
 	else
 		$DIALOG --title "ERROR: could not update" \
-	--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." 30 $DEFAULT_WIDTH
+	--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." $TALL_HEIGHT $DEFAULT_WIDTH
 	fi
 	
 	if [ $resultReturn -ne 0 ]; then
 		$DIALOG --title "ERROR: Failed to update" \
-	--msgbox "Error updating. Output from command:\n\n${result}" 30 $WIDE_WIDTH
+	--msgbox "Error updating. Output from command:\n\n${result}" $TALL_HEIGHT $WIDE_WIDTH
 	fi
 		
 	$DIALOG --title "OS Updates Complete"  --yesno "Restart?" 6 $DEFAULT_WIDTH
@@ -574,28 +611,25 @@ function mainUi(){
 	while true; do
 		$DIALOG --title "Open QuarterMaster Station Captain V${SCRIPT_VERSION}" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT\
-		1 "Status" \
-		2 "Info" \
-		3 "Overall Settings" \
-		4 "Manage Base Station" \
-		5 "Manage Plugins" \
-		6 "Manage Base OS" \
+		1 "Info" \
+		2 "Manage Installation" \
+		3 "Backups" \
+		4 "Updates" \
+		5 "Captain Settings" \
 		2>$USER_SELECT_FILE
 		
 		updateSelection;
 		
 		case $SELECTION in
-			1) getInfo # TODO: status of system
+			1) getInfo
 			;;
-			2) getInfo
+			2) # TODO: manage installation
 			;;
-			3) # TODO: overall settings
+			3) # TODO:manage backups
 			;;
-			4) # TODO: Manage base station
+			4) # TODO: Manage updates
 			;;
-			5) # TODO: manage plugins
-			;;
-			6) baseOsDialog
+			5) # TODO: OQM Captain settings
 			;;
 			*) return
 			;;
@@ -668,11 +702,8 @@ fi
 # Interact with User
 #
 
-
-
 # TODO:: if get inputs, go to direct mode. If none, ui
-
-#mainUi;
+mainUi;
 
 echo "Still working on things! Come back later!"
 

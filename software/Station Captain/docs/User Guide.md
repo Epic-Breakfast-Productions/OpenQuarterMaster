@@ -6,8 +6,8 @@ This is an explanation of the menus.
 
 (main menu)
 - Info
-  - Status
-  - versions
+  - Status; shows status, versions of OQM software running
+  - Host Information
 - Manage Installation
   - Select OQM major version
   - Core
