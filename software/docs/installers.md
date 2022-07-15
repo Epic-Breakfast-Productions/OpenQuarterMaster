@@ -23,6 +23,12 @@ This is mapped directly to service containers at the same path.
 
 Plugin configuration is located `/etc/oqm/plugins/`
 
+#### Data/resource files
+
+`/etc/oqm/static/`
+
+Static file folder to just read from. Might move to `/lib/oqm/`, haven't decided on where best.
+
 #### Logs
 
 `/var/log/oqm/`, `/var/log/oqm/{service}/*`

@@ -66,7 +66,7 @@ VERSION_FLAG_CAP="DEV"
 ###
 #
 function showDialog() {
-    dialog --backtitle "$SCRIPT_TITLE"  "$@"
+    dialog --backtitle "$SCRIPT_TITLE" --hfile "oqm-station-captain-help.txt"  "$@"
 }
 
 # TODO:: take arg to return
@@ -422,8 +422,7 @@ function getAssetToInstall(){
 #
 function installFromGit(){
 	local releaseJson="$1"
-	# TODO:: this https://stackoverflow.com/questions/11836238/using-curl-to-download-file-and-view-headers-and-status-code
-	
+
 	local assetToInstall="$(getAssetToInstall "$releaseJson")"
 	echo "DEBUG:: Installing asset $assetToInstall"
 	# TODO:: download, install
@@ -495,16 +494,27 @@ function displayBaseOsInfo(){
 	showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
+function displayStatusInfo(){
+	showDialog --infobox "Retrieving installation information..." $TINY_HEIGHT $DEFAULT_WIDTH
+
+	local text="Station Captain:\n    $SCRIPT_VERSION\n\n"
+
+	# TODO:: use dpkg to sort out what's installed, versions, etc
+
+	showDialog --title "Installation Status" \
+	--msgbox "$text" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
+}
 function displayOQMInfo(){
-	# TODO:: parse out most relevant OQM info
+	# TODO:: put out more OQM info
 	showDialog --title "Open QuarterMaster Info" \
-	--msgbox "Url: $HOME_GIT" $TALL_HEIGHT 70
+	--msgbox "Url: $HOME_GIT" $TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
 function getInfo(){
 	while true; do
 		showDialog --title "Info" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		1 "Installation Status" \
 		1 "Open QuarterMaster" \
 		2 "Host/Base OS" \
 		2>$USER_SELECT_FILE
@@ -512,9 +522,11 @@ function getInfo(){
 		updateSelection;
 		
 		case $SELECTION in
-			1) displayOQMInfo
+			1) displayStatusInfo
 			;;
-			2) displayBaseOsInfo
+			2) displayOQMInfo
+			;;
+			3) displayBaseOsInfo
 			;;
 			*) return
 			;;
