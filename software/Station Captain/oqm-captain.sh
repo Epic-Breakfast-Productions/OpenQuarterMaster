@@ -15,7 +15,7 @@
 
 SCRIPT_VERSION="1.0.2-DEV"
 SCRIPT_VERSION_RELEASE="Manager-Station_Captain-$SCRIPT_VERSION"
-
+SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
 # urls
 HOME_GIT="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
@@ -37,13 +37,13 @@ SELECTION=""
 DEFAULT_WIDTH=55
 WIDE_WIDTH=80
 SUPER_WIDE_WIDTH=160
+TINY_HEIGHT=5
 DEFAULT_HEIGHT=15
 TALL_HEIGHT=30
 SUPER_TALL_HEIGHT=60
 # How the user is interacting with this script. Either "ui" or "direct"
 INTERACT_MODE="ui";
 
-DIALOG=dialog
 #test -n "$DISPLAY" && DIALOG=xdialog
 
 # Software release name prefixes
@@ -53,7 +53,6 @@ SW_PREFIX_INFRA=("Infra-Jaeger" "Infra-MongoDB")
 VERSION_FLAG_PRIORITY=("NIGHTLY" "DEV" "" "FINAL")
 
 VERSION_FLAG_CAP="DEV"
-
 
 ##################################################
 # Functions
@@ -66,6 +65,9 @@ VERSION_FLAG_CAP="DEV"
 #####
 ###
 #
+function showDialog() {
+    dialog --backtitle "$SCRIPT_TITLE"  "$@"
+}
 
 # TODO:: take arg to return
 function exitProg(){
@@ -80,7 +82,7 @@ function exitProg(){
  		exit;
  	else
  		echo "ERROR:: $2";
- 		$DIALOG --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
+ 		showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
  		clear
 		exit $1
 	fi
@@ -460,12 +462,10 @@ function installFromGit(){
 
 function displayBaseOsInfo(){
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
-	# TODO: format better
 
-	clear;
-	echo "Retrieving system information..."
+	showDialog --infobox "Retrieving system information..." $TINY_HEIGHT $DEFAULT_WIDTH
 
-	echo "Getting general system info..."
+	showDialog --infobox "Retrieving system information...\nGetting general system info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local ipAddrs="$(hostname -I)"
 	ipAddrs="$(echo "$ipAddrs" | sed -e 's/^/    /')"
 	ipAddrs="${ipAddrs//$'\n'/\\n}"
@@ -476,7 +476,7 @@ function displayBaseOsInfo(){
 	uname="$(echo "$uname" | sed -e 's/^/    /')"
 	uname="${uname//$'\n'/\\n}"
 
-	echo "Getting hardware info..."
+	showDialog --infobox "Retrieving system information...\nGetting hardware info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local hwInfo="$(hwinfo --short)"
 	hwInfo="$(echo "$hwInfo" | sed -e 's/^/    /')"
 	hwInfo="${hwInfo//$'\n'/\\n}"
@@ -484,29 +484,26 @@ function displayBaseOsInfo(){
 	usbDevs="$(echo "$usbDevs" | sed -e 's/^/    /')"
 	usbDevs="${usbDevs//$'\n'/\\n}"
 
-	echo "Getting disk usage info..."
+	showDialog --infobox "Retrieving system information...\nGetting disk usage info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local diskUsage="$(df -H)"
 	diskUsage="$(echo "$diskUsage" | sed -e 's/^/    /')"
 	diskUsage="${diskUsage//$'\n'/\\n}"
 
-\t\t
 	local sysInfo="Ip Address(es):\n$ipAddrs\n\nOS Info:\n$release\n\n$uname\n\nHardware Info:\n$hwInfo\n\nUSB devices:\n$usbDevs\n\nDisk usage:\n$diskUsage"
-
-
 	echo "Done retrieving system info."
 
-	$DIALOG --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
+	showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
 function displayOQMInfo(){
 	# TODO:: parse out most relevant OQM info
-	$DIALOG --title "Open QuarterMaster Info" \
+	showDialog --title "Open QuarterMaster Info" \
 	--msgbox "Url: $HOME_GIT" $TALL_HEIGHT 70
 }
 
 function getInfo(){
 	while true; do
-		$DIALOG --title "Info" \
+		showDialog --title "Info" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 		1 "Open QuarterMaster" \
 		2 "Host/Base OS" \
@@ -526,7 +523,7 @@ function getInfo(){
 }
 
 function updateBaseSystem(){
-	$DIALOG --infobox "Updating Base OS. Please wait." 3 $DEFAULT_WIDTH
+	showDialog --infobox "Updating Base OS. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
 	# update base system, based on what distro we are on
 	result="";
 	resultReturn=0;
@@ -538,23 +535,23 @@ function updateBaseSystem(){
 		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)";
 		resultReturn=$?;
 	else
-		$DIALOG --title "ERROR: could not update" \
+		showDialog --title "ERROR: could not update" \
 	--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." $TALL_HEIGHT $DEFAULT_WIDTH
 	fi
 	
 	if [ $resultReturn -ne 0 ]; then
-		$DIALOG --title "ERROR: Failed to update" \
+		showDialog --title "ERROR: Failed to update" \
 	--msgbox "Error updating. Output from command:\n\n${result}" $TALL_HEIGHT $WIDE_WIDTH
 	fi
 		
-	$DIALOG --title "OS Updates Complete"  --yesno "Restart?" 6 $DEFAULT_WIDTH
+	showDialog --title "OS Updates Complete"  --yesno "Restart?" 6 $DEFAULT_WIDTH
 	
 	case $? in
 		# TODO:: reboot not always available?
 		0) reboot
 			exitProg;
 		;;
-		*) $DIALOG --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
+		*) showDialog --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
 		;;
 	esac
 }
@@ -569,22 +566,22 @@ function disableAutoUpdate(){
 }
 
 function enableAutomaticOsUpdates(){
-	$DIALOG --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
+	showDialog --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	#TODO:: this
 	
-	$DIALOG --title "Enabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
+	showDialog --title "Enabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
 function disableAutomaticOsUpdates(){
-	$DIALOG --infobox "Disabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
+	showDialog --infobox "Disabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	# TODO:: doublecheck
 	#crontab -r "$AUTO_UPDATE_HOST_CRONTAB_FILE"
-	$DIALOG --title "Disabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
+	showDialog --title "Disabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
 function baseOsDialog(){
 	while true; do
-		$DIALOG --title "Base OS" \
+		showDialog --title "Base OS" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 		1 "Update" \
 		2 "Enable Automatic OS Updates" \
@@ -607,9 +604,8 @@ function baseOsDialog(){
 }
 
 function mainUi(){
-	
 	while true; do
-		$DIALOG --title "Open QuarterMaster Station Captain V${SCRIPT_VERSION}" \
+		showDialog --title "Main Menu" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT\
 		1 "Info" \
 		2 "Manage Installation" \
@@ -681,7 +677,7 @@ if [ "$latestStatCapRelease" = "" ]; then
 	echo "Station Captain up to date."
 else
 	echo "Station Captain has a new release!";
-	$DIALOG --title "Station Captain new Release" --yesno "Station captain has a new release out. Install it?" 6 $DEFAULT_WIDTH
+	showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out. Install it?" 6 $DEFAULT_WIDTH
 	case $? in
 		0)
 			echo "Updating Station captain."
