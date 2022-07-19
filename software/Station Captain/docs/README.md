@@ -19,4 +19,8 @@ This is a set of requirements for the entire system, not necessarily just the st
 
 Using [Dialog](http://www.unixcl.com/2009/12/linux-dialog-utility-short-tutorial.html)
 
-## 
+## TODOs
+
+Future:
+
+ - swap to a more unified way of finding releases; publish a json list of releases, where to download 

@@ -6,7 +6,8 @@ This is an explanation of the menus.
 
 (main menu)
 - Info
-  - Status; shows status, versions of OQM software running
+  - Installation Status; shows status, versions of OQM software running
+  - Open QuarterMaster; 
   - Host Information
 - Manage Installation
   - Select OQM major version

@@ -29,6 +29,9 @@ SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
 RELEASE_LIST_FILE_WORKING="$META_INFO_DIR/releases_unfinished.json"
+RELEASE_VERSIONS_DIR="$META_INFO_DIR/versions"
+RELEASE_INFRA_VERSIONS="$RELEASE_VERSIONS_DIR/infra.json"
+RELEASE_MNGR_VERSIONS="$RELEASE_VERSIONS_DIR/manager.json"
 
 # Selection
 USER_SELECT_FILE="$TMP_DIR/oqm-captain-input"
@@ -48,7 +51,10 @@ INTERACT_MODE="ui";
 
 # Software release name prefixes
 SW_PREFIX_STATION_CAP="Manager-Station_Captain"
-SW_PREFIX_INFRA=("Infra-Jaeger" "Infra-MongoDB")
+SW_TYPE_INFRA="Infra"
+SW_TYPE_MANAGER="Manager"
+SW_TYPE_BASE_STATION="Core"
+SW_TYPE_PLUGIN="Plugin"
 
 VERSION_FLAG_PRIORITY=("NIGHTLY" "DEV" "" "FINAL")
 
@@ -267,6 +273,62 @@ function getMajorVersion(){
 #
 #
 
+# Processes a release
+# Usage: processRelease "<release json>"
+function processRelease() {
+	local releaseJson="$1"
+	local releaseName="$(echo "$releaseJson" | jq -r ".name")"
+	local releaseParts=(${releaseName//-/ })
+	local releaseType="${releaseParts[0]}"
+	local releaseSoftwareName="${releaseParts[1]}"
+	local releaseVersion="${releaseParts[2]}"
+	local curMajVersion=(${releaseVersion//./ })
+	curMajVersion="${curMajVersion[0]}"
+
+	if [ "${releaseParts[3]}" != "" ]; then
+		releaseVersion="${releaseVersion}-${releaseParts[3]}"
+	fi
+	echo "	Processing Release $releaseName";
+	echo "		         DEBUG:: type: $releaseType"
+	echo "		         DEBUG:: name: $releaseSoftwareName"
+	echo "		      DEBUG:: version: $releaseVersion"
+	echo "		DEBUG:: major version: $curMajVersion"
+
+	local curReleaseListFile
+
+	if [ "$releaseType" == "$SW_TYPE_INFRA" ]; then
+		curReleaseListFile="$RELEASE_INFRA_VERSIONS"
+	elif [ "$releaseType" == "$SW_TYPE_MANAGER" ]; then
+		curReleaseListFile="$RELEASE_RELEASE_MNGR_VERSIONS"
+	else
+		local curMajVersionDir="$RELEASE_VERSIONS_DIR/$curMajVersion"
+		mkdir -p "$curMajVersionDir"
+
+		if [ "$releaseType" == "$SW_TYPE_BASE_STATION" ]; then
+
+		else
+		fi
+	fi
+
+	if [ ! -f "$curReleaseListFile" ]; then
+		echo "[]" >> "$curReleaseListFile"
+	fi
+
+
+}
+
+function processReleaseList() {
+	echo "Processing release list."
+
+	rm -rf "${RELEASE_VERSIONS_DIR}/*"
+
+	for releaseBase64 in $(jq -r '.[] | @base64' "$RELEASE_LIST_FILE"); do
+		processRelease "$(echo "$releaseBase64" | base64 --decode)"
+	done
+
+	echo "DONE processing release list."
+}
+
 function refreshReleaseList(){
 	echo "Refreshing release list."
 	
@@ -441,8 +503,9 @@ function installFromGit(){
 	# TODO:: check filesize is as expected
 	#if [  ]; then	
 	#fi
-	
-	dpkg -i "$fileLocation"
+
+	# TODO:: this based on system packaging type
+	apt install "$fileLocation"
 	local installResult=$?
 	
 	if [ $installResult -ne 0 ]; then
@@ -515,8 +578,8 @@ function getInfo(){
 		showDialog --title "Info" \
 		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 		1 "Installation Status" \
-		1 "Open QuarterMaster" \
-		2 "Host/Base OS" \
+		2 "Open QuarterMaster" \
+		3 "Host/Base OS" \
 		2>$USER_SELECT_FILE
 		
 		updateSelection;
@@ -678,7 +741,7 @@ mkdir -p "$DOWNLOAD_DIR"
 
 # Update release list. Only call here 
 refreshReleaseList
-
+processReleaseList
 #
 # Check updatedness of this script
 #
