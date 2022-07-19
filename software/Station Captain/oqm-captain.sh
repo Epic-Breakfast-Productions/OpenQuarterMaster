@@ -1,21 +1,18 @@
 #!/bin/bash
-
-# 
-# This script manages an installation of OpenQuarterMaster
+# This script manages an installation of Open QuarterMaster
 #
 # Author: Greg Stewart
 # https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
 #
-
 # requires:
 #  - dialog
 #  - docker
 #  - hwinfo
 #  - sponge (from moreutils)
 #  - jq
-
 SCRIPT_VERSION="1.0.0-DEV"
-SCRIPT_VERSION_RELEASE="Manager-Station_Captain-$SCRIPT_VERSION"
+SCRIPT_PACKAGE_NAME="manager-station+captain"
+SCRIPT_VERSION_RELEASE="manager-station+captain-$SCRIPT_VERSION"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
 # urls
@@ -47,7 +44,9 @@ DEFAULT_HEIGHT=15
 TALL_HEIGHT=30
 SUPER_TALL_HEIGHT=60
 # How the user is interacting with this script. Either "ui" or "direct"
-INTERACT_MODE="ui";
+INTERACT_MODE_UI="ui";
+INTERACT_MODE_DIRECT="direct";
+INTERACT_MODE="$INTERACT_MODE_UI";
 
 #test -n "$DISPLAY" && DIALOG=xdialog
 
@@ -79,19 +78,18 @@ function showDialog() {
 
 # TODO:: take arg to return
 function exitProg(){
-	
 	if [ -f "$USER_SELECT_FILE" ]; then
 		rm "$USER_SELECT_FILE";
 	fi
 	
  	if [ "$1" = "" ]; then
 		echo "Exiting."
-		clear;
+		clear -x;
  		exit;
  	else
  		echo "ERROR:: $2";
  		showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
- 		clear
+ 		clear -x;
 		exit $1
 	fi
 }
@@ -109,6 +107,8 @@ function determineSystemPackMan() {
 		result="yum";
 	elif [ -n "$(command -v apt)" ]; then
 		result="apt";
+	else
+		exitProg 2 "Unable to determine if system uses a supported package manager."
 	fi
 	eval $return="$result"
 }
@@ -269,6 +269,32 @@ function getMajorVersion(){
 	echo "${versionArr[0]}"
 }
 
+# Gets the version of an installed package.
+# Usage: getInstalledVersion returnVar "infra-jaeger"
+# Returns: full name/version string, empty string if not installed.
+#
+function getInstalledVersion(){
+	local returnVar=$1
+	local packageName="open+quarter+master-$2"
+	echo "Determining installed version of $packageName";
+
+	local version
+	local packageType
+	determineSystemPackMan packageType
+	if [ "$packageType" == "apt" ]; then
+		version="$(apt-cache show "$packageName" | grep "Version:")"
+		echo "DEBUG:: raw version: $version"
+		version=($version)
+		version="${version[1]}"
+	elif [ "$packageType" == "yum" ]; then
+		# TODO
+		exitProg 2 "yum currently not supported"
+	fi
+
+	echo "Done determining installed version: \"$version\""
+	eval $returnVar="$version"
+}
+
 #
 # Git Interaction Functions
 #
@@ -385,8 +411,9 @@ function getLatestReleaseFor(){
 
 #
 # Determines if the software tag needs an update
+#  TODO:: update to new interface
 # Usage: needsUpdated "type-name-version[-tag]"
-# Returns "" if not needed, json for release to update to.
+# Returns "" if not needed, link of file to download to update to.
 #
 function needsUpdated() {
 	local curTagVersion="$1"
@@ -475,7 +502,7 @@ function installFromGit(){
 
 
 
-# 
+#
 # User Interaction Functions
 # 
 # 
@@ -705,7 +732,9 @@ refreshReleaseList
 #
 # Check updatedness of this script
 #
-latestStatCapRelease="$(needsUpdated "$SCRIPT_VERSION_RELEASE")"
+curInstalledCapVersion=""
+getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
+latestStatCapRelease="$(needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
 #echo "DEBUG:: has new release return: $latestStatCapRelease"
 
 if [ "$latestStatCapRelease" = "" ]; then
@@ -732,11 +761,10 @@ fi
 #
 # Interact with User
 #
-
-# TODO:: if get inputs, go to direct mode. If none, ui
-mainUi;
-
-echo "Still working on things! Come back later!"
+# TODO:: if get inputs, go to direct mode.
+if [ "$INTERACT_MODE" == "$INTERACT_MODE_UI" ]; then
+	mainUi;
+fi
 
 exitProg;
 

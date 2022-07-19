@@ -38,10 +38,10 @@ Each piece of software here will get it's own release tag scheme. Generally spea
 
 Example for each project:
 
- - Base Station - `Core-Base_Station-1.0.0-DEV`
- - Jaeger - `Infra-Jaeger-1.0.0-DEV`
- - Mongo - `Infra-Mongo-1.0.0-DEV`
- - Station Captain - `Manager-Station_Captain-1.0.0-DEV`
+ - Base Station - `core-base+station-1.0.0-DEV`
+ - Jaeger - `infra-jaeger-1.0.0-DEV`
+ - Mongo - `infra-mongo-1.0.0-DEV`
+ - Station Captain - `manager-station+captain-1.0.0-DEV`
 
 ### Installers
 
