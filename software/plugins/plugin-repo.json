@@ -1,0 +1,14 @@
+{
+	"repo": {
+		"maintainer": {
+			"name": "Greg Stewart",
+			"organization": "Epic Breakfast Productions",
+			"email": "contact@gjstewart.net"
+		},
+		"name": "Open QuarterMaster Official",
+		"description": "The official plugin repository for Open QuarterMaster.",
+		"lastUpdate": "Tue 19 Jul 2022 12:12:11 PM UTC"
+	},
+	"ocpBaseVersion": {
+	}
+}
