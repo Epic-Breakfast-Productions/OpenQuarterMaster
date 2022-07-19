@@ -42,3 +42,17 @@ Example for each project:
  - Jaeger - `Infra-Jaeger-1.0.0-DEV`
  - Mongo - `Infra-Mongo-1.0.0-DEV`
  - Station Captain - `Manager-Station_Captain-1.0.0-DEV`
+
+### Installers
+
+All installer/ package names need to follow the following format:
+
+`open+quarter+master-{type}[-{source}]-{packageName}`
+
+Installer name convention is to use the package name, plus the version and installer extension. All parts of the package name must be lower-case, and use `+` instead of spaces, with no other punctuation.
+
+Examples:
+
+- Station Captain: `open+quarter+master-infra-station+captain`
+- Station Captain installer (deb): `open+quarter+master-infra-station+captain-1.0.0-DEV.deb`
+- External plugin: `open+quarter+master-plugin-other+org+repo-plugin+name`

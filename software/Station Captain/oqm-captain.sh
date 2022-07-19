@@ -12,13 +12,15 @@
 #  - docker
 #  - hwinfo
 #  - sponge (from moreutils)
+#  - jq
 
-SCRIPT_VERSION="1.0.2-DEV"
+SCRIPT_VERSION="1.0.0-DEV"
 SCRIPT_VERSION_RELEASE="Manager-Station_Captain-$SCRIPT_VERSION"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
 # urls
 HOME_GIT="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
+HOME_PLUGIN_REPO="https://raw.githubusercontent.com/Epic-Breakfast-Productions/OpenQuarterMaster/main/software/plugins/plugin-repo.json"
 GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster"
 GIT_RELEASES="$GIT_API_BASE/releases"
 
@@ -273,50 +275,6 @@ function getMajorVersion(){
 #
 #
 
-# Processes a release
-# Usage: processRelease "<release json>"
-function processRelease() {
-	local releaseJson="$1"
-	local releaseName="$(echo "$releaseJson" | jq -r ".name")"
-	local releaseParts=(${releaseName//-/ })
-	local releaseType="${releaseParts[0]}"
-	local releaseSoftwareName="${releaseParts[1]}"
-	local releaseVersion="${releaseParts[2]}"
-	local curMajVersion=(${releaseVersion//./ })
-	curMajVersion="${curMajVersion[0]}"
-
-	if [ "${releaseParts[3]}" != "" ]; then
-		releaseVersion="${releaseVersion}-${releaseParts[3]}"
-	fi
-	echo "	Processing Release $releaseName";
-	echo "		         DEBUG:: type: $releaseType"
-	echo "		         DEBUG:: name: $releaseSoftwareName"
-	echo "		      DEBUG:: version: $releaseVersion"
-	echo "		DEBUG:: major version: $curMajVersion"
-
-	local curReleaseListFile
-
-	if [ "$releaseType" == "$SW_TYPE_INFRA" ]; then
-		curReleaseListFile="$RELEASE_INFRA_VERSIONS"
-	elif [ "$releaseType" == "$SW_TYPE_MANAGER" ]; then
-		curReleaseListFile="$RELEASE_RELEASE_MNGR_VERSIONS"
-	else
-		local curMajVersionDir="$RELEASE_VERSIONS_DIR/$curMajVersion"
-		mkdir -p "$curMajVersionDir"
-
-		if [ "$releaseType" == "$SW_TYPE_BASE_STATION" ]; then
-
-		else
-		fi
-	fi
-
-	if [ ! -f "$curReleaseListFile" ]; then
-		echo "[]" >> "$curReleaseListFile"
-	fi
-
-
-}
-
 function processReleaseList() {
 	echo "Processing release list."
 
@@ -376,6 +334,8 @@ EOT
 	#echo "Removing Pre-releases.";
 	#jq -c 'map(select(.prerelease==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 	#echo "Done removing Pre-releases."
+
+	# TODO:: remove plugins
 	
 	echo "Removing drafts.";
 	jq -c 'map(select(.draft==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
@@ -741,7 +701,7 @@ mkdir -p "$DOWNLOAD_DIR"
 
 # Update release list. Only call here 
 refreshReleaseList
-processReleaseList
+
 #
 # Check updatedness of this script
 #

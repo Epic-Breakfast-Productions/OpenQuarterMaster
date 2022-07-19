@@ -1,5 +1,5 @@
 {
-	"packageName":"Open-QuarterMaster-Station-Captain",
+	"packageName":"open+quarter+master-infra-station+captain",
 	"version":"1.0.1-DEV",
 	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
 	"maintainer": {
@@ -16,5 +16,4 @@
 		"copyright":"2021-2022 Greg Stewart",
 		"licence":"GPL-3+"
 	}
-	
 }
