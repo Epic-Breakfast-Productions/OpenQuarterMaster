@@ -58,7 +58,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		
 		boolean failedSerializeTime = false,
 			failedSerializeSize = false,
-			failedDeserializeSize = false;
+			failedDeserializeTime = false;
 		
 		if (sw.getTime(TimeUnit.SECONDS) >= SERIALIZATION_TIME_THRESHOLD) {
 			log.warn("Serialization took longer than threshold {} seconds to complete.", SERIALIZATION_TIME_THRESHOLD);
@@ -84,14 +84,19 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		
 		if (sw.getTime(TimeUnit.SECONDS) >= SERIALIZATION_TIME_THRESHOLD) {
 			log.warn("Deserialization took longer than the threshold {} seconds to complete.", SERIALIZATION_TIME_THRESHOLD);
-			failedDeserializeSize = true;
+			failedDeserializeTime = true;
 		}
 		
 		assertEquals(object, objectBack, "Deserialized object was not equal to original.");
 		
 		assertFalse(
-			failedSerializeSize || failedSerializeTime || failedDeserializeSize,
-			"Failed one or more of size/time related checks."
+			failedSerializeSize || failedSerializeTime || failedDeserializeTime,
+			"Failed one or more of size/time related checks; failedSerialSize=" +
+			failedSerializeSize +
+			", failedSerializeTime=" +
+			failedSerializeTime +
+			", failedDeserializeTime=" +
+			failedDeserializeTime
 		);
 	}
 	
