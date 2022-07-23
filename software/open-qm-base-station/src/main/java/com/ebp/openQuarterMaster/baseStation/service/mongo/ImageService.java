@@ -21,7 +21,6 @@ import java.util.Map;
 @Slf4j
 @ApplicationScoped
 public class ImageService extends MongoService<Image> {
-	
 	//    private Validator validator;
 	
 	ImageService() {//required for DI
