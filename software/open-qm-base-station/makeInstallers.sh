@@ -13,6 +13,7 @@
 #   - rpmlint
 #   - jq
 #
+# TODO:: Figure out how logs work
 
 configFile="installerProperties.json"
 buildDir="build/installers"
@@ -39,6 +40,7 @@ mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
 
 cp oqm_base_station.service "$buildDir/$debDir/etc/systemd/system/"
+sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/oqm_base_station.service"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -69,7 +71,25 @@ EOT
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 #!/bin/bash
 
+mkdir -p /etc/oqm/serviceConfig/core-base+station/
 
+if [ ! -f "/etc/oqm/serviceConfig/core-base+station/envConfig.list" ]; then
+	cat <<EOF >> "/etc/oqm/serviceConfig/core-base+station/envConfig.list"
+#
+# Defaults for connections in a normal install
+#
+quarkus.mongodb.connection-string=mongodb://host.docker.internal:27017
+quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
+quarkus.jaeger.service-name=OQMbase
+
+# change as appropriate
+runningInfo.hostname=localhost
+runningInfo.port=80
+
+# Add your own config here. Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
+
+EOF
+fi
 EOT
 
 chmod +x "$buildDir/$debDir/DEBIAN/preinst"

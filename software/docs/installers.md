@@ -19,9 +19,11 @@ Configuration in this context means configuration passed to each service relayin
 The main Configuration directory is:
 `/etc/oqm/`
 
-This is mapped directly to service containers at the same path.
+This folder is mainly used by the Station Captain script. 
 
-Plugin configuration is located `/etc/oqm/plugins/`
+Service configuration is located `/etc/oqm/serviceConfig/`, with each service getting its own directory (name based on the standard service package name). Examples:
+
+ - `/etc/oqm/serviceConfig/core-base+station/`
 
 #### Data/resource files
 

@@ -3,7 +3,7 @@
 	"maintainer": {
 		"name": "EBP <contact@gjstewart.net>"
 	},
-	"description": "Base Station instance for Open QuarterMaster.\"",
+	"description": "Base Station instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station",
 	"dependencies": {
 		"deb": "docker"
