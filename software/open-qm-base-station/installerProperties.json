@@ -1,0 +1,16 @@
+{
+	"packageName": "open+quarter+master-core-base+station",
+	"maintainer": {
+		"name": "EBP <contact@gjstewart.net>"
+	},
+	"description": "Base Station instance for Open QuarterMaster.\"",
+	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station",
+	"dependencies": {
+		"deb": "docker"
+	},
+	"copyright": {
+		"contact":"Greg Stewart <contact@gjstewart.net>",
+		"copyright":"2021-2022 Greg Stewart",
+		"licence":"GPL-3+"
+	}
+}

@@ -1,0 +1,25 @@
+# Service file for running an instance of the Open QuarterMaster Base Station.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
+#
+#  TODO:: how to update image used?
+#  TODO:: how to pass config to the thing?
+
+[Unit]
+Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_base_station 2> /dev/null || /usr/bin/docker run --name oqm_base_station -p 80:8080 -d ebprod/open-qm-base-station-jvm:1.0.0-DEV"
+ExecStart=/usr/bin/docker start -a oqm_base_station
+ExecStop=/usr/bin/docker stop -t 10 oqm_base_station
+
+[Install]
+WantedBy=multi-user.target

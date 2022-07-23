@@ -4,6 +4,9 @@ plugins {
     id "io.freefair.lombok" version "6.3.0"
 }
 
+group 'com.ebp.openQuarterMaster'
+version '1.0.0-DEV'
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -69,9 +72,6 @@ dependencies {
     testImplementation 'net.datafaker:datafaker:1.4.0'
 }
 
-group 'com.ebp.openQuarterMaster'
-version '1.0.0-DEV'
-
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -101,3 +101,17 @@ test {
 //    include 'io/quarkus/gradle/integrationtest/*.class'
 //}
 //integrationTest.dependsOn(quarkusBuild)
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh script to get the version.
+ */
+class PrintVersionTask extends DefaultTask {
+    @TaskAction
+    def printVersion() {
+        println project.version
+    }
+}
+tasks.register('printVersion', PrintVersionTask)
+
