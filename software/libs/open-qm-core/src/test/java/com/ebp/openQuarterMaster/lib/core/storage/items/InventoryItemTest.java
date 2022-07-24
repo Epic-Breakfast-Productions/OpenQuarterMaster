@@ -1,14 +1,11 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
-import com.ebp.openQuarterMaster.lib.core.history.EventType;
-import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.Stored;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

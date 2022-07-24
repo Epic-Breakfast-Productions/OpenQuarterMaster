@@ -30,16 +30,17 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonTypeInfo(
-//	use = JsonTypeInfo.Id.NAME,
-//	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
-//)
-//@JsonSubTypes({
-//	@JsonSubTypes.Type(value = SimpleAmountItem.class, name = "AMOUNT_SIMPLE"),
-//	@JsonSubTypes.Type(value = ListAmountItem.class, name = "AMOUNT_LIST"),
-//	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
-//})
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
+)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = AmountStored.class, name = "AMOUNT"),
+	@JsonSubTypes.Type(value = TrackedStored.class, name = "TRACKED")
+})
 public abstract class Stored {
+	
+	private StoredType storedType;
 	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.

@@ -1,13 +1,12 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StorageType;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.units.indriya.quantity.Quantities;
@@ -48,7 +47,7 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 	private BigDecimal defaultValue = BigDecimal.ZERO;
 	
 	public TrackedItem() {
-		super(StoredType.TRACKED);
+		super(StorageType.TRACKED);
 	}
 	
 	@BsonIgnore

@@ -32,7 +32,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<HistoriedSerial
 					int numEvents = 10_000;
 					
 					this.updated(new HistoryEvent(
-									 EventType.CREATE,
+									 EventAction.CREATE,
 									 ObjectId.get(),
 									 ZonedDateTime.now(),
 									 FAKER.lorem().sentence()
@@ -41,7 +41,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<HistoriedSerial
 					
 					for (int i = 1; i < numEvents; i++) {
 						this.updated(new HistoryEvent(
-							EventType.UPDATE,
+							EventAction.UPDATE,
 							ObjectId.get(),
 							ZonedDateTime.now(),
 							FAKER.lorem().sentence()

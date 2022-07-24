@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StorageType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 import lombok.AccessLevel;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
@@ -43,8 +42,8 @@ public abstract class AmountItem<T> extends InventoryItem<T> {
 	@DecimalMin("0.0")
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
 	
-	protected AmountItem(StoredType storedType) {
-		super(storedType);
+	protected AmountItem(StorageType storageType) {
+		super(storageType);
 	}
 	
 	@Override

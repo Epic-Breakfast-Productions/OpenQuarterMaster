@@ -1,10 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
 /**
- * Enum to determine what type of storage the item uses.
+ * Enum to determine what type of stored type an object is for jackson.
  */
 public enum StoredType {
-	AMOUNT_SIMPLE,
-	AMOUNT_LIST,
+	AMOUNT,
 	TRACKED;
 }

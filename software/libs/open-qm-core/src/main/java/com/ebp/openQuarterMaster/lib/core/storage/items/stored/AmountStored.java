@@ -10,10 +10,13 @@ import javax.measure.Quantity;
 /**
  * Stored object to describe an amount of stored substance.
  */
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AmountStored extends Stored {
+	
+	public AmountStored() {
+		this.setStoredType(StoredType.AMOUNT);
+	}
 	
 	/**
 	 * The amount of the thing stored.

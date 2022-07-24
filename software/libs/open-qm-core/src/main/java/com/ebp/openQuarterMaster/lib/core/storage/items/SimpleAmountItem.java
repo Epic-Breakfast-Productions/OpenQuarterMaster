@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StorageType;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidUnit;
 import lombok.Data;
@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class SimpleAmountItem extends InventoryItem<AmountStored> {
 	
 	public SimpleAmountItem() {
-		super(StoredType.AMOUNT_SIMPLE);
+		super(StorageType.AMOUNT_SIMPLE);
 	}
 	
 	@Override

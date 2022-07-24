@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 @Data
 public class TrackedStored extends Stored {
 	
+	public TrackedStored() {
+		this.setStoredType(StoredType.TRACKED);
+	}
+	
 	/**
 	 * Some extra details to help identify this exact item.
 	 */

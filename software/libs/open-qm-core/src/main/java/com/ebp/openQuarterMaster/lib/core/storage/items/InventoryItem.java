@@ -1,9 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StorageType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -31,7 +29,7 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storageType"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = SimpleAmountItem.class, name = "AMOUNT_SIMPLE"),
@@ -53,7 +51,7 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private final StoredType storedType;
+	private final StorageType storageType;
 	
 	/*TODO:: this useful?
 	 * Used to determine how much of something is stored if {@link #unit} is {@link AbstractUnit#ONE}
@@ -91,12 +89,12 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 */
 	public InventoryItem() {
 		//noinspection ConstantConditions
-		this.storedType = null;
+		this.storageType = null;
 		throw new UnsupportedOperationException();
 	}
 	
-	protected InventoryItem(StoredType type) {
-		this.storedType = type;
+	protected InventoryItem(StorageType type) {
+		this.storageType = type;
 	}
 	
 	public abstract @NonNull Unit<?> getUnit();

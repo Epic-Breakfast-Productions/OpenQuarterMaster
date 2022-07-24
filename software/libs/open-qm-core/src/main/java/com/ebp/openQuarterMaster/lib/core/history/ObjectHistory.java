@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -20,6 +21,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ObjectHistory extends MainObject {
+	
+	/**
+	 * The id of the object this history is for
+	 */
+	private ObjectId objectId;
 	
 	/**
 	 * The list of history events. Modified by the base station only.
@@ -39,10 +45,10 @@ public class ObjectHistory extends MainObject {
 	 */
 	@JsonIgnore
 	public ObjectHistory updated(@NonNull HistoryEvent event) {
-		if (this.history.isEmpty() && !EventType.CREATE.equals(event.getType())) {
+		if (this.history.isEmpty() && !EventAction.CREATE.equals(event.getAction())) {
 			throw new IllegalArgumentException("First event must be CREATE");
 		}
-		if (!this.history.isEmpty() && EventType.CREATE.equals(event.getType())) {
+		if (!this.history.isEmpty() && EventAction.CREATE.equals(event.getAction())) {
 			throw new IllegalArgumentException("Cannot add another CREATE event type.");
 		}
 		

@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
@@ -28,19 +27,19 @@ class HistoriedTest extends BasicTest {
 		assertEquals(0, o.getHistory().size());
 		
 		ObjectHistory o2 = o.updated(
-			HistoryEvent.builder()
-						.type(EventType.CREATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.CREATE,
+				ObjectId.get()
+			)
 		);
 		assertSame(o, o2);
 		assertEquals(1, o.getHistory().size());
 		
 		o2 = o.updated(
-			HistoryEvent.builder()
-						.type(EventType.UPDATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.UPDATE,
+				ObjectId.get()
+			)
 		);
 		
 		assertTrue(o.getHistory().get(0).getTimestamp().isAfter(o.getHistory().get(1).getTimestamp()));
@@ -50,17 +49,17 @@ class HistoriedTest extends BasicTest {
 	public void testUpdatedCreate() {
 		ObjectHistory o = this.getBasicTestItem();
 		
-		o.updated(HistoryEvent.builder()
-							  .type(EventType.CREATE)
-							  .userId(ObjectId.get())
-							  .build()
+		o.updated(new HistoryEvent(
+					  EventAction.CREATE,
+					  ObjectId.get()
+				  )
 		);
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(HistoryEvent.builder()
-								  .type(EventType.CREATE)
-								  .userId(ObjectId.get())
-								  .build());
+			o.updated(new HistoryEvent(
+				EventAction.CREATE,
+				ObjectId.get()
+			));
 		});
 	}
 	
@@ -69,10 +68,10 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(HistoryEvent.builder()
-								  .type(EventType.UPDATE)
-								  .userId(ObjectId.get())
-								  .build());
+			o.updated(new HistoryEvent(
+				EventAction.UPDATE,
+				ObjectId.get()
+			));
 		});
 	}
 	
@@ -81,16 +80,16 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			HistoryEvent.builder()
-						.type(EventType.CREATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.CREATE,
+				ObjectId.get()
+			)
 		);
 		o.updated(
-			HistoryEvent.builder()
-						.type(EventType.UPDATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.UPDATE,
+				ObjectId.get()
+			)
 		);
 		
 		HistoryEvent event = o.lastHistoryEvent();
@@ -103,16 +102,16 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			HistoryEvent.builder()
-						.type(EventType.CREATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.CREATE,
+				ObjectId.get()
+			)
 		);
 		o.updated(
-			HistoryEvent.builder()
-						.type(EventType.UPDATE)
-						.userId(ObjectId.get())
-						.build()
+			new HistoryEvent(
+				EventAction.UPDATE,
+				ObjectId.get()
+			)
 		);
 		
 		ZonedDateTime eventTime = o.lastHistoryEventTime();
