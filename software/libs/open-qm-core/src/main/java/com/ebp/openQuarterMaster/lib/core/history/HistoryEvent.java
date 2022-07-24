@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
@@ -16,10 +17,8 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class HistoryEvent {
-	//TODO:: extend for add/remove
-	
 	/**
 	 * The type of event that occurred
 	 */
@@ -35,13 +34,13 @@ public class HistoryEvent {
 	/**
 	 * When the event occurred
 	 */
-	@Builder.Default
+	@lombok.Builder.Default
 	@NonNull
 	@NotNull
 	private ZonedDateTime timestamp = ZonedDateTime.now();
 	
 	/** Description of the event */
-	@Builder.Default
+	@lombok.Builder.Default
 	@NonNull
 	@NotNull
 	private String description = "";

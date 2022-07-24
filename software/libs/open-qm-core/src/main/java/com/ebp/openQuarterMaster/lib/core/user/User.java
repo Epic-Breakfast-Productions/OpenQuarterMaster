@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.user;
 
+import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderClassName = "Builder")
-public class User extends MainObject {
+public class User extends ImagedMainObject {
 	
 	@NonNull
 	@NotNull

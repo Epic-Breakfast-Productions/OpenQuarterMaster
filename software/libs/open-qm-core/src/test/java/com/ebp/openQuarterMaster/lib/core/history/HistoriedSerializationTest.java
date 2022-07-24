@@ -20,7 +20,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<HistoriedSerial
 	}
 	
 	@NoArgsConstructor
-	public static class TestHistoried extends Historied {
+	public static class TestHistoried extends ObjectHistory {
 	
 	}
 	

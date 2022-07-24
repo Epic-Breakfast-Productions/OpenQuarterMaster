@@ -1,7 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
+import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
@@ -14,9 +16,10 @@ import java.util.List;
 /**
  * Describes an object that has a history.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public abstract class Historied {
+public class ObjectHistory extends MainObject {
 	
 	/**
 	 * The list of history events. Modified by the base station only.
@@ -35,7 +38,7 @@ public abstract class Historied {
 	 * @return This historied object.
 	 */
 	@JsonIgnore
-	public Historied updated(@NonNull HistoryEvent event) {
+	public ObjectHistory updated(@NonNull HistoryEvent event) {
 		if (this.history.isEmpty() && !EventType.CREATE.equals(event.getType())) {
 			throw new IllegalArgumentException("First event must be CREATE");
 		}

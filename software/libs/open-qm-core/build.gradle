@@ -1,6 +1,7 @@
 plugins {
 	id 'java-library'
-	id "io.freefair.lombok" version "6.3.0"
+	// https://plugins.gradle.org/plugin/io.freefair.lombok
+	id "io.freefair.lombok" version "6.5.0.3"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'

@@ -42,23 +42,6 @@ public class InventoryItemTest extends BasicTest {
 				ObjectId.get()
 			);
 		}
-		
-		item.updated(new HistoryEvent(
-						 EventType.CREATE,
-						 ObjectId.get(),
-						 ZonedDateTime.now(),
-						 FAKER.lorem().sentence()
-					 )
-		);
-		
-		for (int i = 1; i < NUM_HIST_EVENTS; i++) {
-			item.updated(new HistoryEvent(
-				EventType.UPDATE,
-				ObjectId.get(),
-				ZonedDateTime.now(),
-				FAKER.lorem().sentence()
-			));
-		}
 	}
 	
 	public static void fillCommon(Stored stored) {

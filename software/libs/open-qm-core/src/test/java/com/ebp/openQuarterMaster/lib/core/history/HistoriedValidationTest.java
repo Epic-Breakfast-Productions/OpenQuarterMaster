@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-class HistoriedValidationTest extends ObjectValidationTest<Historied> {
+class HistoriedValidationTest extends ObjectValidationTest<ObjectHistory> {
 	
 	@NoArgsConstructor
-	public static class TestHistoried extends Historied {
+	public static class TestHistoried extends ObjectHistory {
 	
 	}
 	

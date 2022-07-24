@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ImagedMainObject extends MainObject {
+public class ImagedMainObject extends AttKeywordMainObject {
 	
 	/**
 	 * List of images related to the object.

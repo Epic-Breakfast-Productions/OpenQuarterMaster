@@ -1,11 +1,8 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
-import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,23 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class HistoriedTest extends BasicTest {
 	
-	@NoArgsConstructor
-	public static class TestHistoried extends Historied {
-	
-	}
-	
-	public TestHistoried getBasicTestItem() {
-		return new TestHistoried();
+	public ObjectHistory getBasicTestItem() {
+		return new ObjectHistory();
 	}
 	
 	@Test
 	public void testUpdated() {
-		Historied o = this.getBasicTestItem();
+		ObjectHistory o = this.getBasicTestItem();
 		
 		assertTrue(o.getHistory().isEmpty());
 		assertEquals(0, o.getHistory().size());
 		
-		Historied o2 = o.updated(
+		ObjectHistory o2 = o.updated(
 			HistoryEvent.builder()
 						.type(EventType.CREATE)
 						.userId(ObjectId.get())
@@ -56,7 +48,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testUpdatedCreate() {
-		Historied o = this.getBasicTestItem();
+		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(HistoryEvent.builder()
 							  .type(EventType.CREATE)
@@ -74,7 +66,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testUpdatedUpdateFirst() {
-		Historied o = this.getBasicTestItem();
+		ObjectHistory o = this.getBasicTestItem();
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
 			o.updated(HistoryEvent.builder()
@@ -86,7 +78,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testGetLastUpdate() {
-		Historied o = this.getBasicTestItem();
+		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
 			HistoryEvent.builder()
@@ -108,7 +100,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testGetLastUpdateTime() {
-		Historied o = this.getBasicTestItem();
+		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
 			HistoryEvent.builder()

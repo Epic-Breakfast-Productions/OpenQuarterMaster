@@ -1,5 +1,10 @@
 package com.ebp.openQuarterMaster.lib.core.storage.items.stored;
 
+import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.storage.items.TrackedItem;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +30,15 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//@JsonTypeInfo(
+//	use = JsonTypeInfo.Id.NAME,
+//	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
+//)
+//@JsonSubTypes({
+//	@JsonSubTypes.Type(value = SimpleAmountItem.class, name = "AMOUNT_SIMPLE"),
+//	@JsonSubTypes.Type(value = ListAmountItem.class, name = "AMOUNT_LIST"),
+//	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
+//})
 public abstract class Stored {
 	
 	/**

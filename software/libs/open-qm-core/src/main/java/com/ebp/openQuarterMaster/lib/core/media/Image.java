@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.media;
 
-import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.AttKeywordMainObject;
 import com.ebp.openQuarterMaster.lib.core.rest.media.ImageCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidBase64;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,7 +32,7 @@ import java.util.Base64;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderClassName = "Builder")
-public class Image extends MainObject {
+public class Image extends AttKeywordMainObject {
 	
 	/**
 	 * The size of the images to keep in pixels

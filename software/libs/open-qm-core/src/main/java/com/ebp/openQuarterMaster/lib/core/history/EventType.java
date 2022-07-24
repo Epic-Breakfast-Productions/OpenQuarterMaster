@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 /**
- * Used with {@link Historied} to describe the type of event.
+ * Used with {@link ObjectHistory} to describe the type of event.
  */
 public enum EventType {
 	/** A creation event; marking the creation of the thing in the database. */
