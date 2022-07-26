@@ -1,12 +1,15 @@
-package com.ebp.openQuarterMaster.lib.core;
+package com.ebp.openQuarterMaster.lib.core.history.events;
 
-import lombok.AllArgsConstructor;
+import com.ebp.openQuarterMaster.lib.core.AttKeywordContaining;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
+import javax.measure.Quantity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -16,24 +19,25 @@ import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public abstract class AttKeywordMainObject
-	extends MainObject
+@SuperBuilder
+@ToString(callSuper = true)
+public abstract class ItemAddSubEvent
+	extends DescriptiveEvent
 	//	implements AttKeywordContaining
 {
 	
-	public AttKeywordMainObject(ObjectId id, Map<@NotBlank @NotNull String, String> attributes, List<@NotBlank String> keywords) {
-		super(id);
-		this.setAttributes(attributes);
-		this.setKeywords(keywords);
+	public ItemAddSubEvent(EventType type) {
+		super(type);
 	}
+	
+	private Quantity<?> quantity;
 	
 	/**
 	 * Attributes this object might have, usable for any purpose.
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -41,6 +45,6 @@ public abstract class AttKeywordMainObject
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private List<@NotBlank String> keywords = new ArrayList<>();
-	
 }

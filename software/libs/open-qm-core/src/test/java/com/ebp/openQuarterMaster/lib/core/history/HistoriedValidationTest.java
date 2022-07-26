@@ -1,5 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.HistoryEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.UpdateEvent;
 import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectValidationTest;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ class HistoriedValidationTest extends ObjectValidationTest<ObjectHistory> {
 		return Stream.of(
 			Arguments.of(new TestHistoried()),
 			Arguments.of(new TestHistoried() {{
-				this.getHistory().add(new HistoryEvent());
+				this.getHistory().add(new UpdateEvent());
 			}})
 		);
 	}

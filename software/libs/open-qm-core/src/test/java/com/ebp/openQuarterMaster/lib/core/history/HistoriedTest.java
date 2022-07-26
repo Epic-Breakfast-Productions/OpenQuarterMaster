@@ -1,5 +1,8 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.CreateEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.HistoryEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.UpdateEvent;
 import com.ebp.openQuarterMaster.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -27,19 +30,13 @@ class HistoriedTest extends BasicTest {
 		assertEquals(0, o.getHistory().size());
 		
 		ObjectHistory o2 = o.updated(
-			new HistoryEvent(
-				EventAction.CREATE,
-				ObjectId.get()
-			)
+			new CreateEvent()
 		);
 		assertSame(o, o2);
 		assertEquals(1, o.getHistory().size());
 		
 		o2 = o.updated(
-			new HistoryEvent(
-				EventAction.UPDATE,
-				ObjectId.get()
-			)
+			new UpdateEvent()
 		);
 		
 		assertTrue(o.getHistory().get(0).getTimestamp().isAfter(o.getHistory().get(1).getTimestamp()));
@@ -49,17 +46,10 @@ class HistoriedTest extends BasicTest {
 	public void testUpdatedCreate() {
 		ObjectHistory o = this.getBasicTestItem();
 		
-		o.updated(new HistoryEvent(
-					  EventAction.CREATE,
-					  ObjectId.get()
-				  )
-		);
+		o.updated(new CreateEvent());
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(new HistoryEvent(
-				EventAction.CREATE,
-				ObjectId.get()
-			));
+			o.updated(new CreateEvent());
 		});
 	}
 	
@@ -68,10 +58,7 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(new HistoryEvent(
-				EventAction.UPDATE,
-				ObjectId.get()
-			));
+			o.updated(new UpdateEvent());
 		});
 	}
 	
@@ -80,16 +67,10 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			new HistoryEvent(
-				EventAction.CREATE,
-				ObjectId.get()
-			)
+			new CreateEvent()
 		);
 		o.updated(
-			new HistoryEvent(
-				EventAction.UPDATE,
-				ObjectId.get()
-			)
+			new UpdateEvent()
 		);
 		
 		HistoryEvent event = o.lastHistoryEvent();
@@ -102,16 +83,10 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			new HistoryEvent(
-				EventAction.CREATE,
-				ObjectId.get()
-			)
+			new CreateEvent()
 		);
 		o.updated(
-			new HistoryEvent(
-				EventAction.UPDATE,
-				ObjectId.get()
-			)
+			new UpdateEvent()
 		);
 		
 		ZonedDateTime eventTime = o.lastHistoryEventTime();

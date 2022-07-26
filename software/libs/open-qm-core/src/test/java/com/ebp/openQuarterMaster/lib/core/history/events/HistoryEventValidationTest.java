@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.history;
+package com.ebp.openQuarterMaster.lib.core.history.events;
 
 import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectValidationTest;
 import lombok.NoArgsConstructor;

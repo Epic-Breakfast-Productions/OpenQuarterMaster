@@ -1,6 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.history;
 
 import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.history.events.CreateEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.HistoryEvent;
+import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,6 +39,19 @@ public class ObjectHistory extends MainObject {
 	@NotNull
 	private List<@NotNull HistoryEvent> history = new ArrayList<>();
 	
+	public ObjectHistory(ObjectId objectId, User user) {
+		this.objectId = objectId;
+		this.updated(
+			CreateEvent.builder()
+					   .userId((user == null ? null : user.getId()))
+					   .build()
+		);
+	}
+	
+	public ObjectHistory(MainObject object, User user) {
+		this(object.getId(), user);
+	}
+	
 	/**
 	 * Adds a history event to the set held, to the front of the list.
 	 *
@@ -45,10 +61,10 @@ public class ObjectHistory extends MainObject {
 	 */
 	@JsonIgnore
 	public ObjectHistory updated(@NonNull HistoryEvent event) {
-		if (this.history.isEmpty() && !EventAction.CREATE.equals(event.getAction())) {
-			throw new IllegalArgumentException("First event must be CREATE");
+		if (this.history.isEmpty() && !(event instanceof CreateEvent)) {
+			throw new IllegalArgumentException("First event must be a create");
 		}
-		if (!this.history.isEmpty() && EventAction.CREATE.equals(event.getAction())) {
+		if (!this.history.isEmpty() && (event instanceof CreateEvent)) {
 			throw new IllegalArgumentException("Cannot add another CREATE event type.");
 		}
 		

@@ -20,7 +20,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 	/** The max amount of time in seconds we want de/serialization to take (triggers warning if over this) */
 	private static final int SERIALIZATION_TIME_THRESHOLD = 2;
 	/** The threshold for logging out the json string representation of the data */
-	private static final int SERIALIZED_SIZE_LOG_THRESHOLD = 2_000;
+	private static final int SERIALIZED_SIZE_LOG_THRESHOLD = 1_000;
 	
 	
 	/** The speed of the theoretical connection. Used to calculate {@link #SERIALIZED_SIZE_THRESHOLD}. In bytes per second. */
@@ -85,9 +85,19 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		if (sw.getTime(TimeUnit.SECONDS) >= SERIALIZATION_TIME_THRESHOLD) {
 			log.warn("Deserialization took longer than the threshold {} seconds to complete.", SERIALIZATION_TIME_THRESHOLD);
 			failedDeserializeTime = true;
+		} else {
+			log.info("Deserialization did not take too long.");
 		}
 		
-		assertEquals(object, objectBack, "Deserialized object was not equal to original.");
+		try {
+			assertEquals(object, objectBack, "Deserialized object was not equal to original.");
+		} catch(AssertionError e) {
+			throw e;
+		} catch(Throwable e) {
+			throw new IllegalStateException("Failed to determine if original and deserialized were equal.");
+		}
+		
+		log.info("Original and deserialized objects were equal.");
 		
 		assertFalse(
 			failedSerializeSize || failedSerializeTime || failedDeserializeTime,
