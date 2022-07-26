@@ -1,10 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.history.EventType;
-import com.ebp.openQuarterMaster.lib.core.history.HistoryEvent;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +27,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +44,8 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @Traced
 public abstract class MongoService<T extends MainObject> {
-	public static String getCollectionName(Class<?> clazz){
+	
+	public static String getCollectionName(Class<?> clazz) {
 		return clazz.getSimpleName();
 	}
 	
@@ -54,7 +53,7 @@ public abstract class MongoService<T extends MainObject> {
 	private static final Validator VALIDATOR;//TODO:: move to constructor?
 	
 	static {
-		try(ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()){
+		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
 			VALIDATOR = validatorFactory.getValidator();
 		}
 	}
@@ -76,17 +75,14 @@ public abstract class MongoService<T extends MainObject> {
 	protected final String collectionName;
 	@Getter
 	protected final Class<T> clazz;
-	protected final boolean allowNullUserForCreate;
 	
-	protected MongoCollection<T> collection = null;
-	
+	private MongoCollection<T> collection = null;
 	
 	protected MongoService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		Class<T> clazz,
-		boolean allowNullUserForCreate
+		Class<T> clazz
 	) {
 		this(
 			objectMapper,
@@ -94,7 +90,6 @@ public abstract class MongoService<T extends MainObject> {
 			database,
 			getCollectionName(clazz),
 			clazz,
-			allowNullUserForCreate,
 			null
 		);
 	}
@@ -105,7 +100,6 @@ public abstract class MongoService<T extends MainObject> {
 		}
 		return this.collection;
 	}
-	
 	
 	/**
 	 * Gets a list of entries based on the options given.
@@ -204,11 +198,16 @@ public abstract class MongoService<T extends MainObject> {
 	 *
 	 * @return The object found. Null if not found.
 	 */
-	public T get(ObjectId objectId) {
+	public T get(ObjectId objectId) throws DbNotFoundException {
 		T found = getCollection()
 					  .find(eq("_id", objectId))
 					  .limit(1)
 					  .first();
+		
+		if(found == null){
+			throw new DbNotFoundException(this.clazz, objectId);
+		}
+		
 		return found;
 	}
 	
@@ -230,18 +229,12 @@ public abstract class MongoService<T extends MainObject> {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
-		if (updateJson.has("history")) {
-			throw new IllegalArgumentException("Not allowed to update history of an object manually.");
-		}
+		
 		T object = this.get(id);
 		
-		if(object == null){
-			throw new IllegalArgumentException("Object to update does not exist.");
-		}
-		
 		ObjectReader reader = objectMapper
-			.readerForUpdating(object)
-			.with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+								  .readerForUpdating(object)
+								  .with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
 			//TODO:: enable different types, for InventoryItem (fails to deal with the abstract type)
 			reader.readValue(updateJson, object.getClass());
@@ -257,18 +250,11 @@ public abstract class MongoService<T extends MainObject> {
 															 .collect(Collectors.joining(", ")));
 		}
 		
-		object.updated(
-			HistoryEvent.builder()
-						.userId(user.getId())
-						.type(EventType.UPDATE)
-						.build()
-		);
-		
 		this.getCollection().findOneAndReplace(eq("_id", id), object);
 		return object;
 	}
 	
-	public <A extends Annotation> T update(String id, ObjectNode updateJson, User user) {
+	public T update(String id, ObjectNode updateJson, User user) {
 		return this.update(new ObjectId(id), updateJson, user);
 	}
 	
@@ -279,23 +265,10 @@ public abstract class MongoService<T extends MainObject> {
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(T object, User user) {
-		if (!this.allowNullUserForCreate) {
-			assertNotNullUser(user);
-		}
+	public ObjectId add(T object) {
 		if (object == null) {
 			throw new NullPointerException("Object cannot be null.");
 		}
-		if (!object.getHistory().isEmpty()) {
-			throw new IllegalArgumentException("Object cannot have history before creation.");
-		}
-		
-		object.updated(
-			HistoryEvent.builder()
-						.userId((user != null ? user.getId() : null))
-						.type(EventType.CREATE)
-						.build()
-		);
 		
 		InsertOneResult result = getCollection().insertOne(object);
 		
@@ -311,20 +284,8 @@ public abstract class MongoService<T extends MainObject> {
 	 *
 	 * @return The object that was removed
 	 */
-	public T remove(ObjectId objectId, User user) {
-		assertNotNullUser(user);
+	public T remove(ObjectId objectId) {
 		T toRemove = this.get(objectId);
-		
-		if (toRemove == null) {
-			return null;
-		}
-		
-		toRemove.updated(
-			HistoryEvent.builder()
-						.userId(user.getId())
-						.type(EventType.REMOVE)
-						.build()
-		);
 		
 		DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
 		
@@ -333,7 +294,7 @@ public abstract class MongoService<T extends MainObject> {
 				log.warn("Delete of obj {} was not acknowledged.", objectId);
 			}
 			if (result.getDeletedCount() != 1) {
-				log.warn("Selete of obj {} returned delete count != 1: {}", objectId, result.getDeletedCount());
+				log.warn("Delete of obj {} returned delete count != 1: {}", objectId, result.getDeletedCount());
 			}
 		}
 		
@@ -343,14 +304,14 @@ public abstract class MongoService<T extends MainObject> {
 	/**
 	 * Removes the object with the id given.
 	 * <p>
-	 * Wrapper for {@link #remove(ObjectId, User)}, to be able to use String representation of ObjectId.
+	 * Wrapper for {@link #remove(ObjectId)}, to be able to use String representation of ObjectId.
 	 *
 	 * @param objectId The id of the object to remove
 	 *
 	 * @return The object that was removed
 	 */
-	public T remove(String objectId, User user) {
-		return this.remove(new ObjectId(objectId), user);
+	public T remove(String objectId) {
+		return this.remove(new ObjectId(objectId));
 	}
 	
 	/**

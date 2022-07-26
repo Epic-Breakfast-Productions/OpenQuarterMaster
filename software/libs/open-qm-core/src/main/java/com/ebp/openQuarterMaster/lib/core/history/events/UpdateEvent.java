@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.history.events;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class UpdateEvent extends DescriptiveEvent {
 	
-	public static List<String> fieldListFromJson(JsonNode updateJson) {
+	public static List<String> fieldListFromJson(ObjectNode updateJson) {
 		List<String> output = new ArrayList<>();
 		
 		for (Iterator<Map.Entry<String, JsonNode>> it = updateJson.fields(); it.hasNext(); ) {
@@ -28,7 +29,7 @@ public class UpdateEvent extends DescriptiveEvent {
 			String curKey = cur.getKey();
 			
 			if (cur.getValue().isObject()) {
-				List<String> curSubs = fieldListFromJson(cur.getValue());
+				List<String> curSubs = fieldListFromJson((ObjectNode) cur.getValue());
 				
 				for (String curSubKey : curSubs) {
 					output.add(curKey + "." + curSubKey);
