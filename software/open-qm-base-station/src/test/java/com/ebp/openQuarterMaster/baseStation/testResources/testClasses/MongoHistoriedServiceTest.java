@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoHistoriedService;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-public abstract class MongoServiceTest<T extends MainObject, S extends MongoService<T>> extends RunningServerTest {
+public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedService<T>> extends RunningServerTest {
 	
 	protected TestUserService testUserService;
 	
@@ -88,7 +88,7 @@ public abstract class MongoServiceTest<T extends MainObject, S extends MongoServ
 			service.add(this.getTestObject(), this.testUserService.getTestUser());
 		}
 		
-		assertEquals(numIn, service.removeAll());
+		assertEquals(numIn, service.removeAll(this.testUserService.getTestUser()));
 		assertTrue(service.list().isEmpty());
 	}
 }

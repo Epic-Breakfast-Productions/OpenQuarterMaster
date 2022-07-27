@@ -4,8 +4,12 @@ import lombok.Getter;
 import org.bson.types.ObjectId;
 
 public class DbNotFoundException extends IllegalArgumentException {
-	private static String buildExceptionMessage(Class<?> clazzNotFound, ObjectId idNotFound, String s){
-		return "Could not find " + clazzNotFound.getSimpleName() + " with id " + idNotFound.toHexString() + (s == null ? "" : " - " + s);
+	
+	private static String buildExceptionMessage(Class<?> clazzNotFound, ObjectId idNotFound, String s) {
+		return "Could not find " + clazzNotFound.getSimpleName() + " with id " + (idNotFound == null ? null : idNotFound.toHexString()) + (
+			s == null ? "" :
+				" - " + s
+		);
 	}
 	
 	@Getter
@@ -18,6 +22,7 @@ public class DbNotFoundException extends IllegalArgumentException {
 		this.clazzNotFound = clazzNotFound;
 		this.idNotFound = idNotFound;
 	}
+	
 	public DbNotFoundException(Class<?> clazzNotFound, ObjectId idNotFound) {
 		this(clazzNotFound, idNotFound, null);
 	}

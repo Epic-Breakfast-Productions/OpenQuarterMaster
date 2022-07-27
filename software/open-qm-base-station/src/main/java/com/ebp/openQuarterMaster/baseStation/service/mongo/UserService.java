@@ -27,13 +27,13 @@ import static com.mongodb.client.model.Filters.or;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class UserService extends MongoService<User> {
+public class UserService extends MongoHistoriedService<User> {
 	
 	private Validator validator;
 	private AuthMode authMode;
 	
 	UserService() {//required for DI
-		super(null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

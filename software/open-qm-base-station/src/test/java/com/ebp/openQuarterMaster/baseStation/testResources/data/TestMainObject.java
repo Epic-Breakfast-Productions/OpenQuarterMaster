@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.AttKeywordMainObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestMainObject extends MainObject {
+public class TestMainObject extends AttKeywordMainObject {
 	
 	@NotNull
 	@NotEmpty

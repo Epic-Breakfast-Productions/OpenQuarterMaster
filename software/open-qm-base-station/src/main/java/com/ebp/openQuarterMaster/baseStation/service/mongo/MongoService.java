@@ -224,8 +224,7 @@ public abstract class MongoService<T extends MainObject> {
 		return this.get(new ObjectId(objectId));
 	}
 	
-	public T update(ObjectId id, ObjectNode updateJson, User user) {
-		assertNotNullUser(user);
+	public T update(ObjectId id, ObjectNode updateJson) {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
@@ -254,8 +253,8 @@ public abstract class MongoService<T extends MainObject> {
 		return object;
 	}
 	
-	public T update(String id, ObjectNode updateJson, User user) {
-		return this.update(new ObjectId(id), updateJson, user);
+	public T update(String id, ObjectNode updateJson) {
+		return this.update(new ObjectId(id), updateJson);
 	}
 	
 	/**

@@ -25,10 +25,10 @@ import java.util.Map;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class StorageBlockService extends MongoService<StorageBlock> {
+public class StorageBlockService extends MongoHistoriedService<StorageBlock> {
 	
 	StorageBlockService() {//required for DI
-		super(null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

@@ -38,7 +38,6 @@ import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.
 import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Tag("integration")
@@ -117,14 +116,11 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		InventoryItem stored = inventoryItemService.get(returned);
 		assertNotNull(stored);
 		
-		assertFalse(stored.getHistory().isEmpty());
-		assertEquals(1, stored.getHistory().size());
-		
-		item.setHistory(stored.getHistory());
 		item.setId(returned);
 		
-		
 		assertEquals(item, stored);
+		
+		//TODO:: check history
 	}
 	
 	@Test
@@ -136,13 +132,11 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		InventoryItem stored = inventoryItemService.get(returned);
 		assertNotNull(stored);
 		
-		assertFalse(stored.getHistory().isEmpty());
-		assertEquals(1, stored.getHistory().size());
-		
-		item.setHistory(stored.getHistory());
 		item.setId(returned);
 		
 		assertEquals(item, stored);
+		
+		//TODO:: check history
 	}
 	
 	@Test
@@ -156,13 +150,11 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		InventoryItem stored = inventoryItemService.get(returned);
 		assertNotNull(stored);
 		
-		assertFalse(stored.getHistory().isEmpty());
-		assertEquals(1, stored.getHistory().size());
-		
-		item.setHistory(stored.getHistory());
 		item.setId(returned);
 		
 		assertEquals(item, stored);
+		
+		//TODO:: check history
 	}
 	
 	@Test

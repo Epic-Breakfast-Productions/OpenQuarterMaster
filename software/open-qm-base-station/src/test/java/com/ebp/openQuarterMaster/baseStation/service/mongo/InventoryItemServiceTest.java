@@ -3,7 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoServiceTest;
+import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-class InventoryItemServiceTest extends MongoServiceTest<InventoryItem, InventoryItemService> {
+class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, InventoryItemService> {
 	
 	InventoryItemService inventoryItemService;
 	

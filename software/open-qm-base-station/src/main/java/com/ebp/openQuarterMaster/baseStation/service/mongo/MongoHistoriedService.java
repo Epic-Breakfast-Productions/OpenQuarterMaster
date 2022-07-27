@@ -8,6 +8,7 @@ import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,13 @@ import org.eclipse.microprofile.opentracing.Traced;
 @Slf4j
 @Traced
 public abstract class MongoHistoriedService<T extends MainObject> extends MongoService<T> {
+	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
 	/**
 	 * TODO:: check if real user. Get userService in constructor?
 	 * TODO:: real exception
+	 *
 	 * @param user
 	 */
 	private static void assertNotNullUser(User user) {
@@ -40,6 +43,21 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 	protected final boolean allowNullUserForCreate;
 	@Getter(AccessLevel.PROTECTED)
 	private MongoHistoryService<T> historyService = null;
+	
+	public MongoHistoriedService(
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		String database,
+		String collectionName,
+		Class<T> clazz,
+		MongoCollection<T> collection,
+		boolean allowNullUserForCreate,
+		MongoHistoryService<T> historyService
+	) {
+		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
+		this.allowNullUserForCreate = allowNullUserForCreate;
+		this.historyService = historyService;
+	}
 	
 	protected MongoHistoriedService(
 		ObjectMapper objectMapper,
@@ -88,13 +106,16 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 	
 	/**
 	 * TODO:: description
+	 *
 	 * @param id
 	 * @param updateJson
 	 * @param user
+	 *
 	 * @return
 	 */
 	public T update(ObjectId id, ObjectNode updateJson, User user) {
-		T updated = super.update(id, updateJson, user);
+		assertNotNullUser(user);
+		T updated = super.update(id, updateJson);
 		
 		this.getHistoryService().updateHistoryFor(
 			updated,
@@ -105,6 +126,10 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 		return updated;
 	}
 	
+	public T update(String id, ObjectNode updateJson, User user) {
+		return this.update(new ObjectId(id), updateJson, user);
+	}
+	
 	/**
 	 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
 	 *
@@ -113,7 +138,7 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 	 * @return The id of the newly added object.
 	 */
 	public ObjectId add(T object, User user) {
-		if(!this.allowNullUserForCreate){
+		if (!this.allowNullUserForCreate) {
 			assertNotNullUser(user);
 		}
 		super.add(object);
@@ -149,7 +174,11 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 		return removed;
 	}
 	
-	public T remove(ObjectId objectId){
+	public T remove(String objectId, User user) {
+		return this.remove(new ObjectId(objectId), user);
+	}
+	
+	public T remove(ObjectId objectId) {
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
@@ -166,4 +195,6 @@ public abstract class MongoHistoriedService<T extends MainObject> extends MongoS
 	public long removeAll() {
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
+	
+	//TODO:: history functionality. Get hist for obj, search history?
 }

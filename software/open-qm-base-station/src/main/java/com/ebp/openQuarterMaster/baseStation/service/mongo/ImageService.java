@@ -20,11 +20,11 @@ import java.util.Map;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class ImageService extends MongoService<Image> {
+public class ImageService extends MongoHistoriedService<Image> {
 	//    private Validator validator;
 	
 	ImageService() {//required for DI
-		super(null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

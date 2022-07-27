@@ -23,10 +23,10 @@ import static com.mongodb.client.model.Filters.regex;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class InventoryItemService extends MongoService<InventoryItem> {
+public class InventoryItemService extends MongoHistoriedService<InventoryItem> {
 	
 	InventoryItemService() {//required for DI
-		super(null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

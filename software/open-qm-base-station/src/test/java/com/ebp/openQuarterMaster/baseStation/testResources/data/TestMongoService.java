@@ -12,7 +12,7 @@ import javax.inject.Inject;
 public class TestMongoService extends MongoService<TestMainObject> {
 	
 	TestMongoService() {//required for DI
-		super(null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null);
 	}
 	
 	@Inject
@@ -26,23 +26,7 @@ public class TestMongoService extends MongoService<TestMainObject> {
 			objectMapper,
 			mongoClient,
 			database,
-			TestMainObject.class,
-			false
-		);
-	}
-	
-	TestMongoService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		boolean allowNullUserForCreate
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			TestMainObject.class,
-			allowNullUserForCreate
+			TestMainObject.class
 		);
 	}
 }
