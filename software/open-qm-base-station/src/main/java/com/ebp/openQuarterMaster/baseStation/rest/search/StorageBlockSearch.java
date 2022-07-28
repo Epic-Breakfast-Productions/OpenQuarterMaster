@@ -1,11 +1,14 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import lombok.Getter;
 import lombok.ToString;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import javax.measure.Quantity;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import java.util.List;
@@ -32,6 +35,30 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
 	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
 	
+	@Override
+	public List<Bson> getSearchFilters() {
+		List<Bson> filters = super.getSearchFilters();
+		
+		SearchUtils.addBasicSearchFilter(filters, "label", this.getLabel());
+		SearchUtils.addBasicSearchFilter(filters, "location", this.getLocation());
+		
+		if (parents != null) {
+			for (String curParentLabel : this.getParents()) {
+				//TODO::parent labels
+			}
+		}
+		
+		if (capacities != null) {
+			List<Quantity<?>> capacityList = SearchUtils.capacityListsToMap(capacities, units);
+			for (Quantity<?> curCap : capacityList) {
+				//TODO:: capacities with greater than or equal capacity to what was given
+			}
+		}
+		
+		//TODO:: stores
+		
+		return filters;
+	}
 	
 	//TODO:: add to bson filter list
 }
