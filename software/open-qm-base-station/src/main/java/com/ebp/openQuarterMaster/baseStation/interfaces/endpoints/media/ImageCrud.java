@@ -390,7 +390,7 @@ public class ImageCrud extends EndpointProvider {
 		return Response.status(Response.Status.OK).entity(output).build();
 	}
 	
-	private Response getImageFromObject(MongoService<? extends ImagedMainObject> service, String id) {
+	private Response getImageFromObject(MongoService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
 		

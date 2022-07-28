@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedService<T>> extends RunningServerTest {
+public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedService<T, ?>> extends RunningServerTest {
 	
 	protected TestUserService testUserService;
 	

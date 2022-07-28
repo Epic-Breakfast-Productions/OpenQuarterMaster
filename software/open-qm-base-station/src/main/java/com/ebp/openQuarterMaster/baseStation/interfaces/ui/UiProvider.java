@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.ui;
 
-import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
+import com.ebp.openQuarterMaster.baseStation.rest.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;

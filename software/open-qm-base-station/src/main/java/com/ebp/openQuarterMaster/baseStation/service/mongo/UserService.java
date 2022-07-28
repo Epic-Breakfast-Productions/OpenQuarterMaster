@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.rest.search.UserSearch;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
@@ -27,7 +28,7 @@ import static com.mongodb.client.model.Filters.or;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class UserService extends MongoHistoriedService<User> {
+public class UserService extends MongoHistoriedService<User, UserSearch> {
 	
 	private Validator validator;
 	private AuthMode authMode;
@@ -144,7 +145,6 @@ public class UserService extends MongoHistoriedService<User> {
 	 * @return The user the jwt was for. Null if no user found.
 	 */
 	public User getFromJwt(JsonWebToken jwt) {
-		
 		switch (this.authMode) {
 			case SELF:
 				log.debug("Getting user data from self.");

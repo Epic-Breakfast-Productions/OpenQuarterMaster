@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.ui;
 
 import com.ebp.openQuarterMaster.baseStation.demo.DemoExternalServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.demo.DemoServiceCaller;
-import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
+import com.ebp.openQuarterMaster.baseStation.rest.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;

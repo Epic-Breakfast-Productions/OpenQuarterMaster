@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbDeletedException;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
+import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -23,7 +24,7 @@ import org.eclipse.microprofile.opentracing.Traced;
  */
 @Slf4j
 @Traced
-public abstract class MongoHistoriedService<T extends MainObject> extends MongoService<T> {
+public abstract class MongoHistoriedService<T extends MainObject, S extends SearchObject<T>> extends MongoService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	

@@ -3,6 +3,9 @@ package com.ebp.openQuarterMaster.baseStation.mongoUtils.exception;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 
+/**
+ * TODO:: rest mapping
+ */
 public class DbNotFoundException extends IllegalArgumentException {
 	
 	private static String buildExceptionMessage(Class<?> clazzNotFound, ObjectId idNotFound, String s) {

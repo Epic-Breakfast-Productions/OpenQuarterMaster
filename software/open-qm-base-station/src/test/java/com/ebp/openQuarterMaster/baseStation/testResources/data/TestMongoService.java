@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TestMongoService extends MongoService<TestMainObject> {
+public class TestMongoService extends MongoService<TestMainObject, TestMainObjectSearch> {
 	
 	TestMongoService() {//required for DI
 		super(null, null, null, null, null, null);

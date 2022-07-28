@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
+import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
@@ -43,7 +44,7 @@ import static com.mongodb.client.model.Filters.eq;
 @AllArgsConstructor
 @Slf4j
 @Traced
-public abstract class MongoService<T extends MainObject> {
+public abstract class MongoService<T extends MainObject, S extends SearchObject<T>> {
 	
 	public static String getCollectionName(Class<?> clazz) {
 		return clazz.getSimpleName();
@@ -135,6 +136,7 @@ public abstract class MongoService<T extends MainObject> {
 		return list;
 	}
 	
+	@Deprecated
 	protected SearchResult<T> searchResult(List<Bson> filters, Bson sort, PagingOptions pagingOptions) {
 		Bson filter = (filters.isEmpty() ? null : and(filters));
 		
@@ -222,6 +224,25 @@ public abstract class MongoService<T extends MainObject> {
 	 */
 	public T get(String objectId) {
 		return this.get(new ObjectId(objectId));
+	}
+	
+	public SearchResult<T> search(S searchObject){
+		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+		
+		List<Bson> filters = searchObject.getSearchFilters();
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		
+		List<T> list = this.list(
+			filter,
+			searchObject.getSortBson(),
+			searchObject.getPagingOptions(false)
+		);
+		
+		return new SearchResult<>(
+			list,
+			this.count(filter),
+			!filters.isEmpty()
+		);
 	}
 	
 	public T update(ObjectId id, ObjectNode updateJson) {

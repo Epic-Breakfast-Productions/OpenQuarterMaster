@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.rest.search.ImageSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class ImageService extends MongoHistoriedService<Image> {
+public class ImageService extends MongoHistoriedService<Image, ImageSearch> {
 	//    private Validator validator;
 	
 	ImageService() {//required for DI

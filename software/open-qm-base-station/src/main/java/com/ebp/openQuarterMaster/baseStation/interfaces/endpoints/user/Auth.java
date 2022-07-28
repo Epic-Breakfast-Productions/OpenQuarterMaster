@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.user;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.interfaces.ui.UiUtils;
-import com.ebp.openQuarterMaster.baseStation.restCalls.KeycloakServiceCaller;
+import com.ebp.openQuarterMaster.baseStation.rest.restCalls.KeycloakServiceCaller;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;

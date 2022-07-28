@@ -2,6 +2,9 @@ package com.ebp.openQuarterMaster.baseStation.mongoUtils.exception;
 
 import org.bson.types.ObjectId;
 
+/**
+ * TODO:: rest mapping
+ */
 public class DbDeletedException extends DbNotFoundException {
 	private static String getMessage(String origMessage){
 		return "Object was deleted." + (origMessage==null ? "" : origMessage);

@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.rest.search.InventoryItemSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
@@ -23,7 +24,7 @@ import static com.mongodb.client.model.Filters.regex;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class InventoryItemService extends MongoHistoriedService<InventoryItem> {
+public class InventoryItemService extends MongoHistoriedService<InventoryItem, InventoryItemSearch> {
 	
 	InventoryItemService() {//required for DI
 		super(null, null, null, null, null, null, false, null);

@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
@@ -25,7 +26,7 @@ import java.util.Map;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class StorageBlockService extends MongoHistoriedService<StorageBlock> {
+public class StorageBlockService extends MongoHistoriedService<StorageBlock, StorageBlockSearch> {
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -111,5 +112,4 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock> {
 		
 		return output;
 	}
-	
 }

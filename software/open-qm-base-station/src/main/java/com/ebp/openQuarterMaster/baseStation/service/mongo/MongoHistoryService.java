@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
+import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.history.events.DeleteEvent;
@@ -25,7 +26,7 @@ import static com.mongodb.client.model.Filters.eq;
  */
 @Slf4j
 @Traced
-public class MongoHistoryService<T extends MainObject> extends MongoService<ObjectHistory> {
+public class MongoHistoryService<T extends MainObject> extends MongoService<ObjectHistory, HistorySearch> {
 	
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	

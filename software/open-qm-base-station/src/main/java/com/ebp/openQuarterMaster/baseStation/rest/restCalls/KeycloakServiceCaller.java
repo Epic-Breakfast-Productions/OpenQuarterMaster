@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.restCalls;
+package com.ebp.openQuarterMaster.baseStation.rest.restCalls;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
