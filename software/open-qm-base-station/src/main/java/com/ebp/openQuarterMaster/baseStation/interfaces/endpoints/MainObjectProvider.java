@@ -4,7 +4,6 @@ import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoHistoriedService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AccessLevel;
@@ -72,11 +71,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	@POST
 	@Operation(
-		summary = "Adds a new storage block."
+		summary = "Adds a new object."
 	)
 	@APIResponse(
 		responseCode = "201",
-		description = "Storage Block added.",
+		description = "Object added.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -86,7 +85,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	)
 	@APIResponse(
 		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.)",
+		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed("user")
@@ -99,7 +98,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of storage blocks."
+		summary = "Gets a list of objects."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -108,7 +107,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY
+					type = SchemaType.ARRAY,
+					implementation = MainObject.class
 				)
 			),
 			@Content(
@@ -121,11 +121,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@APIResponse(
-		responseCode = "204",
-		description = "No items found from query given.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed("user")
 	public abstract Response search(
@@ -136,11 +131,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@GET
 	@Path("{id}")
 	@Operation(
-		summary = "Gets a particular storage block."
+		summary = "Gets a particular object."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Block retrieved.",
+		description = "Object retrieved.",
 		content = @Content(
 			mediaType = "application/json"
 		)
@@ -157,18 +152,18 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		@PathParam String id
 	){
 		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving storage block with id {}", id);
+		log.info("Retrieving object with id {}", id);
 		T output = this.getObjectService().get(id);
 		
-		log.info("Storage block found");
+		log.info("Object found");
 		return output;
 	}
 	
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a particular storage block.",
-		description = "Partial update to a storage block. Do not need to supply all fields, just the one you wish to update."
+		summary = "Updates a particular Object.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -176,7 +171,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = StorageBlock.class
+				implementation = MainObject.class
 			)
 		)
 	)
@@ -193,7 +188,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		ObjectNode updates
 	){
 		logRequestContext(this.getJwt(), securityContext);
-		log.info("Updating storage block with id {}", id);
+		log.info("Updating object with id {}", id);
 		
 		T updated = this.getObjectService().update(id, updates, this.getUserFromJwt());
 		
@@ -211,13 +206,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = StorageBlock.class
+				implementation = MainObject.class
 			)
 		)
 	)
 	@APIResponse(
 		responseCode = "404",
-		description = "No Storage Block found to delete.",
+		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed("user")
