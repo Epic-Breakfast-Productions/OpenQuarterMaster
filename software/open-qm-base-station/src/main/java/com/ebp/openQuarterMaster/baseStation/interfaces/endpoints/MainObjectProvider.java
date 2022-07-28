@@ -39,6 +39,7 @@ import javax.ws.rs.core.SecurityContext;
 /**
  * Main abstract method to handle standard CRUD operations for MainObjects
  *
+ * TODO:: how to ensure spevialized validation?
  * TODO:: proper typing on OpenApi docs for each type of object
  * @param <T>
  * @param <S>
