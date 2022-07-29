@@ -1,5 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbModValidationException;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
@@ -22,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 @Traced
 @Slf4j
@@ -47,7 +52,6 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 			false
 		);
 	}
-	
 	/**
 	 * Searches for the
 	 *
@@ -61,6 +65,7 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 	 *
 	 * @return
 	 */
+	@Deprecated
 	public SearchResult<StorageBlock> search(
 		String label,
 		String location,
@@ -97,6 +102,40 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 		}
 		
 		return this.searchResult(filters, sort, pagingOptions);
+	}
+	
+	@Override
+	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock) {
+		super.ensureObjectValid(newObject, storageBlock);
+		
+		Bson parentFilter = and(
+			eq("label", storageBlock.getLabel()),
+			eq("location", storageBlock.getLocation()),
+			eq("parent", storageBlock.getParent())
+		);
+		
+		if(newObject){
+			long count = this.count(parentFilter);
+			if(count > 0){
+				throw new DbModValidationException("");
+			}
+		} else {
+			List<StorageBlock> results = this.list(parentFilter, null, null);
+			
+			if(!results.isEmpty()){
+				if(results.size() > 1 || !results.get(0).getId().equals(storageBlock.getId())){
+					throw new DbModValidationException("");
+				}
+			}
+		}
+		
+		if (storageBlock.getParent() != null) {
+			try {
+				this.get(storageBlock.getParent());
+			} catch(DbNotFoundException e){
+				throw new DbModValidationException("No parent exists for parent given.", e);
+			}
+		}
 	}
 	
 	public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude) {

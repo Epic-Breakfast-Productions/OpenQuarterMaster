@@ -70,7 +70,9 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .post()
 										   .then();
 		
-		response.statusCode(Response.Status.CREATED.getStatusCode());
+		response.statusCode(Response.Status.OK.getStatusCode());
+		
+		log.info("Got response body: {}", response.extract().body().asString());
 		
 		ObjectId returned = response.extract().body().as(ObjectId.class);
 		

@@ -6,7 +6,6 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
 import io.quarkus.qute.Location;
@@ -29,7 +28,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -43,12 +41,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
 @Traced
 @Slf4j
-@Path("/api/storage/block")
+@Path("/api/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
 @RequestScoped
 @NoArgsConstructor
@@ -64,10 +59,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@Location("tags/search/storage/storageSearchResults.html")
 		Template storageSearchResultsTemplate
 	) {
-		super(storageBlockService, userService, jwt);
+		super(StorageBlock.class, storageBlockService, userService, jwt);
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
-	
 	
 	@POST
 	@Operation(
@@ -91,43 +85,11 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed("user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String create(
+	public ObjectId create(
 		@Context SecurityContext securityContext,
 		@Valid StorageBlock storageBlock
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Creating new storage block.");
-		
-		if (
-			!this.getObjectService().list(
-				and(
-					eq("label", storageBlock.getLabel()),
-					eq("location", storageBlock.getLocation()),
-					eq("parent", storageBlock.getParent())
-				),
-				null,
-				null
-			).isEmpty()
-		) {
-			throw new BadRequestException(
-				Response.status(
-							Response.Status.BAD_REQUEST).entity(
-							new ErrorMessage()
-						)
-						.build()
-			);
-		}
-		
-		if (storageBlock.getParent() != null) {
-			StorageBlock parent = this.getObjectService().get(storageBlock.getParent());
-			if (parent == null) {
-				throw new IllegalArgumentException("No parent exists for parent given.");
-			}
-		}
-		
-		ObjectId output = this.getObjectService().add(storageBlock, this.getUserFromJwt());
-		log.info("Storage block created with id: {}", output);
-		return output.toHexString();
+		return super.create(securityContext, storageBlock);
 	}
 	
 	@GET
@@ -250,7 +212,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
 		logRequestContext(this.getJwt(), securityContext);
-		
 		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
 	}
 }

@@ -103,6 +103,13 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	/**
+	 * Method to check that an object is [still] valid before applying creation or update
+	 * @param newOrChangedObject
+	 */
+	public void ensureObjectValid(boolean newObject, T newOrChangedObject){
+	}
+	
+	/**
 	 * Gets a list of entries based on the options given.
 	 * <p>
 	 * TODO:: look into better, faster paging methods: https://dzone.com/articles/fast-paging-with-mongodb
@@ -269,6 +276,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 															 .map(ConstraintViolation::getMessage)
 															 .collect(Collectors.joining(", ")));
 		}
+		this.ensureObjectValid(false, object);
 		
 		this.getCollection().findOneAndReplace(eq("_id", id), object);
 		return object;
@@ -289,6 +297,8 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		if (object == null) {
 			throw new NullPointerException("Object cannot be null.");
 		}
+		
+		this.ensureObjectValid(true, object);
 		
 		InsertOneResult result = getCollection().insertOne(object);
 		

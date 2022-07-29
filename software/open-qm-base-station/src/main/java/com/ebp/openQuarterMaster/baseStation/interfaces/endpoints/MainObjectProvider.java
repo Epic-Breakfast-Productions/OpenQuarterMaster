@@ -50,6 +50,8 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends EndpointProvider {
 	
 	@Getter
+	private Class<T> objectClass;
+	@Getter
 	private MongoHistoriedService<T, S> objectService;
 	@Getter
 	private UserService userService;
@@ -57,7 +59,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	private JsonWebToken jwt;
 	private User userFromJwt = null;
 	
-	protected MainObjectProvider(MongoHistoriedService<T, S> objectService, UserService userService, JsonWebToken jwt) {
+	protected MainObjectProvider(
+		Class<T> objectClass,
+		MongoHistoriedService<T, S> objectService,
+		UserService userService,
+		JsonWebToken jwt
+	) {
+		this.objectClass = objectClass;
 		this.objectService = objectService;
 		this.userService = userService;
 		this.jwt = jwt;
@@ -92,10 +100,17 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@RolesAllowed("user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract String create(
+	public ObjectId create(
 		@Context SecurityContext securityContext,
-		@Valid T storageBlock
-	);
+		@Valid T object
+	){
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
+		
+		ObjectId output = this.getObjectService().add(object, this.getUserFromJwt());
+		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
+		return output;
+	}
 	
 	@GET
 	@Operation(
@@ -153,10 +168,12 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		@PathParam String id
 	){
 		logRequestContext(this.getJwt(), securityContext);
+		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
+		
 		log.info("Retrieving object with id {}", id);
 		T output = this.getObjectService().get(id);
 		
-		log.info("Object found");
+		log.info("{} found with id {}", this.getObjectClass().getSimpleName(), id);
 		return output;
 	}
 	
@@ -189,10 +206,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		ObjectNode updates
 	){
 		logRequestContext(this.getJwt(), securityContext);
-		log.info("Updating object with id {}", id);
+		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
 		T updated = this.getObjectService().update(id, updates, this.getUserFromJwt());
 		
+		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;
 	}
 	

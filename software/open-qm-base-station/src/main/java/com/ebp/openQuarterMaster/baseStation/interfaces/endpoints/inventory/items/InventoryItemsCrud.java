@@ -50,7 +50,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		UserService userService,
 		JsonWebToken jwt
 	) {
-		super(inventoryItemService, userService, jwt);
+		super(InventoryItem.class, inventoryItemService, userService, jwt);
 	}
 	
 	@POST
@@ -75,16 +75,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed("user")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String create(
+	public ObjectId create(
 		@Context SecurityContext securityContext,
 		@Valid InventoryItem item
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Creating new item.");
-		
-		ObjectId output = this.getObjectService().add(item, this.getUserFromJwt());
-		log.info("Item created with id: {}", output);
-		return output.toHexString();
+		return super.create(securityContext, item);
 	}
 	
 	
