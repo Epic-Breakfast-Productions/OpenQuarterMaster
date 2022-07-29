@@ -8,4 +8,5 @@ import lombok.ToString;
 @Getter
 public class HistorySearch extends SearchObject<ObjectHistory> {
 	//TODO:: object specific fields, add to bson filter list
+	//TODO:: Get hist in time range, etc
 }

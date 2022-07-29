@@ -2,7 +2,10 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbDeletedException;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
+import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -14,8 +17,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
+
+import java.util.List;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -184,7 +190,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	}
 	
 	public long removeAll(User user) {
-		
+		//TODO:: add history event to each
 		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 	}
 	
@@ -197,5 +203,23 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
-	//TODO:: history functionality. Get hist for obj, search history?
+	public List<ObjectHistory> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
+		return this.getHistoryService().list(filter, sort, pageOptions);
+	}
+	
+	public SearchResult<ObjectHistory> searchHistory(HistorySearch search){
+		return this.getHistoryService().search(search);
+	}
+	
+	
+	public ObjectHistory getHistoryFor(ObjectId objectId){
+		return this.getHistoryService().get(objectId);
+	}
+	
+	public ObjectHistory getHistoryFor(String objectId){
+		return this.getHistoryService().get(objectId);
+	}
+	
+	//TODO:: more aggregate history functions (counts updated since, etc)?
+	
 }
