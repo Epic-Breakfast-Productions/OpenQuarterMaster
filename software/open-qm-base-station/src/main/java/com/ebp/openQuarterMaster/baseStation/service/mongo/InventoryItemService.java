@@ -46,6 +46,13 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		);
 	}
 	
+	@Override
+	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject) {
+		super.ensureObjectValid(newObject, newOrChangedObject);
+		//TODO:: name not existant
+	}
+	
+	@Deprecated
 	public SearchResult<InventoryItem> search(
 		String name,
 		List<String> keywords,

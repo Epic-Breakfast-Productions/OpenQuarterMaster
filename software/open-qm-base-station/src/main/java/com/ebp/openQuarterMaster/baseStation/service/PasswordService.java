@@ -64,7 +64,6 @@ public class PasswordService {
 	 * @return The hash for the password
 	 */
 	public String createPasswordHash(String password, int iterations) {
-		
 		IteratedSaltedPasswordAlgorithmSpec iteratedAlgorithmSpec = new IteratedSaltedPasswordAlgorithmSpec(
 			iterations,
 			getSalt()

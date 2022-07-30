@@ -1,15 +1,20 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.inventory.storage;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.MainObjectProvider;
+import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -23,6 +28,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -30,8 +36,10 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -68,8 +76,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		summary = "Adds a new Storage Block."
 	)
 	@APIResponse(
-		responseCode = "201",
-		description = "Storage Block added.",
+		responseCode = "200",
+		description = "Object added.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -94,7 +102,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of storage blocks."
+		summary = "Gets a list of storage blocks, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -103,7 +111,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY
+					type = SchemaType.ARRAY,
+					implementation = StorageBlock.class
 				)
 			),
 			@Content(
@@ -123,19 +132,14 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@Context SecurityContext securityContext,
 		@BeanParam StorageBlockSearch blockSearch
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Searching for objects with: {}", blockSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<StorageBlock>> tuple = super.getSearchResponseBuilder(securityContext, blockSearch);
+		Response.ResponseBuilder rb = tuple.getItem1();
 		
-		SearchResult<StorageBlock> output = this.getObjectService().search(blockSearch);
-		
-		Response.ResponseBuilder rb = Response
-										  .status(Response.Status.OK)
-										  .header("num-elements", output.getResults().size())
-										  .header("query-num-results", output.getNumResultsForEntireQuery());
 		log.debug("Accept header value: \"{}\"", blockSearch.getAcceptHeaderVal());
 		switch (blockSearch.getAcceptHeaderVal()) {
 			case MediaType.TEXT_HTML:
 				log.debug("Requestor wanted html.");
+				SearchResult<StorageBlock> output = tuple.getItem2();
 				rb = rb.entity(
 						   this.storageSearchResultsTemplate
 							   .data("searchResults", output)
@@ -175,11 +179,128 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			case MediaType.APPLICATION_JSON:
 			default:
 				log.debug("Requestor wanted json, or any other form");
-				rb = rb.entity(output.getResults())
-					   .type(MediaType.APPLICATION_JSON_TYPE);
 		}
 		
 		return rb.build();
+	}
+	
+	@Path("{id}")
+	@GET
+	@Operation(
+		summary = "Gets a particular Storage Block."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = StorageBlock.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("user")
+	public StorageBlock get(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		return super.get(securityContext, id);
+	}
+	
+	@PUT
+	@Path("{id}")
+	@Operation(
+		summary = "Updates a storage block.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Storage block updated.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = StorageBlock.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed("user")
+	@Produces(MediaType.APPLICATION_JSON)
+	public StorageBlock update(
+		@Context SecurityContext securityContext,
+		@PathParam String id,
+		ObjectNode updates
+	) {
+		return super.update(securityContext, id, updates);
+	}
+	
+	@DELETE
+	@Path("{id}")
+	@Operation(
+		summary = "Deletes a particular object."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object deleted.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = MainObject.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has already been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No object found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed("user")
+	@Produces(MediaType.APPLICATION_JSON)
+	public StorageBlock delete(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		return super.delete(securityContext, id);
 	}
 	
 	@GET
@@ -214,4 +335,69 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		logRequestContext(this.getJwt(), securityContext);
 		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
 	}
+	
+	
+	//<editor-fold desc="History">
+	@GET
+	@Path("{id}/history")
+	@Operation(
+		summary = "Gets a particular Storage Block's history."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json"
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No history found for object with that id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("user")
+	public ObjectHistory getHistoryForObject(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		return super.getHistoryForObject(securityContext, id);
+	}
+	
+	@GET
+	@Path("history")
+	@Operation(
+		summary = "Searches the history for the Storage Blocks."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = ObjectHistory.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@RolesAllowed("user")
+	public SearchResult<ObjectHistory> searchHistory(
+		@Context SecurityContext securityContext,
+		@BeanParam HistorySearch searchObject
+	) {
+		return super.searchHistory(securityContext, searchObject);
+	}
+	//</editor-fold>
 }

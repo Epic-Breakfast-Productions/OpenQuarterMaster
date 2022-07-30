@@ -4,8 +4,8 @@ import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.MainObjectProv
 import com.ebp.openQuarterMaster.baseStation.rest.search.InventoryItemSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -58,8 +58,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		summary = "Adds a new inventory item."
 	)
 	@APIResponse(
-		responseCode = "201",
-		description = "Item added.",
+		responseCode = "200",
+		description = "Object added.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -69,7 +69,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.)",
+		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed("user")
@@ -85,45 +85,156 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of inventory items."
+		summary = "Gets a list of objects, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Items retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = InventoryItem.class
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = InventoryItem.class
+				)
+			),
+			@Content(
+				mediaType = "text/html",
+				schema = @Schema(type = SchemaType.STRING)
 			)
-		),
+		},
 		headers = {
 			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@APIResponse(
-		responseCode = "204",
-		description = "No items found from query given.",
-		content = @Content(mediaType = "text/plain")
-	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed("user")
-	@Produces({MediaType.APPLICATION_JSON})
 	public Response search(
 		@Context SecurityContext securityContext,
 		//for actual queries
 		@BeanParam InventoryItemSearch search
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
-		SearchResult<InventoryItem> searchResult = this.getObjectService().search(search);
-		
-		return Response
-			.status(Response.Status.OK)
-			.entity(searchResult.getResults())
-			.header("num-elements", searchResult.getResults().size())
-			.header("query-num-results", searchResult.getNumResultsForEntireQuery())
-			.build();
+		return super.search(securityContext, search);
+	}
+	
+	@Path("{id}")
+	@GET
+	@Operation(
+		summary = "Gets a particular InventoryItem."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("user")
+	public InventoryItem get(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		return super.get(securityContext, id);
+	}
+	
+	@PUT
+	@Path("{id}")
+	@Operation(
+		summary = "Updates a particular Object.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object updated.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed("user")
+	@Produces(MediaType.APPLICATION_JSON)
+	public InventoryItem update(
+		@Context SecurityContext securityContext,
+		@PathParam String id,
+		ObjectNode updates
+	) {
+		return super.update(securityContext, id, updates);
+	}
+	
+	@DELETE
+	@Path("{id}")
+	@Operation(
+		summary = "Deletes a particular object."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object deleted.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has already been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No object found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed("user")
+	@Produces(MediaType.APPLICATION_JSON)
+	public InventoryItem delete(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		return super.delete(securityContext, id);
 	}
 	
 	@GET

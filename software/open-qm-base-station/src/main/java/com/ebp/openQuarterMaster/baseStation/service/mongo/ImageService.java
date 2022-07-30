@@ -46,6 +46,12 @@ public class ImageService extends MongoHistoriedService<Image, ImageSearch> {
 		//        this.validator = validator;
 	}
 	
+	@Override
+	public void ensureObjectValid(boolean newObject, Image newOrChangedObject) {
+		super.ensureObjectValid(newObject, newOrChangedObject);
+		//TODO:: name not existant
+	}
+	
 	public SearchResult<Image> search(
 		String title,
 		List<String> keywords,
