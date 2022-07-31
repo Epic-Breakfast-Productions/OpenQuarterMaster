@@ -102,6 +102,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
+	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult){
+		return Response.status(Response.Status.OK)
+				.entity(searchResult.getResults())
+				.header("num-elements", searchResult.getResults().size())
+				.header("query-num-results", searchResult.getNumResultsForEntireQuery());
+	}
+	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
 		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
@@ -111,10 +118,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		SearchResult<T> searchResult = this.getObjectService().search(searchObject);
 		
 		return Tuple2.of(
-			Response.status(Response.Status.OK)
-					.entity(searchResult.getResults())
-					.header("num-elements", searchResult.getResults().size())
-					.header("query-num-results", searchResult.getNumResultsForEntireQuery()),
+			this.getSearchResultResponseBuilder(searchResult),
 			searchResult
 		);
 	}

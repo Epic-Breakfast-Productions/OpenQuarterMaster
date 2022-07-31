@@ -1,9 +1,12 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.inventory.items;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.MainObjectProvider;
+import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.baseStation.rest.search.InventoryItemSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -235,6 +238,78 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam String id
 	) {
 		return super.delete(securityContext, id);
+	}
+	
+	@GET
+	@Path("{id}/history")
+	@Operation(
+		summary = "Gets a particular inventory item's history."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json"
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No history found for object with that id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("user")
+	public ObjectHistory getHistoryForObject(
+		@Context SecurityContext securityContext,
+		@PathParam String id
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
+		
+		log.info("Retrieving object with id {}", id);
+		ObjectHistory output = this.getObjectService().getHistoryFor(id);
+		
+		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
+		return output;
+	}
+	
+	@GET
+	@Path("history")
+	@Operation(
+		summary = "Searches the history for the inventory items."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = ObjectHistory.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@RolesAllowed("user")
+	public SearchResult<ObjectHistory> searchHistory(
+		@Context SecurityContext securityContext,
+		@BeanParam HistorySearch searchObject
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Searching for objects with: {}", searchObject);
+		
+		return this.getObjectService().searchHistory(searchObject);
 	}
 	
 	@GET

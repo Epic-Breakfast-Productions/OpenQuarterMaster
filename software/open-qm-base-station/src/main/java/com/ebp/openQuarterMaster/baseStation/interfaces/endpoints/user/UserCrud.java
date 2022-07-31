@@ -1,18 +1,18 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.user;
 
-import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
+import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.MainObjectProvider;
+import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
+import com.ebp.openQuarterMaster.baseStation.rest.search.UserSearch;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
-import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
+import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
+import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -26,59 +26,58 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.regex;
 
 @Traced
 @Slf4j
 @Path("/api/user")
 @Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
 @RequestScoped
-public class UserCrud extends EndpointProvider {
+public class UserCrud extends MainObjectProvider<User, UserSearch> {
+	
+	PasswordService passwordService;
+	AuthMode authMode;
 	
 	@Inject
-	Validator validator;
-	@Inject
-	UserService userService;
-	@Inject
-	JsonWebToken jwt;
-	@Inject
-	PasswordService passwordService;
-	@ConfigProperty(name = "service.authMode")
-	AuthMode authMode;
+	public UserCrud(
+		UserService userService,
+		JsonWebToken jwt,
+		PasswordService passwordService,
+		@ConfigProperty(name = "service.authMode")
+		AuthMode authMode
+	) {
+		super(User.class, userService, userService, jwt);
+		this.passwordService = passwordService;
+		this.authMode = authMode;
+	}
+	
 	
 	@POST
 	@Operation(
-		summary = "Adds a new user."
+		summary = "Adds a new user. Only for use when AuthMode set to SELF"
 	)
 	@APIResponse(
-		responseCode = "201",
-		description = "User added.",
+		responseCode = "200",
+		description = "Object added.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -88,135 +87,134 @@ public class UserCrud extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.)",
+		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@PermitAll
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createUser(
+	public ObjectId create(
 		@Context SecurityContext securityContext,
-		@Valid UserCreateRequest userCreateRequest
+		@Valid UserCreateRequest ucr
 	) {
-		logRequestContext(this.jwt, securityContext);
-		log.info("Creating new user.");
-		
 		assertSelfAuthMode(this.authMode);
 		
-		//TODO:: refactor
-		if (
-			!this.userService.list(eq("email", userCreateRequest.getEmail()), null, null).isEmpty()
-		) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User with email already exists.")).build();
-		}
-		if (
-			!this.userService.list(eq("username", userCreateRequest.getUsername()), null, null).isEmpty()
-		) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User with username already exists.")).build();
-		}
-		
-		User.Builder builder = User.builder(userCreateRequest);
+		User.Builder builder = User.builder(ucr);
 		
 		{
 			Set<String> roles = new HashSet<>() {{
 				add("user");
 			}};
-			if (this.userService.collectionEmpty()) {
+			if (this.getUserService().collectionEmpty()) {
 				roles.add("userAdmin");
 			}
 			builder.roles(roles);
 		}
 		
-		builder.pwHash(this.passwordService.createPasswordHash(userCreateRequest.getPassword()));
+		builder.pwHash(this.passwordService.createPasswordHash(ucr.getPassword()));
 		
 		User newUser = builder.build();
-		if (userCreateRequest.getAttributes() != null) {
-			newUser.getAttributes().putAll(userCreateRequest.getAttributes());
+		if (ucr.getAttributes() != null) {
+			newUser.getAttributes().putAll(ucr.getAttributes());
 		}
 		
-		Set<ConstraintViolation<User>> validationViolations = validator.validate(newUser);
-		if (!validationViolations.isEmpty()) {
-			Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
-		}
+		//		TODO:: test to see if we need this
+		//		Set<ConstraintViolation<User>> validationViolations = validator.validate(newUser);
+		//		if (!validationViolations.isEmpty()) {
+		//			Response.status(Response.Status.BAD_REQUEST).entity(validationViolations).build();
+		//		}
 		
-		ObjectId output = userService.add(newUser, null);
-		log.info("User created with id: {}", output);
-		return Response.status(Response.Status.CREATED).entity(output).build();
+		return super.create(securityContext, newUser);
 	}
+	
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of users."
+		summary = "Gets a list of users, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Users retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = UserGetResponse.class
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = UserGetResponse.class
+				)
+			),
+			@Content(
+				mediaType = "text/html",
+				schema = @Schema(type = SchemaType.STRING)
 			)
-		),
+		},
 		headers = {
 			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@RolesAllowed("userAdmin")
+	public Response search(
+		@Context SecurityContext securityContext,
+		@BeanParam UserSearch searchObject
+	) {
+		Tuple2<Response.ResponseBuilder, SearchResult<User>> results = this.getSearchResponseBuilder(securityContext, searchObject);
+		SearchResult<User> originalResult = results.getItem2();
+		
+		SearchResult<UserGetResponse> output = new SearchResult<>(
+			results.getItem2().getResults()
+				   .stream()
+				   .map((User user)->{
+					   return UserGetResponse.builder(user).build();
+				   })
+				   .collect(Collectors.toList()),
+			originalResult.getNumResultsForEntireQuery(),
+			originalResult.isHadSearchQuery()
+		);
+		
+		return this.getSearchResultResponseBuilder(output).build();
+	}
+	
+	@Path("{id}")
+	@GET
+	@Operation(
+		summary = "Gets a particular object."
+	)
 	@APIResponse(
-		responseCode = "204",
-		description = "No users found from query given.",
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = UserGetResponse.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed("userAdmin")
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response listUsers(
+	public UserGetResponse getUser(
 		@Context SecurityContext securityContext,
-		//for actual queries
-		@QueryParam("name") String name,
-		//paging
-		@QueryParam("pageSize") Integer pageSize,
-		@QueryParam("pageNum") Integer pageNum,
-		//sorting
-		@QueryParam("sortBy") String sortField,
-		@QueryParam("sortType") SortType sortType
+		@PathParam String id
 	) {
-		logRequestContext(this.jwt, securityContext);
-		log.info("Searching for users with: ");
-		
-		List<Bson> filters = new ArrayList<>();
-		Bson sort = SearchUtils.getSortBson(sortField, sortType);
-		PagingOptions pageOptions = PagingOptions.fromQueryParams(pageSize, pageNum, false);
-		
-		if (name != null && !name.isBlank()) {
-			//TODO:: handle first and last name properly
-			filters.add(regex("firstName", SearchUtils.getSearchTermPattern(name)));
-		}
-		Bson filter = (filters.isEmpty() ? null : and(filters));
-		
-		List<User> users = this.userService.list(
-			filter,
-			sort,
-			pageOptions
-		);
-		if (users.isEmpty()) {
-			return Response.status(Response.Status.NO_CONTENT).build();
-		}
-		List<UserGetResponse> output = users
-			.stream()
-			.map((User user)->{
-				return UserGetResponse.builder(user).build();
-			})
-			.collect(Collectors.toList());
-		
-		
-		return Response
-			.status(Response.Status.OK)
-			.entity(output)
-			.header("num-elements", output.size())
-			.header("query-num-results", this.userService.count(filter))
-			.build();
+		return UserGetResponse.builder(this.get(securityContext, id)).build();
 	}
+	
 	
 	@GET
 	@Path("self")
@@ -245,29 +243,28 @@ public class UserCrud extends EndpointProvider {
 	public Response getSelfInfo(
 		@Context SecurityContext securityContext
 	) {
-		logRequestContext(this.jwt, securityContext);
+		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving info for user.");
-		User user = this.userService.getFromJwt(jwt);
+		User user = this.getUserService().getFromJwt(this.getJwt());
 		
 		return Response
-			.status(Response.Status.OK)
-			.entity(UserGetResponse.builder(user).build())
-			.build();
+				   .status(Response.Status.OK)
+				   .entity(UserGetResponse.builder(user).build())
+				   .build();
 	}
 	
+	//TODO:: update, delete
+	
 	@GET
-	@Path("{id}")
+	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular user's data."
+		summary = "Gets a particular uers's history."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "User retrieved.",
+		description = "Object retrieved.",
 		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = UserGetResponse.class
-			)
+			mediaType = "application/json"
 		)
 	)
 	@APIResponse(
@@ -275,22 +272,58 @@ public class UserCrud extends EndpointProvider {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No history found for object with that id.",
+		content = @Content(mediaType = "text/plain")
+	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed("user")
-	public Response getUser(
+	public ObjectHistory getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
+		@PathParam String id
 	) {
-		logRequestContext(this.jwt, securityContext);
-		log.info("Retrieving user with id {}", id);
-		User output = this.userService.get(id);
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
-		if (output == null) {
-			log.info("User not found.");
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
-		log.info("User found");
-		return Response.status(Response.Status.OK).entity(UserGetResponse.builder(output).build()).build();
+		log.info("Retrieving object with id {}", id);
+		ObjectHistory output = this.getObjectService().getHistoryFor(id);
+		
+		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
+		return output;
 	}
 	
+	@GET
+	@Path("history")
+	@Operation(
+		summary = "Searches the history for the users."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = ObjectHistory.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@RolesAllowed("user")
+	public SearchResult<ObjectHistory> searchHistory(
+		@Context SecurityContext securityContext,
+		@BeanParam HistorySearch searchObject
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Searching for objects with: {}", searchObject);
+		
+		return this.getObjectService().searchHistory(searchObject);
+	}
 }
