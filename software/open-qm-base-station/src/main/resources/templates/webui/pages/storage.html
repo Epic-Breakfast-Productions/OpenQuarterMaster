@@ -207,7 +207,7 @@ function removeStorageBlock(blockId){
 
     var result = false;
     doRestCall({
-            url: "/api/storage/" + blockId,
+            url: "/api/inventory/storage-block/" + blockId,
             method: "DELETE",
             async: false,
             done: function(data) {
@@ -272,7 +272,7 @@ function setupAddEditForEdit(blockId){
 
     doRestCall({
     	spinnerContainer: addEditModal,
-    	url: "/api/storage/" + blockId,
+    	url: "/api/inventory/storage-block/" + blockId,
     	done: function(data){
     	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
@@ -325,7 +325,7 @@ addEditStorageForm.submit(function(event){
         verb = "Created";
         console.log("Adding new storage block.");
         doRestCall({
-            url: "/api/storage",
+            url: "/api/inventory/storage-block",
             method: "POST",
             data: addEditData,
             async: false,
@@ -343,7 +343,7 @@ addEditStorageForm.submit(function(event){
         console.log("Editing storage block " + id);
 
         doRestCall({
-            url: "/api/storage/" + id,
+            url: "/api/inventory/storage-block/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
@@ -399,11 +399,11 @@ function setupView(blockId){
 
     doRestCall({
     	spinnerContainer: storageBlockViewModal,
-    	url: "/api/storage/" + blockId,
+    	url: "/api/inventory/storage-block/" + blockId,
     	done: function(data){
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(storageBlockHistory, data.history);
+            displayObjHistory(storageBlockHistory, "/inventory/storage-block/"+data.id);
             storageBlockViewModalLabel.text(data.label);
 
             if(data.location){

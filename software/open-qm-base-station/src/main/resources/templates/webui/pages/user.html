@@ -1,0 +1,21 @@
+{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='User' titleIcon='user' page='user'}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+
+<p>
+    {user.firstName}
+</p>
+<p>
+{#objView/objHistoryView containerId='historyViewContainer' objectHistory=userHistory}{/objView/objHistoryView}
+</p>
+
+
+{/pageContent}
+{#pageScript}
+    <script>
+    
+    </script>
+{/pageScript}
+{/include}

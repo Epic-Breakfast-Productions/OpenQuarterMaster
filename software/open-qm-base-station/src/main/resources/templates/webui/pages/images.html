@@ -334,7 +334,7 @@ function setupViewForImage(id){
             }
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(historyViewContainer, data.history);
+            displayObjHistory(historyViewContainer, "/media/image/"+data.id);
 
             imageEditButton.click(function(event){
                 setupAddEditForEdit(id);

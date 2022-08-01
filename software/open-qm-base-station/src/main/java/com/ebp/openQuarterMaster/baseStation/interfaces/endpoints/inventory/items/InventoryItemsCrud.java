@@ -9,6 +9,8 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -31,6 +33,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -51,9 +54,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public InventoryItemsCrud(
 		InventoryItemService inventoryItemService,
 		UserService userService,
-		JsonWebToken jwt
+		JsonWebToken jwt,
+		@Location("tags/objView/objHistoryViewRows.html")
+		Template historyRowsTemplate
 	) {
-		super(InventoryItem.class, inventoryItemService, userService, jwt);
+		super(InventoryItem.class, inventoryItemService, userService, jwt, historyRowsTemplate);
 	}
 	
 	@POST
@@ -243,14 +248,21 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular inventory item's history."
+		summary = "Gets a particular Inventory Item's history."
 	)
 	@APIResponse(
 		responseCode = "200",
 		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json"
-		)
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ObjectHistory.class)
+			),
+			@Content(
+				mediaType = "text/html",
+				schema = @Schema(type = SchemaType.STRING)
+			)
+		}
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -262,20 +274,14 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed("user")
-	public ObjectHistory getHistoryForObject(
+	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam String id,
+		@HeaderParam("accept") String acceptHeaderVal
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
-		
-		log.info("Retrieving object with id {}", id);
-		ObjectHistory output = this.getObjectService().getHistoryFor(id);
-		
-		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
-		return output;
+		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
 	}
 	
 	@GET

@@ -49,32 +49,20 @@ function processAttDisplay(container, attributes){
     }
 }
 
-function displayObjHistory(container, historyList){
-    console.log("Displaying image history.");
-    historyList.forEach(function(curEvent){
-        var curhistRow = $("<tr></tr>");
+function displayObjHistory(container, historyObjectEndpoint){
 
-        curhistRow.append($("<td>"+curEvent.timestamp+"</td>"));
-        var userTd = $('<td data-user-id="'+curEvent.userId+'">'+curEvent.userId+"</td>");
-        curhistRow.append(userTd);
-        curhistRow.append($("<td>"+curEvent.type+"</td>"));
-        curhistRow.append($("<td>"+curEvent.description+"</td>"));
-
-        container.append(curhistRow);
-
-        doRestCall({
-            spinnerContainer: container[0],
-            url: "/api/user/" + curEvent.userId,
-            method: "GET",
-            async: true,
-            done: function(data) {
-                console.log("Response from create request: " + JSON.stringify(data));
-                userTd.text(data.username);
-            },
-            fail: function(data) {
-                console.warn("Bad response from user data get request: " + JSON.stringify(data));
-                addMessageToDiv(imageViewMessages, "danger", "Failed to get info on user: " + data.responseText, "Failed", null);
-            }
-        });
+    doRestCall({
+        url: "/api" + historyObjectEndpoint + "/history",
+        method: "GET",
+        async: false,
+        extraHeaders: {
+            "accept": "text/html"
+        },
+        done: function (historyObject) {
+            console.log("Displaying object history.");
+            container.html(historyObject);
+        }
     });
+
+
 }

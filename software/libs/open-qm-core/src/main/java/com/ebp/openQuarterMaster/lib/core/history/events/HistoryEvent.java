@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER")
 })
 @SuperBuilder
+@BsonDiscriminator
 public abstract class HistoryEvent {
 	
 	/**

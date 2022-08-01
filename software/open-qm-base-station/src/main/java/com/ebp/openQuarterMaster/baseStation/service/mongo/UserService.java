@@ -34,7 +34,7 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	private AuthMode authMode;
 	
 	UserService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, true, null);
 	}
 	
 	@Inject
@@ -155,6 +155,9 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 			case SELF:
 				log.debug("Getting user data from self.");
 				String userId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
+				if(userId == null){
+					return null;
+				}
 				return this.get(userId);
 			case EXTERNAL:
 				log.debug("Getting external user data ");

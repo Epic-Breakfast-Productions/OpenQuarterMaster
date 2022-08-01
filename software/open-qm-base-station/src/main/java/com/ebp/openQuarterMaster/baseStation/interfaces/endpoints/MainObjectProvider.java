@@ -9,6 +9,7 @@ import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +22,9 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
@@ -46,17 +49,21 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@Getter
 	private JsonWebToken jwt;
 	private User userFromJwt = null;
+	@Getter
+	private Template historyRowsTemplate;
 	
 	protected MainObjectProvider(
 		Class<T> objectClass,
 		MongoHistoriedService<T, S> objectService,
 		UserService userService,
-		JsonWebToken jwt
+		JsonWebToken jwt,
+		Template historyRowsTemplate
 	) {
 		this.objectClass = objectClass;
 		this.objectService = objectService;
 		this.userService = userService;
 		this.jwt = jwt;
+		this.historyRowsTemplate = historyRowsTemplate;
 	}
 	
 	protected User getUserFromJwt() {
@@ -102,11 +109,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult){
+	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult) {
 		return Response.status(Response.Status.OK)
-				.entity(searchResult.getResults())
-				.header("num-elements", searchResult.getResults().size())
-				.header("query-num-results", searchResult.getNumResultsForEntireQuery());
+					   .entity(searchResult.getResults())
+					   .header("num-elements", searchResult.getResults().size())
+					   .header("query-num-results", searchResult.getNumResultsForEntireQuery());
 	}
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
@@ -304,9 +311,16 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //	@APIResponse(
 //		responseCode = "200",
 //		description = "Object retrieved.",
-//		content = @Content(
-//			mediaType = "application/json"
-//		)
+//		content = {
+//			@Content(
+//				mediaType = "application/json",
+//				schema = @Schema(implementation = ObjectHistory.class)
+//			),
+//			@Content(
+//				mediaType = "text/html",
+//				schema = @Schema(type = SchemaType.STRING)
+//			)
+//		}
 //	)
 //	@APIResponse(
 //		responseCode = "400",
@@ -318,11 +332,12 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //		description = "No history found for object with that id.",
 //		content = @Content(mediaType = "text/plain")
 //	)
-//	@Produces(MediaType.APPLICATION_JSON)
+//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 //	@RolesAllowed("user")
-	public ObjectHistory getHistoryForObject(
+	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam String id,
+		@HeaderParam("accept") String acceptHeaderVal
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
@@ -331,33 +346,52 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		ObjectHistory output = this.getObjectService().getHistoryFor(id);
 		
 		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
-		return output;
+		
+		Response.ResponseBuilder rb = Response.ok();
+		log.debug("Accept header value: \"{}\"", acceptHeaderVal);
+		switch (acceptHeaderVal) {
+			case MediaType.TEXT_HTML:
+				log.debug("Requestor wanted html.");
+				rb = rb.entity(
+						   this.getHistoryRowsTemplate()
+							   .data("objectHistory", output)
+							   .data("userService", this.getUserService())
+					   )
+					   .type(MediaType.TEXT_HTML_TYPE);
+				break;
+			case MediaType.APPLICATION_JSON:
+			default:
+				log.debug("Requestor wanted json, or any other form");
+				rb = rb.entity(output)
+					   .type(MediaType.APPLICATION_JSON_TYPE);
+		}
+		return rb.build();
 	}
 	
-//	@GET
-//	@Path("history")
-//	@Operation(
-//		summary = "Searches the history for the objects."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Blocks retrieved.",
-//		content = {
-//			@Content(
-//				mediaType = "application/json",
-//				schema = @Schema(
-//					type = SchemaType.ARRAY,
-//					implementation = ObjectHistory.class
-//				)
-//			)
-//		},
-//		headers = {
-//			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-//		}
-//	)
-//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-//	@RolesAllowed("user")
+	//	@GET
+	//	@Path("history")
+	//	@Operation(
+	//		summary = "Searches the history for the objects."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Blocks retrieved.",
+	//		content = {
+	//			@Content(
+	//				mediaType = "application/json",
+	//				schema = @Schema(
+	//					type = SchemaType.ARRAY,
+	//					implementation = ObjectHistory.class
+	//				)
+	//			)
+	//		},
+	//		headers = {
+	//			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+	//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+	//		}
+	//	)
+	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@RolesAllowed("user")
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

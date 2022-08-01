@@ -34,15 +34,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -64,10 +56,12 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		StorageBlockService storageBlockService,
 		UserService userService,
 		JsonWebToken jwt,
+		@Location("tags/objView/objHistoryViewRows.html")
+		Template historyRowsTemplate,
 		@Location("tags/search/storage/storageSearchResults.html")
 		Template storageSearchResultsTemplate
 	) {
-		super(StorageBlock.class, storageBlockService, userService, jwt);
+		super(StorageBlock.class, storageBlockService, userService, jwt, historyRowsTemplate);
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
 	
@@ -346,9 +340,16 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@APIResponse(
 		responseCode = "200",
 		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json"
-		)
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ObjectHistory.class)
+			),
+			@Content(
+				mediaType = "text/html",
+				schema = @Schema(type = SchemaType.STRING)
+			)
+		}
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -360,13 +361,14 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed("user")
-	public ObjectHistory getHistoryForObject(
+	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam String id,
+		@HeaderParam("accept") String acceptHeaderVal
 	) {
-		return super.getHistoryForObject(securityContext, id);
+		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
 	}
 	
 	@GET

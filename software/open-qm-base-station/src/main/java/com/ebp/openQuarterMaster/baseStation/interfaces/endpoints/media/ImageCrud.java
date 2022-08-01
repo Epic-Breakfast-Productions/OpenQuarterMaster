@@ -42,6 +42,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -81,13 +82,15 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		ImageService imageService,
 		UserService userService,
 		JsonWebToken jwt,
+		@Location("tags/objView/objHistoryViewRows.html")
+		Template historyRowsTemplate,
 		StorageBlockService storageBlockService,
 		InventoryItemService itemService,
 		@Location("tags/search/image/imageSearchResults.html")
 		Template imageSearchResultsTemplate,
 		Validator validator
 	) {
-		super(Image.class, imageService, userService, jwt);
+		super(Image.class, imageService, userService, jwt, historyRowsTemplate);
 		this.storageBlockService = storageBlockService;
 		this.itemService = itemService;
 		this.validator = validator;
@@ -339,14 +342,21 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular image's history."
+		summary = "Gets a particular Image's history."
 	)
 	@APIResponse(
 		responseCode = "200",
 		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json"
-		)
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ObjectHistory.class)
+			),
+			@Content(
+				mediaType = "text/html",
+				schema = @Schema(type = SchemaType.STRING)
+			)
+		}
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -358,20 +368,14 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed("user")
-	public ObjectHistory getHistoryForObject(
+	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam String id,
+		@HeaderParam("accept") String acceptHeaderVal
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
-		
-		log.info("Retrieving object with id {}", id);
-		ObjectHistory output = this.getObjectService().getHistoryFor(id);
-		
-		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
-		return output;
+		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
 	}
 	
 	@GET

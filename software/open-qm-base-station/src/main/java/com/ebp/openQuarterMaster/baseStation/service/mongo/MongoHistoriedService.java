@@ -213,11 +213,15 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	
 	
 	public ObjectHistory getHistoryFor(ObjectId objectId){
-		return this.getHistoryService().get(objectId);
+		return this.getHistoryService().getHistoryFor(objectId);
 	}
 	
 	public ObjectHistory getHistoryFor(String objectId){
-		return this.getHistoryService().get(objectId);
+		return this.getHistoryFor(new ObjectId(objectId));
+	}
+	
+	public ObjectHistory getHistoryFor(T object){
+		return this.getHistoryFor(object.getId());
 	}
 	
 	//TODO:: more aggregate history functions (counts updated since, etc)?

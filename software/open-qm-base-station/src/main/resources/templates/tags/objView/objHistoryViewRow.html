@@ -1,0 +1,21 @@
+{!
+Inputs:
+    - event - the HistoryEvent object we are dealing with
+    - userService - the UserService to use to get userIds
+!}
+<tr>
+    <td>
+        {event.getTimestamp()}
+    </td>
+    <td>
+        {#if event.getUserId() != null}
+            {userService.get(event.getUserId()).getUsername()}
+        {/if}
+    </td>
+    <td>
+        {event.getType()}
+    </td>
+    <td>
+        {! TODO:: other infos !}
+    </td>
+</tr>

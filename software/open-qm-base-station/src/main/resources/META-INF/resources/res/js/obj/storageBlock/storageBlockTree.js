@@ -49,7 +49,7 @@ function showTree(containerSelector){
 
     doRestCall({
 //        spinnerContainer: $(containerSelector),
-        url: "/api/storage/tree",
+        url: "/api/inventory/storage-block/tree",
         done: function(data){
             console.log("Successfully got tree data.");
             var rootChildrenList = chartConfig.nodeStructure.children;

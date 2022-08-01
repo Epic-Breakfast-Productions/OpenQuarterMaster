@@ -1140,7 +1140,7 @@ function setupView(itemId){
         done: function(data){
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(itemHistory, data.history);
+            displayObjHistory(itemHistory, "/inventory/item/"+data.id);
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storedType);
             itemViewDescription.text(data.description);
