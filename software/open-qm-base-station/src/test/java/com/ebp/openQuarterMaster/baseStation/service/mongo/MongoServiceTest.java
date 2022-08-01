@@ -18,7 +18,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -111,14 +110,11 @@ class MongoServiceTest extends RunningServerTest {
 		);
 	}
 	
-	
 	@Test
 	public void testAdd() {
 		TestMainObject original = new TestMainObject("Hello world");
-		ZonedDateTime start = ZonedDateTime.now();
 		
 		ObjectId returned = this.testMongoService.add(original);
-		ZonedDateTime after = ZonedDateTime.now();
 		
 		assertEquals(1, this.testMongoService.count());
 		

@@ -3,9 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbModValidationException;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,11 +16,8 @@ import org.eclipse.microprofile.opentracing.Traced;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.measure.Quantity;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -51,57 +45,6 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 			StorageBlock.class,
 			false
 		);
-	}
-	/**
-	 * Searches for the
-	 *
-	 * @param label
-	 * @param location
-	 * @param parentLabels
-	 * @param keywords
-	 * @param stores
-	 * @param sort
-	 * @param pagingOptions
-	 *
-	 * @return
-	 */
-	@Deprecated
-	public SearchResult<StorageBlock> search(
-		String label,
-		String location,
-		List<String> parentLabels,
-		List<Quantity<?>> capacities,
-		List<ObjectId> stores,
-		List<String> keywords,
-		Map<String, String> attributes,
-		Bson sort,
-		PagingOptions pagingOptions
-	) {
-		log.info(
-			"Searching for storage blocks with: label=\"{}\", keywords={}",
-			label,
-			keywords
-		);
-		List<Bson> filters = new ArrayList<>();
-		
-		SearchUtils.addBasicSearchFilter(filters, "label", label);
-		SearchUtils.addBasicSearchFilter(filters, "location", location);
-		SearchUtils.addKeywordSearchFilter(filters, keywords);
-		SearchUtils.addAttributeSearchFilters(filters, attributes);
-		
-		if (parentLabels != null) {
-			for (String curParentLabel : parentLabels) {
-				//TODO::parent labels
-			}
-		}
-		
-		if (capacities != null) {
-			for (Quantity<?> curCap : capacities) {
-				//TODO:: capacities with greater than or equal capacity to what was given
-			}
-		}
-		
-		return this.searchResult(filters, sort, pagingOptions);
 	}
 	
 	@Override

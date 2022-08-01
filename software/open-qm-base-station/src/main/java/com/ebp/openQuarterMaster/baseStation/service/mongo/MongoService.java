@@ -1,11 +1,11 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbDeletedException;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.user.User;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -17,6 +17,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
@@ -50,8 +51,8 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return clazz.getSimpleName();
 	}
 	
-	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
-	private static final Validator VALIDATOR;//TODO:: move to constructor?
+	//TODO:: move to constructor?
+	private static final Validator VALIDATOR;
 	
 	static {
 		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
@@ -60,23 +61,29 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	/**
-	 * TODO:: check if real user. Get userService in constructor?
-	 *
-	 * @param user
+	 * Mapper to help deal with json updates.
 	 */
-	private static void assertNotNullUser(User user) {
-		if (user == null) {
-			throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
-		}
-	}
-	
-	protected final ObjectMapper objectMapper;
-	protected final MongoClient mongoClient;
+	private final ObjectMapper objectMapper;
+	/**
+	 * The MongoDb client.
+	 */
+	private final MongoClient mongoClient;
+	/**
+	 * The name of the database to access
+	 */
 	protected final String database;
+	/**
+	 * The name of the collection this service is in charge of
+	 */
 	protected final String collectionName;
+	/**
+	 * The class this collection is in charge of. Used for logging.
+	 */
 	@Getter
 	protected final Class<T> clazz;
-	
+	/**
+	 * The actual mongo collection.
+	 */
 	private MongoCollection<T> collection = null;
 	
 	protected MongoService(
@@ -95,6 +102,13 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		);
 	}
 	
+	/**
+	 * Gets the collection for this service.
+	 * <p>
+	 * Sets up the collection object if not initialized yet.
+	 *
+	 * @return The Mongo collection for this service.
+	 */
 	protected MongoCollection<T> getCollection() {
 		if (this.collection == null) {
 			this.collection = mongoClient.getDatabase(this.database).getCollection(this.collectionName, this.clazz);
@@ -103,10 +117,13 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	/**
-	 * Method to check that an object is [still] valid before applying creation or update
-	 * @param newOrChangedObject
+	 * Method to check that an object is [still] valid before applying creation or update.
+	 * <p>
+	 * Meant to be extended to provide functionality. This empty method simply allows ignoring, if desired.
+	 *
+	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
 	 */
-	public void ensureObjectValid(boolean newObject, T newOrChangedObject){
+	public void ensureObjectValid(boolean newObject, T newOrChangedObject) {
 	}
 	
 	/**
@@ -143,23 +160,6 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return list;
 	}
 	
-	@Deprecated
-	protected SearchResult<T> searchResult(List<Bson> filters, Bson sort, PagingOptions pagingOptions) {
-		Bson filter = (filters.isEmpty() ? null : and(filters));
-		
-		List<T> list = this.list(
-			filter,
-			sort,
-			pagingOptions
-		);
-		
-		return new SearchResult<>(
-			list,
-			this.count(filter),
-			!filters.isEmpty()
-		);
-	}
-	
 	/**
 	 * Gets a list of all elements in the collection.
 	 * <p>
@@ -171,6 +171,36 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.list(null, null, null);
 	}
 	
+	/**
+	 * Searches the collection for objects. Uses the
+	 *
+	 * @param searchObject The search object to use for this object.
+	 *
+	 * @return The search results for the search given
+	 */
+	public SearchResult<T> search(@NonNull S searchObject) {
+		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+		
+		List<Bson> filters = searchObject.getSearchFilters();
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		
+		List<T> list = this.list(
+			filter,
+			searchObject.getSortBson(),
+			searchObject.getPagingOptions(false)
+		);
+		
+		return new SearchResult<>(
+			list,
+			this.count(filter),
+			!filters.isEmpty()
+		);
+	}
+	
+	/**
+	 * Determines if the collection is empty or not.
+	 * @return If the collection is empty or not.
+	 */
 	public boolean collectionEmpty() {
 		return this.getCollection().countDocuments() == 0;
 	}
@@ -207,13 +237,13 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return The object found. Null if not found.
 	 */
-	public T get(ObjectId objectId) throws DbNotFoundException {
+	public T get(ObjectId objectId) throws DbNotFoundException, DbDeletedException {
 		T found = getCollection()
 					  .find(eq("_id", objectId))
 					  .limit(1)
 					  .first();
 		
-		if(found == null){
+		if (found == null) {
 			throw new DbNotFoundException(this.clazz, objectId);
 		}
 		
@@ -229,30 +259,19 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return The object found. Null if not found.
 	 */
-	public T get(String objectId) {
+	public T get(String objectId) throws DbNotFoundException, DbDeletedException {
 		return this.get(new ObjectId(objectId));
 	}
 	
-	public SearchResult<T> search(S searchObject){
-		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
-		
-		List<Bson> filters = searchObject.getSearchFilters();
-		Bson filter = (filters.isEmpty() ? null : and(filters));
-		
-		List<T> list = this.list(
-			filter,
-			searchObject.getSortBson(),
-			searchObject.getPagingOptions(false)
-		);
-		
-		return new SearchResult<>(
-			list,
-			this.count(filter),
-			!filters.isEmpty()
-		);
-	}
-	
-	public T update(ObjectId id, ObjectNode updateJson) {
+	/**
+	 * Updates the object at the id given. Validates the object before updating in the database.
+	 *
+	 * @param id The id of the object to update
+	 * @param updateJson Generic JSON to describe the update. Meant to be individual fields set to the new values.
+	 *
+	 * @return The updated object.
+	 */
+	public T update(ObjectId id, ObjectNode updateJson) throws DbNotFoundException, DbDeletedException {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
@@ -282,6 +301,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return object;
 	}
 	
+	/**
+	 * Updates the object at the id given. Validates the object before updating in the database.
+	 *
+	 * @param id The id of the object to update
+	 * @param updateJson Generic JSON to describe the update. Meant to be individual fields set to the new values.
+	 *
+	 * @return The updated object.
+	 */
 	public T update(String id, ObjectNode updateJson) {
 		return this.update(new ObjectId(id), updateJson);
 	}
