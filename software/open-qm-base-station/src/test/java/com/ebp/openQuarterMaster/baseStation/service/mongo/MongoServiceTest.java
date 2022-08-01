@@ -235,6 +235,22 @@ class MongoServiceTest extends RunningServerTest {
 	}
 	
 	@Test
+	public void testUpdateId() {
+		TestMainObject original = new TestMainObject("hello world");
+		testMongoService.add(original);
+		
+		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		update.put("id", ObjectId.get().toHexString());
+		
+		assertThrows(
+			IllegalArgumentException.class,
+			()->{
+				this.testMongoService.update(original.getId(), update);
+			}
+		);
+	}
+	
+	@Test
 	public void testUpdateBadFieldValue() {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);

@@ -47,6 +47,8 @@ Native-specific tests:
 
 ## TODOS:
 
+- db
+  - look into liquibase: https://quarkus.io/guides/liquibase-mongodb
 - Overview
   - create "explore" and "stats" section; start at explore.
   - explore
