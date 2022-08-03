@@ -74,7 +74,7 @@ public class ImagesUi extends UiProvider {
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		
-		SearchResult<Image> searchResults = this.imageService.search(imageSearch);
+		SearchResult<Image> searchResults = this.imageService.search(imageSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(

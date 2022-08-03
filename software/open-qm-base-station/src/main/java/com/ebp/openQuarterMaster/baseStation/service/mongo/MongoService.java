@@ -178,7 +178,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return The search results for the search given
 	 */
-	public SearchResult<T> search(@NonNull S searchObject) {
+	public SearchResult<T> search(@NonNull S searchObject, boolean defaultPageSizeIfNotSet) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -187,7 +187,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		List<T> list = this.list(
 			filter,
 			searchObject.getSortBson(),
-			searchObject.getPagingOptions(false)
+			searchObject.getPagingOptions(defaultPageSizeIfNotSet)
 		);
 		
 		return new SearchResult<>(

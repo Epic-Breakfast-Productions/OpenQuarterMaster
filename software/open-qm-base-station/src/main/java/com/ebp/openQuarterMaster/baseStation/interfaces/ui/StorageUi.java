@@ -74,7 +74,7 @@ public class StorageUi extends UiProvider {
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		
-		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch);
+		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults,

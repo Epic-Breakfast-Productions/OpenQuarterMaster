@@ -122,7 +122,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		
-		SearchResult<T> searchResult = this.getObjectService().search(searchObject);
+		SearchResult<T> searchResult = this.getObjectService().search(searchObject, false);
 		
 		return Tuple2.of(
 			this.getSearchResultResponseBuilder(searchResult),
@@ -399,7 +399,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getObjectService().searchHistory(searchObject);
+		return this.getObjectService().searchHistory(searchObject, false);
 	}
 	//</editor-fold>
 }

@@ -409,7 +409,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getObjectService().searchHistory(searchObject);
+		return this.getObjectService().searchHistory(searchObject, false);
 	}
 	
 	

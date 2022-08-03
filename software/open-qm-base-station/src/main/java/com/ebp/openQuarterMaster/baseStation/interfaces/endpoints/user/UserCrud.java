@@ -330,6 +330,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getObjectService().searchHistory(searchObject);
+		return this.getObjectService().searchHistory(searchObject, false);
 	}
 }

@@ -207,8 +207,8 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		return this.getHistoryService().list(filter, sort, pageOptions);
 	}
 	
-	public SearchResult<ObjectHistory> searchHistory(HistorySearch search){
-		return this.getHistoryService().search(search);
+	public SearchResult<ObjectHistory> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){
+		return this.getHistoryService().search(search, defaultPageSizeIfNotSet);
 	}
 	
 	
