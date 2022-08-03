@@ -47,8 +47,8 @@ for curPackage in ${packages[@]}; do
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	
 	cp "$curPackage/oqm_$curPackage.service" "$packageDebDir/etc/systemd/system/"
-	sed -i "s/\${version}/$(cat "$packageConfigFile" | jq -r '.version')/" "$packageDebDir/etc/systemd/system/oqm_$curPackage.service"
-	
+	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/oqm_$curPackage.service"
+
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 	cat <<EOT >> "$packageDebDir/DEBIAN/control"
@@ -81,7 +81,6 @@ EOT
 #mkdir -p "/data/oqm/db/mongo"
 #mkdir -p "/data/oqm/prometheus"
 EOT
-
 	chmod +x "$packageDebDir/DEBIAN/preinst"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
@@ -90,7 +89,21 @@ EOT
 systemctl daemon-reload
 systemctl enable oqm_$curPackage.service
 systemctl start oqm_$curPackage.service
+
+#add config to file
+touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
+	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
+		curConfig="$(echo ${row} | base64 --decode)"
+		cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
+if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
+	then
+		echo "Config value already present: $curConfig"
+	else
+		echo "$curConfig" >> /etc/oqm/serviceConfig/infraConfig.list
+	fi
+EOT
+	done
 	chmod +x "$packageDebDir/DEBIAN/postinst"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
@@ -98,7 +111,15 @@ EOT
 
 systemctl disable oqm_$curPackage.service
 systemctl stop oqm_$curPackage.service
+
+# remove config from infra config file
 EOT
+	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
+		curConfig="$(echo ${row} | base64 --decode)"
+		cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
+sed -i -e "s!$curConfig!!g" /etc/oqm/serviceConfig/infraConfig.list
+EOT
+ 	done
 	chmod +x "$packageDebDir/DEBIAN/prerm"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/postrm"

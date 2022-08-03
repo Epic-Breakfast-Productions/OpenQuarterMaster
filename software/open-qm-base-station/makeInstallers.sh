@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to make installers for Station Master.
+# Script to make installers for OQM- Base Station.
 #
 # Intended to be run from the dir this resides
 #
@@ -73,14 +73,8 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 
 mkdir -p /etc/oqm/serviceConfig/core-base+station/
 
-if [ ! -f "/etc/oqm/serviceConfig/core-base+station/envConfig.list" ]; then
-	cat <<EOF >> "/etc/oqm/serviceConfig/core-base+station/envConfig.list"
-#
-# Defaults for connections in a normal install
-#
-quarkus.mongodb.connection-string=mongodb://host.docker.internal:27017
-quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
-quarkus.jaeger.service-name=OQMbase
+if [ ! -f "/etc/oqm/serviceConfig/core-base+station/config.list" ]; then
+	cat <<EOF >> "/etc/oqm/serviceConfig/core-base+station/config.list"
 
 # change as appropriate
 runningInfo.hostname=localhost
