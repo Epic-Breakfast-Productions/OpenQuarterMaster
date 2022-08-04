@@ -10,9 +10,8 @@
 #  - hwinfo
 #  - sponge (from moreutils)
 #  - jq
-SCRIPT_VERSION="1.0.0-DEV"
-SCRIPT_PACKAGE_NAME="manager-station+captain"
-SCRIPT_VERSION_RELEASE="manager-station+captain-$SCRIPT_VERSION"
+SCRIPT_VERSION="1.0.3-DEV"
+SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
 # urls
@@ -275,7 +274,7 @@ function getMajorVersion(){
 #
 function getInstalledVersion(){
 	local returnVar=$1
-	local packageName="open+quarter+master-$2"
+	local packageName="$2"
 	echo "Determining installed version of $packageName";
 
 	local version
@@ -283,7 +282,7 @@ function getInstalledVersion(){
 	determineSystemPackMan packageType
 	if [ "$packageType" == "apt" ]; then
 		version="$(apt-cache show "$packageName" | grep "Version:")"
-		echo "DEBUG:: raw version: $version"
+		#echo "DEBUG:: raw version: $version"
 		version=($version)
 		version="${version[1]}"
 	elif [ "$packageType" == "yum" ]; then
@@ -380,7 +379,7 @@ EOT
 # Gets the latest release version for the given software.
 # Usage: getReleasesFor <software prefix>
 #
-function getReleasesFor(){
+function getGitReleasesFor(){
 	local softwareReleaseToFind="$1"
 	
 	#echo "getting all releases for $softwareReleaseToFind"
@@ -394,17 +393,17 @@ function getReleasesFor(){
 
 #
 # Gets the latest release version for the given software.
-# Usage: getLatestReleaseFor <return var> <software prefix>
+# Usage: getLatestGitReleaseFor <return var> <software prefix>
 # Returns Tag json of the latest release
 #
-function getLatestReleaseFor(){
+function getLatestGitReleaseFor(){
 	local softwareReleaseToFind="$1"
 		
-	releasesFor="$(getReleasesFor "$softwareReleaseToFind")"
-	
-	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
+	releasesFor="$(getGitReleasesFor "$softwareReleaseToFind")"
+
 	#echo "DEBUG:: releases: $releasesFor"
-	
+	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
+
 	echo "$releasesFor" | jq -c '.[0]'
 }
 
@@ -413,19 +412,20 @@ function getLatestReleaseFor(){
 # Determines if the software tag needs an update
 #  TODO:: update to new interface
 # Usage: needsUpdated "type-name-version[-tag]"
-# Returns "" if not needed, link of file to download to update to.
+# Returns "" if not needed, "<tag> <download link>" of version to update to.
 #
 function needsUpdated() {
-	local curTagVersion="$1"
-	local curTagArr=(${curTagVersion//-/ })
+	local inputTagVersion="$1"
+	local curTagArr=(${inputTagVersion//-/ })
 	
 	local curMajVersion="$(getMajorVersion "${curTagArr[2]}")"
-	local curTag="${curTagArr[0]}-${curTagArr[1]}"
-	
+	local curTag="${curTagArr[1]}-${curTagArr[2]}"
+	local curTagVersion="${curTagArr[1]}-${curTagArr[2]}-${curTagArr[3]}"
+
 	output=""
-	case "${curTagArr[0]}" in
-		"Manager" | "Infra") # Prefixes we always want to be latest
-			latestRelease="$(getLatestReleaseFor "$curTag")"
+	case "${curTagArr[1]}" in
+		"manager" | "infra" | "core") # Prefixes we get from Git
+			local latestRelease="$(getLatestGitReleaseFor "$curTag")"
 			
 			#echo "DEBUG:: Latest release: $latestRelease"
 			
@@ -438,7 +438,7 @@ function needsUpdated() {
 				local compareResult="$(compareVersions "$curTagVersion" "$latestReleaseTag")"
 				#echo "DEBUG:: compare result: \"$compareResult\""
 				if [[ "$compareResult" == \<* ]]; then
-					output="$latestRelease"
+					output="$latestReleaseTag $(getAssetUrlToInstallFromGitRelease "$latestRelease")"
 				fi
 			fi	
 			;;
@@ -452,7 +452,7 @@ function needsUpdated() {
 # Usage: selectAssetToInstall "<release json>"
 # Returns the json of the asset to install, or empty string if none applicable
 #
-function getAssetToInstall(){
+function getAssetToInstallFromGitRelease(){
 	local releaseJson="$1"
 	installerFormat=""
 	determineSystemPackFileFormat installerFormat
@@ -465,41 +465,123 @@ function getAssetToInstall(){
 	echo "$matchingAssets" | jq -c '.[0]'
 }
 
-#
-# Gets the appropriate installer from Git, installs it
-# Usage: installFromGit "<json of release to install>"
-#
-function installFromGit(){
+function getAssetUrlToInstallFromGitRelease() {
 	local releaseJson="$1"
+	echo "$(getAssetToInstallFromGitRelease "$releaseJson" | jq -cr '.browser_download_url')"
+}
 
-	local assetToInstall="$(getAssetToInstall "$releaseJson")"
-	echo "DEBUG:: Installing asset $assetToInstall"
-	# TODO:: download, install
-	local downloadUrl="$(echo "$assetToInstall" | jq -cr '.browser_download_url')"
-	local filename="$(echo "$assetToInstall" | jq -cr '.name')"
+function installFromUrl(){
+	local downloadUrl="$1"
+	echo "DEBUG:: download url given: $downloadUrl"
+	local filename="$(basename "$downloadUrl")"
 	local fileLocation="$DOWNLOAD_DIR/$filename"
-	
+
 	if [ -f "$fileLocation" ]; then
 		rm "$fileLocation"
 	fi
-	
+
 	echo "Downloading file \"$filename\" to \"$fileLocation\" from URL: $downloadUrl"
-	
+
 	local downloadResult="$(curl -s -L -o "$fileLocation" "$downloadUrl")"
-	
+
+	echo "Download result: $downloadResult"
 	# TODO:: check filesize is as expected
-	#if [  ]; then	
+	# if [  ]; then
 	#fi
 
 	# TODO:: this based on system packaging type
 	apt install "$fileLocation"
 	local installResult=$?
-	
+
 	if [ $installResult -ne 0 ]; then
 		exitProg 3 "Failed to install package \"$fileLocation\"!"
 	fi
 }
 
+#
+# Gets the appropriate installer from Git, installs it
+# Usage: installFromGit "<json of release to install>"
+#
+#function installFromGit(){
+#	local releaseJson="$1"
+#
+#	local assetToInstall="$(getAssetToInstallFromGitRelease "$releaseJson")"
+#	echo "DEBUG:: Installing asset $assetToInstall"
+#	# TODO:: download, install
+#	local downloadUrl="$(echo "$assetToInstall" | jq -cr '.browser_download_url')"
+#	local filename="$(echo "$assetToInstall" | jq -cr '.name')"
+#	local fileLocation="$DOWNLOAD_DIR/$filename"
+#
+#	if [ -f "$fileLocation" ]; then
+#		rm "$fileLocation"
+#	fi
+#
+#	echo "Downloading file \"$filename\" to \"$fileLocation\" from URL: $downloadUrl"
+#
+#	local downloadResult="$(curl -s -L -o "$fileLocation" "$downloadUrl")"
+#
+#	# TODO:: check filesize is as expected
+#	#if [  ]; then
+#	#fi
+#
+#	# TODO:: this based on system packaging type
+#	apt install "$fileLocation"
+#	local installResult=$?
+#
+#	if [ $installResult -ne 0 ]; then
+#		exitProg 3 "Failed to install package \"$fileLocation\"!"
+#	fi
+#}
+
+function getGitPackagesForType(){
+	local releaseType="$1"
+	local releasesOfType="$(getGitReleasesFor "$1-")"
+
+	#echo "DEBUG:: Getting individual packages of type $releaseType: $releasesOfType"
+	local infraList=()
+	for row in $( echo "$releasesOfType" | jq -r '.[] | @base64'); do
+		local curReleaseName="$(echo ${row} | base64 --decode | jq -r '.name')"
+
+		curReleaseName="$(echo "$curReleaseName" | cut -f1,2 -d'-')"
+		# shellcheck disable=SC2076
+		if [[ ! " ${infraList[*]} " =~ " ${curReleaseName} " ]]; then
+			infraList+=("$curReleaseName")
+		fi
+	done
+
+	#echo "DEBUG:: Got infra pieces: ${infraList[*]}"
+	echo "${infraList[*]}"
+}
+
+function updateInstallPackagesForType(){
+	local releaseType="$1"
+	local packages=($(getGitPackagesForType "$1"))
+	echo "Packages to install: ${packages[*]}"
+	for curPackage in "${packages[@]}"; do
+		echo "Installing $curPackage"
+		local curRelease="$(getLatestGitReleaseFor $curPackage)"
+		local assetUrl="$(getAssetUrlToInstallFromGitRelease "$curRelease")"
+		echo "DEBUG:: url gotten for $curPackage: $assetUrl"
+		installFromUrl "$assetUrl"
+		echo "DONE installing $curPackage"
+	done
+}
+
+function installUpdateInfra(){
+	echo "Installing/Updating latest infrastructure pieces.";
+	updateInstallPackagesForType "infra"
+	echo "DONE Installing/Updating latest infrastructure pieces.";
+}
+function installUpdateBaseStation(){
+	echo "Installing/Updating latest infrastructure pieces.";
+	updateInstallPackagesForType "core"
+	echo "DONE Installing/Updating latest infrastructure pieces.";
+}
+
+function installUpdateInfraBaseStation(){
+	installUpdateInfra
+	installUpdateBaseStation
+}
 
 
 #
@@ -590,6 +672,7 @@ function updateBaseSystem(){
 	result="";
 	resultReturn=0;
 	# TODO::: why no work? error during apt, but no err captured
+	# TODO:: update to new function for determinig system type
 	if [ -n "$(command -v yum)" ]; then
 		result="$(yum update -y)";
 		resultReturn=$?;
@@ -695,6 +778,18 @@ function mainUi(){
 	done;
 }
 
+function initialSetup(){
+	echo "Performing initial setup."
+	showDialog --infobox "Performing initial setup. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
+
+	installUpdateInfra
+
+	installUpdateBaseStation
+
+	echo "Initial Setup complete!"
+
+}
+
 ##################################################
 # Functionality starts here
 ######################################
@@ -734,18 +829,21 @@ refreshReleaseList
 #
 curInstalledCapVersion=""
 getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
+echo "Station captain installed version: $curInstalledCapVersion"
 latestStatCapRelease="$(needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
-#echo "DEBUG:: has new release return: $latestStatCapRelease"
+echo "DEBUG:: has new release return: $latestStatCapRelease"
 
 if [ "$latestStatCapRelease" = "" ]; then
 	echo "Station Captain up to date."
 else
+	statCapUpdateInfo=($latestStatCapRelease);
 	echo "Station Captain has a new release!";
-	showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out. Install it?" 6 $DEFAULT_WIDTH
+	echo "DEBUG:: release info: $latestStatCapRelease"
+	showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out:\\n${statCapUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 	case $? in
 		0)
 			echo "Updating Station captain."
-			installFromGit "$latestStatCapRelease"
+			installFromUrl "${statCapUpdateInfo[1]}"
 			echo "Update installed! Please rerun the script."
 			exitProg;
 		;;
@@ -754,6 +852,25 @@ else
 		;;
 	esac
 	# TODO:: update
+fi
+
+#
+# Check if we need to setup
+#
+curInstalledBaseStationVersion=""
+getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
+echo "Current installed base station version: $curInstalledBaseStationVersion"
+
+if [ "$curInstalledBaseStationVersion" = "" ]; then
+	showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+    	case $? in
+    		0)
+    			initialSetup
+    		;;
+    		*)
+    			echo "Not performing initial setup.";
+    		;;
+    	esac
 fi
 
 #echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
