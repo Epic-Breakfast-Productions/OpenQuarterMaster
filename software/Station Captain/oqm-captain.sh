@@ -490,7 +490,7 @@ function installFromUrl(){
 	#fi
 
 	# TODO:: this based on system packaging type
-	apt install "$fileLocation"
+	apt install -y "$fileLocation"
 	local installResult=$?
 
 	if [ $installResult -ne 0 ]; then
@@ -863,14 +863,14 @@ echo "Current installed base station version: $curInstalledBaseStationVersion"
 
 if [ "$curInstalledBaseStationVersion" = "" ]; then
 	showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
-    	case $? in
-    		0)
-    			initialSetup
-    		;;
-    		*)
-    			echo "Not performing initial setup.";
-    		;;
-    	esac
+	case $? in
+		0)
+			initialSetup
+		;;
+		*)
+			echo "Not performing initial setup.";
+		;;
+	esac
 fi
 
 #echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"

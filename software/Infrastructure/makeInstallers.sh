@@ -60,7 +60,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker
+Depends: docker, docker.io
 EOT
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
@@ -91,6 +91,7 @@ systemctl enable oqm_$curPackage.service
 systemctl start oqm_$curPackage.service
 
 #add config to file
+mkdir -p /etc/oqm/serviceConfig
 touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
