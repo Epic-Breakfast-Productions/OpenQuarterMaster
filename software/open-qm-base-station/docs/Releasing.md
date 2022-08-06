@@ -1,5 +1,10 @@
 # Releasing
 
+Prereqs:
+
+1. Docker, with buildkit enabled
+   - https://www.howtogeek.com/devops/what-is-dockers-buildkit-and-why-does-it-matter/
+
 These are the steps to take to perform a release of the software:
 
 1. Run _all_ tests:
