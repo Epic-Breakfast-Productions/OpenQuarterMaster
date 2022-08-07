@@ -1,16 +1,61 @@
-{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='User' titleIcon='user' page='user'}
+{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title="Your Profile" titleIcon='user' page='user'}
 {#pageStyle}
 
 {/pageStyle}
 {#pageContent}
-
-<p>
-    {user.firstName}
-</p>
-<p>
-{#objView/objHistoryView containerId='historyViewContainer' objectHistory=userHistory}{/objView/objHistoryView}
-</p>
-
+{! TODO:: edit self !}
+<dl class="row">
+  <dt class="col-sm-3 col-md-2">Username:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all">{user.getUsername()}</dd>
+  
+  <dt class="col-sm-3 col-md-2">Name:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all">{user.getFirstName()} {user.getLastName()}</dd>
+  
+  <dt class="col-sm-3 col-md-2">Title:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all">{user.getTitle()}</dd>
+  
+  <dt class="col-sm-3 col-md-2">Email:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all">{user.getEmail()}</dd>
+  
+  <dt class="col-sm-3 col-md-2">Roles:</dt>
+  <dd class="col-sm-9 col-md-10">
+        {#for curRole in user.getRoles()}
+            <span class="user-select-all badge bg-secondary">{curRole}</span>
+        {/for}
+  </dd>
+  
+  <dt class="col-sm-3 col-md-2">Id:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all">{user.getId()}</dd>
+  
+  {#if !user.getExternIds().isEmpty()}
+  <dt class="col-sm-3 col-md-2">External Ids:</dt>
+  <dd class="col-sm-9 col-md-10">
+    <dl class="row">
+        {#for externalIdEntry in user.getExternIds().entrySet()}
+            <dt class="col-sm-4 user-select-all">{externalIdEntry.getKey()}</dt>
+            <dd class="col-sm-8 user-select-all">{externalIdEntry.getValue()}</dd>
+        {/for}
+    </dl>
+  </dd>
+  {/if}
+  {#if !user.getAttributes().isEmpty()}
+  <dt class="col-sm-3 col-md-2">Attributes:</dt>
+  <dd class="col-sm-9 col-md-10">
+    <dl class="row">
+        {#for curAtt in user.getAttributes().entrySet()}
+            <dt class="col-sm-4 user-select-all">{curAtt.getKey()}</dt>
+            <dd class="col-sm-8 user-select-all">{curAtt.getValue()}</dd>
+        {/for}
+    </dl>
+  </dd>
+  {/if}
+</dl>
+<hr />
+<div class="row">
+    <div class="col">
+        {#objView/objHistoryView containerId='historyViewContainer' objectHistory=userHistory}{/objView/objHistoryView}
+    </div>
+</div>
 
 {/pageContent}
 {#pageScript}

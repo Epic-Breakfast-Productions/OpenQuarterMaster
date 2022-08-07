@@ -70,11 +70,11 @@ public class UserUi extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		ObjectHistory userHistory = userService.getHistoryFor(user);
+		UserGetResponse ugr = UserGetResponse.builder(user).build();
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
-		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
-				.data("user", user)
+			this.setupPageTemplate(overview, tracer, ugr)
+				.data("user", ugr)
 				.data("userService", userService)
 				.data("userHistory", userHistory)
 				.data("numItems", inventoryItemService.count())
