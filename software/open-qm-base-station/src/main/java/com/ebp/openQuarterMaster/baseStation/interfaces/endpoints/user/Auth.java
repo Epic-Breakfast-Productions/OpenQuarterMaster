@@ -8,6 +8,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.TimeUtils;
+import com.ebp.openQuarterMaster.lib.core.history.events.UserLoginEvent;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.TokenCheckResponse;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
@@ -144,6 +145,8 @@ public class Auth extends EndpointProvider {
 		//TODO:: additional checks on locked status, etc
 		
 		log.info("User {} authenticated, generating token and returning.", user.getId());
+		
+		this.userService.addHistoryFor(user, UserLoginEvent.builder().userId(user.getId()).build());
 		
 		return Response.status(Response.Status.ACCEPTED)
 					   .entity(this.jwtService.getUserJwt(user, false))

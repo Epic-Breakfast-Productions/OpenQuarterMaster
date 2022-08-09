@@ -65,8 +65,13 @@ Native-specific tests:
   - UI tweaks
     - view improvements
   - UPC barcode lookup. API's:
-    - https://www.barcodelookup.com/api
-    - https://devapi.barcodespider.com/
+    - Good leads:
+      - https://www.barcodelookup.com/api
+      - https://www.upcitemdb.com
+      - https://opengtindb.org/index.php
+    - Backups:
+      - https://upcdatabase.org/
+      - https://devapi.barcodespider.com/
 - Overview
   - stats
 - Image management

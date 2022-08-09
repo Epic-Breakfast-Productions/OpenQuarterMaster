@@ -43,6 +43,9 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 			//delete
 			Arguments.of(DeleteEvent.builder().build()),
 			Arguments.of(DeleteEvent.builder().userId(ObjectId.get()).description(FAKER.lorem().paragraph()).build()),
+			//login
+			Arguments.of(UserLoginEvent.builder().build()),
+			Arguments.of(UserLoginEvent.builder().userId(ObjectId.get()).build()),
 			//item add
 			Arguments.of(ItemAddEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
 			Arguments.of(ItemAddEvent.builder()

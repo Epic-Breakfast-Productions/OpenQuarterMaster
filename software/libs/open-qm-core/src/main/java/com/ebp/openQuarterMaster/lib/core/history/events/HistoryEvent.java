@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = CreateEvent.class, name = "CREATE"),
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
 	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
+	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER")
