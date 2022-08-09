@@ -10,6 +10,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
@@ -119,7 +120,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -159,7 +160,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response search(
 		@Context SecurityContext securityContext,
 		@BeanParam ImageSearch searchObject
@@ -251,7 +252,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Image get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -290,7 +291,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image update(
 		@Context SecurityContext securityContext,
@@ -330,7 +331,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image delete(
 		@Context SecurityContext securityContext,
@@ -369,7 +370,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -401,7 +402,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
@@ -430,7 +431,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	//    @Produces(MediaType.)//TODO
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getImageData(
 		@Context SecurityContext securityContext,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
@@ -491,8 +492,8 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		"image/png",
 		"text/plain"
 	})
-	@RolesAllowed("user")
-	public Response getImageDataForStorageBlock(
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	public Response getImageDataForObject(
 		@Context SecurityContext securityContext,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam IMAGED_OBJ_TYPE_NAME object,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam String id

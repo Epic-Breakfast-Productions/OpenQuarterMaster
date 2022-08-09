@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
@@ -44,7 +45,7 @@ import java.util.List;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class Items extends UiProvider {
+public class ItemsUi extends UiProvider {
 	
 	@Inject
 	@Location("webui/pages/items")
@@ -66,7 +67,7 @@ public class Items extends UiProvider {
 	
 	@GET
 	@Path("items")
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response items(
 		@Context SecurityContext securityContext,

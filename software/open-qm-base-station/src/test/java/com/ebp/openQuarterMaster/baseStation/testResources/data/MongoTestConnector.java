@@ -41,21 +41,11 @@ public class MongoTestConnector {
 	private static CodecRegistry getRegistry() {
 		CodecRegistry registry = CodecRegistries.fromRegistries(
 			MongoClientSettings.getDefaultCodecRegistry(),
+			CodecRegistries.fromProviders(
+				new CustomCodecProvider(),
+				new AnyMapCodecProvider()
+			),
 			CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
-		);
-		
-		registry = CodecRegistries.fromProviders(
-			registry,
-			new CustomCodecProvider()
-		);
-		registry = CodecRegistries.fromRegistries(
-			registry,
-			CodecRegistries.fromProviders(new AnyMapCodecProvider())
-		);
-		
-		registry = CodecRegistries.fromRegistries(
-			registry,
-			MongoClientSettings.getDefaultCodecRegistry()
 		);
 		
 		return registry;

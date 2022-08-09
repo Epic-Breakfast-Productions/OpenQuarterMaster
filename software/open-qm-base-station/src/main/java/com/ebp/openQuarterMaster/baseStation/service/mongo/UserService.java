@@ -38,14 +38,14 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	}
 	
 	@Inject
-	UserService(
+	public UserService(
 		Validator validator,
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
+		String database,
 		@ConfigProperty(name = "service.authMode")
-			AuthMode authMode
+		AuthMode authMode
 	) {
 		super(
 			objectMapper,

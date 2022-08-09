@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbHistoryNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
@@ -55,7 +56,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 								  .limit(1)
 								  .first();
 		if (found == null) {
-			throw new DbNotFoundException(this.clazz, id);
+			throw new DbHistoryNotFoundException(this.clazzForObjectHistoryIsFor, id);
 		}
 		return found;
 	}

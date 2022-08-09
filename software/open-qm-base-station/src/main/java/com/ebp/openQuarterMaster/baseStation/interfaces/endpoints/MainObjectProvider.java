@@ -94,7 +94,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "Bad request given. Data given could not pass validation.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -156,7 +156,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		}
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response search(
 		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
@@ -195,7 +195,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		content = @Content(mediaType = "text/plain")
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public T get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -241,7 +241,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "Object requested has been deleted.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public T update(
 		@Context SecurityContext securityContext,
@@ -287,7 +287,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "No object found to delete.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public T delete(
 		@Context SecurityContext securityContext,
@@ -333,7 +333,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //		content = @Content(mediaType = "text/plain")
 //	)
 //	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-//	@RolesAllowed("user")
+//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -391,7 +391,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		}
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	//	@RolesAllowed("user")
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

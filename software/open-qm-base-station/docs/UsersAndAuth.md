@@ -4,7 +4,7 @@
 
 This guide explains how users are authenticated in this system.
 
- - https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+- https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
 
 ## Authentication
 
@@ -55,7 +55,9 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 
 ## User Roles
 
-| Role | Description |
-| ---- | :---------- |
-| user | Given to everyone; required for any modification. |
-| userAdmin | Required to look up or modify users beyond one's own. Given to the first created user. |
+| Role          | Description                                                                            |
+|---------------|:---------------------------------------------------------------------------------------|
+| user          | Given to everyone; required for any access.                                            |
+| userAdmin     | Required to look up or modify users beyond one's own. Given to the first created user. |
+| inventoryView | Required to view inventory related resources; Items, Storage Blocks, Images.           |
+| inventoryEdit | Required to make edits to inventory related resources; Items, Storage Blocks, Images.  |

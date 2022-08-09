@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
@@ -108,10 +109,12 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		
 		{
 			Set<String> roles = new HashSet<>() {{
-				add("user");
+				add(UserRoles.USER);
+				add(UserRoles.INVENTORY_VIEW);
 			}};
 			if (this.getUserService().collectionEmpty()) {
-				roles.add("userAdmin");
+				roles.add(UserRoles.USER_ADMIN);
+				roles.add(UserRoles.INVENTORY_EDIT);
 			}
 			builder.roles(roles);
 		}

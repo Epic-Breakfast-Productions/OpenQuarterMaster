@@ -7,6 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculations;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
@@ -84,7 +85,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -120,7 +121,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Override
 	public Response search(
 		@Context SecurityContext securityContext,
@@ -209,7 +210,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public StorageBlock get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -248,7 +249,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public StorageBlock update(
 		@Context SecurityContext securityContext,
@@ -288,7 +289,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public StorageBlock delete(
 		@Context SecurityContext securityContext,
@@ -320,7 +321,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public StorageBlockTree tree(
 		@Context SecurityContext securityContext,
 		//for actual queries
@@ -362,7 +363,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -394,7 +395,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

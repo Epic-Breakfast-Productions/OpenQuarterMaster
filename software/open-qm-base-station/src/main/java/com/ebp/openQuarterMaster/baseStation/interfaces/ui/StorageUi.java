@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
@@ -63,7 +64,7 @@ public class StorageUi extends UiProvider {
 	
 	@GET
 	@Path("storage")
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response storage(
 		@Context SecurityContext securityContext,

@@ -64,6 +64,9 @@ Native-specific tests:
   - stats
   - UI tweaks
     - view improvements
+  - UPC barcode lookup. API's:
+    - https://www.barcodelookup.com/api
+    - https://devapi.barcodespider.com/
 - Overview
   - stats
 - Image management

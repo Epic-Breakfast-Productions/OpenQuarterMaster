@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.rest.search.InventoryItemSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -80,7 +81,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -117,7 +118,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response search(
 		@Context SecurityContext securityContext,
 		//for actual queries
@@ -157,7 +158,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public InventoryItem get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -196,7 +197,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
 		@Context SecurityContext securityContext,
@@ -236,7 +237,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
 		@Context SecurityContext securityContext,
@@ -275,7 +276,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -307,7 +308,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
@@ -335,10 +336,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "404",
-		description = "No item found to delete.",
+		description = "No item found to get.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredInventoryItem(
 		@Context SecurityContext securityContext,
@@ -371,7 +372,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	public Response addStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
@@ -403,7 +404,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	public Response removeStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,

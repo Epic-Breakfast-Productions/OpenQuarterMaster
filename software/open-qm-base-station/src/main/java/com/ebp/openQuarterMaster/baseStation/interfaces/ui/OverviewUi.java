@@ -6,6 +6,7 @@ import com.ebp.openQuarterMaster.baseStation.rest.restCalls.KeycloakServiceCalle
 import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.StorageBlockService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.opentracing.Tracer;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class Overview extends UiProvider {
+public class OverviewUi extends UiProvider {
 	
 	@Inject
 	@Location("webui/pages/overview")
@@ -77,7 +78,7 @@ public class Overview extends UiProvider {
 	
 	@GET
 	@Path("overview")
-	@RolesAllowed("user")
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,

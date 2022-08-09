@@ -20,6 +20,17 @@ public class DbNotFoundException extends IllegalArgumentException {
 	@Getter
 	private final ObjectId idNotFound;
 	
+	public DbNotFoundException(String s, Class<?> clazzNotFound, ObjectId idNotFound) {
+		super(s);
+		this.clazzNotFound = clazzNotFound;
+		this.idNotFound = idNotFound;
+	}
+	public DbNotFoundException(String s, Class<?> clazzNotFound, ObjectId idNotFound, Throwable cause) {
+		super(s, cause);
+		this.clazzNotFound = clazzNotFound;
+		this.idNotFound = idNotFound;
+	}
+	
 	public DbNotFoundException(Class<?> clazzNotFound, ObjectId idNotFound, String message) {
 		super(buildExceptionMessage(clazzNotFound, idNotFound, message));
 		this.clazzNotFound = clazzNotFound;

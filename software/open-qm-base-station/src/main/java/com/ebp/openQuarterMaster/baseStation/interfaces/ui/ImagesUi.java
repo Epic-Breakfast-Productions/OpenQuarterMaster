@@ -5,6 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.rest.search.ImageSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.ImageService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.media.Image;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.ebp.openQuarterMaster.lib.core.user.User;
@@ -18,7 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
@@ -60,10 +61,9 @@ public class ImagesUi extends UiProvider {
 	@Inject
 	Tracer tracer;
 	
-	
 	@GET
 	@Path("/images")
-	@PermitAll
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response images(
 		@Context SecurityContext securityContext,

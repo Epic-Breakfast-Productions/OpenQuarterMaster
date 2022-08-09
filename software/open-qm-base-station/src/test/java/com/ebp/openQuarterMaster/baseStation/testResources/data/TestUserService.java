@@ -2,12 +2,10 @@ package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoService;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
+import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
 import com.ebp.openQuarterMaster.lib.core.user.User;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,6 +24,8 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,6 +43,7 @@ public class TestUserService {
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
 	
+	private final UserService userService;
 	private final MongoTestConnector mongoTestConnector = new MongoTestConnector();
 	private final PasswordService passwordService = new PasswordService();
 	
@@ -66,6 +67,15 @@ public class TestUserService {
 			);
 		} catch(Exception e) {
 			throw new IllegalStateException("Failed to setup jwt service.", e);
+		}
+		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+			this.userService = new UserService(
+				validatorFactory.getValidator(),
+				com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER,
+				this.mongoTestConnector.getClient(),
+				this.mongoTestConnector.mongoDatabaseName,
+				this.authMode
+			);
 		}
 	}
 	
@@ -114,13 +124,15 @@ public class TestUserService {
 	private void persistTestUserInternal(User testUser) {
 //		this.userService.add(testUser, null);
 		
-		//TODO::ensure validity
-		try(MongoClient client = this.mongoTestConnector.getClient()){
-			MongoDatabase db = client.getDatabase(this.mongoTestConnector.mongoDatabaseName);
-			MongoCollection<User> userCollection = db.getCollection(MongoService.getCollectionName(User.class), User.class);
-			
-			userCollection.insertOne(testUser);
-		}
+		this.userService.add(testUser);
+		
+//		try(MongoClient client = this.mongoTestConnector.getClient()){
+//
+//			MongoDatabase db = client.getDatabase(this.mongoTestConnector.mongoDatabaseName);
+//			MongoCollection<User> userCollection = db.getCollection(MongoService.getCollectionName(User.class), User.class);
+//
+//			userCollection.insertOne(testUser);
+//		}
 	}
 	
 	private void persistTestUserKeycloak(User testUser) {
@@ -202,9 +214,11 @@ public class TestUserService {
 		builder.email(FAKER.internet().emailAddress());
 		builder.title(FAKER.company().profession());
 		builder.roles(new HashSet<>() {{
-			add("user");
+			add(UserRoles.USER);
+			add(UserRoles.INVENTORY_EDIT);
+			add(UserRoles.INVENTORY_VIEW);
 			if (admin) {
-				add("userAdmin");
+				add(UserRoles.USER_ADMIN);
 			}
 		}});
 		
