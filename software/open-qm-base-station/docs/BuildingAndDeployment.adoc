@@ -169,3 +169,48 @@ EXTERNAL
 | The client secret to use with the external auth provider (Keycloak)
 
 |===
+
+
+==== Product Search Providers
+
+All values for `productLookup.providers.*` are dedicated to sources of product information to help users add items to the system. These providers are queried to get item information at add time.
+
+The configuration relevant to usage of the service for each of the providers is listed below.
+
+===== BarcodeLookup
+
+https://www.barcodelookup.com/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.barcodelookup-com.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.barcodelookup-com.apiKey
+|
+|
+| Key of account to use this provider. Must be set to become enabled.
+
+|===
+
+===== Datakick
+
+https://gtinsearch.org/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.barcodelookup-com.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+
+|===

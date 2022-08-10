@@ -47,6 +47,8 @@ Native-specific tests:
 
 ## TODOS:
 
+- Other
+  - add "server admin" role
 - db
   - look into liquibase: https://quarkus.io/guides/liquibase-mongodb
 - Overview

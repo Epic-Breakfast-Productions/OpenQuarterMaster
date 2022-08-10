@@ -36,6 +36,26 @@ service:
       ensure it is handled well. Please contact the folks running the server for more information.
   ops:
     currency: "USD" # anything that works with `Currency.getInstance("<value>")`
+    
+productLookup:
+  providers:
+    barcodelookup-com:
+      displayName: BarcodeLookup.com
+      description: Comprehensive database of products, but a paid service.
+      cost: Paid
+      acceptsContributions: true
+      homepage: https://www.barcodelookup.com/
+      enabled: true
+      url: https://api.barcodelookup.com/
+      apiKey: " "
+    datakick:
+      displayName: Datakick
+      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
+      cost: Free
+      acceptsContributions: true
+      homepage: https://gtinsearch.org/
+      enabled: true
+      url: https://www.gtinsearch.org
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -55,6 +75,12 @@ quarkus:
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
+      scope: javax.inject.Singleton
+    upc-barcodelookup-com:
+      url: ${productLookup.providers.barcodelookup-com.url}
+      scope: javax.inject.Singleton
+    upc-datakick:
+      url: ${productLookup.providers.datakick.url}
       scope: javax.inject.Singleton
     # for demo
     demoService:

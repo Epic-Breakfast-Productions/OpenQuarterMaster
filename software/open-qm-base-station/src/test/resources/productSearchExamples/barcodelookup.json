@@ -1,0 +1,74 @@
+{
+	"products": [
+		{
+			"barcode_number": "01215908",
+			"barcode_formats": "EAN-8 01215908",
+			"mpn": "12968797",
+			"model": "",
+			"asin": "B007TYENCG",
+			"title": "AquaFina Water 20oz",
+			"category": "Food, Beverages & Tobacco > Beverages > Water",
+			"manufacturer": "AquaFina",
+			"brand": "AquaFina",
+			"contributors": [],
+			"age_group": "",
+			"ingredients": "",
+			"nutrition_facts": "",
+			"energy_efficiency_class": "",
+			"color": "white",
+			"gender": "",
+			"material": "",
+			"pattern": "",
+			"format": "",
+			"multipack": "",
+			"size": "",
+			"length": "",
+			"width": "",
+			"height": "",
+			"weight": "295",
+			"release_date": "",
+			"description": "Great tasting water!",
+			"features": [],
+			"images": [
+				"https://images.barcodelookup.com/5511/55112653-1.jpg",
+				"https://images.barcodelookup.com/5511/55112653-2.jpg",
+				"https://images.barcodelookup.com/5511/55112653-3.jpg",
+				"https://images.barcodelookup.com/5511/55112653-4.jpg"
+			],
+			"last_update": "2022-04-09 22:15:16",
+			"stores": [
+				{
+					"name": "Target",
+					"country": "US",
+					"currency": "USD",
+					"currency_symbol": "$",
+					"price": "1.99",
+					"sale_price": "",
+					"tax": [],
+					"link": "https://www.target.com/p/aquafina-pure-unflavored-water-20-fl-oz-bottle/-/A-12968797&intsrc=CATF_1444",
+					"item_group_id": "",
+					"availability": "",
+					"condition": "",
+					"shipping": [],
+					"last_update": "2021-06-22 07:06:06"
+				},
+				{
+					"name": "goPuff",
+					"country": "US",
+					"currency": "USD",
+					"currency_symbol": "$",
+					"price": "1.99",
+					"sale_price": "",
+					"tax": [],
+					"link": "https://link.gopuff.com/drinks/water/aquafina_water_20oz",
+					"item_group_id": "",
+					"availability": "",
+					"condition": "new",
+					"shipping": [],
+					"last_update": "2022-04-09 22:15:16"
+				}
+			],
+			"reviews": []
+		}
+	]
+}
