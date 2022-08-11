@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints;
 
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.ProductLookupService;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResults;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -25,6 +26,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 @Traced
 @Slf4j
@@ -117,6 +121,32 @@ public class ProductLookup extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		
 		return Response.ok(this.productLookupService.searchBarcode(barcode)).build();
+	}
+	
+	@GET
+	@Path("webpage/{webpage}")
+	@Operation(
+		summary = "Scans the given webpage for product details."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = ProductLookupResult.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response scanWebpage(
+		@Context SecurityContext securityContext,
+		@PathParam("webpage") String page
+	) throws MalformedURLException, ExecutionException, InterruptedException {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices;
+package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api;
 
 
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Traced
-public abstract class ProductSearchService {
+public abstract class ApiProductSearchService {
 	
 	public abstract ProductLookupProviderInfo getProviderInfo();
 	

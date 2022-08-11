@@ -36,6 +36,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client'
     implementation 'io.quarkus:quarkus-rest-client-jackson'
 
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.2'
+
     // https://quarkus.io/guides/logging
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 

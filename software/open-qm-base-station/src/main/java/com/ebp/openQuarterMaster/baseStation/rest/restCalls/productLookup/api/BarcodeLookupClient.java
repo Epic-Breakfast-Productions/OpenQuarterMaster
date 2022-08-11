@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup;
+package com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.eclipse.microprofile.opentracing.Traced;

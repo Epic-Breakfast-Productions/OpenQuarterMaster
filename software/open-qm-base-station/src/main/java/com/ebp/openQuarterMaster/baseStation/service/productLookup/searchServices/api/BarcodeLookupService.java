@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices;
+package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api;
 
-import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.BarcodeLookupClient;
+import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.BarcodeLookupClient;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,7 +27,7 @@ import java.util.concurrent.CompletionStage;
 @Slf4j
 @Traced
 @NoArgsConstructor
-public class BarcodeLookupService extends ProductSearchService {
+public class BarcodeLookupService extends ApiProductSearchService {
 	
 	BarcodeLookupClient barcodeLookupClient;
 	@Getter
