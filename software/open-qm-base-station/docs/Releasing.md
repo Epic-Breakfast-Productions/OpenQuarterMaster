@@ -4,6 +4,12 @@ Prereqs:
 
 1. Docker, with buildkit enabled
    - https://www.howtogeek.com/devops/what-is-dockers-buildkit-and-why-does-it-matter/
+   - https://docs.docker.com/build/buildx/install/
+   - https://github.com/docker/buildx/issues/132
+   - Steps:
+     1. Setup buildx
+        1. TODO::
+     2. Make a builder `docker buildx create --name mybuilder --use`
 
 These are the steps to take to perform a release of the software:
 

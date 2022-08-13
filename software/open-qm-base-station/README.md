@@ -67,9 +67,10 @@ Native-specific tests:
   - UI tweaks
     - view improvements
   - UPC barcode lookup. API's:
-    - Good leads:
-      - https://www.barcodelookup.com/api
+    - To add:
+      - https://rebrickable.com/api/v3/docs/?key=
       - https://www.upcitemdb.com
+    - Good leads:
       - https://opengtindb.org/index.php
     - Backups:
       - https://upcdatabase.org/
