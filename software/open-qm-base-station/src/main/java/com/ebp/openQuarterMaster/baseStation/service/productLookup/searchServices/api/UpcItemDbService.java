@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api;
 
-import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.DataKickLookupClient;
+import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.UpcItemDbLookupClient;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,32 +27,37 @@ import java.util.concurrent.CompletionStage;
 @Slf4j
 @Traced
 @NoArgsConstructor
-public class DataKickService extends ApiProductSearchService {
+public class UpcItemDbService extends ApiProductSearchService {
 	
 	@Inject
 	@RestClient
-	DataKickLookupClient dataKickLookupClient;
+	UpcItemDbLookupClient upcItemDbLookupClient;
 	@Getter
 	ProductLookupProviderInfo providerInfo;
 	
+	private String apiKey;
+	
 	@Inject
-	public DataKickService(
+	public UpcItemDbService(
 		@RestClient
-		DataKickLookupClient dataKickLookupClient,
-		@ConfigProperty(name = "productLookup.providers.datakick.displayName")
+		UpcItemDbLookupClient upcItemDbLookupClient,
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.displayName")
 		String displayName,
-		@ConfigProperty(name = "productLookup.providers.datakick.enabled", defaultValue = "false")
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.enabled", defaultValue = "false")
 		boolean enabled,
-		@ConfigProperty(name = "productLookup.providers.datakick.description", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.description", defaultValue = "")
 		String description,
-		@ConfigProperty(name = "productLookup.providers.datakick.acceptsContributions", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.acceptsContributions", defaultValue = "")
 		boolean acceptsContributions,
-		@ConfigProperty(name = "productLookup.providers.datakick.homepage", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.homepage", defaultValue = "")
 		URL homepage,
-		@ConfigProperty(name = "productLookup.providers.datakick.cost", defaultValue = "")
-		String cost
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.cost", defaultValue = "")
+		String cost,
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.key", defaultValue = "")
+		String apiKey
 	) {
-		this.dataKickLookupClient = dataKickLookupClient;
+		this.upcItemDbLookupClient = upcItemDbLookupClient;
+		this.apiKey = apiKey;
 		this.providerInfo = ProductLookupProviderInfo
 								.builder()
 								.displayName(displayName)
@@ -69,9 +74,12 @@ public class DataKickService extends ApiProductSearchService {
 		return this.getProviderInfo().isEnabled();
 	}
 	
+	public boolean hasKey(){
+		return this.apiKey != null && !this.apiKey.isBlank();
+	}
+	
 	/**
-	 * https://gtinsearch.org/api
-	 * https://www.gtinsearch.org/api/items/0754523765792
+	 * https://www.upcitemdb.com/wp/docs/main/development/responses/
 	 *
 	 * @param results
 	 *
@@ -79,42 +87,38 @@ public class DataKickService extends ApiProductSearchService {
 	 */
 	@Override
 	public List<ProductLookupResult> jsonNodeToSearchResults(JsonNode results) {
-		log.debug("Data from Datakick: {}", results.toPrettyString());
-		if (!results.isArray()) {
-			log.warn("Data from DataKick not an array!");
-			return List.of();
-		}
+		log.debug("Data from upcitemdb: {}", results.toPrettyString());
 		
-		ArrayNode resultsAsArr = (ArrayNode) results;
+		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
 		List<ProductLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
-		for (JsonNode result : results) {
+		for (JsonNode result : resultsAsArr) {
 			ObjectNode curResultJson = (ObjectNode) result;
 			String brandName = "";
 			String name = "";
 			Map<String, String> attributes = new HashMap<>();
-			
+			ProductLookupResult.Builder<?,?> resultBuilder = ProductLookupResult.builder();
 			
 			for (Iterator<Map.Entry<String, JsonNode>> iter = curResultJson.fields(); iter.hasNext(); ) {
 				Map.Entry<String, JsonNode> curField = iter.next();
 				String curFieldName = curField.getKey();
 				String curFieldVal = curField.getValue().asText();
 				
+				//TODO:: handle images
+				
 				if (curField.getValue().isNull() || curFieldVal == null || curFieldVal.isBlank()) {
 					continue;
 				}
 				
 				switch (curFieldName) {
-					case "id":
-					case "user_id":
-					case "created_at":
-					case "updated_at":
-						continue;
-					case "brand_name":
+					case "brand":
 						brandName = curFieldVal;
 						break;
-					case "name":
+					case "title":
 						name = curFieldVal;
+						break;
+					case "description":
+						resultBuilder.description(curFieldVal);
 						break;
 					default:
 						attributes.put(curFieldName, curFieldVal);
@@ -122,8 +126,7 @@ public class DataKickService extends ApiProductSearchService {
 			}
 			
 			resultList.add(
-				ProductLookupResult
-					.builder()
+				resultBuilder
 					.source(this.getProviderInfo().getDisplayName())
 					.name(name)
 					.brand(brandName)
@@ -136,8 +139,18 @@ public class DataKickService extends ApiProductSearchService {
 		return resultList;
 	}
 	
+	
+	
 	@Override
 	protected CompletionStage<JsonNode> performBarcodeSearchCall(String barcode) {
-		return this.dataKickLookupClient.getFromUpcCode(barcode);
+		if(this.hasKey()){
+			return this.upcItemDbLookupClient.getFromUpcCode(
+				this.apiKey,
+				"3scale",
+				UpcItemDbLookupClient.Request.builder().upc(barcode).build()
+			);
+		}
+		
+		return this.upcItemDbLookupClient.getFromUpcCodeTrial(barcode);
 	}
 }

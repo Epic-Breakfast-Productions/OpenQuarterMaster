@@ -56,6 +56,15 @@ productLookup:
       homepage: https://gtinsearch.org/
       enabled: true
       url: https://www.gtinsearch.org
+    upcitemdb:
+      displayName: upcitemdb.com
+      description: A lookup database with good number of records, and a free tier with 100 requests per day.
+      cost: Free tier, Paid
+      acceptsContributions: false
+      homepage: https://www.upcitemdb.com/
+      enabled: true
+      url: https://api.upcitemdb.com
+      key: " "
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -81,6 +90,9 @@ quarkus:
       scope: javax.inject.Singleton
     upc-datakick:
       url: ${productLookup.providers.datakick.url}
+      scope: javax.inject.Singleton
+    upc-upcitemdb:
+      url: ${productLookup.providers.upcitemdb.url}
       scope: javax.inject.Singleton
     # for demo
     demoService:

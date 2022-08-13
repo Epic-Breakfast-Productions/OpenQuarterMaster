@@ -69,11 +69,10 @@ Native-specific tests:
   - UPC barcode lookup. API's:
     - To add:
       - https://rebrickable.com/api/v3/docs/?key=
-      - https://www.upcitemdb.com
     - Good leads:
       - https://opengtindb.org/index.php
+      - https://upcdatabase.org/api
     - Backups:
-      - https://upcdatabase.org/
       - https://devapi.barcodespider.com/
 - Overview
   - stats
