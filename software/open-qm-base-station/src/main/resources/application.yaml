@@ -65,6 +65,15 @@ productLookup:
       enabled: true
       url: https://api.upcitemdb.com
       key: " "
+    rebrickable:
+      displayName: Rebrickable
+      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
+      cost: Free
+      acceptsContributions: false
+      homepage: https://rebrickable.com
+      enabled: false
+      url: https://rebrickable.com
+      key: " "
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -93,6 +102,9 @@ quarkus:
       scope: javax.inject.Singleton
     upc-upcitemdb:
       url: ${productLookup.providers.upcitemdb.url}
+      scope: javax.inject.Singleton
+    lego-rebrickable:
+      url: ${productLookup.providers.rebrickable.url}
       scope: javax.inject.Singleton
     # for demo
     demoService:

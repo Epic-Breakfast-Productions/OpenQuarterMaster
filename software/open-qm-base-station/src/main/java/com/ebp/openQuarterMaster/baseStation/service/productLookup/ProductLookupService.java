@@ -1,9 +1,11 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup;
 
-import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.ApiProductSearchService;
-import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.BarcodeLookupService;
-import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.DataKickService;
-import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.UpcItemDbService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.lego.LegoLookupService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.lego.RebrickableService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.ApiProductSearchService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.BarcodeLookupService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.DataKickService;
+import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.UpcItemDbService;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.page.PageProductSearchService;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
@@ -34,18 +36,23 @@ public class ProductLookupService {
 	
 	private PageProductSearchService pageProductSearchService;
 	private final Set<ApiProductSearchService> productSearchServices = new HashSet<>();
+	private final Set<LegoLookupService> legoSearchServices = new HashSet<>();
 	
 	@Inject
 	public ProductLookupService(
 		PageProductSearchService pageProductSearchService,
 		DataKickService dataKickService,
 		BarcodeLookupService barcodeLookupService,
-		UpcItemDbService upcItemDbService
+		UpcItemDbService upcItemDbService,
+		RebrickableService rebrickableService
 	) {
 		this.pageProductSearchService = pageProductSearchService;
+		
 		this.productSearchServices.add(dataKickService);
 		this.productSearchServices.add(barcodeLookupService);
 		this.productSearchServices.add(upcItemDbService);
+		
+		this.legoSearchServices.add(rebrickableService);
 	}
 	
 	
@@ -92,7 +99,22 @@ public class ProductLookupService {
 	}
 	
 	public ProductLookupResults searchProduct(String brand, String product) {
+		//TODO
 		return null;
+	}
+	
+	public ProductLookupResults searchLegoPart(String legoPartNum) {
+		Map<String, CompletableFuture<List<ProductLookupResult>>> resultMap = new HashMap<>();
+		
+		for (LegoLookupService curService : this.legoSearchServices) {
+			Optional<CompletableFuture<List<ProductLookupResult>>> result = curService.searchPartNumber(legoPartNum);
+			
+			if (result.isPresent()) {
+				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
+			}
+		}
+		
+		return this.processRequests(resultMap);
 	}
 	
 	/**

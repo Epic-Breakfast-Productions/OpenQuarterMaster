@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api;
+package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.BarcodeLookupClient;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;

@@ -149,4 +149,30 @@ public class ProductLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
 	}
 	
+	
+	@GET
+	@Path("lego/{partNo}")
+	@Operation(
+		summary = "Searches enabled providers for the barcode given."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = ProductLookupResults.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response searchLegoPart(
+		@Context SecurityContext securityContext,
+		@PathParam("partNo") String partNo
+	) {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
+	}
 }
