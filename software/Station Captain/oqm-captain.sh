@@ -10,7 +10,7 @@
 #  - hwinfo
 #  - sponge (from moreutils)
 #  - jq
-SCRIPT_VERSION="1.0.3-DEV"
+SCRIPT_VERSION="1.0.4-DEV"
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
