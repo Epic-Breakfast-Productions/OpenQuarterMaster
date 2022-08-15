@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints;
+package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.itemLookup;
 
+import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.ProductLookupService;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
 import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
@@ -32,10 +33,10 @@ import java.util.concurrent.ExecutionException;
 
 @Traced
 @Slf4j
-@Path("/api/productLookup")
-@Tags({@Tag(name = "Product Lookup", description = "Endpoints for searching for products.")})
+@Path("/api/externalItemLookup")
+@Tags({@Tag(name = "External Item Lookup", description = "Endpoints for searching for items from other places.")})
 @RequestScoped
-public class ProductLookup extends EndpointProvider {
+public class ItemLookup extends EndpointProvider {
 	
 	@Inject
 	JsonWebToken jwt;
@@ -44,7 +45,7 @@ public class ProductLookup extends EndpointProvider {
 	ProductLookupService productLookupService;
 	
 	@GET
-	@Path("providers")
+	@Path("/product/providers")
 	@Operation(
 		summary = "Gets information on supported product search providers."
 	)
@@ -66,11 +67,11 @@ public class ProductLookup extends EndpointProvider {
 	) {
 		logRequestContext(this.jwt, securityContext);
 		
-		return Response.ok(this.productLookupService.getProviderInfo()).build();
+		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
 	}
 	
 	@GET
-	@Path("providers/enabled")
+	@Path("/product/providers/enabled")
 	@Operation(
 		summary = "Gets information on supported and enabled product search providers."
 	)
@@ -93,12 +94,12 @@ public class ProductLookup extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		
 		return Response.ok(
-			this.productLookupService.getProviderInfo().stream().filter(ProductLookupProviderInfo::isEnabled)
+			this.productLookupService.getProductProviderInfo().stream().filter(ProductLookupProviderInfo::isEnabled)
 		).build();
 	}
 	
 	@GET
-	@Path("barcode/{barcode}")
+	@Path("product/barcode/{barcode}")
 	@Operation(
 		summary = "Searches enabled providers for the barcode given."
 	)
@@ -124,7 +125,7 @@ public class ProductLookup extends EndpointProvider {
 	}
 	
 	@GET
-	@Path("webpage/{webpage}")
+	@Path("product/webpage/{webpage}")
 	@Operation(
 		summary = "Scans the given webpage for product details."
 	)
@@ -151,7 +152,7 @@ public class ProductLookup extends EndpointProvider {
 	
 	
 	@GET
-	@Path("lego/{partNo}")
+	@Path("lego/part/{partNo}")
 	@Operation(
 		summary = "Searches enabled providers for the barcode given."
 	)

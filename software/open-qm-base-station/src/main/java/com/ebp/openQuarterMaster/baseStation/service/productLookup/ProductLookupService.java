@@ -129,7 +129,7 @@ public class ProductLookupService {
 		return this.pageProductSearchService.scanWebpage(page).get();
 	}
 	
-	public List<ProductLookupProviderInfo> getProviderInfo() {
+	public List<ProductLookupProviderInfo> getProductProviderInfo() {
 		List<ProductLookupProviderInfo> output = new ArrayList<>(this.productSearchServices.size());
 		
 		for (ApiProductSearchService curService : this.productSearchServices) {
