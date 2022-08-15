@@ -381,11 +381,16 @@ EOT
 #
 function getGitReleasesFor(){
 	local softwareReleaseToFind="$1"
+	local baseStationMajorVersion="$2"
 	
 	#echo "getting all releases for $softwareReleaseToFind"
 	
 	local releases="$(jq -c "map(select(.name | contains(\"$softwareReleaseToFind\")))" "$RELEASE_LIST_FILE")"
-	
+
+	if [ "$softwareReleaseToFind" == "core-base+station" ] && [ "$baseStationMajorVersion" != "" ]; then
+		releases="$(echo "$releases" | jq -c "map(select(.name | contains(\"${softwareReleaseToFind}-$baseStationMajorVersion\")))" )"
+	fi
+
 	#echo "DEBUG:: got releases for $softwareReleaseToFind: $releases"
 	
 	echo "$releases"
@@ -398,8 +403,9 @@ function getGitReleasesFor(){
 #
 function getLatestGitReleaseFor(){
 	local softwareReleaseToFind="$1"
+	local baseStationMajorVersion="$2"
 		
-	releasesFor="$(getGitReleasesFor "$softwareReleaseToFind")"
+	releasesFor="$(getGitReleasesFor "$softwareReleaseToFind" "$baseStationMajorVersion")"
 
 	#echo "DEBUG:: releases: $releasesFor"
 	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
@@ -411,21 +417,25 @@ function getLatestGitReleaseFor(){
 #
 # Determines if the software tag needs an update
 #  TODO:: update to new interface
-# Usage: needsUpdated "type-name-version[-tag]"
+# Usage: needsUpdated "open+quarter+master-type-name-version[-tag] [base station major version to stick to]"
 # Returns "" if not needed, "<tag> <download link>" of version to update to.
 #
 function needsUpdated() {
 	local inputTagVersion="$1"
+	local baseStationMajorVersion="$2"
+
 	local curTagArr=(${inputTagVersion//-/ })
 	
 	local curMajVersion="$(getMajorVersion "${curTagArr[2]}")"
-	local curTag="${curTagArr[1]}-${curTagArr[2]}"
+	local curTag="${curTagArr[1]}-${curTagArr[2]}" # ex: core-base+station
 	local curTagVersion="${curTagArr[1]}-${curTagArr[2]}-${curTagArr[3]}"
+
+#	echo "DEBUG:: cur tag: $curTag"
 
 	output=""
 	case "${curTagArr[1]}" in
 		"manager" | "infra" | "core") # Prefixes we get from Git
-			local latestRelease="$(getLatestGitReleaseFor "$curTag")"
+			local latestRelease="$(getLatestGitReleaseFor "$curTag" "$baseStationMajorVersion")"
 			
 			#echo "DEBUG:: Latest release: $latestRelease"
 			
@@ -440,9 +450,9 @@ function needsUpdated() {
 				if [[ "$compareResult" == \<* ]]; then
 					output="$latestReleaseTag $(getAssetUrlToInstallFromGitRelease "$latestRelease")"
 				fi
-			fi	
+			fi
 			;;
-		#TODO:: base station, plugins
+		#TODO:: plugins
 	esac
 	echo "$output"
 }
@@ -825,6 +835,11 @@ mkdir -p "$DOWNLOAD_DIR"
 refreshReleaseList
 
 #
+# Debug section. Nothing should be here
+#
+
+
+#
 # Check updatedness of this script
 #
 curInstalledCapVersion=""
@@ -872,6 +887,37 @@ if [ "$curInstalledBaseStationVersion" = "" ]; then
 		;;
 	esac
 fi
+
+#
+# Get major version of base station
+#
+getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
+baseStationMajorVersion="$(getMajorVersion "$curInstalledBaseStationVersion")"
+echo "Current installed base station major version: $baseStationMajorVersion"
+
+baseStationHasUpdates="$(needsUpdated "open+quarter+master-core-base+station-$curInstalledBaseStationVersion" "$baseStationMajorVersion")"
+
+if [ "$baseStationHasUpdates" = "" ]; then
+	echo "Base Station up to date."
+else
+	baseStationUpdateInfo=($baseStationHasUpdates);
+	echo "Base Station has a new release!";
+	echo "DEBUG:: release info: $baseStationHasUpdates"
+	showDialog --title "Base Station new Release" --yesno "Base Station has a new release out:\\n${baseStationUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+	case $? in
+		0)
+			echo "Updating Base Station."
+			installFromUrl "${baseStationUpdateInfo[1]}"
+			echo "Update installed!"
+			showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
+		;;
+		*)
+			echo "Not updating base Station.";
+		;;
+	esac
+	# TODO:: update
+fi
+
 
 #echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
 
