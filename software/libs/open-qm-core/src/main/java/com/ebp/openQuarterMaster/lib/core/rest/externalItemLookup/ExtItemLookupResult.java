@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.rest.productLookup;
+package com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,14 +8,19 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * An individual result from external sources.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ProductLookupResult {
+public class ExtItemLookupResult {
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -38,4 +43,10 @@ public class ProductLookupResult {
 	@NotNull
 	@lombok.Builder.Default
 	private Map<String, String> attributes = new HashMap<>();
+	
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private List<@NotNull @NonNull @NotBlank String> images = new ArrayList<>();
+	
 }

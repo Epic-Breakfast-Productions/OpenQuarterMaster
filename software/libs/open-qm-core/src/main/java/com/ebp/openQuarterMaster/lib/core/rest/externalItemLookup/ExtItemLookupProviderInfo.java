@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.rest.productLookup;
+package com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,14 @@ import lombok.NonNull;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 
+/**
+ * Information about an external item lookup provider
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductLookupProviderInfo {
+public class ExtItemLookupProviderInfo {
 	
 	@NotNull
 	@NonNull

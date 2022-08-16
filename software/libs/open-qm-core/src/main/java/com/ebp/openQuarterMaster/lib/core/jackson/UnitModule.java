@@ -19,7 +19,7 @@ import static com.ebp.openQuarterMaster.lib.core.UnitUtils.ALLOWED_UNITS;
 import static com.ebp.openQuarterMaster.lib.core.UnitUtils.unitFromString;
 
 /**
- * Jackson module to handle the Mongodb ObjectId in a reasonable manner
+ * Jackson module to handle Units within {@link UnitUtils#ALLOWED_UNITS}
  */
 public class UnitModule extends TestableModule<Unit> {
 	

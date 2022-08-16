@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Request to create an image in the Base Station service.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

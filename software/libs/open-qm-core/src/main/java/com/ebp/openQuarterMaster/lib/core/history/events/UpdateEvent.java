@@ -15,6 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Event for the update of an object.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder

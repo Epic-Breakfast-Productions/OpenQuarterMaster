@@ -1,6 +1,10 @@
 package com.ebp.openQuarterMaster.lib.core.history.events;
 
 import com.ebp.openQuarterMaster.lib.core.UnitUtils;
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemAddEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemSubEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemTransferEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.user.UserLoginEvent;
 import com.ebp.openQuarterMaster.lib.core.testUtils.ObjectSerializationTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

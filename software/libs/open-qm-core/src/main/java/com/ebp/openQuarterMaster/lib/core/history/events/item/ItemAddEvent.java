@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.lib.core.history.events;
+package com.ebp.openQuarterMaster.lib.core.history.events.item;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.EventType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -9,6 +10,9 @@ import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Event for the addition of items to a storage block.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder

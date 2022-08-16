@@ -1,13 +1,12 @@
-package com.ebp.openQuarterMaster.lib.core.history.events;
+package com.ebp.openQuarterMaster.lib.core.history.events.item;
 
-import com.ebp.openQuarterMaster.lib.core.AttKeywordContaining;
-import lombok.Builder;
+import com.ebp.openQuarterMaster.lib.core.history.events.DescriptiveEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.EventType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.bson.types.ObjectId;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Data

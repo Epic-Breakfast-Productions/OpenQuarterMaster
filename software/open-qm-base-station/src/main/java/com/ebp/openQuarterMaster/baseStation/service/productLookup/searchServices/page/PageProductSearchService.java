@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.page;
 
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -20,8 +20,8 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 public class PageProductSearchService {
 	
-	private static ProductLookupResult.Builder<?, ?> getProdDetailsAdafruit(
-		ProductLookupResult.Builder<?, ?> resultBuilder,
+	private static ExtItemLookupResult.Builder<?, ?> getProdDetailsAdafruit(
+		ExtItemLookupResult.Builder<?, ?> resultBuilder,
 		Document results
 	) {
 		Map<String, String> atts = new HashMap<>();
@@ -35,8 +35,8 @@ public class PageProductSearchService {
 		return resultBuilder;
 	}
 	
-	private static ProductLookupResult.Builder<?, ?> getProdDetailsAmazon(
-		ProductLookupResult.Builder<?, ?> resultBuilder,
+	private static ExtItemLookupResult.Builder<?, ?> getProdDetailsAmazon(
+		ExtItemLookupResult.Builder<?, ?> resultBuilder,
 		Document results
 	) {
 		Map<String, String> atts = new HashMap<>();
@@ -70,8 +70,8 @@ public class PageProductSearchService {
 	}
 	
 	
-	public ProductLookupResult documentToSearchResult(URL page, Document results) {
-		ProductLookupResult.Builder<?, ?> output = ProductLookupResult.builder();
+	public ExtItemLookupResult documentToSearchResult(URL page, Document results) {
+		ExtItemLookupResult.Builder<?, ?> output = ExtItemLookupResult.builder();
 		output = output.source(page.getHost());
 		
 		log.debug("Web page size: {}", results.data().length());
@@ -94,7 +94,7 @@ public class PageProductSearchService {
 		return output.build();
 	}
 	
-	public CompletableFuture<ProductLookupResult> scanWebpage(URL page) {
+	public CompletableFuture<ExtItemLookupResult> scanWebpage(URL page) {
 		return CompletableFuture.supplyAsync(()->{
 												 try {
 													 return Jsoup.newSession()

@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.DataKickLookupClient;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,7 +33,7 @@ public class DataKickService extends ApiProductSearchService {
 	@RestClient
 	DataKickLookupClient dataKickLookupClient;
 	@Getter
-	ProductLookupProviderInfo providerInfo;
+	ExtItemLookupProviderInfo providerInfo;
 	
 	@Inject
 	public DataKickService(
@@ -53,7 +53,7 @@ public class DataKickService extends ApiProductSearchService {
 		String cost
 	) {
 		this.dataKickLookupClient = dataKickLookupClient;
-		this.providerInfo = ProductLookupProviderInfo
+		this.providerInfo = ExtItemLookupProviderInfo
 								.builder()
 								.displayName(displayName)
 								.enabled(enabled)
@@ -78,7 +78,7 @@ public class DataKickService extends ApiProductSearchService {
 	 * @return
 	 */
 	@Override
-	public List<ProductLookupResult> jsonNodeToSearchResults(JsonNode results) {
+	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
 		log.debug("Data from Datakick: {}", results.toPrettyString());
 		if (!results.isArray()) {
 			log.warn("Data from DataKick not an array!");
@@ -86,7 +86,7 @@ public class DataKickService extends ApiProductSearchService {
 		}
 		
 		ArrayNode resultsAsArr = (ArrayNode) results;
-		List<ProductLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
+		List<ExtItemLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : results) {
 			ObjectNode curResultJson = (ObjectNode) result;
@@ -122,7 +122,7 @@ public class DataKickService extends ApiProductSearchService {
 			}
 			
 			resultList.add(
-				ProductLookupResult
+				ExtItemLookupResult
 					.builder()
 					.source(this.getProviderInfo().getDisplayName())
 					.name(name)

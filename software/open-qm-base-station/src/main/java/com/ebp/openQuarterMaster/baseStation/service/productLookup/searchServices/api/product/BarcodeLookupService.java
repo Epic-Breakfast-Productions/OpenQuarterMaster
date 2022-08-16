@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.BarcodeLookupClient;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,7 +31,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 	
 	BarcodeLookupClient barcodeLookupClient;
 	@Getter
-	ProductLookupProviderInfo providerInfo;
+	ExtItemLookupProviderInfo providerInfo;
 	String apiKey;
 	
 	@Inject
@@ -55,7 +55,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 	) {
 		this.barcodeLookupClient = barcodeLookupClient;
 		
-		ProductLookupProviderInfo.Builder infoBuilder = ProductLookupProviderInfo
+		ExtItemLookupProviderInfo.Builder infoBuilder = ExtItemLookupProviderInfo
 			.builder()
 			.displayName(displayName)
 			.description(description)
@@ -87,11 +87,11 @@ public class BarcodeLookupService extends ApiProductSearchService {
 	 * @return
 	 */
 	@Override
-	public List<ProductLookupResult> jsonNodeToSearchResults(JsonNode results) {
+	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
 		log.debug("Data from BarcodeLookup: {}", results.toPrettyString());
 		
 		ArrayNode resultsAsArr = (ArrayNode) results.get("products");
-		List<ProductLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
+		List<ExtItemLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : resultsAsArr) {
 			ObjectNode curResultJson = (ObjectNode) result;
@@ -127,7 +127,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 			}
 			
 			resultList.add(
-				ProductLookupResult
+				ExtItemLookupResult
 					.builder()
 					.source(this.getProviderInfo().getDisplayName())
 					.name(name)

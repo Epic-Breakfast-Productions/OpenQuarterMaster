@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Event for the creation of an object.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder

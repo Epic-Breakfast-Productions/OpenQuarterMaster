@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.UpcItemDbLookupClient;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,7 +33,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 	@RestClient
 	UpcItemDbLookupClient upcItemDbLookupClient;
 	@Getter
-	ProductLookupProviderInfo providerInfo;
+	ExtItemLookupProviderInfo providerInfo;
 	
 	private String apiKey;
 	
@@ -58,7 +58,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 	) {
 		this.upcItemDbLookupClient = upcItemDbLookupClient;
 		this.apiKey = apiKey;
-		this.providerInfo = ProductLookupProviderInfo
+		this.providerInfo = ExtItemLookupProviderInfo
 								.builder()
 								.displayName(displayName)
 								.enabled(enabled)
@@ -86,18 +86,18 @@ public class UpcItemDbService extends ApiProductSearchService {
 	 * @return
 	 */
 	@Override
-	public List<ProductLookupResult> jsonNodeToSearchResults(JsonNode results) {
+	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
 		log.debug("Data from upcitemdb: {}", results.toPrettyString());
 		
 		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
-		List<ProductLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
+		List<ExtItemLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : resultsAsArr) {
 			ObjectNode curResultJson = (ObjectNode) result;
 			String brandName = "";
 			String name = "";
 			Map<String, String> attributes = new HashMap<>();
-			ProductLookupResult.Builder<?,?> resultBuilder = ProductLookupResult.builder();
+			ExtItemLookupResult.Builder<?,?> resultBuilder = ExtItemLookupResult.builder();
 			
 			for (Iterator<Map.Entry<String, JsonNode>> iter = curResultJson.fields(); iter.hasNext(); ) {
 				Map.Entry<String, JsonNode> curField = iter.next();

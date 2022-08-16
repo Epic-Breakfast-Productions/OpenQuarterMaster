@@ -1,5 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.history.events;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemAddEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemSubEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.item.ItemTransferEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.user.UserLoginEvent;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;

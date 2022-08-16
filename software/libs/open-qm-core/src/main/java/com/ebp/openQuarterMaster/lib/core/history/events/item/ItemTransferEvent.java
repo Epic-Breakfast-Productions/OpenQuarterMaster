@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.lib.core.history.events;
+package com.ebp.openQuarterMaster.lib.core.history.events.item;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.EventType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -9,21 +10,27 @@ import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Event for the transfer of items from a storage block to another.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
 @ToString(callSuper = true)
-public class ItemSubEvent extends ItemAddSubEvent {
+public class ItemTransferEvent extends ItemAddSubEvent {
 	
 	@NonNull
 	@NotNull
-	private ObjectId storageBlockId;
+	private ObjectId storageBlockFromId;
+	@NonNull
+	@NotNull
+	private ObjectId storageBlockToId;
 	
 	private static EventType getClassType() {
-		return EventType.ITEM_SUBTRACT;
+		return EventType.ITEM_TRANSFER;
 	}
 	
-	public ItemSubEvent() {
+	public ItemTransferEvent() {
 		super(getClassType());
 	}
 	

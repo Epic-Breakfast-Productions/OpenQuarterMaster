@@ -9,6 +9,9 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Describes an event with a description of the event.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Describes an object that has a history.
+ * Describes an object's history.
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

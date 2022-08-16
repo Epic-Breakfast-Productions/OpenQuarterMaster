@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.RebrickableLookupClient;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.concurrent.CompletionStage;
 public class RebrickableService extends LegoLookupService {
 	
 	@Getter
-	ProductLookupProviderInfo providerInfo;
+	ExtItemLookupProviderInfo providerInfo;
 	RebrickableLookupClient rebrickableLookupClient;
 	private String apiKey;
 	
@@ -52,7 +52,7 @@ public class RebrickableService extends LegoLookupService {
 	) {
 		this.rebrickableLookupClient = rebrickableLookupClient;
 		this.apiKey = apiKey;
-		this.providerInfo = ProductLookupProviderInfo
+		this.providerInfo = ExtItemLookupProviderInfo
 								.builder()
 								.displayName(displayName)
 								.enabled(enabled)
@@ -69,8 +69,8 @@ public class RebrickableService extends LegoLookupService {
 	}
 	
 	@Override
-	public List<ProductLookupResult> jsonNodeToSearchResults(JsonNode results) {
-		ProductLookupResult.Builder<?, ?> resultBuilder = ProductLookupResult.builder()
+	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
+		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder()
 																			 .source(this.getProviderInfo().getDisplayName())
 															  .brand("LEGO");
 		

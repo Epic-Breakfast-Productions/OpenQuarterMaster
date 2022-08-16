@@ -2,9 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.testUtils;
 
 import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import net.datafaker.Faker;
 
 public abstract class BasicTest {
 	

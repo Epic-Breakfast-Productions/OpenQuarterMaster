@@ -1,10 +1,15 @@
-package com.ebp.openQuarterMaster.lib.core.history.events;
+package com.ebp.openQuarterMaster.lib.core.history.events.user;
 
+import com.ebp.openQuarterMaster.lib.core.history.events.EventType;
+import com.ebp.openQuarterMaster.lib.core.history.events.HistoryEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Event for the login action of a user.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder

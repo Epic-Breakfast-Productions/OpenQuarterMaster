@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.lib.core.rest.productLookup;
+package com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ProductLookupResults {
-	private List<ProductLookupResult> results;
+public class ExtItemLookupResults {
+	private List<ExtItemLookupResult> results;
 	private Map<String, Throwable> serviceErrs;
 }

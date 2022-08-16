@@ -7,9 +7,9 @@ import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchService
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.DataKickService;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.UpcItemDbService;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.page.PageProductSearchService;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResults;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -56,14 +56,14 @@ public class ProductLookupService {
 	}
 	
 	
-	private ProductLookupResults processRequests(Map<String, CompletableFuture<List<ProductLookupResult>>> requests) {
-		List<ProductLookupResult> resultList = new ArrayList<>(requests.size());
+	private ExtItemLookupResults processRequests(Map<String, CompletableFuture<List<ExtItemLookupResult>>> requests) {
+		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
 		Map<String, Throwable> errList = new HashMap<>();
 		
-		for (Map.Entry<String, CompletableFuture<List<ProductLookupResult>>> curRequest : requests.entrySet()) {
+		for (Map.Entry<String, CompletableFuture<List<ExtItemLookupResult>>> curRequest : requests.entrySet()) {
 			String curService = curRequest.getKey();
-			CompletableFuture<List<ProductLookupResult>> curFuture = curRequest.getValue();
-			List<ProductLookupResult> results;
+			CompletableFuture<List<ExtItemLookupResult>> curFuture = curRequest.getValue();
+			List<ExtItemLookupResult> results;
 			
 			try {
 				results = curFuture.join();
@@ -78,17 +78,17 @@ public class ProductLookupService {
 		}
 		
 		
-		return ProductLookupResults.builder()
+		return ExtItemLookupResults.builder()
 								   .results(resultList)
 								   .serviceErrs(errList)
 								   .build();
 	}
 	
-	public ProductLookupResults searchBarcode(String barcode) {
-		Map<String, CompletableFuture<List<ProductLookupResult>>> resultMap = new HashMap<>();
+	public ExtItemLookupResults searchBarcode(String barcode) {
+		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
 		
 		for (ApiProductSearchService curService : this.productSearchServices) {
-			Optional<CompletableFuture<List<ProductLookupResult>>> result = curService.searchBarcode(barcode);
+			Optional<CompletableFuture<List<ExtItemLookupResult>>> result = curService.searchBarcode(barcode);
 			
 			if (result.isPresent()) {
 				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
@@ -98,16 +98,16 @@ public class ProductLookupService {
 		return this.processRequests(resultMap);
 	}
 	
-	public ProductLookupResults searchProduct(String brand, String product) {
+	public ExtItemLookupResults searchProduct(String brand, String product) {
 		//TODO
 		return null;
 	}
 	
-	public ProductLookupResults searchLegoPart(String legoPartNum) {
-		Map<String, CompletableFuture<List<ProductLookupResult>>> resultMap = new HashMap<>();
+	public ExtItemLookupResults searchLegoPart(String legoPartNum) {
+		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
 		
 		for (LegoLookupService curService : this.legoSearchServices) {
-			Optional<CompletableFuture<List<ProductLookupResult>>> result = curService.searchPartNumber(legoPartNum);
+			Optional<CompletableFuture<List<ExtItemLookupResult>>> result = curService.searchPartNumber(legoPartNum);
 			
 			if (result.isPresent()) {
 				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
@@ -124,13 +124,13 @@ public class ProductLookupService {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public ProductLookupResult scanPage(URL page) throws ExecutionException, InterruptedException {
+	public ExtItemLookupResult scanPage(URL page) throws ExecutionException, InterruptedException {
 //		throw new NotImplementedYetException();
 		return this.pageProductSearchService.scanWebpage(page).get();
 	}
 	
-	public List<ProductLookupProviderInfo> getProductProviderInfo() {
-		List<ProductLookupProviderInfo> output = new ArrayList<>(this.productSearchServices.size());
+	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {
+		List<ExtItemLookupProviderInfo> output = new ArrayList<>(this.productSearchServices.size());
 		
 		for (ApiProductSearchService curService : this.productSearchServices) {
 			output.add(curService.getProviderInfo());

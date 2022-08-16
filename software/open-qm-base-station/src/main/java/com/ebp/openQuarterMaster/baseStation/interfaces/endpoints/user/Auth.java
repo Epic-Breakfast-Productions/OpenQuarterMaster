@@ -8,7 +8,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.TimeUtils;
-import com.ebp.openQuarterMaster.lib.core.history.events.UserLoginEvent;
+import com.ebp.openQuarterMaster.lib.core.history.events.user.UserLoginEvent;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
 import com.ebp.openQuarterMaster.lib.core.rest.user.TokenCheckResponse;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;

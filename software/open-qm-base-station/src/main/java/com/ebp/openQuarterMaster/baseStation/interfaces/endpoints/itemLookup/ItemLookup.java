@@ -2,9 +2,9 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.itemLookup;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.ProductLookupService;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResult;
-import com.ebp.openQuarterMaster.lib.core.rest.productLookup.ProductLookupResults;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
+import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -56,7 +56,7 @@ public class ItemLookup extends EndpointProvider {
 			mediaType = MediaType.APPLICATION_JSON,
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ProductLookupProviderInfo.class
+				implementation = ExtItemLookupProviderInfo.class
 			)
 		)
 	)
@@ -82,7 +82,7 @@ public class ItemLookup extends EndpointProvider {
 			mediaType = MediaType.APPLICATION_JSON,
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ProductLookupProviderInfo.class
+				implementation = ExtItemLookupProviderInfo.class
 			)
 		)
 	)
@@ -94,7 +94,7 @@ public class ItemLookup extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		
 		return Response.ok(
-			this.productLookupService.getProductProviderInfo().stream().filter(ProductLookupProviderInfo::isEnabled)
+			this.productLookupService.getProductProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
 		).build();
 	}
 	
@@ -109,7 +109,7 @@ public class ItemLookup extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = ProductLookupResults.class
+				implementation = ExtItemLookupResults.class
 			)
 		)
 	)
@@ -135,7 +135,7 @@ public class ItemLookup extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = ProductLookupResult.class
+				implementation = ExtItemLookupResult.class
 			)
 		)
 	)
@@ -162,7 +162,7 @@ public class ItemLookup extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = ProductLookupResults.class
+				implementation = ExtItemLookupResults.class
 			)
 		)
 	)
