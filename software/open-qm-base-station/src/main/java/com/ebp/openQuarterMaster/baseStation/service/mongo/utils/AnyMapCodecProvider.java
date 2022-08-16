@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.baseStation.mongoUtils;
+package com.ebp.openQuarterMaster.baseStation.service.mongo.utils;
 
-import com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs.AnyMapCodec;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.codecs.AnyMapCodec;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;

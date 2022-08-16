@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
-import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbDeletedException;
-import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.SearchObject;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbDeletedException;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.lib.core.MainObject;
