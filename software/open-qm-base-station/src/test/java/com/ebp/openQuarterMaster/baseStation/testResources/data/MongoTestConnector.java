@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.AnyMapCodecProvider;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.CustomCodecProvider;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.AnyMapCodecProvider;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.CustomCodecProvider;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;

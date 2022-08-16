@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbModValidationException;
+import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.exception.DbModValidationException;
-import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
 import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.tree.StorageBlockTree;
 import com.fasterxml.jackson.databind.ObjectMapper;

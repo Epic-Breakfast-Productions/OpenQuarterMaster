@@ -40,7 +40,7 @@ import java.util.List;
 public class UserUi extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/you")
+	@Location("webui/pages/user")
 	Template overview;
 	
 	@Inject

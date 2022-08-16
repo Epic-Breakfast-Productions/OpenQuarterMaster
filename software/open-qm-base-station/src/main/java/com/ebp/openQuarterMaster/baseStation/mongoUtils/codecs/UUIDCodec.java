@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.service.mongo.utils.codecs;
+package com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs;
 
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
