@@ -68,9 +68,9 @@
         </div>
     </div>
     <div class="mb-3 row">
-        <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+        <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
         <div class="col-sm-10">
-            <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
+            <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
                 <option value="AMOUNT_SIMPLE" selected>Amount</option>
                 <option value="AMOUNT_LIST">Amount List</option>
                 <option value="TRACKED">Tracked</option>
@@ -238,7 +238,7 @@ var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 var addEditNameInput = $('#addEditNameInput');
 var addEditDescriptionInput = $('#addEditDescriptionInput');
 var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
-var addEditStoredTypeInput = $('#addEditStoredTypeInput');
+var addEditStorageTypeInput = $('#addEditStorageTypeInput');
 var addEditUnitInput = $('#addEditUnitInput');
 var addEditIdentifyingAttInput = $('#addEditIdentifyingAttInput');
 var addEditImagesSelected = addEditItemForm.find(".imagesSelected");
@@ -277,7 +277,7 @@ function foreachStoredTypeFromAddEditInput(
         whenTracked
 ){
     foreachStoredType(
-            addEditStoredTypeInput[0].value,
+            addEditStorageTypeInput[0].value,
             whenAmountSimple,
             whenAmountList,
             whenTracked
@@ -321,8 +321,8 @@ function resetAddEditForm(){
     addEditModalLabel.text("Item");
     addEditPricePerUnitInput.val("0.00");
     addEditIdentifyingAttInput.val("");
-    addEditStoredTypeInput.prop( "disabled", false );
-    addEditStoredTypeInput.val($("#addEditStoredTypeInput option:first").val());
+    addEditStorageTypeInput.prop( "disabled", false );
+    addEditStorageTypeInput.val($("#addEditStorageTypeInput option:first").val());
     addEditUnitInput.val($("#addEditUnitInput option:first").val());
     
     setIdAttField();
@@ -368,7 +368,7 @@ function setupAddEditForEdit(itemId){
     resetAddEditForm();
     addEditModalLabel.text("Item Edit");
     addEditFormMode.val("edit");
-    addEditStoredTypeInput.prop( "disabled", true );
+    addEditStorageTypeInput.prop( "disabled", true );
     
     doRestCall({
         spinnerContainer: addEditModal,
@@ -381,7 +381,7 @@ function setupAddEditForEdit(itemId){
             addEditFormId.val(data.id);
             addEditNameInput.val(data.name);
             addEditDescriptionInput.val(data.description);
-            addEditStoredTypeInput.val(data.storedType);
+            addEditStorageTypeInput.val(data.storageType);
             addEditStoredTypeInputChanged();
     
             let setAmountStoredVars = function(){
@@ -446,12 +446,12 @@ function setupAddEditForEdit(itemId){
 
 function setIdAttField(){
     storedContainer.html("");
-    let value = addEditStoredTypeInput[0].value;
+    let value = addEditStorageTypeInput[0].value;
     
-    if(addEditStoredTypeInput.attr('data-current') == null){
-        addEditStoredTypeInput.attr('data-current', "AMOUNT_SIMPLE");
+    if(addEditStorageTypeInput.attr('data-current') == null){
+        addEditStorageTypeInput.attr('data-current', "AMOUNT_SIMPLE");
     } else {
-        addEditStoredTypeInput.attr('data-current', value);
+        addEditStorageTypeInput.attr('data-current', value);
     }
     
     
@@ -474,15 +474,15 @@ function setIdAttField(){
                 addEditUnitInput.prop('required',false);
                 trackedItemIdentifierNameRow.show();
                 addEditIdentifyingAttInput.prop('required', true);
-                addEditStoredTypeInput.attr('data-current', "TRACKED");
+                addEditStorageTypeInput.attr('data-current', "TRACKED");
             }
     );
 }
 
 function addEditStoredTypeInputChanged(){
     if(haveStored() && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
-        addEditStoredTypeInput.val(
-            addEditStoredTypeInput.attr('data-current')
+        addEditStorageTypeInput.val(
+            addEditStorageTypeInput.attr('data-current')
         );
         return;
     }
@@ -845,7 +845,7 @@ addEditItemForm.submit(function(event) {
     let addEditData = {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
-        storedType: addEditStoredTypeInput.val(),
+        storageType: addEditStorageTypeInput.val(),
         storageMap: { }
     };
     
@@ -1142,7 +1142,7 @@ function setupView(itemId){
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(itemHistory, "/inventory/item/"+data.id);
             itemViewModalLabel.text(data.name);
-            itemViewStorageType.text(data.storedType);
+            itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
