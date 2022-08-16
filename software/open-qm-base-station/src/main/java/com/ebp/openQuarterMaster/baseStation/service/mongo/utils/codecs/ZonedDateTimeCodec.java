@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.mongoUtils.codecs;
+package com.ebp.openQuarterMaster.baseStation.service.mongo.utils.codecs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bson.BsonReader;

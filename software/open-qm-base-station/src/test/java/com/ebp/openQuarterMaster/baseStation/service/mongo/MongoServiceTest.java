@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
-import com.ebp.openQuarterMaster.baseStation.mongoUtils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
+import com.ebp.openQuarterMaster.baseStation.service.mongo.utils.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestMainObject;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestMongoService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;

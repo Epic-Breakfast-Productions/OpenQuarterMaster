@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.baseStation.mongoUtils.exception;
+package com.ebp.openQuarterMaster.baseStation.service.mongo.utils.exception;
 
 /**
  * TODO:: main object specific info?

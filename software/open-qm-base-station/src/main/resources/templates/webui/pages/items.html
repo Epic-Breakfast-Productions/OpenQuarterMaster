@@ -68,7 +68,7 @@
         </div>
     </div>
     <div class="mb-3 row">
-        <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+        <label for="addEditStoredTypeInput" class="col-sm-2 col-form-label">Storage Type</label>
         <div class="col-sm-10">
             <select class="form-select" id="addEditStoredTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
                 <option value="AMOUNT_SIMPLE" selected>Amount</option>
@@ -105,15 +105,9 @@
     <hr />
     <div class="mb-3 row">
         <div class="col-sm-2 col-form-label">Stored</div>
+        <input type="hidden" id="addEditHasStored">
         <div class="col-sm-10">
-            <div class="accordion mt-2" id="storedContainer">
-
-            </div>
-            <div class="col d-grid gap-2">
-                <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
-                    <i class="fas fa-plus"></i> Add Associated Storage
-                </button>
-            </div>
+            <p>Items stored are managed separately, either in the search results or on the Overview page.</p>
         </div>
     </div>
     <hr />
@@ -243,11 +237,11 @@ var addEditUnitInput = $('#addEditUnitInput');
 var addEditIdentifyingAttInput = $('#addEditIdentifyingAttInput');
 var addEditImagesSelected = addEditItemForm.find(".imagesSelected");
 
-var storedContainer = $('#storedContainer');
 var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
 var pricePerUnitNameRow = $('#pricePerUnitNameRow');
 var compatibleUnitOptions = "";
+var addEditHasStored = $("#addEditHasStored");
 
 
 function foreachStoredType(
@@ -284,8 +278,8 @@ function foreachStoredTypeFromAddEditInput(
     );
 }
 
-function haveStored(){
-    return storedContainer.children().length > 0;
+function haveStoredInAddEdit(){
+    return addEditHasStored.val() === "true";
 }
 
 function updateCompatibleUnits(){
@@ -296,19 +290,13 @@ function updateCompatibleUnits(){
         extraHeaders: { accept:"text/html" },
         done: function (data){
             compatibleUnitOptions = data;
-            
-            storedContainer.find(".unitInput").each(function (i, selectInput){
-                var selectInputJq = $(selectInput);
-                selectInputJq.html(compatibleUnitOptions);
-                selectInputJq.change();
-            });
         }
     });
 }
 updateCompatibleUnits();
 
 function handleItemUnitChange(){
-    if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
+    if(haveStoredInAddEdit() && !confirm("Doing this will reset all held units. Are you sure?")){
         //TODO:: handle changing back to old value
     } else {
         updateCompatibleUnits();
@@ -338,6 +326,7 @@ function setupAddEditForAdd(){
     resetAddEditForm();
     addEditModalLabel.text("Item Add");
     addEditFormMode.val("add");
+    addEditHasStored.val("false");
 }
 
 function setStoredItemVales(storedDivJq, storedData){
@@ -381,7 +370,7 @@ function setupAddEditForEdit(itemId){
             addEditFormId.val(data.id);
             addEditNameInput.val(data.name);
             addEditDescriptionInput.val(data.description);
-            addEditStoredTypeInput.val(data.storedType);
+            addEditStoredTypeInput.val(data.storageType);
             addEditStoredTypeInputChanged();
     
             let setAmountStoredVars = function(){
@@ -397,55 +386,12 @@ function setupAddEditForEdit(itemId){
                     }
             );
     
-            Object.keys(data.storageMap).forEach(curStorageBlockId => {
-                let newStorageBody = addStorageBlockAccord("", curStorageBlockId);
-                
-                getStorageBlockLabel(curStorageBlockId, function (blockName){
-                    newStorageBody.parent().parent().find(".storageBlockName").text(blockName);
-                });
-                
-                let storageBlockEntriesContainer = newStorageBody.find(".storageBlockEntriesContainer");
-                
-                foreachStoredTypeFromAddEditInput(
-                        function(){
-                            setStoredItemVales(newStorageBody, data.storageMap[curStorageBlockId]);
-                        },
-                        function (){
-                            data.storageMap[curStorageBlockId].forEach(function(curStorageBlock){
-                                newStorageBody.find(".addAmountStoredButton").trigger("click");
-    
-                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
-                                setStoredItemVales(
-                                        $(storedContList[storedContList.length - 1]),
-                                        curStorageBlock
-                                );
-                            });
-                        },
-                        function(){
-                            let addItemField = newStorageBody.find(".identifierValueInput")[0];
-                            let addItemButton = newStorageBody.find(".addTrackedItemButton")[0];
-                            Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
-                                addItemField.value = curItemIdentifier;
-                                addItemButton.click();
-                                
-                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
-                                setStoredItemVales(
-                                        $(storedContList[storedContList.length - 1]),
-                                        data.storageMap[curStorageBlockId][curItemIdentifier]
-                                );
-                            });
-                            addItemField.value = "";
-                        }
-                );
-                
-            });
+            addEditHasStored.val(Object.keys(data.storageMap).length === 0 ? "false" : "true");
         }
     });
-    
 }
 
 function setIdAttField(){
-    storedContainer.html("");
     let value = addEditStoredTypeInput[0].value;
     
     if(addEditStoredTypeInput.attr('data-current') == null){
@@ -480,7 +426,7 @@ function setIdAttField(){
 }
 
 function addEditStoredTypeInputChanged(){
-    if(haveStored() && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
+    if(haveStoredInAddEdit() && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
         addEditStoredTypeInput.val(
             addEditStoredTypeInput.attr('data-current')
         );
@@ -845,8 +791,7 @@ addEditItemForm.submit(function(event) {
     let addEditData = {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
-        storedType: addEditStoredTypeInput.val(),
-        storageMap: { }
+        storageType: addEditStoredTypeInput.val()
     };
     
     let setAmountStoredVars = function(){
@@ -866,33 +811,6 @@ addEditItemForm.submit(function(event) {
     
     addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
     addImagesToData(addEditData, addEditImagesSelected);
-    
-    storedContainer.find(".storageBlock").each(function (i, storageBlockElement) {
-        let storageBlockElementJq = $(storageBlockElement);
-        let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
-        let storedVal;
-    
-        foreachStoredTypeFromAddEditInput(
-                function(){
-                    storedVal = buildStoredObj(storageBlockElementJq);
-                },
-                function (){
-                    storedVal = [];
-                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
-                        storedVal.push(buildStoredObj($(storedElement)));
-                    });
-                },
-                function(){
-                    storedVal = {};
-                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
-                        let elementJq = $(storedElement);
-                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq);
-                    });
-                }
-        );
-        
-        addEditData.storageMap[curStorageId] = storedVal;
-    });
     
     console.log("Data being submitted: " + JSON.stringify(addEditData));
     let result = false;
