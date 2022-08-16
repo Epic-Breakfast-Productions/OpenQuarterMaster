@@ -60,7 +60,7 @@ public class UserUi extends UiProvider {
 	Tracer tracer;
 	
 	@GET
-	@Path("user")
+	@Path("you")
 	@RolesAllowed("user")
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(

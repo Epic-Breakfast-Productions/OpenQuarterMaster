@@ -119,12 +119,9 @@ Ingests:
                        aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>
                         <span id="userNameDisplay">{userInfo.getUsername()}</span></a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/user" id="userLink">
+                        <a class="dropdown-item" href="/you" id="youLink">
                             <i class="fas fa-user"></i> You
                         </a>
-                        <!--                        <a class="dropdown-item" href="#">Action</a>-->
-                        <!--                        <a class="dropdown-item" href="#">Another action</a>-->
-                        <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
                         {#if userInfo.getRoles().contains('userAdmin')}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#" id="userAdminLink">

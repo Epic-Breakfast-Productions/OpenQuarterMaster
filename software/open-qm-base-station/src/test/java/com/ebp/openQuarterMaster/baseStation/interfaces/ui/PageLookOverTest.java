@@ -17,6 +17,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Dumb/quick test to ensure all pages can at least load.
+ */
 @Tag("integration")
 @Tag("sanity")
 @Slf4j
@@ -35,7 +38,7 @@ public class PageLookOverTest extends WebUiTest {
 			Arguments.of(false, "/", "Login"),
 			Arguments.of(false, "/accountCreate", "Account Create"),
 			Arguments.of(true,  "/overview", "Overview"),
-			Arguments.of(true,  "/user", "Your Profile"),
+			Arguments.of(true,  "/you", "Your Profile"),
 			Arguments.of(true,  "/images", "Images"),
 			Arguments.of(true,  "/storage", "Storage"),
 			Arguments.of(true,  "/items", "Items")
