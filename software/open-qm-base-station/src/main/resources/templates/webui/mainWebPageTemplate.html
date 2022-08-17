@@ -26,7 +26,7 @@ Ingests:
 
     <!-- CSS -->
     <link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
-    <link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.litera.min.css" rel="stylesheet">
+    <link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.yeti.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/lib/fontawesome-free-5.15.4-web/css/all.css">
     <link rel="stylesheet" href="/lib/spin.js/spin.css">
     <link rel="stylesheet" href="/res/css/main.css">
@@ -106,7 +106,7 @@ Ingests:
                 <div class="input-group">
                     <input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
                     <button class="btn btn-secondary" type="submit">Search</button>
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">Items</button>
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">Items</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/items', 'name', this);">Items</button></li>
                         <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/storage', 'label', this);">Storage Blocks</button></li>
@@ -161,7 +161,7 @@ Ingests:
             Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
             <small class="fw-lighter fst-italic text-muted">
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pageLoadInfoCollapse" aria-expanded="false" aria-controls="pageLoadInfoCollapse">
+                    <button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pageLoadInfoCollapse" aria-expanded="false" aria-controls="pageLoadInfoCollapse">
                         Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span> (Server time)
                     </button>
                 </div>
