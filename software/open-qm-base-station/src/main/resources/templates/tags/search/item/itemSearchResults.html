@@ -25,7 +25,7 @@
     <th scope="col">Stored Type</th>
     <th scope="col">Total</th>
     <th scope="col"># Blocks used</th>
-    <th scope="col" width="125px">Actions</th>
+    <th scope="col" width="150px">Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -64,6 +64,9 @@
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">
         <i class="fas fa-edit"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer">
+        <i class="fa-solid fa-plus-minus"></i>
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
               onclick="removeItem('{result.getId()}');"><i class="fas fa-trash"></i></button>
