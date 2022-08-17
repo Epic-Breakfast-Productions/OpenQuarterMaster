@@ -1,10 +1,16 @@
 package com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +19,12 @@ import java.util.Map;
 @NoArgsConstructor
 @SuperBuilder
 public class ExtItemLookupResults {
-	private List<ExtItemLookupResult> results;
-	private Map<String, Throwable> serviceErrs;
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private List<ExtItemLookupResult> results = new ArrayList<>();
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private Map<@NonNull @NotNull @NotBlank String, Throwable> serviceErrs = new HashMap<>();
 }

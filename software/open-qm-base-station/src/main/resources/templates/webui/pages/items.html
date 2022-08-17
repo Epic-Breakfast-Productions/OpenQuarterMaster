@@ -51,79 +51,156 @@
 {/pageContent}
 {#modals}
 {#modal id='addEdit' large=true title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
-<div id="addEditFormMessages"></div>
-<form id="addEditItemForm">
-    <input type="hidden" id="addEditFormMode" value="">
-    <input type="hidden" id="addEditFormId" value="">
-    <div class="mb-3 row">
-        <label for="addEditNameInput" class="col-sm-2 col-form-label">Name</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="addEditNameInput" placeholder="Name" required>
+    
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary mb-1">
+                <i class="fas fa-search"></i>
+                <!-- TODO:: open/close search -->
+                <!-- TODO:: Start closed -->
+                <!-- TODO:: hide when edit? -->
+            </button>
         </div>
     </div>
-    <div class="mb-3 row">
-        <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
-        <div class="col-sm-10">
-            <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
-        <div class="col-sm-10">
-            <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
-                <option value="AMOUNT_SIMPLE" selected>Amount</option>
-                <option value="AMOUNT_LIST">Amount List</option>
-                <option value="TRACKED">Tracked</option>
-            </select>
-        </div>
-    </div>
-    <div class="mb-3 row" id="trackedItemIdentifierNameRow" style="display: none;">
-        <label for="addEditIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
-        </div>
-    </div>
-    <!-- TODO:: default value -->
-    <div class="mb-3 row" id="unitNameRow">
-        <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
-        <div class="col-sm-10">
-            <select class="form-select" id="addEditUnitInput" onchange="handleItemUnitChange();">
-                {#inputs/units/unitOptionsGroups}
-                {/inputs/units/unitOptionsGroups}
-            </select>
-        </div>
-    </div>
-    <div class="mb-3 row" id="pricePerUnitNameRow">
-        <label for="addEditPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
-        <div class="col-sm-10">
-            <div class="input-group">
-                <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
-                <input type="number" min="0" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
+    <div class="row">
+        <div class="col-6 card p-0">
+            <div class="card-header">
+                Search for items:
+            </div>
+            <div class="card-body p-0 h-auto">
+                <ul class="nav nav-tabs" id="extItemSearchTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Product</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Lego&trade;</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Website</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-1" id="myTabContent">
+                    <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <form id="prodBarcodeSearchForm">
+                            <div class="mb-3">
+                                <label for="prodBarcodeSearchBarcodeInput" class="form-label">Search with Barcode</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="prodBarcodeSearchBarcodeInput" aria-describedby="barcodeInputHelp" required>
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                </div>
+                                <div id="barcodeInputHelp" class="form-text">Scan in or enter a barcode on a product.</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <form id="legoPartNumSearchForm">
+                            <div class="mb-3">
+                                <label for="legoPartNumSearchInput" class="form-label">Search with Lego&trade; part number</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="legoPartNumSearchInput" aria-describedby="legoPartNumInputHelp" required>
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                </div>
+                                <div id="legoPartNumInputHelp" class="form-text">Most legos have a number on them, it's that parts numbers.</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <form id="websiteScanSearchForm">
+                            <div class="mb-3">
+                                <label for="websiteScanSearchInput" class="form-label">Scan a website</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="websiteScanSearchInput" aria-describedby="websiteScanInputHelp" required>
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                </div>
+                                <div id="websiteScanInputHelp" class="form-text">Very limited number of supported sites.</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header">
+                Search Results:
+            </div>
+            <div class="card-body h-100 row" id="extSearchResults">
             </div>
         </div>
+        <div class="col">
+            <div id="addEditFormMessages"></div>
+            <form id="addEditItemForm">
+                <input type="hidden" id="addEditFormMode" value="">
+                <input type="hidden" id="addEditFormId" value="">
+                <div class="mb-3 row">
+                    <label for="addEditNameInput" class="col-sm-2 col-form-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditNameInput" placeholder="Name" required>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
+                            <option value="AMOUNT_SIMPLE" selected>Amount</option>
+                            <option value="AMOUNT_LIST">Amount List</option>
+                            <option value="TRACKED">Tracked</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row" id="trackedItemIdentifierNameRow" style="display: none;">
+                    <label for="addEditIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
+                    </div>
+                </div>
+                <!-- TODO:: default value -->
+                <div class="mb-3 row" id="unitNameRow">
+                    <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="addEditUnitInput" onchange="handleItemUnitChange();">
+                            {#inputs/units/unitOptionsGroups}
+                            {/inputs/units/unitOptionsGroups}
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row" id="pricePerUnitNameRow">
+                    <label for="addEditPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
+                            <input type="number" min="0" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="mb-3 row">
+                    <div class="col-sm-2 col-form-label">Stored</div>
+                    <div class="col-sm-10">
+                        <div class="accordion mt-2" id="storedContainer">
+                
+                        </div>
+                        <div class="col d-grid gap-2">
+                            <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
+                                <i class="fas fa-plus"></i> Add Associated Storage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                {#search/image/imageSelectFormInput}
+                {/search/image/imageSelectFormInput}
+                {#inputs/keywordInput}
+                {/inputs/keywordInput}
+                {#inputs/attInput}
+                {/inputs/attInput}
+            </form>
+        </div>
     </div>
-    <hr />
-    <div class="mb-3 row">
-        <div class="col-sm-2 col-form-label">Stored</div>
-        <div class="col-sm-10">
-            <div class="accordion mt-2" id="storedContainer">
 
-            </div>
-            <div class="col d-grid gap-2">
-                <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
-                    <i class="fas fa-plus"></i> Add Associated Storage
-                </button>
-            </div>
-        </div>
-    </div>
-    <hr />
-    {#search/image/imageSelectFormInput}
-    {/search/image/imageSelectFormInput}
-    {#inputs/keywordInput}
-    {/inputs/keywordInput}
-    {#inputs/attInput}
-    {/inputs/attInput}
-</form>
 {/modal}
 {#modal id='itemView' large=true title='Item View'}
 <div class="row">
@@ -223,6 +300,80 @@
 {#pageScript}
 <script>
 const STORAGE_CLASS = "storageBlock";
+
+
+var extSearchResults=$("#extSearchResults");
+function handleExtItemSearchResults(results){
+    console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length)
+    
+    if(results.results.length === 0){
+        extSearchResults.html("<p>No Results!</p>");
+    }
+    results.results.forEach(function(result){
+        //TODO:: better formatting, handle many results well
+        let resultCard = $('<div class="card col-6 p-0"></div>');
+        
+        resultCard.append($('<div class="card-header">'+result.source+'</div>'));
+        resultCard.append($('<div class="card-body">Name: '+result.unifiedName+'</div>'));
+    
+        if(result.brand){
+            '<div class="card-body">Brand: '+result.brand+'</div>'
+        }
+        if(result.description){
+            '<div class="card-body">Description: '+result.description+'</div>'
+        }
+        
+        extSearchResults.append(resultCard);
+    });
+}
+
+var prodBarcodeSearchBarcodeInput = $("#prodBarcodeSearchBarcodeInput");
+$("#prodBarcodeSearchForm").submit(function(event){
+    event.preventDefault();
+    let barcodeText = prodBarcodeSearchBarcodeInput.val();
+    console.log("Searching for a barcode: " + barcodeText);
+    extSearchResults.html("");
+    
+    doRestCall({
+        url: "/api/externalItemLookup/product/barcode/" + barcodeText,
+        done: handleExtItemSearchResults
+    });
+});
+
+var legoPartNumSearchInput = $("#legoPartNumSearchInput");
+$("#legoPartNumSearchForm").submit(function(event){
+    event.preventDefault();
+    let partNumber = legoPartNumSearchInput.val();
+    console.log("Searching for a lego part: " + partNumber);
+    extSearchResults.html("");
+    
+    doRestCall({
+        url: "/api/externalItemLookup/lego/part/" + partNumber,
+        done: handleExtItemSearchResults
+    });
+});
+
+var websiteScanSearchInput = $("#websiteScanSearchInput");
+$("#websiteScanSearchForm").submit(function(event){
+    event.preventDefault();
+    let webpage = websiteScanSearchInput.val();
+    console.log("Scanning a web page: " + webpage);
+    extSearchResults.html("");
+    
+    doRestCall({
+        url: "/api/externalItemLookup/product/webpage/" + encodeURIComponent(webpage),
+        done: handleExtItemSearchResults
+    });
+});
+
+
+
+
+
+
+
+
+
 
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');

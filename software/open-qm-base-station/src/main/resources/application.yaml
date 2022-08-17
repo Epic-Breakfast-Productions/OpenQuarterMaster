@@ -71,9 +71,9 @@ productLookup:
       cost: Free
       acceptsContributions: false
       homepage: https://rebrickable.com
-      enabled: false
+      enabled: true
       url: https://rebrickable.com
-      key: " "
+      key: "0feaa241d91cf96dfb1c690b33c5d966"
 
 # TODO:: move this into `service` config
 runningInfo:

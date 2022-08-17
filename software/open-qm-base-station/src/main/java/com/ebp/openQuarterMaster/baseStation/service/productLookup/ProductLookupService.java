@@ -124,9 +124,8 @@ public class ProductLookupService {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	public ExtItemLookupResult scanPage(URL page) throws ExecutionException, InterruptedException {
-//		throw new NotImplementedYetException();
-		return this.pageProductSearchService.scanWebpage(page).get();
+	public ExtItemLookupResults scanPage(URL page) throws ExecutionException, InterruptedException {
+		return ExtItemLookupResults.builder().results(List.of(this.pageProductSearchService.scanWebpage(page).get())).build();
 	}
 	
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {

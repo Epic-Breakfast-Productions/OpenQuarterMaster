@@ -3,7 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.itemLookup;
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.ProductLookupService;
 import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -135,7 +134,7 @@ public class ItemLookup extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = ExtItemLookupResult.class
+				implementation = ExtItemLookupResults.class
 			)
 		)
 	)
