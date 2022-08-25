@@ -17,32 +17,24 @@ Ingests:
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="shortcut icon" href="/favicon.ico"/>
-    <title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
-    <link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.yeti.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/lib/fontawesome-free-6.1.2-web/css/all.css">
-    <link rel="stylesheet" href="/lib/spin.js/spin.css">
-    <link rel="stylesheet" href="/res/css/main.css">
-    {#insert styleSheets}{/}
-    {!
-    {#if styleSheets??}
-    {#for styleSheet in styleSheets}
-    <link rel="stylesheet" href="{styleSheet}">
-    {/for}
-    {/if}
-    !}
-
-    <style>
-	{#insert pageStyle}/* No page css */{/}
-
-    </style>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="shortcut icon" href="/favicon.ico"/>
+	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
+	<link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/lib/fontawesome-free-6.1.2-web/css/all.css">
+	<link rel="stylesheet" href="/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	{#insert styleSheets}{/}
+	<style>
+		{#insert pageStyle} /* No page css */
+		{/}
+	</style>
 </head>
 <body>
 <span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
@@ -50,149 +42,167 @@ Ingests:
 <!-- nav here -->
 
 {#if showNavbar}
-{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/overview">
-            <img src="/media/logo.svg" alt="" height="40" width="97">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-                aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarColor03">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
-                        <i class="fas fa-tachometer-alt"></i> Overview
-                        {#if page is 'overview'}
-                        <span class="visually-hidden">(current)</span>
-                        {/if}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
-                        <i class="fas fa-boxes"></i> Storage
-                        {#if page is 'storage'}
-                        <span class="visually-hidden">(current)</span>
-                        {/if}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {#if page is 'items'}active{/if}" href="/items"><i
-                            class="fas fa-balance-scale"></i> Items
-                        {#if page is 'items'}
-                        <span class="visually-hidden">(current)</span>
-                        {/if}
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i
-                            class="fas fa-infinity"></i> Other</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
-                            <i class="fas fa-images"></i> Images
-                            {#if page is 'images'}
-                            <span class="visually-hidden">(current)</span>
-                            {/if}
-                        </a>
-                    </div>
-                </li>
-            </ul>
-
-            <form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
-                <div class="input-group">
-                    <input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
-                    <button class="btn btn-secondary" type="submit">Search</button>
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">Items</button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/items', 'name', this);">Items</button></li>
-                        <li><button type="button" class="dropdown-item btn btn-link" onclick="setNavSearch('/storage', 'label', this);">Storage Blocks</button></li>
-                    </ul>
-                </div>
-            </form>
-            <ul class="d-flex navbar-nav me-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                       aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>
-                        <span id="userNameDisplay">{userInfo.getUsername()}</span></a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/you" id="youLink">
-                            <i class="fas fa-user"></i> You
-                        </a>
-                        {#if userInfo.getRoles().contains('userAdmin')}
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" id="userAdminLink">
-                            <i class="fas fa-users-cog"></i> User Admin
-                        </a>
-                        {/if}
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" id="logoutButton">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+	{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+	<a class="navbar-brand" href="/overview">
+		<img src="/media/logo.svg" alt="" height="40" width="97">
+	</a>
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
+			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	
+	<div class="collapse navbar-collapse" id="navbarColor03">
+	<ul class="navbar-nav me-auto">
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
+				<i class="fas fa-tachometer-alt"></i> Overview
+				{#if page is 'overview'}
+					<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
+				<i class="fas fa-boxes"></i> Storage
+				{#if page is 'storage'}
+					<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'items'}active{/if}" href="/items"><i
+						class="fas fa-balance-scale"></i> Items
+				{#if page is 'items'}
+					<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
+		</li>
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+					aria-haspopup="true" aria-expanded="false"><i
+						class="fas fa-infinity"></i> Other</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
+					<i class="fas fa-images"></i> Images
+					{#if page is 'images'}
+						<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
+			</div>
+		</li>
+	</ul>
+	
+	<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
+		<div class="input-group">
+			<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
+			<button class="btn btn-secondary" type="submit">Search</button>
+			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">
+				Items
+			</button>
+			<ul class="dropdown-menu dropdown-menu-end">
+				<li>
+					<button type="button" class="dropdown-item btn btn-link"
+							onclick="setNavSearch('/items', 'name', this);">Items
+					</button>
+				</li>
+				<li>
+					<button type="button" class="dropdown-item btn btn-link"
+							onclick="setNavSearch('/storage', 'label', this);">Storage Blocks
+					</button>
+				</li>
+			</ul>
+		</div>
+	</form>
+	<ul class="d-flex navbar-nav me-auto">
+	<li class="nav-item dropdown">
+	<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+			aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>
+		<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
+	<div class="dropdown-menu">
+	<a class="dropdown-item" href="/you" id="youLink">
+		<i class="fas fa-user"></i> You
+	</a>
+	{#if userInfo.getRoles().contains('userAdmin')}
+		<div class="dropdown-divider"></div>
+		<a class="dropdown-item" href="#" id="userAdminLink">
+			<i class="fas fa-users-cog"></i> User Admin
+		</a>
+	{/if}
+	<div class="dropdown-divider"></div>
+	<a class="dropdown-item" href="#" id="logoutButton">
+		<i class="fas fa-sign-out-alt"></i> Logout
+	</a>
+	</div>
+	</li>
+	</ul>
+	</div>
+	</div>
+	</nav>
 {/if}
 <div id="mainContainer" class="container">
-    {#if showTitle}
-    <h1>{#if titleIcon??}<i class="fas fa-{titleIcon}"></i> {/if}{title}</h1>
-    <hr/>
-    {/if}
-    <div id="messageDiv">
-    </div>
-
-    <main role="main">
-        {#insert pageContent}<h1>No body!</h1>{/}
-    </main>
-
-    <hr/>
-    <footer id="footer" class="row mb-3" role="contentinfo">
-        <div class="col-sm-4">
-            <span class="h4">Open Quarter Master Server</span><br/>
-            &copy; {generateDatetime.getYear()} <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
-            Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
-            License</a><br/>
-            Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
-            <small class="fw-lighter fst-italic text-muted">
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#pageLoadInfoCollapse" aria-expanded="false" aria-controls="pageLoadInfoCollapse">
-                        Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span> (Server time)
-                    </button>
-                </div>
-                <div class="collapse" id="pageLoadInfoCollapse">
-                    <div class="card card-body">
-                        Service id: <code class="user-select-all" id="traceServiceName">{config:['quarkus.jaeger.service-name']}</code><br />
-                        Trace id: <code class="user-select-all" id="traceId">{traceId}</code><!-- TODO:: link to Jaeger -->
-                    </div>
-                </div>
-            </small>
-        </div>
-        <div id="serverInfo" class="col-sm-4">
-            {#if config:['service.runBy.logo'] != " "}
-            <img src="/api/media/runBy/logo" style="float:right; max-width: 30%;">
-            {/if}
-            {#if config:['service.runBy.name'] != " "}
-            <span class="h4">Run by:</span><br/>
-            {config:['service.runBy.name']}
-            {/if}
-            <br/>
-            {#if config:['service.runBy.email'] != " " || config:['service.runBy.phone'] != " " || config:['service.runBy.website'] != " "}
-            <span class="h6">Contact Info:</span><br/>
-            {#if config:['service.runBy.email'] != " "}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a><br/>{/if}
-            {#if config:['service.runBy.phone'] != " "}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a><br/>{/if}
-            {#if config:['service.runBy.website'] != " "}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a><br/>{/if}
-            {/if}
-        </div>
-        <div class="col-sm-4">
-            {config:['service.runBy.motd']}
-        </div>
-    </footer>
+	{#if showTitle}
+		<h1>{#if titleIcon??}<i class="fas fa-{titleIcon}"></i> {/if}{title}</h1>
+		<hr/>
+	{/if}
+	<div id="messageDiv">
+	</div>
+	
+	<main role="main">
+		{#insert pageContent}<h1>No body!</h1>{/}
+	</main>
+	
+	<hr/>
+	<footer id="footer" class="row mb-3" role="contentinfo">
+		<div class="col-sm-4">
+			<span class="h4">Open Quarter Master Server</span><br/>
+			&copy; {generateDatetime.getYear()} <a href="https://gjstewart.net" target="_blank">Greg Stewart</a><br/>
+			Released under the <a href="https://opensource.org/licenses/Apache-2.0" target="_blank">Apache 2.0
+				License</a><br/>
+			Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
+			<small class="fw-lighter fst-italic text-muted">
+				<div class="d-grid gap-2">
+					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
+							data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
+							aria-controls="pageLoadInfoCollapse">
+						Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span>
+						(Server time)
+					</button>
+				</div>
+				<div class="collapse" id="pageLoadInfoCollapse">
+					<div class="card card-body">
+						Service id: <code class="user-select-all"
+								id="traceServiceName">{config:['quarkus.jaeger.service-name']}</code><br/>
+						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
+						<!-- TODO:: link to Jaeger -->
+					</div>
+				</div>
+			</small>
+		</div>
+		<div id="serverInfo" class="col-sm-4">
+			{#if config:['service.runBy.logo'] != " "}
+				<img src="/api/media/runBy/logo" style="float:right; max-width: 30%;">
+			{/if}
+			{#if config:['service.runBy.name'] != " "}
+				<span class="h4">Run by:</span><br/>
+				{config:['service.runBy.name']}
+			{/if}
+			<br/>
+			{#if config:['service.runBy.email'] != " " || config:['service.runBy.phone'] != " " || config:['service.runBy.website'] != " "}
+				<span class="h6">Contact Info:</span><br/>
+				{#if config:['service.runBy.email'] != " "}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a>
+					<br/>{/if}
+				{#if config:['service.runBy.phone'] != " "}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a>
+					<br/>{/if}
+				{#if config:['service.runBy.website'] != " "}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a>
+					<br/>{/if}
+			{/if}
+		</div>
+		<div class="col-sm-4">
+			{config:['service.runBy.motd']}
+		</div>
+	</footer>
 </div>
 <!-- Modals -->
 {#insert modals}{/}
@@ -208,10 +218,10 @@ Ingests:
 <script src="/res/js/login.js"></script>
 <script src="/res/js/main.js"></script>
 <script>
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-        return new bootstrap.Popover(popoverTriggerEl)
-    })
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+		return new bootstrap.Popover(popoverTriggerEl)
+	})
 </script>
 {#insert scripts}{/}
 {!

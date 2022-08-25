@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 
@@ -35,7 +36,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+		String database
 	) {
 		super(
 			objectMapper,
@@ -86,4 +87,52 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			!filters.isEmpty()
 		);
 	}
+	
+	public <T> InventoryItem<T> add(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
+		InventoryItem item = this.get(itemId);
+		
+		try {
+			item.add(storageBlockId, toAdd, true);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		return item;
+	}
+	
+	public <T> InventoryItem<T> subtract(ObjectId itemId, ObjectId storageBlockId, T toSubtract) {
+		InventoryItem item = this.get(itemId);
+		
+		try {
+			item.subtract(storageBlockId, toSubtract);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		return item;
+	}
+	
+	public <T> InventoryItem<T> transfer(
+		ObjectId itemId,
+		ObjectId storageBlockIdFrom,
+		ObjectId storageBlockIdTo,
+		T toTransfer
+	) {
+		InventoryItem item = this.get(itemId);
+		
+		try {
+			item.transfer(storageBlockIdFrom, storageBlockIdTo, toTransfer);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		return item;
+	}
+	
 }
