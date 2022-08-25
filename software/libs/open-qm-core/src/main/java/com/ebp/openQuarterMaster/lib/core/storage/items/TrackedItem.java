@@ -97,13 +97,77 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 		return new HashMap<>();
 	}
 	
-	public TrackedItem add(ObjectId storageId, String identifier, TrackedStored stored) {
-		Map<String, TrackedStored> map = this.getStoredForStorage(storageId);
+	public TrackedItem add(ObjectId storageId, @NonNull String identifier, @NonNull TrackedStored stored, boolean storageBlockStrict) {
+		Map<String, TrackedStored> map = this.getStoredForStorage(storageId, !storageBlockStrict);
+		
+		if (map == null) {
+			//TODO:: custom exception
+			throw new IllegalArgumentException("No storage block found with that Id.");
+		}
 		
 		if (map.containsKey(identifier)) {
 			throw new IllegalArgumentException("Item with that identifier already exists.");
 		}
 		map.put(identifier, stored);
+		this.recalcTotal();
+		return this;
+	}
+	
+	public TrackedItem add(ObjectId storageId, @NonNull String identifier, @NonNull TrackedStored stored) {
+		return this.add(storageId, identifier, stored, false);
+	}
+	
+	@Override
+	public InventoryItem<Map<String, TrackedStored>> add(
+		ObjectId storageId,
+		Map<String, TrackedStored> toAdd,
+		boolean storageBlockStrict
+	) {
+		Map<String, TrackedStored> map = this.getStoredForStorage(storageId, !storageBlockStrict);
+		
+		if (map == null) {
+			//TODO:: custom exception
+			throw new IllegalArgumentException("No storage block found with that Id.");
+		}
+		
+		//validate new additions
+		for (Map.Entry<String, TrackedStored> curToAdd : toAdd.entrySet()) {
+			if (map.containsKey(curToAdd.getKey())) {
+				//TODO:: custom exception
+				throw new IllegalArgumentException("Already contains a value for " + curToAdd.getKey());
+			}
+		}
+		
+		map.putAll(toAdd);
+		
+		this.recalcTotal();
+		return this;
+	}
+	
+	@Override
+	public InventoryItem<Map<String, TrackedStored>> subtract(
+		ObjectId storageId,
+		Map<String, TrackedStored> toSubtract
+	) {
+		Map<String, TrackedStored> map = this.getStoredForStorage(storageId, false);
+		
+		if (map == null) {
+			//TODO:: custom exception
+			throw new IllegalArgumentException("No storage block found with that Id.");
+		}
+		
+		//validate to remove
+		for (Map.Entry<String, TrackedStored> curToRem : toSubtract.entrySet()) {
+			if (map.containsKey(curToRem.getKey())) {
+				//TODO:: custom exception
+				throw new IllegalArgumentException("Does not contain a value for " + curToRem.getKey() + " to remove.");
+			}
+		}
+		
+		for (Map.Entry<String, TrackedStored> curToRem : toSubtract.entrySet()) {
+			map.remove(curToRem.getKey());
+		}
+		
 		this.recalcTotal();
 		return this;
 	}

@@ -97,4 +97,36 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 		}
 		throw new UnsupportedOperationException("Implementation does not yet support: " + totalNum.getClass().getName());
 	}
+	
+	//	@Override
+	public InventoryItem<AmountStored> add(@NonNull ObjectId storageId, AmountStored toAdd, boolean storageBlockStrict) {
+		AmountStored stored = this.getStoredForStorage(storageId, !storageBlockStrict);
+		
+		if (stored == null) {
+			//TODO:: custom exception
+			throw new IllegalArgumentException("No storage block found with that Id.");
+		}
+		stored.add(toAdd);
+		
+		this.getStorageMap().put(storageId, stored);
+		
+		this.recalcTotal();
+		return this;
+	}
+	
+	//	@Override
+	public InventoryItem<AmountStored> subtract(ObjectId storageId, AmountStored toSubtract) {
+		AmountStored stored = this.getStoredForStorage(storageId, false);
+		
+		if (stored == null) {
+			//TODO:: custom exception
+			throw new IllegalArgumentException("Nothing was stored here in the first place.");
+		}
+		
+		stored.subtract(toSubtract);
+		this.getStorageMap().put(storageId, stored);
+		
+		this.recalcTotal();
+		return this;
+	}
 }

@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.lib.core.storage.items;
 
 import com.ebp.openQuarterMaster.lib.core.ImagedMainObject;
 import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StorageType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
@@ -148,14 +149,34 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 */
 	protected abstract T newTInstance();
 	
-	protected T getStoredForStorage(ObjectId storageId) {
+	protected T getStoredForStorage(ObjectId storageId, boolean createIfNone) {
 		if (!this.getStorageMap().containsKey(storageId)) {
-			this.getStorageMap().put(storageId, this.newTInstance());
+			if (createIfNone) {
+				this.getStorageMap().put(storageId, this.newTInstance());
+			} else {
+				return null;
+			}
 		}
 		return this.getStorageMap().get(storageId);
 	}
 	
-	//TODO:: add stored
-	//TODO:: remove stored
-	//TODO:: transfer
+	protected T getStoredForStorage(ObjectId storageId) {
+		return this.getStoredForStorage(storageId, true);
+	}
+	
+	public abstract InventoryItem<T> add(ObjectId storageId, T toAdd, boolean storageBlockStrict);
+	
+	public InventoryItem<T> add(ObjectId storageId, T toAdd) {
+		return this.add(storageId, toAdd, false);
+	}
+	
+	public abstract InventoryItem<T> subtract(ObjectId storageId, T toSubtract);
+	
+	public InventoryItem<T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, T t) {
+		this.subtract(storageIdFrom, t);
+		this.add(storageIdTo, t);
+		
+		this.recalcTotal();
+		return this;
+	}
 }
