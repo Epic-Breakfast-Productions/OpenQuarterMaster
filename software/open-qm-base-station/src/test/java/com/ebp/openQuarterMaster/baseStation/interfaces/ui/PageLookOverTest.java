@@ -3,7 +3,7 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.ui;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;

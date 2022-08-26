@@ -2,7 +2,7 @@ package com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.WebDriverWrapper;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.General;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
 

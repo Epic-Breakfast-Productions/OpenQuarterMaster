@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
-import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
+import com.ebp.openQuarterMaster.lib.core.object.history.ObjectHistory;
 import lombok.Getter;
 import lombok.ToString;
 

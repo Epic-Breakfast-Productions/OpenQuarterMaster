@@ -2,6 +2,7 @@
 
 ## TODOS:
 
+- move search objects to this library
 - Make classes use @SuperBuilder rather than @builder
 - Ensure classes use super tostring
 - Get deployable to Maven Central

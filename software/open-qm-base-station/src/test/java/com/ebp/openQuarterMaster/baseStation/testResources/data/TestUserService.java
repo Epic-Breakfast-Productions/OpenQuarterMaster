@@ -5,7 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;

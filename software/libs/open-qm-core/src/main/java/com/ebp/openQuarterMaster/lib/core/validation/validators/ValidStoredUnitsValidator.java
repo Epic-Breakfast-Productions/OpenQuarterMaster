@@ -1,10 +1,9 @@
 package com.ebp.openQuarterMaster.lib.core.validation.validators;
 
-import com.ebp.openQuarterMaster.lib.core.storage.items.AmountItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.ListAmountItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.ListAmountItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.AmountStored;
 import com.ebp.openQuarterMaster.lib.core.validation.annotations.ValidHeldStoredUnits;
 
 import javax.validation.ConstraintValidatorContext;

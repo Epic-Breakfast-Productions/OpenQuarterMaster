@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;

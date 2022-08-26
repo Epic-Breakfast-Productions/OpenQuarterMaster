@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service.mongo;
 
 import com.ebp.openQuarterMaster.baseStation.rest.search.ImageSearch;
-import com.ebp.openQuarterMaster.lib.core.media.Image;
+import com.ebp.openQuarterMaster.lib.core.object.media.Image;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;

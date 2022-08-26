@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core.test;
 
-import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.object.MainObject;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;

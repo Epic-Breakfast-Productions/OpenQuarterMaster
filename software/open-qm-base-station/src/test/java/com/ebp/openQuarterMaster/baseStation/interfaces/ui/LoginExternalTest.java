@@ -7,7 +7,7 @@ import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.WebUiTest
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.General;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;

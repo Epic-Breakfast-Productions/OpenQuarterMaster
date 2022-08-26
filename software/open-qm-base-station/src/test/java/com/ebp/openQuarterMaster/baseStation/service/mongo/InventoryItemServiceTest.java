@@ -4,9 +4,9 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTes
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
-import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.SimpleAmountItem;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.AmountStored;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.SimpleAmountItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.AmountStored;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;

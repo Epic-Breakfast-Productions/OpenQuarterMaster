@@ -6,10 +6,10 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbDeletedEx
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.history.ObjectHistory;
-import com.ebp.openQuarterMaster.lib.core.history.events.HistoryEvent;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.MainObject;
+import com.ebp.openQuarterMaster.lib.core.object.history.ObjectHistory;
+import com.ebp.openQuarterMaster.lib.core.object.history.events.HistoryEvent;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.MongoClient;

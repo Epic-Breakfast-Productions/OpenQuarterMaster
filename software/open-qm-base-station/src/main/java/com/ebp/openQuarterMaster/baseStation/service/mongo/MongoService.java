@@ -5,7 +5,7 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbDeletedEx
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.lib.core.MainObject;
+import com.ebp.openQuarterMaster.lib.core.object.MainObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;

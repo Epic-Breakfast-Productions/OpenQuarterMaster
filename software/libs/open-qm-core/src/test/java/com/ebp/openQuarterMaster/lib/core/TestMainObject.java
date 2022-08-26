@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.lib.core;
 
+import com.ebp.openQuarterMaster.lib.core.object.AttKeywordMainObject;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 

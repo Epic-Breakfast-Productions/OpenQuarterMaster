@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
-import com.ebp.openQuarterMaster.lib.core.storage.items.InventoryItem;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
 import lombok.Getter;
 import lombok.ToString;
 

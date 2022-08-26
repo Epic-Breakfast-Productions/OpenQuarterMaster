@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.lib.core.storage.items.stored.StoredType;
-import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.StoredType;
+import com.ebp.openQuarterMaster.lib.core.object.storage.storageBlock.StorageBlock;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;

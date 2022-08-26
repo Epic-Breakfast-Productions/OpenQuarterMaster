@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.ebp.openQuarterMaster.lib.core.AttKeywordMainObject;
+import com.ebp.openQuarterMaster.lib.core.object.AttKeywordMainObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

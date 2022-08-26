@@ -2,8 +2,8 @@ package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoHistoriedService;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
-import com.ebp.openQuarterMaster.lib.core.MainObject;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.MainObject;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 

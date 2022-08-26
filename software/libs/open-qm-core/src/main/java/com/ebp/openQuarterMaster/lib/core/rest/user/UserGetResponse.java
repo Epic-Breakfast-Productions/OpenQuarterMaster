@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.lib.core.rest.user;
 
-import com.ebp.openQuarterMaster.lib.core.AttKeywordMainObject;
-import com.ebp.openQuarterMaster.lib.core.user.User;
+import com.ebp.openQuarterMaster.lib.core.object.AttKeywordMainObject;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

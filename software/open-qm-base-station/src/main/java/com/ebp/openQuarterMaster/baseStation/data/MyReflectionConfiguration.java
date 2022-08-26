@@ -1,9 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.data;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
+import com.ebp.openQuarterMaster.lib.core.object.storage.storageBlock.StorageBlock;
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
-import com.ebp.openQuarterMaster.lib.core.storage.storageBlock.StorageBlock;
-import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

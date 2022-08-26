@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
-import com.ebp.openQuarterMaster.lib.core.media.Image;
+import com.ebp.openQuarterMaster.lib.core.object.media.Image;
 import lombok.Getter;
 import lombok.ToString;
 

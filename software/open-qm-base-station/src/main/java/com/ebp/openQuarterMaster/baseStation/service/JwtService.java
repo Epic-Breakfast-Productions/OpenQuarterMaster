@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.baseStation.service;
 
+import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginResponse;
-import com.ebp.openQuarterMaster.lib.core.user.User;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import io.smallrye.jwt.util.KeyUtils;
