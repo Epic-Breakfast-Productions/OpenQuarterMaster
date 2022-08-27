@@ -10,7 +10,7 @@
 #  - hwinfo
 #  - sponge (from moreutils)
 #  - jq
-SCRIPT_VERSION="1.0.4-DEV"
+SCRIPT_VERSION="1.0.5-DEV"
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
@@ -43,9 +43,9 @@ DEFAULT_HEIGHT=15
 TALL_HEIGHT=30
 SUPER_TALL_HEIGHT=60
 # How the user is interacting with this script. Either "ui" or "direct"
-INTERACT_MODE_UI="ui";
-INTERACT_MODE_DIRECT="direct";
-INTERACT_MODE="$INTERACT_MODE_UI";
+INTERACT_MODE_UI="ui"
+INTERACT_MODE_DIRECT="direct"
+INTERACT_MODE="$INTERACT_MODE_UI"
 
 #test -n "$DISPLAY" && DIALOG=xdialog
 
@@ -72,40 +72,39 @@ VERSION_FLAG_CAP="DEV"
 ###
 #
 function showDialog() {
-    dialog --backtitle "$SCRIPT_TITLE" --hfile "oqm-station-captain-help.txt"  "$@"
+	dialog --backtitle "$SCRIPT_TITLE" --hfile "oqm-station-captain-help.txt" "$@"
 }
 
 # TODO:: take arg to return
-function exitProg(){
+function exitProg() {
 	if [ -f "$USER_SELECT_FILE" ]; then
-		rm "$USER_SELECT_FILE";
+		rm "$USER_SELECT_FILE"
 	fi
-	
- 	if [ "$1" = "" ]; then
+
+	if [ "$1" = "" ]; then
 		echo "Exiting."
-		clear -x;
- 		exit;
- 	else
- 		echo "ERROR:: $2";
- 		showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
- 		clear -x;
+		clear -x
+		exit
+	else
+		echo "ERROR:: $2"
+		showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
+		clear -x
 		exit $1
 	fi
 }
 
-function updateSelection(){
-	SELECTION="";
-	SELECTION=$(cat $USER_SELECT_FILE);
+function updateSelection() {
+	SELECTION=""
+	SELECTION=$(cat $USER_SELECT_FILE)
 }
-
 
 function determineSystemPackMan() {
 	local return="$1"
 	local result=""
 	if [ -n "$(command -v yum)" ]; then
-		result="yum";
+		result="yum"
 	elif [ -n "$(command -v apt)" ]; then
-		result="apt";
+		result="apt"
 	else
 		exitProg 2 "Unable to determine if system uses a supported package manager."
 	fi
@@ -113,21 +112,21 @@ function determineSystemPackMan() {
 }
 function determineSystemPackFileFormat() {
 	local return="$1"
-	
+
 	pacMan=""
 	determineSystemPackMan pacMan
-	
+
 	local result=""
-	
+
 	case "$pacMan" in
-		"apt")
-			result=".deb"
-			;;
-		"yum")
-			result=".rpm"
-			;;
+	"apt")
+		result=".deb"
+		;;
+	"yum")
+		result=".rpm"
+		;;
 	esac
-	
+
 	eval $return="$result"
 }
 
@@ -143,13 +142,13 @@ function determineSystemPackFileFormat() {
 # Returns: "> {level}" "< {level}" or "="
 # https://unix.stackexchange.com/a/570581/66841
 #
-function compareVersionNumbersRec(){
-	function sub_ver () {
+function compareVersionNumbersRec() {
+	function sub_ver() {
 		local len=${#1}
-		temp=${1%%"."*} && indexOf=`echo ${1%%"."*} | echo ${#temp}`
+		temp=${1%%"."*} && indexOf=$(echo ${1%%"."*} | echo ${#temp})
 		echo -e "${1:0:indexOf}"
 	}
-	function cut_dot () {
+	function cut_dot() {
 		local offset=${#1}
 		local length=${#2}
 		echo -e "${2:((++offset)):length}"
@@ -157,13 +156,13 @@ function compareVersionNumbersRec(){
 	if [ -z "$2" ] || [ -z "$3" ]; then
 		echo "="
 	else
-		local v1=`echo -e "${2}" | tr -d '[[:space:]]'`
-		local v2=`echo -e "${3}" | tr -d '[[:space:]]'`
-		local v1_sub=`sub_ver $v1`
-		local v2_sub=`sub_ver $v2`
-		if (( v1_sub > v2_sub )); then
+		local v1=$(echo -e "${2}" | tr -d '[[:space:]]')
+		local v2=$(echo -e "${3}" | tr -d '[[:space:]]')
+		local v1_sub=$(sub_ver $v1)
+		local v2_sub=$(sub_ver $v2)
+		if ((v1_sub > v2_sub)); then
 			echo "> $1"
-		elif (( v1_sub < v2_sub )); then
+		elif ((v1_sub < v2_sub)); then
 			echo "< $1"
 		else
 			local cut1="$(cut_dot $v1_sub $v1)"
@@ -184,7 +183,7 @@ function compareVersionNumbersRec(){
 # Usage:  compareVersions "1.2.3" "1.2.3"
 # Returns: "> {level}" "< {level}" or "="
 #
-function compareVersionNumbers(){
+function compareVersionNumbers() {
 	compareVersionNumbersRec "major" $1 $2
 }
 
@@ -192,13 +191,13 @@ function compareVersionNumbers(){
 # Gets the index of an item in an array
 # Usage: getIndexInArr "item" "${array[@]}"
 #
-function getIndexInArr(){
+function getIndexInArr() {
 	local needle="$1"
 	shift
 	local haystack=("$@")
 	for i in "${!haystack[@]}"; do
 		if [[ "${haystack[$i]}" = "${needle}" ]]; then
-			echo "${i}";
+			echo "${i}"
 			return
 		fi
 	done
@@ -209,13 +208,13 @@ function getIndexInArr(){
 # Usage: compareVersionFlags "type-name-version[-FLAG]" "type-name-version[-FLAG]"
 # Returns: "> flag" "< flag" or "="
 #
-function compareVersionFlags(){
+function compareVersionFlags() {
 	local flag1="$1"
 	local flag2="$2"
-	
+
 	local flagVal1="$(getIndexInArr "$flag1" "${VERSION_FLAG_PRIORITY[@]}")"
 	local flagVal2="$(getIndexInArr "$flag2" "${VERSION_FLAG_PRIORITY[@]}")"
-	
+
 	if [ "$flagVal1" -eq "$flagVal2" ]; then
 		echo "="
 	elif [ "$flagVal1" -gt "$flagVal2" ]; then
@@ -230,39 +229,38 @@ function compareVersionFlags(){
 # Usage: compareVersions "type-name-version[-FLAG]" "type-name-version[-FLAG]"
 # Returns: "> {level}" "< {level}" or "="
 #
-function compareVersions(){
+function compareVersions() {
 	local fullVer1="$1"
 	local fullVer2="$2"
 	local ver1Arr=(${fullVer1//-/ })
 	local ver2Arr=(${fullVer2//-/ })
-	
+
 	if [ "${ver1Arr[0]}" != "${ver2Arr[0]}" ] || [ "${ver1Arr[1]}" != "${ver2Arr[1]}" ]; then
-		exitProg 66 "ERROR:: Versions given are not comparable \"$fullVer1\", \"$fullVer2\". Please let the developers know of this issue.";
+		exitProg 66 "ERROR:: Versions given are not comparable \"$fullVer1\", \"$fullVer2\". Please let the developers know of this issue."
 	fi
-	
-	
+
 	local ver1Num="${ver1Arr[2]}"
 	local ver2Num="${ver2Arr[2]}"
 	local ver1Flag="${ver1Arr[3]}"
 	local ver2Flag="${ver2Arr[3]}"
-	
+
 	#echo "DEBUG:: Version 1: $ver1Num / \"$ver1Flag\""
 	#echo "DEBUG:: Version 2: $ver2Num / \"$ver2Flag\""
-	
+
 	local result="$(compareVersionNumbers "$ver1Num" "$ver2Num")"
 
 	if [ "$result" = "=" ]; then
 		#echo "DEBUG:: same version number. Checking flag.";
 		result="$(compareVersionFlags "$ver1Flag" "$ver2Flag")"
 	fi
-	
-	echo "$result";
+
+	echo "$result"
 }
 
 #
 # Gets the major version of a version number.
 # Usage: getMajorVersion "versionNumber"
-function getMajorVersion(){
+function getMajorVersion() {
 	local versionNum="$1"
 	local versionArr=(${versionNum//./ })
 	echo "${versionArr[0]}"
@@ -272,10 +270,10 @@ function getMajorVersion(){
 # Usage: getInstalledVersion returnVar "infra-jaeger"
 # Returns: full name/version string, empty string if not installed.
 #
-function getInstalledVersion(){
+function getInstalledVersion() {
 	local returnVar=$1
 	local packageName="$2"
-	echo "Determining installed version of $packageName";
+	echo "Determining installed version of $packageName"
 
 	local version
 	local packageType
@@ -292,6 +290,23 @@ function getInstalledVersion(){
 
 	echo "Done determining installed version: \"$version\""
 	eval $returnVar="$version"
+}
+
+function getInstalledPackages() {
+	local installed=""
+
+	local packageType
+	determineSystemPackMan packageType
+	if [ "$packageType" == "apt" ]; then
+		installed="$(apt-cache pkgnames open+quarter+master-)"
+	elif [ "$packageType" == "yum" ]; then
+		# TODO
+		exitProg 2 "yum currently not supported"
+	fi
+
+	# TODO:: packages from other repos
+
+	echo "$installed"
 }
 
 #
@@ -312,65 +327,64 @@ function processReleaseList() {
 	echo "DONE processing release list."
 }
 
-function refreshReleaseList(){
+function refreshReleaseList() {
 	echo "Refreshing release list."
-	
-	cat <<EOT >> "$RELEASE_LIST_FILE_WORKING"
+
+	cat <<EOT >>"$RELEASE_LIST_FILE_WORKING"
 []
 EOT
 	#echo "DEBUG:: cur len of releases file: $(stat --printf="%s" "$RELEASE_LIST_FILE_WORKING")";
 	local keepCalling=true
 	local curGitResponseLen=-1
-	local curPage=1;
-	while [ "$keepCalling" = true ] ; do
+	local curPage=1
+	while [ "$keepCalling" = true ]; do
 		#echo "DEBUG:: Hitting: $GIT_RELEASES?per_page=100&page=$curPage"
-		
-		local curResponse="$(curl -s -w "%{http_code}" -H "Accept: application/vnd.github+json" "$GIT_RELEASES?per_page=100&page=$curPage" )"
-		local httpCode=$(tail -n1 <<< "$curResponse")
-		local curResponseJson=$(sed '$ d' <<< "$curResponse")
-		
+
+		local curResponse="$(curl -s -w "%{http_code}" -H "Accept: application/vnd.github+json" "$GIT_RELEASES?per_page=100&page=$curPage")"
+		local httpCode=$(tail -n1 <<<"$curResponse")
+		local curResponseJson=$(sed '$ d' <<<"$curResponse")
+
 		#echo "DEBUG:: Cur git response: $curResponseJson";
-		
+
 		if [ "$httpCode" != "200" ]; then
-			exitProg 1 "Error: Failed to call Git for releases ($httpCode): $curResponseJson";
+			exitProg 1 "Error: Failed to call Git for releases ($httpCode): $curResponseJson"
 		fi
-		
+
 		# TODO:: experiment removing data: https://stackoverflow.com/questions/33895076/exclude-column-from-jq-json-output
-		
+
 		curGitResponseLen=$(echo "$curResponseJson" | jq ". | length")
 		#cat "$RELEASE_LIST_FILE_WORKING"
 		echo "Made call to Git. Cur git response len: \"$curGitResponseLen\""
-		
+
 		jq -c --argjson newReleases "$curResponseJson" '. |= . + $newReleases' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
-		
+
 		#echo "DEBUG:: cur len of releases file: $(stat --printf="%s" "$RELEASE_LIST_FILE_WORKING")";
-		
+
 		if [ "$curGitResponseLen" -lt 100 ]; then
 			keepCalling=false
 		fi
-		
-		curPage=$((curPage+1))
+
+		curPage=$((curPage + 1))
 	done
-	
-	echo "No more releases from Git.";
-	
-	
+
+	echo "No more releases from Git."
+
 	# TODO:: add setting to enable/disable
 	#echo "Removing Pre-releases.";
 	#jq -c 'map(select(.prerelease==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 	#echo "Done removing Pre-releases."
 
 	# TODO:: remove plugins
-	
-	echo "Removing drafts.";
+
+	echo "Removing drafts."
 	jq -c 'map(select(.draft==false))' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
-	echo "Done removing drafts.";
-	
-	echo "Sorting releases.";
+	echo "Done removing drafts."
+
+	echo "Sorting releases."
 	jq -c 'sort_by(.published_at) | reverse' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 	echo "Done sorting releases."
 	#cat "$RELEASE_LIST_FILE_WORKING"
-	
+
 	mv "$RELEASE_LIST_FILE_WORKING" "$RELEASE_LIST_FILE"
 	echo "DONE Refreshing release list. $(jq ". | length" "$RELEASE_LIST_FILE") relevant releases returned. Release file $(stat --printf="%s" "$RELEASE_LIST_FILE") bytes in length."
 }
@@ -379,20 +393,20 @@ EOT
 # Gets the latest release version for the given software.
 # Usage: getReleasesFor <software prefix>
 #
-function getGitReleasesFor(){
+function getGitReleasesFor() {
 	local softwareReleaseToFind="$1"
 	local baseStationMajorVersion="$2"
-	
+
 	#echo "getting all releases for $softwareReleaseToFind"
-	
+
 	local releases="$(jq -c "map(select(.name | contains(\"$softwareReleaseToFind\")))" "$RELEASE_LIST_FILE")"
 
 	if [ "$softwareReleaseToFind" == "core-base+station" ] && [ "$baseStationMajorVersion" != "" ]; then
-		releases="$(echo "$releases" | jq -c "map(select(.name | contains(\"${softwareReleaseToFind}-$baseStationMajorVersion\")))" )"
+		releases="$(echo "$releases" | jq -c "map(select(.name | contains(\"${softwareReleaseToFind}-$baseStationMajorVersion\")))")"
 	fi
 
 	#echo "DEBUG:: got releases for $softwareReleaseToFind: $releases"
-	
+
 	echo "$releases"
 }
 
@@ -401,10 +415,10 @@ function getGitReleasesFor(){
 # Usage: getLatestGitReleaseFor <return var> <software prefix>
 # Returns Tag json of the latest release
 #
-function getLatestGitReleaseFor(){
+function getLatestGitReleaseFor() {
 	local softwareReleaseToFind="$1"
 	local baseStationMajorVersion="$2"
-		
+
 	releasesFor="$(getGitReleasesFor "$softwareReleaseToFind" "$baseStationMajorVersion")"
 
 	#echo "DEBUG:: releases: $releasesFor"
@@ -412,7 +426,6 @@ function getLatestGitReleaseFor(){
 
 	echo "$releasesFor" | jq -c '.[0]'
 }
-
 
 #
 # Determines if the software tag needs an update
@@ -425,33 +438,33 @@ function needsUpdated() {
 	local baseStationMajorVersion="$2"
 
 	local curTagArr=(${inputTagVersion//-/ })
-	
+
 	local curMajVersion="$(getMajorVersion "${curTagArr[2]}")"
 	local curTag="${curTagArr[1]}-${curTagArr[2]}" # ex: core-base+station
 	local curTagVersion="${curTagArr[1]}-${curTagArr[2]}-${curTagArr[3]}"
 
-#	echo "DEBUG:: cur tag: $curTag"
+	#	echo "DEBUG:: cur tag: $curTag"
 
 	output=""
 	case "${curTagArr[1]}" in
-		"manager" | "infra" | "core") # Prefixes we get from Git
-			local latestRelease="$(getLatestGitReleaseFor "$curTag" "$baseStationMajorVersion")"
-			
-			#echo "DEBUG:: Latest release: $latestRelease"
-			
-			if [ -z "$latestRelease" ];then
-				#echo "No release found for tag prefix $curTag";
-				output=""
-			else
-				latestReleaseTag="$(echo "$latestRelease" | jq -c -r '.name')"
-				#echo "DEBUG:: current release: \"$curTagVersion\" Latest release: \"$latestReleaseTag\""
-				local compareResult="$(compareVersions "$curTagVersion" "$latestReleaseTag")"
-				#echo "DEBUG:: compare result: \"$compareResult\""
-				if [[ "$compareResult" == \<* ]]; then
-					output="$latestReleaseTag $(getAssetUrlToInstallFromGitRelease "$latestRelease")"
-				fi
+	"manager" | "infra" | "core") # Prefixes we get from Git
+		local latestRelease="$(getLatestGitReleaseFor "$curTag" "$baseStationMajorVersion")"
+
+		#echo "DEBUG:: Latest release: $latestRelease"
+
+		if [ -z "$latestRelease" ]; then
+			#echo "No release found for tag prefix $curTag";
+			output=""
+		else
+			latestReleaseTag="$(echo "$latestRelease" | jq -c -r '.name')"
+			#echo "DEBUG:: current release: \"$curTagVersion\" Latest release: \"$latestReleaseTag\""
+			local compareResult="$(compareVersions "$curTagVersion" "$latestReleaseTag")"
+			#echo "DEBUG:: compare result: \"$compareResult\""
+			if [[ "$compareResult" == \<* ]]; then
+				output="$latestReleaseTag $(getAssetUrlToInstallFromGitRelease "$latestRelease")"
 			fi
-			;;
+		fi
+		;;
 		#TODO:: plugins
 	esac
 	echo "$output"
@@ -462,16 +475,16 @@ function needsUpdated() {
 # Usage: selectAssetToInstall "<release json>"
 # Returns the json of the asset to install, or empty string if none applicable
 #
-function getAssetToInstallFromGitRelease(){
+function getAssetToInstallFromGitRelease() {
 	local releaseJson="$1"
 	installerFormat=""
 	determineSystemPackFileFormat installerFormat
-	
+
 	local matchingAssets="$(echo "$releaseJson" | jq -c ".assets" | jq -c "map(select(.browser_download_url | endswith(\"$installerFormat\")))")"
-	
+
 	local matchingAssetsLen=$(echo "$matchingAssets" | jq ". | length")
 	# todo:: check len?
-	
+
 	echo "$matchingAssets" | jq -c '.[0]'
 }
 
@@ -480,7 +493,7 @@ function getAssetUrlToInstallFromGitRelease() {
 	echo "$(getAssetToInstallFromGitRelease "$releaseJson" | jq -cr '.browser_download_url')"
 }
 
-function installFromUrl(){
+function installFromUrl() {
 	local downloadUrl="$1"
 	echo "DEBUG:: download url given: $downloadUrl"
 	local filename="$(basename "$downloadUrl")"
@@ -543,13 +556,13 @@ function installFromUrl(){
 #	fi
 #}
 
-function getGitPackagesForType(){
+function getGitPackagesForType() {
 	local releaseType="$1"
 	local releasesOfType="$(getGitReleasesFor "$1-")"
 
 	#echo "DEBUG:: Getting individual packages of type $releaseType: $releasesOfType"
 	local infraList=()
-	for row in $( echo "$releasesOfType" | jq -r '.[] | @base64'); do
+	for row in $(echo "$releasesOfType" | jq -r '.[] | @base64'); do
 		local curReleaseName="$(echo ${row} | base64 --decode | jq -r '.name')"
 
 		curReleaseName="$(echo "$curReleaseName" | cut -f1,2 -d'-')"
@@ -563,7 +576,7 @@ function getGitPackagesForType(){
 	echo "${infraList[*]}"
 }
 
-function updateInstallPackagesForType(){
+function updateInstallPackagesForType() {
 	local releaseType="$1"
 	local packages=($(getGitPackagesForType "$1"))
 	echo "Packages to install: ${packages[*]}"
@@ -577,31 +590,29 @@ function updateInstallPackagesForType(){
 	done
 }
 
-function installUpdateInfra(){
-	echo "Installing/Updating latest infrastructure pieces.";
+function installUpdateInfra() {
+	echo "Installing/Updating latest infrastructure pieces."
 	updateInstallPackagesForType "infra"
-	echo "DONE Installing/Updating latest infrastructure pieces.";
+	echo "DONE Installing/Updating latest infrastructure pieces."
 }
-function installUpdateBaseStation(){
-	echo "Installing/Updating latest infrastructure pieces.";
+function installUpdateBaseStation() {
+	echo "Installing/Updating latest infrastructure pieces."
 	updateInstallPackagesForType "core"
-	echo "DONE Installing/Updating latest infrastructure pieces.";
+	echo "DONE Installing/Updating latest infrastructure pieces."
 }
 
-function installUpdateInfraBaseStation(){
+function installUpdateInfraBaseStation() {
 	installUpdateInfra
 	installUpdateBaseStation
 }
 
-
 #
 # User Interaction Functions
-# 
-# 
-# 
+#
+#
+#
 
-
-function displayBaseOsInfo(){
+function displayBaseOsInfo() {
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 
 	showDialog --infobox "Retrieving system information..." $TINY_HEIGHT $DEFAULT_WIDTH
@@ -636,159 +647,219 @@ function displayBaseOsInfo(){
 	showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
-function displayStatusInfo(){
+function displayOqmInstallStatusInfo() {
 	showDialog --infobox "Retrieving installation information..." $TINY_HEIGHT $DEFAULT_WIDTH
 
-	local text="Station Captain:\n    $SCRIPT_VERSION\n\n"
+	local text=""
+
+	local installedPackages=($(getInstalledPackages))
+	installedPackages=($(echo "${installedPackages[@]}" | xargs -n1 | sort | xargs))
+
+	pacMan=""
+	determineSystemPackMan pacMan
+
+	local curPackageInfo=""
+	for curPackage in "${installedPackages[@]}"; do
+		curPackageInfo=""
+
+		case "$pacMan" in
+			"apt")
+			curPackageInfo="$(apt-cache show "$curPackage")"
+
+			text="${text}${curPackageInfo//$'\n'/\\n}\n"
+			# TODO:: filter for relevant info
+			;;
+			"yum")
+			exitProg "Unsupported package management type."
+			;;
+			*)
+				exitProg "Unsupported package management type."
+		esac
+
+		local serviceStatus;
+		local escapedPackage="$(systemd-escape "$curPackage.service")"
+		serviceStatus="$(systemctl status "$escapedPackage")"
+		if [ $? == 0 ]; then
+			text="${text}${serviceStatus//$'\n'/\\n}"
+		fi
+
+		text="${text}\n\n\n"
+	done
 
 	# TODO:: use dpkg to sort out what's installed, versions, etc
 
 	showDialog --title "Installation Status" \
-	--msgbox "$text" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
-}
-function displayOQMInfo(){
-	# TODO:: put out more OQM info
-	showDialog --title "Open QuarterMaster Info" \
-	--msgbox "Url: $HOME_GIT" $TALL_HEIGHT $SUPER_WIDE_WIDTH
+		--msgbox "$text" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
-function getInfo(){
+function getInfo() {
 	while true; do
 		showDialog --title "Info" \
-		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
-		1 "Installation Status" \
-		2 "Open QuarterMaster" \
-		3 "Host/Base OS" \
-		2>$USER_SELECT_FILE
-		
-		updateSelection;
-		
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "OQM Installation Status" \
+			2 "Host/Base OS" \
+			2>$USER_SELECT_FILE
+
+		updateSelection
+
 		case $SELECTION in
-			1) displayStatusInfo
+		1)
+			displayOqmInstallStatusInfo
 			;;
-			2) displayOQMInfo
+		2)
+			displayBaseOsInfo
 			;;
-			3) displayBaseOsInfo
-			;;
-			*) return
+		*)
+			return
 			;;
 		esac
-	done;
+	done
 }
 
-function updateBaseSystem(){
+function updateBaseSystem() {
 	showDialog --infobox "Updating Base OS. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
 	# update base system, based on what distro we are on
-	result="";
-	resultReturn=0;
+	result=""
+	resultReturn=0
 	# TODO::: why no work? error during apt, but no err captured
 	# TODO:: update to new function for determinig system type
 	if [ -n "$(command -v yum)" ]; then
-		result="$(yum update -y)";
-		resultReturn=$?;
+		result="$(yum update -y)"
+		resultReturn=$?
 	elif [ -n "$(command -v apt)" ]; then
-		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)";
-		resultReturn=$?;
+		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)"
+		resultReturn=$?
 	else
 		showDialog --title "ERROR: could not update" \
-	--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." $TALL_HEIGHT $DEFAULT_WIDTH
+			--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." $TALL_HEIGHT $DEFAULT_WIDTH
 	fi
-	
+
 	if [ $resultReturn -ne 0 ]; then
 		showDialog --title "ERROR: Failed to update" \
-	--msgbox "Error updating. Output from command:\n\n${result}" $TALL_HEIGHT $WIDE_WIDTH
+			--msgbox "Error updating. Output from command:\n\n${result}" $TALL_HEIGHT $WIDE_WIDTH
 	fi
-		
-	showDialog --title "OS Updates Complete"  --yesno "Restart?" 6 $DEFAULT_WIDTH
-	
+
+	showDialog --title "OS Updates Complete" --yesno "Restart?" 6 $DEFAULT_WIDTH
+
 	case $? in
-		# TODO:: reboot not always available?
-		0) reboot
-			exitProg;
+	# TODO:: reboot not always available?
+	0)
+		reboot
+		exitProg
 		;;
-		*) showDialog --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
+	*)
+		showDialog --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
 		;;
 	esac
 }
 
 # https://www.cyberciti.biz/faq/how-to-set-up-automatic-updates-for-ubuntu-linux-18-04/
 # https://fedoraproject.org/wiki/AutoUpdates
-function enableAutoUpdate(){
-	echo "TODO";
+function enableAutoUpdate() {
+	echo "TODO"
 }
-function disableAutoUpdate(){
-	echo "TODO";
+function disableAutoUpdate() {
+	echo "TODO"
 }
 
-function enableAutomaticOsUpdates(){
+function enableAutomaticOsUpdates() {
 	showDialog --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	#TODO:: this
-	
+
 	showDialog --title "Enabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
-function disableAutomaticOsUpdates(){
+function disableAutomaticOsUpdates() {
 	showDialog --infobox "Disabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	# TODO:: doublecheck
 	#crontab -r "$AUTO_UPDATE_HOST_CRONTAB_FILE"
 	showDialog --title "Disabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
-function baseOsDialog(){
+function baseOsUpdatesDialog() {
 	while true; do
 		showDialog --title "Base OS" \
-		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
-		1 "Update" \
-		2 "Enable Automatic OS Updates" \
-		3 "Disable Automatic OS Updates" \
-		2>$USER_SELECT_FILE
-		
-		updateSelection;
-		
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Update" \
+			2 "Enable Automatic OS Updates" \
+			3 "Disable Automatic OS Updates" \
+			2>$USER_SELECT_FILE
+
+		updateSelection
+
 		case $SELECTION in
-			1) updateBaseSystem
+		1)
+			updateBaseSystem
 			;;
-			2) enableAutomaticOsUpdates
+		2)
+			enableAutomaticOsUpdates
 			;;
-			3) disableAutomaticOsUpdates
+		3)
+			disableAutomaticOsUpdates
 			;;
-			*) return
+		*)
+			return
 			;;
 		esac
-	done;
+	done
 }
 
-function mainUi(){
+function updatesDialog() {
+	while true; do
+		showDialog --title "Updates" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Host OS Updates" \
+			2 "OQM Installation Updates" \
+			2>$USER_SELECT_FILE
+
+		updateSelection
+
+		case $SELECTION in
+		1)
+			baseOsUpdatesDialog
+			;;
+		2) # TODO
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+
+function mainUi() {
 	while true; do
 		showDialog --title "Main Menu" \
-		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT\
-		1 "Info" \
-		2 "Manage Installation" \
-		3 "Backups" \
-		4 "Updates" \
-		5 "Captain Settings" \
-		2>$USER_SELECT_FILE
-		
-		updateSelection;
-		
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT 1 "Info / Status" \
+			2 "Manage Installation" \
+			3 "Backups" \
+			4 "Updates" \
+			5 "Captain Settings" \
+			2>$USER_SELECT_FILE
+
+		updateSelection
+
 		case $SELECTION in
-			1) getInfo
+		1)
+			getInfo
 			;;
-			2) # TODO: manage installation
+		2) # TODO: manage installation
 			;;
-			3) # TODO:manage backups
+		3) # TODO:manage backups
 			;;
-			4) # TODO: Manage updates
+		4)
+			updatesDialog
 			;;
-			5) # TODO: OQM Captain settings
+		5) # TODO: OQM Captain settings
 			;;
-			*) return
+		*)
+			return
 			;;
 		esac
-	done;
+	done
 }
 
-function initialSetup(){
+function initialSetup() {
 	echo "Performing initial setup."
 	showDialog --infobox "Performing initial setup. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
 
@@ -831,13 +902,12 @@ mkdir -p "$DOWNLOAD_DIR"
 # TODO:: add captain settings file, prepopulate
 #
 
-# Update release list. Only call here 
+# Update release list. Only call here
 refreshReleaseList
 
 #
 # Debug section. Nothing should be here
 #
-
 
 #
 # Check updatedness of this script
@@ -851,19 +921,19 @@ echo "DEBUG:: has new release return: $latestStatCapRelease"
 if [ "$latestStatCapRelease" = "" ]; then
 	echo "Station Captain up to date."
 else
-	statCapUpdateInfo=($latestStatCapRelease);
-	echo "Station Captain has a new release!";
+	statCapUpdateInfo=($latestStatCapRelease)
+	echo "Station Captain has a new release!"
 	echo "DEBUG:: release info: $latestStatCapRelease"
 	showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out:\\n${statCapUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 	case $? in
-		0)
-			echo "Updating Station captain."
-			installFromUrl "${statCapUpdateInfo[1]}"
-			echo "Update installed! Please rerun the script."
-			exitProg;
+	0)
+		echo "Updating Station captain."
+		installFromUrl "${statCapUpdateInfo[1]}"
+		echo "Update installed! Please rerun the script."
+		exitProg
 		;;
-		*)
-			echo "Not updating Station Captain.";
+	*)
+		echo "Not updating Station Captain."
 		;;
 	esac
 	# TODO:: update
@@ -879,11 +949,11 @@ echo "Current installed base station version: $curInstalledBaseStationVersion"
 if [ "$curInstalledBaseStationVersion" = "" ]; then
 	showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 	case $? in
-		0)
-			initialSetup
+	0)
+		initialSetup
 		;;
-		*)
-			echo "Not performing initial setup.";
+	*)
+		echo "Not performing initial setup."
 		;;
 	esac
 fi
@@ -900,24 +970,23 @@ baseStationHasUpdates="$(needsUpdated "open+quarter+master-core-base+station-$cu
 if [ "$baseStationHasUpdates" = "" ]; then
 	echo "Base Station up to date."
 else
-	baseStationUpdateInfo=($baseStationHasUpdates);
-	echo "Base Station has a new release!";
+	baseStationUpdateInfo=($baseStationHasUpdates)
+	echo "Base Station has a new release!"
 	echo "DEBUG:: release info: $baseStationHasUpdates"
 	showDialog --title "Base Station new Release" --yesno "Base Station has a new release out:\\n${baseStationUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 	case $? in
-		0)
-			echo "Updating Base Station."
-			installFromUrl "${baseStationUpdateInfo[1]}"
-			echo "Update installed!"
-			showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
+	0)
+		echo "Updating Base Station."
+		installFromUrl "${baseStationUpdateInfo[1]}"
+		echo "Update installed!"
+		showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
 		;;
-		*)
-			echo "Not updating base Station.";
+	*)
+		echo "Not updating base Station."
 		;;
 	esac
 	# TODO:: update
 fi
-
 
 #echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
 
@@ -926,8 +995,7 @@ fi
 #
 # TODO:: if get inputs, go to direct mode.
 if [ "$INTERACT_MODE" == "$INTERACT_MODE_UI" ]; then
-	mainUi;
+	mainUi
 fi
 
-exitProg;
-
+exitProg

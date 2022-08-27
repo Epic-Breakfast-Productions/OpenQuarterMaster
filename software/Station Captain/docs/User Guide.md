@@ -5,23 +5,27 @@
 This is an explanation of the menus.
 
 (main menu)
-- Info
-  - Installation Status; shows status, versions of OQM software running
-  - Open QuarterMaster; 
+- Info / Status
+  - Installation Status; shows status, versions of OQM software running TODO
   - Host Information
 - Manage Installation
-  - Select OQM major version
-  - Core
-  - Plugins
-  - Cleanup
+  - Select OQM major version TODO
+  - Core? TODO
+  - Plugins TODO
+    - add plugin repo list
+    - remove plugin repo list
+    - enable plugin
+    - disable plugin
+  - Cleanup TODO
     - Docker (`docker system prune --volumes`)
-- Backups
+    - Reset data
+- Backups TODO
   - Choose backup location
   - Run backups now
   - Automatic backup settings
     - Enable/disable automatic backups
     - Frequency
-- Updates
+- Updates TODO
   - Host Updates
     - Enable/disable automatic updates
     - Update now
