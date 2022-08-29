@@ -39,8 +39,11 @@ mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
 
-cp oqm_base_station.service "$buildDir/$debDir/etc/systemd/system/"
-sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/oqm_base_station.service"
+serviceFile="open+quarter+master-core-base+station.service"
+serviceFileEscaped="$(systemd-escape "$serviceFile")"
+
+cp "$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -92,16 +95,16 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
 systemctl daemon-reload
-systemctl enable oqm_base_station.service
-systemctl start oqm_base_station.service
+systemctl enable "$serviceFileEscaped"
+systemctl start "$serviceFileEscaped"
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"
 
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/prerm"
 #!/bin/bash
 
-systemctl disable oqm_base_station.service
-systemctl stop oqm_base_station.service
+systemctl disable "$serviceFileEscaped"
+systemctl stop "$serviceFileEscaped"
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/prerm"
 

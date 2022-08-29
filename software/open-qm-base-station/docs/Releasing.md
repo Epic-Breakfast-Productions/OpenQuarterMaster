@@ -13,13 +13,16 @@ Prereqs:
 
 These are the steps to take to perform a release of the software:
 
-1. Run _all_ tests:
+1. If it's been a while...
+   1. review Dockerfiles for base image version
+   2. review dependencies for version updates
+2. Run _all_ tests:
     1. `./gradlew clean test `
     2. If it's been a while, review Dockerfiles for base image version
-2. Increment version of service accordingly in `build.gradle`
-3. Ensure everything committed and pushed to github. Check workflows.
-4. Be logged into docker hub with ebprod user `docker login`
-5. Deploy jvm version
+3. Increment version of service accordingly in `build.gradle`
+4. Ensure everything committed and pushed to github. Check workflows.
+5. Be logged into docker hub with ebprod user `docker login`
+6. Deploy jvm version
     1. Clean/build/push project `./gradlew clean build -Pquarkus.container-image.build=true -Pquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Pquarkus.container-image.group=ebprod -Pquarkus.container-image.push=true`
 7. Make installers: `./makeInstallers.sh`
 8. Make release for version on Github, attach all installers to it (`build/installers`)

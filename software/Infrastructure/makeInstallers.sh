@@ -38,16 +38,21 @@ for curPackage in ${packages[@]}; do
 	packageConfigFile="$curPackage/properties.json"
 	packageDebDir="$buildDir/$curPackage/$debDir"
 	echo "Creating deb installer for $curPackage"
+	
+	serviceFile="$(jq -r '.packageName' "$packageConfigFile").service"
+	serviceFileEscaped="$(systemd-escape "$serviceFile")"
 	#
 	# Debian build
 	#
 	
+	
+
 	mkdir -p "$packageDebDir"
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	
-	cp "$curPackage/oqm_$curPackage.service" "$packageDebDir/etc/systemd/system/"
-	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/oqm_$curPackage.service"
+	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -87,8 +92,8 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
-systemctl enable oqm_$curPackage.service
-systemctl start oqm_$curPackage.service
+systemctl enable "$serviceFileEscaped"
+systemctl start "$serviceFileEscaped"
 
 #add config to file
 mkdir -p /etc/oqm/serviceConfig
@@ -110,8 +115,8 @@ EOT
 	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
 #!/bin/bash
 
-systemctl disable oqm_$curPackage.service
-systemctl stop oqm_$curPackage.service
+systemctl disable "$serviceFileEscaped"
+systemctl stop "$serviceFileEscaped"
 
 # remove config from infra config file
 EOT
