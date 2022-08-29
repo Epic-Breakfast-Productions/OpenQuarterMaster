@@ -54,16 +54,13 @@
     
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary mb-1">
-                <i class="fas fa-search"></i>
-                <!-- TODO:: open/close search -->
-                <!-- TODO:: Start closed -->
-                <!-- TODO:: hide when edit? -->
+            <button type="button" class="btn btn-primary mb-1" onclick="toggleAddEditProductSearchPane();" title="Search for Products">
+                <i class="fas fa-search"></i> Search for Products
             </button>
         </div>
     </div>
     <div class="row">
-        <div class="col-6 card p-0">
+        <div class="col-6 card p-0" id="addEditProductSearchPane">
             <div class="card-header">
                 Search for items:
             </div>
@@ -79,7 +76,7 @@
                         <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Website</button>
                     </li>
                 </ul>
-                <div class="tab-content p-1" id="myTabContent">
+                <div class="tab-content p-1" id="searchTabContent">
                     <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <form id="prodBarcodeSearchForm">
                             <div class="mb-3">
@@ -366,7 +363,16 @@ $("#websiteScanSearchForm").submit(function(event){
     });
 });
 
-
+var addEditProductSearchPane = $("#addEditProductSearchPane");
+function toggleAddEditProductSearchPane(){
+    addEditProductSearchPane.toggle();
+}
+function hideAddEditProductSearchPane(){
+    addEditProductSearchPane.toggle();
+}
+function showAddEditProductSearchPane(){
+    addEditProductSearchPane.toggle();
+}
 
 
 
@@ -467,6 +473,7 @@ function handleItemUnitChange(){
 }
 
 function resetAddEditForm(){
+    hideAddEditProductSearchPane();
     addEditNameInput.val("");
     addEditDescriptionInput.val("");
     addEditModalLabel.text("Item");
