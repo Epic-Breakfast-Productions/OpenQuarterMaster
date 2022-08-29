@@ -7,8 +7,11 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.InventoryItemService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
+import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.ebp.openQuarterMaster.lib.core.object.history.ObjectHistory;
 import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -43,6 +46,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.lang.reflect.ParameterizedType;
 
 @Traced
 @Slf4j
@@ -351,6 +355,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.serverError().entity("Not implemented yet.").build();
 	}
 	
+	
+	
 	@PUT
 	@Path("{itemId}/{storageBlockId}")
 	@Operation(
@@ -376,11 +382,25 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public Response addStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
-		@PathParam String storageBlockId
-	) {
+		@PathParam String storageBlockId,
+		JsonNode addObject
+	) throws JsonProcessingException {
 		logRequestContext(this.getJwt(), securityContext);
-		//TODO
-		return Response.serverError().entity("Not implemented yet.").build();
+		log.info("Adding to item");
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item.add(
+			new ObjectId(storageBlockId),
+			Utils.OBJECT_MAPPER.treeToValue(
+				addObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			),
+			true
+		);
+		
+		this.getObjectService().update(item);
+		
+		return Response.ok(item).build();
 	}
 	
 	@DELETE
@@ -408,10 +428,70 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public Response removeStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
-		@PathParam String storageBlockId
-	) {
+		@PathParam String storageBlockId,
+		JsonNode addObject
+	) throws JsonProcessingException {
 		logRequestContext(this.getJwt(), securityContext);
-		//TODO
-		return Response.serverError().entity("Not implemented yet.").build();
+		
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item.subtract(
+			new ObjectId(storageBlockId),
+			Utils.OBJECT_MAPPER.treeToValue(
+				addObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			)
+		);
+		
+		this.getObjectService().update(item);
+		
+		return Response.ok(item).build();
+	}
+	
+	@PUT
+	@Path("{itemId}/{storageBlockIdFrom}/{storageBlockIdTo}")
+	@Operation(
+		summary = "Transfers a stored amount or tracked item to the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	public Response transferStoredInventoryItem(
+		@Context SecurityContext securityContext,
+		@PathParam String itemId,
+		@PathParam String storageBlockIdFrom,
+		@PathParam String storageBlockIdTo,
+		JsonNode addObject
+	) throws JsonProcessingException {
+		logRequestContext(this.getJwt(), securityContext);
+		
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item.transfer(
+			new ObjectId(storageBlockIdFrom),
+			new ObjectId(storageBlockIdTo),
+			Utils.OBJECT_MAPPER.treeToValue(
+				addObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			)
+		);
+		
+		this.getObjectService().update(item);
+		
+		return Response.ok(item).build();
 	}
 }

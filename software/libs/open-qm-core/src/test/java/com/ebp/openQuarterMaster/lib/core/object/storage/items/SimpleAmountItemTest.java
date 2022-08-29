@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
@@ -55,17 +56,17 @@ class SimpleAmountItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored()),
+				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored()),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			)
 		);
@@ -79,42 +80,42 @@ class SimpleAmountItemTest extends BasicTest {
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored()),
+				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored()),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT))),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT))),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT))),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
+					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
 				BigDecimal.valueOf(2.0)
 			)
 		);
@@ -148,5 +149,62 @@ class SimpleAmountItemTest extends BasicTest {
 		sw.stop();
 		
 		log.info("Recalculating totals took {}", sw);
+	}
+	
+	@Test
+	public void testAddSimple(){
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		
+		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		
+		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testAddTwo(){
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		
+		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		
+		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testSubtract(){
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		
+		item.subtract(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		
+		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testSubtractNegative(){
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		
+		assertThrows(IllegalArgumentException.class, ()->{
+			item.subtract(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		});
+		
 	}
 }

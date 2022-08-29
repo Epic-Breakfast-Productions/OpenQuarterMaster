@@ -37,7 +37,7 @@ public class AmountStored extends Stored {
 	}
 	
 	public AmountStored subtract(AmountStored amount) {
-		Quantity result = this.getAmount().add(amount.getAmount());
+		Quantity result = this.getAmount().subtract(amount.getAmount());
 		
 		if (result.getValue().doubleValue() < 0) {
 			//TODO:: custom exception

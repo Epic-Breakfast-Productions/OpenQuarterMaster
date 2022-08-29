@@ -923,8 +923,10 @@ function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
     var newStorageBody = addStorageBlockAccord(blockName, blockId);
 }
 
-function buildStoredObj(storedContainer){
-    let output = { };
+function buildStoredObj(storedContainer, type){
+    let output = {
+        storedType: type
+    };
     
     {
         let amountInput = storedContainer.find("[name=amountStored]");
@@ -1025,19 +1027,19 @@ addEditItemForm.submit(function(event) {
     
         foreachStoredTypeFromAddEditInput(
                 function(){
-                    storedVal = buildStoredObj(storageBlockElementJq);
+                    storedVal = buildStoredObj(storageBlockElementJq, "AMOUNT");
                 },
                 function (){
                     storedVal = [];
                     storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
-                        storedVal.push(buildStoredObj($(storedElement)));
+                        storedVal.push(buildStoredObj($(storedElement), "AMOUNT"));
                     });
                 },
                 function(){
                     storedVal = {};
                     storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
                         let elementJq = $(storedElement);
-                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq);
+                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq, "TRACKED");
                     });
                 }
         );

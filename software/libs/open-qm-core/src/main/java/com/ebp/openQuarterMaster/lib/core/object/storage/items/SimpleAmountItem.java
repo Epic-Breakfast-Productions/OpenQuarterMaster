@@ -60,7 +60,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 		throw new UnsupportedOperationException("Don't call this for this class; no reason to need it");
 	}
 	
-	public SimpleAmountItem add(ObjectId storageId, AmountStored stored) {
+	public SimpleAmountItem addNewStored(ObjectId storageId, AmountStored stored) {
 		this.getStorageMap().put(storageId, stored);
 		
 		this.recalcTotal();
@@ -98,7 +98,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 		throw new UnsupportedOperationException("Implementation does not yet support: " + totalNum.getClass().getName());
 	}
 	
-	//	@Override
+	@Override
 	public InventoryItem<AmountStored> add(@NonNull ObjectId storageId, AmountStored toAdd, boolean storageBlockStrict) {
 		AmountStored stored = this.getStoredForStorage(storageId, !storageBlockStrict);
 		
@@ -114,7 +114,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored> {
 		return this;
 	}
 	
-	//	@Override
+	@Override
 	public InventoryItem<AmountStored> subtract(ObjectId storageId, AmountStored toSubtract) {
 		AmountStored stored = this.getStoredForStorage(storageId, false);
 		

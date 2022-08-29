@@ -28,7 +28,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 		return List.of(
 			(SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name()),
 			(SimpleAmountItem) new SimpleAmountItem()
-				.add(ObjectId.get(), new AmountStored()).setName(FAKER.name().name()),
+								   .addNewStored(ObjectId.get(), new AmountStored()).setName(FAKER.name().name()),
 			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
 			getLargeSimpleAmountItem()
 		);

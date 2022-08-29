@@ -313,6 +313,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.update(new ObjectId(id), updateJson);
 	}
 	
+	public T update(T object) throws DbNotFoundException {
+		//TODO:: review this
+		this.get(object.getId());
+		Object result = this.getCollection().findOneAndReplace(eq("_id", object.getId()), object);
+		
+		return object;
+	}
+	
 	/**
 	 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
 	 *

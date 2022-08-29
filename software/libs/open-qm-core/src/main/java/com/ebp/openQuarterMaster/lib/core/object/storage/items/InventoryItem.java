@@ -163,8 +163,21 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 		return this.getStoredForStorage(storageId, true);
 	}
 	
+	/**
+	 *
+	 * @param storageId
+	 * @param toAdd
+	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	 * @return
+	 */
 	public abstract InventoryItem<T> add(ObjectId storageId, T toAdd, boolean storageBlockStrict);
 	
+	/**
+	 * Wrapper for {@link #add(ObjectId, Object, boolean)}, with false passed to storageBlockStrict
+	 * @param storageId
+	 * @param toAdd
+	 * @return
+	 */
 	public InventoryItem<T> add(ObjectId storageId, T toAdd) {
 		return this.add(storageId, toAdd, false);
 	}
