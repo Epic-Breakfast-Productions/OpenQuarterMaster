@@ -1,97 +1,99 @@
 plugins {
-    id 'java'
-    id 'io.quarkus'
-    id "io.freefair.lombok" version "6.3.0"
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "6.3.0"
 }
 
 group 'com.ebp.openQuarterMaster'
 version '1.0.4-DEV'
 
 repositories {
-    mavenCentral()
-    mavenLocal()
+	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-config-yaml'
-    implementation 'io.quarkus:quarkus-resteasy-jackson'
-    implementation 'io.quarkus:quarkus-resteasy'
-    implementation 'io.quarkus:quarkus-arc'
-    implementation 'io.quarkus:quarkus-smallrye-openapi'
-    implementation 'io.quarkus:quarkus-mongodb-panache'
-    implementation 'io.quarkus:quarkus-hibernate-validator'
-    // https://quarkus.io/guides/security-properties
-    implementation 'io.quarkus:quarkus-smallrye-jwt'
-    implementation 'io.quarkus:quarkus-smallrye-jwt-build'
-    implementation 'io.quarkus:quarkus-elytron-security'
-    implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkus:quarkus-qute'
-    implementation 'io.quarkus:quarkus-resteasy-qute'
-    implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
-    implementation 'io.quarkus:quarkus-smallrye-opentracing'
-    implementation 'io.quarkus:quarkus-container-image-docker'
-    implementation 'io.opentracing.contrib:opentracing-mongo-common'
-    //for demo
-    implementation 'io.quarkus:quarkus-rest-client'
-    implementation 'io.quarkus:quarkus-rest-client-jackson'
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-resteasy-jackson'
+	implementation 'io.quarkus:quarkus-resteasy'
+	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-smallrye-openapi'
+	implementation 'io.quarkus:quarkus-mongodb-panache'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	// https://quarkus.io/guides/security-properties
+	implementation 'io.quarkus:quarkus-smallrye-jwt'
+	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+	implementation 'io.quarkus:quarkus-elytron-security'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkus:quarkus-resteasy-qute'
+	implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
+	implementation 'io.quarkus:quarkus-smallrye-opentracing'
+	implementation 'io.quarkus:quarkus-container-image-docker'
+	implementation 'io.opentracing.contrib:opentracing-mongo-common'
+	//for demo
+	implementation 'io.quarkus:quarkus-rest-client'
+	implementation 'io.quarkus:quarkus-rest-client-jackson'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.2'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.2'
 
-    // https://quarkus.io/guides/logging
-    implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+	// https://quarkus.io/guides/logging
+	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
-    //webjars
-    implementation 'org.webjars:jquery:3.6.0'
-    implementation 'org.webjars:bootstrap:5.1.3'
+	//webjars
+	implementation 'org.webjars:jquery:3.6.0'
+	implementation 'org.webjars:bootstrap:5.1.3'
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-    implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.1-DEV'
-    implementation 'com.ebp.openQuarterMaster.lib:open-qm-lib-driver:1.+'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.1-DEV'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
 
-    // https://mvnrepository.com/artifact/tech.units/indriya
-    //     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-    implementation 'tech.units:indriya:2.1.3'
-    implementation 'systems.uom:systems-common:2.1'
-    // https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
-    implementation 'tech.uom.lib:uom-lib-jackson:2.1'
+	// https://mvnrepository.com/artifact/tech.units/indriya
+	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
+	implementation 'tech.units:indriya:2.1.3'
+	implementation 'systems.uom:systems-common:2.1'
+	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
+	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 
-    /*
-    Test Dependencies
-     */
-    testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
-    testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
-    testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	/*
+	Test Dependencies
+	 */
+	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
+	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
+	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
-    testImplementation 'org.testcontainers:mongodb:1.17.2'
-    testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0' //2.1.2 seems dud, fails to start & null pointers
-    testImplementation 'org.keycloak:keycloak-admin-client:16.1.1' // 17.0.1 seems dud, might be related to keycloak issue
-    testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
-    testImplementation 'org.seleniumhq.selenium:selenium-java:4.2.1'
-    testImplementation 'org.testcontainers:selenium:1.17.2'
-    testImplementation 'com.deque:axe-selenium:3.0'
-    testImplementation 'net.datafaker:datafaker:1.5.0'
+	testImplementation 'org.testcontainers:mongodb:1.17.2'
+	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
+	//2.1.2 seems dud, fails to start & null pointers
+	testImplementation 'org.keycloak:keycloak-admin-client:16.1.1'
+	// 17.0.1 seems dud, might be related to keycloak issue
+	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.2.1'
+	testImplementation 'org.testcontainers:selenium:1.17.2'
+	testImplementation 'com.deque:axe-selenium:3.0'
+	testImplementation 'net.datafaker:datafaker:1.5.0'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
 }
 
 compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters'
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }
 
 test {
-    minHeapSize = "128m" // initial heap size
-    maxHeapSize = "1g" // maximum heap size
-    jvmArgs '-XX:MaxPermSize=1g' // mem argument for the test JVM
+	minHeapSize = "128m" // initial heap size
+	maxHeapSize = "1g" // maximum heap size
+	jvmArgs '-XX:MaxPermSize=1g' // mem argument for the test JVM
 }
 
 //task integrationTest(type: Test) {
@@ -110,10 +112,11 @@ test {
  * Used by the `makeInstallers.sh script to get the version.
  */
 class PrintVersionTask extends DefaultTask {
-    @TaskAction
-    def printVersion() {
-        println project.version
-    }
+	@TaskAction
+	def printVersion() {
+		println project.version
+	}
 }
+
 tasks.register('printVersion', PrintVersionTask)
 

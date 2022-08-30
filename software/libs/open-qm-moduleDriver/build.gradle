@@ -1,7 +1,6 @@
 plugins {
 	id 'java-library'
-	// https://plugins.gradle.org/plugin/io.freefair.lombok
-	id "io.freefair.lombok" version "6.5.0.3"
+	id "io.freefair.lombok" version "6.3.0"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -10,9 +9,8 @@ plugins {
 	//id 'org.kordamp.gradle.jandex' version '0.11.0'
 }
 
-//group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
-archivesBaseName = "openQuarterMaster-lib-core"
+archivesBaseName = "openQuarterMaster-lib-moduleDriver"
 version '1.0.1-DEV'
 
 repositories {
@@ -26,26 +24,31 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
+
 	//if need ObjectIds, BsonIgnore
-	implementation 'org.mongodb:bson:4.6.1' //matched to quarkus version
+//	implementation 'org.mongodb:bson:4.4.0'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
+	implementation 'com.fazecast:jSerialComm:2.9.2'
+
+
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-	implementation 'tech.units:indriya:2.1.3'
+//	implementation 'tech.units:indriya:2.1.3'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
-	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
-	implementation 'systems.uom:systems-common:2.1'
+//	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
+//	implementation 'systems.uom:systems-common:2.1'
 
 	implementation 'javax.validation:validation-api:2.0.1.Final'
-	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
+	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1'
 
-	implementation 'org.passay:passay:1.6.1'
-	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'commons-codec:commons-codec:1.15'
+//	implementation 'org.passay:passay:1.6.1'
+//	implementation 'commons-io:commons-io:2.11.0'
+//	implementation 'commons-codec:commons-codec:1.15'
 
 	testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
 	testImplementation 'javax.el:javax.el-api:3.0.0'
@@ -60,12 +63,10 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.0'
 	testImplementation 'org.assertj:assertj-core:3.23.1'
-	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
+//	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
-	testImplementation 'net.datafaker:datafaker:1.5.0'
+	testImplementation 'com.github.javafaker:javafaker:1.0.2'
 	testImplementation 'ch.qos.logback:logback-classic:1.2.11'
-	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-
 }
 
 test {
@@ -88,7 +89,7 @@ java {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			artifactId = 'open-qm-lib-core'
+			artifactId = 'open-qm-lib-moduleDriver'
 			from components.java
 			versionMapping {
 				usage('java-api') {
@@ -99,9 +100,9 @@ publishing {
 				}
 			}
 			pom {
-				name = 'Open QuarterMaster Core Library'
+				name = 'Open QuarterMaster Module Driver Library'
 				description = 'A concise description of my library'
-				url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/core-base%2Bstation-1.0.4-DEV/software/libs/open-qm-core'
+				url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software'
 //                properties = [
 //                        myProp: "value",
 //                        "prop.with.dots": "anotherValue"
