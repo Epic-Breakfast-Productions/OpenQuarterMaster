@@ -1,7 +1,5 @@
 package com.ebp.openQuarterMaster.baseStation.service;
 
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginResponse;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import io.smallrye.jwt.util.KeyUtils;
@@ -9,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.user.UserLoginResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.PrivateKey;

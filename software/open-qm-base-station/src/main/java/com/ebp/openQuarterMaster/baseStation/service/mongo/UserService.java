@@ -3,8 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.rest.search.UserSearch;
 import com.ebp.openQuarterMaster.baseStation.service.JwtService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +10,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

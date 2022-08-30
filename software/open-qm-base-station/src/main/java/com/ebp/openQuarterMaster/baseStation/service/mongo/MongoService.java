@@ -5,7 +5,6 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbDeletedEx
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
-import com.ebp.openQuarterMaster.lib.core.object.MainObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -23,6 +22,7 @@ import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.MainObject;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

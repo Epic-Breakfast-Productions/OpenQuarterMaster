@@ -1,8 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product;
 
 import com.ebp.openQuarterMaster.baseStation.rest.restCalls.productLookup.api.UpcItemDbLookupClient;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -12,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

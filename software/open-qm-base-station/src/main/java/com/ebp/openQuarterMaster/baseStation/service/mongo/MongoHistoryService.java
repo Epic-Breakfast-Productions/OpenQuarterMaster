@@ -3,18 +3,18 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.rest.search.HistorySearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
-import com.ebp.openQuarterMaster.lib.core.object.MainObject;
-import com.ebp.openQuarterMaster.lib.core.object.history.ObjectHistory;
-import com.ebp.openQuarterMaster.lib.core.object.history.events.DeleteEvent;
-import com.ebp.openQuarterMaster.lib.core.object.history.events.HistoryEvent;
-import com.ebp.openQuarterMaster.lib.core.object.history.events.UpdateEvent;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
+import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.validation.Valid;
 

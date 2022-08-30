@@ -1,7 +1,5 @@
 package com.ebp.openQuarterMaster.baseStation.service;
 
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.wildfly.common.codec.DecodeException;
@@ -11,6 +9,8 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
+import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;

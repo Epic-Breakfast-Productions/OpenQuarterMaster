@@ -1,10 +1,10 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
-import com.ebp.openQuarterMaster.lib.core.object.AttKeywordMainObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

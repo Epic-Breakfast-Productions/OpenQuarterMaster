@@ -2,8 +2,6 @@ package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.itemLookup;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.ProductLookupService;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -14,6 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

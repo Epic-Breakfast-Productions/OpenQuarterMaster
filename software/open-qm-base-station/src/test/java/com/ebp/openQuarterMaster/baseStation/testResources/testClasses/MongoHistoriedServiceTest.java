@@ -2,10 +2,10 @@ package com.ebp.openQuarterMaster.baseStation.testResources.testClasses;
 
 import com.ebp.openQuarterMaster.baseStation.service.mongo.MongoHistoriedService;
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
-import com.ebp.openQuarterMaster.lib.core.object.MainObject;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.user.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -4,8 +4,6 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.profiles.ExternalAuthTestProfile;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserCreateRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -17,6 +15,8 @@ import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;

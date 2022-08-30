@@ -10,7 +10,8 @@ import org.bson.codecs.EncoderContext;
 import javax.inject.Singleton;
 import java.time.ZonedDateTime;
 
-import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
+import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
+
 
 @Singleton
 public class ZonedDateTimeCodec implements Codec<ZonedDateTime> {

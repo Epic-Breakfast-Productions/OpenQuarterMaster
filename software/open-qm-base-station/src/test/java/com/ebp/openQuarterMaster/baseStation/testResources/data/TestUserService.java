@@ -5,7 +5,6 @@ import com.ebp.openQuarterMaster.baseStation.service.PasswordService;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.UserService;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
 import com.ebp.openQuarterMaster.baseStation.utils.UserRoles;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,6 +21,8 @@ import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.validation.Validation;
@@ -71,7 +72,7 @@ public class TestUserService {
 		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
 			this.userService = new UserService(
 				validatorFactory.getValidator(),
-				com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER,
+				Utils.OBJECT_MAPPER,
 				this.mongoTestConnector.getClient(),
 				this.mongoTestConnector.mongoDatabaseName,
 				this.authMode

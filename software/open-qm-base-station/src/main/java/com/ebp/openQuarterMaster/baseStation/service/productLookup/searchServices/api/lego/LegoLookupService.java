@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.ItemSearchService;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import com.fasterxml.jackson.databind.JsonNode;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.info;
 
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
-import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.ValidatableResponse;
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.UnitUtils;
 
 import javax.measure.Unit;
 import javax.ws.rs.core.MediaType;

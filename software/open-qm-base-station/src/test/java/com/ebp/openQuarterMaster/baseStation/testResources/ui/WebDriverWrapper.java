@@ -6,7 +6,6 @@ import com.ebp.openQuarterMaster.baseStation.testResources.ui.assertions.UserRel
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.KeycloakLogin;
 import com.ebp.openQuarterMaster.baseStation.testResources.ui.pages.Root;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -15,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import tech.ebp.oqm.lib.core.object.user.User;
 
 import java.time.Duration;
 import java.util.List;

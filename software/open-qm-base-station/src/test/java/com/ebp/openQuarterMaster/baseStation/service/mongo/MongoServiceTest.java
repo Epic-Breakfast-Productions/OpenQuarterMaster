@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
+import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 @Slf4j
 @QuarkusTest

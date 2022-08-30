@@ -6,13 +6,6 @@ import com.ebp.openQuarterMaster.baseStation.testResources.data.InventoryItemTes
 import com.ebp.openQuarterMaster.baseStation.testResources.data.TestUserService;
 import com.ebp.openQuarterMaster.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.baseStation.testResources.testClasses.RunningServerTest;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.ListAmountItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.SimpleAmountItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.TrackedItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.AmountStored;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.TrackedStored;
-import com.ebp.openQuarterMaster.lib.core.object.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,6 +21,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.user.User;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.inject.Inject;
@@ -35,10 +35,10 @@ import javax.ws.rs.core.Response;
 import java.util.stream.Stream;
 
 import static com.ebp.openQuarterMaster.baseStation.testResources.TestRestUtils.setupJwtCall;
-import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 @Tag("integration")
 @Slf4j

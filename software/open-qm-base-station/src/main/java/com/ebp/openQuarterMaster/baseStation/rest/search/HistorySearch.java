@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.baseStation.rest.search;
 
-import com.ebp.openQuarterMaster.lib.core.object.history.ObjectHistory;
 import lombok.Getter;
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 
 @ToString(callSuper = true)
 @Getter

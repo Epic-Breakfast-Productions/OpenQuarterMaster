@@ -3,8 +3,6 @@ package com.ebp.openQuarterMaster.baseStation.service.mongo;
 import com.ebp.openQuarterMaster.baseStation.rest.search.StorageBlockSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbModValidationException;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.exception.DbNotFoundException;
-import com.ebp.openQuarterMaster.lib.core.object.storage.storageBlock.StorageBlock;
-import com.ebp.openQuarterMaster.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
@@ -13,6 +11,8 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

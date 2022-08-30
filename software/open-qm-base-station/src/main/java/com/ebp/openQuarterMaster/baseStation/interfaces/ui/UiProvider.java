@@ -5,7 +5,6 @@ import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingCalculat
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.utils.AuthMode;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserGetResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Template;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
 import javax.ws.rs.core.SecurityContext;
 import java.time.ZonedDateTime;

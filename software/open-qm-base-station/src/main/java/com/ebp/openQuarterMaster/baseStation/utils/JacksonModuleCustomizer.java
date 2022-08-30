@@ -1,9 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.utils;
 
-import com.ebp.openQuarterMaster.lib.core.Utils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.jackson.ObjectMapperCustomizer;
+import tech.ebp.oqm.lib.core.Utils;
 
 import javax.inject.Singleton;
 

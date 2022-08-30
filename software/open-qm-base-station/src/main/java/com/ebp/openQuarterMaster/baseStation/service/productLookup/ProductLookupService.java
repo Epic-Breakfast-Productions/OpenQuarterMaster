@@ -7,12 +7,12 @@ import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchService
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.DataKickService;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.api.product.UpcItemDbService;
 import com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.page.PageProductSearchService;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

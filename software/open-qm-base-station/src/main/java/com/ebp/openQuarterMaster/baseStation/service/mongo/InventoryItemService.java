@@ -4,8 +4,6 @@ import com.ebp.openQuarterMaster.baseStation.rest.search.InventoryItemSearch;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchResult;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.stored.StoredType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +11,8 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

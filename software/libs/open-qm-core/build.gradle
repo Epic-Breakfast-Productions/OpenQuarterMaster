@@ -6,12 +6,14 @@ plugins {
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
 	// https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
-//    id 'signing'
+    id 'signing'
 	//id 'org.kordamp.gradle.jandex' version '0.11.0'
 }
 
-group 'com.ebp.openQuarterMaster.lib'
-version '1.0.0-DEV'
+//group 'com.ebp.openQuarterMaster.lib'
+group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
+archivesBaseName = "openQuarterMaster-lib-core"
+version '1.0.1-DEV'
 
 repositories {
 	mavenLocal()
@@ -114,7 +116,7 @@ publishing {
 					developer {
 						id = 'GregJohnStewart'
 						name = 'Greg Stewart'
-						email = 'contact@gjstewart.net'
+						email = 'greg@epic-breakfast-productions.tech'
 					}
 				}
 //                scm {
@@ -128,17 +130,21 @@ publishing {
 	repositories {
 		maven {
 			// change URLs to point to your repos, e.g. http://my.org/repo
-			def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-			def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+			def releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"  //layout.buildDirectory.dir('repos/releases')
+			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/" //layout.buildDirectory.dir('repos/snapshots')
 			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = project.properties.ossUsername
+				password = project.properties.ossPassword
+			}
 		}
 	}
 }
 
 //TODO:: setup proper signing
-//signing {
-//    sign publishing.publications.mavenJava
-//}
+signing {
+	sign configurations.archives
+}
 
 javadoc {
 	if (JavaVersion.current().isJava11Compatible()) {

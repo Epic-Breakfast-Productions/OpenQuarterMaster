@@ -10,7 +10,7 @@ import org.bson.codecs.EncoderContext;
 import javax.inject.Singleton;
 import javax.measure.Quantity;
 
-import static com.ebp.openQuarterMaster.lib.core.Utils.OBJECT_MAPPER;
+import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 @Singleton
 public class QuantityCodec implements Codec<Quantity> {

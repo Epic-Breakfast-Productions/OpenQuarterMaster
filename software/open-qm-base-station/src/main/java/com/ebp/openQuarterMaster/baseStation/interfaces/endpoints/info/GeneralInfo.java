@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.info;
 
 import com.ebp.openQuarterMaster.baseStation.interfaces.endpoints.EndpointProvider;
-import com.ebp.openQuarterMaster.lib.core.UnitUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -14,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;

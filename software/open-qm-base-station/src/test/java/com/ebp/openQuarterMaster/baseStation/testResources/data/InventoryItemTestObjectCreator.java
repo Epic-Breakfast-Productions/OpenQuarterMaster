@@ -1,8 +1,9 @@
 package com.ebp.openQuarterMaster.baseStation.testResources.data;
 
 
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.InventoryItem;
-import com.ebp.openQuarterMaster.lib.core.object.storage.items.SimpleAmountItem;
+
+import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 
 import javax.enterprise.context.ApplicationScoped;
 

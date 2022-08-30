@@ -1,11 +1,11 @@
 package com.ebp.openQuarterMaster.baseStation.service.productLookup.searchServices.page;
 
-import com.ebp.openQuarterMaster.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;

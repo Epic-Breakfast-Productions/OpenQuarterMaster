@@ -3,10 +3,10 @@ package com.ebp.openQuarterMaster.baseStation.rest.search;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.PagingOptions;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SearchUtils;
 import com.ebp.openQuarterMaster.baseStation.service.mongo.search.SortType;
-import com.ebp.openQuarterMaster.lib.core.object.MainObject;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import tech.ebp.oqm.lib.core.object.MainObject;
 
 import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
