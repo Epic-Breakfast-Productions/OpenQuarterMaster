@@ -2,11 +2,6 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.lang3.time.StopWatch;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -14,40 +9,30 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.ImageService;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
+import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
+import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
+import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
-import tech.ebp.oqm.lib.core.Utils;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 
 /**
  * https://mkyong.com/java/how-to-create-tar-gz-in-java/
@@ -59,85 +44,27 @@ import java.util.Iterator;
 @RequestScoped
 public class InventoryManagement extends EndpointProvider {
 	
-	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
-	private static final String EXPORT_TEMP_DIR_PREFIX = "oqm-data-export";
-	
-	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
-		File tempDir,
-		MongoService<T, S> service,
-		boolean includeHistory
-	) throws IOException {
-		String dataTypeName = service.getClazz().getSimpleName();
-		log.info("Writing {} data to archive folder.", dataTypeName);
-		StopWatch sw = StopWatch.createStarted();
-		File objectDataDir = new File(tempDir, dataTypeName);
-		
-		if(!objectDataDir.mkdir()){
-			log.error("Failed to create export of data. Failed to create directory.");
-			throw new IOException("Failed to create directory.");
-		}
-		
-		Iterator<T> it = service.iterator();
-		while (it.hasNext()){
-			T curObj = it.next();
-			ObjectId curId = curObj.getId();
-			File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
-			
-			if(!curObjectFile.createNewFile()){
-				log.error("Failed to create data file for object.");
-				throw new IOException("Failed to create data file for object.");
-			}
-			
-			Utils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-		}
-		
-		if(service instanceof MongoHistoriedService && includeHistory){
-			File objectHistoryDataDir = new File(objectDataDir, "history");
-			
-			if(!objectHistoryDataDir.mkdir()){
-				log.error("Failed to create export of data. Failed to create directory for object history.");
-				throw new IOException("Failed to create directory for object history.");
-			}
-			
-			Iterator<ObjectHistory> hIt = ((MongoHistoriedService<T, S>) service).historyIterator();
-			while (hIt.hasNext()){
-				ObjectHistory curObj = hIt.next();
-				ObjectId curId = curObj.getId();
-				File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
-				
-				if(!curObjectFile.createNewFile()){
-					log.error("Failed to create data file for object history.");
-					throw new IOException("Failed to create data file for object history.");
-				}
-				
-				Utils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-			}
-		}
-		
-		sw.stop();
-		log.info("Took {} to write all data for {}", sw, dataTypeName);
-	}
 	
 	@Inject
 	JsonWebToken jwt;
 	
 	@Inject
-	ImageService imageService;
+	DataExportService dataExportService;
 	
 	@Inject
-	StorageBlockService storageBlockService;
+	DataImportService dataImportService;
 	
 	@Inject
-	InventoryItemService inventoryItemService;
+	UserService userService;
 	
 	@GET
 	@Path("export")
 	@Operation(
-		summary = "."
+		summary = "Creates a bundle of all inventory data stored."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
+		description = "Export bundle created.",
 		content = @Content(
 			mediaType = "application/tar+gzip"
 		)
@@ -149,104 +76,50 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
-	//@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response export(
 		@Context SecurityContext securityContext,
 		@QueryParam("excludeHistory") boolean excludeHistory
 	) throws IOException {
-		excludeHistory = true;
 		logRequestContext(this.jwt, securityContext);
 		
-		log.info("Generating new export bundle.");
-		StopWatch mainSw = StopWatch.createStarted();
+		File outputFile = dataExportService.exportDataToBundle(excludeHistory);
 		
-		//create temp folder to do all work in
-		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
-		
-		File tempDir = tempDirPath.toFile();
-		tempDir.deleteOnExit();
-		String exportFileName = "oqm_export_" + ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT) + ".tar.gz";
-		File outputFile = new File(tempDir, exportFileName);
-		File dirToArchive = new File(tempDir, "oqm-export");
-		java.nio.file.Path dirToArchiveAsPath = dirToArchive.toPath();
-		
-		log.info("Temp dir: {}", tempDir);
-		log.info("Output file: {}", outputFile);
-		
-		if(!dirToArchive.mkdir()){
-			log.error("Failed to create export of data. Failed to create directory.");
-			return Response.serverError().entity("Failed to create export of data. Failed to create directory.").build();
-		}
-		
-		log.info("Writing service data to files.");
-		{
-			StopWatch sw = StopWatch.createStarted();
-			recordRecords(dirToArchive, this.imageService, !excludeHistory);
-			recordRecords(dirToArchive, this.storageBlockService, !excludeHistory);
-			recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory);
-			sw.stop();
-			log.info("Took {} to generate files.", sw);
-		}
-		
-		log.info("Compressing files into archive.");
-		if(!outputFile.createNewFile()){
-			log.error("Failed to create export of data. Failed to create archive file.");
-			return Response.serverError().entity("Failed to create export of data. Failed to create archive file.").build();
-		}
-		{
-			StopWatch sw = StopWatch.createStarted();
-			
-			try (
-				OutputStream fOut = new FileOutputStream(outputFile);
-				BufferedOutputStream buffOut = new BufferedOutputStream(fOut);
-				GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut);
-				TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)
-			) {
-				Files.walkFileTree(dirToArchiveAsPath, new SimpleFileVisitor<>() {
-					@Override
-					public FileVisitResult visitFile(java.nio.file.Path file,
-													 BasicFileAttributes attributes) {
-						// only copy files, no symbolic links
-						if (attributes.isSymbolicLink()) {
-							return FileVisitResult.CONTINUE;
-						}
-						
-						// get filename
-						java.nio.file.Path targetFile = dirToArchiveAsPath.relativize(file);
-						
-						try {
-							TarArchiveEntry tarEntry = new TarArchiveEntry(
-								file.toFile(), targetFile.toString()
-							);
-							tOut.putArchiveEntry(tarEntry);
-							Files.copy(file, tOut);
-							tOut.closeArchiveEntry();
-							System.out.printf("file : %s%n", file);
-						} catch (IOException e) {
-							System.err.printf("Unable to tar.gz : %s%n%s%n", file, e);
-						}
-						return FileVisitResult.CONTINUE;
-					}
-					
-					@Override
-					public FileVisitResult visitFileFailed(java.nio.file.Path file, IOException exc) {
-						System.err.printf("Unable to tar.gz : %s%n%s%n", file, exc);
-						return FileVisitResult.CONTINUE;
-					}
-				});
-				tOut.finish();
-			}
-			sw.stop();
-			log.info("Took {} to compress files.", sw);
-		}
-		
-		mainSw.stop();
-		log.info("Took {} total to generate output bundle.", mainSw);
 		Response.ResponseBuilder response = Response.ok(outputFile);
-		response.header("Content-Disposition", "attachment;filename=" + exportFileName);
+		response.header("Content-Disposition", "attachment;filename=" + outputFile.getName());
 		return response.build();
 	}
 	
+	
+	@POST
+	@Path("import/file/bundle")
+	@Operation(
+		summary = "."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response importData(
+		@Context SecurityContext securityContext,
+		@MultipartForm ImportBundleFileBody body
+	) throws IOException {
+		logRequestContext(this.jwt, securityContext);
+		
+		DataImportResult result = this.dataImportService.importBundle(body, this.userService.getFromJwt(this.jwt));
+		
+		return Response.ok(result).build();
+	}
 	
 	
 	//TODO:: prune histories

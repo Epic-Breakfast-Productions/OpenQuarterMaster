@@ -42,5 +42,4 @@ public abstract class EndpointProvider {
 	protected static boolean hasJwt(JsonWebToken jwt) {
 		return jwt != null && jwt.getClaimNames() != null;
 	}
-	
 }

@@ -48,7 +48,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Traced
 public abstract class MongoService<T extends MainObject, S extends SearchObject<T>> {
 	
-	public static String getCollectionName(Class<?> clazz) {
+	public static String getCollectionNameFromClass(Class<?> clazz) {
 		return clazz.getSimpleName();
 	}
 	
@@ -76,6 +76,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	/**
 	 * The name of the collection this service is in charge of
 	 */
+	@Getter
 	protected final String collectionName;
 	/**
 	 * The class this collection is in charge of. Used for logging.
@@ -97,7 +98,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 			objectMapper,
 			mongoClient,
 			database,
-			getCollectionName(clazz),
+			getCollectionNameFromClass(clazz),
 			clazz,
 			null
 		);

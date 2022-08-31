@@ -43,7 +43,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 			objectMapper,
 			mongoClient,
 			database,
-			getCollectionName(clazz) + COLLECTION_HISTORY_APPEND,
+			getCollectionNameFromClass(clazz) + COLLECTION_HISTORY_APPEND,
 			ObjectHistory.class,
 			null
 		);
