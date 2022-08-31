@@ -27,7 +27,31 @@
 								</h2>
 								<div id="importCollapse" class="accordion-collapse collapse" aria-labelledby="importHeading" data-bs-parent="#importExportAccordion">
 									<div class="accordion-body">
-										<strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+										<div class="accordion" id="importAccordion">
+											<div class="accordion-item">
+												<h2 class="accordion-header" id="importBulkHeading">
+													<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#importBulkCollapse" aria-expanded="true" aria-controls="importBulkCollapse">
+														Bulk Import
+													</button>
+												</h2>
+												<div id="importBulkCollapse" class="accordion-collapse collapse show" aria-labelledby="importBulkHeading" data-bs-parent="#importAccordion">
+													<div class="accordion-body">
+														<form id="bulkImportForm">
+															<div class="col-12 mb-3">
+																	<label for="importBulkFileInput" class="form-label">Exported bundle file:</label>
+																	<input class="form-control" type="file" id="importBulkFileInput" name="file">
+															</div>
+															<div class="col-12">
+																<button type="submit" class="btn btn-primary">
+																	<i class="fa-solid fa-file-import"></i>
+																	Import
+																</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -71,7 +95,32 @@
 	{/pageContent}
 	{#pageScript}
 		<script>
-		
+
+			var importBulkFileInput = $("#importBulkFileInput")[0];
+			
+			$("#bulkImportForm").submit(function (e){
+				e.preventDefault();
+
+				let formData = new FormData();
+				
+				
+				let file = importBulkFileInput.files[0];
+				
+				formData.append("fileName", file.name);
+				formData.append("file", file);
+				
+				doRestCall({
+					url: '/api/inventory/manage/import/file/bundle',
+					method: "post",
+					data: formData,
+					done: function (data){
+						console.log("Successfully imported the data.");
+						reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+					}
+				});
+			});
+			
+			
 		</script>
 	{/pageScript}
 {/include}

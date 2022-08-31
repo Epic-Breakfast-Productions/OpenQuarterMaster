@@ -123,6 +123,5 @@ public class InventoryManagement extends EndpointProvider {
 	
 	
 	//TODO:: prune histories
-	//TODO:: import bulk
-	
+	//TODO:: piecemeal import
 }

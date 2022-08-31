@@ -30,10 +30,18 @@ function doRestCall(
 	};
 
 	if (data != null) {
-		ajaxOps.contentType = "application/json; charset=UTF-8";
-		ajaxOps.dataType = 'json';
-		ajaxOps.data = JSON.stringify(data);
-		console.log("Sending json data: " + ajaxOps.data);
+		if( data instanceof FormData){
+			ajaxOps.cache= false;
+			ajaxOps.contentType= false;
+			ajaxOps.processData= false;
+			ajaxOps.data = data;
+			console.log("Sending form data.");
+		} else {
+			ajaxOps.contentType = "application/json; charset=UTF-8";
+			ajaxOps.dataType = 'json';
+			ajaxOps.data = JSON.stringify(data);
+			console.log("Sending json data: " + ajaxOps.data);
+		}
 	}
 
 	if (authorization) {
