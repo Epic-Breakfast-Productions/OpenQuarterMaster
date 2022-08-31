@@ -220,6 +220,7 @@ public class TestUserService {
 			add(UserRoles.INVENTORY_VIEW);
 			if (admin) {
 				add(UserRoles.USER_ADMIN);
+				add(UserRoles.INVENTORY_ADMIN);
 			}
 		}});
 		

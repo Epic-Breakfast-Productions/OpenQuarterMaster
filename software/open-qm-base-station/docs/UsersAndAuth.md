@@ -55,9 +55,10 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 
 ## User Roles
 
-| Role          | Description                                                                            |
-|---------------|:---------------------------------------------------------------------------------------|
-| user          | Given to everyone; required for any access.                                            |
-| userAdmin     | Required to look up or modify users beyond one's own. Given to the first created user. |
-| inventoryView | Required to view inventory related resources; Items, Storage Blocks, Images.           |
-| inventoryEdit | Required to make edits to inventory related resources; Items, Storage Blocks, Images.  |
+| Role           | Description                                                                            |
+|----------------|:---------------------------------------------------------------------------------------|
+| user           | Given to everyone; required for any access.                                            |
+| userAdmin      | Required to look up or modify users beyond one's own. Given to the first created user. |
+| inventoryView  | Required to view inventory related resources; Items, Storage Blocks, Images.           |
+| inventoryEdit  | Required to make edits to inventory related resources; Items, Storage Blocks, Images.  |
+| inventoryAdmin | Required to make admin actions to the inventory data stored.                           |

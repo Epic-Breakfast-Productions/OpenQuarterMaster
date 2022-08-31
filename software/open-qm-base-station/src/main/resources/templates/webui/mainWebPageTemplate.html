@@ -130,6 +130,12 @@ Ingests:
 			<i class="fas fa-users-cog"></i> User Admin
 		</a>
 	{/if}
+	{#if userInfo.getRoles().contains('inventoryAdmin')}
+		<div class="dropdown-divider"></div>
+		<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
+			<i class="fas fa-screwdriver-wrench"></i> Inventory Administration
+		</a>
+	{/if}
 	<div class="dropdown-divider"></div>
 	<a class="dropdown-item" href="#" id="logoutButton">
 		<i class="fas fa-sign-out-alt"></i> Logout

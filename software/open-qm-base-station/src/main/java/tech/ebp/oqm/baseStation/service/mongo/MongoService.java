@@ -30,6 +30,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -169,6 +170,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 */
 	public List<T> list() {
 		return this.list(null, null, null);
+	}
+	
+	public Iterator<T> iterator(){
+		return getCollection().find().iterator();
 	}
 	
 	/**

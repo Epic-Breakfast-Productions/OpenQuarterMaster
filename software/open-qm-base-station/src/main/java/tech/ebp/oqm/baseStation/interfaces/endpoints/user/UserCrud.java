@@ -115,6 +115,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 			if (this.getUserService().collectionEmpty()) {
 				roles.add(UserRoles.USER_ADMIN);
 				roles.add(UserRoles.INVENTORY_EDIT);
+				roles.add(UserRoles.INVENTORY_ADMIN);
 			}
 			builder.roles(roles);
 		}

@@ -22,6 +22,7 @@ import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.user.User;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -206,6 +207,10 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	
 	public List<ObjectHistory> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
 		return this.getHistoryService().list(filter, sort, pageOptions);
+	}
+	
+	public Iterator<ObjectHistory> historyIterator() {
+		return this.getHistoryService().iterator();
 	}
 	
 	public SearchResult<ObjectHistory> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){

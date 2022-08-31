@@ -6,4 +6,5 @@ public final class UserRoles {
 	
 	public static final String INVENTORY_VIEW = "inventoryView";
 	public static final String INVENTORY_EDIT = "inventoryEdit";
+	public static final String INVENTORY_ADMIN = "inventoryAdmin"; //TODO:: add to test keycloak, tests
 }
