@@ -39,6 +39,7 @@ public class PageLookOverTest extends WebUiTest {
 			Arguments.of(false, "/accountCreate", "Account Create"),
 			Arguments.of(true,  "/overview", "Overview"),
 			Arguments.of(true,  "/you", "Your Profile"),
+			Arguments.of(true,  "/inventoryAdmin", "Inventory Administration"),
 			Arguments.of(true,  "/images", "Images"),
 			Arguments.of(true,  "/storage", "Storage"),
 			Arguments.of(true,  "/items", "Items")
