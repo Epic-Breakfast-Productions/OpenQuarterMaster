@@ -16,8 +16,8 @@ This is an explanation of the menus.
     - remove plugin repo list
     - enable plugin
     - disable plugin
-  - Cleanup TODO
-    - Docker (`docker system prune --volumes`)
+  - Cleanup
+    - Docker
     - Reset data
 - Backups TODO
   - Choose backup location
