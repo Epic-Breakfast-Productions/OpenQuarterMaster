@@ -17,7 +17,7 @@ These are the steps to take to perform a release of the software:
    1. review Dockerfiles for base image version
    2. review dependencies for version updates
 2. Run _all_ tests:
-    1. `./gradlew clean test `
+    1. `./gradlew clean test`
     2. If it's been a while, review Dockerfiles for base image version
 3. Increment version of service accordingly in `build.gradle`
 4. Ensure everything committed and pushed to github. Check workflows.
