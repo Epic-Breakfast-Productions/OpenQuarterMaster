@@ -1,6 +1,6 @@
 {
 	"packageName":"open+quarter+master-manager-station+captain",
-	"version":"1.0.5-DEV",
+	"version":"1.0.6-DEV",
 	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
 	"maintainer": {
 		"name":"EBP"

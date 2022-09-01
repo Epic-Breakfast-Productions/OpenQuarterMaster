@@ -10,7 +10,7 @@
 #  - hwinfo
 #  - sponge (from moreutils)
 #  - jq
-SCRIPT_VERSION="1.0.5-DEV"
+SCRIPT_VERSION="1.0.6-DEV"
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
@@ -663,20 +663,21 @@ function displayOqmInstallStatusInfo() {
 		curPackageInfo=""
 
 		case "$pacMan" in
-			"apt")
+		"apt")
 			curPackageInfo="$(apt-cache show "$curPackage")"
 
 			text="${text}${curPackageInfo//$'\n'/\\n}\n"
 			# TODO:: filter for relevant info
 			;;
-			"yum")
+		"yum")
 			exitProg "Unsupported package management type."
 			;;
-			*)
-				exitProg "Unsupported package management type."
+		*)
+			exitProg "Unsupported package management type."
+			;;
 		esac
 
-		local serviceStatus;
+		local serviceStatus
 		local escapedPackage="$(systemd-escape "$curPackage.service")"
 		serviceStatus="$(systemctl status "$escapedPackage")"
 		if [ $? == 0 ]; then
@@ -827,6 +828,102 @@ function updatesDialog() {
 	done
 }
 
+function resetDataDialog() {
+	showDialog --title "Cleanup" \
+		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		1 "Cleanup docker images and resources" \
+		2 "RESET data" \
+		2>$USER_SELECT_FILE
+	updateSelection
+
+	case $SELECTION in
+	1)
+		showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+
+		# TODO::: check for any other steps?
+		docker system prune --volumes
+
+		showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
+		;;
+	2)
+		showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+
+		# TODO::: check for any other steps?
+		docker system prune --volumes
+
+		showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
+		;;
+	*)
+		return
+		;;
+	esac
+}
+
+function cleanupDialog() {
+	while true; do
+		showDialog --title "Cleanup" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Cleanup docker images and resources" \
+			2 "RESET data" \
+			2>$USER_SELECT_FILE
+		updateSelection
+
+		case $SELECTION in
+		1)
+			showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+
+			# TODO::: check for any other steps?
+			docker system prune --volumes
+
+			showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		2)
+			showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to backup your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			case $? in
+			0)
+				showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
+				systemctl stop open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+
+				rm -rf /data/oqm/db/*
+
+				sudo systemctl start open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+
+				showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
+				;;
+			*)
+				echo "Not resetting data."
+				;;
+			esac
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+
+function manageInstallDialog() {
+	while true; do
+		showDialog --title "Manage Install" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Select OQM Major Version TODO" \
+			2 "Plugins TODO" \
+			3 "Cleanup" \
+			2>$USER_SELECT_FILE
+
+		updateSelection
+
+		case $SELECTION in
+		3)
+			cleanupDialog
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+
 function mainUi() {
 	while true; do
 		showDialog --title "Main Menu" \
@@ -843,7 +940,8 @@ function mainUi() {
 		1)
 			getInfo
 			;;
-		2) # TODO: manage installation
+		2)
+			manageInstallDialog
 			;;
 		3) # TODO:manage backups
 			;;
@@ -985,7 +1083,6 @@ else
 		echo "Not updating base Station."
 		;;
 	esac
-	# TODO:: update
 fi
 
 #echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
