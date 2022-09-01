@@ -49,6 +49,9 @@ public class User extends ImagedMainObject {
 	private String email;
 	private String title;
 	
+	@lombok.Builder.Default
+	private boolean disabled = true;
+	
 	/*
 	 * Not used if service.authMode set to EXTERNAL
 	 */

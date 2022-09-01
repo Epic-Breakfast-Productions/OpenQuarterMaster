@@ -1,95 +1,123 @@
 {#include webui/mainWebPageTemplate title='Account Create' showNavbar=false showTitle=true}
-{#pageContent}
+	{#pageContent}
+		<div class="row">
+			<div class="col">
+				<a href="/" title="Back to Login">Back to Login</a>
+			</div>
+		</div>
+		
+		{#if firstUser}
+			<div class="alert alert-warning" role="alert">
+				<h4 class="alert-heading">First User!</h4>
+				<hr>
+				<p>
+					You are the first user to create an account. You will be made an admin of both users and data. You
+					will need to enable users after yourself to interact with data.
+				</p>
+				<p class="mb-0">
+					See the "User Administration" page for more information.
+				</p>
+			</div>
+			{#else}
+			<div class="alert alert-info" role="alert">
+				<h4 class="alert-heading">New User!</h4>
+				<hr>
+				<p>
+					You will need to be approved by an admin before being able to login and use the system.
+				</p>
+				<!-- TODO:: list admins to contact -->
+			</div>
+		{/if}
+		
+		
+		<hr/>
+		<div class="row">
+			<form id="userAccountCreateForm">
+				<div id="createMessageDiv"></div>
+				<div class="form-floating mb-1">
+					<input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
+					<label for="emailInput">Email address</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
+					<label for="usernameInput">Username</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
+					<label for="firstnameInput">First name</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="text" class="form-control" id="lastnameInput" placeholder="Last Name" required>
+					<label for="lastnameInput">Last name</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="text" class="form-control" id="titleInput" placeholder="Title">
+					<label for="titleInput">Title</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
+					<label for="passwordInput">Password</label>
+				</div>
+				<div class="form-floating mb-1">
+					<input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
+							required>
+					<label for="passwordConfirmInput">Password Confirm</label>
+				</div>
+				<button type="submit" class="btn btn-success btn-lg">Create User</button>
+			</form>
+		</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+			assertNotLoggedIn();
 
-<a href="/" title="Back to Login">Back to Login</a>
-<hr/>
-<div class="row">
-    <form id="userAccountCreateForm">
-        <div id="createMessageDiv"></div>
-        <div class="form-floating">
-            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
-            <label for="emailInput">Email address</label>
-        </div>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
-            <label for="usernameInput">Username</label>
-        </div>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
-            <label for="firstnameInput">First name</label>
-        </div>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="lastnameInput" placeholder="Last Name" required>
-            <label for="lastnameInput">Last name</label>
-        </div>
-        <div class="form-floating">
-            <input type="text" class="form-control" id="titleInput" placeholder="Title">
-            <label for="titleInput">Title</label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
-            <label for="passwordInput">Password</label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
-                   required>
-            <label for="passwordConfirmInput">Password Confirm</label>
-        </div>
-        <button type="submit" class="btn btn-success btn-lg">Create User</button>
-    </form>
-</div>
-{/pageContent}
-{#pageScript}
-    <script>
-assertNotLoggedIn();
+			$("#userAccountCreateForm").submit(function (event) {
+				event.preventDefault();
+				console.log("Submitting login form.");
 
-$("#userAccountCreateForm").submit(function(event){
-event.preventDefault();
-console.log("Submitting login form.");
+				if ($("#passwordInput").val() != $("#passwordConfirmInput").val()) {
+					addMessageToDiv($("#createMessageDiv"), "warning", "Password must match confirm!", null, null);
+					return;
+				}
 
-if($("#passwordInput").val() != $("#passwordConfirmInput").val()){
-addMessageToDiv($("#createMessageDiv"), "warning", "Password must match confirm!", null, null);
-return;
-}
+				var createRequestData = {
+					firstName: $("#firstnameInput").val(),
+					lastName: $("#lastnameInput").val(),
+					username: $("#usernameInput").val(),
+					email: $("#emailInput").val(),
+					title: $("#titleInput").val(),
+					password: $("#passwordInput").val()
+				};
 
-var createRequestData = {
-firstName: $("#firstnameInput").val(),
-lastName: $("#lastnameInput").val(),
-username: $("#usernameInput").val(),
-email: $("#emailInput").val(),
-title: $("#titleInput").val(),
-password: $("#passwordInput").val()
-};
+				doRestCall({
+					url: "/api/user",
+					method: "POST",
+					data: createRequestData,
+					async: false,
+					done: function (data) {
+						console.log("Response from user create request: " + JSON.stringify(data));
+						window.location.replace("/?message=User Registration Successful!&messageType=success");
+					},
+					fail: function (data) {
+						console.log("FAILED to create user: " + JSON.stringify(data));
+						var errMessages = "";
+						if (data.responseJSON.hasOwnProperty('error')) {
+							errMessages = data.responseJSON.error;
+						} else if (data.responseJSON.hasOwnProperty('parameterViolations')) {
+							data.responseJSON.parameterViolations.forEach(function (violation) {
+								errMessages += violation.message + "<br/>";
+							});
+						} else {
+							errMessages = "Unknown or unspecified error";
+						}
 
-doRestCall({
-url: "/api/user",
-method: "POST",
-data: createRequestData,
-async: false,
-done: function(data) {
-console.log("Response from user create request: " + JSON.stringify(data));
-window.location.replace("/?message=User Registration Successful!&messageType=success");
-},
-fail: function(data){
-console.log("FAILED to create user: " + JSON.stringify(data));
-var errMessages = "";
-if(data.responseJSON.hasOwnProperty('error')){
-errMessages = data.responseJSON.error;
-} else if(data.responseJSON.hasOwnProperty('parameterViolations')){
-data.responseJSON.parameterViolations.forEach(function(violation){
-errMessages += violation.message + "<br/>";
-});
-} else {
-errMessages = "Unknown or unspecified error";
-}
-
-addMessageToDiv($("#createMessageDiv"), "warning", errMessages, "Failed to register", null);
+						addMessageToDiv($("#createMessageDiv"), "warning", errMessages, "Failed to register", null);
 
 
-}//fail
-});
-console.log("Done.");
-});
-    </script>
-{/pageScript}
+					}//fail
+				});
+				console.log("Done.");
+			});
+		</script>
+	{/pageScript}
 {/include}

@@ -137,12 +137,15 @@ public class Auth extends EndpointProvider {
 		if (user == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User not found.")).build();
 		}
+		if(user.isDisabled()){
+			return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage("Account Disabled. Contact an admin for details.")).build();
+		}
+		
+		//TODO:: check for # of login attempts?
 		
 		if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password.")).build();
 		}
-		
-		//TODO:: additional checks on locked status, etc
 		
 		log.info("User {} authenticated, generating token and returning.", user.getId());
 		

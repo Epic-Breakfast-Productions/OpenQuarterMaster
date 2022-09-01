@@ -104,7 +104,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		@Valid UserCreateRequest ucr
 	) {
 		assertSelfAuthMode(this.authMode);
-		
+		log.info("Creating new user.");
 		User.Builder builder = User.builder(ucr);
 		
 		{
@@ -113,9 +113,14 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				add(UserRoles.INVENTORY_VIEW);
 			}};
 			if (this.getUserService().collectionEmpty()) {
+				log.info("New user is the first user to enter system. Making them an admin.");
+				builder.disabled(false);
 				roles.add(UserRoles.USER_ADMIN);
 				roles.add(UserRoles.INVENTORY_EDIT);
 				roles.add(UserRoles.INVENTORY_ADMIN);
+			} else {
+				log.info("New user is not the first. Disabling.");
+				builder.disabled(true);
 			}
 			builder.roles(roles);
 		}

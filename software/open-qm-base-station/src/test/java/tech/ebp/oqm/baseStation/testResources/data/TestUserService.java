@@ -214,6 +214,7 @@ public class TestUserService {
 		builder.lastName(FAKER.name().lastName());
 		builder.email(FAKER.internet().emailAddress());
 		builder.title(FAKER.company().profession());
+		builder.disabled(false);
 		builder.roles(new HashSet<>() {{
 			add(UserRoles.USER);
 			add(UserRoles.INVENTORY_EDIT);

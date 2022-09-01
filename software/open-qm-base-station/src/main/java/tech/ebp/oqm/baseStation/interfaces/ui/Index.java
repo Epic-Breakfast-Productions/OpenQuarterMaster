@@ -11,6 +11,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 
 import javax.annotation.security.PermitAll;
@@ -25,10 +26,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
+import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
 @Traced
 @Slf4j
@@ -51,6 +54,9 @@ public class Index extends UiProvider {
 	@Inject
 	Tracer tracer;
 	
+	@Inject
+	UserService userService;
+	
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
 	
@@ -69,6 +75,11 @@ public class Index extends UiProvider {
 		@QueryParam("returnPath") String returnPath
 	) throws MalformedURLException, URISyntaxException {
 		logRequestContext(jwt, securityContext);
+		
+		if(this.authMode == SELF && this.userService.collectionEmpty()){
+			return Response.seeOther(new URI("/accountCreate")).build();
+		}
+		
 		
 		String redirectUri = externInteractionCallbackUrl;
 		
@@ -111,6 +122,11 @@ public class Index extends UiProvider {
 		@Context SecurityContext securityContext
 	) {
 		logRequestContext(jwt, securityContext);
-		return this.setupPageTemplate(accountCreate, tracer);
+		
+		if(this.authMode == EXTERNAL){
+			//redirect to login, message about
+		}
+		
+		return this.setupPageTemplate(accountCreate, tracer).data("firstUser", this.userService.collectionEmpty());
 	}
 }

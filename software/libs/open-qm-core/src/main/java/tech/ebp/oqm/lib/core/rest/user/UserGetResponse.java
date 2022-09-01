@@ -30,6 +30,7 @@ public class UserGetResponse extends AttKeywordMainObject {
 	private String lastName;
 	private String email;
 	private String title;
+	private boolean disabled;
 	private Map<String, String> externIds = new HashMap<>();
 	private Set<String> roles = new HashSet<>();
 	private Map<String, String> attributes = new HashMap<>();
@@ -42,6 +43,7 @@ public class UserGetResponse extends AttKeywordMainObject {
 				   .lastName(user.getLastName())
 				   .email(user.getEmail())
 				   .title(user.getTitle())
+				   .disabled(user.isDisabled())
 				   .externIds(user.getExternIds())
 				   .roles(user.getRoles())
 				   .attributes(user.getAttributes());
