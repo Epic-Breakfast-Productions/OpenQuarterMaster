@@ -26,7 +26,7 @@ Ingests:
 	
 	<!-- CSS -->
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
-	<link href="/lib/bootstrap/bootstrap-5.1.3-dist/bootswatch.yeti.min.css" rel="stylesheet">
+	<link href="/lib/bootstrap/bootstrap-5.2.0-dist/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/fontawesome-free-6.1.2-web/css/all.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/res/css/main.css">
@@ -57,7 +57,7 @@ Ingests:
 	<ul class="navbar-nav me-auto">
 		<li class="nav-item">
 			<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
-				<i class="fas fa-tachometer-alt"></i> Overview
+				<i class="fas fa-tachometer-alt fa-fw"></i> Overview
 				{#if page is 'overview'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
@@ -65,7 +65,7 @@ Ingests:
 		</li>
 		<li class="nav-item">
 			<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
-				<i class="fas fa-boxes"></i> Storage
+				<i class="fas fa-boxes fa-fw"></i> Storage
 				{#if page is 'storage'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
@@ -73,7 +73,7 @@ Ingests:
 		</li>
 		<li class="nav-item">
 			<a class="nav-link {#if page is 'items'}active{/if}" href="/items"><i
-						class="fas fa-balance-scale"></i> Items
+						class="fas fa-balance-scale fa-fw"></i> Items
 				{#if page is 'items'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
@@ -82,7 +82,7 @@ Ingests:
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
 					aria-haspopup="true" aria-expanded="false"><i
-						class="fas fa-infinity"></i> Other</a>
+						class="fas fa-infinity fa-fw"></i> Other</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
 					<i class="fas fa-images"></i> Images
@@ -122,24 +122,24 @@ Ingests:
 		<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
 	<div class="dropdown-menu">
 	<a class="dropdown-item" href="/you" id="youLink">
-		<i class="fas fa-user"></i> You
+		<i class="fas fa-user fa-fw"></i> You
 	</a>
 	{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
 	<div class="dropdown-divider"></div>
 	{/if}
 	{#if userInfo.getRoles().contains('userAdmin')}
 		<a class="dropdown-item" href="#" id="userAdminLink">
-			<i class="fas fa-users-cog"></i> User Administration
+			<i class="fas fa-users-cog fa-fw"></i> User Administration
 		</a>
 	{/if}
 	{#if userInfo.getRoles().contains('inventoryAdmin')}
 		<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-			<i class="fas fa-screwdriver-wrench"></i> Inventory Administration
+			<i class="fas fa-screwdriver-wrench fa-fw"></i> Inventory Administration
 		</a>
 	{/if}
 	<div class="dropdown-divider"></div>
 	<a class="dropdown-item" href="#" id="logoutButton">
-		<i class="fas fa-sign-out-alt"></i> Logout
+		<i class="fas fa-sign-out-alt fa-fw"></i> Logout
 	</a>
 	</div>
 	</li>
@@ -216,7 +216,7 @@ Ingests:
 
 <!-- scripts -->
 <script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
 <script src="/res/js/spinnerHelpers.js"></script>
