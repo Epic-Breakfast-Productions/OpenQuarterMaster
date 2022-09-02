@@ -7,7 +7,9 @@ Documentation pages:
  - [Quickstart Guide](Quickstart%20Guide.md)
  - [User Guide](User%20Guide.md)
 
+See also:
 
+ - [Setting up Kiosk Mode](../../docs/guides/Kiosk%20Mode.md)
 
 
 ## Dev Notes

@@ -278,6 +278,8 @@
 {/search/storage/StorageSearchSelectModal}
 {#search/image/imageSearchSelectModal otherModalId="addEditModal"}
 {/search/image/imageSearchSelectModal}
+    {#inputs/item/itemAddSubTransModal otherModalId=""}
+    {/inputs/item/itemAddSubTransModal}
 {/modals}
 
 {#scripts}
@@ -292,6 +294,7 @@
 <script src="/res/js/carousel.js"></script>
 
 <script src="/res/js/item/ItemEditing.js"></script>
+<script src="/res/js/item/ItemAddSubTrans.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
@@ -385,6 +388,7 @@ var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
 
+var addEditModal = $("#addEditModal");
 var addEditFormId = $("#addEditFormId");
 var addEditFormMessages = $("#addEditFormMessages");
 var addEditModalLabel = $('#addEditModalLabel');
