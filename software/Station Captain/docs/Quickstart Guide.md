@@ -20,9 +20,9 @@ System Requirements:
 
 Steps:
 
-1. Download the installer for your system [here on the releases page](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases?q=Station+captain&expanded=true).
-2. Install the package using:
-  - `sudo apt install <deb file>.deb`
-3. Run the main script command: `sudo oqm-captain`
+ 1. Download the installer for your system [here on the releases page](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases?q=Station+captain&expanded=true).
+ 2. Install the package using:
+    - `sudo apt install <deb file>.deb`
+ 3. Run the main script command: `sudo oqm-captain`
 
 For usage documentation, see the [User Guide](User%20Guide.md)
