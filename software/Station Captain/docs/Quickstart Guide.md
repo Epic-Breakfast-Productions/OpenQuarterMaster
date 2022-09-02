@@ -15,6 +15,9 @@ System Requirements:
 - A Modern Linux OS
   - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`yum`) systems.
 - 4gb of RAM
+- Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8
+  - Proven arm boards:
+    - Raspberry Pi 4B
 
 ## Installation
 
@@ -24,5 +27,9 @@ Steps:
  2. Install the package using:
     - `sudo apt install <deb file>.deb`
  3. Run the main script command: `sudo oqm-captain`
+    - The first run should prompt you to do an initial install. Do so.
+    - Installation should be complete once this finishes. You can exit the script.
+ 4. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster tool.
+    - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
 
 For usage documentation, see the [User Guide](User%20Guide.md)
