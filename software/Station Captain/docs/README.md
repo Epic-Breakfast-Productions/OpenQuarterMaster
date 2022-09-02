@@ -2,24 +2,19 @@
 
 [Back](../)
 
+Documentation pages:
+
+ - [Quickstart Guide](Quickstart%20Guide.md)
+ - [User Guide](User%20Guide.md)
 
 
-## Requirements
 
-This is a set of requirements for the entire system, not necessarily just the station captain.
 
-- Linux OS
-- Software:
-  - Podman/Docker
-  - `dialog`/`xdialog`
-  - `reboot`
-  - 
-
-## Notes
+## Dev Notes
 
 Using [Dialog](http://www.unixcl.com/2009/12/linux-dialog-utility-short-tutorial.html)
 
-## TODOs
+## Tool TODOs
 
 Future:
 

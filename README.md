@@ -1,3 +1,5 @@
+<img src="media/logo/Quarter%20Master%20Main%20Logo.svg" alt="Open QuarterMaster Logo">
+
 # OpenQuarterMaster
 
 <!--TODO:: fix images to make this work well ![Open Quartermaster Logo](media/logo/Quarter Master Main Logo_fixed.svg)-->
@@ -7,7 +9,9 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable.
+Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
+
+**For a quick start running on your own computer, check out [Station Captain](software/Station%20Captain)**
 
 See the [software](software) folder for more information!
 
