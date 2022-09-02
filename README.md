@@ -1,6 +1,6 @@
-<img src="media/logo/Quarter%20Master%20Main%20Logo.svg" alt="Open QuarterMaster Logo">
+<img src="media/logo/Quarter%20Master%20Main%20Logo%20Outlined.svg" alt="Open QuarterMaster Logo">
 
-# OpenQuarterMaster
+# Open QuarterMaster
 
 <!--TODO:: fix images to make this work well ![Open Quartermaster Logo](media/logo/Quarter Master Main Logo_fixed.svg)-->
 
