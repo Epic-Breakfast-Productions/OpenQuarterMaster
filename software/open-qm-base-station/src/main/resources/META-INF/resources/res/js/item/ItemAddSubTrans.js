@@ -1,4 +1,5 @@
 var itemAddSubtractTransferModal = $("#itemAddSubtractTransferModal");
+var itemAddSubtractTransferFormMessages = $("#itemAddSubtractTransferFormMessages");
 var itemAddSubtractTransferForm = $("#itemAddSubtractTransferForm");
 var itemAddSubtractTransferFormItemImg = $("#itemAddSubtractTransferFormItemImg");
 var itemAddSubtractTransferFormItemNameLabel = $("#itemAddSubtractTransferFormItemNameLabel");
@@ -15,6 +16,7 @@ var itemAddSubtractTransferFormItemData = undefined;
 
 function resetAddSubTransForm() {
 	itemAddSubtractTransferFormItemData = undefined;
+	itemAddSubtractTransferFormMessages.text("");
 	itemAddSubtractTransferFormItemNameLabel.text("");
 	itemAddSubtractTransferFormItemIdInput.val("");
 	itemAddSubtractTransferFormItemTypeInput.val("");
@@ -27,15 +29,34 @@ function resetAddSubTransForm() {
 	itemAddSubtractTransferFromControls.val("");
 }
 
-function getSelectedStorageBlock(selectInput){
+function getSelectedStorageBlock(selectInput) {
 	return itemAddSubtractTransferFormItemData.storageMap[selectInput.val()];
 }
 
-function getSelectedFrom(){
+function getSelectedFrom() {
 	return getSelectedStorageBlock(itemAddSubtractTransferFromSelect);
 }
-function getSelectedTo(){
+
+function getSelectedTo() {
 	return getSelectedStorageBlock(itemAddSubtractTransferFromSelect);
+}
+
+function addAmountFormControls(container) {
+	let formElements = $('<div class="row">' +
+		'  <div class="col">' +
+		'    <div class="input-group mt-2 mb-3">' +
+		'      <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0" min="0" required="">' +
+		'      <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' +
+		'      </select>' +
+		'    </div>' +
+		'  </div> ' +
+		'</div>');
+
+
+	if (container != undefined) {
+		container.append(formElements);
+	}
+	return formElements;
 }
 
 /**
@@ -44,20 +65,21 @@ function getSelectedTo(){
  */
 function fillAddSubTransFormControlsForAmountSimple() {
 	console.log("Setting up addSubTransForm controls for AMOUNT_SIMPLE");
-
-
+	let controls = addAmountFormControls(itemAddSubtractTransferFromControls);
+	updateCompatibleUnits(itemAddSubtractTransferFormItemData.unit.string, itemAddSubtractTransferFromControls);
 }
 
 function fillAddSubTransFormControlsForAmountList() {
 	console.log("Setting up addSubTransForm controls for AMOUNT_LIST");
-
+	//TODO
 }
 
 function fillAddSubTransFormControlsForTracked() {
 	console.log("Setting up addSubTransForm controls for AMOUNT_TRACKED");
+	//TODO
 }
 
-function fillAddSubTransFormControls(){
+function fillAddSubTransFormControls() {
 	let itemType = itemAddSubtractTransferFormItemTypeInput.val();
 	switch (itemType) {
 		case "AMOUNT_SIMPLE":
@@ -73,6 +95,7 @@ function fillAddSubTransFormControls(){
 }
 
 function setupAddSubTransFormFromToControls() {
+	itemAddSubtractTransferFromControls.html("");
 	let operationVal = itemAddSubtractTransferOpSelect.val();
 	console.log("Setting up addSubTransForm for " + operationVal);
 	switch (operationVal) {
@@ -136,3 +159,62 @@ function setupAddSubTransForm(itemId) {
 	});
 }
 
+function getStoredDataFromItemAddSubtractTransferForm() {
+	let data;
+	switch (itemAddSubtractTransferFormItemTypeInput.val()) {
+		case "AMOUNT_SIMPLE":
+			data = {
+				storedType: "AMOUNT",
+				amount: getQuantityObj(
+					itemAddSubtractTransferFromControls.find("input[name=amountStored]").val(),
+					itemAddSubtractTransferFromControls.find("select[name=amountStoredUnit]").val()
+				)
+			}
+			break;
+		//TODO:: others
+		default:
+			console.error("Unimplemented storage type.");
+			return;
+	}
+
+	return data;
+}
+
+itemAddSubtractTransferForm.on("submit", function (e) {
+	e.preventDefault();
+	console.log("Submitting operation request.");
+
+	let data = getStoredDataFromItemAddSubtractTransferForm();
+	let endpoint = "/api/inventory/item/" + itemAddSubtractTransferFormItemIdInput.val() + "/";
+	let method = undefined;
+
+	switch (itemAddSubtractTransferOpSelect.val()) {
+		case "add":
+			endpoint += itemAddSubtractTransferToSelect.val();
+			method = "PUT";
+			break;
+		case "subtract":
+			endpoint += itemAddSubtractTransferFromSelect.val();
+			method = "DELETE";
+			break;
+		case "transfer":
+			endpoint += itemAddSubtractTransferFromSelect.val() + "/" + itemAddSubtractTransferToSelect.val();
+			method = "PUT";
+			break;
+	}
+
+	doRestCall({
+		url: endpoint,
+		data: data,
+		method: method,
+		done: function (data) {
+			reloadPageWithMessage("Operation successful!", "success", "Success!");
+		},
+		fail: function (errs) {
+			//TODO:: handle better
+			addMessageToDiv(itemAddSubtractTransferFormMessages, "danger", "Failed to do action: " + errs, "Failed", null);
+		}
+	});
+
+
+});

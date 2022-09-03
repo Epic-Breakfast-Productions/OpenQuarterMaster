@@ -449,30 +449,14 @@ function haveStored(){
     return storedContainer.children().length > 0;
 }
 
-function updateCompatibleUnits(){
-    var curSelected = addEditUnitInput.val();
-    
-    doRestCall({
-        url: "/api/info/unitCompatibility/" + curSelected,
-        extraHeaders: { accept:"text/html" },
-        done: function (data){
-            compatibleUnitOptions = data;
-            
-            storedContainer.find(".unitInput").each(function (i, selectInput){
-                var selectInputJq = $(selectInput);
-                selectInputJq.html(compatibleUnitOptions);
-                selectInputJq.change();
-            });
-        }
-    });
-}
-updateCompatibleUnits();
+
+updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
 
 function handleItemUnitChange(){
     if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
         //TODO:: handle changing back to old value
     } else {
-        updateCompatibleUnits();
+        updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
     }
 }
 
@@ -488,7 +472,7 @@ function resetAddEditForm(){
     addEditUnitInput.val($("#addEditUnitInput option:first").val());
     
     setIdAttField();
-    updateCompatibleUnits();
+    updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
     
     addEditImagesSelected.text("");
     addEditKeywordDiv.text("");

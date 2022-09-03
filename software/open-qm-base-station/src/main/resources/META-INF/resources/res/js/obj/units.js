@@ -15,3 +15,31 @@ function getUnitOptions(selectedVal){
 //    }
     return output;
 }
+
+function updateCompatibleUnits(unitToCompatWith, containerToSearch){
+    doRestCall({
+        url: "/api/info/unitCompatibility/" + unitToCompatWith,
+        extraHeaders: { accept:"text/html" },
+        done: function (data){
+            compatibleUnitOptions = data;
+
+            containerToSearch.find(".unitInput").each(function (i, selectInput){
+                var selectInputJq = $(selectInput);
+                selectInputJq.html(compatibleUnitOptions);
+                selectInputJq.change();
+            });
+        }
+    });
+}
+
+function getQuantityObj(value, unit){
+    let output = {
+        unit: {
+            string: unit
+        },
+        scale: "ABSOLUTE",
+        value: value
+    };
+
+    return output;
+}

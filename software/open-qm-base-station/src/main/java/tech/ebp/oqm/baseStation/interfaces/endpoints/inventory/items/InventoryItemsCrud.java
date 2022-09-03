@@ -1,6 +1,8 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.items;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
@@ -356,7 +358,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	
-	
 	@PUT
 	@Path("{itemId}/{storageBlockId}")
 	@Operation(
@@ -389,14 +390,18 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		log.info("Adding to item");
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item.add(
-			new ObjectId(storageBlockId),
-			Utils.OBJECT_MAPPER.treeToValue(
-				addObject,
-				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			),
-			true
-		);
+		try {
+			item.add(
+				new ObjectId(storageBlockId),
+				Utils.OBJECT_MAPPER.treeToValue(
+					addObject,
+					((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+				),
+				true
+			);
+		} catch(JsonMappingException | JsonParseException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Could not parse data given: " + e.getMessage()).build();
+		}
 		
 		this.getObjectService().update(item);
 		
@@ -435,13 +440,17 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item.subtract(
-			new ObjectId(storageBlockId),
-			Utils.OBJECT_MAPPER.treeToValue(
-				addObject,
-				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			)
-		);
+		try {
+			item.subtract(
+				new ObjectId(storageBlockId),
+				Utils.OBJECT_MAPPER.treeToValue(
+					addObject,
+					((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+				)
+			);
+		} catch(JsonMappingException | JsonParseException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Could not parse data given: " + e.getMessage()).build();
+		}
 		
 		this.getObjectService().update(item);
 		
@@ -481,14 +490,18 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item.transfer(
-			new ObjectId(storageBlockIdFrom),
-			new ObjectId(storageBlockIdTo),
-			Utils.OBJECT_MAPPER.treeToValue(
-				addObject,
-				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			)
-		);
+		try {
+			item.transfer(
+				new ObjectId(storageBlockIdFrom),
+				new ObjectId(storageBlockIdTo),
+				Utils.OBJECT_MAPPER.treeToValue(
+					addObject,
+					((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+				)
+			);
+		} catch(JsonMappingException | JsonParseException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Could not parse data given: " + e.getMessage()).build();
+		}
 		
 		this.getObjectService().update(item);
 		
