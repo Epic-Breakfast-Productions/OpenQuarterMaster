@@ -1373,7 +1373,7 @@ function setupView(itemId){
                 //TODO:: do this after, as async call
                 doRestCall({
                     spinnerContainer: null,
-                    url: "/api/storage/" + key,
+                    url: "/api/inventory/storage-block/" + key,
                     async: false,
                     done: function(data){
                         curBlockName = data.label;

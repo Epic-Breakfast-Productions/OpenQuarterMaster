@@ -19,16 +19,27 @@ Ingests:
 		<div class="row">
 			<div class="col">
 				<label for="itemAddSubtractTransferOpSelect" class="form-label">Action:</label>
-				<select id="itemAddSubtractTransferOpSelect" class="form-select" aria-label="Action to take">
+				<select id="itemAddSubtractTransferOpSelect" class="form-select" aria-label="Action to take" onchange="setupAddSubTransFormFromToControls();">
 					<option value="add" selected>Add</option>
 					<option value="subtract">Subtract</option>
 					<option value="transfer">Transfer</option>
 				</select>
 			</div>
+			<div class="col" id="itemAddSubtractTransferFromSelectContainer">
+				<label for="itemAddSubtractTransferFromSelect" class="form-label">From:</label>
+				<select id="itemAddSubtractTransferFromSelect" class="form-select" aria-label="Storage block to take from">
+				</select>
+			</div>
+			<div class="col" id="itemAddSubtractTransferToSelectContainer">
+				<label for="itemAddSubtractTransferToSelect" class="form-label">To:</label>
+				<select id="itemAddSubtractTransferToSelect" class="form-select" aria-label="Storage block to add to">
+				</select>
+			</div>
 		</div>
 		<hr />
 		<div class="row">
-			<div class="col">
+			<div class="col" id="itemAddSubtractTransferFromControls">
+			
 			</div>
 		</div>
 	</form>
