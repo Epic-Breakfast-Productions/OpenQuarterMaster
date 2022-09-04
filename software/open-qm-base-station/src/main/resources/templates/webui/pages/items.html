@@ -371,17 +371,11 @@ function toggleAddEditProductSearchPane(){
     addEditProductSearchPane.toggle();
 }
 function hideAddEditProductSearchPane(){
-    addEditProductSearchPane.toggle();
+    addEditProductSearchPane.hide();
 }
 function showAddEditProductSearchPane(){
-    addEditProductSearchPane.toggle();
+    addEditProductSearchPane.show();
 }
-
-
-
-
-
-
 
 
 var keywordInputTemplate = $('#keywordInputTemplate');
@@ -569,10 +563,10 @@ function setupAddEditForEdit(itemId){
                         },
                         function(){
                             let addItemField = newStorageBody.find(".identifierValueInput")[0];
-                            let addItemButton = newStorageBody.find(".addTrackedItemButton")[0];
+                            let addItemButton = newStorageBody.find(".addTrackedItemButton");
                             Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
                                 addItemField.value = curItemIdentifier;
-                                addItemButton.click();
+                                addItemButton.trigger("click"); //.click();
                                 
                                 let storedContList = storageBlockEntriesContainer.find(".storedContainer");
                                 setStoredItemVales(
@@ -1233,12 +1227,14 @@ function getAmountStoredContent(stored){
 
 function getAmountListStoredContent(blockId, storedList){
     console.log("Getting view content for list amount stored.");
-    let accordId = "itemViewStored"+blockId+"Accordion";
     
     
-    let i = 0;
     let accordContent = "";
-    storedList.forEach(function (curStored){
+    
+    if(storedList.length > 0) {
+        let accordId = "itemViewStored"+blockId+"Accordion";
+        let i = 0;
+        storedList.forEach(function (curStored) {
             accordContent += addViewAccordionItem(
                     accordId + i,
                     getStoredViewContent(curStored, "AMOUNT_LIST"),
@@ -1246,33 +1242,45 @@ function getAmountListStoredContent(blockId, storedList){
                     "AMOUNT_LIST"
             );
             i++;
-    });
-    
+        });
+        
+        accordContent = '<div class="col accordion" id="'+accordId+'">'+
+                accordContent +
+                '</div>';
+    } else {
+        accordContent = '<div class="col"><h4>Nothing currently stored.</h4></div>'
+    }
     
     return '<div class="row"> ' +
-            '<div class="col accordion" id="'+accordId+'">'+
-            accordContent +
-    '</div>'+
+        accordContent +
     '</div>';
 }
 
 function getTrackedStoredContent(blockId, trackedMap){
     console.log("Getting view content for tracked stored.");
-    let accordId = "itemViewStored"+blockId+"Accordion";
     
     let accordContent = "";
-    Object.keys(trackedMap).forEach(key => {
-        accordContent += addViewAccordionItem(
-                accordId + key,
-                getStoredViewContent(trackedMap[key], "TRACKED"),
-                key
-        );
-    });
+    let storageIds = Object.keys(trackedMap);
+    
+    if(storageIds.length > 0) {
+        let accordId = "itemViewStored"+blockId+"Accordion";
+        storageIds.forEach(key => {
+            accordContent += addViewAccordionItem(
+                    accordId + key,
+                    getStoredViewContent(trackedMap[key], "TRACKED"),
+                    key
+            );
+        });
+        
+        accordContent = '<div class="col accordion" id="'+accordId+'">'+
+                accordContent +
+                '</div>';
+    } else {
+        accordContent = '<div class="col"><h4>Nothing currently stored.</h4></div>'
+    }
     
     return '<div class="row"> ' +
-            '<div class="col accordion" id="'+accordId+'">'+
             accordContent +
-            '</div>'+
             '</div>';
 }
 
