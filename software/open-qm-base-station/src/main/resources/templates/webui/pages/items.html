@@ -1339,7 +1339,7 @@ function setupView(itemId){
                 itemViewValPerUnit.text(data.valuePerUnit);
             }
             foreachStoredType(
-                    data.storedType,
+                    data.storageType,
                     showAmountStoredPricePerUnit,
                     showAmountStoredPricePerUnit,
                     function(){
@@ -1365,7 +1365,7 @@ function setupView(itemId){
                 });
                 
                 foreachStoredType(
-                        data.storedType,
+                        data.storageType,
                         function (){
                             addViewStorageBlocksAccordionItem(
                                     key,
