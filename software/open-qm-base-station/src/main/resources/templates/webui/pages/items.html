@@ -552,7 +552,8 @@ function setupAddEditForEdit(itemId){
                         },
                         function (){
                             data.storageMap[curStorageBlockId].forEach(function(curStorageBlock){
-                                newStorageBody.find(".addAmountStoredButton").trigger("click");
+                                let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
+                                addNewAmountStored(curId, curId);
     
                                 let storedContList = storageBlockEntriesContainer.find(".storedContainer");
                                 setStoredItemVales(
@@ -566,7 +567,8 @@ function setupAddEditForEdit(itemId){
                             let addItemButton = newStorageBody.find(".addTrackedItemButton");
                             Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
                                 addItemField.value = curItemIdentifier;
-                                addItemButton.trigger("click"); //.click();
+                                let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
+                                addNewTrackedStored(curId, addItemButton);
                                 
                                 let storedContList = storageBlockEntriesContainer.find(".storedContainer");
                                 setStoredItemVales(
