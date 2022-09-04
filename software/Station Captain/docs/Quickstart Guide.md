@@ -25,7 +25,7 @@ Steps:
 
  1. Download the installer for your system [here on the releases page](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases?q=Station+captain&expanded=true).
  2. Install the package using:
-    - `sudo apt install <deb file>.deb`
+    - `sudo apt install ./<deb file>.deb`
  3. Run the main script command: `sudo oqm-captain`
     - The first run should prompt you to do an initial install. Do so.
     - Installation should be complete once this finishes. You can exit the script.
