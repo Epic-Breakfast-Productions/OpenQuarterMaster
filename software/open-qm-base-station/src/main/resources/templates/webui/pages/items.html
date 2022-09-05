@@ -643,7 +643,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
     return  '<div class="mb-3 ">\n'+
             '    <label class="form-label">Condition Percentage</label>\n' +
             '    <div class="input-group">\n'+
-            '        <input type="number" max="100" min="0" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader($(this).parent(), \''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
+            '        <input type="number" max="100" min="0" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
             '        <span class="input-group-text" id="addon-wrapping">%</span>\n'+ //TODO:: better label of better to worse
             '    </div>\n'+
             '</div>\n' +
@@ -653,7 +653,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
             '</div>\n' +
             '<div class="mb-3">\n'+
             '    <label class="form-label">Expires</label>\n' +
-            '    <input type="date" class="form-control storedExpiredInput" name="expires" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')"')+'>\n'+ //TODO:: enforce future date?
+            '    <input type="date" class="form-control storedExpiredInput" name="expires" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: enforce future date?
             //TODO:: note to leave blank if not applicable
             '</div>\n' +
             imageInputTemplate.html() +
@@ -673,8 +673,8 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
  */
 function getAmountStoredFormElements(headerId, toRemoveId) {
     return '<div class="input-group mt-2 mb-3">\n'+
-            '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">\n'+
-            '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
+            '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(\''+headerId+'\')">\n'+
+            '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
             '</div>\n'+
             getCommonStoredFormElements(headerId, toRemoveId);
 }
@@ -688,7 +688,7 @@ function getAmountStoredFormElements(headerId, toRemoveId) {
 function getTrackedStoredFormElements(headerId, toRemoveId) {
     return '<div class="mb-3">\n'+
             '    <label class="form-label">Identifier:</label>\n' +
-            '    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(this, \''+headerId+'\')" required>\n'+ // TODO:: populate
+            '    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(\''+headerId+'\')" required>\n'+ // TODO:: populate
             '</div>\n' +
             '<div class="mb-3">\n'+
             '    <label class="form-label">Identifying Details</label>\n' +
@@ -697,9 +697,16 @@ function getTrackedStoredFormElements(headerId, toRemoveId) {
             getCommonStoredFormElements(headerId, toRemoveId);
 }
 
-function addEditUpdateStoredHeader(caller, headerId){
-    let header = $("#"+headerId);
-    let parentElem = $(header.parent().get(0));
+function addEditUpdateStoredHeader(containerOrHeaderId){
+    let parentElem;
+    let header;
+    if(typeof containerOrHeaderId === 'string' || containerOrHeaderId instanceof String){
+        header = $("#"+containerOrHeaderId);
+        parentElem = $(header.parent().get(0));
+    } else {
+        parentElem = containerOrHeaderId;
+        header = parentElem.find(".accordion-header");
+    }
     
     let headerAmountDisplay = header.find(".addEditAmountDisplay");
     let headerUnitDisplay = header.find(".addEditUnitDisplay");
@@ -774,7 +781,7 @@ function createNewAmountStored(formContentId, parentId, add=true){
     if(add){
         addNewAmountStored(output, formContentId);
     }
-    addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
+    addEditUpdateStoredHeader(id);
     updateStorageNumHeld(output);
     return output;
 }
@@ -827,7 +834,7 @@ function createNewTrackedStored(formContentId, caller, add = true){
     );
     output.find("[name=identifier]").val(trackedId);
     
-    addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
+    addEditUpdateStoredHeader(id);
     updateStorageNumHeld(output);
     if(add) {
         createNewTrackedStored(output, formContentId);
