@@ -538,11 +538,7 @@ function setupAddEditForEdit(itemId){
             );
     
             Object.keys(data.storageMap).forEach(curStorageBlockId => {
-                let newStorageBody = addStorageBlockAccord("", curStorageBlockId);
-                
-                getStorageBlockLabel(curStorageBlockId, function (blockName){
-                    newStorageBody.parent().parent().find(".storageBlockName").text(blockName);
-                });
+                let newStorageBody = createStorageBlockAccord("", curStorageBlockId);
                 
                 let storageBlockEntriesContainer = newStorageBody.find(".storageBlockEntriesContainer");
                 
@@ -553,13 +549,13 @@ function setupAddEditForEdit(itemId){
                         function (){
                             data.storageMap[curStorageBlockId].forEach(function(curStorageBlock){
                                 let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
-                                addNewAmountStored(curId, curId);
+                                let newAmtStored = createNewAmountStored(curId, curId, false);
     
-                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
                                 setStoredItemVales(
-                                        $(storedContList[storedContList.length - 1]),
+                                        newAmtStored,
                                         curStorageBlock
                                 );
+                                storageBlockEntriesContainer.append(newAmtStored);
                             });
                         },
                         function(){
@@ -568,18 +564,22 @@ function setupAddEditForEdit(itemId){
                             Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
                                 addItemField.value = curItemIdentifier;
                                 let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
-                                addNewTrackedStored(curId, addItemButton);
+                                let trackedStored = createNewTrackedStored(curId, addItemButton, false);
                                 
-                                let storedContList = storageBlockEntriesContainer.find(".storedContainer");
                                 setStoredItemVales(
-                                        $(storedContList[storedContList.length - 1]),
+                                        trackedStored,
                                         data.storageMap[curStorageBlockId][curItemIdentifier]
                                 );
+                                storageBlockEntriesContainer.append(trackedStored);
                             });
                             addItemField.value = "";
                         }
                 );
-                
+                addStorageBlockAccord(newStorageBody);
+    
+                getStorageBlockLabel(curStorageBlockId, function (blockName){
+                    newStorageBody.find(".storageBlockName").text(blockName);
+                });
             });
         }
     });
@@ -698,8 +698,8 @@ function getTrackedStoredFormElements(headerId, toRemoveId) {
 }
 
 function addEditUpdateStoredHeader(caller, headerId){
-    let parentElem = $($(caller).parent().parent().get(0));
     let header = $("#"+headerId);
+    let parentElem = $(header.parent().get(0));
     
     let headerAmountDisplay = header.find(".addEditAmountDisplay");
     let headerUnitDisplay = header.find(".addEditUnitDisplay");
@@ -743,8 +743,12 @@ function addEditUpdateStoredHeader(caller, headerId){
     }
 }
 
+function addNewAmountStored(amountStored, formContentId){
+    $('#'+formContentId).append(amountStored);
+}
+
 var numAmountStoredClicked=0;
-function addNewAmountStored(formContentId, parentId){
+function createNewAmountStored(formContentId, parentId, add=true){
     var id="addEditAmountStoredEntry-"+(numAmountStoredClicked++);
     var headerId=id+"-header";
     var collapseId = id + "-collapse";
@@ -767,17 +771,22 @@ function addNewAmountStored(formContentId, parentId){
             '</div>'
     );
     
-    $('#'+formContentId).append(output);
+    if(add){
+        addNewAmountStored(output, formContentId);
+    }
     addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
     updateStorageNumHeld(output);
     return output;
 }
 
+function createNewTrackedStored(trackedStored, formContentId){
+    $('#'+formContentId).append(trackedStored);
+}
+
 var numTrackedStoredClicked=0;
-function addNewTrackedStored(formContentId, caller){
+function createNewTrackedStored(formContentId, caller, add = true){
     console.log("Adding new tracked storage item");
     
-    let formContent = $('#'+formContentId);
     let trackedStoredIdInput = $(caller).parent().find('.identifierValueInput').get(0);
     let trackedId = trackedStoredIdInput.value.trim();
     
@@ -818,9 +827,11 @@ function addNewTrackedStored(formContentId, caller){
     );
     output.find("[name=identifier]").val(trackedId);
     
-    formContent.append(output);
     addEditUpdateStoredHeader(output.find(".amountStoredUnitInput").get(0), id);
     updateStorageNumHeld(output);
+    if(add) {
+        createNewTrackedStored(output, formContentId);
+    }
     return output;
 }
 
@@ -833,7 +844,11 @@ function updateStorageNumHeld(caller){
     // );
 }
 
-function addStorageBlockAccord(blockName, blockId){
+function addStorageBlockAccord(newBlockAccord){
+    storedContainer.append(newBlockAccord);
+}
+
+function createStorageBlockAccord(blockName, blockId, add = true){
     let accordId = "addEditItemStorageAssoc-" + blockId;
     let existantAccord = storedContainer.find("#" + accordId);
     if(existantAccord.length){
@@ -865,7 +880,7 @@ function addStorageBlockAccord(blockName, blockId){
       '        </div>\n'+
       '    </div>\n'
     );
-    storedContainer.append(newStorage);
+    
     let newAccordBody = newStorage.find("#" + accordBodyId);
     let accordBodyButtonWrapper = newAccordBody.find("#"+accordButtonWrapperId);
     let accordBodyFormContentWrapper = newAccordBody.find("#"+accordFormContentId);
@@ -882,7 +897,7 @@ function addStorageBlockAccord(blockName, blockId){
                 console.log("Setting up storage for AMOUNT_LIST");
     
                 accordBodyButtonWrapper.append($(
-                        '<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="addNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
+                        '<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="createNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
                         '    <i class="fas fa-plus"></i> Add\n'+
                         '</button>\n'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
@@ -895,7 +910,7 @@ function addStorageBlockAccord(blockName, blockId){
                 accordBodyButtonWrapper.append($(
                         '<div class="input-group mt-2">\n'+
                         '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
-                        '    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="addNewTrackedStored(\''+accordFormContentId+'\', this);">' +
+                        '    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="createNewTrackedStored(\''+accordFormContentId+'\', this);">' +
                         '        <i class="fas fa-plus"></i> Add\n'+
                         '    </button>\n'+
                         '</div>'+
@@ -906,12 +921,15 @@ function addStorageBlockAccord(blockName, blockId){
             }
     );
     
-    return newAccordBody;
+    if(add) {
+        addStorageBlockAccord(newStorage);
+    }
+    return newStorage;
 }
 
 function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
     console.log("Selected " + blockId + " - " + blockName);
-    var newStorageBody = addStorageBlockAccord(blockName, blockId);
+    var newStorageBody = createStorageBlockAccord(blockName, blockId);
 }
 
 function buildStoredObj(storedContainer, type){
