@@ -128,8 +128,8 @@ Ingests:
 	<div class="dropdown-divider"></div>
 	{/if}
 	{#if userInfo.getRoles().contains('userAdmin')}
-		<a class="dropdown-item" href="#" id="userAdminLink">
-			<i class="fas fa-users-cog fa-fw"></i> User Administration
+		<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
+			<i class="fas fa-users-gear fa-fw"></i> User Administration
 		</a>
 	{/if}
 	{#if userInfo.getRoles().contains('inventoryAdmin')}

@@ -37,11 +37,11 @@ import java.util.List;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class InventoryAdminUi extends UiProvider {
+public class UserAdminUi extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/inventoryAdmin")
-	Template inventoryAdminTemplate;
+	@Location("webui/pages/userAdmin")
+	Template userAdminTemplate;
 	
 	@Inject
 	UserService userService;
@@ -60,8 +60,8 @@ public class InventoryAdminUi extends UiProvider {
 	Tracer tracer;
 	
 	@GET
-	@Path("inventoryAdmin")
-	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	@Path("userAdmin")
+	@RolesAllowed(UserRoles.USER_ADMIN)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,
@@ -72,7 +72,7 @@ public class InventoryAdminUi extends UiProvider {
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
+			this.setupPageTemplate(userAdminTemplate, tracer, ugr)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
