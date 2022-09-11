@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -41,6 +42,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -75,6 +77,8 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		this.passwordService = passwordService;
 		this.authMode = authMode;
 	}
+	
+	
 	
 	
 	@POST
@@ -190,10 +194,54 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return this.getSearchResultResponseBuilder(output).build();
 	}
 	
+	
+	@PUT
+	@Path("{id}")
+	@Operation(
+		summary = "Updates a particular User.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object updated.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = User.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(UserRoles.USER_ADMIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public User update(
+		@Context SecurityContext securityContext,
+		@PathParam String id,
+		ObjectNode updates
+	) {
+		return super.update(securityContext, id, updates);
+	}
+	
+	
 	@Path("{id}")
 	@GET
 	@Operation(
-		summary = "Gets a particular object."
+		summary = "Gets a particular user."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -267,7 +315,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				   .build();
 	}
 	
-	//TODO:: update, delete
 	
 	@GET
 	@Path("{id}/history")
@@ -331,7 +378,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("user")
+	@RolesAllowed("userAdmin")
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
@@ -341,4 +388,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		
 		return this.getObjectService().searchHistory(searchObject, false);
 	}
+	
+	//TODO:: update self
 }

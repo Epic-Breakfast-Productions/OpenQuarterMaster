@@ -62,6 +62,7 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	public void ensureObjectValid(boolean newObject, User newOrChangedObject) {
 		super.ensureObjectValid(newObject, newOrChangedObject);
 		//TODO:: username/email not existant
+		//TODO:: ensure enabled userAdmin exists
 	}
 	
 	/**
