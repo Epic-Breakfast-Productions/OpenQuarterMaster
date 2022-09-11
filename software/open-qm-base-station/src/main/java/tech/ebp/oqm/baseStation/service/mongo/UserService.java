@@ -10,6 +10,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
+import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
 
@@ -18,10 +19,13 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.or;
 import static tech.ebp.oqm.baseStation.service.JwtService.JWT_USER_TITLE_CLAIM;
 
@@ -62,7 +66,33 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	public void ensureObjectValid(boolean newObject, User newOrChangedObject) {
 		super.ensureObjectValid(newObject, newOrChangedObject);
 		//TODO:: username/email not existant
-		//TODO:: ensure enabled userAdmin exists
+		
+		if(this.authMode == AuthMode.SELF) {
+			if (newOrChangedObject.isDisabled()) {
+				List<User> adminUsers = this.list(
+					and(
+						eq("disabled", false),
+						in("roles", UserRoles.USER_ADMIN)
+					),
+					null,
+					null
+				);
+				
+				if (adminUsers.size() == 1) {
+					if (adminUsers.get(0).getId().equals(newOrChangedObject.getId())) {
+						if (
+							newOrChangedObject.isDisabled() ||
+							!newOrChangedObject.getRoles().contains(UserRoles.USER_ADMIN)
+						) {
+							throw new IllegalArgumentException("Must always have at least one enabled user admin.");
+						}
+					}
+				}
+				
+				
+			}
+		}
+		
 	}
 	
 	/**

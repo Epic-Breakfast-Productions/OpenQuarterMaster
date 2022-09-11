@@ -64,6 +64,9 @@
 					<td>{result.getLastName}</td>
 					<td>{result.isDisabled()}</td>
 					<td>
+					<button type="button" class="btn btn-sm btn-primary" title="View User" data-bs-toggle="modal" data-bs-target="#userViewModal" onclick="setupUserView('{result.getId()}');">
+						<i class="fas fa-eye"></i>
+					</button>
 					<button type="button" class="btn btn-sm btn-warning" title="Edit Roles" data-bs-toggle="modal" data-bs-target="#addEditUserRolesModal" onclick="setupAddEditUserRoles('{result.getId()}');">
 						<i class="fas fa-edit"></i>
 					</button>
@@ -92,8 +95,134 @@
     </div>
 </div>
 	{/pageContent}
+	{#modals}
+		{#modal id='userView' large=true title='User View'}
+			<div class="row">
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Name:</h5>
+							<div id="userViewName">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Username:</h5>
+							<div id="userViewUsername">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Email:</h5>
+							<div id="userViewEmail">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Title:</h5>
+							<div id="userViewTitle">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Disabled?:</h5>
+							<div id="userViewDisabled">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Roles:</h5>
+							<div id="userViewRoles">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<div class="row">
+			{#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+			{#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+		</div>
+		<div class="row">
+		<div class="col">
+		{#objView/objHistoryView containerId='userHistory'}{/objView/objHistoryView}
+	</div>
+	</div>
+	{/modal}
+	{/modals}
+	{#scripts}
+		<script src="/res/js/obj/objView.js"></script>
+	{/scripts}
 	{#pageScript}
 		<script>
+			var userViewModalLabel = $("#userViewModalLabel");
+			var userViewName = $("#userViewName");
+			var userViewUsername = $("#userViewUsername");
+			var userViewEmail = $("#userViewEmail");
+			var userViewTitle = $("#userViewTitle");
+			var userViewDisabled = $("#userViewDisabled");
+			var userViewRoles = $("#userViewRoles");
+			var viewKeywordsSection = $("#viewKeywordsSection");
+			var viewAttsSection = $("#viewAttsSection");
+			var userHistory = $("#userHistory");
+			
+			function resetUserView(){
+				userViewModalLabel.text("");
+				userViewName.text("");
+				userViewUsername.text("");
+				userViewEmail.text("");
+				userViewTitle.text("");
+				userViewDisabled.text("");
+				userViewRoles.text("");
+				userHistory.text("");
+				
+				clearHideKeywordDisplay(viewKeywordsSection);
+				clearHideAttDisplay(viewAttsSection);
+			}
+			
+			function setupUserView(userId){
+				resetUserView();
+				doRestCall({
+					url: "/api/user/" + userId,
+					method: "GET",
+					done: function (data) {
+						userViewModalLabel.text(data.username);
+						userViewName.text(data.firstName + " " + data.lastName);
+						userViewUsername.text(data.username);
+						userViewEmail.text(data.email);
+						userViewTitle.text(data.title);
+						userViewDisabled.text(data.disabled?"Yes":"No");
+						
+						let roleData = "";
+						data.roles.forEach(function(curRole){
+							roleData += '<span class="user-select-all badge bg-secondary">'+curRole+'</span>';
+						});
+						userViewRoles.html(roleData);
+
+						processKeywordDisplay(viewKeywordsSection, data.keywords);
+						processAttDisplay(viewAttsSection, data.attributes);
+						displayObjHistory(userHistory, "/user/"+data.id);
+					}
+				});
+			}
+			
+			
+			
 			function enableUser(userId){
 				doRestCall({
 					url: "/api/user/" + userId,
@@ -126,6 +255,9 @@
 				doRestCall({
 					url: "/api/user/" + userId,
 					method: "GET",
+					fail: function (data){
+						alert("Error: " + data);
+					},
 					done: function (data){
 						if(!confirm("Are you sure? User "+data.username+" will no longer have access.")){
 							return;
@@ -136,6 +268,9 @@
 							method: "PUT",
 							data: {
 								disabled: true
+							},
+							fail: function (data){
+								alert("Error: " + data);
 							},
 							done: function (data) {
 								reloadPageWithMessage("Disabled user "+data.username+"!", "success", "Success!");
