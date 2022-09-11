@@ -1,22 +1,100 @@
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.user.User> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title="User Administration" titleIcon='users-gear' page='userAdmin'}
-    {#pageStyle}
-    
-    {/pageStyle}
-    {#pageContent}
-        <div class="row">
-            <div class="col">
-                TODO:
-                
-                - enable/disable users
-                - manage user roles
-            
+	{#pageStyle}
+	
+	{/pageStyle}
+	{#pageContent}
+	<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+        {#include tags/search/searchForm id="userSearchForm" action='/userAdmin' showKeywords=true showAttributes=true}
+        
+        {/include}
+                </div>
             </div>
         </div>
-    
-    {/pageContent}
-    {#pageScript}
-        <script>
-        
-        </script>
-    {/pageScript}
+    </div>
+</div>
+		<div class="row">
+    <div class="col table-responsive">
+        <table class=" table table-bordered table-striped table-hover table-sm">
+		<thead>
+		<tr>
+			<td colspan="6" class="text-center">
+				{#paginationButtons searchFormId="userSearchForm" pagingCalculations=pagingCalculations}{/paginationButtons}
+			</td>
+		</tr>
+		<tr>
+			<th scope="col">Username</th>
+			<th scope="col">Title</th>
+			<th scope="col">Email</th>
+			<th scope="col">Firstname</th>
+			<th scope="col">Lastname</th>
+			<th scope="col">Disabled?</th>
+			<th scope="col" width="150px">Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		{#if searchResults.getResults().isEmpty()}
+			<tr>
+			<td colspan="6" class="text-center">
+			<h2>
+				No Users. How did you get this? please contact the devs.
+			</h2>
+			</td>
+			</tr>
+			{#else}
+				{#for result in searchResults.getResults()}
+					<tr class="itemResultRow align-middle {#if result.isDisabled()}table-danger{/if}">
+					<td>{result.getUsername()}</td>
+					<td>{result.getTitle()}</td>
+					<td>{result.getEmail()}</td>
+					<td>{result.getFirstName()}</td>
+					<td>{result.getLastName}</td>
+					<td>{result.isDisabled()}</td>
+					<td>
+					<button type="button" class="btn btn-sm btn-warning" title="Edit Roles" data-bs-toggle="modal" data-bs-target="#addEditUserRolesModal" onclick="setupAddEditUserRoles('{result.getId()}');">
+						<i class="fas fa-edit"></i>
+					</button>
+					{#if result.isDisabled()}
+					<button type="button" class="btn btn-sm btn-success" title="Enable User" >
+						<i class="fas fa-thumbs-up"></i>
+					</button>
+					{#else}
+						<button type="button" class="btn btn-sm btn-danger" title="Disable User" >
+							<i class="fas fa-thumbs-down"></i>
+						</button>
+					{/if}
+					</td>
+					</tr>
+				{/for}
+		{/if}
+		</tbody>
+		<tfoot>
+		<tr>
+		<td colspan="6" class="text-center">
+		{#paginationButtons searchFormId="userSearchForm" pagingCalculations=pagingCalculations}{/paginationButtons}
+		</td>
+	</tr>
+		</tfoot>
+        </table>
+    </div>
+</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+		
+		</script>
+	{/pageScript}
 {/include}

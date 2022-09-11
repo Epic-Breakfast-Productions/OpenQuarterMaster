@@ -4,15 +4,20 @@ import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
+import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
+import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
+import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
@@ -29,6 +34,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @Traced
@@ -59,6 +66,9 @@ public class UserAdminUi extends UiProvider {
 	@Inject
 	Tracer tracer;
 	
+	@ConfigProperty(name = "service.authMode")
+	AuthMode authMode;
+	
 	@GET
 	@Path("userAdmin")
 	@RolesAllowed(UserRoles.USER_ADMIN)
@@ -66,13 +76,26 @@ public class UserAdminUi extends UiProvider {
 	public Response overview(
 		@Context SecurityContext securityContext,
 		@CookieParam("jwt_refresh") String refreshToken
-	) {
+	) throws URISyntaxException {
+		if(this.authMode != AuthMode.SELF){
+			return Response.seeOther(new URI("/")).build();
+		}
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		
+		UserSearch search = new UserSearch();
+		SearchResult<User> userResults = userService.search(search, true);
+		
+		search.getPagingOptions(true);
+		PagingCalculations pagingCalculations = new PagingCalculations(search.getPagingOptions(true), userResults);
+		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(userAdminTemplate, tracer, ugr)
+				.data("showSearch", false)
+				.data("searchResults", userResults)
+				.data("pagingCalculations", pagingCalculations)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
