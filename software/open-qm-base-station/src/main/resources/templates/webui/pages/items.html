@@ -790,6 +790,8 @@ function createNewTrackedStored(trackedStored, formContentId){
     $('#'+formContentId).append(trackedStored);
 }
 
+
+
 var numTrackedStoredClicked=0;
 function createNewTrackedStored(formContentId, caller, add = true){
     console.log("Adding new tracked storage item");
@@ -837,7 +839,7 @@ function createNewTrackedStored(formContentId, caller, add = true){
     addEditUpdateStoredHeader(id);
     updateStorageNumHeld(output);
     if(add) {
-        createNewTrackedStored(output, formContentId);
+        $(caller).parent().parent().parent().find(".storageBlockEntriesContainer").append(output);
     }
     return output;
 }
