@@ -9,3 +9,13 @@ function setNavSearch(action, name, caller){
     navSearchSelectButton.text(caller.textContent);
 }
 
+function setCheckboxState(checkbox, checked = false){
+    var check = checkbox.prop('checked');
+    if(checked) {
+        $('.checker').find('span').addClass('checked');
+        $('.checkbox').prop('checked', true);
+    } else {
+        $('.checker').find('span').removeClass('checked');
+        $('.checkbox').prop('checked', false);
+    }
+}

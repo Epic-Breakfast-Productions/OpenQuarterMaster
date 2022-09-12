@@ -185,14 +185,21 @@
 							<label class="form-check-label" for="userRoleInput{roleEntry.key()}">{roleEntry.key()}</label>
 						</div>
 						{/for}
-						
 					</div>
 				</div>
 				<hr />
-				{#inputs/keywordInput}
-				{/inputs/keywordInput}
-				{#inputs/attInput}
-				{/inputs/attInput}
+				<div class="row">
+					<div class="col">
+						{#inputs/keywordInput}
+						{/inputs/keywordInput}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						{#inputs/attInput}
+						{/inputs/attInput}
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -310,6 +317,53 @@
 							done: function (data) {
 								reloadPageWithMessage("Disabled user "+data.username+"!", "success", "Success!");
 							}
+						});
+					}
+				});
+			}
+			
+			var userEditItemForm = $("#userEditItemForm");
+			var userEditModalLabel = $("#userEditModalLabel");
+			var userEditRolesInputs = $("#userEditRolesInputs");
+			
+			var userEditKeywordDiv = userEditItemForm.find(".keywordInputDiv");
+			var userEditAttDiv = userEditItemForm.find(".attInputDiv");
+
+			var userEditRolesInputsMap = { };
+
+			userEditRolesInputs.find(".roleInput").each(function (i, selectInput){
+				userEditRolesInputsMap[selectInput.value] = $(selectInput);
+			});
+			
+			function resetUserEditForm(){
+				userEditModalLabel.text("");
+				for (const [key, input] of Object.entries(userEditRolesInputsMap)) {
+					input.prop("checked", false);
+				}
+
+				userEditKeywordDiv.text("");
+				userEditAttDiv.text("");
+			}
+
+			function setupUserEdit(userId){
+				resetUserEditForm();
+
+				doRestCall({
+					url: "/api/user/" + userId,
+					method: "GET",
+					fail: function (data) {
+						alert("Error: " + data);
+					},
+					done: function (data) {
+						addKeywordInputs(userEditKeywordDiv, data.keywords);
+						addAttInputs(userEditAttDiv, data.attributes);
+						data.roles.forEach(function (role){
+							let curRoleInput = userEditRolesInputsMap[role];
+							
+							if(curRoleInput == undefined){
+								return
+							}
+							curRoleInput.prop("checked", true);
 						});
 					}
 				});
