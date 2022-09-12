@@ -1,6 +1,8 @@
 {@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.user.User> searchResults}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title="User Administration" titleIcon='users-gear' page='userAdmin'}
+	{#styleSheets}
+	{/styleSheets}
 	{#pageStyle}
 	
 	{/pageStyle}
@@ -67,7 +69,7 @@
 					<button type="button" class="btn btn-sm btn-primary" title="View User" data-bs-toggle="modal" data-bs-target="#userViewModal" onclick="setupUserView('{result.getId()}');">
 						<i class="fas fa-eye"></i>
 					</button>
-					<button type="button" class="btn btn-sm btn-warning" title="Edit Roles" data-bs-toggle="modal" data-bs-target="#addEditUserRolesModal" onclick="setupAddEditUserRoles('{result.getId()}');">
+					<button type="button" class="btn btn-sm btn-warning" title="Edit User" data-bs-toggle="modal" data-bs-target="#userEditModal" onclick="setupUserEdit('{result.getId()}');">
 						<i class="fas fa-edit"></i>
 					</button>
 					{#if result.isDisabled()}
@@ -164,9 +166,42 @@
 	</div>
 	</div>
 	{/modal}
+{#modal id='userEdit' large=true title='User edit' submitForm='userEditItemForm' submitDismiss=false}
+	<div class="row">
+		<div class="col">
+			<div id="userEditFormMessages"></div>
+			<form id="userEditItemForm">
+				<input type="hidden" id="addEditFormId" value="">
+				<div class="mb-3 row">
+					<label class="col-sm-2 col-form-label">Roles</label>
+					<div class="col-sm-10" id="userEditRolesInputs">
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" id="userRoleDisabledInput" role="switch" checked disabled>
+							<label class="form-check-label" for="userRoleDisabledInput">user</label>
+						</div>
+						{#for roleEntry in selectableRolesMap}
+						<div class="form-check form-switch">
+							<input class="form-check-input roleInput" type="checkbox" role="switch" id="userRoleInput{roleEntry.key()}" value="{roleEntry.key()}">
+							<label class="form-check-label" for="userRoleInput{roleEntry.key()}">{roleEntry.key()}</label>
+						</div>
+						{/for}
+						
+					</div>
+				</div>
+				<hr />
+				{#inputs/keywordInput}
+				{/inputs/keywordInput}
+				{#inputs/attInput}
+				{/inputs/attInput}
+			</form>
+		</div>
+	</div>
+
+	{/modal}
 	{/modals}
 	{#scripts}
 		<script src="/res/js/obj/objView.js"></script>
+		<script src="/res/js/obj/objEdit.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>

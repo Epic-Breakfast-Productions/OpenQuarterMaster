@@ -96,6 +96,7 @@ public class UserAdminUi extends UiProvider {
 				.data("showSearch", false)
 				.data("searchResults", userResults)
 				.data("pagingCalculations", pagingCalculations)
+				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
