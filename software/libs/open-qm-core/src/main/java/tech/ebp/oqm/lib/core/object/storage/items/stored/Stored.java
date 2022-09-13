@@ -42,6 +42,11 @@ public abstract class Stored {
 	private LocalDate expires = null;
 	
 	/**
+	 * If the stored has expired.
+	 */
+	private boolean expired = false;
+	
+	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
 	@Max(100)
