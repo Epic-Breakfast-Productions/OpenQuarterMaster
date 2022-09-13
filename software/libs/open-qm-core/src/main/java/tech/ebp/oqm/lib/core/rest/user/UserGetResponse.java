@@ -9,8 +9,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +35,7 @@ public class UserGetResponse extends AttKeywordMainObject {
 	private boolean disabled;
 	private Map<String, String> externIds = new HashMap<>();
 	private Set<String> roles = new HashSet<>();
+	private List<String> keywords = new ArrayList<>();
 	private Map<String, String> attributes = new HashMap<>();
 	
 	public static Builder builder(User user) {
@@ -46,6 +49,7 @@ public class UserGetResponse extends AttKeywordMainObject {
 				   .disabled(user.isDisabled())
 				   .externIds(user.getExternIds())
 				   .roles(user.getRoles())
+				   .keywords(user.getKeywords())
 				   .attributes(user.getAttributes());
 	}
 	
