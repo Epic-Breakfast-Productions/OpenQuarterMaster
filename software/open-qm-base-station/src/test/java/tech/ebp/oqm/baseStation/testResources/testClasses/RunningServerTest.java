@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.testResources.testClasses;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -30,6 +31,15 @@ import java.util.stream.StreamSupport;
 @Execution(ExecutionMode.SAME_THREAD)
 //@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
+	
+	@BeforeEach
+	public void beforeEach(TestInfo testInfo){
+		if(SeleniumGridServerManager.RECORD) {
+			TestResourceLifecycleManager.BROWSER_CONTAINER.beforeTest(
+				new OurTestDescription(testInfo)
+			);
+		}
+	}
 	
 	@AfterEach
 	public void afterEach(

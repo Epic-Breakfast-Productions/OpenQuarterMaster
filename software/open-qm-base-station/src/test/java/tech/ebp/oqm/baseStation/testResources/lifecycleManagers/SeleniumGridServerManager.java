@@ -20,6 +20,7 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 @Slf4j
 public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleManager {
+	
 	public static final boolean RECORD = true;
 	
 	private BrowserWebDriverContainer<?> browserWebDriverContainer = null;
@@ -31,7 +32,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 	
 	@Override
 	public Map<String, String> start() {
-		if(!uiTest){
+		if (!uiTest) {
 			log.info("Test not calling for ui.");
 			return Map.of();
 		}
@@ -40,9 +41,10 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 			StopWatch sw = StopWatch.createStarted();
 			
 			this.browserWebDriverContainer = new BrowserWebDriverContainer<>()
-									.withCapabilities(new FirefoxOptions());
+												 .withCapabilities(new FirefoxOptions())
+												 .withReuse(false);
 			
-			if(RECORD) {
+			if (RECORD) {
 				File recordingDir = new File(
 					"build/seleniumRecordings/"
 					+ new SimpleDateFormat("yyyy-MM-dd_HH-mm").format(new Date())
@@ -53,6 +55,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 					recordingDir,
 					VncRecordingContainer.VncRecordingFormat.MP4
 				);
+				
 			}
 			this.browserWebDriverContainer.start();
 			
@@ -78,16 +81,20 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 	
 	@Override
 	public void stop() {
-		if(this.browserWebDriverContainer == null){
+		if (this.browserWebDriverContainer == null) {
 			log.info("Web browser container never started.");
 			return;
 		}
 		
 		log.info("Stopping web driver container.");
 		
-		this.driver.close();
-		this.browserWebDriverContainer.close();
-		this.browserWebDriverContainer.stop();
+		if (this.driver != null) {
+			this.driver.close();
+		}
+		if (this.browserWebDriverContainer != null) {
+			this.browserWebDriverContainer.close();
+			this.browserWebDriverContainer.stop();
+		}
 		
 		this.driver = null;
 		this.browserWebDriverContainer = null;
@@ -102,13 +109,20 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 		}
 	}
 	
+	public void beforeTest(TestDescription description) {
+		if (this.browserWebDriverContainer != null) {
+			this.browserWebDriverContainer.beforeTest(description);
+			
+		}
+	}
+	
 	@Override
 	public void init(Map<String, String> initArgs) {
 		QuarkusTestResourceLifecycleManager.super.init(initArgs);
 		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(TestResourceLifecycleManager.UI_TEST_ARG, Boolean.toString(this.uiTest)));
 	}
 	
-//	public WebDriver getDriver() {
-//		return this.browserWebDriverContainer.getWebDriver();
-//	}
+	//	public WebDriver getDriver() {
+	//		return this.browserWebDriverContainer.getWebDriver();
+	//	}
 }
