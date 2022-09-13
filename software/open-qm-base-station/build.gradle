@@ -114,12 +114,9 @@ test {
  *
  * Used by the `makeInstallers.sh script to get the version.
  */
-class PrintVersionTask extends DefaultTask {
-	@TaskAction
-	def printVersion() {
+tasks.register('printVersion') {
+	doLast {
 		println project.version
 	}
 }
-
-tasks.register('printVersion', PrintVersionTask)
 
