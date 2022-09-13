@@ -42,7 +42,7 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	//webjars
-	implementation 'org.webjars:jquery:3.6.0'
+	implementation 'org.webjars:jquery:3.6.1'
 	implementation 'org.webjars:bootstrap:5.2.0'
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
