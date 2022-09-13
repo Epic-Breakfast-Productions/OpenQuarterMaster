@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.4-DEV'
+version '1.0.5-DEV'
 
 repositories {
 	mavenLocal()
@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.13.4'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.4'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
 
 	//if need ObjectIds, BsonIgnore
 	implementation 'org.mongodb:bson:4.6.1' //matched to quarkus version
@@ -43,7 +43,7 @@ dependencies {
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
 
-	implementation 'org.passay:passay:1.6.1'
+	implementation 'org.passay:passay:1.6.2'
 	implementation 'commons-io:commons-io:2.11.0'
 	implementation 'commons-codec:commons-codec:1.15'
 
@@ -63,7 +63,7 @@ dependencies {
 	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
 	testImplementation 'net.datafaker:datafaker:1.5.0'
-	testImplementation 'ch.qos.logback:logback-classic:1.2.11'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.0'
 	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
 }
