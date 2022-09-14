@@ -16,6 +16,7 @@ import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
+import tech.ebp.oqm.baseStation.service.scheduled.ExpiryProcessor;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
 
 import javax.annotation.security.RolesAllowed;
@@ -56,6 +57,9 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
 	UserService userService;
+	
+	@Inject
+	ExpiryProcessor expiryProcessor;
 	
 	@GET
 	@Path("export")
@@ -121,6 +125,31 @@ public class InventoryManagement extends EndpointProvider {
 		return Response.ok(result).build();
 	}
 	
+	
+	@GET
+	@Path("processExpiry")
+	@Operation(
+		summary = "Manually triggers the process to search for expired items and processing thereof."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Process triggered."
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	public Response triggerSearchAndProcessExpiring(
+		@Context SecurityContext securityContext
+	) throws IOException {
+		logRequestContext(this.jwt, securityContext);
+		
+		expiryProcessor.searchAndProcessExpiring();
+		
+		return Response.ok().build();
+	}
 	
 	//TODO:: prune histories
 	//TODO:: piecemeal import

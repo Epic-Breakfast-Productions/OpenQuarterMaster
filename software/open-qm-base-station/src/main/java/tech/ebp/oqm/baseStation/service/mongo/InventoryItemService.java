@@ -26,6 +26,11 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.regex;
 
+/**
+ *
+ * TODO::
+ *    - Figure out how to handle expired state when adding, updating
+ */
 @Traced
 @Slf4j
 @ApplicationScoped

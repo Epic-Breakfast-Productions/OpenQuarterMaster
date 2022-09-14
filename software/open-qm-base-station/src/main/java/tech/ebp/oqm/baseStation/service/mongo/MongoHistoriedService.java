@@ -113,6 +113,12 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		}
 	}
 	
+	public T update(T object, HistoryEvent event) throws DbNotFoundException {
+		object = super.update(object);
+		this.addHistoryFor(object, event);
+		return object;
+	}
+	
 	/**
 	 * TODO:: description
 	 *

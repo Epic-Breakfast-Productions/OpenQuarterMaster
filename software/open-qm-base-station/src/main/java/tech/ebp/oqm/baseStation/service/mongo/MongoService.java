@@ -129,7 +129,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	/**
-	 * Gets a list of entries based on the options given.
+	 * Gets an iterator of entries based on the options given.
 	 * <p>
 	 * TODO:: look into better, faster paging methods: https://dzone.com/articles/fast-paging-with-mongodb
 	 *
@@ -139,9 +139,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return a list of entries based on the options given.
 	 */
-	public List<T> list(Bson filter, Bson sort, PagingOptions pageOptions) {
-		List<T> list = new ArrayList<>();
-		
+	public FindIterable<T> listIterator(Bson filter, Bson sort, PagingOptions pageOptions) {
 		FindIterable<T> results;
 		
 		if (filter == null) {
@@ -157,8 +155,21 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 			results = results.skip(pageOptions.getSkipVal()).limit(pageOptions.pageSize);
 		}
 		
-		results.into(list);
-		
+		return results;
+	}
+	
+	/**
+	 * Gets a list of entries based on the options given.
+	 *
+	 * @param filter The filter to use for the search. Nullable, no filter if null.
+	 * @param sort The bson used to describe the sorting behavior. Nullable, no explicit sorting if null.
+	 * @param pageOptions The paging options. Nullable, not used if null.
+	 *
+	 * @return a list of entries based on the options given.
+	 */
+	public List<T> list(Bson filter, Bson sort, PagingOptions pageOptions) {
+		List<T> list = new ArrayList<>();
+		this.listIterator(filter, sort, pageOptions).into(list);
 		return list;
 	}
 	
@@ -173,7 +184,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.list(null, null, null);
 	}
 	
-	public Iterator<T> iterator(){
+	public Iterator<T> iterator() {
 		return getCollection().find().iterator();
 	}
 	
@@ -205,6 +216,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	
 	/**
 	 * Determines if the collection is empty or not.
+	 *
 	 * @return If the collection is empty or not.
 	 */
 	public boolean collectionEmpty() {
