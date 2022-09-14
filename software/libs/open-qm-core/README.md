@@ -1,5 +1,7 @@
 # Open QuarterMaster Core Library
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/tech.epic-breakfast-productions.openQuarterMaster.lib/open-qm-lib-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/tech.epic-breakfast-productions.openQuarterMaster.lib/open-qm-lib-core)
+
 ## TODOS:
 
 - move search objects to this library

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
@@ -32,6 +33,7 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
 	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
 	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
+	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER")

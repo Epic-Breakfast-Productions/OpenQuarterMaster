@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.history.events;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
@@ -50,6 +51,13 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 			//login
 			Arguments.of(UserLoginEvent.builder().build()),
 			Arguments.of(UserLoginEvent.builder().userId(ObjectId.get()).build()),
+			//item expired
+			Arguments.of(ItemExpiredEvent.builder().storageBlockId(ObjectId.get()).build()),
+			Arguments.of(ItemExpiredEvent.builder()
+										 .storageBlockId(ObjectId.get())
+										 .identifier(FAKER.lorem().characters())
+										 .index(5)
+										 .build()),
 			//item add
 			Arguments.of(ItemAddEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
 			Arguments.of(ItemAddEvent.builder()
