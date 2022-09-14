@@ -214,3 +214,22 @@ false
 
 
 |===
+
+
+==== Inventory Items
+
+
+
+|===
+| Config | Default | Examples | Explain
+
+| service.item.expiryCheck.cron
+| 0 0 * ? * *
+
+(every hour)
+|
+| How often to scan the database for expired stored items.
+
+https://www.freeformatter.com/cron-expression-generator-quartz.html[Cron Reference]
+
+|===

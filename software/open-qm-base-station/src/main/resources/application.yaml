@@ -36,6 +36,9 @@ service:
       ensure it is handled well. Please contact the folks running the server for more information.
   ops:
     currency: "USD" # anything that works with `Currency.getInstance("<value>")`
+  item:
+    expiryCheck:
+      cron: 0 0 * ? * * # Every Hour
     
 productLookup:
   providers:
