@@ -131,6 +131,9 @@ quarkus:
       enabled: true
   #  package:
   #    type: uber-jar
+  scheduler:
+    metrics:
+      enabled: true
   
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
