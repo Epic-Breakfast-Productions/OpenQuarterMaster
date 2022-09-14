@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import io.quarkus.scheduler.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
@@ -113,6 +114,7 @@ public class ExpiryProcessor {
 		return events;
 	}
 	
+	@Traced
 	@Scheduled(
 		identity = "searchAndProcessExpiredItems",
 		cron = "{service.item.expiryCheck.cron}",
@@ -140,5 +142,6 @@ public class ExpiryProcessor {
 				}
 			}
 		});
+		log.info("Finished processing all held items for newly expired stored.");
 	}
 }

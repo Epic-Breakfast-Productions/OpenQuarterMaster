@@ -125,7 +125,6 @@ public class InventoryManagement extends EndpointProvider {
 		return Response.ok(result).build();
 	}
 	
-	
 	@GET
 	@Path("processExpiry")
 	@Operation(
@@ -143,7 +142,7 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring(
 		@Context SecurityContext securityContext
-	) throws IOException {
+	) {
 		logRequestContext(this.jwt, securityContext);
 		
 		expiryProcessor.searchAndProcessExpiring();
