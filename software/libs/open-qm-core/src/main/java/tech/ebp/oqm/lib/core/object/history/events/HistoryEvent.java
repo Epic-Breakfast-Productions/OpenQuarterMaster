@@ -4,6 +4,8 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
+import tech.ebp.oqm.lib.core.object.history.events.user.UserDisabledEvent;
+import tech.ebp.oqm.lib.core.object.history.events.user.UserEnabledEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,6 +35,8 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
 	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
 	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
+	@JsonSubTypes.Type(value = UserEnabledEvent.class, name = "USER_ENABLED"),
+	@JsonSubTypes.Type(value = UserDisabledEvent.class, name = "USER_DISABLED"),
 	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),

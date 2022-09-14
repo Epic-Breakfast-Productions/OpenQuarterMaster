@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.6-DEV'
+version '1.0.7-DEV'
 
 repositories {
 	mavenLocal()
@@ -100,8 +100,8 @@ publishing {
 			}
 			pom {
 				name = 'Open QuarterMaster Core Library'
-				description = 'A concise description of my library'
-				url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/core-base%2Bstation-1.0.4-DEV/software/libs/open-qm-core'
+				description = 'The core library of Open QuarterMaster. Has core inventory objects and other supporting ones useful for interacting with OQM.'
+				url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/libs/open-qm-core'
 //                properties = [
 //                        myProp: "value",
 //                        "prop.with.dots": "anotherValue"
