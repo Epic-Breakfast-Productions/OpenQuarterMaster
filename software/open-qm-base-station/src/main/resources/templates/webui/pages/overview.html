@@ -1,194 +1,41 @@
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
-{#pageStyle}
-.buttonCell{
-    border: 1px solid black;
-    height: 50px;
-    width: 50px;
-}
-{/pageStyle}
-{#pageContent}
-
-<p>
-    {numItems} types of items stored in over {numStorageBlocks} storage blocks
-</p>
-<p>
-    Currency info:
-    <ul>
-    <li>Currency name: {currency.getDisplayName()}</li>
-    <li>Currency symbol: {currency.getSymbol()}</li>
-    <li>Currency code: {currency.getCurrencyCode()}</li>
-</ul>
-</p>
-
-
-{#if config:['demo.perform'] == 'true'}
-<h3>
-    Results from other service(s):
-</h3>
-<table class="table table-bordered">
-    <tr>
-        <th>
-            Service/endpoint
-        </th>
-        <th>
-            Response
-        </th>
-    </tr>
-    <tr><th class="text-nowrap">Endpoint 1<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/1</code>)</th><td><code>{response1}</code></td></tr>
-    <tr><th class="text-nowrap">Endpoint 2<br />(<code>{config:['quarkus.rest-client.demoService.url']}/demo/2</code>)</th><td><code>{response2}</code></td></tr>
-    <tr><th class="text-nowrap">Recurse<br />(<code>{config:['quarkus.rest-client.demoService.url']}/recursive/{config:['demo.recurseLevel']}</code>)</th><td><code>{recurse}</code></td></tr>
-
-    <tr><th class="text-nowrap">Endpoint 1 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/1</code>)</th><td><code>{responseExt1}</code></td></tr>
-    <tr><th class="text-nowrap">Endpoint 2 external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/demo/2</code>)</th><td><code>{responseExt2}</code></td></tr>
-    <tr><th class="text-nowrap">Recurse external<br />(<code>{config:['quarkus.rest-client.demoServiceExternal.url']}/recursive/{config:['demo.recurseLevel']}</code>)</th><td><code>{recurseExt}</code></td></tr>
-    
-    
-    </table>
-    <h3>
-        Host Device Connector:
-    </h3>
-<div class="row">
-    <div class="col-4">
-        <p>
-            Message: <span id="messageSpan"></span>
-        </p>
-        <p>
-            Encoder Value: <span id="encoderValSpan"></span>
-        </p>
-        <p>
-            Encoder button pressed? <span id="encoderPressedSpan"></span>
-        </p>
-        <table class="text-center" style="border: 1px solid black;">
-            <tr>
-                <td id="buttonCell1" class="buttonCell">1</td>
-                <td id="buttonCell2" class="buttonCell">2</td>
-                <td id="buttonCell3" class="buttonCell">3</td>
-            </tr>
-            <tr>
-                <td id="buttonCell4" class="buttonCell">4</td>
-                <td id="buttonCell5" class="buttonCell">5</td>
-                <td id="buttonCell6" class="buttonCell">6</td>
-            </tr>
-            <tr>
-                <td id="buttonCell7" class="buttonCell">7</td>
-                <td id="buttonCell8" class="buttonCell">8</td>
-                <td id="buttonCell9" class="buttonCell">9</td>
-            </tr>
-            <tr>
-                <td id="buttonCell10" class="buttonCell">10</td>
-                <td id="buttonCell11" class="buttonCell">11</td>
-                <td id="buttonCell12" class="buttonCell">12</td>
-            </tr>
-        </table>
-        <form id="deviceMessageSendForm" class="mt-3">
-            <div class="input-group">
-                <input type="text" class="form-control" maxlength="18" id="messageSendTextInput">
-                <button type="submit" class="btn btn-success">Send</button>
-            </div>
-        </form>
-    </div>
-</div>
-{/if}
-<p>
-    Todo:
-<ul>
-    <li>% storage util</li>
-    <li>graphs on storage stats?</li>
-    <li>List out top items close to expire</li>
-</ul>
-</p>
-
-{/pageContent}
-{#pageScript}
-    <script>
-    
-{#if config:['demo.perform'] == 'true'}
-        var hostDeviceUrl = "{hostDeviceUrl}";
-        var messageSpan = $("#messageSpan");
-        var encoderValSpan = $("#encoderValSpan");
-        var encoderPressedSpan = $("#encoderPressedSpan");
-        var buttCellArr = [
-            $("#buttonCell1"),
-            $("#buttonCell2"),
-            $("#buttonCell3"),
-            $("#buttonCell4"),
-            $("#buttonCell5"),
-            $("#buttonCell6"),
-            $("#buttonCell7"),
-            $("#buttonCell8"),
-            $("#buttonCell9"),
-            $("#buttonCell10"),
-            $("#buttonCell11"),
-            $("#buttonCell12"),
-        ];
-        var messageSendTextInput = $("#messageSendTextInput");
-        var updateSleeping = false;
-        var sendingMessage = false;
-        
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        async function doUpdating(){
-            console.log("Starting worker.");
-            while(true){
-                var run = true;
-                while(run) {
-                    console.log("Looping");
-                    doRestCall({
-                        url: hostDeviceUrl + "/getState",
-                        spinnerContainer: null,
-                        method: "GET",
-                        async: true,
-                        crossDomain: true,
-                        done: function (data) {
-                            messageSpan.text(data['currentMessage']);
-                            encoderValSpan.text(data['encoderVal']);
-                            encoderPressedSpan.text(data['encoderPressed']);
-                            
-                            for(i = 0; i < buttCellArr.length; i++){
-                                buttCellArr[i].css("background-color",data['pixelColors'][i]);
-                            }
-                        },
-                        fail: function (data) {
-                            run = false;
-                        },
-                        failNoResponse: function (data) {
-                            run = false;
-                        }
-                    });
-                    updateSleeping = true;
-                    await sleep(50);
-                    while (sendingMessage) {
-                        await sleep(1000);
-                    }
-                    updateSleeping = false;
-                }
-                console.log("Long wait after error.");
-                await sleep(10000);
-            }
-        }
-        
-        var deviceMessageSendForm = $('#deviceMessageSendForm');
-        deviceMessageSendForm.on('submit', function (event){
-            event.preventDefault();
-            while(!updateSleeping){
-                sendingMessage=true;
-            }
-            doRestCall({
-                url:hostDeviceUrl + "/postMessage",
-                method:"POST",
-                data:{
-                    message:messageSendTextInput.val()
-                }
-            });
-            sendingMessage=false;
-        });
-        
-        $(document).ready(function(){
-            doUpdating();
-        });
-        {/if}
-    </script>
-{/pageScript}
+	{#pageStyle}
+		.buttonCell{
+		border: 1px solid black;
+		height: 50px;
+		width: 50px;
+		}
+	{/pageStyle}
+	{#pageContent}
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
+					Overview
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
+					Expiring
+					<span class="badge rounded-pill bg-danger" title="Expired">0</span>
+					<span class="badge rounded-pill bg-warning text-dark" title="Expiring Soon">0</span>
+				</button>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
+				<p>
+					{numItems} types of items stored in over {numStorageBlocks} storage blocks
+				</p>
+				TODO:: show a navicable overview of storage blocks, items contained within
+			</div>
+			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
+				TODO:: list items that are expiring soon/ expired
+			</div>
+		</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+		
+		</script>
+	{/pageScript}
 {/include}
