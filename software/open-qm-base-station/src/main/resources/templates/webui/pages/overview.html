@@ -1,3 +1,4 @@
+{@tech.ebp.oqm.baseStation.service.mongo.StorageBlockService storageBlockService}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
 	{#pageStyle}
 		.buttonCell{
@@ -26,7 +27,34 @@
 				<p>
 					{numItems} types of items stored in over {numStorageBlocks} storage blocks
 				</p>
-				TODO:: show a navicable overview of storage blocks, items contained within
+				<div class="row">
+					<div class="col">
+						{#let parents=storageBlockService.getTopParents()}
+							{#if parents.isEmpty()}
+								<h2>
+									No Storage Blocks!
+								</h2>
+								<p>
+									No storage blocks currently exist. Go to
+									<a href="/storage"><i class="fas fa-boxes fa-fw"></i> Storage</a>
+									to add a place where items are stored!
+								</p>
+								<p>
+									You can then go to
+									<a href="/items"><i class="fas fa-balance-scale fa-fw"></i> Items</a>
+									to add an item that is stored in that location!
+								</p>
+							{#else}
+								{! TODO:: show a navicable overview of storage blocks, items contained within !}
+								<ul>
+								{#for parent in parents}
+									<li>{parent.getLabel()}</li>
+								{/for}
+								</ul>
+							{/if}
+						{/let}
+					</div>
+				</div>
 			</div>
 			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
 				TODO:: list items that are expiring soon/ expired

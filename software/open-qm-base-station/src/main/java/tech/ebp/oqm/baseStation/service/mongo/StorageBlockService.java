@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -79,6 +80,10 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 				throw new DbModValidationException("No parent exists for parent given.", e);
 			}
 		}
+	}
+	
+	public List<StorageBlock> getTopParents(){
+		return this.list(Filters.exists("parent", false), null, null);
 	}
 	
 	public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude) {
