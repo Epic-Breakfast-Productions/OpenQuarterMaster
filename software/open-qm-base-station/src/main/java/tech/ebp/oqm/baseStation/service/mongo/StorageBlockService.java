@@ -86,6 +86,14 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 		return this.list(Filters.exists("parent", false), null, null);
 	}
 	
+	public List<StorageBlock> getChildrenIn(ObjectId parentId){
+		return this.list(Filters.eq("parent", parentId), null, null);
+	}
+	
+	public List<StorageBlock> getChildrenIn(String parentId){
+		return this.getChildrenIn(new ObjectId(parentId));
+	}
+	
 	public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude) {
 		StorageBlockTree output = new StorageBlockTree();
 		

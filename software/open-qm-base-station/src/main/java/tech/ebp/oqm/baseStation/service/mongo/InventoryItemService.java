@@ -24,10 +24,10 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Filters.regex;
 
 /**
- *
  * TODO::
  *    - Figure out how to handle expired state when adding, updating
  */
@@ -98,8 +98,6 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	}
 	
 	
-	
-	
 	private <T> InventoryItem<T> add(InventoryItem<T> item, ObjectId storageBlockId, T toAdd) {
 		this.get(item.getId());//ensure exists
 		try {
@@ -124,9 +122,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		return item;
 	}
+	
 	public <T> InventoryItem<T> add(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
 		return this.add(this.get(itemId), storageBlockId, toAdd);
 	}
+	
 	public <T> InventoryItem<T> add(String itemId, String storageBlockId, T toAdd) {
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
@@ -154,9 +154,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		return item;
 	}
+	
 	public <T> InventoryItem<T> subtract(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
 		return this.subtract(this.get(itemId), storageBlockId, toAdd);
 	}
+	
 	public <T> InventoryItem<T> subtract(String itemId, String storageBlockId, T toAdd) {
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
@@ -219,4 +221,15 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		);
 	}
 	
+	public List<InventoryItem> getItemsInBlock(ObjectId storageBlockId) {
+		return this.list(
+			exists("storageMap."+storageBlockId.toHexString()),
+			null,
+			null
+		);
+	}
+	
+	public List<InventoryItem> getItemsInBlock(String storageBlockId) {
+		return this.getItemsInBlock(new ObjectId(storageBlockId));
+	}
 }

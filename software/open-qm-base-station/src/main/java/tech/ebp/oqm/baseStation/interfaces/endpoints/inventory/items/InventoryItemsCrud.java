@@ -388,7 +388,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		log.info("Adding to item");
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item = ((InventoryItemService)this.getObjectService()).add(
+		item = ((InventoryItemService) this.getObjectService()).add(
 			itemId,
 			storageBlockId,
 			Utils.OBJECT_MAPPER.treeToValue(
@@ -432,7 +432,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item = ((InventoryItemService)this.getObjectService()).subtract(
+		item = ((InventoryItemService) this.getObjectService()).subtract(
 			itemId,
 			storageBlockId,
 			Utils.OBJECT_MAPPER.treeToValue(
@@ -477,7 +477,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
-		item = ((InventoryItemService)this.getObjectService()).transfer(
+		item = ((InventoryItemService) this.getObjectService()).transfer(
 			itemId,
 			storageBlockIdFrom,
 			storageBlockIdTo,
@@ -489,4 +489,37 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		
 		return Response.ok(item).build();
 	}
+	
+	@GET
+	@Path("inStorageBlock/{storageBlockId}")
+	@Operation(
+		summary = "Gets items that ."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to get.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getInventoryItemsInBlock(
+		@Context SecurityContext securityContext,
+		@PathParam("storageBlockId") String storageBlockId
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		
+		return Response.ok(((InventoryItemService)this.getObjectService()).getItemsInBlock(storageBlockId)).build();
+	}
+	
 }

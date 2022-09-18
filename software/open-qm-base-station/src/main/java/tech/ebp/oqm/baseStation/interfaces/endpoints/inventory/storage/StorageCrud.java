@@ -403,4 +403,37 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.searchHistory(securityContext, searchObject);
 	}
 	//</editor-fold>
+	
+	
+	@GET
+	@Path("childrenOf/{storageBlock}")
+	@Operation(
+		summary = "Gets children of a particular storage block."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = StorageBlock.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON})
+	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	public Response getChildrenOfBlock(
+		@Context SecurityContext securityContext,
+		@PathParam("storageBlock") String storageBlockId
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
+	}
 }
