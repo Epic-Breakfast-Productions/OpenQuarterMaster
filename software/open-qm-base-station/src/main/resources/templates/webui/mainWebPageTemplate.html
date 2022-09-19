@@ -90,6 +90,12 @@ Ingests:
 						<span class="visually-hidden">(current)</span>
 					{/if}
 				</a>
+				<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
+					<i class="fas fa-question fa-fw"></i> Help & User Guide
+					{#if page is 'help'}
+						<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
 			</div>
 		</li>
 	</ul>
@@ -168,6 +174,7 @@ Ingests:
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0
 				License</a><br/>
 			Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
+			<a href="/help"><i class="fas fa-question fa-fw"></i> Help & User Guide</a><br />
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
 					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"

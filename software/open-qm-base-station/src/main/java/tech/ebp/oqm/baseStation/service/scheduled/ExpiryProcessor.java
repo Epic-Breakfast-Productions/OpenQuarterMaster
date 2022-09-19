@@ -127,6 +127,8 @@ public class ExpiryProcessor {
 			and(
 				not(size("storageMap", 0))
 				//TODO:: figure out better filter
+				//  - https://stackoverflow.com/a/26967000/3015723
+				//  - https://stackoverflow.com/a/71999502/3015723
 			),
 			null,
 			null
