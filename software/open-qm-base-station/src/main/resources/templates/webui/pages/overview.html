@@ -97,6 +97,69 @@
 					})
 				});
 			}
+
+			function getInvItemSection(invItemArr){
+				if(invItemArr.length === 0){
+					return $("<p>No inventory items held.</p>");
+				}
+
+				return $('<h5>Items held ('+invItemArr.length+'):</h5>');
+			}
+			
+			function getStorageBlockSection(storageBlockArr, parentId){
+				if(storageBlockArr.length === 0){
+					return $("<p>No children.</p>");
+				}
+				let accordId = "storageBlockAccord" + parentId;
+				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
+				
+				storageBlockArr.forEach(function(storageBlock){
+					let curAccord = $('<div class="accordion-item" id="accordItem'+storageBlock.id+'" data-storage-block-id="'+storageBlock.id+'">' +
+											'<h2 class="accordion-header " id="accordHeader'+storageBlock.id+'" onclick="overviewAccordionClicked(\''+storageBlock.id+'\', $(this).parent())">' +
+												'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse'+storageBlock.id+'" aria-expanded="false" aria-controls="accordCollapse'+storageBlock.id+'">' +
+													''+storageBlock.label+''+
+												'</button>'+
+											'</h2>'+
+											'<div id="accordCollapse'+storageBlock.id+'" class="accordion-collapse collapse" aria-labelledby="accordHeader'+storageBlock.id+'" data-bs-parent="#'+accordId+'">'+
+												'<div class="accordion-body" id="accordContent'+storageBlock.id+'">'+
+													'Loading...'+
+												'</div>'+
+											'</div>'+
+										'</div>');
+					accordion = accordion.append(curAccord);
+				});
+				
+				let output = $('<h5>Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				output = output.add(accordion);
+				return output;
+			}
+			
+			function getBlockDetailsSection(storageBlockData){
+				let output = $('<div class="row">' +
+					'<div class="col">' +
+					'<h5>Block details</h5>' +
+					'</div>' +
+					'</div>'
+				);
+				let detailsRow = $(
+					'<div class="row storageBlockDetailsRow">'+
+					'</div>');
+				
+				if(storageBlockData.location){
+					let locationData = $('<div class="col">' +
+						'Location: <span class="storageBlockLocation"></span>' +
+						'</div>');
+					locationData.find(".storageBlockLocation").text(storageBlockData.location);
+
+					detailsRow = detailsRow.append(locationData);
+				}
+				
+				//TODO:: images, attr/keywords?, capacities
+				
+				
+				output = output.add(detailsRow);
+				return output;
+			}
 			
 			async function createNewStorageBlockContent(storageBlockData){
 				let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
@@ -106,12 +169,15 @@
 				
 				console.log("Got " + storageBlockItems.length + " items, " + storageBlockChildren.length + " children for storage block " + storageBlockData.id);
 				
-				return $('<h5>Items held ('+storageBlockItems.length+'):</h5>' +
-					'');
+				let output = $();
+
+				output = output.add(getBlockDetailsSection(storageBlockData));
+				output = output.add($("<hr />"));
+				output = output.add(getInvItemSection(storageBlockItems));
+				output = output.add($("<hr />"));
+				output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
+				return output;
 			}
-			
-			
-			
 			
 			function overviewAccordionClicked(storageBlockId, accordionDivJq){
 				console.debug("Accordion " + accordionDivJq.attr("id") + " for storage block " + storageBlockId + " clicked.");
