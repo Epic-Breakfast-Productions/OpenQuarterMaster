@@ -81,6 +81,7 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	@Setter(AccessLevel.PROTECTED)
 	private BigDecimal valueOfStored = null;
 	
+	//TODO:: expiryWarningThreshold: duration before expiry dates when to warn that is expiring soon
 	
 	/**
 	 * Constructor to make Lombok happy.
