@@ -76,7 +76,7 @@ function addCrumbs(cur, crumbList, toKeepId){
 
 function getBlockBreadcrumbs(crumbContainer, toKeepId){
     doRestCall({
-            url: "/api/storage/tree?onlyInclude="+toKeepId,
+            url: "/api/inventory/storage-block/tree?onlyInclude="+toKeepId,
             done: function(data){
                 console.log("Successfully got tree data.");
 
