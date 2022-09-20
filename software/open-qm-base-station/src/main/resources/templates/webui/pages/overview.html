@@ -98,12 +98,36 @@
 				});
 			}
 
-			function getInvItemSection(invItemArr){
+			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.length === 0){
 					return $("<p>No inventory items held.</p>");
 				}
+				let accordId = "invItemAccord" + parentId;
+				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
 
-				return $('<h5>Items held ('+invItemArr.length+'):</h5>');
+				invItemArr.forEach(function(invItem){
+					let accordItemId = accordId+'AccordItem'+invItem.id;
+					let accordItemHeaderId = accordItemId + "Header";
+					let accordItemCollapseId = accordItemId + "Collapse";
+					let accordItemContentId = accordItemId + "Content";
+					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-storage-block-id="'+invItem.id+'">' +
+						'<h2 class="accordion-header " id="'+accordItemHeaderId+'">' +
+						'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordItemCollapseId+'" aria-expanded="false" aria-controls="'+accordItemCollapseId+'">' +
+						''+invItem.name+''+
+						'</button>'+
+						'</h2>'+
+						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
+						'<div class="accordion-body" id="'+accordItemContentId+'">'+
+						'Loading...'+
+						'</div>'+
+						'</div>'+
+						'</div>');
+					accordion = accordion.append(curAccord);
+				});
+
+				let output = $('<h5>Items held ('+invItemArr.length+'):</h5>');
+				output = output.add(accordion);
+				return output;
 			}
 			
 			function getStorageBlockSection(storageBlockArr, parentId){
@@ -117,7 +141,6 @@
 					let curAccord = $('<div class="accordion-item" id="accordItem'+storageBlock.id+'" data-storage-block-id="'+storageBlock.id+'">' +
 											'<h2 class="accordion-header " id="accordHeader'+storageBlock.id+'" onclick="overviewAccordionClicked(\''+storageBlock.id+'\', $(this).parent())">' +
 												'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse'+storageBlock.id+'" aria-expanded="false" aria-controls="accordCollapse'+storageBlock.id+'">' +
-													''+storageBlock.label+''+
 												'</button>'+
 											'</h2>'+
 											'<div id="accordCollapse'+storageBlock.id+'" class="accordion-collapse collapse" aria-labelledby="accordHeader'+storageBlock.id+'" data-bs-parent="#'+accordId+'">'+
@@ -126,6 +149,8 @@
 												'</div>'+
 											'</div>'+
 										'</div>');
+					
+					curAccord.find(".accordion-button").text(storageBlock.label);
 					accordion = accordion.append(curAccord);
 				});
 				
@@ -173,7 +198,7 @@
 
 				output = output.add(getBlockDetailsSection(storageBlockData));
 				output = output.add($("<hr />"));
-				output = output.add(getInvItemSection(storageBlockItems));
+				output = output.add(getInvItemSection(storageBlockItems, storageBlockData.id));
 				output = output.add($("<hr />"));
 				output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
 				return output;
