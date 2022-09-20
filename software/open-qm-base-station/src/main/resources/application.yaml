@@ -76,7 +76,7 @@ productLookup:
       homepage: https://rebrickable.com
       enabled: true
       url: https://rebrickable.com
-      key: "0feaa241d91cf96dfb1c690b33c5d966"
+      key: " "
 
 # TODO:: move this into `service` config
 runningInfo:

@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemSearchService;
+import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public abstract class LegoLookupService extends ItemSearchService {
+public abstract class LegoLookupService extends ItemApiSearchService {
 	
 	protected abstract CompletionStage<JsonNode> performPartNumberSearchCall(String barcode);
 	

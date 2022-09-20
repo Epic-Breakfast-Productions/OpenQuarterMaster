@@ -1,0 +1,29 @@
+{@tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo providerInfo}
+{!
+Ingests:
+- id
+- carouselCss
+!}
+<div class="col-3 card p-0 m-1 {providerInfo.isEnabled() ? '' : 'text-white bg-warning'}">
+    <div class="card-header">
+        <a href="{providerInfo.getHomepage()}" target="_blank">
+            {providerInfo.getDisplayName()}
+        </a>
+    </div>
+    <ul class="list-group list-group-flush">
+        {#if !providerInfo.getCost().isBlank()}
+            <li class="list-group-item">
+                <i class="fa-solid fa-money-bill fa-fw"></i> {providerInfo.getCost()}
+            </li>
+        {/if}
+        <li class="list-group-item">
+            <i class="fa-solid fa-person-circle-plus fa-fw"></i> {providerInfo.isAcceptsContributions() ? 'Accepts contributions' : 'No community input'}
+        </li>
+        <li class="list-group-item">
+            <i class="fa-solid fa-{providerInfo.isEnabled() ? 'check' : 'xmark'} fa-fw"></i> {providerInfo.isEnabled() ? 'Enabled' : 'Disabled'}
+        </li>
+        {#if !providerInfo.getDescription().isBlank()}
+            <li class="list-group-item">{providerInfo.getDescription()}</li>
+        {/if}
+    </ul>
+</div>

@@ -52,15 +52,25 @@ public class RebrickableService extends LegoLookupService {
 	) {
 		this.rebrickableLookupClient = rebrickableLookupClient;
 		this.apiKey = apiKey;
-		this.providerInfo = ExtItemLookupProviderInfo
-								.builder()
-								.displayName(displayName)
-								.enabled(enabled)
-								.description(description)
-								.acceptsContributions(acceptsContributions)
-								.homepage(homepage)
-								.cost(cost)
-								.build();
+		
+		ExtItemLookupProviderInfo.Builder infoBuilder = ExtItemLookupProviderInfo
+																				 .builder()
+																				 .displayName(displayName)
+																				 .description(description)
+																				 .acceptsContributions(acceptsContributions)
+																				 .homepage(homepage)
+																				 .cost(cost);
+		
+		if(apiKey == null || apiKey.isBlank()){
+			log.warn("API key for {} was null or blank.", displayName);
+			infoBuilder.enabled(false);
+			this.apiKey = null;
+		} else {
+			infoBuilder.enabled(enabled);
+			this.apiKey = apiKey;
+		}
+		
+		this.providerInfo = infoBuilder.build();
 	}
 	
 	@Override

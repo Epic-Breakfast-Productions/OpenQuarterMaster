@@ -1,10 +1,77 @@
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}
 {#include webui/mainWebPageTemplate showNavbar=true showTitle=true title="Help and User Guide" titleIcon='question' page='help'}
 	{#pageStyle}
 	
 	{/pageStyle}
 	{#pageContent}
-		{! TODO:: this !}
-		TODO
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"
+						type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">General
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
+						data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
+						aria-controls="itemSearchProvidersContent" aria-selected="false">Item Search Providers
+				</button>
+			</li>
+		</ul>
+		<div class="tab-content" id="mainTabContent">
+		<div class="tab-pane fade show active" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
+			{! TODO:: this !}
+			TODO
+		</div>
+		<div class="tab-pane fade" id="itemSearchProvidersContent" role="tabpanel" aria-labelledby="itemSearchProvidersTab">
+		<h2>
+			Item Search Providers
+		</h2>
+		<p>
+			This describes the external services supported by Open QuarterMaster to help read in data about items.
+		</p>
+		<p>
+			For information on enabling/ configuring these providers, see <a
+					href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc#product-search-providers">our
+				documentation on Github</a>
+		</p>
+		<hr/>
+		<h3>
+			Products
+		</h3>
+		<div class="row">
+			{#for productProvider in productProviderInfoList}
+				{#providerInfoCard providerInfo=productProvider}
+				{/providerInfoCard}
+			{/for}
+		</div>
+		<hr />
+		<h3>
+			Websites
+		</h3>
+		<p>
+			These websites are supported to glean data from. The intent is for you to enter a specific product's page.
+		</p>
+		<div class="row">
+		{#for productProvider in supportedPageScanInfoList}
+			{#providerInfoCard providerInfo=productProvider}
+			{/providerInfoCard}
+		{/for}
+		</div>
+		<hr />
+		<h3>
+			Lego
+		</h3>
+		<div class="row">
+		{#for productProvider in legoProviderInfoList}
+			{#providerInfoCard providerInfo=productProvider}
+			{/providerInfoCard}
+		{/for}
+		</div>
+		
+		</div>
+		</div>
 	{/pageContent}
 	{#pageScript}
 		<script>

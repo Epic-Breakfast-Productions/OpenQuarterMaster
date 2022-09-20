@@ -30,6 +30,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+
+/**
+ * TODO:: reorganize these endpoints
+ */
 @Traced
 @Slf4j
 @Path("/api/externalItemLookup")

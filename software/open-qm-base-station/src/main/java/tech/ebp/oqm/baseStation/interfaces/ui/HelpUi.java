@@ -11,6 +11,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
+import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
@@ -52,6 +53,9 @@ public class HelpUi extends UiProvider {
 	@Inject
 	UserService userService;
 	
+	@Inject
+	ProductLookupService productLookupService;
+	
 	@GET
 	@Path("help")
 	@RolesAllowed("user")
@@ -66,7 +70,10 @@ public class HelpUi extends UiProvider {
 		
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build()),
+			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
+				.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
+				.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
+				.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo()),
 			MediaType.TEXT_HTML_TYPE
 		);
 		
