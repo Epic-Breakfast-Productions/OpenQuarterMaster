@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.exception.mappers;
+package tech.ebp.oqm.baseStation.exception.mappers.apiAuth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwt.consumer.InvalidJwtException;

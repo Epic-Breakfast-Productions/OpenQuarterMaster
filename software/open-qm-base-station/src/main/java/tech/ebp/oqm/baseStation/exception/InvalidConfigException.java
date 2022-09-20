@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.exception.mappers;
+package tech.ebp.oqm.baseStation.exception;
 
 /**
  * Exception to convey that the configuration of the running app isn't setup correctly.

@@ -55,7 +55,7 @@ class AuthTest extends RunningServerTest {
 			.extract().body().as(ErrorMessage.class);
 		
 		log.info("Error Message: {}", errorMessage);
-		assertEquals("User not found.", errorMessage.getError());
+		assertEquals("User not found.", errorMessage.getDisplayMessage());
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ class AuthTest extends RunningServerTest {
 			.extract().body().as(ErrorMessage.class);
 		
 		log.info("Error Message: {}", errorMessage);
-		assertEquals("Invalid Password.", errorMessage.getError());
+		assertEquals("Invalid Password.", errorMessage.getDisplayMessage());
 	}
 	
 	@Test

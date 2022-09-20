@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.exception.mappers;
+package tech.ebp.oqm.baseStation.exception.mappers.apiAuth;
 
 import io.smallrye.jwt.auth.principal.ParseException;
 import lombok.extern.slf4j.Slf4j;

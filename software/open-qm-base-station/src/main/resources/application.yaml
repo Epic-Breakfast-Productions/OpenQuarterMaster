@@ -109,15 +109,6 @@ quarkus:
     lego-rebrickable:
       url: ${productLookup.providers.rebrickable.url}
       scope: javax.inject.Singleton
-    # for demo
-    demoService:
-      url: http://localhost:8082
-      scope: javax.inject.Singleton
-    demoServiceExternal:
-      url: http://localhost:8082
-      scope: javax.inject.Singleton
-    demoHostConnection:
-      url: http://localhost:8085
   native:
     resources:
       includes: security/*

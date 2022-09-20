@@ -4,14 +4,11 @@ import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.baseStation.demo.DemoExternalServiceCaller;
-import tech.ebp.oqm.baseStation.demo.DemoServiceCaller;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
@@ -62,15 +59,6 @@ public class OverviewUi extends UiProvider {
 	@Inject
 	Tracer tracer;
 	
-	@Inject
-	@RestClient
-	DemoServiceCaller demoService;
-	@Inject
-	@RestClient
-	DemoExternalServiceCaller externDemoService;
-	@ConfigProperty(name="quarkus.rest-client.demoHostConnection.url")
-	String demoHostConnection;
-	
 	@GET
 	@Path("overview")
 	@RolesAllowed(UserRoles.INVENTORY_VIEW)
@@ -88,7 +76,6 @@ public class OverviewUi extends UiProvider {
 			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
-				.data("hostDeviceUrl", demoHostConnection)
 				.data("storageBlockService", storageBlockService),
 			MediaType.TEXT_HTML_TYPE
 		);
