@@ -58,6 +58,7 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 			eq("parent", storageBlock.getParent())
 		);
 		
+		//TODO:: remember what this does and why
 		if(newObject){
 			long count = this.count(parentFilter);
 			if(count > 0){
@@ -73,12 +74,31 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 			}
 		}
 		
-		if (storageBlock.getParent() != null) {
+		//ensure parent exists, not infinite loop
+		if (storageBlock.hasParent()) {
+			if(storageBlock.getId().equals(storageBlock.getParent())){
+				throw new DbModValidationException("Storage block cannot be a parent to itself.");
+			}
+			
+			//exists
+			StorageBlock curParent;
 			try {
-				this.get(storageBlock.getParent());
+				curParent = this.get(storageBlock.getParent());
 			} catch(DbNotFoundException e){
 				throw new DbModValidationException("No parent exists for parent given.", e);
 			}
+			//no inf loop
+			while (curParent.hasParent()){
+				if(storageBlock.getId().equals(curParent.getParent())){
+					throw new DbModValidationException("Not allowed to make parental loop.");
+				}
+				curParent = this.get(curParent.getParent());
+			}
+			
+		}
+		
+		{//check that parent isn't an infinite loop
+		
 		}
 	}
 	
