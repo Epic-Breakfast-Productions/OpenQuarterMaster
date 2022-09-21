@@ -53,7 +53,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 		URL homepage,
 		@ConfigProperty(name = "productLookup.providers.upcitemdb.cost", defaultValue = "")
 		String cost,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.key", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.upcitemdb.apiKey", defaultValue = "")
 		String apiKey
 	) {
 		this.upcItemDbLookupClient = upcItemDbLookupClient;

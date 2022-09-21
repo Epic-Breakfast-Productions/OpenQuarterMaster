@@ -67,7 +67,7 @@ productLookup:
       homepage: https://www.upcitemdb.com/
       enabled: true
       url: https://api.upcitemdb.com
-      key: " "
+      apiKey: " "
     rebrickable:
       displayName: Rebrickable
       description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
@@ -76,7 +76,7 @@ productLookup:
       homepage: https://rebrickable.com
       enabled: true
       url: https://rebrickable.com
-      key: " "
+      apiKey: " "
 
 # TODO:: move this into `service` config
 runningInfo:

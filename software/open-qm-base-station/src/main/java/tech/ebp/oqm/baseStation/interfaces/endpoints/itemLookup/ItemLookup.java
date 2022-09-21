@@ -128,7 +128,7 @@ public class ItemLookup extends EndpointProvider {
 	}
 	
 	@GET
-	@Path("product/webpage/{webpage}")
+	@Path("webpage/scrape/{webpage}")
 	@Operation(
 		summary = "Scans the given webpage for product details."
 	)
@@ -151,6 +151,61 @@ public class ItemLookup extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		
 		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
+	}
+	
+	
+	@GET
+	@Path("/webpage/providers")
+	@Operation(
+		summary = "Gets information on supported web scraping providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response webScrapeProviderInfo(
+		@Context SecurityContext securityContext
+	) {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(this.productLookupService.getSupportedPageScanInfo()).build();
+	}
+	
+	@GET
+	@Path("/webpage/providers/enabled")
+	@Operation(
+		summary = "Gets information on supported and enabled web scraping providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response enablesWebScrapeProviderInfo(
+		@Context SecurityContext securityContext
+	) {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(
+			this.productLookupService.getSupportedPageScanInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
+		).build();
 	}
 	
 	
@@ -178,5 +233,60 @@ public class ItemLookup extends EndpointProvider {
 		logRequestContext(this.jwt, securityContext);
 		
 		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
+	}
+	
+	
+	@GET
+	@Path("/lego/providers")
+	@Operation(
+		summary = "Gets information on supported lego search providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response legoProviderInfo(
+		@Context SecurityContext securityContext
+	) {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(this.productLookupService.getLegoProviderInfo()).build();
+	}
+	
+	@GET
+	@Path("/lego/providers/enabled")
+	@Operation(
+		summary = "Gets information on supported and enabled lego search providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response enabledLegoProviderInfo(
+		@Context SecurityContext securityContext
+	) {
+		logRequestContext(this.jwt, securityContext);
+		
+		return Response.ok(
+			this.productLookupService.getLegoProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
+		).build();
 	}
 }

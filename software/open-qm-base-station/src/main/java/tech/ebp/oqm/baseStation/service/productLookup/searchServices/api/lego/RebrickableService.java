@@ -47,7 +47,7 @@ public class RebrickableService extends LegoLookupService {
 		URL homepage,
 		@ConfigProperty(name = "productLookup.providers.rebrickable.cost", defaultValue = "")
 		String cost,
-		@ConfigProperty(name = "productLookup.providers.rebrickable.key", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.rebrickable.apiKey", defaultValue = "")
 		String apiKey
 	) {
 		this.rebrickableLookupClient = rebrickableLookupClient;

@@ -211,8 +211,46 @@ https://gtinsearch.org/
 
 false
 | Enables or disables this provider
+|===
 
+===== upcitemdb.com
 
+https://www.upcitemdb.com/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.upcitemdb.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.upcitemdb.apiKey
+|
+|
+| The API key of the account to access this provider.
+|===
+
+===== Rebrickable
+
+https://rebrickable.com
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.rebrickable.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.rebrickable.apiKey
+|
+|
+| The API key of the account to access this provider.
 |===
 
 

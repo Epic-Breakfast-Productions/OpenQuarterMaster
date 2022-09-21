@@ -361,7 +361,7 @@ $("#websiteScanSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/product/webpage/" + encodeURIComponent(webpage),
+        url: "/api/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
         done: handleExtItemSearchResults
     });
 });
