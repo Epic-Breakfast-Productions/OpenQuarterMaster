@@ -19,12 +19,14 @@ configFile="properties.json"
 buildDir="installerBuild"
 
 debDir="StationCaptainDeb"
+outputDir="bin/"
 
 #
 # Clean
 #
 
 rm -rf "$buildDir"
+rm -rf "$outputDir"
 
 #
 # Setup
@@ -36,6 +38,7 @@ mkdir "$buildDir"
 # Debian build
 #
 
+mkdir "$outputDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir "$buildDir/$debDir/bin"
@@ -69,7 +72,7 @@ Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
-dpkg-deb --build "$buildDir/$debDir" "bin/"
+dpkg-deb --build "$buildDir/$debDir" "$outputDir"
 
 
 #
