@@ -11,7 +11,8 @@ public class StepDefinitions {
     }
 
     @When("all step definitions are implemented")
-    public void allStepDefinitionsAreImplemented() {
+    public void allStepDefinitionsAreImplemented() throws InterruptedException {
+        Thread.sleep(5_000);
     }
 
     @Then("the scenario passes")
