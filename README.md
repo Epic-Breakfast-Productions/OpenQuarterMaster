@@ -2,10 +2,9 @@
 
 # Open QuarterMaster
 
-<!--TODO:: fix images to make this work well ![Open Quartermaster Logo](media/logo/Quarter Master Main Logo_fixed.svg)-->
-
 ![Lib - Core](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/coreLib.yml/badge.svg)
-![Base station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)
+![Station Captain](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
