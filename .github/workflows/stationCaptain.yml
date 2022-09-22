@@ -55,7 +55,8 @@ jobs:
         with:
           name: Installers Produced
           path: "software/Station Captain/bin"
-      - uses: deblockt/cucumber-report-annotations-action@v1.7
+      - name: Archive Test Reports
+        uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           path: "stationCaptainTest/target/test-reports/report.json"
