@@ -59,4 +59,4 @@ jobs:
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "stationCaptainTest/target/test-reports/report.json"
+          path: "software/Station Captain/stationCaptainTest/target/test-reports/report.json"
