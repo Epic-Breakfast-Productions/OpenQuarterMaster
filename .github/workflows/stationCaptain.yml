@@ -44,7 +44,8 @@ jobs:
         run: ls
 
       - name: Build with Maven
-        run: ./stationCaptainTest/mvnw verify
+        run: ./mvnw verify
+        path: software/Station Captain/stationCaptainTest
     
           # Runs a single command using the runners shell
       - name: Make Installers
