@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y dpkg-dev jq
       - name: Build with Maven
-        run: mvnw verify
+        run: ./mvnw verify
       # Runs a single command using the runners shell
       - name: Make Installers
         run: ./makeInstallers.sh
