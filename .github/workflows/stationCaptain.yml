@@ -38,11 +38,6 @@ jobs:
           distribution: 'adopt'
       - name: Install dependencies
         run: sudo apt-get install -y dpkg-dev jq
-      - name: curDir
-        run: pwd
-      - name: ls
-        run: ls
-
       - name: Build with Maven
         run: ./mvnw verify
         working-directory: software/Station Captain/stationCaptainTest
@@ -55,7 +50,12 @@ jobs:
         with:
           name: Installers Produced
           path: "software/Station Captain/bin"
-      - name: Archive Test Reports
+      - name: Archive Cucumber Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: Cucumber Test Reports
+          path: "software/Station Captain/stationCaptainTest/target/test-reports/*"
+      - name: Cucumber Test Results to Annotation
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
