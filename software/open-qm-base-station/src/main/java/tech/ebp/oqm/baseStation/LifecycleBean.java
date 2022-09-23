@@ -37,10 +37,7 @@ public class LifecycleBean {
 //		log.debug("Stats lib version: {}", this.statsVersion);
 //		log.debug("Web lib version: {}", this.webLibVersion);
 		
-		System.out.println(
-			this.startTemplate
-				.render()
-		);
+		log.info(this.startTemplate.render());
 		
 		StringBuilder sb = new StringBuilder();
 		for(String curProp : ConfigProvider.getConfig().getPropertyNames()){

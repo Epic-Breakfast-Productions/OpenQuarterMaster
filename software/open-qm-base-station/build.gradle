@@ -35,9 +35,10 @@ dependencies {
 	implementation 'io.opentracing.contrib:opentracing-mongo-common'
 	implementation 'io.quarkus:quarkus-rest-client'
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
+	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
 
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.2'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 
 	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'

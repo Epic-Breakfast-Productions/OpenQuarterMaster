@@ -85,12 +85,6 @@ runningInfo:
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-
-demo:
-  connectTimeout: 10000
-  readTimeout: 10000
-  recurseLevel: 10
-  perform: false
   
 quarkus:
   rest-client:

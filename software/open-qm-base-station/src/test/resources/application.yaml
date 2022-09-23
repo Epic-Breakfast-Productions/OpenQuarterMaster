@@ -18,6 +18,8 @@ quarkus:
     enabled: true
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
+  mailer:
+    mock: true
 
 test:
   profile: test
