@@ -100,7 +100,7 @@
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.length === 0){
-					return $("<p>No inventory items held.</p>");
+					return $('<p><i class="fas fa-balance-scale fa-fw"></i> No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -118,21 +118,21 @@
 						'</h2>'+
 						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
 						'<div class="accordion-body" id="'+accordItemContentId+'">'+
-						'Loading...'+
+						'TODO'+
 						'</div>'+
 						'</div>'+
 						'</div>');
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5>Items held ('+invItemArr.length+'):</h5>');
+				let output = $('<h5><i class="fas fa-balance-scale fa-fw"></i> Items held ('+invItemArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
 			
 			function getStorageBlockSection(storageBlockArr, parentId){
 				if(storageBlockArr.length === 0){
-					return $("<p>No children.</p>");
+					return $('<p><i class="fas fa-boxes fa-fw"></i> No children.</p>');
 				}
 				let accordId = "storageBlockAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -154,7 +154,7 @@
 					accordion = accordion.append(curAccord);
 				});
 				
-				let output = $('<h5>Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				let output = $('<h5><i class="fas fa-boxes fa-fw"></i> Storage Blocks ('+storageBlockArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}

@@ -75,7 +75,7 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 		}
 		
 		//ensure parent exists, not infinite loop
-		if (storageBlock.hasParent()) {
+		if (storageBlock.getId() != null && storageBlock.hasParent()) {
 			if(storageBlock.getId().equals(storageBlock.getParent())){
 				throw new DbModValidationException("Storage block cannot be a parent to itself.");
 			}
