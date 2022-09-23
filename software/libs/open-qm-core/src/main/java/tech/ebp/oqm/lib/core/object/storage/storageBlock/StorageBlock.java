@@ -30,6 +30,14 @@ public class StorageBlock extends ImagedMainObject {
 	@NotNull
 	@NotBlank
 	private String label;
+	
+	/**
+	 * Text that describes the storage block
+	 */
+	@NonNull
+	@NotNull
+	private String description;
+	
 	/**
 	 * The location of this storage block. If a sub-block, just the location within that sub-block.
 	 */
