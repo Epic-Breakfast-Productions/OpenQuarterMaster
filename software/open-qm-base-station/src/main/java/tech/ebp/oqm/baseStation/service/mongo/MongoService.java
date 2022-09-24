@@ -4,11 +4,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,6 +31,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -68,6 +75,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	/**
 	 * The MongoDb client.
 	 */
+	@Getter(AccessLevel.PROTECTED)
 	private final MongoClient mongoClient;
 	/**
 	 * The name of the database to access
@@ -116,6 +124,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 			this.collection = mongoClient.getDatabase(this.database).getCollection(this.collectionName, this.clazz);
 		}
 		return this.collection;
+	}
+	
+	protected TransactionOptions getDefaultTransactionOptions() {
+		return TransactionOptions.builder()
+								 .readPreference(ReadPreference.primary())
+								 .readConcern(ReadConcern.LOCAL)
+								 .writeConcern(WriteConcern.MAJORITY)
+								 .build();
 	}
 	
 	/**
@@ -331,7 +347,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.update(new ObjectId(id), updateJson);
 	}
 	
-	public T update(T object) throws DbNotFoundException {
+	public T update(@Valid T object) throws DbNotFoundException {
 		//TODO:: review this
 		this.get(object.getId());
 		Object result = this.getCollection().findOneAndReplace(eq("_id", object.getId()), object);
@@ -346,18 +362,49 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(T object) {
-		if (object == null) {
-			throw new NullPointerException("Object cannot be null.");
-		}
+	public ObjectId add(ClientSession session, @NonNull @Valid T object) {
+		log.info("Adding new {}", this.getCollectionName());
+		log.debug("New object: {}", object);
 		
 		this.ensureObjectValid(true, object);
 		
-		InsertOneResult result = getCollection().insertOne(object);
+		InsertOneResult result;
+		if(session==null) {
+			result = getCollection().insertOne(object);
+		} else {
+			result = getCollection().insertOne(session, object);
+		}
 		
 		object.setId(result.getInsertedId().asObjectId().getValue());
 		
+		log.info("Added. Id: {}", object.getId());
 		return object.getId();
+	}
+	
+	public ObjectId add(@NonNull @Valid T object) {
+		return this.add(null, object);
+	}
+	
+	public List<ObjectId> addBulk(List<T> objects) {
+		try(
+			ClientSession session = this.getMongoClient().startSession();
+		){
+			return session.withTransaction(()->{
+				List<ObjectId> output = new ArrayList<>(objects.size());
+				
+				for (T cur : objects) {
+					try {
+						output.add(add(session, cur));
+					} catch(Throwable e){
+						session.abortTransaction();
+						throw e;
+					}
+				}
+				
+				session.commitTransaction();
+				return output;
+			}, this.getDefaultTransactionOptions());
+		}
 	}
 	
 	/**

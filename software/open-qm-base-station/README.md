@@ -62,18 +62,20 @@ Native-specific tests:
 - Storage
   - do all stats
   - handle breadcrumb links
+  - bulk create
+  - bulk edit?
 - Items
   - stats
   - UI tweaks
     - view improvements
-  - UPC barcode lookup. API's:
-    - To add:
-      - https://rebrickable.com/api/v3/docs/?key=
-    - Good leads:
-      - https://opengtindb.org/index.php
-      - https://upcdatabase.org/api
-    - Backups:
-      - https://devapi.barcodespider.com/
+  - External item lookup.
+    - support throwing data points to adding/editing item  
+    - API's:
+      - Good leads:
+        - https://opengtindb.org/index.php
+        - https://upcdatabase.org/api
+      - Backups:
+        - https://devapi.barcodespider.com/
 - Overview
   - stats
 - Image management

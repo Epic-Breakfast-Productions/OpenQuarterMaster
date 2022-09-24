@@ -18,6 +18,7 @@ import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLife
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +40,14 @@ class MongoServiceTest extends RunningServerTest {
 	public void testCollectionEmpty() {
 		assertTrue(this.testMongoService.collectionEmpty());
 		
-		this.testMongoService.add(new TestMainObject());
+		this.testMongoService.add(new TestMainObject(FAKER.name().name()));
 		
 		assertFalse(this.testMongoService.collectionEmpty());
 	}
 	
 	@Test
 	public void testCollectionCount() {
-		this.testMongoService.add(new TestMainObject());
+		this.testMongoService.add(new TestMainObject(FAKER.name().name()));
 		
 		assertEquals(1, this.testMongoService.count());
 		
@@ -124,6 +125,44 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject gotten = this.testMongoService.get(original.getId());
 		
 		assertEquals(original, gotten);
+	}
+	
+	@Test
+	public void testAddBulk() {
+		List<TestMainObject> originals = new ArrayList<>();
+		
+		for(int i = 1; i <= 5; i++){
+			originals.add(new TestMainObject("Hello world " + i));
+		}
+		
+		
+		List<ObjectId> returned = this.testMongoService.addBulk(originals);
+		
+		assertEquals(originals.size(), this.testMongoService.count());
+		
+		for(TestMainObject original : originals) {
+			assertNotNull(original.getId());
+			
+			assertTrue(returned.contains(original.getId()));
+			
+			TestMainObject gotten = this.testMongoService.get(original.getId());
+			
+			assertEquals(original, gotten);
+		}
+	}
+	
+	@Test
+	public void testAddBulkError() {
+		List<TestMainObject> originals = new ArrayList<>();
+
+		for(int i = 1; i <= 5; i++){
+			originals.add(new TestMainObject("Hello world " + i));
+		}
+		originals.add(new TestMainObject());
+		
+		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(originals));
+
+		assertEquals(0, this.testMongoService.count());
 	}
 	// </editor-fold>
 	

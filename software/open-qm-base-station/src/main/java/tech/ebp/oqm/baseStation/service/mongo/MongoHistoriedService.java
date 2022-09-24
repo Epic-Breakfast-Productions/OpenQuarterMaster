@@ -2,10 +2,12 @@ package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
@@ -22,6 +24,8 @@ import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.user.User;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -152,13 +156,14 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(T object, User user) {
+	public ObjectId add(ClientSession session, @NonNull @Valid T object, User user) {
 		if (!this.allowNullUserForCreate) {
 			assertNotNullUser(user);
 		}
-		super.add(object);
+		super.add(session, object);
 		
 		this.getHistoryService().createHistoryFor(
+			session,
 			object,
 			user
 		);
@@ -166,8 +171,34 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		return object.getId();
 	}
 	
-	public ObjectId add(T object) {
+	public ObjectId add(T object, User user) {
+		return this.add(null, object, user);
+	}
+	
+	public ObjectId add(@NonNull T object) {
 		return this.add(object, null);
+	}
+	
+	public List<ObjectId> addBulk(List<T> objects, User user) {
+		try(
+			ClientSession session = this.getMongoClient().startSession();
+		){
+			return session.withTransaction(()->{
+				List<ObjectId> output = new ArrayList<>(objects.size());
+				
+				for (T cur : objects) {
+					try {
+						output.add(add(session, cur, user));
+					} catch(Throwable e){
+						session.abortTransaction();
+						throw e;
+					}
+				}
+				
+				session.commitTransaction();
+				return output;
+			}, this.getDefaultTransactionOptions());
+		}
 	}
 	
 	/**

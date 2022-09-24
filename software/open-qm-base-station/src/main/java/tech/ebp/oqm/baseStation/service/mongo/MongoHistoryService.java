@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -65,7 +66,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		return this.getHistoryFor(object.getId());
 	}
 	
-	public ObjectId createHistoryFor(T created, User user) {
+	public ObjectId createHistoryFor(ClientSession session, T created, User user) {
 		try {
 			this.getHistoryFor(created);
 			throw new IllegalStateException(
@@ -77,7 +78,11 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		
 		ObjectHistory history = new ObjectHistory(created, user);
 		
-		return this.add(history);
+		return this.add(session, history);
+	}
+	
+	public ObjectId createHistoryFor(T created, User user) {
+		return this.createHistoryFor(null, created, user);
 	}
 	
 	public ObjectHistory addHistoryEvent(ObjectId objectId, @Valid HistoryEvent event) {
