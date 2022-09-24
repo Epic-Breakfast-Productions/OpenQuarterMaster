@@ -829,37 +829,6 @@ function updatesDialog() {
 	done
 }
 
-function resetDataDialog() {
-	showDialog --title "Cleanup" \
-		--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
-		1 "Cleanup docker images and resources" \
-		2 "RESET data" \
-		2>$USER_SELECT_FILE
-	updateSelection
-
-	case $SELECTION in
-	1)
-		showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
-
-		# TODO::: check for any other steps?
-		docker system prune --volumes
-
-		showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
-		;;
-	2)
-		showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
-
-		# TODO::: check for any other steps?
-		docker system prune --volumes
-
-		showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
-		;;
-	*)
-		return
-		;;
-	esac
-}
-
 function cleanupDialog() {
 	while true; do
 		showDialog --title "Cleanup" \
