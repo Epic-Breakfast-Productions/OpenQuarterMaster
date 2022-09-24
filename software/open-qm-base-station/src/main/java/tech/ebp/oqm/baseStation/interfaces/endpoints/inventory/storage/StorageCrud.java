@@ -88,11 +88,44 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public ObjectId create(
 		@Context SecurityContext securityContext,
 		@Valid StorageBlock storageBlock
 	) {
 		return super.create(securityContext, storageBlock);
+	}
+	
+	@POST
+	@Path("bulk")
+	@Operation(
+		summary = "Adds new Storage Blocks."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Objects added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ObjectId.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Override
+	public List<ObjectId> createBulk(
+		@Context SecurityContext securityContext,
+		@Valid List<StorageBlock> storageBlocks
+	) {
+		return super.createBulk(securityContext, storageBlocks);
 	}
 	
 	@GET
@@ -211,6 +244,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@Override
 	public StorageBlock get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -251,6 +285,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public StorageBlock update(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -291,6 +326,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public StorageBlock delete(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -364,6 +400,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@Override
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -396,6 +433,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@Override
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

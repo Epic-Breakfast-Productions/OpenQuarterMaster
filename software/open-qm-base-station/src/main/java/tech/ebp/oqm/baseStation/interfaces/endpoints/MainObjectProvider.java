@@ -27,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 /**
  * Main abstract method to handle standard CRUD operations for MainObjects
@@ -106,6 +107,18 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		
 		ObjectId output = this.getObjectService().add(object, this.getUserFromJwt());
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
+		return output;
+	}
+	
+	public List<ObjectId> createBulk(
+		@Context SecurityContext securityContext,
+		@Valid List<T> objects
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
+		
+		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getUserFromJwt());
+		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
 	
