@@ -65,7 +65,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io
+Depends: docker, docker.io$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
@@ -118,6 +118,8 @@ EOT
 systemctl disable "$serviceFileEscaped"
 systemctl stop "$serviceFileEscaped"
 
+echo "Stopped $serviceFileEscaped"
+
 # remove config from infra config file
 EOT
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
@@ -132,18 +134,23 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
+
+
+
 # Remove docker image
-if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" != "" ]]; then
-	docker rmi oqm_$curPackage
-	echo "Removed docker image."
-else
-	echo "Docker image was already gone."
-fi
+docker stop oqm_$curPackage || echo "Docker container stopped previously."
+
 if [ $( docker ps -a | grep oqm_$curPackage | wc -l ) -gt 0 ]; then
 	docker rm oqm_$curPackage
 	echo "Removed docker container."
 else
 	echo "Docker container was already gone."
+fi
+if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" != "" ]]; then
+	docker rmi oqm_$curPackage
+	echo "Removed docker image."
+else
+	echo "Docker image was already gone."
 fi
 
 
