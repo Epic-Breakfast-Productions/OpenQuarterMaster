@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.ui.assertions.UserRelated;
+import tech.ebp.oqm.baseStation.testResources.ui.pages.General;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.KeycloakLogin;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.Root;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
@@ -45,12 +47,16 @@ public class WebDriverWrapper {
 		);
 		log.debug("Last Page html: \n{}", driver.getPageSource());
 		
-		if (AuthMode.EXTERNAL.equals(this.authMode)) {
-			String logoutUrl = this.keycloakInteractionBase + "/logout";
-			log.info("Logging out of Keycloak at: {}", logoutUrl);
-			driver.get(logoutUrl);
-			driver.manage().deleteAllCookies();
+		if(isLoggedIn()) {
+			this.logoutUser();
+			if (AuthMode.EXTERNAL.equals(this.authMode)) {
+				String logoutUrl = this.keycloakInteractionBase + "/logout";
+				log.info("Logging out of Keycloak at: {}", logoutUrl);
+				driver.manage().deleteAllCookies();
+				driver.get(logoutUrl);
+			}
 		}
+		driver.manage().deleteAllCookies();
 		this.goToIndex();
 		driver.manage().deleteAllCookies();
 		driver.get("about:logo");
@@ -96,6 +102,15 @@ public class WebDriverWrapper {
 		log.info("Page loaded: {}", this.getWebDriver().getCurrentUrl());
 	}
 	
+	public boolean isLoggedIn() {
+		try {
+			this.getWebDriver().findElement(General.USERNAME_DISPLAY);
+			return true;
+		} catch(NoSuchElementException e){
+			return false;
+		}
+	}
+	
 	public void loginUser(User testUser) {
 		log.info("Logging in user {}.", testUser.getUsername());
 		this.goToIndex();
@@ -128,5 +143,11 @@ public class WebDriverWrapper {
 		UserRelated.assertUserLoggedIn(this, testUser);
 		
 		log.info("Logged in user.");
+	}
+	
+	public void logoutUser() {
+		this.getWebDriver().findElement(General.USERNAME_DISPLAY).click();
+		this.getWebDriver().findElement(General.LOGOUT_BUTTON).click();
+		this.waitForPageLoad();
 	}
 }

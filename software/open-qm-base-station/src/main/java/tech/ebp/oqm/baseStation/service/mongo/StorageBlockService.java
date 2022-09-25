@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
@@ -49,8 +50,8 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 	}
 	
 	@Override
-	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock) {
-		super.ensureObjectValid(newObject, storageBlock);
+	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
+		super.ensureObjectValid(newObject, storageBlock, clientSession);
 		
 		Bson parentFilter = and(
 			eq("label", storageBlock.getLabel()),
@@ -60,12 +61,12 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 		
 		//TODO:: remember what this does and why
 		if(newObject){
-			long count = this.count(parentFilter);
+			long count = this.count(clientSession, parentFilter);
 			if(count > 0){
 				throw new DbModValidationException("");
 			}
 		} else {
-			List<StorageBlock> results = this.list(parentFilter, null, null);
+			List<StorageBlock> results = this.list(clientSession, parentFilter, null, null);
 			
 			if(!results.isEmpty()){
 				if(results.size() > 1 || !results.get(0).getId().equals(storageBlock.getId())){
@@ -83,7 +84,7 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 			//exists
 			StorageBlock curParent;
 			try {
-				curParent = this.get(storageBlock.getParent());
+				curParent = this.get(clientSession, storageBlock.getParent());
 			} catch(DbNotFoundException e){
 				throw new DbModValidationException("No parent exists for parent given.", e);
 			}
@@ -92,7 +93,7 @@ public class StorageBlockService extends MongoHistoriedService<StorageBlock, Sto
 				if(storageBlock.getId().equals(curParent.getParent())){
 					throw new DbModValidationException("Not allowed to make parental loop.");
 				}
-				curParent = this.get(curParent.getParent());
+				curParent = this.get(clientSession, curParent.getParent());
 			}
 			
 		}

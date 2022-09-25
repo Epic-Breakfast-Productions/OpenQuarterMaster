@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -40,8 +41,8 @@ public class ImageService extends MongoHistoriedService<Image, ImageSearch> {
 	}
 	
 	@Override
-	public void ensureObjectValid(boolean newObject, Image newOrChangedObject) {
-		super.ensureObjectValid(newObject, newOrChangedObject);
+	public void ensureObjectValid(boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant
 	}
 }

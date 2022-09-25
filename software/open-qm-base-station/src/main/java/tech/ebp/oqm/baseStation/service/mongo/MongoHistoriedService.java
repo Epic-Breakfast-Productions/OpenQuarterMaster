@@ -209,6 +209,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 * @return The object that was removed
 	 */
 	public T remove(ObjectId objectId, User user) {
+		//TODO:: client session
 		assertNotNullUser(user);
 		T removed = super.remove(objectId);
 		
@@ -229,6 +230,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	}
 	
 	public long removeAll(User user) {
+		//TODO:: client session
 		//TODO:: add history event to each
 		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 	}
@@ -267,10 +269,14 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		return this.getHistoryFor(object.getId());
 	}
 	
-	public ObjectHistory addHistoryFor(T object, HistoryEvent event){
+	public ObjectHistory addHistoryFor(ClientSession clientSession, T object, HistoryEvent event){
 		return this.getHistoryService().addHistoryEvent(object.getId(), event);
 	}
 	
-	//TODO:: more aggregate history functions (counts updated since, etc)?
+	public ObjectHistory addHistoryFor(T object, HistoryEvent event) {
+		return this.addHistoryFor(null, object, event);
+	}
+		
+		//TODO:: more aggregate history functions (counts updated since, etc)?
 	
 }

@@ -51,28 +51,44 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		this.clazzForObjectHistoryIsFor = clazz;
 	}
 	
-	public ObjectHistory getHistoryFor(ObjectId id) {
-		ObjectHistory found = getCollection()
-								  .find(eq("objectId", id))
-								  .limit(1)
-								  .first();
+	public ObjectHistory getHistoryFor(ClientSession clientSession, ObjectId id) {
+		ObjectHistory found;
+		if (clientSession != null) {
+			found = getCollection()
+						.find(clientSession, eq("objectId", id))
+						.limit(1)
+						.first();
+		} else {
+			found = getCollection()
+						.find(eq("objectId", id))
+						.limit(1)
+						.first();
+		}
 		if (found == null) {
 			throw new DbHistoryNotFoundException(this.clazzForObjectHistoryIsFor, id);
 		}
 		return found;
 	}
 	
+	public ObjectHistory getHistoryFor(ObjectId id) {
+		return this.getHistoryFor(null, id);
+	}
+	
+	public ObjectHistory getHistoryFor(ClientSession clientSession, T object) {
+		return this.getHistoryFor(clientSession, object.getId());
+	}
+	
 	public ObjectHistory getHistoryFor(T object) {
-		return this.getHistoryFor(object.getId());
+		return this.getHistoryFor(null, object);
 	}
 	
 	public ObjectId createHistoryFor(ClientSession session, T created, User user) {
 		try {
-			this.getHistoryFor(created);
+			this.getHistoryFor(session, created);
 			throw new IllegalStateException(
 				"History already exists for object " + this.clazzForObjectHistoryIsFor.getSimpleName() + " with id: " + created.getId()
 			);
-		} catch(DbNotFoundException e){
+		} catch(DbNotFoundException e) {
 			// no history record should exist.
 		}
 		
@@ -85,26 +101,28 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		return this.createHistoryFor(null, created, user);
 	}
 	
-	public ObjectHistory addHistoryEvent(ObjectId objectId, @Valid HistoryEvent event) {
+	public ObjectHistory addHistoryEvent(ClientSession clientSession, ObjectId objectId, @Valid HistoryEvent event) {
 		ObjectHistory history;
 		try {
-			history = this.getHistoryFor(objectId);
+			history = this.getHistoryFor(clientSession, objectId);
 		} catch(DbNotFoundException e) {
 			log.error("Could not find history for object! (Should not happen)");
 			throw e;
 		}
 		
 		history.updated(event);
+		this.update(clientSession, history);
 		
-		this.getCollection().findOneAndReplace(
-			eq("_id", history.getId()),
-			history
-		);
 		return history;
 	}
 	
-	public ObjectHistory updateHistoryFor(T updated, User user, ObjectNode updateJson, String description) {
+	public ObjectHistory addHistoryEvent(ObjectId objectId, @Valid HistoryEvent event) {
+		return addHistoryEvent(null, objectId, event);
+	}
+	
+	public ObjectHistory updateHistoryFor(ClientSession clientSession, T updated, User user, ObjectNode updateJson, String description) {
 		return this.addHistoryEvent(
+			clientSession,
 			updated.getId(),
 			UpdateEvent.builder()
 					   .userId(user.getId())
@@ -114,12 +132,22 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		);
 	}
 	
-	public ObjectHistory updateHistoryFor(T updated, User user, ObjectNode updateJson) {
+	public ObjectHistory updateHistoryFor(T updated, User user, ObjectNode updateJson, String description) {
+		return this.updateHistoryFor(null, updated, user, updateJson, description);
+	}
+	
+	
+	public ObjectHistory updateHistoryFor(ClientSession clientSession, T updated, User user, ObjectNode updateJson) {
 		return this.updateHistoryFor(updated, user, updateJson, "");
 	}
 	
-	public ObjectHistory objectDeleted(T updated, User user, String description) {
+	public ObjectHistory updateHistoryFor(T updated, User user, ObjectNode updateJson) {
+		return this.updateHistoryFor(null, updated, user, updateJson);
+	}
+	
+	public ObjectHistory objectDeleted(ClientSession clientSession, T updated, User user, String description) {
 		return this.addHistoryEvent(
+			clientSession,
 			updated.getId(),
 			DeleteEvent.builder()
 					   .userId(user.getId())
@@ -127,7 +155,16 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 					   .build()
 		);
 	}
+	
+	public ObjectHistory objectDeleted(T updated, User user, String description) {
+		return this.objectDeleted(null, updated, user, description);
+	}
+	
+	public ObjectHistory objectDeleted(ClientSession clientSession, T updated, User user) {
+		return this.objectDeleted(clientSession, updated, user, "");
+	}
+	
 	public ObjectHistory objectDeleted(T updated, User user) {
-		return this.objectDeleted(updated, user, "");
+		return this.objectDeleted(null, updated, user);
 	}
 }

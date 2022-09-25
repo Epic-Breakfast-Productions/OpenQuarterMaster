@@ -59,6 +59,7 @@ public class PageLookOverTest extends WebUiTest {
 		
 		if(loggedIn){
 			this.webDriverWrapper.loginUser(testUser);
+			log.info("User logged in.");
 		}
 		
 		log.info("Attempting page: {}", endpoint);

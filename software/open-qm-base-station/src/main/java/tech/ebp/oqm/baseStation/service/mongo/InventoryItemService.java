@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
@@ -57,9 +58,9 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	}
 	
 	@Override
-	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject) {
-		super.ensureObjectValid(newObject, newOrChangedObject);
-		//TODO:: name not existant
+	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
 	@Deprecated

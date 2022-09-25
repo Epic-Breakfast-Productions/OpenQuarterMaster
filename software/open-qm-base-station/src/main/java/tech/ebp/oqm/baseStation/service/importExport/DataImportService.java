@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
+import com.mongodb.client.ClientSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -14,8 +15,10 @@ import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,7 +30,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -90,20 +96,51 @@ public class DataImportService {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
+	private <T extends MainObject, S extends SearchObject<T>> void readInObject(
+		ClientSession clientSession,
+		T curObj,
+		MongoHistoriedService<T, S> objectService,
+		User importingUser,
+		Map<ObjectId, List<T>> needParentMap,
+		List<ObjectId> addedList
+	) {
+		ObjectId oldId = curObj.getId();
+		ObjectId newId;
+		try {
+			newId = objectService.add(clientSession, curObj, importingUser);
+		} catch(DbModValidationException e){
+			if(e.getMessage().contains("No parent exists")){
+				ObjectId curParent = ((StorageBlock)curObj).getParent();
+				needParentMap.computeIfAbsent(curParent, k->new ArrayList<>()).add(curObj);
+				return;
+			}
+			throw e;
+		}
+		log.info("Read in object. new id == old? {}", newId.equals(oldId));
+		assert newId.equals(oldId); //TODO:: better check?
+		addedList.add(oldId);
+	}
 	
 	private <T extends MainObject, S extends SearchObject<T>> void readInObject(
+		ClientSession clientSession,
 		File curFile,
 		MongoHistoriedService<T, S> objectService,
-		User importingUser
+		User importingUser,
+		Map<ObjectId, List<T>> needParentMap,
+		List<ObjectId> addedList
 	) throws IOException {
-		T curObj = Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz());
-		
-		ObjectId oldId = curObj.getId();
-		ObjectId newId = objectService.add(curObj, importingUser);
-		log.info("Read in object. new id == old? {}", newId.equals(oldId));
+		this.readInObject(
+			clientSession,
+			Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz()),
+			objectService,
+			importingUser,
+			needParentMap,
+			addedList
+		);
 	}
 	
 	private <T extends MainObject, S extends SearchObject<T>> long readInObjects(
+		ClientSession clientSession,
 		Path directory,
 		MongoHistoriedService<T, S> objectService,
 		User importingUser
@@ -113,9 +150,44 @@ public class DataImportService {
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), objectService.getCollectionName(), objectDirPath);
 		StopWatch sw = StopWatch.createStarted();
+		Map<ObjectId, List<T>> needParentMap = new HashMap<>();
+		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
-			readInObject(curObjFile, objectService, importingUser);
+			this.readInObject(clientSession, curObjFile, objectService, importingUser, needParentMap, addedList);
 		}
+		
+		if(needParentMap.isEmpty()){
+			log.info("No objects need parents.");
+		} else {
+			log.info("{} objects need parents.", needParentMap.size());
+			
+			while(!needParentMap.isEmpty()){
+				List<ObjectId> newAddedList = new ArrayList<>(addedList.size());
+				
+				while (!addedList.isEmpty()){
+					ObjectId curParent = addedList.remove(0);
+					
+					List<T> toAdd = needParentMap.remove(curParent);
+					
+					if(toAdd == null){
+						continue;
+					}
+					
+					for(T curObj : toAdd){
+						this.readInObject(
+							clientSession,
+							curObj,
+							objectService,
+							importingUser,
+							null,
+							newAddedList
+						);
+					}
+				}
+				addedList = newAddedList;
+			}
+		}
+		
 		sw.stop();
 		log.info(
 			"Read in {} {} objects in {}",
@@ -177,15 +249,27 @@ public class DataImportService {
 		
 		// TODO:: validate data to read in. Ensure no errors will happen when adding to database. No optimal way to do this?
 		
-		
 		log.info("Reading in objects.");
 		sw = StopWatch.createStarted();
 		DataImportResult.DataImportResultBuilder<?, ?> resultBuilder = DataImportResult.builder();
 		
-		resultBuilder.numImages(this.readInObjects(tempDirPath, this.imageService, importingUser));
-		resultBuilder.numStorageBlocks(this.readInObjects(tempDirPath, this.storageBlockService, importingUser));
-		resultBuilder.numInventoryItems(this.readInObjects(tempDirPath, this.inventoryItemService, importingUser));
-		//TODO:: history
+		try(
+			ClientSession session = this.imageService.getNewClientSession();//shouldn't matter which mongo service to grab session from
+		){
+			session.withTransaction(()->{
+				try {
+					resultBuilder.numImages(this.readInObjects(session, tempDirPath, this.imageService, importingUser));
+					resultBuilder.numStorageBlocks(this.readInObjects(session, tempDirPath, this.storageBlockService, importingUser));
+					resultBuilder.numInventoryItems(this.readInObjects(session, tempDirPath, this.inventoryItemService, importingUser));
+					//TODO:: history
+				} catch(Throwable e){
+					session.abortTransaction();
+					throw new RuntimeException(e);
+				}
+				session.commitTransaction();
+				return true;
+			}, this.imageService.getDefaultTransactionOptions());
+		}
 		
 		sw.stop();
 		log.info("Finished reading in objects. Took {}", sw);

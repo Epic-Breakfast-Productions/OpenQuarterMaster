@@ -126,12 +126,16 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.collection;
 	}
 	
-	protected TransactionOptions getDefaultTransactionOptions() {
+	public TransactionOptions getDefaultTransactionOptions() {
 		return TransactionOptions.builder()
 								 .readPreference(ReadPreference.primary())
 								 .readConcern(ReadConcern.LOCAL)
 								 .writeConcern(WriteConcern.MAJORITY)
 								 .build();
+	}
+	
+	public ClientSession getNewClientSession() {
+		return this.getMongoClient().startSession();
 	}
 	
 	/**
@@ -141,7 +145,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
 	 */
-	public void ensureObjectValid(boolean newObject, T newOrChangedObject) {
+	public void ensureObjectValid(boolean newObject, T newOrChangedObject, ClientSession clientSession) {
 	}
 	
 	/**
@@ -155,7 +159,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return a list of entries based on the options given.
 	 */
-	public FindIterable<T> listIterator(Bson filter, Bson sort, PagingOptions pageOptions) {
+	public FindIterable<T> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
 		FindIterable<T> results;
 		
 		if (filter == null) {
@@ -174,6 +178,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return results;
 	}
 	
+	public FindIterable<T> listIterator(Bson filter, Bson sort, PagingOptions pageOptions) {
+		return this.listIterator(null, filter, sort, pageOptions);
+	}
+	
 	/**
 	 * Gets a list of entries based on the options given.
 	 *
@@ -183,10 +191,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return a list of entries based on the options given.
 	 */
-	public List<T> list(Bson filter, Bson sort, PagingOptions pageOptions) {
+	public List<T> list(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
 		List<T> list = new ArrayList<>();
-		this.listIterator(filter, sort, pageOptions).into(list);
+		this.listIterator(clientSession, filter, sort, pageOptions).into(list);
 		return list;
+	}
+	
+	public List<T> list(Bson filter, Bson sort, PagingOptions pageOptions) {
+		return this.list(null, filter, sort, pageOptions);
 	}
 	
 	/**
@@ -196,8 +208,12 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return a list of all elements in the collection.
 	 */
+	public List<T> list(ClientSession clientSession) {
+		return this.list(clientSession, null, null, null);
+	}
+	
 	public List<T> list() {
-		return this.list(null, null, null);
+		return this.list(null);
 	}
 	
 	public Iterator<T> iterator() {
@@ -246,11 +262,23 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return the count of records in the collection
 	 */
-	public long count(Bson filter) {
+	public long count(ClientSession clientSession, Bson filter) {
 		if (filter == null) {
-			return getCollection().countDocuments();
+			if (clientSession == null) {
+				return getCollection().countDocuments();
+			} else {
+				return getCollection().countDocuments(clientSession);
+			}
 		}
-		return this.getCollection().countDocuments(filter);
+		if (clientSession == null) {
+			return getCollection().countDocuments(filter);
+		} else {
+			return getCollection().countDocuments(clientSession, filter);
+		}
+	}
+	
+	public long count(Bson filter) {
+		return this.count(null, filter);
 	}
 	
 	/**
@@ -260,8 +288,15 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return the count of all records in the collection.
 	 */
+	public long count(ClientSession clientSession) {
+		if (clientSession == null) {
+			return this.count((Bson) null);
+		}
+		return this.count(clientSession, null);
+	}
+	
 	public long count() {
-		return this.count(null);
+		return this.count((ClientSession) null);
 	}
 	
 	/**
@@ -274,6 +309,19 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public T get(ObjectId objectId) throws DbNotFoundException, DbDeletedException {
 		T found = getCollection()
 					  .find(eq("_id", objectId))
+					  .limit(1)
+					  .first();
+		
+		if (found == null) {
+			throw new DbNotFoundException(this.clazz, objectId);
+		}
+		
+		return found;
+	}
+	
+	public T get(ClientSession clientSession, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
+		T found = getCollection()
+					  .find(clientSession, eq("_id", objectId))
 					  .limit(1)
 					  .first();
 		
@@ -329,7 +377,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 															 .map(ConstraintViolation::getMessage)
 															 .collect(Collectors.joining(", ")));
 		}
-		this.ensureObjectValid(false, object);
+		this.ensureObjectValid(false, object, null);//TODO:: add client session
 		
 		this.getCollection().findOneAndReplace(eq("_id", id), object);
 		return object;
@@ -347,12 +395,18 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.update(new ObjectId(id), updateJson);
 	}
 	
-	public T update(@Valid T object) throws DbNotFoundException {
+	public T update(ClientSession clientSession, @Valid T object) throws DbNotFoundException {
 		//TODO:: review this
 		this.get(object.getId());
-		Object result = this.getCollection().findOneAndReplace(eq("_id", object.getId()), object);
-		
-		return object;
+		if (clientSession != null) {
+			return this.getCollection().findOneAndReplace(clientSession, eq("_id", object.getId()), object);
+		} else {
+			return this.getCollection().findOneAndReplace(eq("_id", object.getId()), object);
+		}
+	}
+	
+	public T update(@Valid T object) throws DbNotFoundException {
+		return this.update(null, object);
 	}
 	
 	/**
@@ -366,10 +420,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		log.info("Adding new {}", this.getCollectionName());
 		log.debug("New object: {}", object);
 		
-		this.ensureObjectValid(true, object);
+		this.ensureObjectValid(true, object, session);
 		
 		InsertOneResult result;
-		if(session==null) {
+		if (session == null) {
 			result = getCollection().insertOne(object);
 		} else {
 			result = getCollection().insertOne(session, object);
@@ -386,16 +440,16 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	public List<ObjectId> addBulk(List<T> objects) {
-		try(
-			ClientSession session = this.getMongoClient().startSession();
-		){
+		try (
+			ClientSession session = this.getNewClientSession();
+		) {
 			return session.withTransaction(()->{
 				List<ObjectId> output = new ArrayList<>(objects.size());
 				
 				for (T cur : objects) {
 					try {
 						output.add(add(session, cur));
-					} catch(Throwable e){
+					} catch(Throwable e) {
 						session.abortTransaction();
 						throw e;
 					}
@@ -415,6 +469,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 * @return The object that was removed
 	 */
 	public T remove(ObjectId objectId) {
+		//TODO:: client session
 		T toRemove = this.get(objectId);
 		
 		DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
@@ -450,6 +505,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 * @return The number of items that were removed.
 	 */
 	public long removeAll() {
+		//TODO:: client session
 		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 	}
 }

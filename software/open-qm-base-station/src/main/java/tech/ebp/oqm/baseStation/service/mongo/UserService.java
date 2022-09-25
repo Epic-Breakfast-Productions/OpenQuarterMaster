@@ -1,7 +1,9 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
@@ -9,6 +11,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
@@ -63,13 +66,13 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	}
 	
 	@Override
-	public void ensureObjectValid(boolean newObject, User newOrChangedObject) {
-		super.ensureObjectValid(newObject, newOrChangedObject);
+	public void ensureObjectValid(boolean newObject, User newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: username/email not existant
 		
 		if(this.authMode == AuthMode.SELF) {
 			if (newOrChangedObject.isDisabled()) {
-				List<User> adminUsers = this.list(
+				List<User> adminUsers = this.list(//TODO:: client session
 					and(
 						eq("disabled", false),
 						in("roles", UserRoles.USER_ADMIN)
@@ -88,11 +91,8 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 						}
 					}
 				}
-				
-				
 			}
 		}
-		
 	}
 	
 	/**
@@ -189,7 +189,11 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 				if(userId == null){
 					return null;
 				}
-				return this.get(userId);
+				try {
+					return this.get(userId);
+				} catch(DbNotFoundException e){
+					throw new UnauthorizedException("User in JWT not found.");
+				}
 			case EXTERNAL:
 				log.debug("Getting external user data ");
 				return this.getOrCreateExternalUser(jwt);
