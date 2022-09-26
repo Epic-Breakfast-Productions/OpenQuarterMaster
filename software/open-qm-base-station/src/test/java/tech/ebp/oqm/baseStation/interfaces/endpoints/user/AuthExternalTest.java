@@ -12,6 +12,7 @@ import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.GeneralAuth;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.UserAuth;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -37,7 +38,6 @@ import static io.restassured.RestAssured.given;
 	initArgs = @ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"),
 	restrictToAnnotatedClass = true
 )
-@TestHTTPEndpoint(UserAuth.class)
 class AuthExternalTest extends RunningServerTest {
 	
 	@Inject
@@ -46,12 +46,15 @@ class AuthExternalTest extends RunningServerTest {
 	TestUserService testUserService;
 	
 	@Test
+	@TestHTTPEndpoint(UserAuth.class)
 	public void testLoginEndpoint() throws JsonProcessingException {
 		User testUser = this.testUserService.getTestUser(false, true);
 		
-		UserLoginRequest
-			ulr =
-			new UserLoginRequest(testUser.getEmail(), testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY), true);
+		UserLoginRequest ulr = new UserLoginRequest(
+			testUser.getEmail(),
+			testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY),
+			true
+		);
 		
 		String errorMessage = given()
 			.contentType(ContentType.JSON)
@@ -66,6 +69,7 @@ class AuthExternalTest extends RunningServerTest {
 	}
 	
 	@Test
+	@TestHTTPEndpoint(GeneralAuth.class)
 	public void testTokenCheck() throws JsonProcessingException {
 		User testUser = this.testUserService.getTestUser(false, true);
 		

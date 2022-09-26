@@ -81,9 +81,12 @@ class AuthTest extends RunningServerTest {
 	public void testLogin() throws JsonProcessingException {
 		User testUser = this.testUserService.getTestUser(false, true);
 		
-		UserLoginRequest
-			ulr =
-			new UserLoginRequest(testUser.getEmail(), testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY), true);
+		UserLoginRequest ulr = new UserLoginRequest(
+			testUser.getEmail(),
+			testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY),
+			true
+		);
+		
 		UserLoginResponse loginResponse = given()
 			.contentType(ContentType.JSON)
 			.body(objectMapper.writeValueAsString(ulr))
@@ -103,6 +106,7 @@ class AuthTest extends RunningServerTest {
 		)
 													.contentType(ContentType.JSON)
 													.when()
+										   .basePath("/api/auth")
 													.get("/tokenCheck")
 													.then();
 		log.info("token check response: {}", response.extract().body().asString());

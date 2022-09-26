@@ -48,7 +48,7 @@ function checkToken(jwtToken){
 
     doRestCall({
         spinnerContainer: null,
-        url: "/api/auth/user/tokenCheck",
+        url: "/api/auth/tokenCheck",
         async: false,
         authorization: jwtToken,
         done: function(data){
