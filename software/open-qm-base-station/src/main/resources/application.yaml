@@ -22,7 +22,7 @@ service:
     #    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackUrl: ${runningInfo.baseUrl}/api/user/auth/callback
+    callbackUrl: ${runningInfo.baseUrl}/api/auth/user/callback
   runBy:
     name: " "
     email: " "

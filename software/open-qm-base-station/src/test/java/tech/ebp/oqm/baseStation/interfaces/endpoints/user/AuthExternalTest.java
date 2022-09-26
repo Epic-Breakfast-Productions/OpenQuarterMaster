@@ -12,6 +12,7 @@ import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.UserAuth;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -36,7 +37,7 @@ import static io.restassured.RestAssured.given;
 	initArgs = @ResourceArg(name = TestResourceLifecycleManager.EXTERNAL_AUTH_ARG, value = "true"),
 	restrictToAnnotatedClass = true
 )
-@TestHTTPEndpoint(Auth.class)
+@TestHTTPEndpoint(UserAuth.class)
 class AuthExternalTest extends RunningServerTest {
 	
 	@Inject

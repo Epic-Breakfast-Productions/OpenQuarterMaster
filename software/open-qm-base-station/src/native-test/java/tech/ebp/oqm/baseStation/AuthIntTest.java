@@ -1,8 +1,5 @@
 package tech.ebp.oqm.baseStation;
 
-import com.ebp.openQuarterMaster.lib.core.Utils;
-import com.ebp.openQuarterMaster.lib.core.rest.ErrorMessage;
-import com.ebp.openQuarterMaster.lib.core.rest.user.UserLoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
@@ -10,6 +7,9 @@ import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
+import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.rest.ErrorMessage;
+import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
 
 import javax.ws.rs.core.Response;
 
@@ -25,7 +25,7 @@ public class AuthIntTest {
         log.info("INTEGRATION TEST");
         UserLoginRequest ulr = new UserLoginRequest("bad", "login", true);
         ErrorMessage errorMessage = given()
-                .basePath("/api/user/auth")
+                .basePath("/api/auth/user")
                 .contentType(ContentType.JSON)
                 .body(Utils.OBJECT_MAPPER.writeValueAsString(ulr))
                 .when()

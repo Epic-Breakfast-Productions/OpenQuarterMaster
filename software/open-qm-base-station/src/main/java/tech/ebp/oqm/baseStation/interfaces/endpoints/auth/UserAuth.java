@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
+package tech.ebp.oqm.baseStation.interfaces.endpoints.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -10,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -23,11 +22,9 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.utils.TimeUtils;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-import tech.ebp.oqm.lib.core.rest.user.TokenCheckResponse;
 import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
 import tech.ebp.oqm.lib.core.rest.user.UserLoginResponse;
 
@@ -49,16 +46,15 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
-import java.util.Date;
 import java.util.List;
 
 @Traced
 @Slf4j
-@Path("/api/user/auth")
-@Tags({@Tag(name = "User Auth", description = "Endpoints for user authorization.")})
+@Path("/api/auth/user")
+@Tags({@Tag(name = "Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
 @NoCache
-public class Auth extends EndpointProvider {
+public class UserAuth extends EndpointProvider {
 	
 	@Inject
 	UserService userService;
@@ -156,40 +152,6 @@ public class Auth extends EndpointProvider {
 					   .build();
 	}
 	
-	@GET
-	@Path("tokenCheck")
-	@Operation(
-		summary = "Checks a users' token."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "The check happened.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(implementation = TokenCheckResponse.class)
-		)
-	)
-	@SecurityRequirement(name = "JwtAuth")
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response tokenCheck(@Context SecurityContext ctx) {
-		logRequestContext(this.jwt, ctx);
-		log.info("Checking user's token.");
-		
-		TokenCheckResponse response = new TokenCheckResponse();
-		if (jwt.getRawToken() != null) {
-			log.info("User roles: {}", this.identity.getRoles());
-			log.info("User JWT claims: {}", this.jwt.getClaimNames());
-			
-			response.setHadToken(true);
-			response.setTokenSecure(ctx.isSecure());
-			response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());
-			response.setExpirationDate(new Date(jwt.getExpirationTime()));
-		} else {
-			log.info("User had no jwt");
-		}
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON_TYPE).entity(response).build();
-	}
 	
 	@GET
 	@Path("callback")
@@ -271,7 +233,7 @@ public class Auth extends EndpointProvider {
 	@GET
 	@Path("logout")
 	@Operation(
-		summary = "Callback for an external auth provider to come back to this service."
+		summary = "Logs out a user from the ui."
 	)
 	@APIResponse(
 		responseCode = "303",
