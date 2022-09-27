@@ -26,6 +26,7 @@ class StorageBlockTest extends BasicTest {
 				new StorageBlock(
 					FAKER.name().name(),
 					"",
+					"",
 					FAKER.address().fullAddress(),
 					null,
 					new ArrayList<>() {{
@@ -36,6 +37,7 @@ class StorageBlockTest extends BasicTest {
 			Arguments.of(
 				new StorageBlock(
 					FAKER.name().name(),
+					"",
 					"",
 					FAKER.address().fullAddress(),
 					null,

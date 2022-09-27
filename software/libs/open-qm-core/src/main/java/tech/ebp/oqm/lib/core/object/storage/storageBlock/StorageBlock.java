@@ -34,11 +34,18 @@ public class StorageBlock extends ImagedMainObject {
 	private String label;
 	
 	/**
+	 * The nickname for this storage block
+	 */
+	@NonNull
+	@NotNull
+	private String nickname = "";
+	
+	/**
 	 * Text that describes the storage block
 	 */
 	@NonNull
 	@NotNull
-	private String description;
+	private String description = "";
 	
 	/**
 	 * The location of this storage block. If a sub-block, just the location within that sub-block.
@@ -46,8 +53,6 @@ public class StorageBlock extends ImagedMainObject {
 	@NonNull
 	@NotNull
 	private String location = "";
-	
-	//TODO:: location tag/label
 	
 	
 	/**
