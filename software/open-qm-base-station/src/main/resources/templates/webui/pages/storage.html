@@ -97,6 +97,18 @@ Accepts:
                         </div>
                     </div>
                     <div class="mb-3 row">
+                        <label for="addEditNicknameInput" class="col-sm-2 col-form-label">Nickname</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="addEditNicknameInput" placeholder="Nickname">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
                         <label for="addEditLocationInput" class="col-sm-2 col-form-label">Location</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="addEditLocationInput" placeholder="Location">
@@ -207,6 +219,12 @@ Accepts:
                     <p class="card-text" id="storageBlockViewLocation"></p>
                 </div>
             </div>
+            <div class="card" id="storageBlockViewDescriptionContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Description:</h5>
+                    <p class="card-text" id="storageBlockViewDescription"></p>
+                </div>
+            </div>
             <div class="card" id="storageBlockViewCapacityContainer">
                 <div class="card-body">
                     <h5 class="card-title">Capacities:</h5>
@@ -294,6 +312,8 @@ var addEditFormMessages = $("#addEditFormMessages");
 var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
 var addEditLabelInput = $("#addEditLabelInput");
+var addEditNicknameInput = $("#addEditNicknameInput");
+var addEditDescriptionInput = $("#addEditDescriptionInput");
 var addEditLocationInput = $("#addEditLocationInput");
 var addEditParentInputId = $("#addEditParentInputId");
 var addEditParentInputName = $("#addEditParentInputName");
@@ -349,6 +369,8 @@ function setupAddEditForEdit(blockId){
     	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
             addEditLabelInput.val(data.label);
+            addEditNicknameInput.text(data.nickname)
+            addEditDescriptionInput.text(data.description)
             addEditLocationInput.val(data.location);
 
             if(data.parent){
@@ -370,6 +392,8 @@ addEditStorageForm.submit(function(event){
 
     var addEditData = {
         label: addEditLabelInput.val(),
+        nickname: addEditNicknameInput.val(),
+        description: addEditDescriptionInput.val(),
         location: addEditLocationInput.val(),
         capacityMeasures: []
     };
@@ -462,8 +486,10 @@ var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
 var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
+var storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
 var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
 var storageBlockViewLocation = $('#storageBlockViewLocation');
+var storageBlockViewDescription = $('#storageBlockViewDescription');
 var storageBlockViewCapacity = $('#storageBlockViewCapacity');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
@@ -473,6 +499,9 @@ function resetView(){
     storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
     storageBlockViewBreadcrumbContainer.text('');
+    
+    storageBlockViewDescriptionContainer.hide();
+    storageBlockViewDescription.text("");
 
     storageBlockViewCapacity.text('');
     storageBlockViewCapacityContainer.hide();
@@ -497,11 +526,21 @@ function setupView(blockId){
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(storageBlockHistory, "/inventory/storage-block/"+data.id);
-            storageBlockViewModalLabel.text(data.label);
-
+            
+            if(data.nickname){
+                storageBlockViewModalLabel.text(data.label + " / " + data.nickname);
+            } else {
+                storageBlockViewModalLabel.text(data.label);
+            }
+        
+        
             if(data.location){
                 storageBlockViewLocation.text(data.location);
                 storageBlockViewLocationContainer.show();
+            }
+            if(data.description){
+                storageBlockViewDescription.text(data.description);
+                storageBlockViewDescriptionContainer.show();
             }
             if(data.capacityMeasures.length){
                 data.capacityMeasures.forEach(function(curCapacity){

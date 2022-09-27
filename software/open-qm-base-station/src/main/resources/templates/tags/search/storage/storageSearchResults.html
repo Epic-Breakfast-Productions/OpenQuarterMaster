@@ -21,7 +21,7 @@
   </tr>
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
-    <th scope="col">Label</th>
+    <th scope="col">Label/Nickname</th>
     <th scope="col">Location</th>
     <th scope="col">Parent</th>
     <th scope="col">Capacity</th>
@@ -53,7 +53,7 @@
       <img src="/api/media/image/for/storageBlock/{result.getId()}" class="searchResultImage">
       {/if}
     </td>
-    <td>{result.getLabel()}</td>
+    <td>{result.getLabel()}{#if result.getNickname() != null && !result.getNickname().isBlank()} / {result.getNickname()}{/if}</td>
     <td>{result.getLocation()}</td>
     <td>{#if result.getParent()??}{storageService.get(result.getParent()).getLabel()}{/if}</td>
     <td></td>
