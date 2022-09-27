@@ -23,6 +23,8 @@ import java.util.Map;
 
 /**
  * Describes a type of inventory item.
+ * <p>
+ * TODO:: simplify getStorageType for superBuilder, similar to how Service handles
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
