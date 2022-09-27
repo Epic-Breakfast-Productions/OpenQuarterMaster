@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.media;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidBase64;
@@ -27,10 +28,11 @@ import java.util.Base64;
 /**
  *
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
 public class Image extends AttKeywordMainObject {
 	

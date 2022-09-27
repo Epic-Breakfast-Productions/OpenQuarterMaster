@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.user;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
 import lombok.AllArgsConstructor;
@@ -21,10 +22,11 @@ import java.util.Set;
 /**
  *
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
 public class User extends ImagedMainObject {
 	

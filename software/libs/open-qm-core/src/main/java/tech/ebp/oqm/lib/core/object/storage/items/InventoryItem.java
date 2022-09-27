@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -26,9 +27,10 @@ import java.util.Map;
  * <p>
  * TODO:: simplify getStorageType for superBuilder, similar to how Service handles
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storageType"
@@ -38,7 +40,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = ListAmountItem.class, name = "AMOUNT_LIST"),
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
-@BsonDiscriminator(key="storedType_mongo")
+@BsonDiscriminator(key = "storedType_mongo")
 public abstract class InventoryItem<T> extends ImagedMainObject {
 	
 	/**

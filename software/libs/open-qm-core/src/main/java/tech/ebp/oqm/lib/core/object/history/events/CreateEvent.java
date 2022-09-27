@@ -8,10 +8,10 @@ import lombok.experimental.SuperBuilder;
 /**
  * Event for the creation of an object.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class CreateEvent extends HistoryEvent {
 	
 	private static EventType getClassType() {

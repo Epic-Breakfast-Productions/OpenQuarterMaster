@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidHeldStoredUnits;
@@ -22,9 +23,10 @@ import java.math.BigDecimal;
  *
  * @param <T>
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @ValidHeldStoredUnits
 public abstract class AmountItem<T> extends InventoryItem<T> {
 	

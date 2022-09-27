@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
@@ -24,8 +25,9 @@ import java.util.Map;
 /**
  * Describes a unique item stored.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
 	
 	/**

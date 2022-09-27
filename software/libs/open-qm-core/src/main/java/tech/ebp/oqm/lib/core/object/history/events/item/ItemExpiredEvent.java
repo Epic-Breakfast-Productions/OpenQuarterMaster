@@ -15,10 +15,10 @@ import javax.validation.constraints.NotNull;
 /**
  * Event for the addition of items to a storage block.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 public class ItemExpiredEvent extends HistoryEvent {
 	
 	private static EventType getClassType() {

@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 public abstract class ItemAddSubEvent
 	extends DescriptiveEvent
 	//	implements AttKeywordContaining

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
@@ -20,9 +21,10 @@ import java.util.List;
 /**
  * Describes an object's history.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ObjectHistory extends MainObject {
 	
 	/**

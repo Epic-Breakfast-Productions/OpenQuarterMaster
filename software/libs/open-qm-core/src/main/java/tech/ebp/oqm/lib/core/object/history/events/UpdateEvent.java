@@ -17,10 +17,10 @@ import java.util.Map;
 /**
  * Event for the update of an object.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class UpdateEvent extends DescriptiveEvent {
 	
 	public static List<String> fieldListFromJson(ObjectNode updateJson) {

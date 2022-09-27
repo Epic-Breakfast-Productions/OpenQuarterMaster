@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.storageBlock;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,9 +18,10 @@ import java.util.List;
 /**
  * Describes an area for storage.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AllArgsConstructor
 public class StorageBlock extends ImagedMainObject {
 	
@@ -44,6 +46,10 @@ public class StorageBlock extends ImagedMainObject {
 	@NonNull
 	@NotNull
 	private String location = "";
+	
+	//TODO:: location tag/label
+	
+	
 	/**
 	 * The parent of this storage block, if any
 	 */

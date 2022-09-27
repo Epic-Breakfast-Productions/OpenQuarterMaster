@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidQuantity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,8 +10,9 @@ import javax.measure.Quantity;
 /**
  * Stored object to describe an amount of stored substance.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class AmountStored extends Stored {
 	
 	public AmountStored() {

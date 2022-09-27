@@ -10,10 +10,10 @@ import lombok.experimental.SuperBuilder;
 /**
  * Event for the login action of a user.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class UserLoginEvent extends HistoryEvent {
 	
 	private static EventType getClassType() {

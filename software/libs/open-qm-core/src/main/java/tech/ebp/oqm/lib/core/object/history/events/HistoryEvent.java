@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
  * TODO:: validator to ensure type
  */
 @Data
+@SuperBuilder
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
@@ -42,7 +43,6 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER")
 })
-@SuperBuilder
 @BsonDiscriminator
 public abstract class HistoryEvent {
 	

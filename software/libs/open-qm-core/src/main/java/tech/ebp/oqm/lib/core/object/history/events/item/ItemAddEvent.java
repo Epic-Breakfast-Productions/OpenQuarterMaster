@@ -13,10 +13,10 @@ import javax.validation.constraints.NotNull;
 /**
  * Event for the addition of items to a storage block.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class ItemAddEvent extends ItemAddSubEvent {
 	
 	@NonNull

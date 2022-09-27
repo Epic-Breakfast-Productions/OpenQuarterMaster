@@ -8,10 +8,10 @@ import lombok.experimental.SuperBuilder;
 /**
  * Event for the deletion of an object.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class DeleteEvent extends DescriptiveEvent {
 	
 	private static EventType getClassType() {

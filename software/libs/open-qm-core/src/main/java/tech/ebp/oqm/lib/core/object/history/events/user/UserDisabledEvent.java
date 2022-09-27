@@ -10,10 +10,10 @@ import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 /**
  * Event for the login action of a user.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class UserDisabledEvent extends HistoryEvent {
 	
 	private static EventType getClassType() {

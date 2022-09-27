@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 
 import javax.validation.constraints.DecimalMin;
@@ -13,8 +14,9 @@ import java.math.BigDecimal;
  * The key of this object in the {@link TrackedItem} object is the identifying key for this
  * object.
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class TrackedStored extends Stored {
 	
 	public TrackedStored() {
