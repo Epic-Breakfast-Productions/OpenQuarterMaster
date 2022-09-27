@@ -320,10 +320,19 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	public T get(ClientSession clientSession, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
-		T found = getCollection()
-					  .find(clientSession, eq("_id", objectId))
-					  .limit(1)
-					  .first();
+		T found;
+		
+		if(clientSession == null) {
+			found = getCollection()
+						.find(eq("_id", objectId))
+						.limit(1)
+						.first();
+		} else {
+			found = getCollection()
+						.find(clientSession, eq("_id", objectId))
+						.limit(1)
+						.first();
+		}
 		
 		if (found == null) {
 			throw new DbNotFoundException(this.clazz, objectId);

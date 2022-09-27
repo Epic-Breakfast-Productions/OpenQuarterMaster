@@ -122,6 +122,59 @@ Accepts:
                     {/inputs/keywordInput}
                     {#inputs/attInput}
                     {/inputs/attInput}
+                    <hr />
+                    <div class="accordion" id="addBulkAccord">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="addBulkAccordHeading">
+                                <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#addBulkAccordCollapse" aria-expanded="false" aria-controls="addBulkAccordCollapse">
+                                    Bulk Add Options
+                                </button>
+                            </h2>
+                            <div id="addBulkAccordCollapse" class="accordion-collapse collapse" aria-labelledby="addBulkAccordHeading" data-bs-parent="#addBulkAccord">
+                                <div class="accordion-body">
+                                    <div class="row mb-4">
+                                        <div class="col">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" value="true" id="addBulkEnabledInput" aria-describedby="#bulkHelp" onchange="setBulkInsertInputState()">
+                                            <label class="form-check-label" for="addBulkEnabledInput">
+                                                Do bulk insert
+                                            </label>
+                                            <div id="bulkHelp" class="form-text">Bulk insert will make a copies of the block described above using the settings below.</div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div id="bulkInputControls">
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="addBulkNumberInput" class="form-label"># of storage blocks to make</label>
+                                                <input type="number" class="form-control" id="addBulkNumberInput" aria-describedby="addBulkNumberInputHelp" min="1" value="1" onchange="updateBulkLabelExample()">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="true" id="addBulkLeadingZeroesInput" onchange="updateBulkLabelExample()">
+                                                <label class="form-check-label" for="addBulkLeadingZeroesInput">
+                                                    Leading Zeroes
+                                                </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <h5>
+                                                    Example Labels:
+                                                </h5>
+                                                <p id="addBulkExample">
+                                                
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -250,6 +303,14 @@ var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
 var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
 var attInputDiv = addEditStorageForm.find(".attInputDiv");
 
+var addBulkAccord = $("#addBulkAccord");
+var addBulkEnabledInput = $("#addBulkEnabledInput");
+var bulkInputControls = $("#bulkInputControls");
+var addBulkNumberInput = $("#addBulkNumberInput");
+var addBulkLeadingZeroesInput = $("#addBulkLeadingZeroesInput");
+var addBulkExample = $("#addBulkExample");
+
+
 function resetAddEdit(){
     addEditStorageForm.trigger("reset");
     addEditFormId.val("");
@@ -257,12 +318,17 @@ function resetAddEdit(){
     keywordInputDiv.text("");
     attInputDiv.text("");
     capacityInputDiv.text("");
+    
+    addBulkEnabledInput.prop("checked", false);
+    addBulkNumberInput.val(1);
+    setBulkInsertInputState();
 }
 
 
 function setupAddEditForAdd(){
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
+    addBulkAccord.show();
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add");
     addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Storage Block');
@@ -271,6 +337,7 @@ function setupAddEditForAdd(){
 function setupAddEditForEdit(blockId){
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
+    addBulkAccord.hide();
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit");
     addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Storage Block');
@@ -330,20 +397,39 @@ addEditStorageForm.submit(function(event){
     var verb = "";
     if(addEditFormMode.val() === "add"){
         verb = "Created";
-        console.log("Adding new storage block.");
-        doRestCall({
-            url: "/api/inventory/storage-block",
-            method: "POST",
-            data: addEditData,
-            async: false,
-            done: function(data) {
-                console.log("Response from create request: " + JSON.stringify(data));
-                result = true;
-            },
-            fail: function(data) {
-                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
-            }
-        });
+        
+        if(addBulkEnabledInput.is(":checked")){
+            addEditData = getBulkInsertData(addEditData);
+            console.log("Adding new storage blocks in bulk.");
+            doRestCall({
+                url: "/api/inventory/storage-block/bulk",
+                method: "POST",
+                data: addEditData,
+                async: false,
+                done: function(data) {
+                    console.log("Response from create request: " + JSON.stringify(data));
+                    result = true;
+                },
+                fail: function(data) {
+                    console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+                }
+            });
+        } else {
+            console.log("Adding new storage block.");
+            doRestCall({
+                url: "/api/inventory/storage-block",
+                method: "POST",
+                data: addEditData,
+                async: false,
+                done: function(data) {
+                    console.log("Response from create request: " + JSON.stringify(data));
+                    result = true;
+                },
+                fail: function(data) {
+                    console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+                }
+            });
+        }
     } else if(addEditFormMode.val() === "edit") {
         verb = "Edited";
         let id = addEditFormId.val();
@@ -454,7 +540,57 @@ function setupView(blockId){
     	},
     	fail: function(){}
     });
+    
+}
 
+
+function setBulkInsertInputState(){
+    if(addBulkEnabledInput.is(":checked")){
+        console.log("Disabling bulk insert options");
+        bulkInputControls.show();
+        bulkInputControls.find(":input").attr("disabled", false);
+    } else {
+        console.log("Enabling bulk insert options");
+        bulkInputControls.hide();
+        bulkInputControls.find(":input").attr("disabled", true);
+    }
+}
+
+function padWithZero(num, targetLength) {
+    return String(num).padStart(targetLength, '0');
+}
+
+function getBulkLabel(i, leadingZeroes, numDigits){
+    return addEditLabelInput.val() + " " + padWithZero(i, (leadingZeroes? numDigits:0))
+}
+
+function updateBulkLabelExample(){
+    let num = addBulkNumberInput.val();
+    let numDigits = num.toString().length;
+    let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
+    
+    addBulkExample.text(
+            getBulkLabel(1, addBulkLeadingZeroes, numDigits) +
+            " → " +
+            getBulkLabel(num, addBulkLeadingZeroes, numDigits)
+    );
+}
+
+function getBulkInsertData(origStorageBlockData){
+    let origDataString = JSON.stringify(origStorageBlockData);
+    let output = [ ];
+    
+    let num = addBulkNumberInput.val();
+    let numDigits = num.toString().length;
+    let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
+    
+    for(let i = 1; i <= num; i++){
+        let newData = JSON.parse(origDataString);
+        newData.label = getBulkLabel(i, addBulkLeadingZeroes, numDigits);
+        output.push(newData);
+    }
+    
+    return output;
 }
 
 showTree("#mainTreeChart");
