@@ -8,7 +8,7 @@ Inputs:
 
 {#if pagingCalculations.getNumPages() > 1 }
 <nav aria-label="Search Pagination">
-    <ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-center mb-0">
         <li class="page-item {#if pagingCalculations.isOnFirstPage()}disabled{/if}">
             <button type="button" class="btn-link page-link" title="First page" onclick="paginationClick('{searchFormId}', 1);" {#if pagingCalculations.isOnFirstPage()}disabled{/if}><i class="fas fa-angle-double-left"></i></button>
         </li>
