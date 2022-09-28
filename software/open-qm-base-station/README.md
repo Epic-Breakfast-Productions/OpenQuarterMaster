@@ -83,6 +83,7 @@ Native-specific tests:
   - responsive design tweaks
   - testing for large images
   - Allow for image upload on image select
+  - Look at moving to Cropper to replace Croppie: https://github.com/fengyuanchen/cropperjs
 - User
   - external
     - view your infos

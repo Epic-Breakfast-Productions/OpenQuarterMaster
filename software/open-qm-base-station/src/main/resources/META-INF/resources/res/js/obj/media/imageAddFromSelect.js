@@ -1,4 +1,5 @@
 
+var addImageFormMessages = $("addImageFormMessages");
 var imageSearchSelectModalLabelCloseButton = $("#imageSearchSelectModalLabelCloseButton");
 var imageAddImageForm = $("#addImageForm");
 
@@ -41,13 +42,14 @@ imageAddImageForm.submit(function (ev) {
 			data: addData,
 			async: false,
 			done: function(data) {
-				selectImage(data.title, data.id);
+				console.log("New image id: " + data)
+				selectImage(addData.title, data);
 				imageSearchSelectModalLabelCloseButton.click();
 				resetImageAdd();
 			},
 			fail: function(data) {
 				console.warn("Bad response from image add attempt: " + JSON.stringify(data));
-				addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
+				addMessageToDiv(addImageFormMessages, "danger", "Failed to add image: " + data.responseText, "Failed", null);
 			}
 		});
 	});
