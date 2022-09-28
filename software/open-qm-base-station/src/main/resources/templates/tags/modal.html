@@ -12,7 +12,7 @@ Ingests:
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="{id}ModalLabel">{#if title??}{title}{/if}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
+                <button id="{id}ModalLabelCloseButton" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
             </div>
             <div class="modal-body">
                 {nested-content}

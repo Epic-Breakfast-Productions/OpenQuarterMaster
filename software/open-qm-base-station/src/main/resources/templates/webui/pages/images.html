@@ -65,7 +65,7 @@
         <label for="imageUploadInput" class="form-label">Image File</label>
         <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
         <div class="col-md-4 text-center pt-3">
-            <div id="upload-input" class="border" style="width:350px;"></div>
+            <div id="imageUploadCroppieDiv" class="border" style="width:350px;"></div>
         </div>
     </div>
     {#inputs/keywordInput}
@@ -122,10 +122,11 @@
 
 {/modals}
 {#scripts}
-<script src="/res/js/search.js"></script>
-<script src="/res/js/obj/objEdit.js"></script>
-<script src="/res/js/obj/objView.js"></script>
-<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="/res/js/search.js"></script>
+    <script src="/res/js/obj/objEdit.js"></script>
+    <script src="/res/js/obj/objView.js"></script>
+    <script src="/res/js/obj/media/imageAdd.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -145,49 +146,14 @@ var addEditTitleInput = $("#addEditTitleInput");
 var addEditDescriptionInput = $("#addEditDescriptionInput");
 
 //TODO:: figure out proper sizing on small screens
-$uploadCrop = $('#upload-input').croppie({
-    enableExif: true,
-    viewport: {
-        width: 250,
-        height: 250,
-        type: 'square'
-    },
-    boundary: {
-        width: 300,
-        height: 300
-    }
-});
-var cropSlider = $uploadCrop.find(":input.cr-slider");
 
-function bindCroppie(bindVal){
-    return $uploadCrop.croppie('bind', {
-        url: bindVal
-    }).then(function(){
-        var minVal = cropSlider.attr('min');
-        minVal = minVal === undefined ? 0 : minVal;
-        $uploadCrop.croppie(
-            'setZoom',
-            cropSlider.attr('min')
-        );
-    });
-}
-
-$('#imageUploadInput').on('change', function () {
-	var reader = new FileReader();
-    reader.onload = function (e) {
-    	bindCroppie(e.target.result).then(function(){
-    		console.log('Loaded image selected by user.');
-    	});
-    }
-    reader.readAsDataURL(this.files[0]);
-});
 
 function resetAddEdit(){
     addEditImageForm.trigger("reset");
     addEditFormMessages.text("");
     keywordInputDiv.html("");
     attInputDiv.html("");
-    bindCroppie("/resources/media/noneSelected.png");//TODO:: fix this, doesn't exist
+    resetCroppie();
 }
 
 function setupAddEditForAdd(){
@@ -226,7 +192,6 @@ function setupAddEditForEdit(id){
         }
     });
 }
-
 
 addEditImageForm.submit(function (ev) {
     ev.preventDefault();
