@@ -5,8 +5,31 @@ Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
 {#modal id='imageSearchSelect' large=true title='Select an Image' otherModalId=otherModalId}
-{#search/image/imageSearchForm id='imageSearchSelectForm'}
-{/search/image/imageSearchForm}
-<div class="row" id="imageSearchSelectResults">
+
+<ul class="nav nav-tabs" id="imageSelectTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="imageSelectSearchTab" data-bs-toggle="tab" data-bs-target="#imageSelectSearchTabContent" type="button" role="tab" aria-controls="imageSelectSearchTabContent" aria-selected="true">Search</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="imageSelectNewImageTab" data-bs-toggle="tab" data-bs-target="#imageSelectNewImageTabContent" type="button" role="tab" aria-controls="imageSelectNewImageTabContent" aria-selected="false">Add New</button>
+  </li>
+</ul>
+<div class="tab-content" id="imageSelectTabContent">
+  <div class="tab-pane fade show active" id="imageSelectSearchTabContent" role="tabpanel" aria-labelledby="imageSelectSearchTab">
+	{#search/image/imageSearchForm id='imageSearchSelectForm'}
+	{/search/image/imageSearchForm}
+	<div class="row" id="imageSearchSelectResults">
+	</div>
 </div>
+  <div class="tab-pane fade" id="imageSelectNewImageTabContent" role="tabpanel" aria-labelledby="imageSelectNewImageTab">
+  Add new image!
+</div>
+</div>
+
+
+
+
+
+
+
 {/modal}

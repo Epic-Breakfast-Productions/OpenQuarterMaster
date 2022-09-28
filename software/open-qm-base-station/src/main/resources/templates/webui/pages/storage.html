@@ -22,7 +22,7 @@ Accepts:
     {/pageStyle}
     {#pageContent}
 
-    <div class="row">
+    <div class="row mb-2">
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
                     onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Storage Block
@@ -32,12 +32,6 @@ Accepts:
             <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
         </div>
 </div>
-<div class="row">
-    <div class="col">
-        <div class="chart" id="mainTreeChart"></div>
-    </div>
-</div>
-<br/>
 <div class="row">
     <div class="col accordion" id="searchAccordion">
         <div class="accordion-item">
@@ -66,6 +60,13 @@ Accepts:
         </table>
     </div>
 </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="chart" id="mainTreeChart"></div>
+                </div>
+            </div>
+            <br/>
     {#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
     {/inputs/units/unitOptionsHidden}
 
