@@ -72,21 +72,12 @@ public class Image extends AttKeywordMainObject {
 		return outputImage;
 	}
 	
-	/**
-	 * Resizes the image and returns the base64 representation of the resized image.
-	 *
-	 * @param image The image to resize, and get the data for
-	 *
-	 * @return The image data in base64
-	 */
-	public static String resizeGetBytes(BufferedImage image) {
-		BufferedImage resized = resize(image);
-		
+	public static String getImageBytes(BufferedImage image) {
 		byte[] data;
 		try (
 			ByteArrayOutputStream os = new ByteArrayOutputStream()
 		) {
-			ImageIO.write(resized, CONVERTED_IMAGE_FORMAT, os);
+			ImageIO.write(image, CONVERTED_IMAGE_FORMAT, os);
 			os.flush();
 			data = os.toByteArray();
 		} catch(IOException e) {
@@ -97,6 +88,18 @@ public class Image extends AttKeywordMainObject {
 		}
 		data = BASE_64_ENCODER.encode(data);
 		return new String(data);
+	}
+	
+	/**
+	 * Resizes the image and returns the base64 representation of the resized image.
+	 *
+	 * @param image The image to resize, and get the data for
+	 *
+	 * @return The image data in base64
+	 */
+	public static String resizeGetBytes(BufferedImage image) {
+		BufferedImage resized = resize(image);
+		return getImageBytes(resized);
 	}
 	
 	public static BufferedImage bufferedImageFromBase64(String dataString) {
