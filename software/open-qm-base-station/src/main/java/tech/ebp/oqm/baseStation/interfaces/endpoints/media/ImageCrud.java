@@ -298,6 +298,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		@PathParam String id,
 		ObjectNode updates
 	) {
+		//TODO:: handle updates, json given is icr
 		return super.update(securityContext, id, updates);
 	}
 	
