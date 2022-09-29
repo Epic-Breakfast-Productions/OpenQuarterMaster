@@ -103,7 +103,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	
 	@POST
 	@Operation(
-		summary = "Adds a new object."
+		summary = "Adds a new image."
 	)
 	@APIResponse(
 		responseCode = "200",
