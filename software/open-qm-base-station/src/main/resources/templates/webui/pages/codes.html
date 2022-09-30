@@ -50,13 +50,13 @@
 									<div class="accordion-body">
 										<div class="row mb-2">
 											<div class="col">
-												<label for="contentTypeInput" class="form-label">Type of code content:</label>
-												<select id="contentTypeInput" class="form-select" aria-label="Type of Code"  aria-describedby="contentTypeInputHelp">
+												<label for="objectContentTypeInput" class="form-label">Type of code content:</label>
+												<select id="objectContentTypeInput" class="form-select" aria-label="Type of Code"  aria-describedby="objectContentTypeInputHelp">
 													<option value="uilink" selected>Link to Web UI</option>
 													<option value="id">Object Id</option>
 													<option value="apilink">Link in API</option>
 												</select>
-												<div id="contentTypeInputHelp" class="form-text">The type of code image to generate.</div>
+												<div id="objectContentTypeInputHelp" class="form-text">What the data contained in the image should be.</div>
 											</div>
 										</div>
 										<div class="row">
@@ -66,6 +66,24 @@
 												</button>
 												<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal">
 													<i class="fas fa-balance-scale"></i> For Inventory Item
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="otherDataHeading">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#otherDataCollapse" aria-expanded="false" aria-controls="otherDataCollapse">
+										Other data about the Server
+									</button>
+								</h2>
+								<div id="otherDataCollapse" class="accordion-collapse collapse" aria-labelledby="otherDataHeading" data-bs-parent="#qrGenerateAccord">
+									<div class="accordion-body">
+										<div class="row">
+											<div class="col">
+												<button type="button" class="btn btn-sm btn-success mt-2" onclick="generateQrFromData('{config:['runningInfo.baseUrl']}')">
+													Link to this server
 												</button>
 											</div>
 										</div>
@@ -88,7 +106,7 @@
 										</div>
 										<div class="row">
 											<div class="col">
-												<button class="btn btn-success" onclick="generateQrFromCustomData()">
+												<button class="btn btn-success" onclick="generateQrFromData(codeContentInput.val())">
 													Generate
 												</button>
 											</div>
@@ -120,25 +138,26 @@
 			var noImageText = $("#noImageText");
 			var outputImage = $("#outputImage");
 			var codeTypeInput = $("#codeTypeInput");
+			var codeContentInput = $("#codeContentInput");
 			
 			function showGenerated(){
 				noImageText.hide();
 				outputImageDisplay.show();
 			}
 			
-			var codeContentInput = $("#codeContentInput");
-			function generateQrFromCustomData(){
-				outputImage.attr("src", "/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(codeContentInput.val()));
+			function generateQrFromData(data){
+				outputImage.attr("src", "/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(data));
 				showGenerated();
 			}
 			
-			var contentTypeInput = $("#contentTypeInput");
+			
+			var objectContentTypeInput = $("#objectContentTypeInput");
 			function selectStorageBlock(label, id, thing){
-				outputImage.attr("src", "/api/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + contentTypeInput.val());
+				outputImage.attr("src", "/api/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
 			function selectItem(label, id, thing){
-				outputImage.attr("src", "/api/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + contentTypeInput.val());
+				outputImage.attr("src", "/api/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
 		</script>

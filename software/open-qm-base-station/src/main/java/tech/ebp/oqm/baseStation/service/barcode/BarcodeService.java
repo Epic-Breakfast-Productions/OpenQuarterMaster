@@ -13,6 +13,11 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Service to generate barcode images.
+ *
+ * TODO:: add better labels to images https://github.com/jfree/jfreesvg
+ */
 @Traced
 @ApplicationScoped
 public class BarcodeService {
