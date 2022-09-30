@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -23,6 +24,7 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
+import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.Utils;
@@ -55,15 +57,21 @@ import java.lang.reflect.ParameterizedType;
 @RequestScoped
 public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
 	
+	
+	Template itemSearchResultsTemplate;
+	
 	@Inject
 	public InventoryItemsCrud(
 		InventoryItemService inventoryItemService,
 		UserService userService,
 		JsonWebToken jwt,
 		@Location("tags/objView/objHistoryViewRows.html")
-		Template historyRowsTemplate
+		Template historyRowsTemplate,
+		@Location("tags/search/item/itemSearchResults.html")
+		Template itemSearchResultsTemplate
 	) {
 		super(InventoryItem.class, inventoryItemService, userService, jwt, historyRowsTemplate);
+		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
 	}
 	
 	@POST
@@ -126,9 +134,58 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public Response search(
 		@Context SecurityContext securityContext,
 		//for actual queries
-		@BeanParam InventoryItemSearch search
+		@BeanParam InventoryItemSearch itemSearch
 	) {
-		return super.search(securityContext, search);
+		Tuple2<Response.ResponseBuilder, SearchResult<InventoryItem>> tuple = super.getSearchResponseBuilder(securityContext, itemSearch);
+		Response.ResponseBuilder rb = tuple.getItem1();
+		
+		log.debug("Accept header value: \"{}\"", itemSearch.getAcceptHeaderVal());
+		switch (itemSearch.getAcceptHeaderVal()) {
+			case MediaType.TEXT_HTML:
+				log.debug("Requestor wanted html.");
+				SearchResult<InventoryItem> output = tuple.getItem2();
+				rb = rb.entity(
+						   this.itemSearchResultsTemplate
+							   .data("searchResults", output)
+							   .data("actionType", (
+								   itemSearch.getActionTypeHeaderVal() == null || itemSearch.getActionTypeHeaderVal().isBlank() ? "full" :
+									   itemSearch.getActionTypeHeaderVal()
+							   ))
+							   .data(
+								   "searchFormId",
+								   (
+									   itemSearch.getSearchFormIdHeaderVal() == null || itemSearch.getSearchFormIdHeaderVal().isBlank() ?
+										   "" :
+										   itemSearch.getSearchFormIdHeaderVal()
+								   )
+							   )
+							   .data(
+								   "inputIdPrepend",
+								   (
+									   itemSearch.getInputIdPrependHeaderVal() == null || itemSearch.getInputIdPrependHeaderVal().isBlank() ?
+										   "" :
+										   itemSearch.getInputIdPrependHeaderVal()
+								   )
+							   )
+							   .data(
+								   "otherModalId",
+								   (
+									   itemSearch.getOtherModalIdHeaderVal() == null || itemSearch.getOtherModalIdHeaderVal().isBlank() ?
+										   "" :
+										   itemSearch.getOtherModalIdHeaderVal()
+								   )
+							   )
+							   .data("pagingCalculations", new PagingCalculations(itemSearch.getPagingOptions(false), output))
+							   .data("storageService", this.getObjectService())
+					   )
+					   .type(MediaType.TEXT_HTML_TYPE);
+				break;
+			case MediaType.APPLICATION_JSON:
+			default:
+				log.debug("Requestor wanted json, or any other form");
+		}
+		
+		return rb.build();
 	}
 	
 	@Path("{id}")

@@ -1,0 +1,146 @@
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}
+{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}
+{#include webui/mainWebPageTemplate showNavbar=true showTitle=true title="Create QR & Bar Codes" titleIcon='qrcode' page='codes'}
+	{#pageStyle}
+	#outputImage {
+		min-height: 100px;
+		min-width: 200px;
+	}
+	{/pageStyle}
+	{#pageContent}
+		<div class="row">
+			<div class="col">
+				<h4>
+					Output:
+				</h4>
+				<div id="outputImageDisplay" style="display: none">
+					<img src="" alt="Output Image" class="img-thumbnail" id="outputImage"/>
+					<!-- TODO:: save button -->
+				</div>
+				<p id="noImageText">No image generated. Use the form below to generate.</p>
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+			<div class="col">
+				<h4>
+					Generate:
+				</h4>
+				<div class="row mb-3">
+					<div class="col">
+						<label for="codeTypeInput" class="form-label">Type of code:</label>
+						<select id="codeTypeInput" class="form-select" aria-label="Type of Code"  aria-describedby="codeTypeInputHelp">
+							<option value="barcode" selected>Bar Code</option>
+							<option value="qrcode">QR Code</option>
+						</select>
+						<div id="codeTypeInputHelp" class="form-text">The type of code image to generate.</div>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col">
+						<div class="accordion" id="qrGenerateAccord">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingTwo">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+										Data for an Object
+									</button>
+								</h2>
+								<div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#qrGenerateAccord">
+									<div class="accordion-body">
+										<div class="row mb-2">
+											<div class="col">
+												<label for="contentTypeInput" class="form-label">Type of code content:</label>
+												<select id="contentTypeInput" class="form-select" aria-label="Type of Code"  aria-describedby="contentTypeInputHelp">
+													<option value="uilink" selected>Link to Web UI</option>
+													<option value="id">Object Id</option>
+													<option value="apilink">Link in API</option>
+												</select>
+												<div id="contentTypeInputHelp" class="form-text">The type of code image to generate.</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
+													<i class="fas fa-boxes"></i> For Storage Block
+												</button>
+												<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal">
+													<i class="fas fa-balance-scale"></i> For Inventory Item
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="customDataCollapseHeading">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#customDataCollapse" aria-expanded="false" aria-controls="customDataCollapse">
+										Enter Custom Data
+									</button>
+								</h2>
+								<div id="customDataCollapse" class="accordion-collapse collapse" aria-labelledby="customDataCollapseHeading" data-bs-parent="#qrGenerateAccord">
+									<div class="accordion-body">
+										<div class="row mb-2">
+											<div class="col">
+												<label for="codeContentInput" class="form-label">Content:</label>
+												<input type="text" class="form-control" id="codeContentInput">
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<button class="btn btn-success" onclick="generateQrFromCustomData()">
+													Generate
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/pageContent}
+	{#modals}
+		{#search/storage/StorageSearchSelectModal otherModalId=""}
+		{/search/storage/StorageSearchSelectModal}
+		{#search/item/itemSearchSelectModal otherModalId=""}
+		{/search/item/itemSearchSelectModal}
+	{/modals}
+	{#scripts}
+		<script src="/res/js/search.js"></script>
+		<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+		<script src="/res/js/obj/item/itemSearchSelect.js"></script>
+		
+	{/scripts}
+	{#pageScript}
+		<script>
+			var outputImageDisplay = $("#outputImageDisplay");
+			var noImageText = $("#noImageText");
+			var outputImage = $("#outputImage");
+			var codeTypeInput = $("#codeTypeInput");
+			
+			function showGenerated(){
+				noImageText.hide();
+				outputImageDisplay.show();
+			}
+			
+			var codeContentInput = $("#codeContentInput");
+			function generateQrFromCustomData(){
+				outputImage.attr("src", "/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(codeContentInput.val()));
+				showGenerated();
+			}
+			
+			var contentTypeInput = $("#contentTypeInput");
+			function selectStorageBlock(label, id, thing){
+				outputImage.attr("src", "/api/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + contentTypeInput.val());
+				showGenerated();
+			}
+			function selectItem(label, id, thing){
+				outputImage.attr("src", "/api/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + contentTypeInput.val());
+				showGenerated();
+			}
+		</script>
+	{/pageScript}
+{/include}

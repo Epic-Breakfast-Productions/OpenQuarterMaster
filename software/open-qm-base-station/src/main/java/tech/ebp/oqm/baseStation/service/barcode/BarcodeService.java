@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.barcode;
 
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.rest.media.CodeImageType;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.QrCode;
@@ -45,5 +46,15 @@ public class BarcodeService {
 		qrCode.setContent(data);
 		
 		return toImageData(qrCode);
+	}
+	
+	public String getCodeData(CodeImageType type, String data){
+		switch (type){
+			case qrcode:
+				return this.getQrCodeData(data);
+			case barcode:
+				return this.getBarcodeData(data);
+		}
+		throw new IllegalStateException();
 	}
 }

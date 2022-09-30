@@ -85,8 +85,14 @@ Ingests:
 						class="fas fa-infinity fa-fw"></i> Other</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
-					<i class="fas fa-images"></i> Images
+					<i class="fas fa-images fa-fw"></i> Images
 					{#if page is 'images'}
+						<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
+				<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
+					<i class="fas fa-qrcode fa-fw"></i> QR &amp; Bar Code Generator
+					{#if page is 'codes'}
 						<span class="visually-hidden">(current)</span>
 					{/if}
 				</a>
