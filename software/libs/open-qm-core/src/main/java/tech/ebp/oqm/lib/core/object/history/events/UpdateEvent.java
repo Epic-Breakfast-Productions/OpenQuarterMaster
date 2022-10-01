@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +19,7 @@ import java.util.Map;
  * Event for the update of an object.
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
@@ -44,21 +46,14 @@ public class UpdateEvent extends DescriptiveEvent {
 		return output;
 	}
 	
-	private static EventType getClassType() {
-		return EventType.UPDATE;
-	}
-	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private List<String> fieldsUpdated = new ArrayList<>();
 	
-	public UpdateEvent() {
-		super(getClassType());
-	}
 	
 	@Override
 	public EventType getType() {
-		return getClassType();
+		return EventType.UPDATE;
 	}
 }

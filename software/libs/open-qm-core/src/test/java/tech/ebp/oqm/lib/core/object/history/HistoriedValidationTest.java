@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history;
 
+import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,7 @@ class HistoriedValidationTest extends ObjectValidationTest<ObjectHistory> {
 		return Stream.of(
 			Arguments.of(new TestHistoried()),
 			Arguments.of(new TestHistoried() {{
-				this.getHistory().add(new UpdateEvent());
+				this.getHistory().add(UpdateEvent.builder().build());
 			}})
 		);
 	}

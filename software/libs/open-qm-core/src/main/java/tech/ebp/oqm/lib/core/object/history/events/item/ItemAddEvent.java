@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history.events.item;
 
+import lombok.NoArgsConstructor;
 import tech.ebp.oqm.lib.core.object.history.events.EventType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
  * Event for the addition of items to a storage block.
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
@@ -23,16 +25,8 @@ public class ItemAddEvent extends ItemAddSubEvent {
 	@NotNull
 	private ObjectId storageBlockId;
 	
-	private static EventType getClassType() {
-		return EventType.ITEM_ADD;
-	}
-	
-	public ItemAddEvent() {
-		super(getClassType());
-	}
-	
 	@Override
 	public EventType getType() {
-		return getClassType();
+		return EventType.ITEM_ADD;
 	}
 }

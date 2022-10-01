@@ -29,13 +29,13 @@ class HistoriedTest extends BasicTest {
 		assertEquals(0, o.getHistory().size());
 		
 		ObjectHistory o2 = o.updated(
-			new CreateEvent()
+			CreateEvent.builder().build()
 		);
 		assertSame(o, o2);
 		assertEquals(1, o.getHistory().size());
 		
 		o2 = o.updated(
-			new UpdateEvent()
+			UpdateEvent.builder().build()
 		);
 		
 		assertTrue(o.getHistory().get(0).getTimestamp().isAfter(o.getHistory().get(1).getTimestamp()));
@@ -45,10 +45,10 @@ class HistoriedTest extends BasicTest {
 	public void testUpdatedCreate() {
 		ObjectHistory o = this.getBasicTestItem();
 		
-		o.updated(new CreateEvent());
+		o.updated(CreateEvent.builder().build());
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(new CreateEvent());
+			o.updated(CreateEvent.builder().build());
 		});
 	}
 	
@@ -57,7 +57,7 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
-			o.updated(new UpdateEvent());
+			o.updated(UpdateEvent.builder().build());
 		});
 	}
 	
@@ -66,10 +66,10 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			new CreateEvent()
+			CreateEvent.builder().build()
 		);
 		o.updated(
-			new UpdateEvent()
+			UpdateEvent.builder().build()
 		);
 		
 		HistoryEvent event = o.lastHistoryEvent();
@@ -82,10 +82,10 @@ class HistoriedTest extends BasicTest {
 		ObjectHistory o = this.getBasicTestItem();
 		
 		o.updated(
-			new CreateEvent()
+			CreateEvent.builder().build()
 		);
 		o.updated(
-			new UpdateEvent()
+			UpdateEvent.builder().build()
 		);
 		
 		ZonedDateTime eventTime = o.lastHistoryEventTime();

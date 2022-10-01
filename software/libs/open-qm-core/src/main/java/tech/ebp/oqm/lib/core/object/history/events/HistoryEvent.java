@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
+import lombok.NoArgsConstructor;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
@@ -26,6 +27,7 @@ import java.time.ZonedDateTime;
  * TODO:: validator to ensure type
  */
 @Data
+@NoArgsConstructor
 @SuperBuilder
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
@@ -47,14 +49,6 @@ import java.time.ZonedDateTime;
 public abstract class HistoryEvent {
 	
 	/**
-	 * The type of event. This field exists to safisfy Jackson, as lombok hates fields in json and not have an actual field. As Lombok can
-	 * override this field in the builder, we have {@link #getType()} as an abstract method to force any retrieval of the type to be what
-	 * the class should show.
-	 */
-	@Setter(AccessLevel.PROTECTED)
-	private EventType type;
-	
-	/**
 	 * The user that performed the event Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
 	private ObjectId userId;
@@ -66,11 +60,6 @@ public abstract class HistoryEvent {
 	@NotNull
 	@lombok.Builder.Default
 	private ZonedDateTime timestamp = ZonedDateTime.now();
-	
-	protected HistoryEvent(EventType type) {
-		timestamp = ZonedDateTime.now();
-		this.type = type;
-	}
 	
 	public abstract EventType getType();
 	
