@@ -8,7 +8,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.lib.core.object.user.User;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginResponse;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.PrivateKey;

@@ -25,8 +25,8 @@ import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginResponse;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

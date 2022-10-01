@@ -10,7 +10,7 @@ import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
 import tech.ebp.oqm.lib.core.object.user.User;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;

@@ -15,7 +15,7 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

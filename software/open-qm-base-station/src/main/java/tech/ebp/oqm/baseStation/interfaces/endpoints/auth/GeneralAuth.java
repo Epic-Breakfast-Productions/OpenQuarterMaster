@@ -14,7 +14,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.utils.TimeUtils;
-import tech.ebp.oqm.lib.core.rest.user.TokenCheckResponse;
+import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

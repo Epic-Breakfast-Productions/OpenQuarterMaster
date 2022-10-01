@@ -20,8 +20,8 @@ import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLife
 import tech.ebp.oqm.baseStation.testResources.profiles.ExternalAuthTestProfile;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.lib.core.object.user.User;
-import tech.ebp.oqm.lib.core.rest.user.TokenCheckResponse;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
+import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
