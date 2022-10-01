@@ -143,12 +143,12 @@ public class UserAuth extends EndpointProvider {
 			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password.")).build();
 		}
 		
-		log.info("User {} authenticated, generating token and returning.", user.getId());
+		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());
 		
 		this.userService.addHistoryFor(user, UserLoginEvent.builder().userId(user.getId()).build());
 		
 		return Response.status(Response.Status.ACCEPTED)
-					   .entity(this.jwtService.getUserJwt(user, false))
+					   .entity(this.jwtService.getUserJwt(user, loginRequest.isExtendedExpire()))
 					   .build();
 	}
 	
