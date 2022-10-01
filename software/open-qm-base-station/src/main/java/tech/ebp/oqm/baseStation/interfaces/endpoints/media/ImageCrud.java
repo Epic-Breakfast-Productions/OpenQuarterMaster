@@ -27,10 +27,10 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
 import tech.ebp.oqm.lib.core.rest.storage.IMAGED_OBJ_TYPE_NAME;
 
@@ -120,7 +120,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -160,7 +160,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
 		@Context SecurityContext securityContext,
 		@BeanParam ImageSearch searchObject
@@ -252,7 +252,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Image get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -291,7 +291,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image update(
 		@Context SecurityContext securityContext,
@@ -332,7 +332,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image delete(
 		@Context SecurityContext securityContext,
@@ -371,7 +371,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -403,7 +403,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
@@ -432,7 +432,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	//    @Produces(MediaType.)//TODO
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageData(
 		@Context SecurityContext securityContext,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
@@ -493,7 +493,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		"image/png",
 		"text/plain"
 	})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@Context SecurityContext securityContext,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam IMAGED_OBJ_TYPE_NAME object,

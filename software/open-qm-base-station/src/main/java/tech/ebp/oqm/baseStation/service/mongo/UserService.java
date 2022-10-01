@@ -13,8 +13,8 @@ import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -75,7 +75,7 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 				List<User> adminUsers = this.list(//TODO:: client session
 					and(
 						eq("disabled", false),
-						in("roles", UserRoles.USER_ADMIN)
+						in("roles", Roles.USER_ADMIN)
 					),
 					null,
 					null
@@ -85,7 +85,7 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 					if (adminUsers.get(0).getId().equals(newOrChangedObject.getId())) {
 						if (
 							newOrChangedObject.isDisabled() ||
-							!newOrChangedObject.getRoles().contains(UserRoles.USER_ADMIN)
+							!newOrChangedObject.getRoles().contains(Roles.USER_ADMIN)
 						) {
 							throw new IllegalArgumentException("Must always have at least one enabled user admin.");
 						}

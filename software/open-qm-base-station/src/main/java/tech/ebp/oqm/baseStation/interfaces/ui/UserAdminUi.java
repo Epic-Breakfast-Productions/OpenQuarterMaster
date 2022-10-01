@@ -18,8 +18,9 @@ import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.auth.roles.UserRoles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
@@ -71,7 +72,7 @@ public class UserAdminUi extends UiProvider {
 	
 	@GET
 	@Path("userAdmin")
-	@RolesAllowed(UserRoles.USER_ADMIN)
+	@RolesAllowed(Roles.USER_ADMIN)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,
@@ -96,7 +97,8 @@ public class UserAdminUi extends UiProvider {
 				.data("showSearch", false)
 				.data("searchResults", userResults)
 				.data("pagingCalculations", pagingCalculations)
-				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES)
+				.data("selectableRolesMap", Roles.ROLE_DESCRIPTION_MAP.entrySet().stream().filter(
+					UserRoles.SELECTABLE_ROLES::contains))
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

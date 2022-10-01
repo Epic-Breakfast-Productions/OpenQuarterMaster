@@ -26,9 +26,9 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
@@ -113,15 +113,15 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		
 		{
 			Set<String> roles = new HashSet<>() {{
-				add(UserRoles.USER);
-				add(UserRoles.INVENTORY_VIEW);
+				add(Roles.USER);
+				add(Roles.INVENTORY_VIEW);
 			}};
 			if (this.getUserService().collectionEmpty()) {
 				log.info("New user is the first user to enter system. Making them an admin.");
 				builder.disabled(false);
-				roles.add(UserRoles.USER_ADMIN);
-				roles.add(UserRoles.INVENTORY_EDIT);
-				roles.add(UserRoles.INVENTORY_ADMIN);
+				roles.add(Roles.USER_ADMIN);
+				roles.add(Roles.INVENTORY_EDIT);
+				roles.add(Roles.INVENTORY_ADMIN);
 			} else {
 				log.info("New user is not the first. Disabling.");
 				builder.disabled(true);
@@ -172,7 +172,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("userAdmin")
+	@RolesAllowed(Roles.USER_ADMIN)
 	public Response search(
 		@Context SecurityContext securityContext,
 		@BeanParam UserSearch searchObject
@@ -226,7 +226,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.USER_ADMIN)
+	@RolesAllowed(Roles.USER_ADMIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public User update(
@@ -269,7 +269,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("userAdmin")
+	@RolesAllowed(Roles.USER_ADMIN)
 	public UserGetResponse getUser(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -299,7 +299,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		description = "No users found from query given.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@PermitAll
+	@PermitAll//TODO:: require user?
 	@SecurityRequirement(name = "JwtAuth")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSelfInfo(
@@ -346,7 +346,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("userAdmin")
+	@RolesAllowed(Roles.USER_ADMIN)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -378,7 +378,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed("userAdmin")
+	@RolesAllowed(Roles.USER_ADMIN)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

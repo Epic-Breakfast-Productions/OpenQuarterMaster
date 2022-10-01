@@ -20,9 +20,9 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.validation.Validation;
@@ -205,7 +205,6 @@ public class TestUserService {
 		
 	}
 	
-	
 	public User getTestUser(boolean admin, boolean persisted) {
 		User.Builder builder = User.builder();
 		
@@ -216,12 +215,12 @@ public class TestUserService {
 		builder.title(FAKER.company().profession());
 		builder.disabled(false);
 		builder.roles(new HashSet<>() {{
-			add(UserRoles.USER);
-			add(UserRoles.INVENTORY_EDIT);
-			add(UserRoles.INVENTORY_VIEW);
+			add(Roles.USER);
+			add(Roles.INVENTORY_EDIT);
+			add(Roles.INVENTORY_VIEW);
 			if (admin) {
-				add(UserRoles.USER_ADMIN);
-				add(UserRoles.INVENTORY_ADMIN);
+				add(Roles.USER_ADMIN);
+				add(Roles.INVENTORY_ADMIN);
 			}
 		}});
 		

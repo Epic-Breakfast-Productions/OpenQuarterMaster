@@ -17,7 +17,7 @@ import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.scheduled.ExpiryProcessor;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -78,7 +78,7 @@ public class InventoryManagement extends EndpointProvider {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
 		@Context SecurityContext securityContext,
@@ -111,7 +111,7 @@ public class InventoryManagement extends EndpointProvider {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
@@ -139,7 +139,7 @@ public class InventoryManagement extends EndpointProvider {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_ADMIN)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring(
 		@Context SecurityContext securityContext
 	) {

@@ -14,10 +14,10 @@ import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
@@ -64,7 +64,7 @@ public class StorageUi extends UiProvider {
 	
 	@GET
 	@Path("storage")
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response storage(
 		@Context SecurityContext securityContext,

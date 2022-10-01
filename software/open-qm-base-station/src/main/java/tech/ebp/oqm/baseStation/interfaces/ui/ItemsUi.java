@@ -17,11 +17,11 @@ import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.baseStation.service.mongo.search.SortType;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
@@ -67,7 +67,7 @@ public class ItemsUi extends UiProvider {
 	
 	@GET
 	@Path("items")
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response items(
 		@Context SecurityContext securityContext,

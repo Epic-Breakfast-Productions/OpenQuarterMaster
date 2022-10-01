@@ -25,11 +25,11 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -85,7 +85,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
@@ -117,7 +117,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
@@ -154,7 +154,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
 		@Context SecurityContext securityContext,
@@ -243,7 +243,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public StorageBlock get(
 		@Context SecurityContext securityContext,
@@ -283,7 +283,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock update(
@@ -324,7 +324,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock delete(
@@ -357,7 +357,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public StorageBlockTree tree(
 		@Context SecurityContext securityContext,
 		//for actual queries
@@ -399,7 +399,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
@@ -432,7 +432,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
@@ -466,7 +466,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getChildrenOfBlock(
 		@Context SecurityContext securityContext,
 		@PathParam("storageBlock") String storageBlockId

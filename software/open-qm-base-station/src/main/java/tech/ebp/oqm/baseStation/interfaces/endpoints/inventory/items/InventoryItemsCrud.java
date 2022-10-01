@@ -26,10 +26,10 @@ import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.utils.UserRoles;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -93,7 +93,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -130,7 +130,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
 		@Context SecurityContext securityContext,
 		//for actual queries
@@ -219,7 +219,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -258,7 +258,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
 		@Context SecurityContext securityContext,
@@ -298,7 +298,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
 		@Context SecurityContext securityContext,
@@ -337,7 +337,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -369,7 +369,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		}
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistory> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
@@ -400,7 +400,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "No item found to get.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredInventoryItem(
 		@Context SecurityContext securityContext,
@@ -434,7 +434,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response addStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
@@ -478,7 +478,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response subtractStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
@@ -522,7 +522,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response transferStoredInventoryItem(
 		@Context SecurityContext securityContext,
 		@PathParam String itemId,
@@ -568,7 +568,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "No item found to get.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInventoryItemsInBlock(
 		@Context SecurityContext securityContext,
