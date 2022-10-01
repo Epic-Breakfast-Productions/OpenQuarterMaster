@@ -10,9 +10,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
-import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
+import tech.ebp.oqm.lib.core.object.service.plugin.PluginService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

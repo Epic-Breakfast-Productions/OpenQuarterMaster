@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.rest.user;
+package tech.ebp.oqm.lib.core.rest.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

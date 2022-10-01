@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.provider.Arguments;
+import tech.ebp.oqm.lib.core.object.service.plugin.PluginService;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
 
 import java.util.stream.Stream;
