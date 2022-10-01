@@ -521,6 +521,7 @@ function resetView(){
 function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
+    addOrReplaceParams("view", blockId);
     storageBlockViewModalLabel.text(blockId);
     getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
@@ -584,7 +585,17 @@ function setupView(blockId){
     	},
     	fail: function(){}
     });
-    
+}
+
+var viewModal = new bootstrap.Modal(storageBlockViewModal, { });
+
+storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
+    removeParam("view");
+});
+
+if(getParams.has("view")){
+    setupView(getParams.get("view"));
+    viewModal.show();
 }
 
 

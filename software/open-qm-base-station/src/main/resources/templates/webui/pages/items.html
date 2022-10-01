@@ -1324,6 +1324,7 @@ function setupView(itemId){
     console.log("Setting up view for item " + itemId);
     resetView();
     
+    addOrReplaceParams("view", itemId);
     itemViewModalLabel.text(itemId);
     
     doRestCall({
@@ -1437,8 +1438,17 @@ function setupView(itemId){
         },
         fail: function(){ }
     });
-    
-    
+}
+
+var viewModal = new bootstrap.Modal(itemViewModal, { });
+
+itemViewModal[0].addEventListener("hidden.bs.modal", function (){
+    removeParam("view");
+});
+
+if(getParams.has("view")){
+    setupView(getParams.get("view"));
+    viewModal.show();
 }
 
 

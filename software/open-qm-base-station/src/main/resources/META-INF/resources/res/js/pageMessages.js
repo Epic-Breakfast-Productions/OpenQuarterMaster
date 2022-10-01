@@ -42,7 +42,7 @@ function reloadPageWithMessage(message, type, heading){
 }
 
 
-var getParams = new URLSearchParams(window.location.search);
+
 
 if(getParams.has("message")){
     var type = (getParams.has("messageType") ? getParams.get("messageType") : "info");
