@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -26,9 +27,15 @@ import java.util.Map;
  * Describes a unique item stored.
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull TrackedStored>> {
+	
+	@Override
+	public StorageType getStorageType() {
+		return StorageType.TRACKED;
+	}
 	
 	/**
 	 * The name of the identifier used for the items tracked.
@@ -48,9 +55,6 @@ public class TrackedItem extends InventoryItem<Map<@NotBlank String, @NotNull Tr
 	@DecimalMin("0.0")
 	private BigDecimal defaultValue = BigDecimal.ZERO;
 	
-	public TrackedItem() {
-		super(StorageType.TRACKED);
-	}
 	
 	@BsonIgnore
 	@JsonIgnore

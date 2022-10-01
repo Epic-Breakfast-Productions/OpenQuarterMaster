@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
@@ -19,13 +20,15 @@ import java.math.BigDecimal;
 
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
 public class SimpleAmountItem extends InventoryItem<AmountStored> {
 	
-	public SimpleAmountItem() {
-		super(StorageType.AMOUNT_SIMPLE);
+	@Override
+	public StorageType getStorageType() {
+		return StorageType.AMOUNT_SIMPLE;
 	}
 	
 	@Override

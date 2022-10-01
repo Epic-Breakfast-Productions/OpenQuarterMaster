@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
@@ -22,13 +23,15 @@ import java.util.List;
 
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
 public class ListAmountItem extends InventoryItem<List<@NotNull AmountStored>> {//TODO:: when superbuild, this annotation can't happen
 	
-	public ListAmountItem() {
-		super(StorageType.AMOUNT_LIST);
+	@Override
+	public StorageType getStorageType() {
+		return StorageType.AMOUNT_LIST;
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})

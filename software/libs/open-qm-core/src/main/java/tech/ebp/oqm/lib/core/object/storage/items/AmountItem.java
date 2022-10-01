@@ -24,7 +24,7 @@ import java.math.BigDecimal;
  * @param <T>
  */
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
@@ -43,10 +43,6 @@ public abstract class AmountItem<T> extends InventoryItem<T> {
 	@NonNull
 	@DecimalMin("0.0")
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
-	
-	protected AmountItem(StorageType storageType) {
-		super(storageType);
-	}
 	
 	@Override
 	public BigDecimal getValueOfStored() {

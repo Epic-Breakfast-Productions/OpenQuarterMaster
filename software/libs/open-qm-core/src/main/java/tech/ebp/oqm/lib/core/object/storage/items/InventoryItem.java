@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -28,6 +29,7 @@ import java.util.Map;
  * TODO:: simplify getStorageType for superBuilder, similar to how Service handles
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -53,9 +55,7 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	/**
 	 * The type of storage this item uses.
 	 */
-	@NonNull
-	@NotNull
-	private final StorageType storageType;
+	public abstract StorageType getStorageType();
 	
 	/*TODO:: this useful?
 	 * Used to determine how much of something is stored if {@link #unit} is {@link AbstractUnit#ONE}
@@ -86,21 +86,6 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	private BigDecimal valueOfStored = null;
 	
 	//TODO:: expiryWarningThreshold: duration before expiry dates when to warn that is expiring soon
-	
-	/**
-	 * Constructor to make Lombok happy.
-	 * <p>
-	 * Disregard, not intended to be used
-	 */
-	public InventoryItem() {
-		//noinspection ConstantConditions
-		this.storageType = null;
-		throw new UnsupportedOperationException();
-	}
-	
-	protected InventoryItem(StorageType type) {
-		this.storageType = type;
-	}
 	
 	public abstract @NonNull Unit<?> getUnit();
 	
