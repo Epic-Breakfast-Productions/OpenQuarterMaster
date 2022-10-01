@@ -1,6 +1,8 @@
 package tech.ebp.oqm.lib.core.rest.auth.roles;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServiceRoles {
 	
@@ -29,5 +31,11 @@ public class ServiceRoles {
 		Roles.INVENTORY_VIEW,
 		Roles.INVENTORY_EDIT
 	);
+	
+	public static final Map<String, String> SELECTABLE_ROLES_DESC_MAP = Roles.ROLE_DESCRIPTION_MAP.entrySet().stream().filter(
+		(Map.Entry<String, String> cur)->{
+			return SELECTABLE_ROLES.contains(cur.getKey());
+		}
+	).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	
 }
