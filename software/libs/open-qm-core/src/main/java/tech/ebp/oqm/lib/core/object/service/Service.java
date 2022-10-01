@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.service.plugin.PluginService;
+import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -45,7 +46,7 @@ public abstract class Service extends AttKeywordMainObject {
 	private boolean disabled = true;
 	@NonNull
 	@NotNull
-	private Set<String> roles = new HashSet<>();
+	private Set<@ValidServiceRole String> roles = new HashSet<>();
 	
 	public abstract ServiceType getServiceType();
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -42,5 +43,5 @@ public abstract class ServiceLoginRequest {
 	
 	@NonNull
 	@NotNull
-	private Set<String> requestedRoles = new HashSet<>();
+	private Set<@ValidServiceRole String> requestedRoles = new HashSet<>();
 }

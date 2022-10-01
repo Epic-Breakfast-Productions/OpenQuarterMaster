@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import tech.ebp.oqm.lib.core.validation.annotations.ValidUserRole;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -59,7 +60,7 @@ public class User extends ImagedMainObject {
 	 */
 	private String pwHash = null;
 	
-	private Set<String> roles = new HashSet<>();
+	private Set<@ValidUserRole String> roles = new HashSet<>();
 	
 	/*
 	 * Only used if service.authMode set to EXTERNAL

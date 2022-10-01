@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.service.Service;
 import tech.ebp.oqm.lib.core.object.service.ServiceType;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponentDetails;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponentType;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -23,7 +25,7 @@ public class PluginService extends Service {
 	
 	@NonNull
 	@NotNull
-	Map<String, Object> pageComponents = new HashMap<>();
+	Map<PageComponentType, PageComponentDetails> pageComponents = new HashMap<>();
 	
 	@Override
 	public ServiceType getServiceType() {
