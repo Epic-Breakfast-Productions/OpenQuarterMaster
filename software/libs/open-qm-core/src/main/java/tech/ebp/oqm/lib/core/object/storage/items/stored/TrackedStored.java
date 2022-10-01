@@ -1,7 +1,9 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 
@@ -15,13 +17,10 @@ import java.math.BigDecimal;
  * object.
  */
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class TrackedStored extends Stored {
-	
-	public TrackedStored() {
-		this.setStoredType(StoredType.TRACKED);
-	}
 	
 	/**
 	 * Some extra details to help identify this exact item.
@@ -35,4 +34,9 @@ public class TrackedStored extends Stored {
 	 */
 	@DecimalMin("0.0")
 	private BigDecimal value = null;
+	
+	@Override
+	public StoredType getStoredType() {
+		return StoredType.TRACKED;
+	}
 }

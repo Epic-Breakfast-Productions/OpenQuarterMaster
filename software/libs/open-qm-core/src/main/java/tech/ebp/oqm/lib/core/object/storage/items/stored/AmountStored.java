@@ -15,10 +15,6 @@ import javax.measure.Quantity;
 @ToString(callSuper = true)
 public class AmountStored extends Stored {
 	
-	public AmountStored() {
-		this.setStoredType(StoredType.AMOUNT);
-	}
-	
 	/**
 	 * The amount of the thing stored.
 	 */
@@ -49,4 +45,8 @@ public class AmountStored extends Stored {
 		return this;
 	}
 	
+	@Override
+	public StoredType getStoredType() {
+		return StoredType.AMOUNT;
+	}
 }

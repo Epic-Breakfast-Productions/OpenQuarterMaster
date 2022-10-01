@@ -34,7 +34,7 @@ import java.util.Map;
 })
 public abstract class Stored {
 	
-	private StoredType storedType;
+	public abstract StoredType getStoredType();
 	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
