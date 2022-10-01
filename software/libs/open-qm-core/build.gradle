@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	// https://plugins.gradle.org/plugin/io.freefair.lombok
-	id "io.freefair.lombok" version "6.5.0.3"
+	id "io.freefair.lombok" version "6.5.1"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.13-DEV'
+version '1.0.14-DEV'
 
 repositories {
 	mavenLocal()

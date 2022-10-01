@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.service.plugin.components;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -41,5 +42,6 @@ public class NavItemDetails extends PageComponentDetails {
 	/**
 	 * If the link should go to a new tab
 	 */
+	@lombok.Builder.Default
 	private boolean newTab = false;
 }

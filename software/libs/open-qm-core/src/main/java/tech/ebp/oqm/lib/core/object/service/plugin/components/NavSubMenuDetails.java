@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.service.plugin.components;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -40,5 +41,6 @@ public class NavSubMenuDetails extends PageComponentDetails {
 	@NotNull
 	@NonNull
 	@NotEmpty
+	@lombok.Builder.Default
 	private List<NavItemDetails> menuItems = new ArrayList<>();
 }
