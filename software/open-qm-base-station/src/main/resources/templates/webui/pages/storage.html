@@ -241,6 +241,35 @@ Accepts:
         {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
         {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
     </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <h3>Items Stored:</h3>
+            <table class="table table-bordered table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Stored Here
+                        </th>
+                        <th>
+                            Total Stored
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="storageBlockViewItemsStoredContent">
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
@@ -499,6 +528,7 @@ var storageBlockViewCapacity = $('#storageBlockViewCapacity');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
+var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 
 function resetView(){
     storageBlockViewLocationContainer.hide();
@@ -513,6 +543,7 @@ function resetView(){
 
     storageBlockViewModalLabel.text("");
     storageBlockHistory.text('');
+    storageBlockViewItemsStoredContent.text("");
     clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
@@ -525,10 +556,12 @@ function setupView(blockId){
     storageBlockViewModalLabel.text(blockId);
     getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
+    //TODO:: do this in await getter
     doRestCall({
     	spinnerContainer: storageBlockViewModal,
     	url: "/api/inventory/storage-block/" + blockId,
-    	done: function(data){
+    	done: async function(data){
+            let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(storageBlockHistory, "/inventory/storage-block/"+data.id);
@@ -538,8 +571,7 @@ function setupView(blockId){
             } else {
                 storageBlockViewModalLabel.text(data.label);
             }
-        
-        
+            
             if(data.location){
                 storageBlockViewLocation.text(data.location);
                 storageBlockViewLocationContainer.show();
@@ -581,7 +613,27 @@ function setupView(blockId){
                 console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();
             }
-
+            storageBlockItems = await storageBlockItems;
+            
+            if(storageBlockItems.length){
+                console.log(storageBlockItems.length + " items stored.")
+                storageBlockItems.forEach(function (item){
+                    console.log(item);
+                    let row = $('<tr>' +
+                            '<td class="blockViewItemInImage"></td>' +//image
+                            '<td class="blockViewItemName"></td>' +//name
+                            '<td class="blockViewItemAmountIn"></td>' +//amount in
+                            '<td class="blockViewItemTotal"></td>' +//total
+                            '<td class="blockViewItemActions"><a href="/items?view='+item.id+'" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a> </td>' +//actions
+                            '</tr>');
+                    row.find(".blockViewItemName").text(item.name);
+                    //row.find(".blockViewItemAmountIn").text(item.total.value + item.total.unit.symbol);//TODO:: handle different storage types
+                    row.find(".blockViewItemTotal").text(item.total.value + item.total.unit.symbol);
+                    storageBlockViewItemsStoredContent.append(row);
+                });
+            } else {
+                storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
+            }
     	},
     	fail: function(){ }
     });
@@ -648,7 +700,7 @@ function getBulkInsertData(origStorageBlockData){
     return output;
 }
 
-showTree("#mainTreeChart");
+// showTree("#mainTreeChart");
 </script>
 {/pageScript}
 

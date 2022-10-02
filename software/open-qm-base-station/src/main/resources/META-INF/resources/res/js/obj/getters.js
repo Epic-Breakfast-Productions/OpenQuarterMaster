@@ -1,3 +1,32 @@
+async function getStorageBlock(blockId){
+	//TODO
+}
+
+
+async function getStorageBlockItemData(blockId) {
+	console.log("Getting item data for storage block \"" + blockId + "\"");
+	return new Promise((done, fail) => {
+		doRestCall({
+			spinnerContainer: null,
+			url: "/api/inventory/item/inStorageBlock/" + blockId,
+			done: done,
+			fail: fail
+		})
+	});
+}
+
+async function getStorageBlockChildrenData(blockId) {
+	console.log("Getting children of storage block \"" + blockId + "\"");
+	return new Promise((done, fail) => {
+		doRestCall({
+			spinnerContainer: null,
+			url: "/api/inventory/storage-block/childrenOf/" + blockId,
+			done: done,
+			fail: fail
+		})
+	});
+}
+
 function getStorageBlockLabel(blockId, doneFunc) {
 	console.log("Getting label for storage block \"" + blockId + "\"");
 	doRestCall({

@@ -71,32 +71,13 @@
 			</div>
 		</div>
 	{/pageContent}
+	{#scripts}
+		<script src="/res/js/obj/getters.js"></script>
+	{/scripts}
 	{#pageScript}
 		<script>
 			var created = { };
 
-			async function getStorageBlockItemData(blockId) {
-				console.log("Getting item data for storage block \"" + blockId + "\"");
-				return new Promise((done, fail) => {
-					doRestCall({
-						spinnerContainer: null,
-						url: "/api/inventory/item/inStorageBlock/" + blockId,
-						done: done,
-						fail: fail
-					})
-				});
-			}
-			async function getStorageBlockChildrenData(blockId) {
-				console.log("Getting item data for storage block \"" + blockId + "\"");
-				return new Promise((done, fail) => {
-					doRestCall({
-						spinnerContainer: null,
-						url: "/api/inventory/storage-block/childrenOf/" + blockId,
-						done: done,
-						fail: fail
-					})
-				});
-			}
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.length === 0){
