@@ -93,7 +93,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		} catch(AssertionError e) {
 			throw e;
 		} catch(Throwable e) {
-			throw new IllegalStateException("Failed to determine if original and deserialized were equal.");
+			throw new IllegalStateException("Failed to determine if original and deserialized were equal.", e);
 		}
 		
 		log.info("Original and deserialized objects were equal.");
