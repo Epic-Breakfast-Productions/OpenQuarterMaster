@@ -41,7 +41,7 @@ Ingests:
 
 <!-- nav here -->
 
-{#if showNavbar}
+{#if navbar == "full"}
 	{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
@@ -159,6 +159,30 @@ Ingests:
 	</div>
 	</div>
 	</nav>
+{#else if navbar == "toLogin"}
+{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="/">
+			<img src="/media/logo.svg" alt="" height="40" width="97">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
+				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse" id="navbarColor03">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="/">
+						<i class="fas fa-arrow-right-to-bracket fa-fw"></i> Login
+					</a>
+				</li>
+			</ul>
+			
+		</div>
+	</div>
+</nav>
 {/if}
 <div id="mainContainer" class="container">
 	{#if showTitle}

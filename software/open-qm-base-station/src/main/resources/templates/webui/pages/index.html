@@ -1,4 +1,4 @@
-{#include webui/mainWebPageTemplate title='Login' showNavbar=false showTitle=false}
+{#include webui/mainWebPageTemplate title='Login' navbar="none" showTitle=false}
 	{#pageContent}
 		<br/>
 		<div class="row justify-content-center ">
@@ -15,7 +15,7 @@
 				Please sign in
 			</h1>
 			{#if config:['service.authMode'] == 'SELF'}
-				<a href="/accountCreate">Or, Create account</a>
+				<a href="/accountCreate">Or, Create account <i class="fa-solid fa-user-plus"></i></a>
 			{/if}
 		</div>
 		<div class="card-body">

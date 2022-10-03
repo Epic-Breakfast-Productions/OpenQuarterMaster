@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.interfaces.ui;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -15,7 +16,7 @@ import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
-import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.CookieParam;
@@ -58,7 +59,7 @@ public class HelpUi extends UiProvider {
 	
 	@GET
 	@Path("help")
-	@RolesAllowed("user")
+	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,
@@ -67,13 +68,23 @@ public class HelpUi extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		
 		User user = userService.getFromJwt(this.jwt);
+		TemplateInstance template;
+		if(user == null){
+			template = this.setupPageTemplate(overview, tracer)
+						   .data("navbar", "toLogin");
+		} else {
+			template = this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
+						   .data("navbar", "full");
+		}
+		template = template.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
+								.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
+								.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo());
+		
+		
 		
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
-				.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
-				.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
-				.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo()),
+			template,
 			MediaType.TEXT_HTML_TYPE
 		);
 		

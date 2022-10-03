@@ -1,11 +1,5 @@
-{#include webui/mainWebPageTemplate title='Account Create' showNavbar=false showTitle=true}
+{#include webui/mainWebPageTemplate title='Account Create' navbar="toLogin" showTitle=true titleIcon="user-plus"}
 	{#pageContent}
-		<div class="row">
-			<div class="col">
-				<a href="/" title="Back to Login">Back to Login</a>
-			</div>
-		</div>
-		
 		{#if firstUser}
 			<div class="alert alert-warning" role="alert">
 				<h4 class="alert-heading">First User!</h4>
@@ -34,36 +28,38 @@
 		<div class="row">
 			<form id="userAccountCreateForm">
 				<div id="createMessageDiv"></div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
 					<label for="emailInput">Email address</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
 					<label for="usernameInput">Username</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
 					<label for="firstnameInput">First name</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="text" class="form-control" id="lastnameInput" placeholder="Last Name" required>
 					<label for="lastnameInput">Last name</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="text" class="form-control" id="titleInput" placeholder="Title">
 					<label for="titleInput">Title</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
 					<label for="passwordInput">Password</label>
 				</div>
-				<div class="form-floating mb-1">
+				<div class="form-floating mb-2">
 					<input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
 							required>
 					<label for="passwordConfirmInput">Password Confirm</label>
 				</div>
-				<button type="submit" class="btn btn-success btn-lg">Create User</button>
+				<button type="submit" class="btn btn-success btn-lg">
+					<i class="fa-solid fa-user-plus"></i> Create User
+				</button>
 			</form>
 		</div>
 	{/pageContent}
