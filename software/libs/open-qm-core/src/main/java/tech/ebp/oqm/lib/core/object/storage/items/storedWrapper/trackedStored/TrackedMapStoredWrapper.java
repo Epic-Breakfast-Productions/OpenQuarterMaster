@@ -15,6 +15,7 @@ import tech.units.indriya.quantity.Quantities;
 import javax.measure.Quantity;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class TrackedMapStoredWrapper extends MapStoredWrapper<TrackedStored> {
