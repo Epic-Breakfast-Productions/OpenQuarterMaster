@@ -14,7 +14,7 @@ import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class StoredWrapper<T, S extends Stored> {
 	
 	@Setter(AccessLevel.PROTECTED)
