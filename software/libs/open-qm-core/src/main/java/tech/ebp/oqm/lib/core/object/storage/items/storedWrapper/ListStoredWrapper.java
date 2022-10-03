@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class ListStoredWrapper<S extends Stored>
-	extends StoredWrapper<List<@NotNull S>, S>
+	extends StoredWrapper<List<@Valid @NotNull S>, S>
 	//	implements List<S> //only uncomment to get/override methods
 {
 	
@@ -74,44 +75,75 @@ public abstract class ListStoredWrapper<S extends Stored>
 	}
 	
 	//	@Override
-	public boolean add(S s) {
-		return this.getStored().add(s);
+	public boolean add(@NotNull S s) {
+		boolean output = this.getStored().add(s);
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean remove(Object o) {
-		return this.getStored().remove(o);
+		boolean output = this.getStored().remove(o);
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean containsAll(Collection<?> collection) {
 		//noinspection SlowListContainsAll
-		return this.getStored().containsAll(collection);
+		boolean output = this.getStored().containsAll(collection);
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean addAll(Collection<? extends S> collection) {
-		return this.getStored().addAll(collection);
+		boolean output = this.getStored().addAll(collection);
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean addAll(int i, Collection<? extends S> collection) {
-		return this.getStored().addAll(i, collection);
+		boolean output = this.getStored().addAll(i, collection);
+		
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean removeAll(Collection<?> collection) {
-		return this.getStored().removeAll(collection);
+		boolean output = this.getStored().removeAll(collection);
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public boolean retainAll(Collection<?> collection) {
-		return this.getStored().retainAll(collection);
+		boolean output = this.getStored().retainAll(collection);
+		
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override
 	public void clear() {
 		this.getStored().clear();
+		this.recalcTotal();
 	}
 	
 	//	@Override
@@ -127,11 +159,14 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	@Override
 	public void add(int i, S s) {
 		this.getStored().add(i, s);
+		this.recalcTotal();
 	}
 	
 	//	@Override
 	public S remove(int i) {
-		return this.getStored().remove(i);
+		S output = this.getStored().remove(i);
+		this.recalcTotal();
+		return output;
 	}
 	
 	//	@Override
@@ -162,6 +197,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	@Override
 	public void replaceAll(UnaryOperator<S> operator) {
 		this.getStored().replaceAll(operator);
+		this.recalcTotal();
 	}
 	
 	//	@Override
@@ -181,7 +217,12 @@ public abstract class ListStoredWrapper<S extends Stored>
 	
 	//	@Override
 	public boolean removeIf(Predicate<? super S> filter) {
-		return this.getStored().removeIf(filter);
+		boolean output = this.getStored().removeIf(filter);
+		
+		if (output) {
+			this.recalcTotal();
+		}
+		return output;
 	}
 	
 	//	@Override

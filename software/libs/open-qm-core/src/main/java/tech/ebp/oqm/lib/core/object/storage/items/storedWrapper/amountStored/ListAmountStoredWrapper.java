@@ -32,6 +32,10 @@ public class ListAmountStoredWrapper
 	@ValidUnit
 	private Unit parentUnit;
 	
+	public ListAmountStoredWrapper(Unit<?> parentUnit) {
+		this.setParentUnit(parentUnit);
+	}
+	
 	@Override
 	public Quantity<?> recalcTotal() {
 		var ref = new Object() {
