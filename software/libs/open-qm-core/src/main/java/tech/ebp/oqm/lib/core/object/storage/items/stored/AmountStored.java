@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidQuantity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,12 +35,11 @@ public class AmountStored extends Stored {
 		return this;
 	}
 	
-	public AmountStored subtract(AmountStored amount) {
+	public AmountStored subtract(AmountStored amount) throws NotEnoughStoredException {
 		Quantity result = this.getAmount().subtract(amount.getAmount());
 		
 		if (result.getValue().doubleValue() < 0) {
-			//TODO:: custom exception
-			throw new IllegalArgumentException("Resulting amount less than zero.");
+			throw new NotEnoughStoredException("Resulting amount less than zero.");
 		}
 		this.setAmount(result);
 		return this;

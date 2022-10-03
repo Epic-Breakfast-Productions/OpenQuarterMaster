@@ -49,8 +49,11 @@ class TrackedItemTest extends BasicTest {
 			stored.setIdentifyingDetails(FAKER.lorem().paragraph());
 			stored.setValue(BigDecimal.valueOf(RandomUtils.nextDouble(5, 1_000_000)));
 			
+			String id = UUID.randomUUID().toString();
+			stored.setIdentifier(id);
+			
 			item.getStorageMap().get(storageIds.get(RandomUtils.nextInt(0, storageIds.size()))).put(
-				UUID.randomUUID().toString(),
+				id,
 				stored
 			);
 		}

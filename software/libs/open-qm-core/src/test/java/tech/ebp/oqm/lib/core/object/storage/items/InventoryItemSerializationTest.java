@@ -45,7 +45,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 		return List.of(
 			(TrackedItem) new TrackedItem().setTrackedItemIdentifierName(FAKER.name().name()).setName(FAKER.name().name()),
 			(TrackedItem) new TrackedItem()
-				.add(ObjectId.get(), "1234", new TrackedStored())
+							  .add(ObjectId.get(), "1234", new TrackedStored().setIdentifier(FAKER.business().creditCardNumber()))
 				.setTrackedItemIdentifierName(FAKER.name().name())
 				.setName(FAKER.name().name()),
 			TrackedItemTest.getLargeTrackedItem()

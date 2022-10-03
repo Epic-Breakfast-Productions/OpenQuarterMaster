@@ -17,9 +17,10 @@ class TrackedStoredSerializationTest extends ObjectSerializationTest<TrackedStor
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new TrackedStored()),
+			Arguments.of(new TrackedStored().setIdentifier(FAKER.idNumber().peselNumber())),
 			Arguments.of(
 				new TrackedStored()
+					.setIdentifier(FAKER.idNumber().peselNumber())
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
