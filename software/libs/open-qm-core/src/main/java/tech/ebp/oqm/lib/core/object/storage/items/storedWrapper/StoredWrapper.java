@@ -12,6 +12,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
+import java.util.stream.Stream;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,6 +21,9 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
+	@Setter(AccessLevel.PROTECTED)
+	private Quantity<?> totalCost = null;
+	
 	@NonNull
 	@NotNull
 	private T stored;
@@ -27,6 +31,13 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	protected StoredWrapper(T stored) {
 		this.stored = stored;
 	}
+	
+	/**
+	 * Gets the number of individual items stored in the wrapper
+	 *
+	 * @return
+	 */
+	public abstract long getNumStored();
 	
 	/**
 	 * Method to recalculate and return the total amount held in this wrapper.

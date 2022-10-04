@@ -14,6 +14,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -22,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BinaryOperator;
 
 /**
  * Describes a type of inventory item.
@@ -43,7 +46,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
 @BsonDiscriminator(key = "storedType_mongo")
-public abstract class InventoryItem<T> extends ImagedMainObject {
+public abstract class InventoryItem<T extends StoredWrapper<?, ?>> extends ImagedMainObject {
 	
 	/**
 	 * The name of this inventory item
@@ -83,7 +86,7 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	private Quantity<?> total = null;
 	
 	@Setter(AccessLevel.PROTECTED)
-	private BigDecimal valueOfStored = null;
+	private BigDecimal valueOfStored = BigDecimal.ZERO;
 	
 	//TODO:: expiryWarningThreshold: duration before expiry dates when to warn that is expiring soon
 	
@@ -96,7 +99,24 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 *
 	 * @return The total amount stored.
 	 */
-	public abstract Quantity<?> recalcTotal();
+	public Quantity<?> recalcTotal() {
+		var ref = new Object() {
+			Quantity<?> total = Quantities.getQuantity(0, getUnit());
+			
+			public synchronized void addToTotal(Quantity quantity) {
+				this.total = this.total.add(quantity);
+			}
+		};
+		
+		this.getStorageMap()
+			.values()
+			.stream()
+			.forEach((StoredWrapper s)->{
+				ref.addToTotal(s.recalcTotal());
+			});
+		this.setTotal(ref.total);
+		return this.total;
+	}
 	
 	public Quantity<?> getTotal() {
 		if (total == null) {
@@ -110,7 +130,9 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 *
 	 * @return the number of individual entities stored
 	 */
-	public abstract long numStored();
+	public long numStored() {
+		return this.getStorageMap().values().stream().map(StoredWrapper::getNumStored).reduce(0L, Long::sum);
+	}
 	
 	/**
 	 * First calls {@link #recalcTotal()}, then calculates the total value of all items stored according to how it should for the type of
@@ -118,7 +140,10 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 	 *
 	 * @return The total that was calculated.
 	 */
-	public abstract BigDecimal recalcValueOfStored();
+	public BigDecimal recalcValueOfStored() {
+		//		TODO:: this
+		return BigDecimal.ZERO;
+	}
 	
 	/**
 	 * Gets the total value of all items/ amounts stored.
@@ -132,53 +157,53 @@ public abstract class InventoryItem<T> extends ImagedMainObject {
 		return this.valueOfStored;
 	}
 	
-	/**
-	 * Gets a new instance of what holds the T value.
-	 * @return
-	 */
-	protected abstract T newTInstance();
+	//	/**
+	//	 * Gets a new instance of what holds the T value.
+	//	 * @return
+	//	 */
+	//	protected abstract T newTInstance();
+	//
+	//	protected T getStoredForStorage(ObjectId storageId, boolean createIfNone) {
+	//		if (!this.getStorageMap().containsKey(storageId)) {
+	//			if (createIfNone) {
+	//				this.getStorageMap().put(storageId, this.newTInstance());
+	//			} else {
+	//				return null;
+	//			}
+	//		}
+	//		return this.getStorageMap().get(storageId);
+	//	}
+	//
+	//	protected T getStoredForStorage(ObjectId storageId) {
+	//		return this.getStoredForStorage(storageId, true);
+	//	}
 	
-	protected T getStoredForStorage(ObjectId storageId, boolean createIfNone) {
-		if (!this.getStorageMap().containsKey(storageId)) {
-			if (createIfNone) {
-				this.getStorageMap().put(storageId, this.newTInstance());
-			} else {
-				return null;
-			}
-		}
-		return this.getStorageMap().get(storageId);
-	}
-	
-	protected T getStoredForStorage(ObjectId storageId) {
-		return this.getStoredForStorage(storageId, true);
-	}
-	
-	/**
-	 *
-	 * @param storageId
-	 * @param toAdd
-	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
-	 * @return
-	 */
-	public abstract InventoryItem<T> add(ObjectId storageId, T toAdd, boolean storageBlockStrict);
-	
-	/**
-	 * Wrapper for {@link #add(ObjectId, Object, boolean)}, with false passed to storageBlockStrict
-	 * @param storageId
-	 * @param toAdd
-	 * @return
-	 */
-	public InventoryItem<T> add(ObjectId storageId, T toAdd) {
-		return this.add(storageId, toAdd, false);
-	}
-	
-	public abstract InventoryItem<T> subtract(ObjectId storageId, T toSubtract);
-	
-	public InventoryItem<T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, T t) {
-		this.subtract(storageIdFrom, t);
-		this.add(storageIdTo, t);
-		
-		this.recalcTotal();
-		return this;
-	}
+	//	/**
+	//	 *
+	//	 * @param storageId
+	//	 * @param toAdd
+	//	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	//	 * @return
+	//	 */
+	//	public abstract InventoryItem<T> add(ObjectId storageId, T toAdd, boolean storageBlockStrict);
+	//
+	//	/**
+	//	 * Wrapper for {@link #add(ObjectId, Object, boolean)}, with false passed to storageBlockStrict
+	//	 * @param storageId
+	//	 * @param toAdd
+	//	 * @return
+	//	 */
+	//	public InventoryItem<T> add(ObjectId storageId, T toAdd) {
+	//		return this.add(storageId, toAdd, false);
+	//	}
+	//
+	//	public abstract InventoryItem<T> subtract(ObjectId storageId, T toSubtract);
+	//
+	//	public InventoryItem<T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, T t) {
+	//		this.subtract(storageIdFrom, t);
+	//		this.add(storageIdTo, t);
+//
+//		this.recalcTotal();
+//		return this;
+//	}
 }

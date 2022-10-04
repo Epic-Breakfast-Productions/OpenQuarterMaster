@@ -32,6 +32,11 @@ public abstract class MapStoredWrapper<S extends Stored>
 		super(new HashMap<>());
 	}
 	
+	@Override
+	public long getNumStored() {
+		return this.size();
+	}
+	
 	// <editor-fold desc="Map pass-through methods">
 	public int size() {
 		return this.getStored().size();

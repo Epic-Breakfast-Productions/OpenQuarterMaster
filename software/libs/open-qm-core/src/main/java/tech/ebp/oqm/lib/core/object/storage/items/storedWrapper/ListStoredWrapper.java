@@ -41,6 +41,11 @@ public abstract class ListStoredWrapper<S extends Stored>
 		super(new ArrayList<>());
 	}
 	
+	@Override
+	public long getNumStored() {
+		return this.size();
+	}
+	
 	// <editor-fold desc="List pass-through methods">
 	//	@Override
 	public int size() {

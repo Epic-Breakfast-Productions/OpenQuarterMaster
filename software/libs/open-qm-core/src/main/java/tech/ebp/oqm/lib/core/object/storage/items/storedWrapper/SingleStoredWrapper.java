@@ -1,6 +1,5 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,5 +14,10 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 	
 	protected SingleStoredWrapper(T stored) {
 		super(stored);
+	}
+	
+	@Override
+	public long getNumStored() {
+		return 1;
 	}
 }

@@ -2,7 +2,9 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidHeldStoredUnits;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 import lombok.AccessLevel;
@@ -28,7 +30,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
-public abstract class AmountItem<T> extends InventoryItem<T> {
+public abstract class AmountItem<T extends StoredWrapper<?, ? extends AmountStored>> extends InventoryItem<T> {
 	
 	/**
 	 * The unit used to measure the item.
