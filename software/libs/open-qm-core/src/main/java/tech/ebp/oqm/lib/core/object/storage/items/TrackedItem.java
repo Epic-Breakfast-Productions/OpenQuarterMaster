@@ -31,7 +31,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class TrackedItem extends InventoryItem<TrackedMapStoredWrapper> {
+public class TrackedItem extends InventoryItem<TrackedStored, Map<String, TrackedStored>, TrackedMapStoredWrapper> {
 	
 	@Override
 	public StorageType getStorageType() {
@@ -62,6 +62,11 @@ public class TrackedItem extends InventoryItem<TrackedMapStoredWrapper> {
 	@Override
 	public @NonNull Unit<?> getUnit() {
 		return UnitUtils.UNIT;
+	}
+	
+	@Override
+	protected TrackedMapStoredWrapper newTInstance() {
+		return new TrackedMapStoredWrapper();
 	}
 	//
 	//	@Override

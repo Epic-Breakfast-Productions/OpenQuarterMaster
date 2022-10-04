@@ -30,7 +30,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
-public abstract class AmountItem<T extends StoredWrapper<?, ? extends AmountStored>> extends InventoryItem<T> {
+public abstract class AmountItem<C, T extends StoredWrapper<C, AmountStored>> extends InventoryItem<AmountStored, C, T> {
 	
 	/**
 	 * The unit used to measure the item.

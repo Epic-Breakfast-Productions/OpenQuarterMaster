@@ -28,17 +28,22 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
-public class ListAmountItem extends InventoryItem<ListAmountStoredWrapper> {//TODO:: when superbuild, this annotation can't happen
+public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStored>, ListAmountStoredWrapper> {//TODO:: when superbuild, this
+	// annotation
+	// can't
+	// happen
 	
 	@Override
 	public StorageType getStorageType() {
 		return StorageType.AMOUNT_LIST;
 	}
 	
-	//	@Override
-	//	protected List<@NotNull AmountStored> newTInstance() {
-	//		return new ArrayList<>();
-	//	}
+	
+	@Override
+	protected ListAmountStoredWrapper newTInstance() {
+		return new ListAmountStoredWrapper().setParentUnit(this.getUnit());
+	}
+	
 	//
 	//	public ListAmountItem add(ObjectId storageId, AmountStored stored) {
 	//		List<AmountStored> storageList = this.getStoredForStorage(storageId);
@@ -59,6 +64,12 @@ public class ListAmountItem extends InventoryItem<ListAmountStoredWrapper> {//TO
 	@NonNull
 	@ValidUnit
 	private Unit<?> unit = UnitUtils.UNIT;
+	
+	public ListAmountItem setUnit(Unit<?> unit) {
+		this.unit = unit;
+		this.getStorageMap().values().forEach((ListAmountStoredWrapper w)->w.setParentUnit(this.getUnit()));
+		return this;
+	}
 	
 	/**
 	 * The value of this item per the unit set by {@link #unit}.

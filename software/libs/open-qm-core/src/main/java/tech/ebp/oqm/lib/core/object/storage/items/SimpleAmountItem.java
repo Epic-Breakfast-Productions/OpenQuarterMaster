@@ -26,12 +26,18 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
-public class SimpleAmountItem extends InventoryItem<SingleAmountStoredWrapper> {
+public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, SingleAmountStoredWrapper> {
 	
 	@Override
 	public StorageType getStorageType() {
 		return StorageType.AMOUNT_SIMPLE;
 	}
+	
+	@Override
+	protected SingleAmountStoredWrapper newTInstance() {
+		return new SingleAmountStoredWrapper();
+	}
+	
 	
 	//
 	//	@Override
@@ -76,6 +82,8 @@ public class SimpleAmountItem extends InventoryItem<SingleAmountStoredWrapper> {
 		}
 		throw new UnsupportedOperationException("Implementation does not yet support: " + totalNum.getClass().getName());
 	}
+	
+	
 	//
 	//	@Override
 	//	public InventoryItem<AmountStored> add(@NonNull ObjectId storageId, AmountStored toAdd, boolean storageBlockStrict) {

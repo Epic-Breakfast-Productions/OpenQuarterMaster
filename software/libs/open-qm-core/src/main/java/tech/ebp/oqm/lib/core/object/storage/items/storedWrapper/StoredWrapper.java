@@ -12,8 +12,11 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
-import java.util.stream.Stream;
 
+/**
+ * @param <T> The storage type wrapped.
+ * @param <S> The type held in the storage
+ */
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class StoredWrapper<T, S extends Stored> {

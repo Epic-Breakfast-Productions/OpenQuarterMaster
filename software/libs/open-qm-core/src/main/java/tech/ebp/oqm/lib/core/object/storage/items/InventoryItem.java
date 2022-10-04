@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import tech.units.indriya.quantity.Quantities;
 
@@ -30,6 +31,10 @@ import java.util.function.BinaryOperator;
  * Describes a type of inventory item.
  * <p>
  * TODO:: simplify getStorageType for superBuilder, similar to how Service handles
+ *
+ * @param <S> The type of Stored object this deals with
+ * @param <C> The general collection type wrapped by T
+ * @param <T> The StoredWrapper used.
  */
 @Data
 @NoArgsConstructor
@@ -46,7 +51,7 @@ import java.util.function.BinaryOperator;
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
 @BsonDiscriminator(key = "storedType_mongo")
-public abstract class InventoryItem<T extends StoredWrapper<?, ?>> extends ImagedMainObject {
+public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper<C, S>> extends ImagedMainObject {
 	
 	/**
 	 * The name of this inventory item
@@ -157,26 +162,40 @@ public abstract class InventoryItem<T extends StoredWrapper<?, ?>> extends Image
 		return this.valueOfStored;
 	}
 	
-	//	/**
-	//	 * Gets a new instance of what holds the T value.
-	//	 * @return
-	//	 */
-	//	protected abstract T newTInstance();
-	//
-	//	protected T getStoredForStorage(ObjectId storageId, boolean createIfNone) {
-	//		if (!this.getStorageMap().containsKey(storageId)) {
-	//			if (createIfNone) {
-	//				this.getStorageMap().put(storageId, this.newTInstance());
-	//			} else {
-	//				return null;
-	//			}
-	//		}
-	//		return this.getStorageMap().get(storageId);
-	//	}
-	//
-	//	protected T getStoredForStorage(ObjectId storageId) {
-	//		return this.getStoredForStorage(storageId, true);
-	//	}
+	/**
+	 * Gets a new instance of what holds the T value.
+	 *
+	 * @return a new valid T instance
+	 */
+	protected abstract T newTInstance();
+	
+	protected T getStoredWrapperForStorage(ObjectId storageId, boolean createIfNone) {
+		if (!this.getStorageMap().containsKey(storageId)) {
+			if (createIfNone) {
+				this.getStorageMap().put(storageId, this.newTInstance());
+			} else {
+				return null;
+			}
+		}
+		return this.getStorageMap().get(storageId);
+	}
+	
+	public T getStoredWrapperForStorage(ObjectId storageId) {
+		return this.getStoredWrapperForStorage(storageId, false);
+	}
+	
+	protected C getStoredForStorage(ObjectId storageId, boolean createIfNone) {
+		T wrapper = this.getStoredWrapperForStorage(storageId, createIfNone);
+		
+		if (wrapper == null) {
+			return null;
+		}
+		return wrapper.getStored();
+	}
+	
+	public C getStoredForStorage(ObjectId storageId) {
+		return this.getStoredForStorage(storageId, false);
+	}
 	
 	//	/**
 	//	 *
@@ -202,8 +221,8 @@ public abstract class InventoryItem<T extends StoredWrapper<?, ?>> extends Image
 	//	public InventoryItem<T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, T t) {
 	//		this.subtract(storageIdFrom, t);
 	//		this.add(storageIdTo, t);
-//
-//		this.recalcTotal();
-//		return this;
-//	}
+	//
+	//		this.recalcTotal();
+	//		return this;
+	//	}
 }
