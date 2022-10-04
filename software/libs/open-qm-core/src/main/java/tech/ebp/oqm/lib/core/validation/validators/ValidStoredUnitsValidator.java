@@ -17,7 +17,12 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 //TODO:: turn back to AmountItem type when https://jira.mongodb.org/projects/JAVA/issues/JAVA-4578 resolved
-public class ValidStoredUnitsValidator extends Validator<ValidHeldStoredUnits, InventoryItem<? extends StoredWrapper<?, AmountStored>>> {
+public class ValidStoredUnitsValidator
+	extends Validator<
+						 ValidHeldStoredUnits,
+						 InventoryItem<? extends AmountStored, ?, ? extends StoredWrapper<?, AmountStored>>
+						 >
+{
 	
 	public static final String INVALID_UNITS_FOUND_FORMAT = "Found %d stored objects with units incompatible with the item's.";
 	

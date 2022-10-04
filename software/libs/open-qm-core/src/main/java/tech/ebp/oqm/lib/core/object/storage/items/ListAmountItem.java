@@ -28,10 +28,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
-public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStored>, ListAmountStoredWrapper> {//TODO:: when superbuild, this
-	// annotation
-	// can't
-	// happen
+public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStored>, ListAmountStoredWrapper> {
 	
 	@Override
 	public StorageType getStorageType() {
@@ -43,16 +40,6 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	protected ListAmountStoredWrapper newTInstance() {
 		return new ListAmountStoredWrapper().setParentUnit(this.getUnit());
 	}
-	
-	//
-	//	public ListAmountItem add(ObjectId storageId, AmountStored stored) {
-	//		List<AmountStored> storageList = this.getStoredForStorage(storageId);
-	//
-	//		storageList.add(stored);
-	//
-	//		this.recalcTotal();
-	//		return this;
-	//	}
 	
 	/*
 	TODO:: use the AmountItem as the superclass, once https://jira.mongodb.org/projects/JAVA/issues/JAVA-4578 resolved.
@@ -77,46 +64,4 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	@NonNull
 	@DecimalMin("0.0")
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
-	
-	//
-	//	@Override
-	//	public InventoryItem<List<AmountStored>> add(ObjectId storageId, List<AmountStored> toAdd, boolean storageBlockStrict) {
-	//		List<AmountStored> storedList = this.getStoredForStorage(storageId, !storageBlockStrict);
-	//
-	//		if (storedList == null) {
-	//			//TODO:: custom exception
-	//			throw new IllegalArgumentException("No storage block found with that Id.");
-	//		}
-	//
-	//		storedList.addAll(toAdd);
-	//
-	//		this.getStorageMap().put(storageId, storedList);
-	//
-	//		this.recalcTotal();
-	//		return this;
-	//	}
-	//
-	//	@Override
-	//	public ListAmountItem subtract(ObjectId storageId, List<AmountStored> toSubtract) {
-	//		List<AmountStored> storedList = this.getStoredForStorage(storageId, false);
-	//
-	//		if (storedList == null) {
-	//			//TODO:: custom exception
-	//			throw new IllegalArgumentException("Nothing was stored here in the first place.");
-	//		}
-	//
-	//		List<AmountStored> subtracted = new ArrayList<>(storedList);
-	//
-	//		for (AmountStored curToSubtract : subtracted) {
-	//			if (!subtracted.remove(curToSubtract)) {
-	//				//TODO:: custom exception
-	//				throw new IllegalArgumentException("Amount did not exist in storage to remove.");
-	//			}
-	//		}
-	//
-	//		this.getStorageMap().put(storageId, subtracted);
-	//
-	//		this.recalcTotal();
-	//		return this;
-	//	}
 }

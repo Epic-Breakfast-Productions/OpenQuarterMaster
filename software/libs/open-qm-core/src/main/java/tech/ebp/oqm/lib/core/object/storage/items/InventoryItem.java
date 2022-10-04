@@ -3,6 +3,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -197,32 +198,74 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 		return this.getStoredForStorage(storageId, false);
 	}
 	
-	//	/**
-	//	 *
-	//	 * @param storageId
-	//	 * @param toAdd
-	//	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
-	//	 * @return
-	//	 */
-	//	public abstract InventoryItem<T> add(ObjectId storageId, T toAdd, boolean storageBlockStrict);
-	//
-	//	/**
-	//	 * Wrapper for {@link #add(ObjectId, Object, boolean)}, with false passed to storageBlockStrict
-	//	 * @param storageId
-	//	 * @param toAdd
-	//	 * @return
-	//	 */
-	//	public InventoryItem<T> add(ObjectId storageId, T toAdd) {
-	//		return this.add(storageId, toAdd, false);
-	//	}
-	//
-	//	public abstract InventoryItem<T> subtract(ObjectId storageId, T toSubtract);
-	//
-	//	public InventoryItem<T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, T t) {
-	//		this.subtract(storageIdFrom, t);
-	//		this.add(storageIdTo, t);
-	//
-	//		this.recalcTotal();
-	//		return this;
-	//	}
+	
+	/**
+	 * Adds a stored to the set held at the storage block id given.
+	 * <p>
+	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
+	 * <ul>
+	 *     <li>
+	 *         <strong>Single Amount</strong>- The amount of the parameter is added to the amount held.
+	 *     </li>
+	 *     <li>
+	 *         <strong>Any collection</strong>- The Stored object given is added to the set alongside the others already stored
+	 *     </li>
+	 * </ul>
+	 *
+	 * @param storageId
+	 * @param toAdd
+	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	 *
+	 * @return
+	 */
+	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean storageBlockStrict) {
+		this.getStoredWrapperForStorage(storageId, !storageBlockStrict).addStored(toAdd);
+		this.recalcTotal();
+		return this;
+	}
+	
+	/**
+	 * Wrapper for {@link #add(ObjectId, S, boolean)}, with true passed to storageBlockStrict
+	 *
+	 * @param storageId
+	 * @param toAdd
+	 *
+	 * @return
+	 */
+	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd) {
+		return this.add(storageId, toAdd, true);
+	}
+	
+	/**
+	 * Adds a stored to the set held at the storage block id given.
+	 * <p>
+	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
+	 * <ul>
+	 *     <li>
+	 *         <strong>Single Amount</strong>- The amount of the parameter is subtracted from the amount held.
+	 *     </li>
+	 *     <li>
+	 *         <strong>Any collection</strong>- The Stored object given is removed from the set alongside the others already stored
+	 *     </li>
+	 * </ul>
+	 *
+	 * @param storageId
+	 * @param toAdd
+	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	 *
+	 * @return
+	 * @throws NotEnoughStoredException If there isn't enough held to subtract
+	 */
+	public InventoryItem<S, C, T> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException {
+		this.getStoredWrapperForStorage(storageId).subtractStored(toSubtract);
+		this.recalcTotal();
+		return this;
+	}
+	
+	public InventoryItem<S, C, T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S t) throws NotEnoughStoredException {
+		this.subtract(storageIdFrom, t);
+		this.add(storageIdTo, t);
+		
+		return this;
+	}
 }

@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.AlreadyStoredException;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -35,6 +38,22 @@ public abstract class MapStoredWrapper<S extends Stored>
 	@Override
 	public long getNumStored() {
 		return this.size();
+	}
+	
+	//TODO:: make an interface for stored objs to have identifiers to use here?
+	protected void addStored(String identifier, S stored) throws AlreadyStoredException {
+		if (this.containsKey(identifier)) {
+			throw new AlreadyStoredException("Identifier already present: " + identifier);
+		}
+		this.put(identifier, stored);
+	}
+	
+	public S subtractStored(String identifier) throws NotEnoughStoredException {
+		S result = this.remove(identifier);
+		if (result == null) {
+			throw new NotEnoughStoredException("Stored to remove was not held.");
+		}
+		return result;
 	}
 	
 	// <editor-fold desc="Map pass-through methods">

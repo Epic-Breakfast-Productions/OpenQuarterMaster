@@ -56,18 +56,4 @@ public class ListAmountStoredWrapper
 		this.setTotal(ref.total);
 		return this.getTotal();
 	}
-	
-	@Override
-	public void addStored(AmountStored stored) {
-		this.add(stored);
-	}
-	
-	@Override
-	public AmountStored subtractStored(AmountStored stored) throws NotEnoughStoredException {
-		boolean result = this.remove(stored);
-		if (!result) {
-			throw new NotEnoughStoredException("Stored to remove was not held.");
-		}
-		return stored;
-	}
 }

@@ -13,6 +13,9 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 
+/**
+ * TODO:: validator to ensure identifiers == stored identifiers
+ */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -27,17 +30,11 @@ public class TrackedMapStoredWrapper extends MapStoredWrapper<TrackedStored> {
 	
 	@Override
 	public void addStored(TrackedStored stored) throws AlreadyStoredException {
-		if (this.containsKey(stored.getIdentifier())) {
-			throw new AlreadyStoredException("Identifier already present: " + stored.getIdentifier());
-		}
-		this.put(stored.getIdentifier(), stored);
+		super.addStored(stored.getIdentifier(), stored);
 	}
 	
 	@Override
 	public TrackedStored subtractStored(TrackedStored stored) throws NotEnoughStoredException {
-		if (!this.containsKey(stored.getIdentifier())) {
-			throw new NotEnoughStoredException("Identifier not stored: " + stored.getIdentifier());
-		}
-		return this.remove(stored.getIdentifier());
+		return this.subtractStored(stored.getIdentifier());
 	}
 }

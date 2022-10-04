@@ -57,14 +57,30 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	}
 	
 	/**
-	 * Adds to the stored. Semantics based on implementation.
+	 * Adds to the stored. Semantics based on implementation:
+	 * <ul>
+	 *     <li>
+	 *         <strong>Single Amount</strong>- The amount of the parameter is added to the amount held.
+	 *     </li>
+	 *     <li>
+	 *         <strong>Any collection</strong>- The Stored object given is added to the set alongside the others already stored
+	 *     </li>
+	 * </ul>
 	 *
 	 * @param stored
 	 */
 	public abstract void addStored(S stored);
 	
 	/**
-	 * Removes from the stored. Semantics based on implementation.
+	 * Removes from the stored. Semantics based on implementation:
+	 * <ul>
+	 *     <li>
+	 *         <strong>Single Amount</strong>- The amount of the parameter is subtracted from the amount held.
+	 *     </li>
+	 *     <li>
+	 *         <strong>Any collection</strong>- The Stored object given is removed from the set alongside the others already stored
+	 *     </li>
+	 * </ul>
 	 *
 	 * @param stored
 	 *

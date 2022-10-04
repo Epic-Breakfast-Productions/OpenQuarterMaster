@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.validation.Valid;
@@ -44,6 +46,20 @@ public abstract class ListStoredWrapper<S extends Stored>
 	@Override
 	public long getNumStored() {
 		return this.size();
+	}
+	
+	@Override
+	public void addStored(S stored) {
+		this.add(stored);
+	}
+	
+	@Override
+	public S subtractStored(S stored) throws NotEnoughStoredException {
+		boolean result = this.remove(stored);
+		if (!result) {
+			throw new NotEnoughStoredException("Stored to remove was not held.");
+		}
+		return stored;
 	}
 	
 	// <editor-fold desc="List pass-through methods">
