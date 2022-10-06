@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * @param <S> The type of Stored object this deals with
  * @param <C> The general collection type wrapped by T
- * @param <T> The StoredWrapper used.
+ * @param <W> The StoredWrapper used.
  */
 @Data
 @NoArgsConstructor
@@ -52,7 +52,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
 @BsonDiscriminator(key = "storedType_mongo")
-public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper<C, S>> extends ImagedMainObject {
+public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper<C, S>> extends ImagedMainObject {
 	
 	/**
 	 * The name of this inventory item
@@ -83,7 +83,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 */
 	@NonNull
 	@NotNull
-	private Map<@NonNull ObjectId, @NonNull T> storageMap = new LinkedHashMap<>();
+	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
 	 * The total amount of that item in storage, in the {@link #getUnit()} unit.
@@ -112,7 +112,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 			this.getStorageMap()
 				.values()
 				.stream()
-				.map((T wrapper)->{
+				.map((W wrapper)->{
 					wrapper.recalcDerived();
 					return wrapper.getTotal();
 				})
@@ -158,7 +158,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 		return this.valueOfStored;
 	}
 	
-	public InventoryItem<S, C, T> recalculateDerived() {
+	public InventoryItem<S, C, W> recalculateDerived() {
 		this.recalcTotal();
 		this.recalcValueOfStored();
 		return this;
@@ -169,9 +169,9 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return a new valid T instance
 	 */
-	protected abstract T newTInstance();
+	protected abstract W newTInstance();
 	
-	protected T getStoredWrapperForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
+	protected W getStoredWrapperForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
 		if (!this.getStorageMap().containsKey(storageId)) {
 			if (addStorageBlockIdIfNone) {
 				this.getStorageMap().put(storageId, this.newTInstance());
@@ -182,12 +182,12 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 		return this.getStorageMap().get(storageId);
 	}
 	
-	public T getStoredWrapperForStorage(ObjectId storageId) {
+	public W getStoredWrapperForStorage(ObjectId storageId) {
 		return this.getStoredWrapperForStorage(storageId, true);
 	}
 	
 	protected C getStoredForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
-		T wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
+		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
 		if (wrapper == null) {
 			return null;
@@ -219,8 +219,8 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return
 	 */
-	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
-		T wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
+	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
+		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
 		if (wrapper == null) {
 			throw new NoStorageBlockException();
@@ -239,7 +239,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return
 	 */
-	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd) {
+	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd) {
 		return this.add(storageId, toAdd, true);
 	}
 	
@@ -263,8 +263,8 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 * @return
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract
 	 */
-	public InventoryItem<S, C, T> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
-		T wrapper = this.getStoredWrapperForStorage(storageId, false);
+	public InventoryItem<S, C, W> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
 		if (wrapper == null) {
 			throw new NoStorageBlockException();
@@ -275,7 +275,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 		return this;
 	}
 	
-	public InventoryItem<S, C, T> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S t) throws NotEnoughStoredException {
+	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S t) throws NotEnoughStoredException {
 		this.subtract(storageIdFrom, t);
 		this.add(storageIdTo, t);
 		
