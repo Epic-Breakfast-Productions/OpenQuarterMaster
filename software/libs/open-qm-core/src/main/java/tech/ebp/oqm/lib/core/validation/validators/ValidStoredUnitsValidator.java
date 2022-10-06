@@ -30,7 +30,7 @@ public class ValidStoredUnitsValidator
 	) {
 		List<String> validationErrs = new ArrayList<>();
 		
-		List<StoredWrapper<?, AmountStored>> storedWrapperList = (List<StoredWrapper<?, AmountStored>>) item.getStorageMap().values();
+		List<StoredWrapper<?, AmountStored>> storedWrapperList = new ArrayList<>(item.getStorageMap().values());
 		
 		Stream<AmountStored> storedStream;
 		if (item instanceof SimpleAmountItem) {

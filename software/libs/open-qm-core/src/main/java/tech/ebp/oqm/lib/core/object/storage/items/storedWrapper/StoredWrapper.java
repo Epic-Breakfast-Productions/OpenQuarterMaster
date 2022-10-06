@@ -1,8 +1,8 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -12,6 +12,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * @param <T> The storage type wrapped.
@@ -24,8 +25,9 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
+	//TODO:: implement recalc similar to total
 	@Setter(AccessLevel.PROTECTED)
-	private Quantity<?> totalCost = null;
+	private BigDecimal totalValue = null;
 	
 	@NonNull
 	@NotNull
@@ -40,6 +42,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 *
 	 * @return
 	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract long getNumStored();
 	
 	/**
@@ -47,13 +50,18 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 *
 	 * @return The newly calculated total in this wrapper.
 	 */
-	public abstract Quantity<?> recalcTotal();
+	protected abstract Quantity<?> recalcTotal();
 	
 	public Quantity<?> getTotal() {
 		if (total == null) {
 			this.recalcTotal();
 		}
 		return this.total;
+	}
+	
+	public StoredWrapper<T, S> recalcDerived() {
+		this.recalcTotal();
+		return this;
 	}
 	
 	/**

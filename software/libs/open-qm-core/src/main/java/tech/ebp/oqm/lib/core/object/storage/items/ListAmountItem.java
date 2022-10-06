@@ -6,6 +6,7 @@ import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.utils.BigDecimalSumHelper;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidHeldStoredUnits;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 import lombok.Data;
@@ -64,4 +65,17 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	@NonNull
 	@DecimalMin("0.0")
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
+	
+	
+	@Override
+	public BigDecimal recalcValueOfStored() {
+		Quantity<?> total = this.recalcTotal();
+		
+		this.setValueOfStored(
+			
+			BigDecimal.valueOf(total.getValue().doubleValue()).multiply(this.getValuePerUnit())
+		);
+		
+		return this.getValueOfStored();
+	}
 }

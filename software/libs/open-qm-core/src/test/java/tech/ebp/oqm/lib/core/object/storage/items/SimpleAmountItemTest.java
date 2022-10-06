@@ -62,7 +62,7 @@ class SimpleAmountItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
@@ -128,6 +128,7 @@ class SimpleAmountItemTest extends BasicTest {
 	@ParameterizedTest
 	@MethodSource("getTotalArguments")
 	public void testTotalTest(SimpleAmountItem item, Quantity<?> quantityExpected) {
+		item.recalcValueOfStored();
 		assertEquals(
 			quantityExpected,
 			item.getTotal()
@@ -137,6 +138,7 @@ class SimpleAmountItemTest extends BasicTest {
 	@ParameterizedTest
 	@MethodSource("getValueArguments")
 	public void testGetValue(SimpleAmountItem item, BigDecimal valueExpected) {
+		item.recalcValueOfStored();
 		assertEquals(
 			valueExpected,
 			item.getValueOfStored()

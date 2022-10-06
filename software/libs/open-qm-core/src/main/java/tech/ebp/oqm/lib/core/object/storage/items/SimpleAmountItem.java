@@ -33,6 +33,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 		return StorageType.AMOUNT_SIMPLE;
 	}
 	
+	
 	@Override
 	protected SingleAmountStoredWrapper newTInstance() {
 		return new SingleAmountStoredWrapper(new AmountStored(Quantities.getQuantity(0, this.getUnit())));
@@ -57,14 +58,13 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 	private BigDecimal valuePerUnit = BigDecimal.ZERO;
 	
 	@Override
-	public BigDecimal getValueOfStored() {
-		Number totalNum = this.getTotal().getValue();
+	public BigDecimal recalcValueOfStored() {
+		Quantity<?> total = this.recalcTotal();
 		
-		if (totalNum instanceof Double) {
-			return this.getValuePerUnit().multiply(BigDecimal.valueOf(totalNum.doubleValue()));
-		} else if (totalNum instanceof Integer) {
-			return this.getValuePerUnit().multiply(BigDecimal.valueOf(totalNum.doubleValue()));
-		}
-		throw new UnsupportedOperationException("Implementation does not yet support: " + totalNum.getClass().getName());
+		this.setValueOfStored(
+			BigDecimal.valueOf(total.getValue().doubleValue()).multiply(this.getValuePerUnit())
+		);
+		
+		return this.getValueOfStored();
 	}
 }

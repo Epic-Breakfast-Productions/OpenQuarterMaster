@@ -12,6 +12,7 @@ import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.utils.BigDecimalSumHelper;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -62,6 +63,27 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	@Override
 	public @NonNull Unit<?> getUnit() {
 		return UnitUtils.UNIT;
+	}
+	
+	@Override
+	public BigDecimal recalcValueOfStored() {
+		BigDecimalSumHelper helper = new BigDecimalSumHelper();
+		
+		for (TrackedMapStoredWrapper w : this.getStorageMap().values()) {
+			helper.addAll(
+				w.values()
+				 .stream()
+				 .map((TrackedStored s)->{
+					 if (s.getValue() == null) {
+						 return getDefaultValue();
+					 }
+					 return s.getValue();
+				 })
+			);
+		}
+		
+		this.setValueOfStored(helper.getTotal());
+		return this.getValueOfStored();
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -17,7 +18,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
-import tech.units.indriya.quantity.Quantities;
+import tech.ebp.oqm.lib.core.object.storage.items.utils.QuantitySumHelper;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -26,7 +27,6 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.BinaryOperator;
 
 /**
  * Describes a type of inventory item.
@@ -106,21 +106,19 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 * @return The total amount stored.
 	 */
 	public Quantity<?> recalcTotal() {
-		var ref = new Object() {
-			Quantity<?> total = Quantities.getQuantity(0, getUnit());
-			
-			public synchronized void addToTotal(Quantity quantity) {
-				this.total = this.total.add(quantity);
-			}
-		};
+		QuantitySumHelper helper = new QuantitySumHelper(this.getUnit());
 		
-		this.getStorageMap()
-			.values()
-			.stream()
-			.forEach((StoredWrapper s)->{
-				ref.addToTotal(s.recalcTotal());
-			});
-		this.setTotal(ref.total);
+		helper.addAll(
+			this.getStorageMap()
+				.values()
+				.stream()
+				.map((T wrapper)->{
+					wrapper.recalcDerived();
+					return wrapper.getTotal();
+				})
+		);
+		
+		this.setTotal(helper.getTotal());
 		return this.total;
 	}
 	
@@ -146,10 +144,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return The total that was calculated.
 	 */
-	public BigDecimal recalcValueOfStored() {
-		//		TODO:: this
-		return BigDecimal.ZERO;
-	}
+	public abstract BigDecimal recalcValueOfStored();
 	
 	/**
 	 * Gets the total value of all items/ amounts stored.
@@ -218,8 +213,14 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return
 	 */
-	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean storageBlockStrict) {
-		this.getStoredWrapperForStorage(storageId, !storageBlockStrict).addStored(toAdd);
+	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean storageBlockStrict) throws NoStorageBlockException {
+		T wrapper = this.getStoredWrapperForStorage(storageId, !storageBlockStrict);
+		
+		if (wrapper == null) {
+			throw new NoStorageBlockException();
+		}
+		
+		wrapper.addStored(toAdd);
 		this.recalcTotal();
 		return this;
 	}
@@ -256,8 +257,14 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 * @return
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract
 	 */
-	public InventoryItem<S, C, T> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException {
-		this.getStoredWrapperForStorage(storageId).subtractStored(toSubtract);
+	public InventoryItem<S, C, T> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+		T wrapper = this.getStoredWrapperForStorage(storageId, false);
+		
+		if (wrapper == null) {
+			throw new NoStorageBlockException();
+		}
+		
+		wrapper.subtractStored(toSubtract);
 		this.recalcTotal();
 		return this;
 	}

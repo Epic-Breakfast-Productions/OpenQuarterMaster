@@ -91,25 +91,25 @@ class TrackedItemTest extends BasicTest {
 		return Stream.of(
 			Arguments.of(
 				new TrackedItem(),
-				BigDecimal.ZERO
+				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new TrackedItem()
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
-				BigDecimal.ONE
+				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new TrackedItem()
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
-				BigDecimal.valueOf(2)
+				BigDecimal.valueOf(2.0)
 			),
 			Arguments.of(
 				new TrackedItem()
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
 					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
 					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
-				BigDecimal.valueOf(3)
+				BigDecimal.valueOf(3.0)
 			)
 		);
 	}
@@ -126,6 +126,7 @@ class TrackedItemTest extends BasicTest {
 	@ParameterizedTest
 	@MethodSource("getValueArguments")
 	public void testGetValue(TrackedItem item, BigDecimal valueExpected) {
+		item.recalcValueOfStored();
 		assertEquals(
 			valueExpected,
 			item.getValueOfStored()

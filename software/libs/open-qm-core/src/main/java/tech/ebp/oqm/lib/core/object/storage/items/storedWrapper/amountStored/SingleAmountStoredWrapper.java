@@ -11,6 +11,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.SingleStoredWrap
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor

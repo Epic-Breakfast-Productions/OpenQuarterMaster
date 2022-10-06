@@ -1,10 +1,14 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+
+import javax.measure.Quantity;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +24,5 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 	public long getNumStored() {
 		return 1;
 	}
+	
 }

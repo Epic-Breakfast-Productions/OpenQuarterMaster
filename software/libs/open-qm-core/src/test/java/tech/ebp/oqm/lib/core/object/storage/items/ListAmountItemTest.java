@@ -36,10 +36,7 @@ class ListAmountItemTest extends BasicTest {
 		List<ObjectId> storageIds = InventoryItemTest.getStorageList();
 		
 		for (ObjectId id : storageIds) {
-			item.getStorageMap().put(
-				id,
-				new ListAmountStoredWrapper()
-			);
+			item.getStoredWrapperForStorage(id, true);
 		}
 		
 		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
@@ -215,6 +212,7 @@ class ListAmountItemTest extends BasicTest {
 	@ParameterizedTest
 	@MethodSource("getValueArguments")
 	public void testGetValue(ListAmountItem item, BigDecimal valueExpected) {
+		item.recalcValueOfStored();
 		assertEquals(
 			valueExpected,
 			item.getValueOfStored()

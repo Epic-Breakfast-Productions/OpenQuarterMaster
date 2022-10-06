@@ -9,12 +9,14 @@ import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.ListStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.utils.QuantitySumHelper;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * TODO:: figure out validator to ensure unit validity
@@ -38,22 +40,14 @@ public class ListAmountStoredWrapper
 	
 	@Override
 	public Quantity<?> recalcTotal() {
-		var ref = new Object() {
-			Quantity<?> total = Quantities.getQuantity(0, getParentUnit());
-			
-			public void addToTotal(Quantity quantity) {
-				this.total = this.total.add(quantity);
-			}
-		};
+		QuantitySumHelper helper = new QuantitySumHelper(this.getParentUnit());
 		
-		this.stream()
-			.map(AmountStored::getAmount)
-			.sequential()
-			.forEach((Quantity q)->{
-				ref.addToTotal(q);
-			});
+		helper.addAll(
+			this.stream()
+				.map(AmountStored::getAmount)
+		);
 		
-		this.setTotal(ref.total);
+		this.setTotal(helper.getTotal());
 		return this.getTotal();
 	}
 }

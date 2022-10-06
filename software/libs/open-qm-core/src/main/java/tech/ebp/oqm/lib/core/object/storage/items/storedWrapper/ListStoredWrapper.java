@@ -1,13 +1,10 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.validation.Valid;
@@ -99,7 +96,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public boolean add(@NotNull S s) {
 		boolean output = this.getStored().add(s);
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -108,7 +105,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public boolean remove(Object o) {
 		boolean output = this.getStored().remove(o);
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -118,7 +115,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 		//noinspection SlowListContainsAll
 		boolean output = this.getStored().containsAll(collection);
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -127,7 +124,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public boolean addAll(Collection<? extends S> collection) {
 		boolean output = this.getStored().addAll(collection);
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -137,7 +134,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 		boolean output = this.getStored().addAll(i, collection);
 		
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -146,7 +143,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public boolean removeAll(Collection<?> collection) {
 		boolean output = this.getStored().removeAll(collection);
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -156,7 +153,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 		boolean output = this.getStored().retainAll(collection);
 		
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}
@@ -164,7 +161,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	@Override
 	public void clear() {
 		this.getStored().clear();
-		this.recalcTotal();
+		this.recalcDerived();
 	}
 	
 	//	@Override
@@ -180,13 +177,13 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	@Override
 	public void add(int i, S s) {
 		this.getStored().add(i, s);
-		this.recalcTotal();
+		this.recalcDerived();
 	}
 	
 	//	@Override
 	public S remove(int i) {
 		S output = this.getStored().remove(i);
-		this.recalcTotal();
+		this.recalcDerived();
 		return output;
 	}
 	
@@ -218,7 +215,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	@Override
 	public void replaceAll(UnaryOperator<S> operator) {
 		this.getStored().replaceAll(operator);
-		this.recalcTotal();
+		this.recalcDerived();
 	}
 	
 	//	@Override
@@ -241,7 +238,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 		boolean output = this.getStored().removeIf(filter);
 		
 		if (output) {
-			this.recalcTotal();
+			this.recalcDerived();
 		}
 		return output;
 	}

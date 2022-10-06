@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidQuantity;
@@ -15,6 +16,7 @@ import javax.measure.Unit;
  * Stored object to describe an amount of stored substance.
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
