@@ -165,9 +165,9 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 */
 	protected abstract T newTInstance();
 	
-	protected T getStoredWrapperForStorage(ObjectId storageId, boolean createIfNone) {
+	protected T getStoredWrapperForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
 		if (!this.getStorageMap().containsKey(storageId)) {
-			if (createIfNone) {
+			if (addStorageBlockIdIfNone) {
 				this.getStorageMap().put(storageId, this.newTInstance());
 			} else {
 				return null;
@@ -177,11 +177,11 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	}
 	
 	public T getStoredWrapperForStorage(ObjectId storageId) {
-		return this.getStoredWrapperForStorage(storageId, false);
+		return this.getStoredWrapperForStorage(storageId, true);
 	}
 	
-	protected C getStoredForStorage(ObjectId storageId, boolean createIfNone) {
-		T wrapper = this.getStoredWrapperForStorage(storageId, createIfNone);
+	protected C getStoredForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
+		T wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
 		if (wrapper == null) {
 			return null;
@@ -190,7 +190,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	}
 	
 	public C getStoredForStorage(ObjectId storageId) {
-		return this.getStoredForStorage(storageId, false);
+		return this.getStoredForStorage(storageId, true);
 	}
 	
 	
@@ -213,8 +213,8 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 *
 	 * @return
 	 */
-	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean storageBlockStrict) throws NoStorageBlockException {
-		T wrapper = this.getStoredWrapperForStorage(storageId, !storageBlockStrict);
+	public InventoryItem<S, C, T> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
+		T wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
 		if (wrapper == null) {
 			throw new NoStorageBlockException();

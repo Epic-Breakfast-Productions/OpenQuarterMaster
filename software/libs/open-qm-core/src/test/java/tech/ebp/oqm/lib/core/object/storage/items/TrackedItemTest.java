@@ -67,20 +67,20 @@ class TrackedItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new TrackedItem().add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false),
+				new TrackedItem().add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false)
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true)
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false)
-					.add(id, new TrackedStored(FAKER.name().name()), false)
-					.add(id, new TrackedStored(FAKER.name().name()), false),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true)
+					.add(id, new TrackedStored(FAKER.name().name()), true)
+					.add(id, new TrackedStored(FAKER.name().name()), true),
 				Quantities.getQuantity(3, UnitUtils.UNIT)
 			)
 		);
@@ -95,20 +95,20 @@ class TrackedItemTest extends BasicTest {
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true)
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true),
 				BigDecimal.valueOf(2.0)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
-					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
-					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true)
+					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true)
+					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), true),
 				BigDecimal.valueOf(3.0)
 			)
 		);

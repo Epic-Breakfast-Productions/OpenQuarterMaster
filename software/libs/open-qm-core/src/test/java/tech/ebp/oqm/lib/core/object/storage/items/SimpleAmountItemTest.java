@@ -58,17 +58,17 @@ class SimpleAmountItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			)
 		);
@@ -83,43 +83,43 @@ class SimpleAmountItemTest extends BasicTest {
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1L, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1L, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0f, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0f, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(2.0)
 			)
 		);
@@ -192,7 +192,7 @@ class SimpleAmountItemTest extends BasicTest {
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false);
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true);
 		
 		item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
 		
@@ -206,7 +206,7 @@ class SimpleAmountItemTest extends BasicTest {
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false);
+		item.add(storageId, new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true);
 		
 		assertThrows(IllegalArgumentException.class, ()->{
 			item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));

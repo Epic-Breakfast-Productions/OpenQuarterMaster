@@ -28,7 +28,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(SimpleAmountItem) new SimpleAmountItem().add(
 				ObjectId.get(),
 				new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)),
-				false
+				true
 			).setName(FAKER.name().name()),
 			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
 			SimpleAmountItemTest.getLargeSimpleAmountItem()
@@ -39,7 +39,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 		return List.of(
 			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
 			(ListAmountItem) new ListAmountItem()
-								 .add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false)
+								 .add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true)
 								 .setName(FAKER.name().name()),
 			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
 			ListAmountItemTest.getLargeListAmountItem()
@@ -51,7 +51,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(TrackedItem) new TrackedItem().setTrackedItemIdentifierName(FAKER.name().name()).setName(FAKER.name().name()),
 			(TrackedItem) new TrackedItem()
 							  .setTrackedItemIdentifierName(FAKER.name().name())
-							  .add(ObjectId.get(), new TrackedStored().setIdentifier(FAKER.business().creditCardNumber()), false)
+							  .add(ObjectId.get(), new TrackedStored().setIdentifier(FAKER.business().creditCardNumber()), true)
 				.setName(FAKER.name().name()),
 			TrackedItemTest.getLargeTrackedItem()
 		);
