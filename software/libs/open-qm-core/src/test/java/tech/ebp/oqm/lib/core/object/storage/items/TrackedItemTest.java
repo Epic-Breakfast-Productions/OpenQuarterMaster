@@ -55,6 +55,7 @@ class TrackedItemTest extends BasicTest {
 				stored
 			);
 		}
+		item.recalculateDerived();
 		
 		return item;
 	}

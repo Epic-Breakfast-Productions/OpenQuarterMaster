@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ListAmountItemTest extends BasicTest {
 	
 	public static ListAmountItem getLargeListAmountItem() {
+		log.info("Generating large amount list item.");
 		ListAmountItem item = new ListAmountItem();
 		
 		InventoryItemTest.fillCommon(item);
@@ -36,7 +37,7 @@ class ListAmountItemTest extends BasicTest {
 		List<ObjectId> storageIds = InventoryItemTest.getStorageList();
 		
 		for (ObjectId id : storageIds) {
-			item.getStoredWrapperForStorage(id, true);
+			item.getStoredWrapperForStorage(id);
 		}
 		
 		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
@@ -56,7 +57,8 @@ class ListAmountItemTest extends BasicTest {
 				stored
 			);
 		}
-		
+		item.recalcValueOfStored();
+		log.info("Done Generating large amount list item.");
 		return item;
 	}
 	
@@ -224,10 +226,11 @@ class ListAmountItemTest extends BasicTest {
 	public void testLargeItemTotalCalculation() {
 		ListAmountItem item = getLargeListAmountItem();
 		
+		log.info("Calculating.");
 		StopWatch sw = StopWatch.createStarted();
-		Quantity first = item.recalcTotal();
+		Quantity<?> first = item.recalculateDerived().getTotal();
 		sw.stop();
-		log.info("Recalculating totals took {}", sw);
+		log.info("Recalculating totals took {} - Total: {}", sw, first);
 		
 		assertEquals(first, item.recalcTotal());
 	}

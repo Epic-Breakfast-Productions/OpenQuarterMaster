@@ -45,6 +45,7 @@ class SimpleAmountItemTest extends BasicTest {
 				new SingleAmountStoredWrapper(stored)
 			);
 		}
+		item.recalculateDerived();
 		
 		return item;
 	}

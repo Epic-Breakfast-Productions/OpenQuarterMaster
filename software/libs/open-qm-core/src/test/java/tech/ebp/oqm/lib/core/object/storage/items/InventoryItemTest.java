@@ -13,7 +13,6 @@ public class InventoryItemTest extends BasicTest {
 	private static final int NUM_ATTS = 50;
 	private static final int NUM_KEYWORDS = 25;
 	private static final int NUM_IMAGES = 10;
-	private static final int NUM_HIST_EVENTS = 10_000;
 	private static final int NUM_DISTINCT_STORAGE = 500;
 	public static final int NUM_STORED = 10_000;
 	

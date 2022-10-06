@@ -124,7 +124,7 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	
 	public Quantity<?> getTotal() {
 		if (total == null) {
-			this.recalcTotal();
+			this.recalculateDerived();
 		}
 		return this.total;
 	}
@@ -153,9 +153,15 @@ public abstract class InventoryItem<S extends Stored, C, T extends StoredWrapper
 	 */
 	public BigDecimal getValueOfStored() {
 		if (this.valueOfStored == null) {
-			this.recalcValueOfStored();
+			this.recalculateDerived();
 		}
 		return this.valueOfStored;
+	}
+	
+	public InventoryItem<S, C, T> recalculateDerived() {
+		this.recalcTotal();
+		this.recalcValueOfStored();
+		return this;
 	}
 	
 	/**

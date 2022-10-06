@@ -24,13 +24,20 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 	
 	private static List<SimpleAmountItem> getSimpleAmountItems() {
 		return List.of(
-			(SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name()),
-			(SimpleAmountItem) new SimpleAmountItem().add(
-				ObjectId.get(),
-				new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)),
-				true
-			).setName(FAKER.name().name()),
-			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
+			(SimpleAmountItem) new SimpleAmountItem()
+								   .setName(FAKER.name().name())
+								   .recalculateDerived(),
+			(SimpleAmountItem) new SimpleAmountItem()
+								   .add(
+									   ObjectId.get(),
+									   new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)),
+									   true
+								   ).setName(FAKER.name().name())
+								   .recalculateDerived(),
+			(SimpleAmountItem) new SimpleAmountItem()
+								   .setUnit(UnitUtils.ALLOWED_UNITS.get(0))
+								   .setName(FAKER.name().name())
+								   .recalculateDerived(),
 			SimpleAmountItemTest.getLargeSimpleAmountItem()
 		);
 	}
@@ -40,19 +47,27 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
 			(ListAmountItem) new ListAmountItem()
 								 .add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true)
-								 .setName(FAKER.name().name()),
-			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name()),
+								 .setName(FAKER.name().name())
+								 .recalculateDerived(),
+			(ListAmountItem) new ListAmountItem()
+								 .setUnit(UnitUtils.ALLOWED_UNITS.get(0))
+								 .setName(FAKER.name().name())
+								 .recalculateDerived(),
 			ListAmountItemTest.getLargeListAmountItem()
 		);
 	}
 	
 	private static List<TrackedItem> getTrackedItems() {
 		return List.of(
-			(TrackedItem) new TrackedItem().setTrackedItemIdentifierName(FAKER.name().name()).setName(FAKER.name().name()),
+			(TrackedItem) new TrackedItem()
+							  .setTrackedItemIdentifierName(FAKER.name().name())
+							  .setName(FAKER.name().name())
+							  .recalculateDerived(),
 			(TrackedItem) new TrackedItem()
 							  .setTrackedItemIdentifierName(FAKER.name().name())
 							  .add(ObjectId.get(), new TrackedStored().setIdentifier(FAKER.business().creditCardNumber()), true)
-				.setName(FAKER.name().name()),
+							  .setName(FAKER.name().name())
+							  .recalculateDerived(),
 			TrackedItemTest.getLargeTrackedItem()
 		);
 	}

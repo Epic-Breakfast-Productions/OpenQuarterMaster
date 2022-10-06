@@ -12,7 +12,6 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 /**
  * @param <T> The storage type wrapped.
@@ -25,9 +24,9 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
-	//TODO:: implement recalc similar to total
-	@Setter(AccessLevel.PROTECTED)
-	private BigDecimal totalValue = null;
+	//TODO:: implement recalc similar to total. Deal with getting val per unit from parent.
+	//	@Setter(AccessLevel.PROTECTED)
+	//	private BigDecimal totalValue = null;
 	
 	@NonNull
 	@NotNull
