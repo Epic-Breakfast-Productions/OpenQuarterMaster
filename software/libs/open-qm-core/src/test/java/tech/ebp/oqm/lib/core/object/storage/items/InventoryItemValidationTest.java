@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -31,7 +32,7 @@ class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 		
 		badUnitItem.getStorageMap().put(
 			ObjectId.get(),
-			new AmountStored().setAmount(Quantities.getQuantity(0, Units.GRAM))
+			new SingleAmountStoredWrapper(new AmountStored(0, Units.GRAM))
 		);
 		
 		

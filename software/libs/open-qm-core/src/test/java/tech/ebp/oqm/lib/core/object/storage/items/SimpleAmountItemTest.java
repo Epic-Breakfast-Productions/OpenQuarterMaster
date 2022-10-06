@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -32,15 +33,16 @@ class SimpleAmountItemTest extends BasicTest {
 		InventoryItemTest.fillCommon(item);
 		
 		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
-			AmountStored stored = new AmountStored();
+			AmountStored stored = new AmountStored(
+				Quantities.getQuantity(
+					RandomUtils.nextInt(0, 501),
+					item.getUnit()
+				)
+			);
 			InventoryItemTest.fillCommon(stored);
-			stored.setAmount(Quantities.getQuantity(
-				RandomUtils.nextInt(0, 501),
-				item.getUnit()
-			));
 			item.getStorageMap().put(
 				ObjectId.get(),
-				stored
+				new SingleAmountStoredWrapper(stored)
 			);
 		}
 		
@@ -56,17 +58,17 @@ class SimpleAmountItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored()),
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			)
 		);
@@ -80,42 +82,44 @@ class SimpleAmountItemTest extends BasicTest {
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored()),
+				new SimpleAmountItem()
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new SimpleAmountItem().addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new SimpleAmountItem()
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1L, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0f, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.addNewStored(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false),
 				BigDecimal.valueOf(2.0)
 			)
 		);
@@ -152,58 +156,58 @@ class SimpleAmountItemTest extends BasicTest {
 	}
 	
 	@Test
-	public void testAddSimple(){
+	public void testAddSimple() {
 		SimpleAmountItem item = new SimpleAmountItem();
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		item.getStoredWrapperForStorage(storageId, true);
 		
-		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
 		
 		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getTotal());
 		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
-	public void testAddTwo(){
+	public void testAddTwo() {
 		SimpleAmountItem item = new SimpleAmountItem();
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		item.getStoredWrapperForStorage(storageId, true);
 		
-		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
-		item.add(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
 		
 		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getTotal());
 		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
-	public void testSubtract(){
+	public void testSubtract() {
 		SimpleAmountItem item = new SimpleAmountItem();
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), false);
 		
-		item.subtract(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
 		
 		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getTotal());
 		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
-	public void testSubtractNegative(){
+	public void testSubtractNegative() {
 		SimpleAmountItem item = new SimpleAmountItem();
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.getStorageMap().put(storageId, new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), false);
 		
 		assertThrows(IllegalArgumentException.class, ()->{
-			item.subtract(storageId, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)));
+			item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
 		});
 		
 	}

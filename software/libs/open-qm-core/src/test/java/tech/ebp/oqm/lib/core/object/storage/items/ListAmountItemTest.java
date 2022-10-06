@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -37,12 +38,17 @@ class ListAmountItemTest extends BasicTest {
 		for (ObjectId id : storageIds) {
 			item.getStorageMap().put(
 				id,
-				new ArrayList<>()
+				new ListAmountStoredWrapper()
 			);
 		}
 		
 		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
-			AmountStored stored = new AmountStored();
+			AmountStored stored = new AmountStored(
+				Quantities.getQuantity(
+					RandomUtils.nextInt(0, 501),
+					item.getUnit()
+				)
+			);
 			InventoryItemTest.fillCommon(stored);
 			stored.setAmount(Quantities.getQuantity(
 				RandomUtils.nextInt(0, 501),
@@ -68,24 +74,26 @@ class ListAmountItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new ListAmountItem().add(ObjectId.get(), new AmountStored()),
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored(0, UnitUtils.UNIT), false),
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new ListAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				Quantities.getQuantity(3, UnitUtils.UNIT)
 			)
 		);
@@ -100,95 +108,96 @@ class ListAmountItemTest extends BasicTest {
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new ListAmountItem().add(ObjectId.get(), new AmountStored()),
+				new ListAmountItem()
+					.add(ObjectId.get(), new AmountStored(UnitUtils.UNIT), false),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
-				new ListAmountItem().add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT))),
+				new ListAmountItem().add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1L, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1L, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1.0, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1.0f, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1.0f, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(2.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(3.0)
 			),
 			Arguments.of(
 				new ListAmountItem()
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.add(id, new AmountStored().setAmount(Quantities.getQuantity(1, UnitUtils.UNIT)))
-					.setValuePerUnit(BigDecimal.ONE),
+					.setValuePerUnit(BigDecimal.ONE)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false)
+					.add(id, new AmountStored(1, UnitUtils.UNIT), false),
 				BigDecimal.valueOf(40.0)
 			)
 		);

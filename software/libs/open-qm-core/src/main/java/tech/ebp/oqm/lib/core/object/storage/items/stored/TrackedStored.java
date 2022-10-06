@@ -30,6 +30,11 @@ public class TrackedStored extends Stored {
 	@NotBlank
 	private String identifier;
 	
+	public TrackedStored(String identifier) {
+		this();
+		this.identifier = identifier;
+	}
+	
 	/**
 	 * Some extra details to help identify this exact item.
 	 */

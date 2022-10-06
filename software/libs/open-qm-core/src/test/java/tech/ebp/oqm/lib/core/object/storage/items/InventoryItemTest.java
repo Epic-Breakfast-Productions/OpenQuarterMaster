@@ -17,7 +17,7 @@ public class InventoryItemTest extends BasicTest {
 	private static final int NUM_DISTINCT_STORAGE = 500;
 	public static final int NUM_STORED = 10_000;
 	
-	static void fillCommon(InventoryItem<?> item) {
+	static void fillCommon(InventoryItem<?, ?, ?> item) {
 		
 		item.setName(FAKER.commerce().productName());
 		item.setDescription(FAKER.lorem().paragraph());

@@ -16,7 +16,7 @@ class SingleAmountStoredWrapperSerializationTest extends ObjectSerializationTest
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new SingleAmountStoredWrapper(new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT))))
+			Arguments.of(new SingleAmountStoredWrapper(new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT))))
 		);
 	}
 }

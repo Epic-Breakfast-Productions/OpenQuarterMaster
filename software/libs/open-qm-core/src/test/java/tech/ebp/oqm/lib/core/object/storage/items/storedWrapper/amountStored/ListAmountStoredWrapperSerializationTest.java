@@ -19,7 +19,7 @@ class ListAmountStoredWrapperSerializationTest extends ObjectSerializationTest<L
 			Arguments.of(new ListAmountStoredWrapper().setParentUnit(UnitUtils.UNIT)),
 			Arguments.of(new ListAmountStoredWrapper() {{
 				setParentUnit(UnitUtils.UNIT);
-				add(new AmountStored().setAmount(Quantities.getQuantity(0, UnitUtils.UNIT)));
+				add(new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)));
 			}})
 		);
 	}

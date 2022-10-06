@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -37,10 +38,7 @@ class TrackedItemTest extends BasicTest {
 		List<ObjectId> storageIds = InventoryItemTest.getStorageList();
 		
 		for (ObjectId id : storageIds) {
-			item.getStorageMap().put(
-				id,
-				new HashMap<>()
-			);
+			item.getStoredWrapperForStorage(id, true);
 		}
 		
 		for (int i = 0; i < InventoryItemTest.NUM_STORED; i++) {
@@ -69,20 +67,20 @@ class TrackedItemTest extends BasicTest {
 				Quantities.getQuantity(0, UnitUtils.UNIT)
 			),
 			Arguments.of(
-				new TrackedItem().add(ObjectId.get(), FAKER.name().name(), new TrackedStored()),
+				new TrackedItem().add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false),
 				Quantities.getQuantity(1, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored())
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored()),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false)
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored())
-					.add(id, FAKER.name().name(), new TrackedStored())
-					.add(id, FAKER.name().name(), new TrackedStored()),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), false)
+					.add(id, new TrackedStored(FAKER.name().name()), false)
+					.add(id, new TrackedStored(FAKER.name().name()), false),
 				Quantities.getQuantity(3, UnitUtils.UNIT)
 			)
 		);
@@ -96,20 +94,21 @@ class TrackedItemTest extends BasicTest {
 				BigDecimal.ZERO
 			),
 			Arguments.of(
-				new TrackedItem().add(ObjectId.get(), FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE)),
+				new TrackedItem()
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
 				BigDecimal.ONE
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE))
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE)),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
 				BigDecimal.valueOf(2)
 			),
 			Arguments.of(
 				new TrackedItem()
-					.add(ObjectId.get(), FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE))
-					.add(id, FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE))
-					.add(id, FAKER.name().name(), new TrackedStored().setValue(BigDecimal.ONE)),
+					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
+					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false)
+					.add(id, new TrackedStored(FAKER.name().name()).setValue(BigDecimal.ONE), false),
 				BigDecimal.valueOf(3)
 			)
 		);

@@ -35,7 +35,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 	
 	@Override
 	protected SingleAmountStoredWrapper newTInstance() {
-		return new SingleAmountStoredWrapper();
+		return new SingleAmountStoredWrapper(new AmountStored(Quantities.getQuantity(0, this.getUnit())));
 	}
 	
 	/*

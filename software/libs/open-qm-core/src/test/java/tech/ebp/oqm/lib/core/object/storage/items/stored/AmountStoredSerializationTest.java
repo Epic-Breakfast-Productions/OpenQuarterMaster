@@ -19,17 +19,16 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new AmountStored()),
+			Arguments.of(new AmountStored(UnitUtils.UNIT)),
 			Arguments.of(
-				new AmountStored()
-					.setAmount(Quantities.getQuantity(5, UnitUtils.UNIT))
+				new AmountStored(5, UnitUtils.UNIT)
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
 					.setExpires(LocalDate.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
-				
+			
 			)
 		);
 	}
