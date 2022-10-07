@@ -28,13 +28,15 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	//	@Setter(AccessLevel.PROTECTED)
 	//	private BigDecimal totalValue = null;
 	
-	@NonNull
-	@NotNull
-	private T stored;
+	//	@NonNull
+	//	@NotNull
+	//	private T stored;
+	//
+	//	protected StoredWrapper(T stored) {
+	//		this.stored = stored;
+	//	}
 	
-	protected StoredWrapper(T stored) {
-		this.stored = stored;
-	}
+	public abstract T getStored();
 	
 	/**
 	 * Gets the number of individual items stored in the wrapper

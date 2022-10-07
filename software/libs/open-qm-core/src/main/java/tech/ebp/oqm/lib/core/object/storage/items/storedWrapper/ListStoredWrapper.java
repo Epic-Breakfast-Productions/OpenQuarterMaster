@@ -36,9 +36,9 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//	implements List<S> //only uncomment to get/override methods
 {
 	
-	public ListStoredWrapper() {
-		super(new ArrayList<>());
-	}
+	//	public ListStoredWrapper() {
+	//		super(new ArrayList<>());
+	//	}
 	
 	@Override
 	public long getNumStored() {

@@ -17,6 +17,8 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO:: figure out validator to ensure unit validity
@@ -33,6 +35,10 @@ public class ListAmountStoredWrapper
 	@NotNull
 	@ValidUnit
 	private Unit parentUnit;
+	
+	@NonNull
+	@NotNull
+	private List<@NotNull AmountStored> stored = new ArrayList<>();
 	
 	public ListAmountStoredWrapper(Unit<?> parentUnit) {
 		this.setParentUnit(parentUnit);

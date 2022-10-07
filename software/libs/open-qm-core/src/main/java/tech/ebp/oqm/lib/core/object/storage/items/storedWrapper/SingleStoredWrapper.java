@@ -16,9 +16,9 @@ import java.math.BigDecimal;
 @ToString(callSuper = true)
 public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrapper<T, T> {
 	
-	protected SingleStoredWrapper(T stored) {
-		super(stored);
-	}
+	//	protected SingleStoredWrapper(T stored) {
+	//		super(stored);
+	//	}
 	
 	@Override
 	public long getNumStored() {

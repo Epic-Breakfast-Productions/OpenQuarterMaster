@@ -31,9 +31,9 @@ public abstract class MapStoredWrapper<S extends Stored>
 	//	implements Map<String, S> //Used for overriding passthrough methods
 {
 	
-	public MapStoredWrapper() {
-		super(new HashMap<>());
-	}
+	//	public MapStoredWrapper() {
+	//		super(new HashMap<>());
+	//	}
 	
 	@Override
 	public long getNumStored() {

@@ -12,6 +12,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.SingleStoredWrap
 import javax.measure.Quantity;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,8 +20,13 @@ import java.math.BigDecimal;
 @ToString(callSuper = true)
 public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored> {
 	
+	
+	@NonNull
+	@NotNull
+	private AmountStored stored;
+	
 	public SingleAmountStoredWrapper(@NonNull AmountStored stored) {
-		super(stored);
+		this.stored = stored;
 	}
 	
 	@Override
