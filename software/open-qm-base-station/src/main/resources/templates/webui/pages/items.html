@@ -550,10 +550,10 @@ function setupAddEditForEdit(itemId){
                 
                 foreachStoredTypeFromAddEditInput(
                         function(){
-                            setStoredItemVales(newStorageBody, data.storageMap[curStorageBlockId]);
+                            setStoredItemVales(newStorageBody, data.storageMap[curStorageBlockId].stored);
                         },
                         function (){
-                            data.storageMap[curStorageBlockId].forEach(function(curStorageBlock){
+                            data.storageMap[curStorageBlockId].stored.forEach(function(curStorageBlock){
                                 let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
                                 let newAmtStored = createNewAmountStored(curId, curId, false);
     
@@ -567,14 +567,14 @@ function setupAddEditForEdit(itemId){
                         function(){
                             let addItemField = newStorageBody.find(".identifierValueInput")[0];
                             let addItemButton = newStorageBody.find(".addTrackedItemButton");
-                            Object.keys(data.storageMap[curStorageBlockId]).forEach(curItemIdentifier => {
+                            Object.keys(data.storageMap[curStorageBlockId].stored).forEach(curItemIdentifier => {
                                 addItemField.value = curItemIdentifier;
                                 let curId = 'addEditItemStorageAssoc-'+curStorageBlockId+'-formContent';
                                 let trackedStored = createNewTrackedStored(curId, addItemButton, false);
                                 
                                 setStoredItemVales(
                                         trackedStored,
-                                        data.storageMap[curStorageBlockId][curItemIdentifier]
+                                        data.storageMap[curStorageBlockId].stored[curItemIdentifier]
                                 );
                                 storageBlockEntriesContainer.append(trackedStored);
                             });
@@ -1069,6 +1069,10 @@ addEditItemForm.submit(function(event) {
                 }
         );
         
+        storedVal = {
+            stored: storedVal
+        };
+        
         addEditData.storageMap[curStorageId] = storedVal;
     });
     
@@ -1414,21 +1418,21 @@ function setupView(itemId){
                         function (){
                             addViewStorageBlocksAccordionItem(
                                     key,
-                                    getAmountStoredContent(data.storageMap[key]),
+                                    getAmountStoredContent(data.storageMap[key].stored),
                                     curBlockName
                             );
                         },
                         function (){
                             addViewStorageBlocksAccordionItem(
                                     key,
-                                    getAmountListStoredContent(key, data.storageMap[key]),
+                                    getAmountListStoredContent(key, data.storageMap[key].stored),
                                     curBlockName
                             );
                         },
                         function (){
                             addViewStorageBlocksAccordionItem(
                                     key,
-                                    getTrackedStoredContent(key, data.storageMap[key]),
+                                    getTrackedStoredContent(key, data.storageMap[key].stored),
                                     curBlockName
                             );
                         }

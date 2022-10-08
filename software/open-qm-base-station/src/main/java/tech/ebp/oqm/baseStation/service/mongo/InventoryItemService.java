@@ -16,7 +16,9 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredType;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -99,7 +101,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	}
 	
 	
-	private <T> InventoryItem<T> add(InventoryItem<T> item, ObjectId storageBlockId, T toAdd) {
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(InventoryItem<T, C, W> item, ObjectId storageBlockId, T toAdd) {
 		this.get(item.getId());//ensure exists
 		try {
 			item.add(storageBlockId, toAdd, true);
@@ -124,15 +126,15 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return item;
 	}
 	
-	public <T> InventoryItem<T> add(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
 		return this.add(this.get(itemId), storageBlockId, toAdd);
 	}
 	
-	public <T> InventoryItem<T> add(String itemId, String storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(String itemId, String storageBlockId, T toAdd) {
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
 	
-	public <T> InventoryItem<T> subtract(InventoryItem<T> item, ObjectId storageBlockId, T toSubtract) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(InventoryItem<T, C, W> item, ObjectId storageBlockId, T toSubtract) {
 		this.get(item.getId());//ensure exists
 		try {
 			item.subtract(storageBlockId, toSubtract);
@@ -156,16 +158,16 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return item;
 	}
 	
-	public <T> InventoryItem<T> subtract(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
 		return this.subtract(this.get(itemId), storageBlockId, toAdd);
 	}
 	
-	public <T> InventoryItem<T> subtract(String itemId, String storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(String itemId, String storageBlockId, T toAdd) {
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
 	
-	public <T> InventoryItem<T> transfer(
-		InventoryItem<T> item,
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
 		T toTransfer
@@ -194,7 +196,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return item;
 	}
 	
-	public <T> InventoryItem<T> transfer(
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		ObjectId itemId,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
@@ -208,7 +210,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		);
 	}
 	
-	public <T> InventoryItem<T> transfer(
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		String itemId,
 		String storageBlockIdFrom,
 		String storageBlockIdTo,

@@ -29,6 +29,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
@@ -448,7 +449,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		item = ((InventoryItemService) this.getObjectService()).add(
 			itemId,
 			storageBlockId,
-			Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				addObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			)
@@ -492,7 +493,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		item = ((InventoryItemService) this.getObjectService()).subtract(
 			itemId,
 			storageBlockId,
-			Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				subtractObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			)
@@ -538,7 +539,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			itemId,
 			storageBlockIdFrom,
 			storageBlockIdTo,
-			Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				transferObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			)

@@ -11,8 +11,8 @@ import javax.enterprise.context.ApplicationScoped;
 public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryItem> {
 	
 	@Override
-	public InventoryItem<?> getTestObject() {
-		SimpleAmountItem item = new SimpleAmountItem();//TODO:: use a regular SimpleAmountItem once we know how to do that
+	public InventoryItem<?, ?, ?> getTestObject() {
+		SimpleAmountItem item = new SimpleAmountItem();
 		
 		item.setName(faker.commerce().productName());
 		

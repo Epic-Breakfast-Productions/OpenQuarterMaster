@@ -11,9 +11,12 @@ import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -45,24 +48,24 @@ public class ExpiryProcessor {
 		return Optional.empty();
 	}
 	
-	private List<ItemExpiredEvent> processSimpleAmountStored(Map<ObjectId, AmountStored> storageMap) {
+	private List<ItemExpiredEvent> processSimpleAmountStored(Map<ObjectId, SingleAmountStoredWrapper> storageMap) {
 		List<ItemExpiredEvent> events = new ArrayList<>();
 		
-		for (Map.Entry<ObjectId, AmountStored> curStored : storageMap.entrySet()) {
+		for (Map.Entry<ObjectId, SingleAmountStoredWrapper> curStored : storageMap.entrySet()) {
 			Optional<ItemExpiredEvent> event = this.processExpiryForStored(
 				curStored.getKey(),
-				curStored.getValue()
+				curStored.getValue().getStored()
 			);
 			event.ifPresent(events::add);
 		}
 		return events;
 	}
 	
-	private List<ItemExpiredEvent> processListAmountStored(Map<ObjectId, List<AmountStored>> storageMap) {
+	private List<ItemExpiredEvent> processListAmountStored(Map<ObjectId, ListAmountStoredWrapper> storageMap) {
 		List<ItemExpiredEvent> events = new ArrayList<>();
 		
-		for (Map.Entry<ObjectId, List<AmountStored>> curStored : storageMap.entrySet()) {
-			List<AmountStored> storedList = curStored.getValue();
+		for (Map.Entry<ObjectId, ListAmountStoredWrapper> curStored : storageMap.entrySet()) {
+			ListAmountStoredWrapper storedList = curStored.getValue();
 			for (int i = 0; i < storedList.size(); i++) {
 				Optional<ItemExpiredEvent> eventOp = this.processExpiryForStored(
 					curStored.getKey(),
@@ -78,10 +81,10 @@ public class ExpiryProcessor {
 		return events;
 	}
 	
-	private List<ItemExpiredEvent> processTrackedAmountStored(Map<ObjectId, Map<String, TrackedStored>> storageMap) {
+	private List<ItemExpiredEvent> processTrackedAmountStored(Map<ObjectId, TrackedMapStoredWrapper> storageMap) {
 		List<ItemExpiredEvent> events = new ArrayList<>();
 		
-		for (Map.Entry<ObjectId, Map<String, TrackedStored>> curStoredMap : storageMap.entrySet()) {
+		for (Map.Entry<ObjectId, TrackedMapStoredWrapper> curStoredMap : storageMap.entrySet()) {
 			for (Map.Entry<String, TrackedStored> curStored : curStoredMap.getValue().entrySet()) {
 				Optional<ItemExpiredEvent> eventOp = this.processExpiryForStored(curStoredMap.getKey(), curStored.getValue());
 				
@@ -95,7 +98,7 @@ public class ExpiryProcessor {
 		return events;
 	}
 	
-	public <T> List<ItemExpiredEvent> processForExpired(InventoryItem<T> item) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> List<ItemExpiredEvent> processForExpired(InventoryItem<T, C, W> item) {
 		List<ItemExpiredEvent> events;
 		
 		switch (item.getStorageType()) {

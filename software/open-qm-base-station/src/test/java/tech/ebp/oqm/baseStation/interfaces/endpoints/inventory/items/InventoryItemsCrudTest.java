@@ -27,8 +27,8 @@ import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.object.user.User;
-import tech.units.indriya.quantity.Quantities;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -102,7 +102,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 			),
 			Arguments.of(
 				new SimpleAmountItem(){{
-					this.getStorageMap().put(ObjectId.get(), new AmountStored().setAmount(Quantities.getQuantity(0, this.getUnit())));
+					this.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, this.getUnit())));
 				}}.setName(FAKER.commerce().productName())
 			)
 		);
@@ -165,7 +165,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
-		item.add(ObjectId.get(), "1", new TrackedStored());
+		item.add(ObjectId.get(), new TrackedStored("1"));
 		ObjectId returned = create(user, item);
 		
 		ObjectNode updateData = OBJECT_MAPPER.createObjectNode();

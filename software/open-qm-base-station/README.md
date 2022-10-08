@@ -47,6 +47,8 @@ Native-specific tests:
 
 ## TODOS:
 
+- Expiry
+  - tests
 - Other
   - add "server admin" role
 - db
@@ -54,8 +56,7 @@ Native-specific tests:
 - Overview
   - create "explore" and "stats" section; start at explore.
   - explore
-    - start at all top-level storage blocks, allow drilling down to items held
-    - search for items/blocks, show there
+    - add images
   - stats
     - \# of items, blocks
     - come up with helpful stats to show
@@ -97,5 +98,4 @@ Native-specific tests:
       - search users
 - REST
   - handle ParseException for expired, bad tokens for UI
-  - in self mode, kill session for users that don't exist
 - Testing
