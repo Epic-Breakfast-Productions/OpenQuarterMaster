@@ -549,6 +549,8 @@ function resetView(){
     clearHideAttDisplay(viewAttsSection);
 }
 
+//TODO:: add children list
+//TODO:: add view link to breadcrumbs
 function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
@@ -627,7 +629,7 @@ function setupView(blockId){
                             '<td class="blockViewItemActions"><a href="/items?view='+item.id+'" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a> </td>' +//actions
                             '</tr>');
                     row.find(".blockViewItemName").text(item.name);
-                    //row.find(".blockViewItemAmountIn").text(item.total.value + item.total.unit.symbol);//TODO:: handle different storage types
+                    row.find(".blockViewItemAmountIn").text(item.storageMap[blockId].total.value + item.storageMap[blockId].total.unit.symbol);
                     row.find(".blockViewItemTotal").text(item.total.value + item.total.unit.symbol);
                     storageBlockViewItemsStoredContent.append(row);
                 });
