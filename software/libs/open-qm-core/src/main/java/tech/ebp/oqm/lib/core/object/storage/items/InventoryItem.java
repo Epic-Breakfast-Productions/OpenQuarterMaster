@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
@@ -64,6 +65,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	/**
 	 * The type of storage this item uses.
 	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract StorageType getStorageType();
 	
 	/*TODO:: this useful?
