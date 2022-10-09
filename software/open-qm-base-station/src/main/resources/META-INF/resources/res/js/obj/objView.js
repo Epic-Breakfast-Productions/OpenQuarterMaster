@@ -3,9 +3,9 @@
 function displayKeywordsIn(container, keywords){
     keywords.forEach(function(keyword){
         console.log("Keyword: " + keyword);
-        container.append(
-            $('<span class="badge bg-secondary m-2 user-select-all">'+keyword+'</span> ')
-        );
+        let newspan = $('<span class="badge bg-secondary m-2 user-select-all"></span>');
+        newspan.text(keyword);
+        container.append(newspan);
     });
 }
 
@@ -29,7 +29,12 @@ function displayAttsIn(container, attributes){
     Object.entries(attributes).forEach(entry => {
         const [key, val] = entry;
         console.log("Att: " + key + "/" + val);
-        container.append($('<span class="badge bg-secondary m-2"><span class="user-select-all">'+key+'</span> <i class="fas fa-equals"></i> <code class="user-select-all">'+ val + '</code></span> '));
+        let newAtt = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span> ');
+
+        newAtt.find(".attKey").text(key);
+        newAtt.find(".attVal").text(val);
+
+        container.append(newAtt);
     });
 }
 
