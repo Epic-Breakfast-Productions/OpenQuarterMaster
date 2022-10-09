@@ -29,7 +29,7 @@ async function getStorageBlockChildrenData(blockId) {
 
 function getStorageBlockLabel(blockId, doneFunc) {
 	console.log("Getting label for storage block \"" + blockId + "\"");
-	doRestCall({
+	return doRestCall({
 		spinnerContainer: null,
 		url: "/api/inventory/storage-block/" + blockId,
 		done: function (data) {
@@ -40,7 +40,7 @@ function getStorageBlockLabel(blockId, doneFunc) {
 }
 
 function getImageName(imageId, doneFunc) {
-	doRestCall({
+	return doRestCall({
 		spinnerContainer: null,
 		url: "/api/media/image/" + imageId,
 		done: function (data) {

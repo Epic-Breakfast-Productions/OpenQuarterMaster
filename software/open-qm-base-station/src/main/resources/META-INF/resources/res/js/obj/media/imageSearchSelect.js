@@ -22,8 +22,8 @@ function selectImage(imageName, imageId) {
 function addSelectedImages(selectedImagesDiv, imageList) {
 	setupImageSearchModal(selectedImagesDiv);
 	var titleArr = [];
-	imageList.forEach(function (imageId, i) {
-		doRestCall({
+	imageList.forEach(async function (imageId, i) {
+		await doRestCall({
 			async: false,
 			spinnerContainer: null,
 			url: "/api/media/image/" + imageId,

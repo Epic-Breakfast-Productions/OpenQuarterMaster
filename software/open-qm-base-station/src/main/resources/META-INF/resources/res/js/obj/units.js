@@ -17,7 +17,7 @@ function getUnitOptions(selectedVal){
 }
 
 function updateCompatibleUnits(unitToCompatWith, containerToSearch){
-    doRestCall({
+    return doRestCall({
         url: "/api/info/unitCompatibility/" + unitToCompatWith,
         extraHeaders: { accept:"text/html" },
         done: function (data){

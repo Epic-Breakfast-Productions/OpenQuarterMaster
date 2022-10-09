@@ -313,33 +313,25 @@ function clearParentInput(caller){
     caller.siblings("input[name=parentId]").val("");
 }
 
-function removeStorageBlock(blockId){
-    if(!confirm("Are you sure you want to delete this storage block? This cannot be undone.")){
+function removeStorageBlock(blockId) {
+    if (!confirm("Are you sure you want to delete this storage block? This cannot be undone.")) {
         return;
     }
-
+    
     console.log("Removing storage block " + blockId);
-
-    var result = false;
+    
     doRestCall({
-            url: "/api/inventory/storage-block/" + blockId,
-            method: "DELETE",
-            async: false,
-            done: function(data) {
-                console.log("Response from remove request: " + JSON.stringify(data));
-                result = true;
-            },
-            fail: function(data) {
-                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
-            }
-        });
-
-if(!result){
-        addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
-    } else {
-        reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
-    }
-
+        url: "/api/inventory/storage-block/" + blockId,
+        method: "DELETE",
+        async: false,
+        done: function (data) {
+            reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+        },
+        fail: function (data) {
+            console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
+            addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+        }
+    });
 }
 
 
@@ -425,10 +417,10 @@ function setupAddEditForEdit(blockId){
     });
 }
 
-addEditStorageForm.submit(function(event){
+addEditStorageForm.submit(async function (event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
-
+    
     var addEditData = {
         label: addEditLabelInput.val(),
         nickname: addEditNicknameInput.val(),
@@ -436,11 +428,11 @@ addEditStorageForm.submit(function(event){
         location: addEditLocationInput.val(),
         capacityMeasures: []
     };
-
+    
     addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
     addImagesToData(addEditData, imagesSelected);
-
-    capacityInputDiv.children().each(function(i, curCapDiv){
+    
+    capacityInputDiv.children().each(function (i, curCapDiv) {
         var cur = $(curCapDiv);
         addEditData.capacityMeasures.push({
             value: cur.find(".capacityInput")[0].value,
@@ -448,72 +440,72 @@ addEditStorageForm.submit(function(event){
             scale: "ABSOLUTE"
         });
     });
-
-
-    if(addEditParentInputId.val()){
+    
+    
+    if (addEditParentInputId.val()) {
         addEditData.parent = addEditParentInputId.val();
     } else {
         addEditData.parent = null;
     }
-
+    
     var result = false;
     var verb = "";
-    if(addEditFormMode.val() === "add"){
+    if (addEditFormMode.val() === "add") {
         verb = "Created";
         
-        if(addBulkEnabledInput.is(":checked")){
+        if (addBulkEnabledInput.is(":checked")) {
             addEditData = getBulkInsertData(addEditData);
             console.log("Adding new storage blocks in bulk.");
-            doRestCall({
+            await doRestCall({
                 url: "/api/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
                 async: false,
-                done: function(data) {
+                done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
                 },
-                fail: function(data) {
-                    console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+                fail: function (data) {
+                    console.warn("Bad response from bulk block add attempt: " + JSON.stringify(data));
                 }
             });
         } else {
             console.log("Adding new storage block.");
-            doRestCall({
+            await doRestCall({
                 url: "/api/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
                 async: false,
-                done: function(data) {
+                done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
                 },
-                fail: function(data) {
-                    console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+                fail: function (data) {
+                    console.warn("Bad response from block add attempt: " + JSON.stringify(data));
                 }
             });
         }
-    } else if(addEditFormMode.val() === "edit") {
+    } else if (addEditFormMode.val() === "edit") {
         verb = "Edited";
         let id = addEditFormId.val();
         console.log("Editing storage block " + id);
-
-        doRestCall({
+        
+        await doRestCall({
             url: "/api/inventory/storage-block/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
-            done: function(data) {
-                console.log("Response from create request: " + JSON.stringify(data));
+            done: function (data) {
+                console.log("Response from edit request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function(data) {
-                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
+            fail: function (data) {
+                console.warn("Bad response from edit storage block attempt: " + JSON.stringify(data));
             }
         });
     }
-
-    if(!result){
+    
+    if (!result) {
         addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
     } else {
         reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
@@ -568,6 +560,7 @@ function setupView(blockId){
     	spinnerContainer: storageBlockViewModal,
     	url: "/api/inventory/storage-block/" + blockId,
     	done: async function(data){
+            let promises = [];
             let children = getStorageBlockChildrenData(blockId);
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
@@ -590,7 +583,9 @@ function setupView(blockId){
             }
             if(data.capacityMeasures.length){
                 data.capacityMeasures.forEach(function(curCapacity){
-                    storageBlockViewCapacity.append('<span class="badge bg-secondary m-2 user-select-all">'+curCapacity.value+curCapacity.unit+'</span>');
+                    let curCapacitySpan = $('<span class="badge bg-secondary m-2 user-select-all"></span>');
+                    curCapacitySpan.text(curCapacity.value+curCapacity.unit)
+                    storageBlockViewCapacity.append(curCapacitySpan);
                 });
                 storageBlockViewCapacityContainer.show();
             }
@@ -598,25 +593,8 @@ function setupView(blockId){
             if(data.imageIds.length){
                 console.log("Storage block had images to show.");
                 storageBlockViewCarousel.show();
-                var carouselData = [];
-
-                data.imageIds.forEach(function(id, i){
-                    doRestCall({
-    	                spinnerContainer: storageBlockViewCarousel[0],
-    	                url: "/api/media/image/" + id,
-    	                async: false,
-    	                done: function(data){
-                            carouselData.push({
-                                src: "/api/media/image/" + id + "/data",
-                                alt: data.title,
-                                captionHeading: data.title,
-                                caption: data.description
-                            });
-    	                }
-    	            });
-                });
-
-                setCarouselImages(storageBlockViewCarousel, carouselData);
+                
+                promises.push(setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
             } else {
                 console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();
@@ -655,6 +633,7 @@ function setupView(blockId){
                     storageBlockViewChildrenContainer.append(newChildLink);
                 });
             }
+            await Promise.all(promises);
     	},
     	fail: function(){ }
     });

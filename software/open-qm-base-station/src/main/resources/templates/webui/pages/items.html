@@ -992,31 +992,23 @@ function removeItem(itemId){
     if(!confirm("Are you sure you want to delete this item? This cannot be undone.")){
         return;
     }
-    
     console.log("Removing item " + itemId);
     
-    let result = false;
     doRestCall({
         url: "/api/inventory/item/" + itemId,
         method: "DELETE",
-        async: false,
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));
-            result = true;
+            reloadPageWithMessage("Removed item successfully!", "success", "Success!");
         },
         fail: function(data) {
             console.warn("Bad response from remove attempt: " + JSON.stringify(data));
+            addMessageToDiv(addEditFormMessages, "danger", "Failed to remove item.", "Failed", null);
         }
     });
-    
-    if(!result){
-        addMessageToDiv(addEditFormMessages, "danger", "Failed to remove item.", "Failed", null);
-    } else {
-        reloadPageWithMessage("Removed item successfully!", "success", "Success!");
-    }
 }
 
-addEditItemForm.submit(function(event) {
+addEditItemForm.submit(async function (event) {
     event.preventDefault();
     console.log("Submitting add/edit form.");
     
@@ -1024,20 +1016,20 @@ addEditItemForm.submit(function(event) {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
         storageType: addEditStorageTypeInput.val(),
-        storageMap: { }
+        storageMap: {}
     };
     
-    let setAmountStoredVars = function(){
+    let setAmountStoredVars = function () {
         addEditData["unit"] = {
-            string:addEditUnitInput.val()
+            string: addEditUnitInput.val()
         };
         addEditData["valuePerUnit"] = addEditPricePerUnitInput.val();
     };
-
+    
     foreachStoredTypeFromAddEditInput(
             setAmountStoredVars,
             setAmountStoredVars,
-            function(){
+            function () {
                 addEditData["trackedItemIdentifierName"] = addEditIdentifyingAttInput.val();
             }
     );
@@ -1049,20 +1041,20 @@ addEditItemForm.submit(function(event) {
         let storageBlockElementJq = $(storageBlockElement);
         let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
         let storedVal;
-    
+        
         foreachStoredTypeFromAddEditInput(
-                function(){
+                function () {
                     storedVal = buildStoredObj(storageBlockElementJq, "AMOUNT");
                 },
-                function (){
+                function () {
                     storedVal = [];
-                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
+                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement) {
                         storedVal.push(buildStoredObj($(storedElement), "AMOUNT"));
                     });
                 },
-                function(){
+                function () {
                     storedVal = {};
-                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement){
+                    storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement) {
                         let elementJq = $(storedElement);
                         storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq, "TRACKED");
                     });
@@ -1077,45 +1069,46 @@ addEditItemForm.submit(function(event) {
     });
     
     console.log("Data being submitted: " + JSON.stringify(addEditData));
+    let verb = "";
     let result = false;
-    if(addEditFormMode.val() === "add"){
+    if (addEditFormMode.val() === "add") {
         verb = "Created";
         console.log("Adding new item.");
-        doRestCall({
+        await doRestCall({
             url: "/api/inventory/item",
             method: "POST",
             data: addEditData,
             async: false,
-            done: function(data) {
+            done: function (data) {
                 console.log("Response from create request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function(data) {
+            fail: function (data) {
                 console.warn("Bad response from token check attempt: " + JSON.stringify(data));
             }
         });
-    } else if(addEditFormMode.val() === "edit") {
+    } else if (addEditFormMode.val() === "edit") {
         verb = "Edited";
         let id = addEditFormId.val();
         console.log("Editing storage block " + id);
         
-        doRestCall({
+        await doRestCall({
             url: "/api/inventory/item/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
-            done: function(data) {
+            done: function (data) {
                 console.log("Response from create request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function(data) {
+            fail: function (data) {
                 console.warn("Bad response from create request: " + JSON.stringify(data));
             }
         });
     }
     
-    if(!result){
-        addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+    if (!result) {
+        addMessageToDiv(addEditFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
     } else {
         reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
     }
@@ -1334,48 +1327,31 @@ function setupView(itemId){
     doRestCall({
         spinnerContainer: itemViewModal,
         url: "/api/inventory/item/" + itemId,
-        done: function(data){
+        done: async function (data) {
+            let promises = [];
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(itemHistory, "/inventory/item/"+data.id);
+            displayObjHistory(itemHistory, "/inventory/item/" + data.id);
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
-            
-            if(data.imageIds.length){
+    
+            if (data.imageIds.length) {
                 console.log("Item had images to show.");
                 itemViewCarousel.show();
-                var carouselData = [];
-                
-                data.imageIds.forEach(function(id, i){
-                    doRestCall({
-                        spinnerContainer: itemViewCarousel[0],
-                        url: "/api/media/image/" + id,
-                        async: false,
-                        done: function(data){
-                            carouselData.push({
-                                src: "/api/media/image/" + id + "/data",
-                                alt: data.name,
-                                captionHeading: data.name,
-                                caption: data.description
-                            });
-                        }
-                    });
-                });
-                
-                setCarouselImages(itemViewCarousel, carouselData);
+                promises.push(setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
             } else {
                 console.log("Storage block had no images to show.");
                 itemViewCarousel.hide();
             }
-            
+    
             console.log("Setting up view of stored.");
-            
+    
             let numStorageBlocks = Object.keys(data.storageMap).length;
-            
-            if(numStorageBlocks === 0){
+    
+            if (numStorageBlocks === 0) {
                 console.log("None stored.");
                 itemViewStoredNonePresentContainer.show();
             } else {
@@ -1384,61 +1360,62 @@ function setupView(itemId){
                 itemViewStored.show();
             }
     
-            let showAmountStoredPricePerUnit = function(){
+            let showAmountStoredPricePerUnit = function () {
                 itemViewValPerUnit.text(data.valuePerUnit);
             }
             foreachStoredType(
                     data.storageType,
                     showAmountStoredPricePerUnit,
                     showAmountStoredPricePerUnit,
-                    function(){
+                    function () {
                         itemViewValPerUnit.text(data.defaultValue);
                         itemViewValPerUnitDefault.show();
-    
+                
                         itemViewIdentifyingAtt.text(data.trackedItemIdentifierName);
                         itemViewIdentifyingAttContainer.show();
                     }
             );
-            
-            Object.keys(data.storageMap).forEach(key =>{
-                console.log("Processing stored under storage block " + key);
-                let curBlockName = key;
-                //TODO:: do this after, as async call
-                doRestCall({
-                    spinnerContainer: null,
-                    url: "/api/inventory/storage-block/" + key,
-                    async: false,
-                    done: function(data){
-                        curBlockName = data.label;
-                    }
-                });
-                
-                foreachStoredType(
-                        data.storageType,
-                        function (){
-                            addViewStorageBlocksAccordionItem(
-                                    key,
-                                    getAmountStoredContent(data.storageMap[key].stored),
-                                    curBlockName
-                            );
-                        },
-                        function (){
-                            addViewStorageBlocksAccordionItem(
-                                    key,
-                                    getAmountListStoredContent(key, data.storageMap[key].stored),
-                                    curBlockName
-                            );
-                        },
-                        function (){
-                            addViewStorageBlocksAccordionItem(
-                                    key,
-                                    getTrackedStoredContent(key, data.storageMap[key].stored),
-                                    curBlockName
-                            );
+    
+            Object.keys(data.storageMap).forEach(key => {
+                promises.push(new Promise( async function(){
+                    console.log("Processing stored under storage block " + key);
+                    let curBlockName = key;
+                    await doRestCall({
+                        spinnerContainer: null,
+                        async: false,
+                        url: "/api/inventory/storage-block/" + key,
+                        done: function (data) {
+                            curBlockName = data.label;
                         }
-                );
+                    });
+        
+                    foreachStoredType(
+                            data.storageType,
+                            function () {
+                                addViewStorageBlocksAccordionItem(
+                                        key,
+                                        getAmountStoredContent(data.storageMap[key].stored),
+                                        curBlockName
+                                );
+                            },
+                            function () {
+                                addViewStorageBlocksAccordionItem(
+                                        key,
+                                        getAmountListStoredContent(key, data.storageMap[key].stored),
+                                        curBlockName
+                                );
+                            },
+                            function () {
+                                addViewStorageBlocksAccordionItem(
+                                        key,
+                                        getTrackedStoredContent(key, data.storageMap[key].stored),
+                                        curBlockName
+                                );
+                            }
+                    );
+                }));
             });
-            
+            await Promise.all(promises);
         },
         fail: function(){ }
     });

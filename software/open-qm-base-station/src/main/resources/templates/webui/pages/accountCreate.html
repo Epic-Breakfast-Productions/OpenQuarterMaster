@@ -67,7 +67,7 @@
 		<script>
 			assertNotLoggedIn();
 
-			$("#userAccountCreateForm").submit(function (event) {
+			$("#userAccountCreateForm").submit(async function (event) {
 				event.preventDefault();
 				console.log("Submitting login form.");
 
@@ -85,13 +85,13 @@
 					password: $("#passwordInput").val()
 				};
 
-				doRestCall({
+				await doRestCall({
 					url: "/api/user",
 					method: "POST",
 					data: createRequestData,
 					async: false,
 					done: function (data) {
-						console.log("Response from user create request: " + JSON.stringify(data));
+						console.log("Response from user create request.");
 						window.location.replace("/?message=User Registration Successful!&messageType=success");
 					},
 					fail: function (data) {
@@ -108,8 +108,6 @@
 						}
 
 						addMessageToDiv($("#createMessageDiv"), "warning", errMessages, "Failed to register", null);
-
-
 					}//fail
 				});
 				console.log("Done.");

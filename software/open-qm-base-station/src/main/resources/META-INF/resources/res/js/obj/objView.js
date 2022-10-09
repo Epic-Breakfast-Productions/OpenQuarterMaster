@@ -29,7 +29,7 @@ function displayAttsIn(container, attributes){
     Object.entries(attributes).forEach(entry => {
         const [key, val] = entry;
         console.log("Att: " + key + "/" + val);
-        let newAtt = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span> ');
+        let newAtt = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span>');
 
         newAtt.find(".attKey").text(key);
         newAtt.find(".attVal").text(val);
@@ -54,12 +54,10 @@ function processAttDisplay(container, attributes){
     }
 }
 
-function displayObjHistory(container, historyObjectEndpoint){
-
-    doRestCall({
+async function displayObjHistory(container, historyObjectEndpoint){
+    return doRestCall({
         url: "/api" + historyObjectEndpoint + "/history",
         method: "GET",
-        async: false,
         extraHeaders: {
             "accept": "text/html"
         },
@@ -68,6 +66,4 @@ function displayObjHistory(container, historyObjectEndpoint){
             container.html(historyObject);
         }
     });
-
-
 }

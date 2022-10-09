@@ -54,7 +54,7 @@
 
 			var signInForm = $("#signInForm");
 
-			signInForm.submit(function (event) {
+			signInForm.submit(async function (event) {
 				event.preventDefault();
 				{#if config:['service.authMode'] == 'SELF'}
 				console.log("Submitting login form.");
@@ -62,7 +62,7 @@
 				var result = false;
 				var rememberUser = $("#rememberUserCheckbox").is(":checked");
 				
-				result = getToken(
+				result = await getToken(
 					$("#emailUsernameInput").val(),
 					$("#passwordInput").val(),
 					rememberUser

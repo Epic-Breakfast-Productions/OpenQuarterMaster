@@ -175,7 +175,6 @@ function setupAddEditForEdit(id){
     doRestCall({
         url: "/api/media/image/" + id,
         method: "GET",
-        async: false,
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
             addEditTitleInput.val(data.title);
@@ -199,56 +198,54 @@ addEditImageForm.submit(function (ev) {
     $uploadCrop.croppie('result', {
 		type: 'base64',
 		size: 'original'
-	}).then(function(imageDataStr){
+	}).then(async function (imageDataStr) {
         var addEditData = {
             title: addEditTitleInput.val(),
             description: addEditDescriptionInput.val(),
             imageData: imageDataStr
         };
-
+    
         addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
-
-	    console.log("Got image data.");
-
-        if(addEditFormMode.val() == "add"){
+    
+        console.log("Got image data.");
+    
+        if (addEditFormMode.val() == "add") {
             console.log("Adding new image.");
             doRestCall({
                 url: "/api/media/image",
                 method: "POST",
                 data: addEditData,
-                async: false,
-                done: function(data) {
+                done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     reloadPageWithMessage("Created image successfully!", "success", "Success!");
                 },
-                fail: function(data) {
+                fail: function (data) {
                     console.warn("Bad response from image add attempt: " + JSON.stringify(data));
                     addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
                 }
             });
-        } else if(addEditFormMode.val() == "edit"){
+        } else if (addEditFormMode.val() == "edit") {
             var id = addEditFormId.val();
             console.log("Editing image " + id);
-
+        
             doRestCall({
                 url: "/api/media/image/" + id,
                 method: "PUT",
                 data: addEditData,
-                async: false,
-                done: function(data) {
+                done: function (data) {
                     console.log("Response from update request: " + JSON.stringify(data));
                     reloadPageWithMessage("Updated image successfully!", "success", "Success!");
                 },
-                fail: function(data) {
+                fail: function (data) {
                     console.warn("Bad response from update attempt: " + JSON.stringify(data));
                     addMessageToDiv(addEditFormMessages, "danger", "Failed to do update: " + data.responseText, "Failed", null);
                 }
             });
-
+        
         } else {
             addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
         }
-	});
+    });
 });
 
 
@@ -314,7 +311,6 @@ function setupViewForImage(id){
                 doRestCall({
                     url: "/api/media/image/" + id,
                     method: "DELETE",
-                    async: false,
                     done: function(data) {
                         console.log("Response from create request: " + JSON.stringify(data));
                         reloadPageWithMessage("Delete image successfully!", "success", "Success!");

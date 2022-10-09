@@ -14,7 +14,7 @@ function logout(){
     window.location.replace("/api/auth/user/logout");
 }
 
-function getToken(usernameEmail, password, rememberUser){
+async function getToken(usernameEmail, password, rememberUser){
     console.log("Getting token for user: " + usernameEmail);
     var loginRequestData = {
             usernameEmail: $("#emailUsernameInput").val(),
@@ -24,11 +24,11 @@ function getToken(usernameEmail, password, rememberUser){
     var result = false;
 
 
-    doRestCall({
+    await doRestCall({
         url: "/api/auth/user",
         method: "POST",
         data: loginRequestData,
-        async: false,
+        async: true,
         done: function(data) {
             console.log("Response from login request: " + JSON.stringify(data));
             result = data.token;
@@ -42,14 +42,14 @@ function getToken(usernameEmail, password, rememberUser){
  * Determines if the token is valid and provides actual authorization.
  * Returns bool
  */
-function checkToken(jwtToken){
+async function checkToken(jwtToken){
     console.log("Checking validity of token: " + jwtToken);
     var valid = false;
 
-    doRestCall({
+    await doRestCall({
         spinnerContainer: null,
         url: "/api/auth/tokenCheck",
-        async: false,
+        async: true,
         authorization: jwtToken,
         done: function(data){
             console.log("Got response from getting token check request: " + JSON.stringify(data));
@@ -69,13 +69,13 @@ function checkToken(jwtToken){
  * Checks if the user is logged in or not.
  * returns bool, if the user was logged in or not
  */
-function isLoggedIn(){
+async function isLoggedIn() {
     var jwtVal = Cookies.get(jwtCookieName);
     console.log("User token: " + jwtVal);
-    if(!jwtVal){
+    if (!jwtVal) {
         return false;
     }
-    return checkToken(jwtVal);
+    return await checkToken(jwtVal);
 }
 
 function assertLoggedIn(){
@@ -84,8 +84,8 @@ function assertLoggedIn(){
     }
 }
 
-function assertNotLoggedIn(){
-    if(isLoggedIn()){
+async function assertNotLoggedIn() {
+    if (await isLoggedIn()) {
         window.location.replace("/overview");
     } else {
         Cookies.remove(jwtCookieName);

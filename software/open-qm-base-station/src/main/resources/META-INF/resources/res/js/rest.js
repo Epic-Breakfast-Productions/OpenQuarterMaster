@@ -1,6 +1,23 @@
 var wholeBody = $('body');
 
-function doRestCall(
+/**
+ *
+ * @param spinnerContainer
+ * @param url
+ * @param timeout
+ * @param method
+ * @param data
+ * @param authorization
+ * @param extraHeaders
+ * @param async
+ * @param crossDomain
+ * @param done
+ * @param fail
+ * @param failNoResponse
+ * @param failNoResponseCheckStatus
+ * @returns {jqXHR}
+ */
+async function doRestCall(
 	{
 		spinnerContainer = wholeBody.get(0),
 		url = null,
@@ -10,7 +27,7 @@ function doRestCall(
 		authorization = false,
 		extraHeaders = {},
 		async = true,
-		crossDomain= false,
+		crossDomain = false,
 		done,
 		fail = function () {
 		},
@@ -25,15 +42,14 @@ function doRestCall(
 		url: url,
 		method: method,
 		timeout: timeout,
-		async: async,
 		crossDomain: crossDomain
 	};
 
 	if (data != null) {
-		if( data instanceof FormData){
-			ajaxOps.cache= false;
-			ajaxOps.contentType= false;
-			ajaxOps.processData= false;
+		if (data instanceof FormData) {
+			ajaxOps.cache = false;
+			ajaxOps.contentType = false;
+			ajaxOps.processData = false;
 			ajaxOps.data = data;
 			console.log("Sending form data.");
 		} else {
@@ -50,22 +66,22 @@ function doRestCall(
 			...{Authorization: "Bearer " + authorization}
 		}
 	}
-	if(crossDomain){
+	if (crossDomain) {
 		extraHeaders = {
 			...extraHeaders,
-			...{"Access-Control-Allow-Origin":"*"}
+			...{"Access-Control-Allow-Origin": "*"}
 		}
 	}
 
 	ajaxOps.headers = extraHeaders;
 
-	$.ajax(
+	let ajaxPromise = $.ajax(
 		ajaxOps
 	).done(function (data, status, xhr) {
-		console.log("Got successful response from "+url+" (trace id: "+xhr.getResponseHeader("traceId")+"): " + JSON.stringify(data));
+		console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
 		done(data);
 	}).fail(function (data, status, statusStr) {
-		console.warn("Request failed to "+url+" (trace id: "+data.getResponseHeader("traceId")+"): " + JSON.stringify(data));
+		console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + "): " + JSON.stringify(data));
 
 		var response = data.responseJSON;
 
@@ -91,4 +107,9 @@ function doRestCall(
 			spinner.stop();
 		}
 	});
+
+	if (!async) {
+		await ajaxPromise;
+	}
+	return ajaxPromise;
 }
