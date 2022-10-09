@@ -66,15 +66,23 @@ function showTree(containerSelector){
 
 function addCrumbs(cur, crumbList, toKeepId){
     if(cur.blockId != toKeepId){
-        crumbList.append($('<li class="breadcrumb-item"><a href="#">'+cur.blockLabel+'</a></li>'));
+        let curCrumb = $('<li class="breadcrumb-item"><a href="#"></a></li>');
+        curCrumb.find("a").text(cur.blockLabel);
+        let newGetParams = new URLSearchParams(window.location.search);
+        newGetParams.set("view", cur.blockId)
+        curCrumb.find("a").attr("href", "/storage?" + newGetParams.toString());
+
+        crumbList.append(curCrumb);
         addCrumbs(cur.children[0], crumbList, toKeepId);
     } else {
-        crumbList.append($('<li class="breadcrumb-item"active" aria-current="page">'+cur.blockLabel+' (this)</li>'));
+        let curCrumb = $('<li class="breadcrumb-item active" aria-current="page">'+cur.blockLabel+' (this)</li>');
+        curCrumb = curCrumb.text(cur.blockLabel + " (this)");
+        crumbList.append(curCrumb);
     }
 }
 
 
-function getBlockBreadcrumbs(crumbContainer, toKeepId){
+async function getBlockBreadcrumbs(crumbContainer, toKeepId){
     doRestCall({
             url: "/api/inventory/storage-block/tree?onlyInclude="+toKeepId,
             done: function(data){

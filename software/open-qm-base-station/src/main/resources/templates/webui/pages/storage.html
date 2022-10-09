@@ -213,6 +213,11 @@ Accepts:
                     <h5 class="card-title">Location in storage:</h5>
                     <div id="storageBlockViewBreadcrumbContainer">
                     </div>
+                    <h5 class="card-title">Children:</h5>
+                    <ul class="list-inline">
+                    </ul>
+                    <div id="storageBlockViewChildrenContainer">
+                    </div>
                 </div>
             </div>
             <div class="card" id="storageBlockViewLocationContainer">
@@ -528,12 +533,14 @@ var storageBlockViewCapacity = $('#storageBlockViewCapacity');
 var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
+var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 
 function resetView(){
     storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
     storageBlockViewBreadcrumbContainer.text('');
+    storageBlockViewChildrenContainer.text('');
     
     storageBlockViewDescriptionContainer.hide();
     storageBlockViewDescription.text("");
@@ -549,8 +556,6 @@ function resetView(){
     clearHideAttDisplay(viewAttsSection);
 }
 
-//TODO:: add children list
-//TODO:: add view link to breadcrumbs
 function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
@@ -563,6 +568,7 @@ function setupView(blockId){
     	spinnerContainer: storageBlockViewModal,
     	url: "/api/inventory/storage-block/" + blockId,
     	done: async function(data){
+            let children = getStorageBlockChildrenData(blockId);
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
@@ -620,7 +626,6 @@ function setupView(blockId){
             if(storageBlockItems.length){
                 console.log(storageBlockItems.length + " items stored.")
                 storageBlockItems.forEach(function (item){
-                    console.log(item);
                     let row = $('<tr>' +
                             '<td class="blockViewItemInImage"></td>' +//image
                             '<td class="blockViewItemName"></td>' +//name
@@ -635,6 +640,20 @@ function setupView(blockId){
                 });
             } else {
                 storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
+            }
+            
+            children = await children;
+            if(!children.length){
+                storageBlockViewChildrenContainer.text("No children!")
+            } else {
+                children.forEach(function (child) {
+                    let newGetParams = new URLSearchParams(window.location.search);
+                    newGetParams.set("view", child.id)
+                    
+                    let newChildLink = $('<li class="list-inline-item"><a href="/storage?'+newGetParams.toString()+'"></li></a>');
+                    newChildLink.find("a").text(child.label);
+                    storageBlockViewChildrenContainer.append(newChildLink);
+                });
             }
     	},
     	fail: function(){ }
