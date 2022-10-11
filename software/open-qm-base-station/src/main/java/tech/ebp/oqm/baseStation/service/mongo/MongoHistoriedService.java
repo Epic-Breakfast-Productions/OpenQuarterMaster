@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +53,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	}
 	
 	protected final boolean allowNullUserForCreate;
-	@Getter(AccessLevel.PROTECTED)
+	@Getter
 	private MongoHistoryService<T> historyService = null;
 	
 	public MongoHistoriedService(

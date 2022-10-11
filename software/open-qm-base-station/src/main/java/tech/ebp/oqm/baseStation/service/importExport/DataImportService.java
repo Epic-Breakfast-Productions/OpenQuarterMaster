@@ -44,7 +44,6 @@ public class DataImportService {
 	
 	private static final String IMPORT_TEMP_DIR_PREFIX = "oqm-data-import";
 	
-	
 	private static Path zipSlipProtect(ArchiveEntry entry, Path targetDir)
 		throws IOException {
 		
@@ -115,6 +114,9 @@ public class DataImportService {
 				return;
 			}
 			throw e;
+		} catch(Throwable e) {
+			log.error("Failed to import object: ", e);
+			throw e;
 		}
 		log.info("Read in object. new id == old? {}", newId.equals(oldId));
 		assert newId.equals(oldId); //TODO:: better check?
@@ -129,14 +131,19 @@ public class DataImportService {
 		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) throws IOException {
-		this.readInObject(
-			clientSession,
-			Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz()),
-			objectService,
-			importingUser,
-			needParentMap,
-			addedList
-		);
+		try {
+			this.readInObject(
+				clientSession,
+				Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz()),
+				objectService,
+				importingUser,
+				needParentMap,
+				addedList
+			);
+		} catch(Throwable e){
+			log.error("Failed to process object file {}: ", curFile, e);
+			throw e;
+		}
 	}
 	
 	private <T extends MainObject, S extends SearchObject<T>> long readInObjects(
