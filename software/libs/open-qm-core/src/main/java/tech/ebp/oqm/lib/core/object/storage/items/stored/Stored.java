@@ -47,6 +47,11 @@ public abstract class Stored {
 	private boolean expired = false;
 	
 	/**
+	 * If the expired warning has been sent.
+	 */
+	private boolean warningSent = false;
+	
+	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
 	@Max(100)
