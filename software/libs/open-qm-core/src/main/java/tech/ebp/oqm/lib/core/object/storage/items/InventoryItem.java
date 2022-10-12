@@ -26,6 +26,7 @@ import javax.measure.Unit;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -96,7 +97,9 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@Setter(AccessLevel.PROTECTED)
 	private BigDecimal valueOfStored = BigDecimal.ZERO;
 	
-	//TODO:: expiryWarningThreshold: duration before expiry dates when to warn that is expiring soon
+	@NonNull
+	@NotNull
+	private Duration expiryWarningThreshold = Duration.ZERO;
 	
 	public abstract @NonNull Unit<?> getUnit();
 	

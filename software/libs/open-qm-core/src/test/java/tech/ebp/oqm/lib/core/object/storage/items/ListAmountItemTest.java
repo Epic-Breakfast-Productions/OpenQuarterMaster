@@ -95,6 +95,21 @@ class ListAmountItemTest extends BasicTest {
 					.add(ObjectId.get(), new AmountStored(1, UnitUtils.UNIT), true),
 				Quantities.getQuantity(3, UnitUtils.UNIT)
 			)
+			//			, // TODO:: when figure out double add quantities: https://github.com/unitsofmeasurement/indriya/issues/384
+			//			Arguments.of(
+			//				new ListAmountItem()
+			//					.add(ObjectId.get(), new AmountStored(1.1, UnitUtils.UNIT), true)
+			//					.add(ObjectId.get(), new AmountStored(1.2, UnitUtils.UNIT), true)
+			//					.add(ObjectId.get(), new AmountStored(1.3, UnitUtils.UNIT), true),
+			//				Quantities.getQuantity(3.6, UnitUtils.UNIT)
+			//			),
+			//			Arguments.of(
+			//				new ListAmountItem()
+			//					.add(ObjectId.get(), new AmountStored(1.1, UnitUtils.UNIT), true)
+			//					.add(ObjectId.get(), new AmountStored(1.2, UnitUtils.UNIT), true)
+			//					.add(ObjectId.get(), new AmountStored(1.3, UnitUtils.UNIT), true),
+			//				Quantities.getQuantity(3.6, UnitUtils.UNIT)
+			//			)
 		);
 	}
 	

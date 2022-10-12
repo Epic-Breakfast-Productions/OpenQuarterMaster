@@ -72,6 +72,13 @@ class SimpleAmountItemTest extends BasicTest {
 					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				Quantities.getQuantity(2, UnitUtils.UNIT)
 			)
+			//			, //TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
+			//			Arguments.of(
+			//				new SimpleAmountItem()
+			//					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.1, UnitUtils.UNIT)), true)
+			//					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.2, UnitUtils.UNIT)), true),
+			//				Quantities.getQuantity(2.3, UnitUtils.UNIT)
+			//			)
 		);
 	}
 	

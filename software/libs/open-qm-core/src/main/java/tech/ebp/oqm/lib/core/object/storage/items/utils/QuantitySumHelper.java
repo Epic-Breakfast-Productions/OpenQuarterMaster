@@ -8,7 +8,7 @@ import javax.measure.Unit;
 public class QuantitySumHelper extends SumHelper<Quantity<?>> {
 	
 	public QuantitySumHelper(Unit<?> unit) {
-		super(Quantities.getQuantity(0, unit));
+		super(Quantities.getQuantity(0.0, unit));
 	}
 	
 	@Override
