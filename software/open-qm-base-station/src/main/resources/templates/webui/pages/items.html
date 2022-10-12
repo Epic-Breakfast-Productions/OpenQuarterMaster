@@ -176,6 +176,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="mb-3 row" id="pricePerUnitNameRow">
+                    <label for="addEditExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="number" min="0" class="form-control" id="addEditExpiryWarningThresholdInput" placeholder="Expiry Warning Threshold" required value="0" aria-describedby="addEditExpiryWarningThresholdHelp">
+                            <select class="form-select" style="max-width: 10em;" id="addEditExpiryWarningThresholdUnitInput">
+                                <!-- The values here represent the multiplier to make the equivalent number of seconds for each -->
+                                <option value="1">Seconds*</option>
+                                <option value="60">Minutes*</option>
+                                <option value="3600" selected>Hours</option>
+                                <option value="86400">Days</option>
+                                <option value="604800">Weeks</option>
+                            </select>
+                        </div>
+                        <div id="addEditExpiryWarningThresholdHelp" class="form-text">
+                            How many days before expiration dates to warn of imminent expiration. 0 for no warning. <br />
+                            * = Depending on server settings, you might not get an accurate warning with a short warning period.
+                        </div>
+                    </div>
+                </div>
                 <hr />
                 <div class="mb-3 row">
                     <div class="col-sm-2 col-form-label">Stored</div>
@@ -251,6 +271,7 @@
                 </div>
             </div>
         </div>
+        <!-- TODO:: add expiry warning duration -->
     </div>
 </div>
 <hr />
@@ -399,6 +420,8 @@ var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 var addEditNameInput = $('#addEditNameInput');
 var addEditDescriptionInput = $('#addEditDescriptionInput');
 var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
+var addEditExpiryWarningThresholdInput = $('#addEditExpiryWarningThresholdInput');
+var addEditExpiryWarningThresholdUnitInput = $('#addEditExpiryWarningThresholdUnitInput');
 var addEditStorageTypeInput = $('#addEditStorageTypeInput');
 var addEditUnitInput = $('#addEditUnitInput');
 var addEditIdentifyingAttInput = $('#addEditIdentifyingAttInput');
@@ -466,6 +489,8 @@ function resetAddEditForm(){
     addEditDescriptionInput.val("");
     addEditModalLabel.text("Item");
     addEditPricePerUnitInput.val("0.00");
+    addEditExpiryWarningThresholdInput.val(0);
+    addEditExpiryWarningThresholdUnitInput.prop('selectedIndex',2);
     addEditIdentifyingAttInput.val("");
     addEditStorageTypeInput.prop( "disabled", false );
     addEditStorageTypeInput.val($("#addEditStorageTypeInput option:first").val());
@@ -519,7 +544,7 @@ function setupAddEditForEdit(itemId){
     doRestCall({
         spinnerContainer: addEditModal,
         url: "/api/inventory/item/" + itemId,
-        done: function(data){
+        done: async function(data){
             addSelectedImages(addEditImagesSelected, data.imageIds);
             addKeywordInputs(addEditKeywordDiv, data.keywords);
             addAttInputs(addEditAttDiv, data.attributes);
@@ -530,19 +555,42 @@ function setupAddEditForEdit(itemId){
             addEditStorageTypeInput.val(data.storageType);
             addEditStoredTypeInputChanged();
     
-            let setAmountStoredVars = function(){
+            let setAmountStoredVars = async function(){
                 addEditUnitInput.val(data.unit.string);
                 addEditPricePerUnitInput.val(data.valuePerUnit);
-                updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
+                await updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
             };
     
             foreachStoredTypeFromAddEditInput(
-                    setAmountStoredVars,
-                    setAmountStoredVars,
+                    await setAmountStoredVars,
+                    await setAmountStoredVars,
                     function(){
                         addEditIdentifyingAttInput.val(data.trackedItemIdentifierName);
                     }
             );
+            
+            if((data.expiryWarningThreshold / 604800) % 1 == 0){
+                console.log("Determined was weeks.");
+                addEditExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 604800);
+                addEditExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
+            } else if((data.expiryWarningThreshold / 86400) % 1 == 0){
+                console.log("Determined was days.");
+                addEditExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 86400);
+                addEditExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
+            } else if((data.expiryWarningThreshold / 3600) % 1 == 0){
+                console.log("Determined was hours.");
+                addEditExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 3600);
+                addEditExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
+            } else if((data.expiryWarningThreshold / 60) % 1 == 0){
+                console.log("Determined was minutes.");
+                addEditExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 60);
+                addEditExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
+            } else {
+                console.log("Determined was seconds.");
+                addEditExpiryWarningThresholdInput.val(data.expiryWarningThreshold);
+                addEditExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
+            }
+    
     
             Object.keys(data.storageMap).forEach(curStorageBlockId => {
                 let newStorageBody = createStorageBlockAccord("", curStorageBlockId);
@@ -1017,7 +1065,8 @@ addEditItemForm.submit(async function (event) {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
         storageType: addEditStorageTypeInput.val(),
-        storageMap: {}
+        expiryWarningThreshold: addEditExpiryWarningThresholdInput.val() * addEditExpiryWarningThresholdUnitInput.val(),
+        storageMap: { }
     };
     
     let setAmountStoredVars = function () {
