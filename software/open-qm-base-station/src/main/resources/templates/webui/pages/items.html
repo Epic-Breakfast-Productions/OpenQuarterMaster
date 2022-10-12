@@ -172,7 +172,7 @@
                     <div class="col-sm-10">
                         <div class="input-group">
                             <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
-                            <input type="number" min="0" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
+                            <input type="number" min="0.00" step="any" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
                         </div>
                     </div>
                 </div>
@@ -533,6 +533,7 @@ function setupAddEditForEdit(itemId){
             let setAmountStoredVars = function(){
                 addEditUnitInput.val(data.unit.string);
                 addEditPricePerUnitInput.val(data.valuePerUnit);
+                updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
             };
     
             foreachStoredTypeFromAddEditInput(
@@ -649,7 +650,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
     return  '<div class="mb-3 ">\n'+
             '    <label class="form-label">Condition Percentage</label>\n' +
             '    <div class="input-group">\n'+
-            '        <input type="number" max="100" min="0" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
+            '        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
             '        <span class="input-group-text" id="addon-wrapping">%</span>\n'+ //TODO:: better label of better to worse
             '    </div>\n'+
             '</div>\n' +
@@ -679,7 +680,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
  */
 function getAmountStoredFormElements(headerId, toRemoveId) {
     return '<div class="input-group mt-2 mb-3">\n'+
-            '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0" min="0" required onchange="addEditUpdateStoredHeader(\''+headerId+'\')">\n'+
+            '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="addEditUpdateStoredHeader(\''+headerId+'\')">\n'+
             '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
             '</div>\n'+
             getCommonStoredFormElements(headerId, toRemoveId);
@@ -957,7 +958,7 @@ function buildStoredObj(storedContainer, type){
         let amountInput = storedContainer.find("[name=amountStored]");
         if (amountInput.length) {
             output["amount"] = getQuantityObj(
-                    amountInput.get(0).value,
+                    parseFloat(amountInput.get(0).value),
                     storedContainer.find("[name=amountStoredUnit]").get(0).value
             );
         }
@@ -966,7 +967,7 @@ function buildStoredObj(storedContainer, type){
     {
         let input = storedContainer.find("[name=condition]");
         if (input.length) {
-            output["condition"] = input.get(0).value;
+            parseFloat(output["condition"] = input.get(0).value);
         }
     }
     {
