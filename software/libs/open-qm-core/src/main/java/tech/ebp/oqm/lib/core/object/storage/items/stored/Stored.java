@@ -42,14 +42,11 @@ public abstract class Stored {
 	private LocalDate expires = null;
 	
 	/**
-	 * If the stored has expired.
+	 * Statuses about this stored object.
 	 */
-	private boolean expired = false;
-	
-	/**
-	 * If the expired warning has been sent.
-	 */
-	private boolean warningSent = false;
+	@NonNull
+	@NotNull
+	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
 	
 	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.

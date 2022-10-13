@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.user;
 
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredNotificationStatus;
 import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,6 @@ import java.util.Set;
 @ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
 public class User extends ImagedMainObject {
-	
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -51,6 +51,11 @@ public class User extends ImagedMainObject {
 	@Email
 	private String email;
 	private String title;
+	
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private NotificationSettings notificationSettings = new NotificationSettings();
 	
 	@lombok.Builder.Default
 	private boolean disabled = true;
