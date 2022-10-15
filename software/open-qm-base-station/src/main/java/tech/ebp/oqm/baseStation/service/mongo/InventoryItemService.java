@@ -61,8 +61,8 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	
 	@Override
 	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		newOrChangedObject.recalculateDerived();
+		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	

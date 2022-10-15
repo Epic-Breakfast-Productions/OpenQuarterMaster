@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.notification.ItemEventNotificationService;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
@@ -40,7 +40,7 @@ import static com.mongodb.client.model.Filters.size;
 public class ExpiryProcessor {
 	
 	@Inject
-	ItemEventNotificationService iens;
+	ItemEventNotificationDispatchService iends;
 	
 	@Inject
 	InventoryItemService inventoryItemService;
@@ -201,7 +201,7 @@ public class ExpiryProcessor {
 				inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
 					inventoryItemService.addHistoryFor(cur, curEvent);
-					iens.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
+					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}
 			}
 		});
