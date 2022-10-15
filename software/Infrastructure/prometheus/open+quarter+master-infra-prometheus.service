@@ -2,13 +2,12 @@
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
+#  Prometheus tags: https://hub.docker.com/r/prom/prometheus/tags
 #
-#  TODO:: how to update image used?
 
 [Unit]
-Description=Prometheus server for Open Quartermaster. Version ${version}, using Prometheus tagged to "v2.36.2".
-Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
+Description=Prometheus server for Open Quartermaster. Version ${version}, using Prometheus tagged to "v2.39.1".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus
 After=docker.service
 Wants=network-online.target docker.socket
 Requires=docker.socket
@@ -16,9 +15,14 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_prometheus 2> /dev/null || /usr/bin/docker run --name oqm_prometheus -p 8092:9090 -v /data/oqm/prometheus:/etc/prometheus -d prom/prometheus:v2.36.2"
-ExecStart=/usr/bin/docker start -a oqm_prometheus
-ExecStop=/usr/bin/docker stop -t 10 oqm_prometheus
+
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_prometheus || echo 'Could not stop prometheus container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_prometheus || echo 'Could not remove prometheus container'"
+
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_prometheus 2> /dev/null || /usr/bin/docker run --name oqm_prometheus -p 8092:9090 -v /etc/oqm/infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml --add-host host.docker.internal:host-gateway prom/prometheus:v2.39.1"
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_prometheus || echo 'Could not stop prometheus container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_prometheus || echo 'Could not remove prometheus container'"
 
 [Install]
 WantedBy=multi-user.target

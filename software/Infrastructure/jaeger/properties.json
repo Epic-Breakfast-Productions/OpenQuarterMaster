@@ -6,5 +6,7 @@
 	"configs": [
 		"# Jaeger Config:",
 		"quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces"
-	]
+	],
+	"configFiles":{
+	}
 }

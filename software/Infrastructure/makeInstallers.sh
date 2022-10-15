@@ -156,7 +156,25 @@ fi
 
 EOT
 	chmod +x "$packageDebDir/DEBIAN/postrm"
-	
+
+	configFileKeys=($(jq -r '.configFiles | keys[]'  "$packageConfigFile"))
+
+	for configFileKey in ${configFileKeys[@]}; do
+		echo "Adding config file: $configFileKey";
+		curConfigFile="$packageDebDir$configFileKey"
+
+		mkdir -p "$(dirname "$curConfigFile")"
+
+		curConfigFileContent="$(jq -r ".configFiles.\"$configFileKey\""  "$packageConfigFile")"
+#		echo "Config file content: $curConfigFileContent"
+		echo "$curConfigFileContent" > "$curConfigFile"
+	done;
+
+
+
+
+
+
 	dpkg-deb --build "$packageDebDir" "$buildDir"
 	
 	#	
