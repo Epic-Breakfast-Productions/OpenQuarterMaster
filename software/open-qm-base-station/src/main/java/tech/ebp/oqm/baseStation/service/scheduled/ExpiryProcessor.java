@@ -6,7 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
+import tech.ebp.oqm.baseStation.service.notification.ItemEventNotificationService;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
@@ -20,6 +23,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.Tr
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,86 +34,139 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.not;
 import static com.mongodb.client.model.Filters.size;
 
+@Traced
 @Slf4j
 @ApplicationScoped
 public class ExpiryProcessor {
 	
 	@Inject
+	ItemEventNotificationService iens;
+	
+	@Inject
 	InventoryItemService inventoryItemService;
 	
-	private Optional<ItemExpiredEvent> processExpiryForStored(ObjectId storageBlockId, Stored stored) {
-		if (!stored.isExpired() && stored.getExpires() != null && LocalDate.now().isAfter(stored.getExpires())) {
+	private Optional<ItemExpiredEvent.Builder<?, ?>> processExpiryForStored(Stored stored) {
+		if (!stored.getNotificationStatus().isExpired() && stored.getExpires() != null && LocalDate.now().isAfter(stored.getExpires())) {
+			stored.getNotificationStatus().setExpired(true);
 			return Optional.of(
 				ItemExpiredEvent.builder()
-								.storageBlockId(storageBlockId)
-								.build()
 			);
 		}
 		return Optional.empty();
 	}
 	
-	private List<ItemExpiredEvent> processSimpleAmountStored(Map<ObjectId, SingleAmountStoredWrapper> storageMap) {
-		List<ItemExpiredEvent> events = new ArrayList<>();
+	private Optional<ItemExpiryWarningEvent.Builder<?, ?>> processExpiryWarningForStored(InventoryItem item, Stored stored) {
+		if (
+			!stored.getNotificationStatus().isExpiredWarning() &&
+			!stored.getNotificationStatus().isExpired() &&
+			stored.getExpires() != null &&
+			!Duration.ZERO.equals(item.getExpiryWarningThreshold()) &&
+			LocalDate.now().isAfter(stored.getExpires().minus(item.getExpiryWarningThreshold()))
+		) {
+			stored.getNotificationStatus().setExpiredWarning(true);
+			return Optional.of(
+				ItemExpiryWarningEvent.builder()
+			);
+		}
+		return Optional.empty();
+	}
+	
+	private List<? extends ItemExpiryEvent.Builder<?, ?>> processExpiryEvents(
+		InventoryItem item,
+		ObjectId storageBlockId,
+		Stored stored
+	) {
+		List<ItemExpiryEvent.Builder<?, ?>> output = new ArrayList<>();
 		
-		for (Map.Entry<ObjectId, SingleAmountStoredWrapper> curStored : storageMap.entrySet()) {
-			Optional<ItemExpiredEvent> event = this.processExpiryForStored(
+		{
+			Optional<ItemExpiredEvent.Builder<?, ?>> expiredEvent = this.processExpiryForStored(stored);
+			if (expiredEvent.isPresent()) {
+				expiredEvent.get().storageBlockId(storageBlockId);
+				output.add(expiredEvent.get());
+			}
+		}
+		
+		{
+			Optional<ItemExpiryWarningEvent.Builder<?, ?>> expiryWarningEvent = this.processExpiryWarningForStored(item, stored);
+			if (expiryWarningEvent.isPresent()) {
+				expiryWarningEvent.get().storageBlockId(storageBlockId);
+				output.add(expiryWarningEvent.get());
+			}
+		}
+		
+		return output;
+	}
+	
+	private List<ItemExpiryEvent> processSimpleAmountItem(SimpleAmountItem item) {
+		List<ItemExpiryEvent> events = new ArrayList<>();
+		
+		for (Map.Entry<ObjectId, SingleAmountStoredWrapper> curStored : item.getStorageMap().entrySet()) {
+			List<? extends ItemExpiryEvent.Builder<?, ?>> results = processExpiryEvents(
+				item,
 				curStored.getKey(),
 				curStored.getValue().getStored()
 			);
-			event.ifPresent(events::add);
+			
+			for (ItemExpiryEvent.Builder<?, ?> curEvent : results){
+				events.add(curEvent.build());
+			}
 		}
 		return events;
 	}
 	
-	private List<ItemExpiredEvent> processListAmountStored(Map<ObjectId, ListAmountStoredWrapper> storageMap) {
-		List<ItemExpiredEvent> events = new ArrayList<>();
+	private List<ItemExpiryEvent> processListAmountItem(ListAmountItem item) {
+		List<ItemExpiryEvent> events = new ArrayList<>();
 		
-		for (Map.Entry<ObjectId, ListAmountStoredWrapper> curStored : storageMap.entrySet()) {
+		for (Map.Entry<ObjectId, ListAmountStoredWrapper> curStored : item.getStorageMap().entrySet()) {
 			ListAmountStoredWrapper storedList = curStored.getValue();
 			for (int i = 0; i < storedList.size(); i++) {
-				Optional<ItemExpiredEvent> eventOp = this.processExpiryForStored(
+				List<? extends ItemExpiryEvent.Builder<?, ?>> results = processExpiryEvents(
+					item,
 					curStored.getKey(),
 					storedList.get(i)
 				);
-				if (eventOp.isPresent()) {
-					ItemExpiredEvent event = eventOp.get();
-					event.setIndex(i);
-					events.add(event);
-				}
-			}
-		}
-		return events;
-	}
-	
-	private List<ItemExpiredEvent> processTrackedAmountStored(Map<ObjectId, TrackedMapStoredWrapper> storageMap) {
-		List<ItemExpiredEvent> events = new ArrayList<>();
-		
-		for (Map.Entry<ObjectId, TrackedMapStoredWrapper> curStoredMap : storageMap.entrySet()) {
-			for (Map.Entry<String, TrackedStored> curStored : curStoredMap.getValue().entrySet()) {
-				Optional<ItemExpiredEvent> eventOp = this.processExpiryForStored(curStoredMap.getKey(), curStored.getValue());
 				
-				if (eventOp.isPresent()) {
-					ItemExpiredEvent event = eventOp.get();
-					event.setIdentifier(curStored.getKey());
-					events.add(event);
+				for (ItemExpiryEvent.Builder<?, ?> curEvent : results){
+					curEvent.index(i);
+					events.add(curEvent.build());
 				}
 			}
 		}
 		return events;
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> List<ItemExpiredEvent> processForExpired(InventoryItem<T, C, W> item) {
-		List<ItemExpiredEvent> events;
+	private List<ItemExpiryEvent> processTrackedItem(TrackedItem item) {
+		List<ItemExpiryEvent> events = new ArrayList<>();
+		
+		for (Map.Entry<ObjectId, TrackedMapStoredWrapper> curStoredMap : item.getStorageMap().entrySet()) {
+			for (Map.Entry<String, TrackedStored> curStored : curStoredMap.getValue().entrySet()) {
+				List<? extends ItemExpiryEvent.Builder<?, ?>> results = processExpiryEvents(
+					item,
+					curStoredMap.getKey(),
+					curStored.getValue()
+				);
+				
+				for (ItemExpiryEvent.Builder<?, ?> curEvent : results){
+					curEvent.identifier(curStored.getKey());
+					events.add(curEvent.build());
+				}
+			}
+		}
+		return events;
+	}
+	
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> List<ItemExpiryEvent> processForExpired(InventoryItem<T, C, W> item) {
+		List<ItemExpiryEvent> events;
 		
 		switch (item.getStorageType()) {
 			case AMOUNT_SIMPLE:
-				events = processSimpleAmountStored(((SimpleAmountItem) item).getStorageMap());
+				events = processSimpleAmountItem((SimpleAmountItem) item);
 				break;
 			case AMOUNT_LIST:
-				events = processListAmountStored(((ListAmountItem) item).getStorageMap());
+				events = processListAmountItem((ListAmountItem) item);
 				break;
 			case TRACKED:
-				events = processTrackedAmountStored(((TrackedItem) item).getStorageMap());
+				events = processTrackedItem((TrackedItem) item);
 				break;
 			default:
 				throw new IllegalArgumentException("Should not have been able to get unsupported storage type: " + item.getStorageType());
@@ -138,12 +195,13 @@ public class ExpiryProcessor {
 		);
 		
 		it.forEach((InventoryItem cur)->{
-			List<ItemExpiredEvent> expiryEvents = this.processForExpired(cur);
+			List<ItemExpiryEvent> expiryEvents = this.processForExpired(cur);
 			
 			if (!expiryEvents.isEmpty()) {
 				inventoryItemService.update(cur);
-				for (ItemExpiredEvent curEvent : expiryEvents) {
+				for (ItemExpiryEvent curEvent : expiryEvents) {
 					inventoryItemService.addHistoryFor(cur, curEvent);
+					iens.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}
 			}
 		});
