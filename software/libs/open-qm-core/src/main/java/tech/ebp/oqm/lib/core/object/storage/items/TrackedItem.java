@@ -3,7 +3,9 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -11,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.utils.BigDecimalSumHelper;
 import tech.units.indriya.quantity.Quantities;
@@ -22,8 +26,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Describes a unique item stored.
@@ -84,6 +91,29 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 		
 		this.setValueOfStored(helper.getTotal());
 		return this.getValueOfStored();
+	}
+	
+	@Override
+	public InventoryItem<TrackedStored, Map<String, TrackedStored>, TrackedMapStoredWrapper> recalculateExpiryStats() {
+		AtomicLong newExpiredCount = new AtomicLong();
+		AtomicLong newExpiryWarnCount = new AtomicLong();
+		
+		this.getStorageMap().values().stream()
+			.map(TrackedMapStoredWrapper::getStored)
+			.map(Map::values)
+			.flatMap(Collection::stream)
+			.forEach((Stored s)->{
+				if (s.getNotificationStatus().isExpired()) {
+					newExpiredCount.getAndIncrement();
+				} else if (s.getNotificationStatus().isExpiredWarning()) {
+					newExpiryWarnCount.getAndIncrement();
+				}
+			});
+		
+		this.setNumExpired(newExpiredCount.get());
+		this.setNumExpiryWarn(newExpiryWarnCount.get());
+		
+		return this;
 	}
 	
 	@Override

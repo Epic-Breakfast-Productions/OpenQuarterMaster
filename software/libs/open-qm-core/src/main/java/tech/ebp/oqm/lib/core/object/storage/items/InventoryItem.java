@@ -163,9 +163,17 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.valueOfStored;
 	}
 	
+	
+	private long numExpired = 0;
+	private long numExpiryWarn = 0;
+	
+	public abstract InventoryItem<S, C, W> recalculateExpiryStats();
+	
+	
 	public InventoryItem<S, C, W> recalculateDerived() {
 		this.recalcTotal();
 		this.recalcValueOfStored();
+		this.recalculateExpiryStats();
 		return this;
 	}
 	

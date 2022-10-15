@@ -5,20 +5,19 @@ import lombok.ToString;
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
-import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.SingleStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidHeldStoredUnits;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import org.bson.types.ObjectId;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Data
@@ -66,5 +65,24 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 		);
 		
 		return this.getValueOfStored();
+	}
+	
+	@Override
+	public SimpleAmountItem recalculateExpiryStats() {
+		AtomicLong newExpiredCount = new AtomicLong();
+		AtomicLong newExpiryWarnCount = new AtomicLong();
+		
+		this.getStorageMap().values().stream().map(SingleAmountStoredWrapper::getStored).forEach((AmountStored s)->{
+			if (s.getNotificationStatus().isExpired()) {
+				newExpiredCount.getAndIncrement();
+			} else if (s.getNotificationStatus().isExpiredWarning()) {
+				newExpiryWarnCount.getAndIncrement();
+			}
+		});
+		
+		this.setNumExpired(newExpiredCount.get());
+		this.setNumExpiryWarn(newExpiryWarnCount.get());
+		
+		return this;
 	}
 }
