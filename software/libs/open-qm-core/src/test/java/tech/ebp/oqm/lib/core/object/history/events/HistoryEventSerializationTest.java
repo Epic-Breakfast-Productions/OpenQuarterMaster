@@ -2,9 +2,10 @@ package tech.ebp.oqm.lib.core.object.history.events;
 
 import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
-import tech.ebp.oqm.lib.core.object.history.events.item.ItemExpiredEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +59,12 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 										 .identifier(FAKER.lorem().characters())
 										 .index(5)
 										 .build()),
+			Arguments.of(ItemExpiryWarningEvent.builder().storageBlockId(ObjectId.get()).build()),
+			Arguments.of(ItemExpiryWarningEvent.builder()
+											   .storageBlockId(ObjectId.get())
+											   .identifier(FAKER.lorem().characters())
+											   .index(5)
+											   .build()),
 			//item add
 			Arguments.of(ItemAddEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
 			Arguments.of(ItemAddEvent.builder()
