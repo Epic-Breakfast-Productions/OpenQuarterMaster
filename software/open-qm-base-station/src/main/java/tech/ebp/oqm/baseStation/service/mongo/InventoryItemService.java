@@ -1,11 +1,9 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -27,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -241,26 +240,29 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	}
 	
 	public long getNumStoredExpired(){
-		//TODO:: make this actually work
-		Object returned = this.getCollection().aggregate(
-			List.of(
-				Aggregates.group(null, Accumulators.sum("$numExpired", 1))
-			)
-		);
+		//TODO:: make this actually work with aggregation rather than digging through everything
+//		Object returned = this.getCollection().aggregate(
+//			List.of(
+//				Aggregates.group(null, Accumulators.sum("$numExpired", 1))
+//			)
+//		);
 		
-		return 100L;
+		List<InventoryItem> itemsWithExpired = this.list(Filters.gt("numExpired", 0), null, null);
+		AtomicLong sum = new AtomicLong();
+		
+		itemsWithExpired.forEach((InventoryItem i) -> {sum.addAndGet(i.getNumExpired());});
+		
+		return sum.get();
 	}
 	
 	public long getNumStoredExpiryWarn(){
-		// TODO:: make this actually work
-		Object returned = this.getCollection().aggregate(
-			List.of(
-				Aggregates.group("", Accumulators.sum("$numExpired", 1)),
-				Aggregates.project(new BasicDBObject("sum", 0L))
-			)
-		);
+		// TODO:: make this actually work with aggregation rather than digging through everything
+		List<InventoryItem> itemsWithExpired = this.list(Filters.gt("numExpiryWarn", 0), null, null);
+		AtomicLong sum = new AtomicLong();
 		
-		return 0L;
+		itemsWithExpired.forEach((InventoryItem i) -> {sum.addAndGet(i.getNumExpired());});
+		
+		return sum.get();
 	}
 	
 }

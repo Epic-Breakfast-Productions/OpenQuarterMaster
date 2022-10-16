@@ -84,6 +84,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		log.info("num in collection: {}", list.size());
 		assertEquals(1, list.size(), "Unexpected number of objects in collection.");
 	}
+	
 	@Test
 	public void testAddListAmountItem(){
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
@@ -180,6 +181,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		this.defaultRemoveAllTest(this.inventoryItemService);
 	}
 	
+	//TODO:: test expiry related
 	
 	//    @Test
 	//    public void listTest(){

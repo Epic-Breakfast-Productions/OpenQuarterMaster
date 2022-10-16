@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.ui;
 
+import com.mongodb.client.model.Filters;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -75,7 +76,9 @@ public class OverviewUi extends UiProvider {
 			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())
+				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
 				.data("totalExpiryWarn", inventoryItemService.getNumStoredExpiryWarn())
+				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageBlockService", storageBlockService),
 			MediaType.TEXT_HTML_TYPE

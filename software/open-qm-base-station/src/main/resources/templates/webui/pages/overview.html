@@ -1,4 +1,6 @@
 {@tech.ebp.oqm.baseStation.service.mongo.StorageBlockService storageBlockService}
+{@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredList}
+{@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredWarnList}
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
 	{#pageStyle}
 		.buttonCell{
@@ -17,8 +19,8 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					Expiring
-					<span class="badge rounded-pill bg-danger" title="Expired">{totalExpired}</span>
-					<span class="badge rounded-pill bg-warning" title="Expiring Soon">{totalExpiryWarn}</span>
+					{#if totalExpired > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</span>{/if}
+					{#if totalExpiryWarn > 0}<span class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</span>{/if}
 				</button>
 			</li>
 		</ul>
@@ -67,7 +69,75 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
-				TODO:: list items that are expiring soon/ expired
+				<div class="row">
+					<div class="col">
+						<h3>
+							Expired:
+						</h3>
+						{#if expiredList.isEmpty()}
+							<p>
+								Nothing expired!
+							</p>
+						{#else}
+							<table class="table">
+								<thead>
+								<tr>
+									<th>
+										Image
+									</th>
+									<th>
+										Item
+									</th>
+									<th>
+										# Expired
+									</th>
+									<th>
+										Actions
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								{!TODO!}
+								</tbody>
+							</table>
+						{/if}
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col">
+						<h3>
+							Close to expiring:
+						</h3>
+						{#if expiredList.isEmpty()}
+							<p>
+								Nothing close to expiring!
+							</p>
+						{#else}
+							<table class="table">
+								<thead>
+								<tr>
+									<th>
+										Image
+									</th>
+									<th>
+										Item
+									</th>
+									<th>
+										# close to expiring
+									</th>
+									<th>
+										Actions
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								{!TODO!}
+								</tbody>
+							</table>
+						{/if}
+					</div>
+				</div>
 			</div>
 		</div>
 	{/pageContent}
