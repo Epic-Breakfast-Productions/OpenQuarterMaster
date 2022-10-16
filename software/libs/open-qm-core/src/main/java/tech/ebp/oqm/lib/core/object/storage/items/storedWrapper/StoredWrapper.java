@@ -11,6 +11,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredExcep
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -23,6 +24,14 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
+	
+	@Min(0L)
+	@Setter(AccessLevel.PROTECTED)
+	private long numExpired = 0L;
+	@Min(0L)
+	@Setter(AccessLevel.PROTECTED)
+	private long numExpiryWarned = 0L;
+	
 	
 	//TODO:: implement recalc similar to total. Deal with getting val per unit from parent.
 	//	@Setter(AccessLevel.PROTECTED)
@@ -60,8 +69,11 @@ public abstract class StoredWrapper<T, S extends Stored> {
 		return this.total;
 	}
 	
+	public abstract void recalculateExpiredRelated();
+	
 	public StoredWrapper<T, S> recalcDerived() {
 		this.recalcTotal();
+		this.recalculateExpiredRelated();
 		return this;
 	}
 	

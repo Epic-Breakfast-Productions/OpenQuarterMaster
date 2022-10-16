@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Describes a type of inventory item.
@@ -163,14 +164,30 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.valueOfStored;
 	}
 	
-	
+	@Setter(AccessLevel.PROTECTED)
 	private long numExpired = 0;
+	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarn = 0;
 	
-	public abstract InventoryItem<S, C, W> recalculateExpiryStats();
+	public InventoryItem<S, C, W> recalculateExpiryStats() {
+		AtomicLong expiredSum = new AtomicLong();
+		AtomicLong expiryWarnSum = new AtomicLong();
+		
+		this.getStorageMap().values().forEach(
+			(StoredWrapper w)->{
+				expiredSum.addAndGet(w.getNumExpired());
+				expiryWarnSum.addAndGet(w.getNumExpiryWarned());
+			}
+		);
+		
+		this.setNumExpired(expiredSum.get());
+		this.setNumExpiryWarn(expiryWarnSum.get());
+		return this;
+	}
 	
 	
 	public InventoryItem<S, C, W> recalculateDerived() {
+		this.getStorageMap().values().forEach(StoredWrapper::recalcDerived);
 		this.recalcTotal();
 		this.recalcValueOfStored();
 		this.recalculateExpiryStats();

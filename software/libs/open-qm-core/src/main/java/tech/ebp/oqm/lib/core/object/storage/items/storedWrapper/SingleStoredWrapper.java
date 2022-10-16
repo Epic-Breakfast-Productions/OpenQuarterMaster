@@ -25,4 +25,18 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 		return 1;
 	}
 	
+	@Override
+	public void recalculateExpiredRelated() {
+		long expiredResult = 0;
+		long expiryWarnResult = 0;
+		
+		if (this.getStored().getNotificationStatus().isExpired()) {
+			expiredResult = 1;
+		} else if (this.getStored().getNotificationStatus().isExpiredWarning()) {
+			expiryWarnResult = 1;
+		}
+		
+		this.setNumExpired(expiredResult);
+		this.setNumExpiryWarned(expiryWarnResult);
+	}
 }

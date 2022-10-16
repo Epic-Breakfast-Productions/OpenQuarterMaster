@@ -67,22 +67,4 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 		return this.getValueOfStored();
 	}
 	
-	@Override
-	public SimpleAmountItem recalculateExpiryStats() {
-		AtomicLong newExpiredCount = new AtomicLong();
-		AtomicLong newExpiryWarnCount = new AtomicLong();
-		
-		this.getStorageMap().values().stream().map(SingleAmountStoredWrapper::getStored).forEach((AmountStored s)->{
-			if (s.getNotificationStatus().isExpired()) {
-				newExpiredCount.getAndIncrement();
-			} else if (s.getNotificationStatus().isExpiredWarning()) {
-				newExpiryWarnCount.getAndIncrement();
-			}
-		});
-		
-		this.setNumExpired(newExpiredCount.get());
-		this.setNumExpiryWarn(newExpiryWarnCount.get());
-		
-		return this;
-	}
 }

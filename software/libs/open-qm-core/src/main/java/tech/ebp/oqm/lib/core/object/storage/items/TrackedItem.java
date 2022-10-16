@@ -94,29 +94,6 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	}
 	
 	@Override
-	public InventoryItem<TrackedStored, Map<String, TrackedStored>, TrackedMapStoredWrapper> recalculateExpiryStats() {
-		AtomicLong newExpiredCount = new AtomicLong();
-		AtomicLong newExpiryWarnCount = new AtomicLong();
-		
-		this.getStorageMap().values().stream()
-			.map(TrackedMapStoredWrapper::getStored)
-			.map(Map::values)
-			.flatMap(Collection::stream)
-			.forEach((Stored s)->{
-				if (s.getNotificationStatus().isExpired()) {
-					newExpiredCount.getAndIncrement();
-				} else if (s.getNotificationStatus().isExpiredWarning()) {
-					newExpiryWarnCount.getAndIncrement();
-				}
-			});
-		
-		this.setNumExpired(newExpiredCount.get());
-		this.setNumExpiryWarn(newExpiryWarnCount.get());
-		
-		return this;
-	}
-	
-	@Override
 	protected TrackedMapStoredWrapper newTInstance() {
 		return new TrackedMapStoredWrapper();
 	}

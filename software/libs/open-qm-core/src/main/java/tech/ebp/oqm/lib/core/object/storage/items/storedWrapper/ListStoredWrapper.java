@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -57,6 +59,24 @@ public abstract class ListStoredWrapper<S extends Stored>
 			throw new NotEnoughStoredException("Stored to remove was not held.");
 		}
 		return stored;
+	}
+	
+	@Override
+	public void recalculateExpiredRelated() {
+		AtomicLong newExpiredCount = new AtomicLong();
+		AtomicLong newExpiryWarnCount = new AtomicLong();
+		
+		this.getStored()
+			.forEach((Stored s)->{
+				if (s.getNotificationStatus().isExpired()) {
+					newExpiredCount.getAndIncrement();
+				} else if (s.getNotificationStatus().isExpiredWarning()) {
+					newExpiryWarnCount.getAndIncrement();
+				}
+			});
+		
+		this.setNumExpired(newExpiredCount.get());
+		this.setNumExpiryWarned(newExpiryWarnCount.get());
 	}
 	
 	// <editor-fold desc="List pass-through methods">

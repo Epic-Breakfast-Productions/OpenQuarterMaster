@@ -80,26 +80,4 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 		
 		return this.getValueOfStored();
 	}
-	
-	@Override
-	public InventoryItem<AmountStored, List<AmountStored>, ListAmountStoredWrapper> recalculateExpiryStats() {
-		AtomicLong newExpiredCount = new AtomicLong();
-		AtomicLong newExpiryWarnCount = new AtomicLong();
-		
-		this.getStorageMap().values().stream()
-			.map(ListAmountStoredWrapper::getStored)
-			.flatMap(List::stream)
-			.forEach((AmountStored s)->{
-				if (s.getNotificationStatus().isExpired()) {
-					newExpiredCount.getAndIncrement();
-				} else if (s.getNotificationStatus().isExpiredWarning()) {
-					newExpiryWarnCount.getAndIncrement();
-				}
-			});
-		
-		this.setNumExpired(newExpiredCount.get());
-		this.setNumExpiryWarn(newExpiryWarnCount.get());
-		
-		return this;
-	}
 }
