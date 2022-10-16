@@ -67,3 +67,8 @@
 	border-radius: 2px;
 	/*border: 1px solid black;*/
 }
+
+.badge {
+	padding-left: 8.4px;
+	padding-right: 8.4px;
+}

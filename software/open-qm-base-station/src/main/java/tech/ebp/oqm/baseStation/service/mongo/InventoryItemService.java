@@ -1,8 +1,11 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -236,4 +239,28 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	public List<InventoryItem> getItemsInBlock(String storageBlockId) {
 		return this.getItemsInBlock(new ObjectId(storageBlockId));
 	}
+	
+	public long getNumStoredExpired(){
+		//TODO:: make this actually work
+		Object returned = this.getCollection().aggregate(
+			List.of(
+				Aggregates.group(null, Accumulators.sum("$numExpired", 1))
+			)
+		);
+		
+		return 100L;
+	}
+	
+	public long getNumStoredExpiryWarn(){
+		// TODO:: make this actually work
+		Object returned = this.getCollection().aggregate(
+			List.of(
+				Aggregates.group("", Accumulators.sum("$numExpired", 1)),
+				Aggregates.project(new BasicDBObject("sum", 0L))
+			)
+		);
+		
+		return 0L;
+	}
+	
 }

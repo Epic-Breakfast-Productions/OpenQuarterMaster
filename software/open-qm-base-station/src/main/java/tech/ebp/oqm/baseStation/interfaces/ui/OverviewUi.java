@@ -71,10 +71,11 @@ public class OverviewUi extends UiProvider {
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		
-		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
+				.data("totalExpired", inventoryItemService.getNumStoredExpired())
+				.data("totalExpiryWarn", inventoryItemService.getNumStoredExpiryWarn())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageBlockService", storageBlockService),
 			MediaType.TEXT_HTML_TYPE

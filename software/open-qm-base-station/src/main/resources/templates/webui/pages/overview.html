@@ -17,12 +17,12 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					Expiring
-					<span class="badge rounded-pill bg-danger" title="Expired">0</span>
-					<span class="badge rounded-pill bg-warning text-dark" title="Expiring Soon">0</span>
+					<span class="badge rounded-pill bg-danger" title="Expired">{totalExpired}</span>
+					<span class="badge rounded-pill bg-warning" title="Expiring Soon">{totalExpiryWarn}</span>
 				</button>
 			</li>
 		</ul>
-		<div class="tab-content" id="myTabContent">
+		<div class="tab-content">
 			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
 				<p>
 					{numItems} types of items stored in over {numStorageBlocks} storage blocks
