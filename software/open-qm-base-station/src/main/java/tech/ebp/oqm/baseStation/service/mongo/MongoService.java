@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
+import org.bson.BsonNull;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -519,4 +521,52 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		//TODO:: client session
 		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 	}
+	
+	/**
+	 * Gets the sum of an integer(or long) field in the object stored.
+	 * @param field The field to sum
+	 * @return The sum of all values at the field
+	 */
+	protected long getSumOfIntField(String field){
+		Document returned = this.getCollection().aggregate(
+			List.of(
+				new Document(
+					"$group",
+					new Document("_id", new BsonNull())
+						.append("value", new Document("$sum", "$"+field))
+				)),
+			Document.class
+		).first();
+		
+		return returned.get("value", Number.class).longValue();
+	}
+	
+	protected double getSumOfFloatField(String field){
+		Document returned = this.getCollection().aggregate(
+			List.of(
+				new Document(
+					"$group",
+					new Document("_id", new BsonNull())
+						.append("value", new Document("$sum", "$"+field))
+				)),
+			Document.class
+		).first();
+		
+		return returned.get("value", Number.class).doubleValue();
+	}
+	
+	//TODO
+//	protected BigInteger getSumOfBigIntField(String field){
+//		Document returned = this.getCollection().aggregate(
+//			List.of(
+//				new Document(
+//					"$group",
+//					new Document("_id", new BsonNull())
+//						.append("value", new Document("$sum", "$"+field))
+//				)),
+//			Document.class
+//		).first();
+//
+//		return returned.get("value", Number.class).doubleValue();
+//	}
 }

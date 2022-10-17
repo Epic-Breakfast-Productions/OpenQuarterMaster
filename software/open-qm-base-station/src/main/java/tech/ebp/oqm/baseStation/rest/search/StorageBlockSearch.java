@@ -5,7 +5,6 @@ import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
 import javax.measure.Quantity;
@@ -28,9 +27,8 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	//capacities
 	@QueryParam("capacity") List<Integer> capacities;
 	@QueryParam("unit") List<String> units;
-	@QueryParam("stores") List<ObjectId> stores;
-	@QueryParam("storedType")
-	StoredType storedType;
+//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
+	@QueryParam("parent") ObjectId parent; //TODO
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering

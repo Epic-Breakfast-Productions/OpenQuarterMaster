@@ -3,7 +3,6 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -19,7 +18,6 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
@@ -60,7 +58,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
-	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(InventoryItem<T, C, W> item, ObjectId storageBlockId, T toAdd) {
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		InventoryItem<T, C, W> item,
+		ObjectId storageBlockId,
+		T toAdd
+	) {
 		this.get(item.getId());//ensure exists
 		try {
 			item.add(storageBlockId, toAdd, true);
@@ -85,7 +87,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return item;
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		ObjectId itemId,
+		ObjectId storageBlockId,
+		T toAdd
+	) {
 		return this.add(this.get(itemId), storageBlockId, toAdd);
 	}
 	
@@ -93,7 +99,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(InventoryItem<T, C, W> item, ObjectId storageBlockId, T toSubtract) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		InventoryItem<T, C, W> item,
+		ObjectId storageBlockId,
+		T toSubtract
+	) {
 		this.get(item.getId());//ensure exists
 		try {
 			item.subtract(storageBlockId, toSubtract);
@@ -117,11 +127,19 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return item;
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(ObjectId itemId, ObjectId storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		ObjectId itemId,
+		ObjectId storageBlockId,
+		T toAdd
+	) {
 		return this.subtract(this.get(itemId), storageBlockId, toAdd);
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(String itemId, String storageBlockId, T toAdd) {
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String itemId,
+		String storageBlockId,
+		T toAdd
+	) {
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
 	}
 	
@@ -185,7 +203,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	
 	public List<InventoryItem> getItemsInBlock(ObjectId storageBlockId) {
 		return this.list(
-			exists("storageMap."+storageBlockId.toHexString()),
+			exists("storageMap." + storageBlockId.toHexString()),
 			null,
 			null
 		);
@@ -195,30 +213,12 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return this.getItemsInBlock(new ObjectId(storageBlockId));
 	}
 	
-	public long getNumStoredExpired(){
-		//TODO:: make this actually work with aggregation rather than digging through everything
-//		Object returned = this.getCollection().aggregate(
-//			List.of(
-//				Aggregates.group(null, Accumulators.sum("$numExpired", 1))
-//			)
-//		);
-		
-		List<InventoryItem> itemsWithExpired = this.list(Filters.gt("numExpired", 0), null, null);
-		AtomicLong sum = new AtomicLong();
-		
-		itemsWithExpired.forEach((InventoryItem i) -> {sum.addAndGet(i.getNumExpired());});
-		
-		return sum.get();
+	public long getNumStoredExpired() {
+		return this.getSumOfIntField("numExpired");
 	}
 	
-	public long getNumStoredExpiryWarn(){
-		// TODO:: make this actually work with aggregation rather than digging through everything
-		List<InventoryItem> itemsWithExpired = this.list(Filters.gt("numExpiryWarn", 0), null, null);
-		AtomicLong sum = new AtomicLong();
-		
-		itemsWithExpired.forEach((InventoryItem i) -> {sum.addAndGet(i.getNumExpired());});
-		
-		return sum.get();
+	public long getNumStoredExpiryWarn() {
+		return this.getSumOfIntField("numExpiryWarn");
 	}
 	
 }

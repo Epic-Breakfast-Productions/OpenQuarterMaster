@@ -379,4 +379,48 @@ class MongoServiceTest extends RunningServerTest {
 	}
 	// </editor-fold>
 	
+	@Test
+	public void testSumIntFieldIntegerSmall() {
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
+		
+		assertEquals(15L, this.testMongoService.getSumOfIntField("intValue"));
+	}
+	@Test
+	public void testSumIntFieldIntegerLarge() {
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		
+		assertEquals(
+			(long)Integer.MAX_VALUE * 3L,
+			this.testMongoService.getSumOfIntField("intValue")
+		);
+	}
+	
+	@Test
+	public void testSumIntFieldLong() {
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		
+		assertEquals(
+			(long)Integer.MAX_VALUE * 3L,
+			this.testMongoService.getSumOfIntField("longValue")
+		);
+	}
+	
+	@Test
+	public void testSumFloatField() {
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		
+		assertEquals(
+			16.5,
+			this.testMongoService.getSumOfFloatField("floatValue")
+		);
+	}
+	
 }
