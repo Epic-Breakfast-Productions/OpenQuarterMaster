@@ -1,0 +1,15 @@
+{
+	"packageName": "open+quarter+master-infra-otel",
+	"version": "1.0.4",
+	"description": "OpenTelemetry Collector instance for Open QuarterMaster.",
+	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel",
+	"configs": [
+	],
+	"dependencies": {
+		"deb": ", open+quarter+master-infra-jaeger"
+	},
+	"configFiles":{
+		"/etc/oqm/infra/otel/otel-collector-config.yaml":
+			"# Configuration for OpenTelemetry Collector within the OQM system.\nreceivers:\n  otlp:\n    protocols:\n      grpc:\n        endpoint: otel-collector:4317 # What does this do?\n\nexporters:\n  jaeger:\n    endpoint: jaeger-all-in-one:14250\n    tls:\n      insecure: true\n\nprocessors:\n  batch:\n\nextensions:\n  health_check:\n\nservice:\n  extensions: [health_check]\n  pipelines:\n    traces:\n      receivers: [otlp]\n      processors: [batch]\n      exporters: [jaeger]"
+	}
+}
