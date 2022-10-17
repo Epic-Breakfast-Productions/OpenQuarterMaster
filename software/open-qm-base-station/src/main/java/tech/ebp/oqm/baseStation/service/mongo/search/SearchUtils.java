@@ -30,9 +30,17 @@ public class SearchUtils {
 		);
 	}
 	
-	public static void addBasicSearchFilter(List<Bson> filters, String field, String value) {
+	public static Bson getBasicSearchFilter(String field, String value) {
 		if (value != null && !value.isBlank()) {
-			filters.add(regex(field, SearchUtils.getSearchTermPattern(value.strip())));
+			return regex(field, SearchUtils.getSearchTermPattern(value.strip()));
+		}
+		return null;
+	}
+	
+	public static void addBasicSearchFilter(List<Bson> filters, String field, String value) {
+		Bson filter = getBasicSearchFilter(field, value);
+		if(filter != null){
+			filters.add(filter);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import com.mongodb.client.model.Filters;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
@@ -20,15 +21,15 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	}
 	
 	//for actual queries
-	@QueryParam("label") String label;
+	@QueryParam("label") String labelOrNickname;
 	@QueryParam("location") String location;
 	@QueryParam("parentLabel")
 	List<String> parents;
 	//capacities
-	@QueryParam("capacity") List<Integer> capacities;
-	@QueryParam("unit") List<String> units;
+	@QueryParam("capacity") List<Integer> capacities;//TODO
+	@QueryParam("unit") List<String> units;//TODO
 //	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
-	@QueryParam("parent") ObjectId parent; //TODO
+	@QueryParam("parent") ObjectId parent; //TODO:
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering
@@ -41,7 +42,14 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		SearchUtils.addBasicSearchFilter(filters, "label", this.getLabel());
+		if (this.getLabelOrNickname() != null && !this.getLabelOrNickname().isBlank()) {
+			filters.add(
+				Filters.or(
+					SearchUtils.getBasicSearchFilter("label", this.getLabelOrNickname()),
+					SearchUtils.getBasicSearchFilter("nickname", this.getLabelOrNickname())
+				)
+			);
+		}
 		SearchUtils.addBasicSearchFilter(filters, "location", this.getLocation());
 		
 		if (parents != null) {
