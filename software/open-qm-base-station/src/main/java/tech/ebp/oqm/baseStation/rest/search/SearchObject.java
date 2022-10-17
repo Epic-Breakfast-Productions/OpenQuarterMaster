@@ -20,18 +20,21 @@ public abstract class SearchObject<T extends MainObject> {
 	@QueryParam("pageNum") Integer pageNum;
 	//sorting
 	@QueryParam("sortBy") String sortField;
-	@QueryParam("sortType")
-	SortType sortType;
+	@QueryParam("sortType") SortType sortType;
 	
 	public Bson getSortBson(){
 		return SearchUtils.getSortBson(this.sortField, this.sortType);
 	}
 	
 	public PagingOptions getPagingOptions(boolean defaultPageSizeIfNotSet){
-		return PagingOptions.fromQueryParams(this.pageSize, this.pageNum, defaultPageSizeIfNotSet);
+		return PagingOptions.from(this, defaultPageSizeIfNotSet);
 	}
 	
 	public List<Bson> getSearchFilters(){
 		return new ArrayList<>();
+	}
+	
+	public int getDefaultPageSize(){
+		return PagingOptions.DEFAULT_PAGE_SIZE;
 	}
 }

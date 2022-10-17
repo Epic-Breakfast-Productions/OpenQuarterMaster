@@ -90,8 +90,7 @@ class PagingCalculationsTest {
 	@Test
 	public void testSearchConstructor() {
 		PagingCalculations calculations = new PagingCalculations(
-			new PagingOptions(1, 2),
-			new SearchResult<Void>(Collections.emptyList(), 3, false)
+			new SearchResult<Void>(Collections.emptyList(), 3, false, new PagingOptions(1, 2))
 		);
 		
 		assertEquals(3, calculations.getNumPages());

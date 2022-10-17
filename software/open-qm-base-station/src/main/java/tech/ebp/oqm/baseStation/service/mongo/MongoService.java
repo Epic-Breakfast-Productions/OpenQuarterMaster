@@ -232,17 +232,19 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		
 		List<Bson> filters = searchObject.getSearchFilters();
 		Bson filter = (filters.isEmpty() ? null : and(filters));
+		PagingOptions pagingOptions = searchObject.getPagingOptions(defaultPageSizeIfNotSet);
 		
 		List<T> list = this.list(
 			filter,
 			searchObject.getSortBson(),
-			searchObject.getPagingOptions(defaultPageSizeIfNotSet)
+			pagingOptions
 		);
 		
 		return new SearchResult<>(
 			list,
 			this.count(filter),
-			!filters.isEmpty()
+			!filters.isEmpty(),
+			pagingOptions
 		);
 	}
 	

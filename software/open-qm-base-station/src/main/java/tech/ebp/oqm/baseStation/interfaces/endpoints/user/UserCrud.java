@@ -188,7 +188,8 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				   })
 				   .collect(Collectors.toList()),
 			originalResult.getNumResultsForEntireQuery(),
-			originalResult.isHadSearchQuery()
+			originalResult.isHadSearchQuery(),
+			originalResult.getPagingOptions()
 		);
 		
 		return this.getSearchResultResponseBuilder(output).build();

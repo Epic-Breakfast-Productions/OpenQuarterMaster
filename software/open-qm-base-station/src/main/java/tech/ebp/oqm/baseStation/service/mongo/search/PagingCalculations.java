@@ -47,8 +47,8 @@ public class PagingCalculations {
 		);
 	}
 	
-	public PagingCalculations(PagingOptions options, SearchResult<?> searchResult) {
-		this(options, searchResult.getNumResultsForEntireQuery());
+	public PagingCalculations(SearchResult<?> searchResult) {
+		this(searchResult.getPagingOptions(), searchResult.getNumResultsForEntireQuery());
 	}
 	
 	public boolean onPage(long curPage) {

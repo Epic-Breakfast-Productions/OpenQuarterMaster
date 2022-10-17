@@ -90,7 +90,7 @@ public class UserAdminUi extends UiProvider {
 		SearchResult<User> userResults = userService.search(search, true);
 		
 		search.getPagingOptions(true);
-		PagingCalculations pagingCalculations = new PagingCalculations(search.getPagingOptions(true), userResults);
+		PagingCalculations pagingCalculations = new PagingCalculations(userResults);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(userAdminTemplate, tracer, ugr)

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo.search;
 
 import lombok.Data;
+import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 
 /**
  * Object to describe paging options.
@@ -8,9 +9,13 @@ import lombok.Data;
 @Data
 public class PagingOptions {
 	
-	public static final int DEFAULT_PAGE_SIZE = 36;
+	public static final int DEFAULT_PAGE_SIZE = 25;
 	public static final int DEFAULT_PAGE_NUM = 1;
 	
+	
+	public static PagingOptions from(SearchObject<?> searchObject, boolean defaultPageSizeIfNotSet){
+		return from(searchObject.getPageSize(), searchObject.getPageNum(), defaultPageSizeIfNotSet, searchObject.getDefaultPageSize());
+	}
 	
 	/**
 	 * Gets paging options from those provided in query parameters.
@@ -20,10 +25,10 @@ public class PagingOptions {
 	 *
 	 * @return A paging options object. Can be null
 	 */
-	public static PagingOptions fromQueryParams(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet) {
+	public static PagingOptions from(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet, int defaultPageSize) {
 		if (defaultPageSizeIfNotSet) {
 			if (pageSize == null) {
-				pageSize = DEFAULT_PAGE_SIZE;
+				pageSize = defaultPageSize;
 			}
 		} else {
 			if (pageSize == null && pageNum == null) {
@@ -37,6 +42,10 @@ public class PagingOptions {
 			pageNum = 1;
 		}
 		return new PagingOptions(pageSize, pageNum);
+	}
+	
+	public static PagingOptions from(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet) {
+		return from(pageSize, pageNum, defaultPageSizeIfNotSet, DEFAULT_PAGE_SIZE);
 	}
 	
 	/** The size of the pages */

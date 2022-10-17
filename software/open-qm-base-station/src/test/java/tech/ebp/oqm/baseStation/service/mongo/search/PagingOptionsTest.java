@@ -38,7 +38,7 @@ class PagingOptionsTest {
 		Class<Throwable> expectedE
 	) {
 		if (expectedE == null) {
-			PagingOptions ops = PagingOptions.fromQueryParams(pageSize, pageNum, defaultsIfNotSet);
+			PagingOptions ops = PagingOptions.from(pageSize, pageNum, defaultsIfNotSet);
 			
 			assertEquals(expectedPageSize, ops.getPageSize());
 			assertEquals(expectedPageNum, ops.getPageNum());
@@ -47,7 +47,7 @@ class PagingOptionsTest {
 			assertThrows(
 				expectedE,
 				()->{
-					PagingOptions.fromQueryParams(pageSize, pageNum, defaultsIfNotSet);
+					PagingOptions.from(pageSize, pageNum, defaultsIfNotSet);
 				}
 			);
 		}

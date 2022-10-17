@@ -78,9 +78,7 @@ public class StorageUi extends UiProvider {
 		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults,
-								   storageBlockSearch.getPagingOptions(true)
-				)
+			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService),

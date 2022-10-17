@@ -81,8 +81,7 @@ public class ImagesUi extends UiProvider {
 				images,
 				tracer,
 				UserGetResponse.builder(user).build(),
-				searchResults,
-				imageSearch.getPagingOptions(true)
+				searchResults
 			),
 			MediaType.TEXT_HTML_TYPE
 		);

@@ -10,7 +10,6 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
@@ -93,13 +92,12 @@ public abstract class UiProvider {
 		Template template,
 		Tracer tracer,
 		UserGetResponse userInfo,
-		SearchResult<?> searchResults,
-		PagingOptions pageOptions
+		SearchResult<?> searchResults
 	) {
 		return this.setupPageTemplate(template, tracer, userInfo)
 				   .data("showSearch", searchResults.isHadSearchQuery())
 				   .data("searchResult", searchResults)
-				   .data("pagingCalculations", new PagingCalculations(pageOptions, searchResults));
+				   .data("pagingCalculations", new PagingCalculations(searchResults));
 	}
 	
 }

@@ -176,7 +176,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 										   itemSearch.getOtherModalIdHeaderVal()
 								   )
 							   )
-							   .data("pagingCalculations", new PagingCalculations(itemSearch.getPagingOptions(false), output))
+							   .data("pagingCalculations", new PagingCalculations(output))
 							   .data("storageService", this.getObjectService())
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);

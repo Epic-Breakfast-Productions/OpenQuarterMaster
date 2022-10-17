@@ -5,32 +5,24 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
-import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
-import static com.mongodb.client.model.Filters.regex;
 
 /**
  * TODO::
@@ -67,42 +59,6 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
-	
-	@Deprecated
-	public SearchResult<InventoryItem> search(
-		String name,
-		List<String> keywords,
-		StoredType storedType,
-		Bson sort,
-		PagingOptions pagingOptions
-	) {
-		log.info(
-			"Searching for items with: name=\"{}\", keywords={}, storedType=\"{}\"",
-			name,
-			keywords,
-			storedType
-		);
-		List<Bson> filters = new ArrayList<>();
-		if (name != null && !name.isBlank()) {
-			filters.add(regex("name", SearchUtils.getSearchTermPattern(name)));
-		}
-		//TODO:: keywords, storedType
-		
-		Bson filter = (filters.isEmpty() ? null : and(filters));
-		
-		List<InventoryItem> list = this.list(
-			filter,
-			sort,
-			pagingOptions
-		);
-		
-		return new SearchResult<>(
-			list,
-			this.count(filter),
-			!filters.isEmpty()
-		);
-	}
-	
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(InventoryItem<T, C, W> item, ObjectId storageBlockId, T toAdd) {
 		this.get(item.getId());//ensure exists

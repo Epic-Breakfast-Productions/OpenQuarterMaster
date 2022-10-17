@@ -207,7 +207,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 										   searchObject.getOtherModalIdHeaderVal()
 								   )
 							   )
-							   .data("pagingCalculations", new PagingCalculations(searchObject.getPagingOptions(false), output))
+							   .data("pagingCalculations", new PagingCalculations(output))
 						   //                                        .data("storageService", this.storageBlockService)
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
