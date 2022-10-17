@@ -4,31 +4,30 @@ Template for the search form for storage blocks
 Ingests:
 - id - the id to give the form
 !}
-
-{#include tags/search/searchForm id=id action='/storage' showKeywords=true showAttributes=true}
+{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch searchObject}
+{#include tags/search/searchForm id=id action='/storage' showKeywords=true showAttributes=true pagingOptions=searchObject.getPagingOptions(true)}
 {#inputs}
 <div class="mb-3 col col-3">
-    <label for="{id}-blockLabelInput" class="form-label">Label</label>
-    <input type="text" class="form-control" name="label" id="{id}-blockLabelInput"
-           aria-describedby="{id}-blockLabelInputHelp">
-    <div id="{id}-blockLabelInputHelp" class="form-text">The name of the storage block to find.</div>
+	<label for="{id}-blockLabelInput" class="form-label">Label</label>
+	<input type="text" class="form-control" name="label" id="{id}-blockLabelInput" aria-describedby="{id}-blockLabelInputHelp">
+	<div id="{id}-blockLabelInputHelp" class="form-text">The name of the storage block to find.</div>
 </div>
 <div class="mb-3 col col-3">
-    <label for="{id}-blockLocationInput" class="form-label">Location</label>
-    <input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
-           aria-describedby="{id}-blockLocationInputHelp">
-    <div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
+	<label for="{id}-blockLocationInput" class="form-label">Location</label>
+	<input type="text" class="form-control" name="location" id="{id}-blockLocationInput"
+		   aria-describedby="{id}-blockLocationInputHelp">
+	<div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
 </div>
 <div class="mb-3 col col-3">
-    <label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
-    <input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput"
-           aria-describedby="{id}-blockParentNameInputHelp">
-    <div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.
-    </div>
+	<label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
+	<input type="text" class="form-control" name="parentName" id="{id}-blockParentNameInput"
+		   aria-describedby="{id}-blockParentNameInputHelp">
+	<div id="{id}-blockParentNameInputHelp" class="form-text">The name of the parent storage block to find.
+	</div>
 </div>
 <div class="mb-3 col col-3">
-    {#inputs/capacityInput}
-    {/inputs/capacityInput}
+	{#inputs/capacityInput}
+	{/inputs/capacityInput}
 </div>
 {/inputs}
 {/include}

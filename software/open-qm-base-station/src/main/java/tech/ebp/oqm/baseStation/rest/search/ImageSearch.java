@@ -19,4 +19,9 @@ public class ImageSearch extends SearchKeyAttObject<Image> {
 	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
 	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
 	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
+	
+	@Override
+	public int getDefaultPageSize() {
+		return 36;
+	}
 }

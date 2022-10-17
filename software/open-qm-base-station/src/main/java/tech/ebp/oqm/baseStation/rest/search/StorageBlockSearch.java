@@ -16,6 +16,10 @@ import java.util.List;
 @ToString(callSuper = true)
 @Getter
 public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
+	public static StorageBlockSearch newInstance(){
+		return new StorageBlockSearch();
+	}
+	
 	//for actual queries
 	@QueryParam("label") String label;
 	@QueryParam("location") String location;

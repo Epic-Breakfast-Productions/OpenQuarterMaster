@@ -78,11 +78,12 @@ public class ImagesUi extends UiProvider {
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
-				images,
-				tracer,
-				UserGetResponse.builder(user).build(),
-				searchResults
-			),
+					images,
+					tracer,
+					UserGetResponse.builder(user).build(),
+					searchResults
+				)
+				.data("searchObject", imageSearch),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

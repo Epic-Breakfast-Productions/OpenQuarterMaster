@@ -7,7 +7,8 @@ Ingests:
   - showKeywords - if to show keyword search inputs
   - showAttributes - if to show attribute search inputs
 !}
-
+{@tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions pagingOptions}
+{@tech.ebp.oqm.baseStation.rest.search.SearchObject searchObject}
 <form id="{id}" action="{action}" method="get" class="pagingSearchForm">
     <div class="row">
         {#insert inputs}<!-- No additional inputs -->{/}
@@ -31,10 +32,10 @@ Ingests:
             <button type="reset" class="btn btn-warning mb-1">Reset</button>
         </div>
         <div class="col col-2">
-            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="1">
+            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="{#if pagingOptions??}{pagingOptions.getPageNum()}{#else}1{/if}">
             <div class="input-group" title="Number of results per page">
                 <label for="{id}-pageSizeInput" class="input-group-text"><i class="fas fa-hashtag"></i></label>
-                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="36" value="36" min="1">
+                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="{searchObject.getDefaultPageSize()}" value="{#if pagingOptions??}{pagingOptions.getPageSize()}{/if}" min="1">
             </div>
         </div>
     </div>

@@ -83,7 +83,8 @@ public class ItemsUi extends UiProvider {
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
-				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP),
+				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
+				.data("searchObject", itemSearch),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

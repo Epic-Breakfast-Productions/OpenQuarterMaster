@@ -81,7 +81,8 @@ public class StorageUi extends UiProvider {
 			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
-				.data("storageService", storageBlockService),
+				.data("storageService", storageBlockService)
+				.data("searchObject", storageBlockSearch),
 			MediaType.TEXT_HTML_TYPE
 		);
 		
