@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -97,7 +97,7 @@ class DataImportServiceTest extends RunningServerTest {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
 					.setAmount(rand.nextInt(), UnitUtils.UNIT)
 					.setCondition(rand.nextInt(100))
-					.setExpires(LocalDate.now().plusDays(rand.nextInt(5)))
+					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
 			}
 			item.getAttributes().put("key", "val");
@@ -113,7 +113,7 @@ class DataImportServiceTest extends RunningServerTest {
 					(AmountStored) new AmountStored()
 									   .setAmount(rand.nextInt(), UnitUtils.UNIT)
 									   .setCondition(rand.nextInt(100))
-									   .setExpires(LocalDate.now().plusDays(rand.nextInt(5)))
+									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())
 				);
 			}
@@ -132,7 +132,7 @@ class DataImportServiceTest extends RunningServerTest {
 					(TrackedStored) new TrackedStored()
 									   .setIdentifier(FAKER.idNumber().valid())
 									   .setCondition(rand.nextInt(100))
-									   .setExpires(LocalDate.now().plusDays(rand.nextInt(5)))
+									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())
 				);
 			}

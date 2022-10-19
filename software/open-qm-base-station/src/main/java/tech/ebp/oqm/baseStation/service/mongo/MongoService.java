@@ -538,6 +538,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 			Document.class
 		).first();
 		
+		if(returned == null){
+			return 0;
+		}
+		
 		return returned.get("value", Number.class).longValue();
 	}
 	
@@ -551,6 +555,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 				)),
 			Document.class
 		).first();
+		
+		if(returned == null){
+			return 0.0;
+		}
 		
 		return returned.get("value", Number.class).doubleValue();
 	}

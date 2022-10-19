@@ -380,6 +380,11 @@ class MongoServiceTest extends RunningServerTest {
 	// </editor-fold>
 	
 	@Test
+	public void testSumIntFieldIntegerEmpty() {
+		assertEquals(0L, this.testMongoService.getSumOfIntField("intValue"));
+	}
+	
+	@Test
 	public void testSumIntFieldIntegerSmall() {
 		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
 		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
@@ -408,6 +413,14 @@ class MongoServiceTest extends RunningServerTest {
 		assertEquals(
 			(long)Integer.MAX_VALUE * 3L,
 			this.testMongoService.getSumOfIntField("longValue")
+		);
+	}
+	
+	@Test
+	public void testSumFloatFieldEmpty() {
+		assertEquals(
+			0.0,
+			this.testMongoService.getSumOfFloatField("floatValue")
 		);
 	}
 	

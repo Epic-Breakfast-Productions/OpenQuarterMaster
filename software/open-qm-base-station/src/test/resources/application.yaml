@@ -24,7 +24,7 @@ quarkus:
 test:
   profile: test
   selenium:
-    defaultWait: 5 # seconds
+    defaultWait: 10 # seconds
   keycloak:
     url: " "
     authUrl: " "
