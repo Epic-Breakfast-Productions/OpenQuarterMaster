@@ -6,23 +6,29 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -35,6 +41,12 @@ public abstract class MapStoredWrapper<S extends Stored>
 	//	public MapStoredWrapper() {
 	//		super(new HashMap<>());
 	//	}
+	
+	
+	@Override
+	public Stream<S> getStoredStream() {
+		return this.values().stream();
+	}
 	
 	@Override
 	public long getNumStored() {
@@ -74,6 +86,25 @@ public abstract class MapStoredWrapper<S extends Stored>
 		
 		this.setNumExpired(newExpiredCount.get());
 		this.setNumExpiryWarned(newExpiryWarnCount.get());
+	}
+	
+	@Override
+	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
+		List<ItemExpiryEvent> events = new ArrayList<>();
+		for (Map.Entry<String, S> curStored : this.entrySet()) {
+			Optional<ItemExpiryEvent.Builder<?, ?>> result = this.updateExpiredStateForStored(
+				curStored.getValue(),
+				blockKey,
+				expiredWarningThreshold
+			);
+			
+			if (result.isPresent()) {
+				events.add(
+					result.get().identifier(curStored.getKey()).build()
+				);
+			}
+		}
+		return events;
 	}
 	
 	// <editor-fold desc="Map pass-through methods">

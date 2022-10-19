@@ -73,18 +73,18 @@ class QuantitySumHelperTest extends BasicTest {
 		);
 	}
 	
-	@Disabled()// TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
-	@Test
-	public void playground() {
-		Unit<AmountOfSubstance> unit = Units.MOLE;
-		
-		Quantity<?> result = Quantities.getQuantity(0.0, unit).add(Quantities.getQuantity(1.1, Units.MOLE));
-		
-		assertEquals(
-			Quantities.getQuantity(1.1, unit),
-			result
-		);
-	}
+	//	@Disabled()// TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
+	//	@Test
+	//	public void playground() {
+	//		Unit<AmountOfSubstance> unit = Units.MOLE;
+	//
+	//		Quantity<?> result = Quantities.getQuantity(0.0, unit).add(Quantities.getQuantity(1.1, Units.MOLE));
+	//
+	//		assertEquals(
+	//			Quantities.getQuantity(1.1, unit),
+	//			result
+	//		);
+	//	}
 	
 	@Test
 	public void playground2() {

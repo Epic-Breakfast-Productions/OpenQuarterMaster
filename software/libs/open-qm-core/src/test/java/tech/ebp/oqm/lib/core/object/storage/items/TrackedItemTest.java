@@ -115,6 +115,15 @@ class TrackedItemTest extends BasicTest {
 		);
 	}
 	
+	public static Stream<Arguments> getExpiryArguments() {
+		ObjectId id = ObjectId.get();
+		return Stream.of(
+			//TODO
+			Arguments.of(
+			)
+		);
+	}
+	
 	@ParameterizedTest
 	@MethodSource("getTotalArguments")
 	public void testTotalTest(TrackedItem item, Quantity<?> quantityExpected) {

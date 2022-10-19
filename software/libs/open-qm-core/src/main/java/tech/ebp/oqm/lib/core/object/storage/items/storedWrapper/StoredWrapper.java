@@ -1,20 +1,35 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
+import javax.swing.text.html.Option;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
+ * TODO:: abstract method to stream all stored
+ *
  * @param <T> The storage type wrapped.
  * @param <S> The type held in the storage
  */
@@ -55,6 +70,9 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract long getNumStored();
 	
+	@JsonIgnore
+	public abstract Stream<S> getStoredStream();
+	
 	/**
 	 * Method to recalculate and return the total amount held in this wrapper.
 	 *
@@ -68,6 +86,44 @@ public abstract class StoredWrapper<T, S extends Stored> {
 		}
 		return this.total;
 	}
+	
+	protected Optional<ItemExpiryEvent.Builder<?, ?>> updateExpiredStateForStored(
+		Stored stored,
+		ObjectId blockKey,
+		Duration expiredWarningThreshold
+	) {
+		if (stored.getExpires() == null) {
+			return Optional.empty();
+		}
+		
+		stored.getNotificationStatus().setExpired(false);
+		stored.getNotificationStatus().setExpiredWarning(false);
+		
+		if (
+			!stored.getNotificationStatus().isExpired() &&
+			LocalDateTime.now().isAfter(stored.getExpires())
+		) {
+			stored.getNotificationStatus().setExpired(true);
+			return Optional.of(
+				ItemExpiredEvent.builder().storageBlockId(blockKey)
+			);
+		} else if (
+				   !stored.getNotificationStatus().isExpiredWarning() &&
+				   !stored.getNotificationStatus().isExpired() &&
+				   !Duration.ZERO.equals(expiredWarningThreshold) &&
+				   LocalDateTime.now().isAfter(stored.getExpires().minus(expiredWarningThreshold))
+		) {
+			stored.getNotificationStatus().setExpiredWarning(true);
+			return Optional.of(
+				ItemExpiryWarningEvent.builder().storageBlockId(blockKey)
+			);
+		}
+		
+		return Optional.empty();
+	}
+	
+	
+	public abstract List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold);
 	
 	public abstract void recalculateExpiredRelated();
 	

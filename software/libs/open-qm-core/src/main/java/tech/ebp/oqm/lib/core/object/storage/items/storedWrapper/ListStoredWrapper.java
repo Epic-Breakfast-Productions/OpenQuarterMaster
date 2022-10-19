@@ -4,18 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -42,6 +46,12 @@ public abstract class ListStoredWrapper<S extends Stored>
 	//		super(new ArrayList<>());
 	//	}
 	
+	
+	@Override
+	public Stream<S> getStoredStream() {
+		return this.stream();
+	}
+	
 	@Override
 	public long getNumStored() {
 		return this.size();
@@ -59,6 +69,23 @@ public abstract class ListStoredWrapper<S extends Stored>
 			throw new NotEnoughStoredException("Stored to remove was not held.");
 		}
 		return stored;
+	}
+	
+	@Override
+	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
+		List<ItemExpiryEvent> output = new ArrayList<>();
+		for (int i = 0; i < this.size(); i++) {
+			Optional<ItemExpiryEvent.Builder<?, ?>> result = this.updateExpiredStateForStored(
+				this.get(i),
+				blockKey,
+				expiredWarningThreshold
+			);
+			
+			if (result.isPresent()) {
+				output.add(result.get().index(i).build());
+			}
+		}
+		return output;
 	}
 	
 	@Override

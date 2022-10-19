@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,7 @@ public abstract class Stored {
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
-	private LocalDate expires = null;
+	private LocalDateTime expires = null;
 	
 	/**
 	 * Statuses about this stored object.

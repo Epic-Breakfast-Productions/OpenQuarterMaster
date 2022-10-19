@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import tech.units.indriya.quantity.Quantities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -25,7 +26,7 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDate.now())
+					.setExpires(LocalDateTime.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
 			

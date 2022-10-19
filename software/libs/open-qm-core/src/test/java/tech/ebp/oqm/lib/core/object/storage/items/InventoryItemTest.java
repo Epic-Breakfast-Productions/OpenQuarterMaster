@@ -1,15 +1,31 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import org.apache.commons.lang3.RandomUtils;
 import org.bson.types.ObjectId;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class InventoryItemTest extends BasicTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Slf4j
+public abstract class InventoryItemTest extends BasicTest {
+	
 	private static final int NUM_ATTS = 50;
 	private static final int NUM_KEYWORDS = 25;
 	private static final int NUM_IMAGES = 10;
@@ -43,7 +59,7 @@ public class InventoryItemTest extends BasicTest {
 	public static void fillCommon(Stored stored) {
 		stored.setCondition(RandomUtils.nextInt(0, 101));
 		stored.setConditionNotes(FAKER.lorem().paragraph());
-		stored.setExpires(LocalDate.now());
+		stored.setExpires(LocalDateTime.now());
 		
 		for (int j = 0; j < NUM_IMAGES; j++) {
 			stored.getImageIds().add(
@@ -75,5 +91,54 @@ public class InventoryItemTest extends BasicTest {
 		return output;
 	}
 	
+	protected static LocalDateTime getNotExpiredExpiryDate() {
+		return LocalDateTime.now().plus(30, ChronoUnit.DAYS);
+	}
+	
+	protected static LocalDateTime getExpiredExpiryDate() {
+		return LocalDateTime.now().minus(5, ChronoUnit.SECONDS);
+	}
+	
+	protected static Duration getExpiryWarnThreshold() {
+		return Duration.of(31, ChronoUnit.DAYS);
+	}
+	
+	/**
+	 * Waits 5s before updating, checking
+	 *
+	 * @param item
+	 * @param expectedExpired
+	 * @param expectedExpiryWarn
+	 *
+	 * @throws InterruptedException
+	 */
+	@ParameterizedTest
+	@MethodSource("getExpiryArguments")
+	public void testUpdateExpiredStates(
+		ListAmountItem item,
+		List<AmountStored> expectedExpired,
+		List<AmountStored> expectedExpiryWarn
+	) {
+		List<ItemExpiryEvent> events = item.updateExpiredStates();
+		
+		List<ItemExpiredEvent> expiredEvents = events.stream()
+													 .filter((ItemExpiryEvent e)->{
+														 return e instanceof ItemExpiredEvent;
+													 }).map((ItemExpiryEvent e)->{
+				return (ItemExpiredEvent) e;
+			})
+													 .collect(Collectors.toList());
+		List<ItemExpiryWarningEvent> expiryWarnEvents = events.stream()
+															  .filter((ItemExpiryEvent e)->{
+																  return e instanceof ItemExpiryWarningEvent;
+															  }).map((ItemExpiryEvent e)->{
+				return (ItemExpiryWarningEvent) e;
+			})
+															  .collect(Collectors.toList());
+		
+		assertEquals(expectedExpired.size(), expiredEvents.size());
+		assertEquals(expectedExpiryWarn.size(), expiryWarnEvents.size());
+		
+	}
 	
 }

@@ -8,6 +8,7 @@ import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.quantity.Quantities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ class AmountStoredValidationTest extends ObjectValidationTest<AmountStored> {
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDate.now())
+					.setExpires(LocalDateTime.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
 			)

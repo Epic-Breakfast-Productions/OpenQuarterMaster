@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -28,8 +29,10 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * Describes a type of inventory item.
@@ -169,7 +172,21 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarn = 0;
 	
-	public InventoryItem<S, C, W> recalculateExpiryStats() {
+	
+	public List<ItemExpiryEvent> updateExpiredStates() {
+		List<ItemExpiryEvent> output =
+			this.getStorageMap().entrySet().stream()
+				.map((Map.Entry<ObjectId, W> wrapperEntry)->{
+					return wrapperEntry.getValue().updateExpiredStates(wrapperEntry.getKey(), getExpiryWarningThreshold());
+				})
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+		this.recalculateExpiryDerivedStats();
+		return output;
+	}
+	
+	//TODO:: rework expiry, move changing expired statuses here
+	public InventoryItem<S, C, W> recalculateExpiryDerivedStats() {
 		AtomicLong expiredSum = new AtomicLong();
 		AtomicLong expiryWarnSum = new AtomicLong();
 		
@@ -185,12 +202,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this;
 	}
 	
-	
 	public InventoryItem<S, C, W> recalculateDerived() {
 		this.getStorageMap().values().forEach(StoredWrapper::recalcDerived);
 		this.recalcTotal();
 		this.recalcValueOfStored();
-		this.recalculateExpiryStats();
+		this.recalculateExpiryDerivedStats();
 		return this;
 	}
 	

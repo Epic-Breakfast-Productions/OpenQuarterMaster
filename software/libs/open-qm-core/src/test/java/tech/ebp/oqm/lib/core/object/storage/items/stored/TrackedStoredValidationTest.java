@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ class TrackedStoredValidationTest extends ObjectValidationTest<TrackedStored> {
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDate.now())
+					.setExpires(LocalDateTime.now())
 					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
 			)

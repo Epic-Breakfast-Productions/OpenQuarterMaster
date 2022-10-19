@@ -18,6 +18,10 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
-class SimpleAmountItemTest extends BasicTest {
+class SimpleAmountItemTest extends InventoryItemTest {
 	
 	public static SimpleAmountItem getLargeSimpleAmountItem() {
 		SimpleAmountItem item = new SimpleAmountItem();
@@ -129,6 +133,55 @@ class SimpleAmountItemTest extends BasicTest {
 					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true)
 					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
 				BigDecimal.valueOf(2.0)
+			)
+		);
+	}
+	
+	public static Stream<Arguments> getExpiryArguments() {
+		//TODO:: update lists to hold verifyable information, do this for other item types. More cases
+		LocalDateTime notExpired = getNotExpiredExpiryDate();
+		LocalDateTime expired = getExpiredExpiryDate();
+		Duration expiryWarnThreshold = getExpiryWarnThreshold();
+		
+		ObjectId idOne = ObjectId.get();
+		ObjectId idTwo = ObjectId.get();
+		ObjectId idThree = ObjectId.get();
+		return Stream.of(
+			Arguments.of(
+				new ListAmountItem() {{
+					add(idOne, new AmountStored(UnitUtils.UNIT), true);
+				}},
+				List.of(),
+				List.of()
+			),
+			Arguments.of(
+				new ListAmountItem() {{
+					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+				}},
+				List.of(),
+				List.of()
+			),
+			Arguments.of(
+				new ListAmountItem() {{
+					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(expired), true);
+				}},
+				List.of(new AmountStored().setExpires(expired)),
+				List.of()
+			),
+			Arguments.of(
+				new ListAmountItem() {{
+					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+				}},
+				List.of(),
+				List.of()
+			),
+			Arguments.of(
+				new ListAmountItem() {{
+					setExpiryWarningThreshold(expiryWarnThreshold);
+					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+				}},
+				List.of(),
+				List.of(new AmountStored().setExpires(notExpired))
 			)
 		);
 	}

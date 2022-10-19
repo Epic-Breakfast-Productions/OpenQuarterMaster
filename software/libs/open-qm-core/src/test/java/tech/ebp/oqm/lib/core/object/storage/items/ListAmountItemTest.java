@@ -217,6 +217,15 @@ class ListAmountItemTest extends BasicTest {
 		);
 	}
 	
+	public static Stream<Arguments> getExpiryArguments() {
+		ObjectId id = ObjectId.get();
+		return Stream.of(
+			//TODO
+			Arguments.of(
+			)
+		);
+	}
+	
 	@ParameterizedTest
 	@MethodSource("getTotalArguments")
 	public void testTotalTest(ListAmountItem item, Quantity<?> quantityExpected) {
@@ -237,16 +246,4 @@ class ListAmountItemTest extends BasicTest {
 	}
 	
 	
-	@Test
-	public void testLargeItemTotalCalculation() {
-		ListAmountItem item = getLargeListAmountItem();
-		
-		log.info("Calculating.");
-		StopWatch sw = StopWatch.createStarted();
-		Quantity<?> first = item.recalculateDerived().getTotal();
-		sw.stop();
-		log.info("Recalculating totals took {} - Total: {}", sw, first);
-		
-		assertEquals(first, item.recalcTotal());
-	}
 }
