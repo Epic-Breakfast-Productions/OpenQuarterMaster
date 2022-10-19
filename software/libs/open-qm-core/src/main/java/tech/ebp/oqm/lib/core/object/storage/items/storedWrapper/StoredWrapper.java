@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
@@ -71,6 +72,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	public abstract long getNumStored();
 	
 	@JsonIgnore
+	@BsonIgnore
 	public abstract Stream<S> getStoredStream();
 	
 	/**
