@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Describes a type of inventory item.
@@ -326,5 +327,9 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		this.add(storageIdTo, t);
 		
 		return this;
+	}
+	
+	public Stream<S> storedStream() {
+		return this.storageMap.values().stream().flatMap(StoredWrapper::storedStream);
 	}
 }

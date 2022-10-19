@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
@@ -17,15 +16,11 @@ import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredExcep
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.measure.Quantity;
-import javax.swing.text.html.Option;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -71,9 +66,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract long getNumStored();
 	
-	@JsonIgnore
-	@BsonIgnore
-	public abstract Stream<S> getStoredStream();
+	public abstract Stream<S> storedStream();
 	
 	/**
 	 * Method to recalculate and return the total amount held in this wrapper.

@@ -28,7 +28,7 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 	
 	
 	@Override
-	public Stream<T> getStoredStream() {
+	public Stream<T> storedStream() {
 		return Stream.of(this.getStored());
 	}
 	

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
@@ -48,7 +49,8 @@ public abstract class ListStoredWrapper<S extends Stored>
 	
 	
 	@Override
-	public Stream<S> getStoredStream() {
+	@BsonIgnore
+	public Stream<S> storedStream() {
 		return this.stream();
 	}
 	
