@@ -30,8 +30,6 @@ public class ValidStoredUnitsValidator
 	) {
 		List<String> validationErrs = new ArrayList<>();
 		
-		List<StoredWrapper<?, AmountStored>> storedWrapperList = new ArrayList<>(item.getStorageMap().values());
-		
 		Stream<AmountStored> storedStream = (Stream<AmountStored>) item.storedStream();
 		
 		long invalidCount = storedStream.filter(
