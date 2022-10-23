@@ -34,6 +34,7 @@ public final class UnitUtils {
 		if (UNIT_LIST.contains(unit)) {
 			return;
 		}
+		//TODO:: figure out validation to not step on existing units
 		
 		UNIT_LIST.add(unit);
 		
@@ -60,6 +61,18 @@ public final class UnitUtils {
 				);
 			});
 		});
+	}
+	
+	public static void registerAllUnits(CustomUnitEntry... customUnitEntries) {
+		for (CustomUnitEntry customUnitEntry : customUnitEntries) {
+			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnit());
+		}
+	}
+	
+	public static void registerAllUnits(Collection<CustomUnitEntry> customUnitEntries) {
+		for (CustomUnitEntry customUnitEntry : customUnitEntries) {
+			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnit());
+		}
 	}
 	
 	public static void reInitUnitCollections() {
@@ -116,7 +129,7 @@ public final class UnitUtils {
 	 * @param unitStr The string to get the actual unit from
 	 *
 	 * @return The unit the string given represents
-	 * @throws IllegalArgumentException If the unit string given is not in the set of valid units, {@link LibUnits#ALLOWED_UNITS}
+	 * @throws IllegalArgumentException If the unit string given is not in the set of valid units, {@link #UNIT_LIST}
 	 */
 	public static Unit<?> unitFromString(String unitStr) throws IllegalArgumentException {
 		for (Unit<?> curUnit : UNIT_LIST) {
