@@ -12,7 +12,6 @@ Prerequisites:
 
  1. Running instance of MongoDB (preferably at `mongodb://localhost:27017`, to avoid needing to set config)
  2. Java runtime and dev kit version 11 (official or open is fine)
- 3. Running `./gradlew publishToMavenLocal` on the core lib project: [open-qm-core](../libs/open-qm-core)
 
 ### Common Commands
 
@@ -68,6 +67,7 @@ Native-specific tests:
   - bulk create
   - bulk edit?
 - Items
+  - fix unit editing unit
   - stats
   - UI tweaks
     - view improvements

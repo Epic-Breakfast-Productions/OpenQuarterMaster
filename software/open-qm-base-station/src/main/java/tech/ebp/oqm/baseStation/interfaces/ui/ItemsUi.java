@@ -14,11 +14,11 @@ import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -83,7 +83,7 @@ public class ItemsUi extends UiProvider {
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
-				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
+				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("searchObject", itemSearch),
 			MediaType.TEXT_HTML_TYPE
 		);

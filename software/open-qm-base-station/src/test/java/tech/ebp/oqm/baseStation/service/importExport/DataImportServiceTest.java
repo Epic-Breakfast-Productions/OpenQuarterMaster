@@ -12,7 +12,6 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
@@ -22,6 +21,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -95,7 +95,7 @@ class DataImportServiceTest extends RunningServerTest {
 			item.setName(FAKER.name().name());
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(rand.nextInt(), UnitUtils.UNIT)
+					.setAmount(rand.nextInt(), OqmProvidedUnits.UNIT)
 					.setCondition(rand.nextInt(100))
 					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
@@ -111,7 +111,7 @@ class DataImportServiceTest extends RunningServerTest {
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size()))).add(
 					(AmountStored) new AmountStored()
-									   .setAmount(rand.nextInt(), UnitUtils.UNIT)
+									   .setAmount(rand.nextInt(), OqmProvidedUnits.UNIT)
 									   .setCondition(rand.nextInt(100))
 									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())

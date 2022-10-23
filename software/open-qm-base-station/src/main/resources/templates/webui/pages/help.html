@@ -9,7 +9,15 @@
 		<ul class="nav nav-tabs" id="mainTab" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"
-						type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">General
+						type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">
+					General
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="unitsTab" data-bs-toggle="tab"
+						data-bs-target="#unitsContent" type="button" role="tab"
+						aria-controls="unitsContent" aria-selected="false">
+					Units
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
@@ -23,6 +31,27 @@
 		<div class="tab-pane fade show active" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
 			{! TODO:: this !}
 			TODO
+		</div>
+		<div class="tab-pane fade" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
+			<h2>
+				Units
+			</h2>
+			<p>
+				This describes what units are available to use in this system. An inventory administrator can add additional units.
+			</p>
+			{#for curCategory in unitCategoryMap}
+			<hr />
+				<h4>
+					{curCategory.getKey()}
+				</h4>
+				<ul>
+					{#for curUnit in curCategory.getValue()}
+					<li>
+						{curUnit.getName()} - (  #{curUnit.getSymbol()} )
+					</li>
+					{/for}
+				</ul>
+			{/for}
 		</div>
 		<div class="tab-pane fade" id="itemSearchProvidersContent" role="tabpanel" aria-labelledby="itemSearchProvidersTab">
 		<h2>

@@ -13,7 +13,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitCategory;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
@@ -30,7 +31,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Variant;
 import java.util.Currency;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,9 +82,9 @@ public class GeneralInfo extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, List<Unit<?>>> getUnits(@Context SecurityContext ctx) {
+	public Map<UnitCategory, Set<Unit<?>>> getUnits(@Context SecurityContext ctx) {
 		log.info("Getting valid unit list.");
-		return UnitUtils.ALLOWED_UNITS_MAP;
+		return UnitUtils.UNIT_CATEGORY_MAP;
 	}
 	
 	@GET

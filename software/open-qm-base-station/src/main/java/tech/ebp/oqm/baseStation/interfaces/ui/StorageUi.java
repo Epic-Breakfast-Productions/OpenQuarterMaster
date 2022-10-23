@@ -14,11 +14,11 @@ import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -79,7 +79,7 @@ public class StorageUi extends UiProvider {
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults)
-				.data("allowedUnitsMap", UnitUtils.ALLOWED_UNITS_MAP)
+				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService)
 				.data("searchObject", storageBlockSearch),

@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
@@ -69,18 +70,19 @@ public class HelpUi extends UiProvider {
 		
 		User user = userService.getFromJwt(this.jwt);
 		TemplateInstance template;
-		if(user == null){
+		if (user == null) {
 			template = this.setupPageTemplate(overview, tracer)
 						   .data("navbar", "toLogin");
 		} else {
 			template = this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
 						   .data("navbar", "full");
 		}
-		template = template.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
-								.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
-								.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo());
-		
-		
+		template = template
+					   .data("unitCategoryMap", UnitUtils.UNIT_CATEGORY_MAP)
+					   .data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
+					   .data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
+					   .data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo())
+		;
 		
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
