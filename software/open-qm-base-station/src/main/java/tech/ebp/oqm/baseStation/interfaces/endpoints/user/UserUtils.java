@@ -57,7 +57,7 @@ public class UserUtils extends EndpointProvider {
 		User user = this.userService.getFromJwt(this.jwt);
 		
 		return this.emailUtils
-				   .setupDefaultEmail(
+				   .setupDefaultEmailData(
 					   testMailTemplate,
 					   UserGetResponse.builder(user).build(),
 					   "Test Email"
@@ -80,7 +80,7 @@ public class UserUtils extends EndpointProvider {
 		User userTo = this.userService.get(userId);
 		
 		return this.emailUtils
-				   .setupDefaultEmail(
+				   .setupDefaultEmailData(
 					   testMailTemplate,
 					   UserGetResponse.builder(userTo).build(),
 					   "Test Email"

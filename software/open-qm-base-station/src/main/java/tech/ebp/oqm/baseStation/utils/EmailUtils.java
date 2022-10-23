@@ -14,11 +14,12 @@ public class EmailUtils {
 	@ConfigProperty(name = "runningInfo.fromEmail")
 	String fromEmail;
 	
-	public MailTemplate.MailTemplateInstance setupDefaultEmail(
+	public MailTemplate.MailTemplateInstance setupDefaultEmailData(
 		MailTemplate template,
 		UserGetResponse userTo,
 		String subject
 	) {
+		//TODO:: add logo image data
 		return template
 				   .to(userTo.getEmail())
 				   .from(this.fromEmail)
