@@ -20,13 +20,13 @@
 		</div>
 		<div class="card-body">
 		{#if config:['service.authMode'] == 'SELF'}
-			<div class="form-floating">
-				<input type="text" class="form-control mb-2" id="emailUsernameInput" placeholder="name@example.com">
-				<label for="emailUsernameInput">Email address or Username</label>
+			<div class="mb-3">
+				<label for="emailUsernameInput">Email address or Username:</label>
+				<input type="text" class="form-control text-center" id="emailUsernameInput" placeholder="Email or Username">
 			</div>
-			<div class="form-floating">
-				<input type="password" class="form-control mb-3" id="passwordInput" placeholder="Password">
-				<label for="passwordInput">Password</label>
+			<div class="mb-3">
+				<label for="passwordInput">Password:</label>
+				<input type="password" class="form-control text-center" id="passwordInput" placeholder="Password">
 			</div>
 			<div class="checkbox mb-3">
 				<label>

@@ -105,7 +105,6 @@ Native-specific tests:
 ### From User feedback
 
 - Custom units
-- Turn login text inputs to normal
 - import
   - from csv
   - from excel?
@@ -118,4 +117,4 @@ Native-specific tests:
     - open new stored dropdown when added
   - add/sub/trans
     - better placement of submit button
-  - quick and easy item i/o from overview?
+  - quick and easy item i/o from overview? 
