@@ -21,9 +21,8 @@ public final class Roles {
 														"control their roles.";
 	
 	public static final String SERVICE_ADMIN = "serviceAdmin";
-	public static final String SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable serices, and " +
+	public static final String SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable services, and " +
 														   "control their roles.";
-	
 	
 	public static final String INVENTORY_ADMIN = "inventoryAdmin";
 	public static final String INVENTORY_ADMIN_DESCRIPTION = "Role to enable inventory administration. Can import/export inventory data.";

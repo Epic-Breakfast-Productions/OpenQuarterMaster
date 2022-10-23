@@ -32,27 +32,7 @@ public class ValidStoredUnitsValidator
 		
 		List<StoredWrapper<?, AmountStored>> storedWrapperList = new ArrayList<>(item.getStorageMap().values());
 		
-		Stream<AmountStored> storedStream;
-		if (item instanceof SimpleAmountItem) {
-			storedStream =
-				((List<StoredWrapper<?, AmountStored>>) storedWrapperList)
-					.stream()
-					.map(
-						(StoredWrapper<?, AmountStored> w)->(AmountStored) w.getStored()
-					);
-		} else if (item instanceof ListAmountItem) {
-			storedStream =
-				(storedWrapperList)
-					.stream()
-					.parallel()
-					.map(
-						(StoredWrapper<?, AmountStored> w)->(List<AmountStored>) w.getStored()
-					)
-					.flatMap(List::stream);
-		} else {
-			validationErrs.add("Unsupported type of AmountStored object giver: " + item.getClass().getName());
-			storedStream = Stream.empty();
-		}
+		Stream<AmountStored> storedStream = (Stream<AmountStored>) item.storedStream();
 		
 		long invalidCount = storedStream.filter(
 			(AmountStored curStored)->{
