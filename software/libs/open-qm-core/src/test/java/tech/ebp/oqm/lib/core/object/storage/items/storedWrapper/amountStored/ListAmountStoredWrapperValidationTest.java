@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored;
 
 import org.junit.jupiter.params.provider.Arguments;
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import tech.units.indriya.unit.Units;
 

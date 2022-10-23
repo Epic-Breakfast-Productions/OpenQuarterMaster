@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.validation.validators;
 
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidatorTest;
 import tech.ebp.oqm.lib.core.testUtils.TestConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;

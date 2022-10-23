@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.jackson;
 
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.Utils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.measure.Unit;
 import java.io.IOException;
 
-import static tech.ebp.oqm.lib.core.UnitUtils.ALLOWED_UNITS;
-import static tech.ebp.oqm.lib.core.UnitUtils.unitFromString;
+import static tech.ebp.oqm.lib.core.units.UnitUtils.ALLOWED_UNITS;
+import static tech.ebp.oqm.lib.core.units.UnitUtils.unitFromString;
 
 /**
  * Jackson module to handle Units within {@link UnitUtils#ALLOWED_UNITS}

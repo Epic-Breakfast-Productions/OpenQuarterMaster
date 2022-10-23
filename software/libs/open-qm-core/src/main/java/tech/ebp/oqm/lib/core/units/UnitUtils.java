@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core;
+package tech.ebp.oqm.lib.core.units;
 
 import systems.uom.common.USCustomary;
 import tech.units.indriya.unit.Units;

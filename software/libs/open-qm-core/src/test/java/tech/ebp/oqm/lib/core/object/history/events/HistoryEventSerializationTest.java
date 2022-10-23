@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;

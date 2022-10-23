@@ -2,7 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
@@ -17,7 +17,6 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 @Data

@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.jackson;
 
-import tech.ebp.oqm.lib.core.UnitUtils;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
