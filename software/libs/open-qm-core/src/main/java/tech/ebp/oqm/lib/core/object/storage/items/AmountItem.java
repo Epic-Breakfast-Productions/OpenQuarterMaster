@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidHeldStoredUnits;
@@ -35,7 +35,7 @@ public abstract class AmountItem<C, T extends StoredWrapper<C, AmountStored>> ex
 	 */
 	@NonNull
 	@ValidUnit
-	private Unit<?> unit = UnitUtils.UNIT;
+	private Unit<?> unit = OqmProvidedUnits.UNIT;
 	
 	/**
 	 * The value of this item per the unit set by {@link #unit}.

@@ -2,7 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -58,7 +58,7 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	@JsonIgnore
 	@Override
 	public @NonNull Unit<?> getUnit() {
-		return UnitUtils.UNIT;
+		return OqmProvidedUnits.UNIT;
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.units.indriya.quantity.Quantities;
@@ -26,22 +27,22 @@ class QuantitySumHelperTest extends BasicTest {
 		return Stream.of(
 			Arguments.of(
 				List.of(),
-				UnitUtils.UNIT,
-				Quantities.getQuantity(0.0, UnitUtils.UNIT)
+				OqmProvidedUnits.UNIT,
+				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				List.of(
-					Quantities.getQuantity(0.0, UnitUtils.UNIT)
+					Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 				),
-				UnitUtils.UNIT,
-				Quantities.getQuantity(0.0, UnitUtils.UNIT)
+				OqmProvidedUnits.UNIT,
+				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				List.of(
-					Quantities.getQuantity(1.0, UnitUtils.UNIT)
+					Quantities.getQuantity(1.0, OqmProvidedUnits.UNIT)
 				),
-				UnitUtils.UNIT,
-				Quantities.getQuantity(1.0, UnitUtils.UNIT)
+				OqmProvidedUnits.UNIT,
+				Quantities.getQuantity(1.0, OqmProvidedUnits.UNIT)
 			),
 			//			Arguments.of( //TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
 			//				List.of(

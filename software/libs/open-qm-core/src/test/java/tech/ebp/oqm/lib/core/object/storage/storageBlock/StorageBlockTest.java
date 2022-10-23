@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.storageBlock;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +30,7 @@ class StorageBlockTest extends BasicTest {
 					FAKER.address().fullAddress(),
 					null,
 					new ArrayList<>() {{
-						add(Quantities.getQuantity(5, UnitUtils.UNIT));
+						add(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
 					}}
 				)
 			),

@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import lombok.extern.slf4j.Slf4j;
@@ -63,24 +63,24 @@ class TrackedItemTest extends BasicTest {
 		return Stream.of(
 			Arguments.of(
 				new TrackedItem(),
-				Quantities.getQuantity(0, UnitUtils.UNIT)
+				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem().add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true),
-				Quantities.getQuantity(1, UnitUtils.UNIT)
+				Quantities.getQuantity(1, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true)
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true),
-				Quantities.getQuantity(2, UnitUtils.UNIT)
+				Quantities.getQuantity(2, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem()
 					.add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true)
 					.add(id, new TrackedStored(FAKER.name().name()), true)
 					.add(id, new TrackedStored(FAKER.name().name()), true),
-				Quantities.getQuantity(3, UnitUtils.UNIT)
+				Quantities.getQuantity(3, OqmProvidedUnits.UNIT)
 			)
 		);
 	}

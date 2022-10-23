@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
@@ -33,7 +33,7 @@ public class TrackedMapStoredWrapper extends MapStoredWrapper<TrackedStored> {
 	
 	@Override
 	public Quantity<?> recalcTotal() {
-		this.setTotal(Quantities.getQuantity(this.values().size(), UnitUtils.UNIT));
+		this.setTotal(Quantities.getQuantity(this.values().size(), OqmProvidedUnits.UNIT));
 		return this.getTotal();
 	}
 	

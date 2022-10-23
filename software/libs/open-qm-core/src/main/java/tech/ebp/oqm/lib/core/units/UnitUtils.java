@@ -5,7 +5,6 @@ import tech.units.indriya.unit.Units;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.measure.quantity.AmountOfSubstance;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class UnitUtils {
-	
-	public static final Unit<AmountOfSubstance> UNIT = Units.MOLE.divide(6.02214076 * Math.pow(10, 23));
 	
 	private static <Q extends Quantity<Q>> Unit<Q> getUnitWithNameSymbol(
 		Unit<Q> unit,
@@ -50,7 +47,7 @@ public class UnitUtils {
 			put(
 				"Number",
 				List.of(
-					getUnitWithNameSymbol(UNIT, "Units", "units"),
+					getUnitWithNameSymbol(OqmProvidedUnits.UNIT, "Units", "units"),
 					Units.MOLE
 				)
 			);

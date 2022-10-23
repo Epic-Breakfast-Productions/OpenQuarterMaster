@@ -2,7 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
@@ -46,7 +46,7 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	 */
 	@NonNull
 	@ValidUnit
-	private Unit<?> unit = UnitUtils.UNIT;
+	private Unit<?> unit = OqmProvidedUnits.UNIT;
 	
 	public ListAmountItem setUnit(Unit<?> unit) {
 		this.unit = unit;

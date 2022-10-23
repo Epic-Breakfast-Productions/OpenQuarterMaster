@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @Execution(ExecutionMode.SAME_THREAD)
 class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent> {
 	
-	private static final Quantity<?> testQuantity = Quantities.getQuantity(20, UnitUtils.UNIT);
+	private static final Quantity<?> testQuantity = Quantities.getQuantity(20, OqmProvidedUnits.UNIT);
 	
 	private static JsonNode getRandJsonNode() {
 		ObjectNode output = OBJECT_MAPPER.createObjectNode();

@@ -2,7 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
@@ -46,7 +46,7 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 	 */
 	@NonNull
 	@ValidUnit
-	private Unit<?> unit = UnitUtils.UNIT;
+	private Unit<?> unit = OqmProvidedUnits.UNIT;
 	
 	/**
 	 * The value of this item per the unit set by {@link #unit}.

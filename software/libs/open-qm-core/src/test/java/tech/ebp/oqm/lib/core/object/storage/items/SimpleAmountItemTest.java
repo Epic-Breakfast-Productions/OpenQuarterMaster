@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -58,21 +58,21 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		return Stream.of(
 			Arguments.of(
 				new SimpleAmountItem(),
-				Quantities.getQuantity(0, UnitUtils.UNIT)
+				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true),
-				Quantities.getQuantity(0, UnitUtils.UNIT)
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)), true),
+				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
-				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
-				Quantities.getQuantity(1, UnitUtils.UNIT)
+				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true),
+				Quantities.getQuantity(1, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
-				Quantities.getQuantity(2, UnitUtils.UNIT)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true),
+				Quantities.getQuantity(2, OqmProvidedUnits.UNIT)
 			)
 			//			, //TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
 			//			Arguments.of(
@@ -93,43 +93,43 @@ class SimpleAmountItemTest extends InventoryItemTest {
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(0.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1L, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1L, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0f, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1.0f, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(1.0)
 			),
 			Arguments.of(
 				new SimpleAmountItem()
 					.setValuePerUnit(BigDecimal.ONE)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true)
-					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true),
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true)
+					.add(ObjectId.get(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true),
 				BigDecimal.valueOf(2.0)
 			)
 		);
@@ -147,28 +147,28 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		return Stream.of(
 			Arguments.of(
 				new ListAmountItem() {{
-					add(idOne, new AmountStored(UnitUtils.UNIT), true);
+					add(idOne, new AmountStored(OqmProvidedUnits.UNIT), true);
 				}},
 				List.of(),
 				List.of()
 			),
 			Arguments.of(
 				new ListAmountItem() {{
-					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+					add(idOne, (AmountStored) new AmountStored(OqmProvidedUnits.UNIT).setExpires(notExpired), true);
 				}},
 				List.of(),
 				List.of()
 			),
 			Arguments.of(
 				new ListAmountItem() {{
-					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(expired), true);
+					add(idOne, (AmountStored) new AmountStored(OqmProvidedUnits.UNIT).setExpires(expired), true);
 				}},
 				List.of(new AmountStored().setExpires(expired)),
 				List.of()
 			),
 			Arguments.of(
 				new ListAmountItem() {{
-					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+					add(idOne, (AmountStored) new AmountStored(OqmProvidedUnits.UNIT).setExpires(notExpired), true);
 				}},
 				List.of(),
 				List.of()
@@ -176,7 +176,7 @@ class SimpleAmountItemTest extends InventoryItemTest {
 			Arguments.of(
 				new ListAmountItem() {{
 					setExpiryWarningThreshold(expiryWarnThreshold);
-					add(idOne, (AmountStored) new AmountStored(UnitUtils.UNIT).setExpires(notExpired), true);
+					add(idOne, (AmountStored) new AmountStored(OqmProvidedUnits.UNIT).setExpires(notExpired), true);
 				}},
 				List.of(),
 				List.of(new AmountStored().setExpires(notExpired))
@@ -224,10 +224,10 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		item.getStoredWrapperForStorage(storageId, true);
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		
-		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getTotal());
-		assertEquals(Quantities.getQuantity(1, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
@@ -238,11 +238,11 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		item.getStoredWrapperForStorage(storageId, true);
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
-		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		
-		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getTotal());
-		assertEquals(Quantities.getQuantity(2, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+		assertEquals(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
@@ -251,12 +251,12 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)), true);
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
 		
-		item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
+		item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		
-		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getTotal());
-		assertEquals(Quantities.getQuantity(0, UnitUtils.UNIT), item.getStoredForStorage(storageId).getAmount());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
@@ -265,10 +265,10 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		ObjectId storageId = ObjectId.get();
 		
-		item.add(storageId, new AmountStored(Quantities.getQuantity(0, UnitUtils.UNIT)), true);
+		item.add(storageId, new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)), true);
 		
 		assertThrows(IllegalArgumentException.class, ()->{
-			item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, UnitUtils.UNIT)));
+			item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		});
 		
 	}

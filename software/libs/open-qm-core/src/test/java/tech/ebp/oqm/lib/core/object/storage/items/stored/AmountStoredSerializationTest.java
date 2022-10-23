@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,9 +18,9 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new AmountStored(UnitUtils.UNIT)),
+			Arguments.of(new AmountStored(OqmProvidedUnits.UNIT)),
 			Arguments.of(
-				new AmountStored(5, UnitUtils.UNIT)
+				new AmountStored(5, OqmProvidedUnits.UNIT)
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
