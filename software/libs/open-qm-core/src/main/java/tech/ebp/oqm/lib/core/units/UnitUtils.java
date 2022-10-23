@@ -76,7 +76,7 @@ public final class UnitUtils {
 	public static void reInitUnitCollections() {
 		UNIT_LIST = new ArrayList<>();
 		
-		UNIT_CATEGORY_MAP = new HashMap<>() {{
+		UNIT_CATEGORY_MAP = new LinkedHashMap<>() {{
 			for (UnitCategory curCat : UnitCategory.values()) {
 				this.put(curCat, new LinkedHashSet<>());
 			}

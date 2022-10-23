@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,6 +136,15 @@ class UnitUtilsTest extends BasicTest {
 		UnitUtils.reInitUnitCollections();
 		sw.stop();
 		log.info("Took {} to reinit units.", sw);
+	}
+	
+	@Test
+	public void testUnitOrder() {
+		UnitCategory firstCat = (UnitCategory) ((LinkedHashMap) UnitUtils.UNIT_CATEGORY_MAP).keySet().stream().findFirst().get();
+		
+		assertEquals(UnitCategory.Number, firstCat);
+		
+		assertEquals(OqmProvidedUnits.UNIT, UnitUtils.UNIT_CATEGORY_MAP.get(firstCat).stream().findFirst().get());
 	}
 	
 	//	@ParameterizedTest
