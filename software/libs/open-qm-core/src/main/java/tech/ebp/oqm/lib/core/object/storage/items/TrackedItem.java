@@ -83,7 +83,7 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	}
 	
 	@Override
-	protected TrackedMapStoredWrapper newTInstance() {
+	protected TrackedMapStoredWrapper newWrapperInstance() {
 		return new TrackedMapStoredWrapper();
 	}
 }

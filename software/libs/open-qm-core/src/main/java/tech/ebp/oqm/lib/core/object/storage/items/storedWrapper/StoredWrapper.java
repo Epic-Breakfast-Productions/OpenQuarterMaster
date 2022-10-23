@@ -1,13 +1,11 @@
 package tech.ebp.oqm.lib.core.object.storage.items.storedWrapper;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
@@ -24,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * TODO:: abstract method to stream all stored
+ * Wrapper that helps hold extra information dealing with the json form of inventory item objects.
  *
  * @param <T> The storage type wrapped.
  * @param <S> The type held in the storage

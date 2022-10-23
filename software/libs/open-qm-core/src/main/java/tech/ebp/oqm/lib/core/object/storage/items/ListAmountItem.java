@@ -33,7 +33,7 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	
 	
 	@Override
-	protected ListAmountStoredWrapper newTInstance() {
+	protected ListAmountStoredWrapper newWrapperInstance() {
 		return new ListAmountStoredWrapper().setParentUnit(this.getUnit());
 	}
 	

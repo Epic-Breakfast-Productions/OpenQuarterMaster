@@ -37,8 +37,6 @@ import java.util.stream.Stream;
 
 /**
  * Describes a type of inventory item.
- * <p>
- * TODO:: simplify getStorageType for superBuilder, similar to how Service handles
  *
  * @param <S> The type of Stored object this deals with
  * @param <C> The general collection type wrapped by T
@@ -78,6 +76,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * Used to determine how much of something is stored if {@link #unit} is {@link AbstractUnit#ONE}
 	 * <p>
 	 * Example, if we store gallon jugs of Milk, we could use this to specify each jug holds a gallon, and compute we have n gallons of milk
+	 * Maybe make this its own class?
 	 */
 	//    private Quantity<?> unitQuantity = null;
 	
@@ -88,6 +87,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * The map of where the items are stored.
+	 * <p>
+	 * The key is the id of the storage block being stored in, the value the storage wrapper actually holding stored item information.
 	 */
 	@NonNull
 	@NotNull
@@ -95,17 +96,34 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * The total amount of that item in storage, in the {@link #getUnit()} unit.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
 	 */
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
+	/**
+	 * The total value of everything stored.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
+	 */
 	@Setter(AccessLevel.PROTECTED)
 	private BigDecimal valueOfStored = BigDecimal.ZERO;
 	
+	/**
+	 * When before a stored item expired to send a warning out about that expiration.
+	 * <p>
+	 * {@link Duration#ZERO} for no expiration.
+	 */
 	@NonNull
 	@NotNull
 	private Duration expiryWarningThreshold = Duration.ZERO;
 	
+	/**
+	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
+	 *
+	 * @return The unit associated with this item.
+	 */
 	public abstract @NonNull Unit<?> getUnit();
 	
 	/**
@@ -168,8 +186,19 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.valueOfStored;
 	}
 	
+	/**
+	 * The number of expired stored items held.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
+	 */
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpired = 0;
+	
+	/**
+	 * The number of stored items close to expiring held.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
+	 */
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarn = 0;
 	
@@ -186,7 +215,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return output;
 	}
 	
-	//TODO:: rework expiry, move changing expired statuses here
 	public InventoryItem<S, C, W> recalculateExpiryDerivedStats() {
 		AtomicLong expiredSum = new AtomicLong();
 		AtomicLong expiryWarnSum = new AtomicLong();
@@ -203,6 +231,13 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this;
 	}
 	
+	/**
+	 * Recalculates all derived stats for this object.
+	 * <p>
+	 * Should call this whenever you are done making changes to stored items.
+	 *
+	 * @return This object
+	 */
 	public InventoryItem<S, C, W> recalculateDerived() {
 		this.getStorageMap().values().forEach(StoredWrapper::recalcDerived);
 		this.recalcTotal();
@@ -212,16 +247,24 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
-	 * Gets a new instance of what holds the T value.
+	 * Gets a new valid wrapper instance.
 	 *
-	 * @return a new valid T instance
+	 * @return a new valid wrapper instance
 	 */
-	protected abstract W newTInstance();
+	protected abstract W newWrapperInstance();
 	
-	protected W getStoredWrapperForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
+	/**
+	 * Gets the storage wrapper for the given storage block id.
+	 *
+	 * @param storageId The id of the storage block we are dealing with.
+	 * @param addStorageBlockIdIfNone True if when the storage is not associated, add it.
+	 *
+	 * @return The wrapper at the storage block held, <pre>null</pre> if not held (unless addStorageBlockIdIfNone is true)
+	 */
+	public W getStoredWrapperForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
 		if (!this.getStorageMap().containsKey(storageId)) {
 			if (addStorageBlockIdIfNone) {
-				this.getStorageMap().put(storageId, this.newTInstance());
+				this.getStorageMap().put(storageId, this.newWrapperInstance());
 			} else {
 				return null;
 			}
@@ -229,10 +272,27 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.getStorageMap().get(storageId);
 	}
 	
+	/**
+	 * Gets the storage wrapper for the given storage block id.
+	 * <p>
+	 * Wrapper for {@link #getStoredWrapperForStorage(ObjectId, boolean)}, with addStorageBlockIdIfNone set to <pre>true</pre>.
+	 *
+	 * @param storageId The id of the storage block we are dealing with.
+	 *
+	 * @return The wrapper at the storage block held
+	 */
 	public W getStoredWrapperForStorage(ObjectId storageId) {
 		return this.getStoredWrapperForStorage(storageId, true);
 	}
 	
+	/**
+	 * Gets the storage collection for the given storage block id.
+	 *
+	 * @param storageId The id of the storage block we are dealing with.
+	 * @param addStorageBlockIdIfNone True if when the storage is not associated, add it.
+	 *
+	 * @return The collection at the storage block held, <pre>null</pre> if not held (unless addStorageBlockIdIfNone is true)
+	 */
 	protected C getStoredForStorage(ObjectId storageId, boolean addStorageBlockIdIfNone) {
 		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
@@ -242,10 +302,18 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return wrapper.getStored();
 	}
 	
+	/**
+	 * Gets the storage collection for the given storage block id.
+	 * <p>
+	 * Wrapper for {@link #getStoredForStorage(ObjectId, boolean)}, with addStorageBlockIdIfNone set to <pre>true</pre>.
+	 *
+	 * @param storageId The id of the storage block we are dealing with.
+	 *
+	 * @return The collection at the storage block held
+	 */
 	public C getStoredForStorage(ObjectId storageId) {
 		return this.getStoredForStorage(storageId, true);
 	}
-	
 	
 	/**
 	 * Adds a stored to the set held at the storage block id given.
@@ -260,11 +328,12 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 *     </li>
 	 * </ul>
 	 *
-	 * @param storageId
-	 * @param toAdd
-	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	 * @param storageId The id of the storage block we are dealing with.
+	 * @param toAdd The stored object to add/ add with
+	 * @param addStorageBlockIdIfNone True if when the storage is not associated, add it.
 	 *
-	 * @return
+	 * @return This object
+	 * @throws NoStorageBlockException If no storage held at storage block, and addStorageBlockIdIfNone is false
 	 */
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
@@ -274,24 +343,23 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		}
 		
 		wrapper.addStored(toAdd);
-		this.recalcTotal();
 		return this;
 	}
 	
 	/**
 	 * Wrapper for {@link #add(ObjectId, S, boolean)}, with true passed to storageBlockStrict
 	 *
-	 * @param storageId
-	 * @param toAdd
+	 * @param storageId The id of the storage block we are dealing with.
+	 * @param toAdd The stored object to add/ add with
 	 *
-	 * @return
+	 * @return This object
 	 */
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd) {
 		return this.add(storageId, toAdd, true);
 	}
 	
 	/**
-	 * Adds a stored to the set held at the storage block id given.
+	 * Subtracts a stored from the set held at the storage block id given.
 	 * <p>
 	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
 	 * <ul>
@@ -303,12 +371,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 *     </li>
 	 * </ul>
 	 *
-	 * @param storageId
-	 * @param toAdd
-	 * @param storageBlockStrict False if want to add storage block if not present. True if fail if storage block not present.
+	 * @param storageId The id of the storage block we are dealing with.
+	 * @param toSubtract The stored object to remove/ use to subtract with
 	 *
-	 * @return
-	 * @throws NotEnoughStoredException If there isn't enough held to subtract
+	 * @return This object
+	 * @throws NotEnoughStoredException If there isn't enough held to subtract, or if the stored object does not exist
 	 */
 	public InventoryItem<S, C, W> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
@@ -318,17 +385,32 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		}
 		
 		wrapper.subtractStored(toSubtract);
-		this.recalcTotal();
 		return this;
 	}
 	
-	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S t) throws NotEnoughStoredException {
-		this.subtract(storageIdFrom, t);
-		this.add(storageIdTo, t);
+	/**
+	 * Transfers a stored item from one storage block to another.
+	 * <p>
+	 * Just calls {@link #subtract(ObjectId, Stored)}, then {@link #add(ObjectId, Stored)}
+	 *
+	 * @param storageIdFrom The id of the storage block we are taking from
+	 * @param storageIdTo The id of the storage block we are adding to
+	 * @param toTransfer The stored amount to transfer.
+	 *
+	 * @return This object
+	 * @throws NotEnoughStoredException
+	 */
+	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S toTransfer) throws NotEnoughStoredException {
+		this.subtract(storageIdFrom, toTransfer);
+		this.add(storageIdTo, toTransfer);
 		
 		return this;
 	}
 	
+	/**
+	 * Gets a stream of all stored items held
+	 * @return a stream of all stored items held
+	 */
 	public Stream<S> storedStream() {
 		return this.storageMap.values().stream().flatMap(StoredWrapper::storedStream);
 	}
