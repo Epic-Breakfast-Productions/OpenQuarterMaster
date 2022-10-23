@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.provider.Arguments;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.units.indriya.quantity.Quantities;
 
 import java.util.List;
@@ -36,7 +37,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 								   ).setName(FAKER.name().name())
 								   .recalculateDerived(),
 			(SimpleAmountItem) new SimpleAmountItem()
-								   .setUnit(LibUnits.ALLOWED_UNITS.get(0))
+								   .setUnit(UnitUtils.UNIT_LIST.get(0))
 								   .setName(FAKER.name().name())
 								   .recalculateDerived(),
 			SimpleAmountItemTest.getLargeSimpleAmountItem()
@@ -51,7 +52,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 								 .setName(FAKER.name().name())
 								 .recalculateDerived(),
 			(ListAmountItem) new ListAmountItem()
-								 .setUnit(LibUnits.ALLOWED_UNITS.get(0))
+								 .setUnit(UnitUtils.UNIT_LIST.get(0))
 								 .setName(FAKER.name().name())
 								 .recalculateDerived(),
 			ListAmountItemTest.getLargeListAmountItem()

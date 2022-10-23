@@ -7,6 +7,7 @@ import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.units.indriya.unit.Units;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 	private static List<SimpleAmountItem> getSimpleAmountItemsValid() {
 		return List.of(
 			(SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name()),
-			(SimpleAmountItem) new SimpleAmountItem().setUnit(LibUnits.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.UNIT_LIST.get(0)).setName(FAKER.name().name())
 		);
 	}
 	
@@ -54,7 +55,7 @@ class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 	private static List<ListAmountItem> getListAmountItemsValid() {
 		return List.of(
 			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
-			(ListAmountItem) new ListAmountItem().setUnit(LibUnits.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.UNIT_LIST.get(0)).setName(FAKER.name().name())
 		);
 	}
 	

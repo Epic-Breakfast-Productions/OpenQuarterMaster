@@ -1,6 +1,5 @@
 package tech.ebp.oqm.lib.core.jackson;
 
-import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.Utils;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -14,11 +13,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.measure.Unit;
 import java.io.IOException;
 
-import static tech.ebp.oqm.lib.core.units.LibUnits.ALLOWED_UNITS;
 import static tech.ebp.oqm.lib.core.units.UnitUtils.unitFromString;
 
 /**
- * Jackson module to handle Units within {@link LibUnits#ALLOWED_UNITS}
+ * Jackson module to handle Units within {@link UnitUtils#UNIT_LIST}
  */
 public class UnitModule extends TestableModule<Unit> {
 	
@@ -36,7 +34,7 @@ public class UnitModule extends TestableModule<Unit> {
 		
 		@Override
 		public void serialize(Unit value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-			if (!ALLOWED_UNITS.contains(value)) {
+			if (!UnitUtils.UNIT_LIST.contains(value)) {
 				serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
 			} else {
 				ObjectNode node = Utils.OBJECT_MAPPER.createObjectNode();

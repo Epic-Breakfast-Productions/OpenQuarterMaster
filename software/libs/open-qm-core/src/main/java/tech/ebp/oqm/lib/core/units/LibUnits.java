@@ -16,18 +16,17 @@ public final class LibUnits {
 	/**
 	 * List of units that are applicable to storage.
 	 */
-	public static final Map<String, List<Unit<?>>> ALLOWED_UNITS_MAP = new LinkedHashMap<>() {{
+	public static final Map<UnitCategory, Set<Unit<?>>> LIB_UNITS_MAP = new LinkedHashMap<>() {{
 		try {
 			put(
-				"Number",
-				List.of(
-					UnitUtils.getUnitWithNameSymbol(OqmProvidedUnits.UNIT, "Units", "units"),
+				UnitCategory.Number,
+				Set.of(
 					Units.MOLE
 				)
 			);
 			put(
-				"Length",
-				List.of(
+				UnitCategory.Length,
+				Set.of(
 					Units.METRE,
 					UnitUtils.getUnitWithNameSymbol(USCustomary.INCH, "Inch", "in"),
 					UnitUtils.getUnitWithNameSymbol(USCustomary.FOOT, null, "ft"),
@@ -38,8 +37,8 @@ public final class LibUnits {
 				)
 			);
 			put(
-				"Mass",
-				List.of(
+				UnitCategory.Mass,
+				Set.of(
 					UnitUtils.getUnitWithNameSymbol(Units.GRAM, "Gram", "g"),
 					Units.KILOGRAM,
 					UnitUtils.getUnitWithNameSymbol(USCustomary.OUNCE, "Ounce", "oz"),
@@ -48,8 +47,8 @@ public final class LibUnits {
 				)
 			);
 			put(
-				"Area",
-				List.of(
+				UnitCategory.Area,
+				Set.of(
 					UnitUtils.getUnitWithNameSymbol(Units.SQUARE_METRE, "Meter Squared", Units.SQUARE_METRE.toString()),
 					UnitUtils.getUnitWithNameSymbol(USCustomary.SQUARE_FOOT, "Square Foot", "ft²"),
 					UnitUtils.getUnitWithNameSymbol(USCustomary.ARE, null, "a"),
@@ -58,8 +57,8 @@ public final class LibUnits {
 				)
 			);
 			put(
-				"Volume",
-				List.of(
+				UnitCategory.Volume,
+				Set.of(
 					Units.LITRE,
 					UnitUtils.getUnitWithNameSymbol(Units.CUBIC_METRE, "Meter Cubed", Units.CUBIC_METRE.toString()),
 					//					getUnitWithNameSymbol(USCustomary.LITER, null, USCustomary.LITER.toString()), // same as LITRE
@@ -80,8 +79,8 @@ public final class LibUnits {
 				)
 			);
 			put(
-				"Energy",
-				List.of(
+				UnitCategory.Energy,
+				Set.of(
 					Units.JOULE,
 					Units.VOLT,
 					Units.PASCAL,
@@ -89,31 +88,7 @@ public final class LibUnits {
 				)
 			);
 		} catch(NoSuchFieldException | IllegalAccessException e) {
-			throw new IllegalStateException("Failed to set name or symbol for unit(s): " + e.getMessage(), e);
+			throw new IllegalStateException("Failed to set name or symbol for Library provided unit(s): " + e.getMessage(), e);
 		}
 	}};
-	public static final List<Unit<?>> ALLOWED_UNITS = new ArrayList<>();
-	public static final Map<Unit<?>, Set<Unit<?>>> UNIT_COMPATIBILITY_MAP = new LinkedHashMap<>();
-	
-	
-	static {
-		//flatten map to list
-		for (List<Unit<?>> curList : ALLOWED_UNITS_MAP.values()) {
-			ALLOWED_UNITS.addAll(curList);
-		}
-		// build map of compatible units for each unit
-		for (Unit<?> curUnit : LibUnits.ALLOWED_UNITS) {
-			Set<Unit<?>> compatibleList = new LinkedHashSet<>();
-			
-			compatibleList.add(curUnit);
-			
-			for (Unit<?> curComparison : ALLOWED_UNITS) {
-				if (curUnit.isCompatible(curComparison)) {
-					compatibleList.add(curComparison);
-				}
-			}
-			
-			UNIT_COMPATIBILITY_MAP.put(curUnit, compatibleList);
-		}
-	}
 }

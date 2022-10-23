@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
 
@@ -43,7 +44,8 @@ class QuantitySumHelperTest extends BasicTest {
 				),
 				OqmProvidedUnits.UNIT,
 				Quantities.getQuantity(1.0, OqmProvidedUnits.UNIT)
-			),
+			)
+			//			,
 			//			Arguments.of( //TODO:: https://github.com/unitsofmeasurement/indriya/issues/384
 			//				List.of(
 			//					Quantities.getQuantity(1.1, UnitUtils.UNIT)
@@ -51,13 +53,13 @@ class QuantitySumHelperTest extends BasicTest {
 			//				UnitUtils.UNIT,
 			//				Quantities.getQuantity(new BigDecimal("1.1"), UnitUtils.UNIT)
 			//			),
-			Arguments.of(
-				List.of(
-					Quantities.getQuantity(1.1, LibUnits.ALLOWED_UNITS.get(2))
-				),
-				LibUnits.ALLOWED_UNITS.get(2),
-				Quantities.getQuantity(new BigDecimal("1.1"), LibUnits.ALLOWED_UNITS.get(2))
-			)
+			//			Arguments.of(
+			//				List.of(
+			//					Quantities.getQuantity(1.1, UnitUtils.UNIT_LIST.get(2))
+			//				),
+			//				UnitUtils.UNIT_LIST.get(2),
+			//				Quantities.getQuantity(new BigDecimal("1.1"), UnitUtils.UNIT_LIST.get(2))
+			//			)
 		);
 	}
 	

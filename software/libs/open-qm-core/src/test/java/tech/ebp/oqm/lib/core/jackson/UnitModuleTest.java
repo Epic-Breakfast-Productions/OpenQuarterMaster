@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnitModuleTest extends BasicTest {
 	
 	private static Stream<Arguments> unitsAsArgs() {
-		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
+		return UnitUtils.UNIT_LIST.stream().map(Arguments::of);
 	}
 	
 	private final UnitModule module = new UnitModule();

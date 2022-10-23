@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UnitValidatorTest extends ObjectValidatorTest<UnitValidator> {
 	
 	private static Stream<Arguments> validUnits() {
-		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
+		return UnitUtils.UNIT_LIST.stream().map(Arguments::of);
 	}
 	
 	private static Stream<Arguments> invalidUnits() {

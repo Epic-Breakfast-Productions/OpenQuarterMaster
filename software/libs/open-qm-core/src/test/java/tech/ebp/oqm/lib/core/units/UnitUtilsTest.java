@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.units;
 
+import org.apache.commons.lang3.time.StopWatch;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.ebp.oqm.lib.core.validation.validators.UnitValidator;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class UnitUtilsTest extends BasicTest {
 	
 	private static Stream<Arguments> unitsAsArgs() {
-		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
+		return UnitUtils.UNIT_LIST.stream().map(Arguments::of);
 	}
 	
 	private static Stream<Arguments> invalidUnits() {
@@ -70,7 +71,7 @@ class UnitUtilsTest extends BasicTest {
 		);
 		
 		boolean found = false;
-		for (Unit<?> curUnit : LibUnits.ALLOWED_UNITS) {
+		for (Unit<?> curUnit : UnitUtils.UNIT_LIST) {
 			if (unit.equals(curUnit)) {
 				if (found) {
 					fail("Unit is in the list more than once.");
@@ -110,7 +111,8 @@ class UnitUtilsTest extends BasicTest {
 	
 	@Test
 	public void testUnitCompatibilityMap() {
-		log.info("Map: {}", LibUnits.UNIT_COMPATIBILITY_MAP);
+		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
+		//TODO:: do something here
 	}
 	
 	@ParameterizedTest
@@ -125,6 +127,14 @@ class UnitUtilsTest extends BasicTest {
 		);
 		assertNotNull(unit.getName(), "Unit had no name");
 		assertNotNull(unit.getSymbol(), "Unit had no symbol");
+	}
+	
+	@Test
+	public void testTimeForReinit() {
+		StopWatch sw = StopWatch.createStarted();
+		UnitUtils.reInitUnitCollections();
+		sw.stop();
+		log.info("Took {} to reinit units.", sw);
 	}
 	
 	//	@ParameterizedTest
