@@ -47,6 +47,8 @@ Native-specific tests:
 
 ## TODOS:
 
+### General:
+
 - Expiry
   - tests
 - Other
@@ -99,3 +101,21 @@ Native-specific tests:
 - REST
   - handle ParseException for expired, bad tokens for UI
 - Testing
+
+### From User feedback
+
+- Custom units
+- Turn login text inputs to normal
+- import
+  - from csv
+  - from excel?
+- select:
+  - select search auto submit
+  - better labeling of search items
+- items
+  - add/edit
+    - more space between add stored button and dropdowns
+    - open new stored dropdown when added
+  - add/sub/trans
+    - better placement of submit button
+  - quick and easy item i/o from overview?
