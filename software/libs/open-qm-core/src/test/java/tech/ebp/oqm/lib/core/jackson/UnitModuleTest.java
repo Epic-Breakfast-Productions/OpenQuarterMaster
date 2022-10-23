@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.jackson;
 
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UnitModuleTest extends BasicTest {
 	
 	private static Stream<Arguments> unitsAsArgs() {
-		return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
+		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
 	}
 	
 	private final UnitModule module = new UnitModule();

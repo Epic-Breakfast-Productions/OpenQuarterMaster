@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.validation.validators;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 
 import javax.measure.Unit;
@@ -17,7 +17,7 @@ public class UnitValidator extends Validator<ValidUnit, Unit> {
 		if (unit == null) {
 			return true;
 		} else {
-			if (!UnitUtils.ALLOWED_UNITS.contains(unit)) {
+			if (!LibUnits.ALLOWED_UNITS.contains(unit)) {
 				errs.add("Invalid unit. " + unit.toString() + " not applicable for item storage.");
 			}
 		}

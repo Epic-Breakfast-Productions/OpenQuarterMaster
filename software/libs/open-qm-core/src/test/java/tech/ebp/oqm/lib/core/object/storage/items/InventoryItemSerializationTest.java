@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
@@ -36,7 +36,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 								   ).setName(FAKER.name().name())
 								   .recalculateDerived(),
 			(SimpleAmountItem) new SimpleAmountItem()
-								   .setUnit(UnitUtils.ALLOWED_UNITS.get(0))
+								   .setUnit(LibUnits.ALLOWED_UNITS.get(0))
 								   .setName(FAKER.name().name())
 								   .recalculateDerived(),
 			SimpleAmountItemTest.getLargeSimpleAmountItem()
@@ -51,7 +51,7 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 								 .setName(FAKER.name().name())
 								 .recalculateDerived(),
 			(ListAmountItem) new ListAmountItem()
-								 .setUnit(UnitUtils.ALLOWED_UNITS.get(0))
+								 .setUnit(LibUnits.ALLOWED_UNITS.get(0))
 								 .setName(FAKER.name().name())
 								 .recalculateDerived(),
 			ListAmountItemTest.getLargeListAmountItem()

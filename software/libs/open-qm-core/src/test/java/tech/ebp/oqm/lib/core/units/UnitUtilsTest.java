@@ -2,7 +2,6 @@ package tech.ebp.oqm.lib.core.units;
 
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.validation.validators.UnitValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class UnitUtilsTest extends BasicTest {
 	
 	private static Stream<Arguments> unitsAsArgs() {
-		return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
+		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
 	}
 	
 	private static Stream<Arguments> invalidUnits() {
@@ -71,7 +70,7 @@ class UnitUtilsTest extends BasicTest {
 		);
 		
 		boolean found = false;
-		for (Unit<?> curUnit : UnitUtils.ALLOWED_UNITS) {
+		for (Unit<?> curUnit : LibUnits.ALLOWED_UNITS) {
 			if (unit.equals(curUnit)) {
 				if (found) {
 					fail("Unit is in the list more than once.");
@@ -111,7 +110,7 @@ class UnitUtilsTest extends BasicTest {
 	
 	@Test
 	public void testUnitCompatibilityMap() {
-		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
+		log.info("Map: {}", LibUnits.UNIT_COMPATIBILITY_MAP);
 	}
 	
 	@ParameterizedTest

@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
@@ -53,10 +53,10 @@ class QuantitySumHelperTest extends BasicTest {
 			//			),
 			Arguments.of(
 				List.of(
-					Quantities.getQuantity(1.1, UnitUtils.ALLOWED_UNITS.get(2))
+					Quantities.getQuantity(1.1, LibUnits.ALLOWED_UNITS.get(2))
 				),
-				UnitUtils.ALLOWED_UNITS.get(2),
-				Quantities.getQuantity(new BigDecimal("1.1"), UnitUtils.ALLOWED_UNITS.get(2))
+				LibUnits.ALLOWED_UNITS.get(2),
+				Quantities.getQuantity(new BigDecimal("1.1"), LibUnits.ALLOWED_UNITS.get(2))
 			)
 		);
 	}

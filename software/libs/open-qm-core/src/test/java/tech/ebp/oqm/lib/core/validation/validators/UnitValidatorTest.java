@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.validation.validators;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidatorTest;
 import tech.ebp.oqm.lib.core.testUtils.TestConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UnitValidatorTest extends ObjectValidatorTest<UnitValidator> {
 	
 	private static Stream<Arguments> validUnits() {
-		return UnitUtils.ALLOWED_UNITS.stream().map(Arguments::of);
+		return LibUnits.ALLOWED_UNITS.stream().map(Arguments::of);
 	}
 	
 	private static Stream<Arguments> invalidUnits() {

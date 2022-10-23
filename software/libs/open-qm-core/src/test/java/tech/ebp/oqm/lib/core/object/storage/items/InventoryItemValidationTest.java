@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.LibUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
@@ -20,7 +20,7 @@ class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 	private static List<SimpleAmountItem> getSimpleAmountItemsValid() {
 		return List.of(
 			(SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name()),
-			(SimpleAmountItem) new SimpleAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(SimpleAmountItem) new SimpleAmountItem().setUnit(LibUnits.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
 		);
 	}
 	
@@ -54,7 +54,7 @@ class InventoryItemValidationTest extends ObjectValidationTest<InventoryItem> {
 	private static List<ListAmountItem> getListAmountItemsValid() {
 		return List.of(
 			(ListAmountItem) new ListAmountItem().setName(FAKER.name().name()),
-			(ListAmountItem) new ListAmountItem().setUnit(UnitUtils.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
+			(ListAmountItem) new ListAmountItem().setUnit(LibUnits.ALLOWED_UNITS.get(0)).setName(FAKER.name().name())
 		);
 	}
 	
