@@ -15,7 +15,7 @@ public final class OqmProvidedUnits {
 	
 	static {
 		try {
-			UNIT = UnitUtils.getUnitWithNameSymbol(Units.MOLE.divide(6.02214076 * Math.pow(10, 23)), "Units", "units");
+			UNIT = UnitTools.getUnitWithNameSymbol(Units.MOLE.divide(6.02214076 * Math.pow(10, 23)), "Units", "units");
 		} catch(NoSuchFieldException | IllegalAccessException e) {
 			throw new IllegalStateException("Failed to set name or symbol for OQM provided unit(s): " + e.getMessage(), e);
 		}

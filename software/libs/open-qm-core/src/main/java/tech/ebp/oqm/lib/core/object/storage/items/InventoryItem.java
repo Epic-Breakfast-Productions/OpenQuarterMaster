@@ -347,7 +347,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
-	 * Wrapper for {@link #add(ObjectId, S, boolean)}, with true passed to storageBlockStrict
+	 * Wrapper for {@link #add(ObjectId, Stored, boolean)}, with true passed to storageBlockStrict
 	 *
 	 * @param storageId The id of the storage block we are dealing with.
 	 * @param toAdd The stored object to add/ add with
