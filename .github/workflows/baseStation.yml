@@ -8,16 +8,12 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/libs/open-qm-core/**"
       - "software/open-qm-base-station/**"
-      - "software/drivers/open-qm-driver-server/**"
       - ".github/workflows/baseStation.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/libs/open-qm-core/**"
       - "software/open-qm-base-station/**"
-      - "software/drivers/open-qm-driver-server/**"
       - ".github/workflows/baseStation.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
