@@ -38,7 +38,7 @@ public final class UnitUtils {
 		
 		UNIT_CATEGORY_MAP.get(unitCategory).add(unit);
 		
-		Set<Unit<?>> compatibleUnits = new HashSet<>();
+		Set<Unit<?>> compatibleUnits = new LinkedHashSet<>();
 		compatibleUnits.add(unit);
 		for (Map.Entry<Unit<?>, Set<Unit<?>>> cur : UNIT_COMPATIBILITY_MAP.entrySet()) {
 			if (cur.getKey().isCompatible(unit)) {

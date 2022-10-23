@@ -14,6 +14,8 @@ import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,6 +147,17 @@ class UnitUtilsTest extends BasicTest {
 		assertEquals(UnitCategory.Number, firstCat);
 		
 		assertEquals(OqmProvidedUnits.UNIT, UnitUtils.UNIT_CATEGORY_MAP.get(firstCat).stream().findFirst().get());
+	}
+	
+	@Test
+	public void testUnitCompatabilityOrder() {
+		for (Map.Entry<Unit<?>, Set<Unit<?>>> curEntry : UnitUtils.UNIT_COMPATIBILITY_MAP.entrySet()) {
+			
+			assertEquals(
+				curEntry.getKey(),
+				curEntry.getValue().stream().findFirst().get()
+			);
+		}
 	}
 	
 	//	@ParameterizedTest
