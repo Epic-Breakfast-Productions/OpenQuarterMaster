@@ -10,12 +10,15 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.lib.core.units.UnitCategory;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -49,6 +52,8 @@ public class InventoryAdminUi extends UiProvider {
 	InventoryItemService inventoryItemService;
 	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
+	CustomUnitService customUnitService;
 	
 	@Inject
 	JsonWebToken jwt;
@@ -73,6 +78,9 @@ public class InventoryAdminUi extends UiProvider {
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
+				.data("unitCategories", UnitCategory.values())
+				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
+				.data("customUnits", this.customUnitService.list())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
