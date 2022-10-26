@@ -7,4 +7,5 @@ public enum UnitCategory {
 	Volume,
 	Length,
 	Energy
+	;
 }
