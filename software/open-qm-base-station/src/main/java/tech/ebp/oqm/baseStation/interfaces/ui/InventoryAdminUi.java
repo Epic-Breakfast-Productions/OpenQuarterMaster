@@ -16,9 +16,11 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.lib.core.units.ValidUnitDimension;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -78,6 +80,8 @@ public class InventoryAdminUi extends UiProvider {
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
+				.data("unitDerivisionTypes", NewDerivedCustomUnitRequest.DeriveType.values())
+				.data("unitDimensions", ValidUnitDimension.values())
 				.data("unitCategories", UnitCategory.values())
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("customUnits", this.customUnitService.list())

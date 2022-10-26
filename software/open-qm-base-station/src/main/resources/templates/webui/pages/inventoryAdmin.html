@@ -53,8 +53,18 @@
 												<div class="col">
 													<label for="unitAddTypeInput" class="form-label">Type</label>
 													<select class="form-select" id="unitAddTypeInput" required onchange="newUnitTypeChanged();">
-														<option value="base" selected>New Base Unit</option>
-														<option value="derived">Derived Unit</option>
+														<option value="BASE" selected>New Base Unit</option>
+														<option value="DERIVED">Derived Unit</option>
+													</select>
+												</div>
+											</div>
+											<div class="row" id="baseFormInputRow">
+												<div class="col-3">
+													<label for="unitAddBaseDimensionInput" class="form-label">Unit Dimension</label>
+													<select class="form-select" id="unitAddDerivedFromInput" required>
+														{#for curDimension in unitDimensions}
+															<option value="{curDimension}">{curDimension}</option>
+														{/for}
 													</select>
 												</div>
 											</div>
@@ -62,8 +72,16 @@
 												<div class="col-3">
 													<label for="unitAddDerivedFromInput" class="form-label">Unit Derived From</label>
 													<select class="form-select" id="unitAddDerivedFromInput" required>
-														{#inputs/units/unitOptionsGroups allowedUnitsMap=allowedUnitsMap}
-														{/inputs/units/unitOptionsGroups}
+													{#inputs/units/unitOptionsGroups allowedUnitsMap=allowedUnitsMap}
+													{/inputs/units/unitOptionsGroups}
+													</select>
+												</div>
+												<div class="col-3">
+													<label for="unitAddDerivedFromInput" class="form-label">Derivation Type</label>
+													<select class="form-select" id="unitAddDerivedFromInput" required>
+														{#for curType in unitDerivisionTypes}
+															<option value="{curType}">{curType}</option>
+														{/for}
 													</select>
 												</div>
 												<div class="col-3">
@@ -220,15 +238,18 @@
 
 
 			var unitAddTypeInput = $("#unitAddTypeInput");
+			var baseFormInputRow = $("#baseFormInputRow");
 			var derivedFormInputRow = $("#derivedFormInputRow");
 
 			function newUnitTypeChanged(){
 				switch (unitAddTypeInput.val()){
-					case "base":
+					case "BASE":
 						derivedFormInputRow.hide();
+						baseFormInputRow.show();
 						break;
-					case "derived":
+					case "DERIVED":
 						derivedFormInputRow.show();
+						baseFormInputRow.hide();
 						break;
 				}
 			}
