@@ -1,9 +1,15 @@
 package tech.ebp.oqm.lib.core.rest.unit.custom;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
+import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.units.ValidUnitDimension;
 
 import java.math.BigDecimal;
@@ -49,5 +55,20 @@ class NewCustomUnitRequestSerializationTest extends ObjectSerializationTest<NewC
 					.build()
 			)
 		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getObjects")
+	public void testResultingUnitSerializable(NewCustomUnitRequest cur) throws JsonProcessingException {
+		CustomUnitEntry cue = cur.toCustomUnitEntry();
+		
+		UnitUtils.registerAllUnits(cue);
+		
+		OBJECT_MAPPER.writeValueAsString(cue);
+	}
+	
+	@AfterEach
+	public void cleanupUnits() {
+		UnitUtils.reInitUnitCollections();
 	}
 }

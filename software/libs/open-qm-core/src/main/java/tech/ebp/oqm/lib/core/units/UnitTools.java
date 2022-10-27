@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 public final class UnitTools {
 	
-	static <Q extends Quantity<Q>> Unit<Q> getUnitWithNameSymbol(
+	public static <Q extends Quantity<Q>> Unit<Q> getUnitWithNameSymbol(
 		Unit<Q> unit,
 		String nameIfNone,
 		String symbolIfNone

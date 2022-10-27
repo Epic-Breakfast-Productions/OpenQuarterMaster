@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.units.UnitTools;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidUnit;
 
 import javax.measure.Unit;
@@ -41,13 +42,25 @@ public class NewDerivedCustomUnitRequest extends NewCustomUnitRequest {
 	
 	@Override
 	public Unit<?> toUnit() {
+		Unit<?> newUnit;
 		switch (this.getDeriveType()) {
 			case multiply:
-				return this.getBaseUnit().multiply(this.getNumPerBaseUnit());
+				newUnit = this.getBaseUnit().multiply(this.getNumPerBaseUnit());
+				break;
 			case divide:
-				return this.getBaseUnit().divide(this.getNumPerBaseUnit());
+				newUnit = this.getBaseUnit().divide(this.getNumPerBaseUnit());
+				break;
+			default:
+				throw new IllegalArgumentException("Bad or unsupported derive type. This should not happen.");
 		}
-		throw new IllegalArgumentException("Bad or unsupported derive type. This should not happen.");
+		
+		try {
+			newUnit = UnitTools.getUnitWithNameSymbol(newUnit, this.getName(), this.getSymbol());
+		} catch(NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return newUnit;
 	}
 	
 	public enum DeriveType {
