@@ -153,6 +153,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	/**
 	 * Gets an iterator of entries based on the options given.
 	 * <p>
+	 *     TODO:: deal with client session
 	 * TODO:: look into better, faster paging methods: https://dzone.com/articles/fast-paging-with-mongodb
 	 *
 	 * @param filter The filter to use for the search. Nullable, no filter if null.

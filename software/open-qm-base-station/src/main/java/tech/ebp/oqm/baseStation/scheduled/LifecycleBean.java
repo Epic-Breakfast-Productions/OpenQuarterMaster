@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.scheduled;
 
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Sorts;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -8,6 +9,7 @@ import io.quarkus.runtime.StartupEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
+import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.enterprise.event.Observes;
@@ -65,9 +67,19 @@ public class LifecycleBean {
 		}
 		
 		log.info("Reading existing custom units from database...");
-		UnitUtils.registerAllUnits(
-			this.customUnitService.list(null, Sorts.ascending("order"), null)
-		);
+		
+		try (
+			MongoCursor<CustomUnitEntry> it = this.customUnitService
+												  .listIterator(null, Sorts.ascending("order"), null)
+												  .batchSize(1)
+												  .iterator()
+		) {
+			while (it.hasNext()){
+				CustomUnitEntry curEntry = it.next();
+				log.debug("Registering unit {}", curEntry);
+				UnitUtils.registerAllUnits(curEntry);
+			}
+		}
 		log.info("Done.");
 	}
 	
