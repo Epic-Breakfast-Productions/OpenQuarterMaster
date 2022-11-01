@@ -32,11 +32,17 @@ function updateCompatibleUnits(unitToCompatWith, containerToSearch){
     });
 }
 
+function getUnitObj(unitStr){
+    let output = {
+            string: unitStr
+        };
+
+    return output;
+}
+
 function getQuantityObj(value, unit){
     let output = {
-        unit: {
-            string: unit
-        },
+        unit: getUnitObj(unit),
         scale: "ABSOLUTE",
         value: value
     };

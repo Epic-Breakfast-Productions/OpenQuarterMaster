@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -42,5 +43,14 @@ public class CustomUnitService extends MongoHistoriedService<CustomUnitEntry, Cu
 	public void ensureObjectValid(boolean newObject, CustomUnitEntry newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: ensure name,symbol, tostring? not same as any in default set or held
+	}
+	
+	public long getNextOrderValue(){
+		CustomUnitEntry entry = this.listIterator(null, Sorts.descending("order"), null).first();
+		
+		if(entry == null){
+			return 0;
+		}
+		return entry.getOrder() + 1L;
 	}
 }

@@ -61,7 +61,7 @@
 											<div class="row" id="baseFormInputRow">
 												<div class="col-3">
 													<label for="unitAddBaseDimensionInput" class="form-label">Unit Dimension</label>
-													<select class="form-select" id="unitAddDerivedFromInput" required>
+													<select class="form-select" id="unitAddBaseDimensionInput" required>
 														{#for curDimension in unitDimensions}
 															<option value="{curDimension}">{curDimension}</option>
 														{/for}
@@ -77,8 +77,8 @@
 													</select>
 												</div>
 												<div class="col-3">
-													<label for="unitAddDerivedFromInput" class="form-label">Derivation Type</label>
-													<select class="form-select" id="unitAddDerivedFromInput" required>
+													<label for="unitAddDerivedTypeInput" class="form-label">Derivation Type</label>
+													<select class="form-select" id="unitAddDerivedTypeInput" required>
 														{#for curType in unitDerivisionTypes}
 															<option value="{curType}">{curType}</option>
 														{/for}
@@ -86,7 +86,7 @@
 												</div>
 												<div class="col-3">
 													<label for="unitAddDerivedValueInput" class="form-label"># of new unit per derived</label>
-													<input type="number" class="form-control" id="unitAddDerivedValueInput" required>
+													<input type="number" class="form-control" id="unitAddDerivedValueInput" value="0.00" required>
 												</div>
 											</div>
 											<button type="submit" class="btn btn-sm btn-success mt-3">
@@ -119,9 +119,9 @@
 							{#else}
 								{#for curCustomUnitEntry in customUnits}
 									<tr>
-										<td>{curCustomUnitEntry.getUnit().getName()}</td>
-										<td>{curCustomUnitEntry.getUnitCatrgory()}</td>
-										<td>{curCustomUnitEntry.getUnit().getSymbol()}</td>
+										<td>{curCustomUnitEntry.getUnitCreator().toUnit().getName()}</td>
+										<td>{curCustomUnitEntry.getCategory()}</td>
+										<td>{curCustomUnitEntry.getUnitCreator().toUnit().getSymbol()}</td>
 										<td>{! TODO:: actions !}</td>
 									</tr>
 								{/for}
@@ -208,6 +208,9 @@
 			</div>
 		</div>
 	{/pageContent}
+	{#scripts}
+		<script src="/res/js/obj/units.js"></script>
+	{/scripts}
 	{#pageScript}
 		<script>
 
@@ -236,10 +239,19 @@
 				});
 			});
 
-
+			var unitAddForm = $("#unitAddForm");
+			var unitAddCategoryInput = $("#unitAddCategoryInput");
+			var unitAddNameInput = $("#unitAddNameInput");
+			var unitAddSymbolInput = $("#unitAddSymbolInput");
 			var unitAddTypeInput = $("#unitAddTypeInput");
+			
 			var baseFormInputRow = $("#baseFormInputRow");
+			var unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
+			
 			var derivedFormInputRow = $("#derivedFormInputRow");
+			var unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
+			var unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
+			var unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
 
 			function newUnitTypeChanged(){
 				switch (unitAddTypeInput.val()){
@@ -255,7 +267,44 @@
 			}
 			
 			//TODO:: handle addUnit form submission
+			unitAddForm.on("submit", function (e){
+				e.preventDefault();
+				
+				let newUnitRequest = {
+					unitCategory: unitAddCategoryInput.val(),
+					name: unitAddNameInput.val(),
+					symbol: unitAddSymbolInput.val(),
+					requestType: unitAddTypeInput.val()
+				};
+				
+				if(newUnitRequest.requestType === "BASE"){
+					console.log("New base unit (" + unitAddBaseDimensionInput.val() + ")");
+					newUnitRequest.dimension = unitAddBaseDimensionInput.val();
+				} else if (newUnitRequest.requestType === "DERIVED") {
+					console.log("New derived unit");
+					newUnitRequest.baseUnit = getUnitObj(unitAddDerivedFromInput.val());
+					newUnitRequest.numPerBaseUnit = unitAddDerivedValueInput.val();
+					newUnitRequest.deriveType = unitAddDerivedTypeInput.val();
+				} else {
+					console.error("Was not a recognized type.");
+				}
 			
+				
+				console.log("New unit request: " + JSON.stringify(newUnitRequest));
+				
+				doRestCall({
+					authorization: true,
+					url: "/api/inventory/manage/customUnit",
+					method: 'POST',
+					data: newUnitRequest,
+					done: function (data){
+						reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+					},
+					fail: function (data){
+					}
+				});
+				
+			});
 			
 		</script>
 	{/pageScript}
