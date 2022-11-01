@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
 
@@ -25,6 +26,7 @@ import javax.validation.constraints.NotNull;
 	@JsonSubTypes.Type(value = NewBaseCustomUnitRequest.class, name = "BASE"),
 	@JsonSubTypes.Type(value = NewDerivedCustomUnitRequest.class, name = "DERIVED")
 })
+@BsonDiscriminator
 public abstract class NewCustomUnitRequest {
 	
 	@NonNull
