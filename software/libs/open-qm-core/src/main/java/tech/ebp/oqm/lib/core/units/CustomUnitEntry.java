@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.rest.unit.custom.NewCustomUnitRequest;
 
 import javax.measure.Unit;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -22,7 +24,10 @@ public class CustomUnitEntry extends MainObject {
 	@NonNull
 	private UnitCategory category;
 	
+	@Min(0)
+	private long order;
+	
 	@NotNull
 	@NonNull
-	private Unit<?> unit;
+	private NewCustomUnitRequest unitCreator;
 }

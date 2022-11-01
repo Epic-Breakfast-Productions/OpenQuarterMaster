@@ -5,8 +5,6 @@ import lombok.NonNull;
 import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,13 +62,13 @@ public final class UnitUtils {
 	
 	public static void registerAllUnits(CustomUnitEntry... customUnitEntries) {
 		for (CustomUnitEntry customUnitEntry : customUnitEntries) {
-			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnit());
+			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnitCreator().toUnit());
 		}
 	}
 	
 	public static void registerAllUnits(Collection<CustomUnitEntry> customUnitEntries) {
 		for (CustomUnitEntry customUnitEntry : customUnitEntries) {
-			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnit());
+			registerUnit(customUnitEntry.getCategory(), customUnitEntry.getUnitCreator().toUnit());
 		}
 	}
 	
@@ -112,6 +110,6 @@ public final class UnitUtils {
 				return curUnit;
 			}
 		}
-		throw new IllegalArgumentException("Unit string given does not represent any of the possible valid units.");
+		throw new IllegalArgumentException("Unit string given (" + unitStr + ") does not represent any of the possible valid units.");
 	}
 }

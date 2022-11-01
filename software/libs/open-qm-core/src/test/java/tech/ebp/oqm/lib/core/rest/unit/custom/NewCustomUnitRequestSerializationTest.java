@@ -60,7 +60,7 @@ class NewCustomUnitRequestSerializationTest extends ObjectSerializationTest<NewC
 	@ParameterizedTest
 	@MethodSource("getObjects")
 	public void testResultingUnitSerializable(NewCustomUnitRequest cur) throws JsonProcessingException {
-		CustomUnitEntry cue = cur.toCustomUnitEntry();
+		CustomUnitEntry cue = cur.toCustomUnitEntry(0L);
 		
 		UnitUtils.registerAllUnits(cue);
 		

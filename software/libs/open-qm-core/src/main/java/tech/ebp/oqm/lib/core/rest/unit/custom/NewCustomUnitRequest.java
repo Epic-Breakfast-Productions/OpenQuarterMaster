@@ -43,10 +43,11 @@ public abstract class NewCustomUnitRequest {
 	
 	public abstract Unit<?> toUnit();
 	
-	public CustomUnitEntry toCustomUnitEntry() {
+	public CustomUnitEntry toCustomUnitEntry(long orderVal) {
 		return new CustomUnitEntry(
 			this.getUnitCategory(),
-			this.toUnit()
+			orderVal,
+			this
 		);
 	}
 	
