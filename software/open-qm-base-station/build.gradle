@@ -50,7 +50,7 @@ dependencies {
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.38-DEV'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.40-DEV'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -85,8 +85,11 @@ dependencies {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_11
-	targetCompatibility = JavaVersion.VERSION_11
+	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(11))
+		}
+	}
 }
 
 compileJava {
@@ -101,23 +104,13 @@ compileTestJava {
 test {
 	minHeapSize = "128m" // initial heap size
 	maxHeapSize = "1g" // maximum heap size
-	jvmArgs '-XX:MaxPermSize=1g' // mem argument for the test JVM
+//	jvmArgs '-XX:MaxPermSize=1g' // mem argument for the test JVM //no worky with j17
 }
-
-//task integrationTest(type: Test) {
-//    description = "Runs integration tests"
-//    group = "verification"
-//    useJUnitPlatform()
-//
-//     Include only integration test package
-//    include 'io/quarkus/gradle/integrationtest/*.class'
-//}
-//integrationTest.dependsOn(quarkusBuild)
 
 /**
  * Used to print the current version of this project.
  *
- * Used by the `makeInstallers.sh script to get the version.
+ * Used by the `makeInstallers.sh` script to get the version.
  */
 tasks.register('printVersion') {
 	doLast {
