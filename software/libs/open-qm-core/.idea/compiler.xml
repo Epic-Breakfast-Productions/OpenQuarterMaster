@@ -12,6 +12,6 @@
         <module name="open-qm-lib-core.test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="11" />
   </component>
 </project>

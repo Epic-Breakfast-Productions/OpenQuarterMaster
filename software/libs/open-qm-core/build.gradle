@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.39-DEV'
+version '1.0.40-DEV'
 
 repositories {
 	mavenLocal()
@@ -83,7 +83,7 @@ jacocoTestReport {
 java {
 	java {
 		toolchain {
-			languageVersion.set(JavaLanguageVersion.of(17))
+			languageVersion.set(JavaLanguageVersion.of(11))
 		}
 	}
 	withJavadocJar()
@@ -155,6 +155,4 @@ signing {
 javadoc {
 	options.addBooleanOption('html5', true)
 	options.addBooleanOption('private', true)
-//	if (JavaVersion.current().isJava11Compatible()) {
-//	}
 }
