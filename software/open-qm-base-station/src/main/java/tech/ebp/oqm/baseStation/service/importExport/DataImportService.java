@@ -11,6 +11,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
@@ -85,6 +86,10 @@ public class DataImportService {
 		}
 		return List.of();
 	}
+	
+	
+	@Inject
+	CustomUnitService customUnitService;
 	
 	@Inject
 	ImageService imageService;
@@ -265,6 +270,7 @@ public class DataImportService {
 		){
 			session.withTransaction(()->{
 				try {
+					resultBuilder.numUnits(this.readInObjects(session, tempDirPath, this.customUnitService, importingUser));
 					resultBuilder.numImages(this.readInObjects(session, tempDirPath, this.imageService, importingUser));
 					resultBuilder.numStorageBlocks(this.readInObjects(session, tempDirPath, this.storageBlockService, importingUser));
 					resultBuilder.numInventoryItems(this.readInObjects(session, tempDirPath, this.inventoryItemService, importingUser));

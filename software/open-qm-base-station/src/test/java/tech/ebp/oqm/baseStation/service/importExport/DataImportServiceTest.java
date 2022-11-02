@@ -6,6 +6,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
@@ -21,7 +22,11 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
+import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
+import tech.ebp.oqm.lib.core.units.UnitCategory;
+import tech.ebp.oqm.lib.core.units.ValidUnitDimension;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -52,6 +57,8 @@ class DataImportServiceTest extends RunningServerTest {
 	TestUserService testUserService;
 	
 	@Inject
+	CustomUnitService customUnitService;
+	@Inject
 	ImageService imageService;
 	@Inject
 	StorageBlockService storageBlockService;
@@ -63,6 +70,17 @@ class DataImportServiceTest extends RunningServerTest {
 		User testUser = testUserService.getTestUser();
 		
 		//TODO:: refactor
+		for (int i = 0; i < 5; i++) {
+			CustomUnitEntry curImage = new CustomUnitEntry(
+				UnitCategory.Number,
+				i,
+				new NewBaseCustomUnitRequest(ValidUnitDimension.amount)
+					.setUnitCategory(UnitCategory.Number)
+					.setName(FAKER.name().name())
+					.setSymbol(FAKER.food().dish())
+			);
+			this.customUnitService.add(curImage, testUser);
+		}
 		for (int i = 0; i < 5; i++) {
 			Image curImage = new Image();
 			curImage.setTitle(FAKER.name().name());
@@ -141,6 +159,9 @@ class DataImportServiceTest extends RunningServerTest {
 			storageIds.add(this.inventoryItemService.add(item, testUser));
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
+		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
+		this.customUnitService.removeAll(testUser);
+		this.customUnitService.getHistoryService().removeAll();
 		List<InventoryItem> oldItems = this.inventoryItemService.list(null, Sorts.ascending("name"), null);
 		this.inventoryItemService.removeAll(testUser);
 		this.inventoryItemService.getHistoryService().removeAll();
@@ -154,6 +175,9 @@ class DataImportServiceTest extends RunningServerTest {
 		try(InputStream is = new FileInputStream(bundle)) {
 			this.dataImportService.importBundle(is, "test.tar.gz", testUser);
 		}
+		
+		assertEquals(oldUnits.size(), this.customUnitService.list().size());
+		assertEquals(oldUnits, this.customUnitService.list(null, Sorts.ascending("order"), null));
 		
 		assertEquals(oldItems.size(), this.inventoryItemService.list().size());
 		assertEquals(oldItems, this.inventoryItemService.list(null, Sorts.ascending("name"), null));

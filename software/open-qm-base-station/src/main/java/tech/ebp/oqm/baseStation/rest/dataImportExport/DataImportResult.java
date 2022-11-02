@@ -14,7 +14,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Setter(AccessLevel.PROTECTED)
 public class DataImportResult {
-
+	
+	@Builder.Default
+	private long numUnits = 0;
 	@Builder.Default
 	private long numImages = 0;
 	@Builder.Default

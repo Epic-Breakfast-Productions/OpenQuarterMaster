@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
@@ -97,6 +98,9 @@ public class DataExportService {
 	}
 	
 	@Inject
+	CustomUnitService customUnitService;
+	
+	@Inject
 	ImageService imageService;
 	
 	@Inject
@@ -133,6 +137,7 @@ public class DataExportService {
 		{
 			StopWatch sw = StopWatch.createStarted();
 			//TODO:: parallelize
+			recordRecords(dirToArchive, this.customUnitService, !excludeHistory);
 			recordRecords(dirToArchive, this.imageService, !excludeHistory);
 			recordRecords(dirToArchive, this.storageBlockService, !excludeHistory);
 			recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory);
