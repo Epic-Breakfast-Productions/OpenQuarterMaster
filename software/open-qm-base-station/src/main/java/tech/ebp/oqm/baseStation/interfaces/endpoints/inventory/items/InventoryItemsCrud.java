@@ -2,11 +2,15 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.items;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.client.ClientSession;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -19,7 +23,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -30,6 +36,7 @@ import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
@@ -49,7 +56,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.List;
 
 @Traced
 @Slf4j
@@ -60,6 +70,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	
 	
 	Template itemSearchResultsTemplate;
+	ObjectMapper objectMapper;
 	
 	@Inject
 	public InventoryItemsCrud(
@@ -69,10 +80,12 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@Location("tags/objView/objHistoryViewRows.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/item/itemSearchResults.html")
-		Template itemSearchResultsTemplate
+		Template itemSearchResultsTemplate,
+		ObjectMapper objectMapper
 	) {
 		super(InventoryItem.class, inventoryItemService, userService, jwt, historyRowsTemplate);
 		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
+		this.objectMapper = objectMapper;
 	}
 	
 	@POST
@@ -102,6 +115,79 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@Valid InventoryItem item
 	) {
 		return super.create(securityContext, item);
+	}
+	
+	@POST
+	@Operation(
+		summary = "Imports items from a file uploaded by a user."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ObjectId.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response importData(
+		@Context SecurityContext securityContext,
+		@MultipartForm ImportBundleFileBody body
+	) throws IOException {
+		logRequestContext(this.getJwt(), securityContext);
+		User user = this.getUserFromJwt();
+		
+		log.info("Processing item file: {}", body.fileName);
+		
+		final String fileExtension = FilenameUtils.getExtension(body.fileName);
+		
+		List<InventoryItem<?, ?, ?>> items = new ArrayList<>();
+		switch (fileExtension) {
+			case "csv":
+				return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+			case "json":
+				JsonNode json = this.objectMapper.readTree(body.file);
+				
+				if (json.isObject()) {
+					json = this.objectMapper.createArrayNode().add(json);
+				}
+				
+				while (!(json).isEmpty()) {
+					JsonNode curItemJson = ((ArrayNode) json).remove(0);
+					items.add(this.objectMapper.treeToValue(curItemJson, InventoryItem.class));
+				}
+				
+				break;
+			default:
+				return Response.status(Response.Status.BAD_REQUEST).entity("Invalid file type uploaded.").build();
+		}
+		
+		List<ObjectId> results = new ArrayList<>(items.size());
+		try (ClientSession session = this.getObjectService().getNewClientSession()) {
+			session.startTransaction();
+			while (!items.isEmpty()) {
+				results.add(
+					this.getObjectService().add(
+						session,
+						items.remove(0),
+						user
+					)
+				);
+			}
+			session.commitTransaction();
+		}
+		
+		return Response.ok(results).build();
 	}
 	
 	
@@ -577,7 +663,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		
-		return Response.ok(((InventoryItemService)this.getObjectService()).getItemsInBlock(storageBlockId)).build();
+		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(storageBlockId)).build();
 	}
 	
 }
