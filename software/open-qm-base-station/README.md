@@ -104,12 +104,10 @@ Native-specific tests:
 
 ### From User feedback
 
-- Custom units
 - import
   - from csv
   - from excel?
 - select:
-  - select search auto submit
   - better labeling of search items
 - items
   - add/edit

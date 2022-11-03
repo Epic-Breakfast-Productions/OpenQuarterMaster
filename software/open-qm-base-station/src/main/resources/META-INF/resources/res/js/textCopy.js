@@ -4,11 +4,11 @@ function copyText(buttonClicked, textContainerId){
 
     buttonClicked = $(buttonClicked);
     let oldContent = buttonClicked.html();
-    console.log("old content: " + oldContent);
+    // console.log("old content: " + oldContent);
     buttonClicked.html('<i class="fa-solid fa-clipboard-check"></i>');
     setTimeout(
         function (){
-            console.log("Setting copy symbol back.");
+            // console.log("Setting copy symbol back.");
             buttonClicked.html(oldContent);
         },
         5_000
