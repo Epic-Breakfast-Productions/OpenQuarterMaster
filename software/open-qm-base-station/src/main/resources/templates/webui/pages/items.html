@@ -11,6 +11,10 @@
         </button>
     </div>
     <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal"><i class="fas fa-solid fa-file-circle-plus"></i> Add Item(s) from file
+        </button>
+    </div>
+    <div class="col d-grid gap-2">
         <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Item stats</button>
     </div>
 </div>
@@ -303,6 +307,20 @@
         {#objView/objHistoryView containerId='itemHistory'}{/objView/objHistoryView}
     </div>
 </div>
+{/modal}
+{#modal id='addItemFromFile' large=true title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+    <!-- TODO:: point to docs on how to do this -->
+    <div class="row">
+        <div class="col">
+            <form id="addItemFromFileForm">
+                <div class="col-12 mb-3">
+                    <label for="importBulkFileInput" class="form-label">CSV, or JSON file:</label>
+                    <input class="form-control" type="file" id="addFromFileInput" name="file">
+                </div>
+            </form>
+        </div>
+    </div>
+
 {/modal}
 {#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
 {/search/storage/StorageSearchSelectModal}
@@ -1491,6 +1509,28 @@ if(getParams.has("view")){
     viewModal.show();
 }
 
+var addFromFileInput = $("#addFromFileInput")[0];
+
+$("#addItemFromFileForm").submit(function (e){
+    e.preventDefault();
+    
+    let formData = new FormData();
+    let file = addFromFileInput.files[0];
+    
+    formData.append("fileName", file.name);
+    formData.append("file", file);
+    
+    doRestCall({
+        url: '/api/inventory/item',
+        method: "post",
+        data: formData,
+        done: function (data){
+            console.log("Successfully added items.");
+            reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
+        }
+        //TODO:: fail message
+    });
+});
 
 </script>
 {/pageScript}
