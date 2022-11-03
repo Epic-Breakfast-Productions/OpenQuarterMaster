@@ -209,6 +209,12 @@ Accepts:
         <div class="col">
             <div class="card">
                 <div class="card-body">
+                    <h5 class="card-title" style="display: inline">Id:</h5>
+                    <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
                     <h5 class="card-title">Location in storage:</h5>
                     <div id="storageBlockViewBreadcrumbContainer">
                     </div>
@@ -302,6 +308,7 @@ Accepts:
 <script src="/lib/treant-js/vendor/jquery.easing.js"></script>
 <script src="/lib/treant-js/Treant.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+<script src="/res/js/textCopy.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -515,6 +522,7 @@ var storageBlockViewModal = $('#storageBlockViewModal');
 var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
+var storageBlockViewId = $('#storageBlockViewId');
 var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
 var storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
 var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
@@ -528,6 +536,7 @@ var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 
 function resetView(){
+    storageBlockViewId.text('');
     storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
     storageBlockViewBreadcrumbContainer.text('');
@@ -550,6 +559,7 @@ function resetView(){
 function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
+    storageBlockViewId.text(blockId);
     addOrReplaceParams("view", blockId);
     storageBlockViewModalLabel.text(blockId);
     getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);

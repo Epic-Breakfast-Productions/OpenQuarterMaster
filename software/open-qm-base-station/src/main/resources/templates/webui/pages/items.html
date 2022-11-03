@@ -228,6 +228,12 @@
     <div class="col">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title" style="display: inline">Id:</h5>
+                <p class="card-text" style="display: inline"><span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Storage Type:</h5>
                 <div id="itemViewStorageType">
                 </div>
@@ -323,6 +329,7 @@
 <script src="/res/js/item/ItemEditing.js"></script>
 <script src="/res/js/item/ItemAddSubTrans.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="/res/js/textCopy.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -1185,6 +1192,7 @@ var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
 var viewKeywordsSection = $("#viewKeywordsSection");
 var viewAttsSection = $("#viewAttsSection");
 var itemHistory = $("#itemHistory");
+var itemViewId = $("#itemViewId");
 
 function resetView(){
     itemViewStoredContainer.text("");
@@ -1371,6 +1379,7 @@ function setupView(itemId){
     console.log("Setting up view for item " + itemId);
     resetView();
     
+    itemViewId.text(itemId);
     addOrReplaceParams("view", itemId);
     itemViewModalLabel.text(itemId);
     
