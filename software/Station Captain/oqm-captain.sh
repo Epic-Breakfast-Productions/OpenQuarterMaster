@@ -11,7 +11,7 @@
 #  - sponge (from moreutils)
 #  - curl
 #  - jq
-SCRIPT_VERSION="1.0.7-DEV"
+SCRIPT_VERSION="1.0.8-DEV"
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
