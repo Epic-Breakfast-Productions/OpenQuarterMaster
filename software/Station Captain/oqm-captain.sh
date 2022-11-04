@@ -28,6 +28,7 @@ SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
 RELEASE_LIST_FILE_WORKING="$META_INFO_DIR/releases_unfinished.json"
+RELEASE_LIST_FILE_CUR="$META_INFO_DIR/releases_cur.json"
 RELEASE_VERSIONS_DIR="$META_INFO_DIR/versions"
 RELEASE_INFRA_VERSIONS="$RELEASE_VERSIONS_DIR/infra.json"
 RELEASE_MNGR_VERSIONS="$RELEASE_VERSIONS_DIR/manager.json"
@@ -344,8 +345,11 @@ EOT
 		local curResponse="$(curl -s -w "%{http_code}" -H "Accept: application/vnd.github+json" "$GIT_RELEASES?per_page=100&page=$curPage")"
 		local httpCode=$(tail -n1 <<<"$curResponse")
 		local curResponseJson=$(sed '$ d' <<<"$curResponse")
+		echo "$curResponseJson" > "$RELEASE_LIST_FILE_CUR"
 
-		#echo "DEBUG:: Cur git response: $curResponseJson";
+#		echo "DEBUG:: Cur git response: $curResponseJson";
+
+#		echo "$curResponseJson" >> temp.txt
 
 		if [ "$httpCode" != "200" ]; then
 			exitProg 1 "Error: Failed to call Git for releases ($httpCode): $curResponseJson"
@@ -357,7 +361,7 @@ EOT
 		#cat "$RELEASE_LIST_FILE_WORKING"
 		echo "Made call to Git. Cur git response len: \"$curGitResponseLen\""
 
-		jq -c --argjson newReleases "$curResponseJson" '. |= . + $newReleases' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
+		jq -c --slurpfile newReleases "$RELEASE_LIST_FILE_CUR" '. |= . + $newReleases[0]' "$RELEASE_LIST_FILE_WORKING" | sponge "$RELEASE_LIST_FILE_WORKING"
 
 		#echo "DEBUG:: cur len of releases file: $(stat --printf="%s" "$RELEASE_LIST_FILE_WORKING")";
 
@@ -369,6 +373,13 @@ EOT
 	done
 
 	echo "No more releases from Git."
+
+	if [ -s "$RELEASE_LIST_FILE_WORKING" ]; then
+		echo "Got releases from Git."
+	else
+		exitProg 1 "Failed to get releases from GitHub."
+	fi
+
 
 	# TODO:: add setting to enable/disable
 	#echo "Removing Pre-releases.";
