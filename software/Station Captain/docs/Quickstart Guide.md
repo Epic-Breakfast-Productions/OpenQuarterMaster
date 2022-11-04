@@ -13,7 +13,7 @@ This is a set of requirements for the entire system, not necessarily just the st
 System Requirements:
 
 - A Modern Linux OS
-  - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`yum`) systems.
+  - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems.
 - 4gb of RAM
 - Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8
   - Proven arm boards:
