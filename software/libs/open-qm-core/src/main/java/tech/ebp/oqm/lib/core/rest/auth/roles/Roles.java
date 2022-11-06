@@ -1,7 +1,12 @@
 package tech.ebp.oqm.lib.core.rest.auth.roles;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Roles that define what entities are allowed to do in OpenQuarterMaster.
+ */
 public final class Roles {
 	/*
 		'type' roles
@@ -36,17 +41,19 @@ public final class Roles {
 	public static final String INVENTORY_EDIT = "inventoryEdit";
 	public static final String INVENTORY_EDIT_DESCRIPTION = "Role to enable editing inventory.";
 	
-	
-	public static final Map<String, String> ROLE_DESCRIPTION_MAP = Map.of(
-		USER, USER_DESCRIPTION,
-		SERVICE, SERVICE_DESCRIPTION,
+	/**
+	 * Map to easily associate roles with their description.
+	 */
+	public static final Map<String, String> ROLE_DESCRIPTION_MAP = Collections.unmodifiableMap(new LinkedHashMap<>() {{
+		this.put(USER, USER_DESCRIPTION);
+		this.put(SERVICE, SERVICE_DESCRIPTION);
 		
-		USER_ADMIN, USER_ADMIN_DESCRIPTION,
-		SERVICE_ADMIN, SERVICE_ADMIN_DESCRIPTION,
-		INVENTORY_ADMIN, INVENTORY_ADMIN_DESCRIPTION,
+		this.put(USER_ADMIN, USER_ADMIN_DESCRIPTION);
+		this.put(SERVICE_ADMIN, SERVICE_ADMIN_DESCRIPTION);
+		this.put(INVENTORY_ADMIN, INVENTORY_ADMIN_DESCRIPTION);
 		
-		INVENTORY_VIEW, INVENTORY_VIEW_DESCRIPTION,
-		INVENTORY_EDIT, INVENTORY_EDIT_DESCRIPTION
-	);
+		this.put(INVENTORY_VIEW, INVENTORY_VIEW_DESCRIPTION);
+		this.put(INVENTORY_EDIT, INVENTORY_EDIT_DESCRIPTION);
+	}});
 	
 }
