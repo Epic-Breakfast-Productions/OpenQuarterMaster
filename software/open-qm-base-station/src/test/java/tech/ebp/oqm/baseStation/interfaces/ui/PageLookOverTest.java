@@ -42,6 +42,7 @@ public class PageLookOverTest extends WebUiTest {
 			Arguments.of(true,  "/codes", "Create QR & Bar Codes"),
 			Arguments.of(true,  "/you", "Your Profile"),
 			Arguments.of(true,  "/inventoryAdmin", "Inventory Administration"),
+			Arguments.of(true,  "/userAdmin", "User Administration"),
 			Arguments.of(true,  "/images", "Images"),
 			Arguments.of(true,  "/storage", "Storage"),
 			Arguments.of(true,  "/items", "Items")
