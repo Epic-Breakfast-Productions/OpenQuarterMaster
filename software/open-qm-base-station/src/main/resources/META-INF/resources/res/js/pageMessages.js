@@ -1,25 +1,54 @@
 var messageDiv = $("#messageDiv")
-function addMessageToDiv(jqueryObj, type, message, heading, id){
-	if(heading != null){
-		heading = '<h4 class="alert-heading">'+heading+'</h4>';
-	}else{
-		heading = "";
-	}
+var alertIdCount = 0;
+
+function buildMessageDiv(type, message, heading, id, infoContent){
+
 	if(id != null){
 		id = 'id="'+id+'"'
 	}else{
-		id = "";
+		id = "alert-" + alertIdCount++;
 	}
-	$('<div '+id+' class="alert alert-'+type+' alert-dismissible fade show alertMessage m-1" role="alert">\n'+
+	let infoContentId = id + "-infoContent"
+
+	let output = $('<div class="alert alert-'+type+' alert-dismissible fade show alertMessage m-1" role="alert">\n'+
 		'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-		heading + "\n" +
-		'<span class="message">\n' +
-		message + "\n" +
-		'</span>\n' +
-		'</div>').appendTo(jqueryObj.get(0))
+		'</div>');
+	output.attr("id", id);
+
+	let headingObj = $('<h4 class="alert-heading"></h4>');
+	let infoContentObj = "";
+
+	if(infoContent != null){
+		headingObj.append(
+			$('<button type="button" class="btn btn-'+type+' mx-2" data-bs-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-info"></i></button>')
+				.attr("aria-controls", infoContentId)
+				.attr("data-bs-target", "#" + infoContentId)
+		);
+		infoContentObj = $('<div class="collapse mt-2">\n' +
+			'  <div class="card card-body card-'+type+' bg-'+type+'">\n' +
+			'  </div>\n' +
+			'</div>');
+		infoContentObj.attr("id", infoContentId)
+		infoContentObj.find(".card-body").text(infoContent)
+	}
+
+	if(heading != null){
+		headingObj.append($('<span class=""></span>').text(heading));
+	}
+	output = output.append(headingObj);
+	output = output.append($('<span class="message"></span>').text(message));
+	output = output.append(infoContentObj);
+
+	return output;
 }
-function addMessage(type, message, heading, id){
-	addMessageToDiv(messageDiv, type, message, heading, id);
+
+
+function addMessageToDiv(jqueryObj, type, message, heading, id, infoContent){
+	buildMessageDiv(type, message, heading, id, infoContent).appendTo(jqueryObj.get(0))
+}
+
+function addMessage(type, message, heading, id, infoContent){
+	addMessageToDiv(messageDiv, type, message, heading, id, infoContent);
 }
 
 function reloadPageWithMessage(message, type, heading){

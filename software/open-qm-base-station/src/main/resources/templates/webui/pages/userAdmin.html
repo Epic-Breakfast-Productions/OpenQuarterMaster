@@ -100,6 +100,10 @@
 	{#modals}
 		{#modal id='userView' large=true title='User View'}
 			<div class="row">
+				<div class="col" id="userViewMessages">
+				</div>
+			</div>
+			<div class="row">
 				<div class="col">
 					<div class="card">
 						<div class="card-body">
@@ -168,8 +172,11 @@
 	{/modal}
 {#modal id='userEdit' large=true title='User edit' submitForm='userEditItemForm' submitDismiss=false}
 	<div class="row">
+		<div class="col" id="userEditFormMessages">
+		</div>
+	</div>
+	<div class="row">
 		<div class="col">
-			<div id="userEditFormMessages"></div>
 			<form id="userEditItemForm">
 				<input type="hidden" id="userEditFormUserId" value="">
 				<div class="mb-3 row">
@@ -213,6 +220,7 @@
 	{#pageScript}
 		<script>
 			var userViewModalLabel = $("#userViewModalLabel");
+			var userViewMessages = $("#userViewMessages");
 			var userViewName = $("#userViewName");
 			var userViewUsername = $("#userViewUsername");
 			var userViewEmail = $("#userViewEmail");
@@ -224,6 +232,7 @@
 			var userHistory = $("#userHistory");
 			
 			function resetUserView(){
+				userViewMessages.text("");
 				userViewModalLabel.text("");
 				userViewName.text("");
 				userViewUsername.text("");
@@ -242,6 +251,7 @@
 				doRestCall({
 					url: "/api/user/" + userId,
 					method: "GET",
+					failMessagesDiv: userViewMessages,
 					done: function (data) {
 						userViewModalLabel.text(data.username);
 						userViewName.text(data.firstName + " " + data.lastName);
@@ -269,6 +279,7 @@
 				doRestCall({
 					url: "/api/user/" + userId,
 					method: "GET",
+					failMessagesDiv: messageDiv,
 					done: function (data){
 						let confirmMessage = "Are you sure? User "+data.username+" currently has the following roles:\n"
 
@@ -297,9 +308,7 @@
 				doRestCall({
 					url: "/api/user/" + userId,
 					method: "GET",
-					fail: function (data){
-						alert("Error: " + data);
-					},
+					failMessagesDiv: messageDiv,
 					done: function (data){
 						if(!confirm("Are you sure? User "+data.username+" will no longer have access.")){
 							return;
@@ -323,6 +332,7 @@
 			}
 			
 			var userEditItemForm = $("#userEditItemForm");
+			var userEditFormMessages = $("#userEditFormMessages");
 			var userEditModalLabel = $("#userEditModalLabel");
 			var userEditFormUserId = $("#userEditFormUserId");
 			var userEditRolesInputs = $("#userEditRolesInputs");
@@ -337,6 +347,7 @@
 			});
 			
 			function resetUserEditForm(){
+				userEditFormMessages.text("");
 				userEditModalLabel.text("");
 				userEditFormUserId.val("");
 				for (const [key, input] of Object.entries(userEditRolesInputsMap)) {
@@ -391,9 +402,7 @@
 					url: "/api/user/" + userEditFormUserId.val(),
 					method: "PUT",
 					data: data,
-					fail: function (data){
-						alert("Error: " + data);
-					},
+					failMessagesDiv: userEditFormMessages,
 					done: function (data) {
 						reloadPageWithMessage("Updated user "+data.username+"!", "success", "Success!");
 					}

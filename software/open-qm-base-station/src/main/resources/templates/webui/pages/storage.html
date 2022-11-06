@@ -205,6 +205,11 @@ Accepts:
 
 {#modal id='storageBlockView' large=true title='Storage Block View'}
     <div class="row">
+        <div class="col" id="storageBlockViewMessages">
+        
+        </div>
+    </div>
+    <div class="row">
         {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
         <div class="col">
             <div class="card">
@@ -505,9 +510,7 @@ addEditStorageForm.submit(async function (event) {
                 console.log("Response from edit request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function (data) {
-                console.warn("Bad response from edit storage block attempt: " + JSON.stringify(data));
-            }
+            failMessagesDiv: addEditFormMessages
         });
     }
     
@@ -519,6 +522,7 @@ addEditStorageForm.submit(async function (event) {
 });
 
 var storageBlockViewModal = $('#storageBlockViewModal');
+var storageBlockViewMessages = $("#storageBlockViewMessages");
 var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
 var storageBlockHistory = $('#storageBlockHistory');
@@ -536,6 +540,7 @@ var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 
 function resetView(){
+    storageBlockViewMessages.text("");
     storageBlockViewId.text('');
     storageBlockViewLocationContainer.hide();
     storageBlockViewLocation.text('');
@@ -644,7 +649,7 @@ function setupView(blockId){
             }
             await Promise.all(promises);
     	},
-    	fail: function(){ }
+    	failMessagesDiv: storageBlockViewMessages
     });
 }
 

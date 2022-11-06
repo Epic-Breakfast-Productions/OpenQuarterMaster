@@ -37,6 +37,7 @@ import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
@@ -154,7 +155,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		List<InventoryItem<?, ?, ?>> items = new ArrayList<>();
 		switch (fileExtension) {
 			case "csv":
-				return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+				return Response.status(Response.Status.NOT_IMPLEMENTED).entity(
+					ErrorMessage.builder()
+								.displayMessage("Adding items from CSV not yet implemented.")
+								.build()
+				).build();
 			case "json":
 				JsonNode json = this.objectMapper.readTree(body.file);
 				

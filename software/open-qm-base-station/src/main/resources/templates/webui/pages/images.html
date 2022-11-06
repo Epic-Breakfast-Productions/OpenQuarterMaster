@@ -185,10 +185,7 @@ function setupAddEditForEdit(id){
             addKeywordInputs(keywordInputDiv, data.keywords);
             addAttInputs(attInputDiv, data.attributes);
         },
-        fail: function(data) {
-            console.warn("Bad response from image data get attempt: " + JSON.stringify(data));
-            addMessageToDiv(imageViewMessages, "danger", "Failed to get info on image: " + data.responseText, "Failed", null);
-        }
+        failMessagesDiv: addEditFormMessages
     });
 }
 
@@ -236,10 +233,7 @@ addEditImageForm.submit(function (ev) {
                     console.log("Response from update request: " + JSON.stringify(data));
                     reloadPageWithMessage("Updated image successfully!", "success", "Success!");
                 },
-                fail: function (data) {
-                    console.warn("Bad response from update attempt: " + JSON.stringify(data));
-                    addMessageToDiv(addEditFormMessages, "danger", "Failed to do update: " + data.responseText, "Failed", null);
-                }
+                failMessagesDiv: addEditFormMessages
             });
         
         } else {
@@ -251,7 +245,7 @@ addEditImageForm.submit(function (ev) {
 
 var viewModalLabel = $('#viewModalLabel');
 var imageViewImages = $('.imageViewImage');
-var imageViewMessages = $('.imageViewMessages');
+var imageViewMessages = $('#imageViewMessages');
 var viewDescriptionTextSection = $('#viewDescriptionTextSection');
 var viewDescriptionText = $('#viewDescriptionText');
 var viewKeywordsSection = $('#viewKeywordsSection');
@@ -261,6 +255,7 @@ var imageEditButton = $('#imageEditButton');
 var historyViewContainer = $('#historyViewContainer');
 
 function resetView(){
+    imageViewMessages.text("");
     viewModalLabel.text("");
     imageViewImages.each(function(cur){
         cur.src = '';
@@ -315,17 +310,11 @@ function setupViewForImage(id){
                         console.log("Response from create request: " + JSON.stringify(data));
                         reloadPageWithMessage("Delete image successfully!", "success", "Success!");
                     },
-                    fail: function(data) {
-                        console.warn("Bad response from image delete attempt: " + JSON.stringify(data));
-                        addMessageToDiv(imageViewMessages, "danger", "Failed to remove image: " + data.responseText, "Failed", null);
-                    }
+                    failMessagesDiv: imageViewMessages
                 });
             });
         },
-        fail: function(data) {
-            console.warn("Bad response from image data get attempt: " + JSON.stringify(data));
-            addMessageToDiv(imageViewMessages, "danger", "Failed to get info on image: " + data.responseText, "Failed", null);
-        }
+        failMessagesDiv: imageViewMessages
     });
 }
 </script>

@@ -1,5 +1,29 @@
 var wholeBody = $('body');
 
+function buildErrorMessageFromResponse(response, statusMessage){
+	let output = "";
+
+	if(
+		Object.prototype.hasOwnProperty.call(response, "responseJSON")
+		&& (Object.prototype.hasOwnProperty.call(response.responseJSON, "displayMessage")
+		|| Object.prototype.hasOwnProperty.call(response.responseJSON, "message"))
+	){
+		if(Object.prototype.hasOwnProperty.call(response.responseJSON, "displayMessage")){
+			output = response.responseJSON.displayMessage;
+		} else {
+			output = response.responseJSON.message;
+		}
+	} else if(
+		response.responseText
+	){
+		output = response.responseText;
+	} else {
+		output = statusMessage;
+	}
+
+	return output;
+}
+
 /**
  *
  * @param spinnerContainer
@@ -9,13 +33,14 @@ var wholeBody = $('body');
  * @param data
  * @param authorization
  * @param extraHeaders
- * @param async
+ * @param async If this function should await the ajax promise before returning
  * @param crossDomain
- * @param done
- * @param fail
+ * @param done Required, Function to call when the call is successful
+ * @param fail Optional, Function to call when the call fails
+ * @param failMessagesDiv Null for no auto message display. String Jquery selector or Jquery object otherwise.
  * @param failNoResponse
  * @param failNoResponseCheckStatus
- * @returns {jqXHR}
+ * @returns {jqXHR} the ajax promise from calling jquery ajax
  */
 async function doRestCall(
 	{
@@ -31,6 +56,7 @@ async function doRestCall(
 		done,
 		fail = function () {
 		},
+		failMessagesDiv = null,
 		failNoResponse = null,
 		failNoResponseCheckStatus = true,
 	} = {}
@@ -81,10 +107,23 @@ async function doRestCall(
 		console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
 		done(data);
 	}).fail(function (data, status, statusStr) {
-		console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + "): " + JSON.stringify(data));
+		console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
+
+		if(failMessagesDiv != null){
+			if(String(failMessagesDiv) === failMessagesDiv){
+				failMessagesDiv = $(failMessagesDiv);
+			}
+			addMessageToDiv(
+				failMessagesDiv,
+				"danger",
+				buildErrorMessageFromResponse(data, statusStr),
+				"Action Failed",
+				null,
+				JSON.stringify(data)
+			);
+		}
 
 		var response = data.responseJSON;
-
 		if (data.status == 0) { // no response from server
 			if (failNoResponseCheckStatus) {
 				//getServerStatus();

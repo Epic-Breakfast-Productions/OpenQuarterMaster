@@ -155,7 +155,8 @@ function setupAddSubTransForm(itemId) {
 			itemAddSubtractTransferFormItemIdInput.val(itemAddSubtractTransferFormItemData.id);
 			itemAddSubtractTransferFormItemTypeInput.val(itemAddSubtractTransferFormItemData.storageType);
 			resetAddSubTransFormActionChanged();
-		}
+		},
+		failMessagesDiv: itemAddSubtractTransferFormMessages
 	});
 }
 
@@ -210,10 +211,7 @@ itemAddSubtractTransferForm.on("submit", function (e) {
 		done: function (data) {
 			reloadPageWithMessage("Operation successful!", "success", "Success!");
 		},
-		fail: function (errs) {
-			//TODO:: handle better
-			addMessageToDiv(itemAddSubtractTransferFormMessages, "danger", "Failed to do action: " + errs, "Failed", null);
-		}
+		failMessagesDiv: itemAddSubtractTransferFormMessages
 	});
 
 

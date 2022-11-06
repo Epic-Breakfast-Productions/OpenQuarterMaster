@@ -67,6 +67,7 @@ Native-specific tests:
   - bulk create
   - bulk edit?
 - Items
+  - fix search form
   - fix unit editing unit
   - stats
   - UI tweaks

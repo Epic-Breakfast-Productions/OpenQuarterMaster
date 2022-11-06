@@ -195,7 +195,7 @@
                             </select>
                         </div>
                         <div id="addEditExpiryWarningThresholdHelp" class="form-text">
-                            How many days before expiration dates to warn of imminent expiration. 0 for no warning. <br />
+                            How many time units before expiration dates to warn of imminent expiration. 0 for no warning.<br />
                             * = Depending on server settings, you might not get an accurate warning with a short warning period.
                         </div>
                     </div>
@@ -227,6 +227,11 @@
 
 {/modal}
 {#modal id='itemView' large=true title='Item View'}
+    <div class="row">
+        <div class="col" id="itemViewMessages">
+			
+		</div>
+    </div>
 <div class="row">
     {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
     <div class="col">
@@ -309,18 +314,21 @@
 </div>
 {/modal}
 {#modal id='addItemFromFile' large=true title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+    <div class="row">
+        <div class="col" id="addItemFromFileFormMessages">
+        </div>
+    </div>
     <!-- TODO:: point to docs on how to do this -->
     <div class="row">
         <div class="col">
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
                     <label for="importBulkFileInput" class="form-label">CSV, or JSON file:</label>
-                    <input class="form-control" type="file" id="addFromFileInput" name="file">
+                    <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
                 </div>
             </form>
         </div>
     </div>
-
 {/modal}
 {#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
 {/search/storage/StorageSearchSelectModal}
@@ -569,6 +577,7 @@ function setupAddEditForEdit(itemId){
     doRestCall({
         spinnerContainer: addEditModal,
         url: "/api/inventory/item/" + itemId,
+        failMessagesDiv: addEditFormMessages,
         done: async function(data){
             addSelectedImages(addEditImagesSelected, data.imageIds);
             addKeywordInputs(addEditKeywordDiv, data.keywords);
@@ -1023,8 +1032,7 @@ function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
 
 function buildStoredObj(storedContainer, type){
     let output = {
-        storedType: type,
-        expired: false
+        storedType: type
     };
     
     {
@@ -1158,9 +1166,7 @@ addEditItemForm.submit(async function (event) {
                 console.log("Response from create request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function (data) {
-                console.warn("Bad response from token check attempt: " + JSON.stringify(data));
-            }
+            failMessagesDiv: addEditFormMessages
         });
     } else if (addEditFormMode.val() === "edit") {
         verb = "Edited";
@@ -1176,9 +1182,7 @@ addEditItemForm.submit(async function (event) {
                 console.log("Response from create request: " + JSON.stringify(data));
                 result = true;
             },
-            fail: function (data) {
-                console.warn("Bad response from create request: " + JSON.stringify(data));
-            }
+            failMessagesDiv: addEditFormMessages
         });
     }
     
@@ -1190,6 +1194,7 @@ addEditItemForm.submit(async function (event) {
 });
 
 var itemViewModal = $("#itemViewModal");
+var itemViewMessages = $("#itemViewMessages");
 var itemViewModalLabel = $("#itemViewModalLabel");
 var itemViewStoredContainer = $("#itemViewStoredContainer");
 var itemViewStored = $("#itemViewStored");
@@ -1461,6 +1466,7 @@ function setupView(itemId){
                         spinnerContainer: null,
                         async: false,
                         url: "/api/inventory/storage-block/" + key,
+						failMessagesDiv: itemViewMessages,
                         done: function (data) {
                             curBlockName = data.label;
                         }
@@ -1494,7 +1500,7 @@ function setupView(itemId){
             });
             await Promise.all(promises);
         },
-        fail: function(){ }
+        failMessagesDiv: itemViewMessages
     });
 }
 
@@ -1510,6 +1516,7 @@ if(getParams.has("view")){
 }
 
 var addFromFileInput = $("#addFromFileInput")[0];
+var addItemFromFileFormMessages = $("#addItemFromFileFormMessages");
 
 $("#addItemFromFileForm").submit(function (e){
     e.preventDefault();
@@ -1527,8 +1534,8 @@ $("#addItemFromFileForm").submit(function (e){
         done: function (data){
             console.log("Successfully added items.");
             reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
-        }
-        //TODO:: fail message
+        },
+        failMessagesDiv: addItemFromFileFormMessages
     });
 });
 
