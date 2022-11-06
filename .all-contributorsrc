@@ -35,6 +35,15 @@
         "infra",
         "mentoring"
       ]
+    },
+    {
+      "login": "kfrankli",
+      "name": "kfrankli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3671139?v=4",
+      "profile": "https://github.com/kfrankli",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -42,5 +51,6 @@
   "projectOwner": "Epic-Breakfast-Productions",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
