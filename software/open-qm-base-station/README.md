@@ -55,7 +55,6 @@ Native-specific tests:
 - db
   - look into liquibase: https://quarkus.io/guides/liquibase-mongodb
 - Overview
-  - create "explore" and "stats" section; start at explore.
   - explore
     - add images
   - stats
@@ -63,9 +62,6 @@ Native-specific tests:
     - come up with helpful stats to show
 - Storage
   - do all stats
-  - handle breadcrumb links
-  - bulk create
-  - bulk edit?
 - Items
   - fix search form
   - fix unit editing unit
@@ -73,7 +69,7 @@ Native-specific tests:
   - UI tweaks
     - view improvements
   - External item lookup.
-    - support throwing data points to adding/editing item  
+    - support throwing data points to adding/editing item
     - API's:
       - Good leads:
         - https://opengtindb.org/index.php
@@ -86,19 +82,14 @@ Native-specific tests:
   - overall stats
   - responsive design tweaks
   - testing for large images
-  - Allow for image upload on image select
   - Look at moving to Cropper to replace Croppie: https://github.com/fengyuanchen/cropperjs
 - User
   - external
     - view your infos
   - self
-    - review acct create
-    - view your info
-    - give admins
-      - add user
-      - remove user
-      - promote/demote user
-      - search users
+    - stats? 
+  - give admins
+    - search users
 - REST
   - handle ParseException for expired, bad tokens for UI
 - Testing
@@ -107,13 +98,13 @@ Native-specific tests:
 
 - import
   - from csv
+    - determine what this should look like
+    - provide template
   - from excel?
 - select:
   - better labeling of search items
 - items
   - add/edit
-    - more space between add stored button and dropdowns
     - open new stored dropdown when added
   - add/sub/trans
     - better placement of submit button
-  - quick and easy item i/o from overview? 

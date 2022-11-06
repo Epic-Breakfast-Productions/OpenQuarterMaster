@@ -78,7 +78,7 @@ public class UserAdminUi extends UiProvider {
 		@Context SecurityContext securityContext,
 		@CookieParam("jwt_refresh") String refreshToken
 	) throws URISyntaxException {
-		if(this.authMode != AuthMode.SELF){
+		if (this.authMode != AuthMode.SELF) {
 			return Response.seeOther(new URI("/")).build();
 		}
 		logRequestContext(jwt, securityContext);
@@ -97,8 +97,8 @@ public class UserAdminUi extends UiProvider {
 				.data("showSearch", false)
 				.data("searchResults", userResults)
 				.data("pagingCalculations", pagingCalculations)
-				.data("selectableRolesMap", Roles.ROLE_DESCRIPTION_MAP.entrySet().stream().filter(
-					UserRoles.SELECTABLE_ROLES::contains))
+				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES_DESC_MAP)
+				.data("searchObject", search)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

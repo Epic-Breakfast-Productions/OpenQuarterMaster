@@ -33,7 +33,7 @@
         <table class=" table table-bordered table-striped table-hover table-sm">
 		<thead>
 		<tr>
-			<td colspan="6" class="text-center">
+			<td colspan="7" class="text-center">
 				{#paginationButtons searchFormId="userSearchForm" pagingCalculations=pagingCalculations}{/paginationButtons}
 			</td>
 		</tr>
@@ -88,7 +88,7 @@
 		</tbody>
 		<tfoot>
 		<tr>
-		<td colspan="6" class="text-center">
+		<td colspan="7" class="text-center">
 		{#paginationButtons searchFormId="userSearchForm" pagingCalculations=pagingCalculations}{/paginationButtons}
 		</td>
 	</tr>
@@ -189,7 +189,7 @@
 						{#for roleEntry in selectableRolesMap}
 						<div class="form-check form-switch">
 							<input class="form-check-input roleInput" type="checkbox" role="switch" id="userRoleInput{roleEntry.key()}" value="{roleEntry.key()}">
-							<label class="form-check-label" for="userRoleInput{roleEntry.key()}">{roleEntry.key()}</label>
+							<label class="form-check-label" for="userRoleInput{roleEntry.key()}">{roleEntry.key()} - <span class="fw-lighter">{roleEntry.value()}</span></label>
 						</div>
 						{/for}
 					</div>
