@@ -1,12 +1,15 @@
-package tech.ebp.oqm.lib.core.object.service.plugin;
+package tech.ebp.oqm.lib.core.rest.service;
+
+//TODO:: for general, plugin
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.service.Service;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.lib.core.object.service.ServiceType;
 import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponent;
 
@@ -15,17 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@SuperBuilder
 @ToString(callSuper = true)
-public class PluginService extends Service {
+@EqualsAndHashCode(callSuper = true)
+public class PluginServiceSetupRequest extends ServiceSetupRequest {
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<PageComponent> pageComponents = new ArrayList<>();
 	
-	@Override
 	public ServiceType getServiceType() {
 		return ServiceType.PLUGIN;
 	}

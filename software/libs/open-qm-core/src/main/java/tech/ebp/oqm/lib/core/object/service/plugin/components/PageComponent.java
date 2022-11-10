@@ -2,11 +2,12 @@ package tech.ebp.oqm.lib.core.object.service.plugin.components;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.nav.NavItem;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.nav.NavSubMenu;
 
 @Data
 //@AllArgsConstructor
@@ -16,12 +17,15 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "componentType"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = NavItemDetails.class, name = "NAV_ITEM"),
-	@JsonSubTypes.Type(value = NavSubMenuDetails.class, name = "NAV_SUB_MENU"),
+	@JsonSubTypes.Type(value = NavItem.class, name = "NAV_ITEM"),
+	@JsonSubTypes.Type(value = NavSubMenu.class, name = "NAV_SUB_MENU"),
 })
 @BsonDiscriminator(key = "componentType_mongo")
 @SuperBuilder
-public abstract class PageComponentDetails {
+public abstract class PageComponent {
+	
+	@lombok.Builder.Default
+	public boolean enabled = true;
 	
 	public abstract PageComponentType getComponentType();
 }

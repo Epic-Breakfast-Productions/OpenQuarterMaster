@@ -1,19 +1,17 @@
-package tech.ebp.oqm.lib.core.object.service.plugin.components;
+package tech.ebp.oqm.lib.core.object.service.plugin.components.nav;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponent;
+import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponentType;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,26 +19,30 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public class NavSubMenuDetails extends PageComponentDetails {
+public class NavItem extends PageComponent {
 	
 	@Override
 	public PageComponentType getComponentType() {
-		return PageComponentType.NAV_SUB_MENU;
+		return PageComponentType.NAV_ITEM;
 	}
 	
 	/**
-	 * The text of the menu
+	 * The text of the link
 	 */
 	@NonNull
 	@NotNull
-	private String menuText;
+	private String itemText;
 	
 	/**
-	 * The list of nav items to show in the menu
+	 * The url of the nav item to go to
 	 */
-	@NotNull
 	@NonNull
-	@NotEmpty
+	@NotNull
+	private URL itemUrl;
+	
+	/**
+	 * If the link should go to a new tab
+	 */
 	@lombok.Builder.Default
-	private List<NavItemDetails> menuItems = new ArrayList<>();
+	private boolean newTab = false;
 }

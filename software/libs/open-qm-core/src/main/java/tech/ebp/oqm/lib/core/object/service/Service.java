@@ -11,8 +11,10 @@ import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.service.plugin.PluginService;
+import tech.ebp.oqm.lib.core.object.service.roles.RequestedRole;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -41,12 +43,36 @@ public abstract class Service extends AttKeywordMainObject {
 	@Size(max = 30)
 	private String name;
 	
+	/**
+	 * Only used when authmode == SELF
+	 */
 	@NonNull
 	@NotNull
 	private boolean disabled = true;
+	
+	/**
+	 * Only used when authmode == SELF
+	 */
+	@NonNull
+	@NotNull
+	private Set<@Valid RequestedRole> requestedRoles = new HashSet<>();
+	
+	/**
+	 * Only used when authmode == SELF
+	 */
 	@NonNull
 	@NotNull
 	private Set<@ValidServiceRole String> roles = new HashSet<>();
+	
+	/**
+	 * Only used when authmode == SELF
+	 */
+	private String secretHash;
+	
+	/**
+	 * Only used when authmode == SELF
+	 */
+	private String setupTokenHash;
 	
 	public abstract ServiceType getServiceType();
 }
