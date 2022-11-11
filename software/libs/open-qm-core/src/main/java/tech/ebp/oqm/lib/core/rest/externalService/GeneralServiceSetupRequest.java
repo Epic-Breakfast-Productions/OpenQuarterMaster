@@ -1,14 +1,13 @@
-package tech.ebp.oqm.lib.core.rest.service;
+package tech.ebp.oqm.lib.core.rest.externalService;
 
 //TODO:: for general, plugin
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.service.ServiceType;
+import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
 
 @Data
 //@AllArgsConstructor

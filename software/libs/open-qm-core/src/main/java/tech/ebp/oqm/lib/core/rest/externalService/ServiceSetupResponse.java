@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.rest.service;
+package tech.ebp.oqm.lib.core.rest.externalService;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

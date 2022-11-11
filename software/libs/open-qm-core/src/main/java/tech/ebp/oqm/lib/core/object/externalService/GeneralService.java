@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.service;
+package tech.ebp.oqm.lib.core.object.externalService;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +10,7 @@ import lombok.ToString;
 //@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class GeneralService extends Service {
+public class GeneralService extends ExternalService {
 	
 	@Override
 	public ServiceType getServiceType() {

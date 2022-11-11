@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.service.plugin.components.nav;
+package tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponent;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponentType;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.Plugin;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginType;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -19,11 +19,11 @@ import java.net.URL;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public class NavItem extends PageComponent {
+public class NavItem extends Plugin {
 	
 	@Override
-	public PageComponentType getComponentType() {
-		return PageComponentType.NAV_ITEM;
+	public PluginType getComponentType() {
+		return PluginType.NAV_ITEM;
 	}
 	
 	/**

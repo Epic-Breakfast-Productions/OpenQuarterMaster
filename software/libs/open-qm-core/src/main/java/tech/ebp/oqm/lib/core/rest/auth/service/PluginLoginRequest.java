@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponent;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.PageComponentType;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.Plugin;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginType;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -22,5 +22,5 @@ public class PluginLoginRequest extends ServiceLoginRequest {
 	
 	@NonNull
 	@NotNull
-	private Map<PageComponentType, PageComponent> pageComponents = new HashMap<>();
+	private Map<PluginType, Plugin> pageComponents = new HashMap<>();
 }

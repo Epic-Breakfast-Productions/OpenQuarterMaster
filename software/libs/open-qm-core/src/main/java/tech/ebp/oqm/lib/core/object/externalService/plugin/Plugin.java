@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.service.plugin.components;
+package tech.ebp.oqm.lib.core.object.externalService.plugin;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.nav.NavItem;
-import tech.ebp.oqm.lib.core.object.service.plugin.components.nav.NavSubMenu;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav.NavItem;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav.NavSubMenu;
 
 @Data
 //@AllArgsConstructor
@@ -22,10 +22,10 @@ import tech.ebp.oqm.lib.core.object.service.plugin.components.nav.NavSubMenu;
 })
 @BsonDiscriminator(key = "componentType_mongo")
 @SuperBuilder
-public abstract class PageComponent {
+public abstract class Plugin {
 	
 	@lombok.Builder.Default
 	public boolean enabled = true;
 	
-	public abstract PageComponentType getComponentType();
+	public abstract PluginType getComponentType();
 }

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.rest.service;
+package tech.ebp.oqm.lib.core.rest.externalService;
 
 //TODO:: for general, plugin
 
@@ -9,8 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.service.ServiceType;
-import tech.ebp.oqm.lib.core.object.service.roles.RequestedRole;
+import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
+import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

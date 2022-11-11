@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.service;
+package tech.ebp.oqm.lib.core.object.externalService;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -10,8 +10,8 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
-import tech.ebp.oqm.lib.core.object.service.plugin.PluginService;
-import tech.ebp.oqm.lib.core.object.service.roles.RequestedRole;
+import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginService;
+import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 
 import javax.validation.Valid;
@@ -35,7 +35,7 @@ import java.util.Set;
 	@JsonSubTypes.Type(value = PluginService.class, name = "PLUGIN"),
 })
 @BsonDiscriminator(key = "serviceType_mongo")
-public abstract class Service extends AttKeywordMainObject {
+public abstract class ExternalService extends AttKeywordMainObject {
 	
 	@NonNull
 	@NotNull
