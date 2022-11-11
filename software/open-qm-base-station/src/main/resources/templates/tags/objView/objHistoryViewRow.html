@@ -8,8 +8,9 @@ Inputs:
         {event.getTimestamp()}
     </td>
     <td>
-        {#if event.getUserId() != null}
-            {userService.get(event.getUserId()).getUsername()}
+        {#if event.getEntityId() != null}
+            {! TODO:: update to include service ids !}
+            {userService.get(event.getEntityId()).getUsername()}
         {/if}
     </td>
     <td>

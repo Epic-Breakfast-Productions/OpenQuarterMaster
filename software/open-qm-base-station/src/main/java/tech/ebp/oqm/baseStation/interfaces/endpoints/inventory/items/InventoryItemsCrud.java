@@ -23,7 +23,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -143,7 +142,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
 		@Context SecurityContext securityContext,
-		@MultipartForm ImportBundleFileBody body
+		@BeanParam ImportBundleFileBody body
 	) throws IOException {
 		logRequestContext(this.getJwt(), securityContext);
 		User user = this.getUserFromJwt();

@@ -20,6 +20,7 @@ import java.util.Currency;
 
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
 
+
 @Traced
 @Slf4j
 public abstract class UiProvider {

@@ -21,6 +21,12 @@ public abstract class EndpointProvider {
 			throw new ForbiddenException("Service not set to authenticate its own users.");
 		}
 	}
+	protected static void assertExternalAuthMode(AuthMode authMode) {
+		if (!AuthMode.EXTERNAL.equals(authMode)) {
+			//TODO:: throw custom exception, handle to return proper response object
+			throw new ForbiddenException("Service not set to authenticate externally.");
+		}
+	}
 	
 	protected static void logRequestContext(JsonWebToken jwt, SecurityContext context) {
 		if (!hasJwt(jwt)) {

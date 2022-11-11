@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 
+import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
@@ -22,6 +22,7 @@ import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -64,6 +65,7 @@ public class InventoryManagement extends EndpointProvider {
 	@Inject
 	ExpiryProcessor expiryProcessor;
 	
+	@Blocking
 	@GET
 	@Path("export")
 	@Operation(
@@ -96,7 +98,7 @@ public class InventoryManagement extends EndpointProvider {
 		return response.build();
 	}
 	
-	
+	@Blocking
 	@POST
 	@Path("import/file/bundle")
 	@Operation(
@@ -119,7 +121,7 @@ public class InventoryManagement extends EndpointProvider {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
 		@Context SecurityContext securityContext,
-		@MultipartForm ImportBundleFileBody body
+		@BeanParam ImportBundleFileBody body
 	) throws IOException {
 		logRequestContext(this.jwt, securityContext);
 		
@@ -128,6 +130,7 @@ public class InventoryManagement extends EndpointProvider {
 		return Response.ok(result).build();
 	}
 	
+	@Blocking
 	@GET
 	@Path("processExpiry")
 	@Operation(

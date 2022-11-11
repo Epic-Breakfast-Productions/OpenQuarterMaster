@@ -15,10 +15,10 @@ repositories {
 dependencies {
 	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
 	implementation 'io.quarkus:quarkus-config-yaml'
-	implementation 'io.quarkus:quarkus-resteasy'
-	implementation 'io.quarkus:quarkus-resteasy-jackson'
-	implementation 'io.quarkus:quarkus-resteasy-multipart'
-	implementation 'io.quarkus:quarkus-resteasy-qute'
+	implementation 'io.quarkus:quarkus-resteasy-reactive'
+	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+//	implementation 'io.quarkus:quarkus-resteasy-multipart'
+	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
 	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-arc'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
@@ -45,11 +45,11 @@ dependencies {
 
 	//webjars
 	implementation 'org.webjars:jquery:3.6.1'
-	implementation 'org.webjars:bootstrap:5.2.0'
+	implementation 'org.webjars:bootstrap:5.2.2'
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.41-DEV'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.44-DEV'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya

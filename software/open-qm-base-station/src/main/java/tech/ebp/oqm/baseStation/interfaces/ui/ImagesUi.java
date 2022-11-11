@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.interfaces.ui;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -34,6 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
+@Blocking
 @Traced
 @Slf4j
 @Path("/")
@@ -54,6 +56,7 @@ public class ImagesUi extends UiProvider {
 	
 	@Inject
 	JsonWebToken jwt;
+	
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;

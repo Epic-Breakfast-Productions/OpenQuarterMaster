@@ -17,7 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
@@ -247,7 +246,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Override
 	public StorageBlock get(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.get(securityContext, id);
 	}
@@ -288,7 +287,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Override
 	public StorageBlock update(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		return super.update(securityContext, id, updates);
@@ -329,7 +328,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Override
 	public StorageBlock delete(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.delete(securityContext, id);
 	}
@@ -403,7 +402,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Override
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		@HeaderParam("accept") String acceptHeaderVal
 	) {
 		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
@@ -444,7 +443,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	
 	@GET
-	@Path("childrenOf/{storageBlock}")
+	@Path("{id}/children")
 	@Operation(
 		summary = "Gets children of a particular storage block."
 	)
@@ -469,9 +468,10 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getChildrenOfBlock(
 		@Context SecurityContext securityContext,
-		@PathParam("storageBlock") String storageBlockId
+		@PathParam("id") String storageBlockId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
+		log.info("Getting children of \"{}\"", storageBlockId);
 		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
 	}
 }

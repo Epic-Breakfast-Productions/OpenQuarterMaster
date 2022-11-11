@@ -1,6 +1,6 @@
 package tech.ebp.oqm.baseStation.rest.dataImportExport;
 
-import org.jboss.resteasy.annotations.providers.multipart.PartType;
+import org.jboss.resteasy.reactive.PartType;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;

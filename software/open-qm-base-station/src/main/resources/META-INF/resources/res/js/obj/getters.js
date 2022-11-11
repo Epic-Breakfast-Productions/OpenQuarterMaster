@@ -20,7 +20,7 @@ async function getStorageBlockChildrenData(blockId) {
 	return new Promise((done, fail) => {
 		doRestCall({
 			spinnerContainer: null,
-			url: "/api/inventory/storage-block/childrenOf/" + blockId,
+			url: "/api/inventory/storage-block/" + blockId + "/children",
 			done: done,
 			fail: fail
 		})

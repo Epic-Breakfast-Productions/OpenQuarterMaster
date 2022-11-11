@@ -4,6 +4,7 @@ import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
+import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -33,13 +34,14 @@ import java.util.UUID;
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
 import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
+@Blocking
 @Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class Index extends UiProvider {
+public class IndexUi extends UiProvider {
 	
 	@Inject
 	@Location("webui/pages/index")
@@ -124,7 +126,7 @@ public class Index extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		
 		if(this.authMode == EXTERNAL){
-			//redirect to login, message about
+			//TODO:: redirect to login, message about
 		}
 		
 		return this.setupPageTemplate(accountCreate, tracer).data("firstUser", this.userService.collectionEmpty());

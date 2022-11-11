@@ -145,7 +145,9 @@ public class UserAuth extends EndpointProvider {
 		
 		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());
 		
-		this.userService.addHistoryFor(user, UserLoginEvent.builder().userId(user.getId()).build());
+		this.userService.addHistoryFor(
+			user, UserLoginEvent.builder().entityId(user.getId()).entityType(user.getInteractingEntityType()).build()
+		);
 		
 		return Response.status(Response.Status.ACCEPTED)
 					   .entity(this.jwtService.getUserJwt(user, loginRequest.isExtendedExpire()))
