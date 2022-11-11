@@ -24,7 +24,7 @@ import java.util.List;
 public class NavSubMenu extends Plugin {
 	
 	@Override
-	public PluginType getComponentType() {
+	public PluginType getPluginType() {
 		return PluginType.NAV_SUB_MENU;
 	}
 	

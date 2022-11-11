@@ -1,9 +1,11 @@
 package tech.ebp.oqm.lib.core.object.history;
 
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.object.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -41,17 +43,18 @@ public class ObjectHistory extends MainObject {
 	@NotNull
 	private List<@NotNull HistoryEvent> history = new ArrayList<>();
 	
-	public ObjectHistory(ObjectId objectId, User user) {
+	public ObjectHistory(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
 		this.updated(
 			CreateEvent.builder()
-					   .userId((user == null ? null : user.getId()))
+					   .entityId((entity == null ? null : entity.getId()))
+					   .entityType((entity == null ? null : entity.getInteractingEntityType()))
 					   .build()
 		);
 	}
 	
-	public ObjectHistory(MainObject object, User user) {
-		this(object.getId(), user);
+	public ObjectHistory(MainObject object, InteractingEntity entity) {
+		this(object.getId(), entity);
 	}
 	
 	/**

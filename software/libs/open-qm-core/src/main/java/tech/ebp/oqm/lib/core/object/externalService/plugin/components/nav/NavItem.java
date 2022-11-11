@@ -22,7 +22,7 @@ import java.net.URL;
 public class NavItem extends Plugin {
 	
 	@Override
-	public PluginType getComponentType() {
+	public PluginType getPluginType() {
 		return PluginType.NAV_ITEM;
 	}
 	

@@ -5,6 +5,7 @@ package tech.ebp.oqm.lib.core.rest.externalService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,6 +14,7 @@ import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
 import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,6 +40,25 @@ public abstract class ServiceSetupRequest {
 	@NotBlank
 	@Size(max = 30)
 	private String name;
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	@lombok.Builder.Default
+	private String description = "";
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	@Size(max = 50)
+	private String developerName;
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	@Email
+	private String developerEmail;
+	
 	
 	/**
 	 * Only used when authmode == SELF

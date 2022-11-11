@@ -19,6 +19,8 @@ class PluginServiceSerializationTest extends ObjectSerializationTest<PluginServi
 			Arguments.of(
 				new PluginService()
 					.setName(FAKER.name().name())
+					.setDeveloperName(FAKER.name().name())
+					.setDeveloperEmail(FAKER.internet().emailAddress())
 			)
 		);
 	}

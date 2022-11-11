@@ -18,6 +18,8 @@ class GeneralServiceSerializationTest extends ObjectSerializationTest<GeneralSer
 			Arguments.of(
 				new GeneralService()
 					.setName(FAKER.name().name())
+					.setDeveloperName(FAKER.name().name())
+					.setDeveloperEmail(FAKER.internet().emailAddress())
 			)
 		);
 	}

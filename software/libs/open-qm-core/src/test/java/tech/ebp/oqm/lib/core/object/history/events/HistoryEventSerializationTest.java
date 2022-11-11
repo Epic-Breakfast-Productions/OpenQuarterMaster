@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
@@ -41,17 +42,25 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 		return Stream.of(
 			//create
 			Arguments.of(CreateEvent.builder().build()),
-			Arguments.of(CreateEvent.builder().userId(ObjectId.get()).build()),
+			Arguments.of(CreateEvent.builder().entityId(ObjectId.get()).entityType(InteractingEntityType.USER).build()),
 			//update
 			Arguments.of(UpdateEvent.builder().build()),
-			Arguments.of(UpdateEvent.builder().userId(ObjectId.get()).description(FAKER.lorem().paragraph()).build()),
+			Arguments.of(UpdateEvent.builder()
+									.entityId(ObjectId.get())
+									.entityType(InteractingEntityType.USER)
+									.description(FAKER.lorem().paragraph())
+									.build()),
 			//			Arguments.of(UpdateEvent.builder().updateJson(getRandJsonNode()).build()),
 			//delete
 			Arguments.of(DeleteEvent.builder().build()),
-			Arguments.of(DeleteEvent.builder().userId(ObjectId.get()).description(FAKER.lorem().paragraph()).build()),
+			Arguments.of(DeleteEvent.builder()
+									.entityId(ObjectId.get())
+									.entityType(InteractingEntityType.USER)
+									.description(FAKER.lorem().paragraph())
+									.build()),
 			//login
 			Arguments.of(UserLoginEvent.builder().build()),
-			Arguments.of(UserLoginEvent.builder().userId(ObjectId.get()).build()),
+			Arguments.of(UserLoginEvent.builder().entityId(ObjectId.get()).entityType(InteractingEntityType.USER).build()),
 			//item expired
 			Arguments.of(ItemExpiredEvent.builder().storageBlockId(ObjectId.get()).build()),
 			Arguments.of(ItemExpiredEvent.builder()

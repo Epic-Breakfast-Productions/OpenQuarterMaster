@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.history;
 
 import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -25,11 +26,15 @@ class HistoriedSerializationTest extends ObjectSerializationTest<ObjectHistory> 
 		output.setId(ObjectId.get());
 		output.setObjectId(ObjectId.get());
 		
-		output.updated(CreateEvent.builder().userId(ObjectId.get()).build());
+		output.updated(CreateEvent.builder().entityId(ObjectId.get()).entityType(InteractingEntityType.USER).build());
 		
 		for (int i = 1; i < numEvents; i++) {
 			output.updated(
-				UpdateEvent.builder().userId(ObjectId.get()).description(FAKER.lorem().paragraph()).build()
+				UpdateEvent.builder()
+						   .entityId(ObjectId.get())
+						   .entityType(InteractingEntityType.USER)
+						   .description(FAKER.lorem().paragraph())
+						   .build()
 			);
 		}
 		

@@ -2,7 +2,8 @@ package tech.ebp.oqm.lib.core.object.user;
 
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.StoredNotificationStatus;
+import tech.ebp.oqm.lib.core.object.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
-public class User extends ImagedMainObject {
+public class User extends ImagedMainObject implements InteractingEntity {
+	
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -86,11 +88,11 @@ public class User extends ImagedMainObject {
 	 */
 	public static Builder builder(UserCreateRequest userCreateRequest) {
 		return new Builder()
-			.firstName(userCreateRequest.getFirstName())
-			.lastName(userCreateRequest.getLastName())
-			.username(userCreateRequest.getUsername())
-			.email(userCreateRequest.getEmail())
-			.title(userCreateRequest.getTitle());
+				   .firstName(userCreateRequest.getFirstName())
+				   .lastName(userCreateRequest.getLastName())
+				   .username(userCreateRequest.getUsername())
+				   .email(userCreateRequest.getEmail())
+				   .title(userCreateRequest.getTitle());
 	}
 	
 	public static Builder builder() {
@@ -98,4 +100,13 @@ public class User extends ImagedMainObject {
 	}
 	
 	
+	@Override
+	public String getName() {
+		return this.getFirstName() + " " + this.getLastName();
+	}
+	
+	@Override
+	public InteractingEntityType getInteractingEntityType() {
+		return InteractingEntityType.USER;
+	}
 }
