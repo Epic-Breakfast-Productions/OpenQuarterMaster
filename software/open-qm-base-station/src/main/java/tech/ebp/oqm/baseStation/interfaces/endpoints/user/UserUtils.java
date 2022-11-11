@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
 
 import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.Location;
-import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -51,26 +50,27 @@ public class UserUtils extends EndpointProvider {
 	@Operation(summary = "Tests that an email can be sent.")
 	@APIResponse(responseCode = "200", description = "Sent the email.")
 	@RolesAllowed(Roles.USER)
-	public Uni<Void> sendTestEmail(@Context SecurityContext ctx) {
+	public void sendTestEmail(@Context SecurityContext ctx) {
 		logRequestContext(this.jwt, ctx);
 		
 		User user = this.userService.getFromJwt(this.jwt);
 		
-		return this.emailUtils
+		this.emailUtils
 				   .setupDefaultEmailData(
 					   testMailTemplate,
 					   UserGetResponse.builder(user).build(),
 					   "Test Email"
 				   )
-				   .send();
+				   .send().await().indefinitely();
+		
 	}
 	
 	@GET
 	@Path("emailTest/{userId}")
 	@Operation(summary = "Tests that an email can be sent.")
 	@APIResponse(responseCode = "200", description = "Sent the email.")
-	@RolesAllowed(Roles.USER)
-	public Uni<Void> sendTestEmail(
+	@RolesAllowed(Roles.USER_ADMIN)
+	public Void sendTestEmail(
 		@Context SecurityContext ctx,
 		@PathParam("userId") String userId
 	) {
@@ -79,13 +79,14 @@ public class UserUtils extends EndpointProvider {
 		User adminUser = this.userService.getFromJwt(this.jwt);
 		User userTo = this.userService.get(userId);
 		
-		return this.emailUtils
+		this.emailUtils
 				   .setupDefaultEmailData(
 					   testMailTemplate,
 					   UserGetResponse.builder(userTo).build(),
 					   "Test Email"
 				   )
 				   .cc(adminUser.getEmail())
-				   .send();
+				   .send().await().indefinitely();
+		return null;
 	}
 }

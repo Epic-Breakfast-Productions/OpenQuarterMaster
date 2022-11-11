@@ -1,6 +1,8 @@
 # Releasing
 
-Prereqs:
+[Back](README.md)
+
+## Prereqs:
 
 1. Docker, with buildkit enabled
    - https://www.howtogeek.com/devops/what-is-dockers-buildkit-and-why-does-it-matter/
@@ -10,6 +12,8 @@ Prereqs:
      1. Setup buildx
         1. TODO::
      2. Make a builder `docker buildx create --name mybuilder --use`
+
+## Release Steps
 
 These are the steps to take to perform a release of the software:
 
