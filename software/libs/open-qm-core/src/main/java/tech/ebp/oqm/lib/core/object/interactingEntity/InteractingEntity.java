@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object;
+package tech.ebp.oqm.lib.core.object.interactingEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bson.types.ObjectId;

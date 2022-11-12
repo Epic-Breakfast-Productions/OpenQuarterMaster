@@ -11,7 +11,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
-import tech.ebp.oqm.lib.core.object.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginService;
 import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
