@@ -239,7 +239,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 */
 	public InventoryItem<S, C, W> recalculateDerived() {
-		this.getStorageMap().values().forEach(StoredWrapper::recalcDerived);
+		this.getStorageMap().values().parallelStream().forEach(StoredWrapper::recalcDerived);
+		
 		this.recalcTotal();
 		this.recalcValueOfStored();
 		this.recalculateExpiryDerivedStats();
