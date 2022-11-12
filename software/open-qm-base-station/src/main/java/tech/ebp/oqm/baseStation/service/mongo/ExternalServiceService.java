@@ -3,20 +3,29 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.ExternalServiceSearch;
+import tech.ebp.oqm.baseStation.service.JwtService;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Traced
 @Slf4j
 @ApplicationScoped
 public class ExternalServiceService extends MongoHistoriedService<ExternalService, ExternalServiceSearch> {
 	//    private Validator validator;
+	private AuthMode authMode;
 	
 	ExternalServiceService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -28,7 +37,9 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		@ConfigProperty(name = "service.authMode")
+		AuthMode authMode
 	) {
 		super(
 			objectMapper,
@@ -37,6 +48,7 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 			ExternalService.class,
 			true
 		);
+		this.authMode = authMode;
 		//        this.validator = validator;
 	}
 	
@@ -44,5 +56,47 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 	public void ensureObjectValid(boolean newObject, ExternalService newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant
+	}
+	
+	private ExternalService getExternalService(String externalSource, String externalId) {
+		if (externalId == null) {
+			return null;
+		}
+		return this.getCollection().find(eq("externIds." + externalSource, externalId)).limit(1).first();
+	}
+	
+	private ExternalService getExternalService(JsonWebToken jwt) {
+		String externalSource = jwt.getIssuer();
+		String externalId = jwt.getClaim(Claims.sub);
+		log.debug("User id from external jwt: {}", externalId);
+		ExternalService externalService = this.getExternalService(externalSource, externalId);
+		
+		if (externalService != null) {
+			//TODO:: update from given jwt, if needed?
+			return externalService;
+		}
+		throw new DbNotFoundException("Make sure the calling service hit the setup endpoint first.", ExternalService.class, null);
+	}
+	
+	
+	public ExternalService getFromJwt(JsonWebToken jwt) {
+		//TODO:: check is user?
+		switch (this.authMode) {
+			case SELF:
+				log.debug("Getting service data from self.");
+				String extServiceId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
+				if(extServiceId == null){
+					return null;
+				}
+				try {
+					return this.get(extServiceId);
+				} catch(DbNotFoundException e){
+					throw new UnauthorizedException("Service in JWT not found.");
+				}
+			case EXTERNAL:
+				log.debug("Getting external service data ");
+				return this.getExternalService(jwt);
+		}
+		return null;
 	}
 }

@@ -14,9 +14,9 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.scheduled.ExpiryProcessor;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
@@ -60,7 +60,7 @@ public class InventoryManagement extends EndpointProvider {
 	DataImportService dataImportService;
 	
 	@Inject
-	UserService userService;
+	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	ExpiryProcessor expiryProcessor;
@@ -125,7 +125,7 @@ public class InventoryManagement extends EndpointProvider {
 	) throws IOException {
 		logRequestContext(this.jwt, securityContext);
 		
-		DataImportResult result = this.dataImportService.importBundle(body, this.userService.getFromJwt(this.jwt));
+		DataImportResult result = this.dataImportService.importBundle(body, this.interactingEntityService.getFromJwt(this.jwt));
 		
 		return Response.ok(result).build();
 	}

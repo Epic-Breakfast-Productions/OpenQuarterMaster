@@ -19,8 +19,8 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -104,14 +104,14 @@ public class DataImportService {
 		ClientSession clientSession,
 		T curObj,
 		MongoHistoriedService<T, S> objectService,
-		User importingUser,
+		InteractingEntity importingEntity,
 		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) {
 		ObjectId oldId = curObj.getId();
 		ObjectId newId;
 		try {
-			newId = objectService.add(clientSession, curObj, importingUser);
+			newId = objectService.add(clientSession, curObj, importingEntity);
 		} catch(DbModValidationException e){
 			if(e.getMessage().contains("No parent exists")){
 				ObjectId curParent = ((StorageBlock)curObj).getParent();
@@ -132,7 +132,7 @@ public class DataImportService {
 		ClientSession clientSession,
 		File curFile,
 		MongoHistoriedService<T, S> objectService,
-		User importingUser,
+		InteractingEntity importingEntity,
 		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) throws IOException {
@@ -141,7 +141,7 @@ public class DataImportService {
 				clientSession,
 				Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz()),
 				objectService,
-				importingUser,
+				importingEntity,
 				needParentMap,
 				addedList
 			);
@@ -155,7 +155,7 @@ public class DataImportService {
 		ClientSession clientSession,
 		Path directory,
 		MongoHistoriedService<T, S> objectService,
-		User importingUser
+		InteractingEntity importingEntity
 	) throws IOException {
 		Path objectDirPath = directory.resolve(objectService.getCollectionName());
 		List<File> filesForObject = getObjectFiles(objectDirPath);
@@ -165,7 +165,7 @@ public class DataImportService {
 		Map<ObjectId, List<T>> needParentMap = new HashMap<>();
 		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
-			this.readInObject(clientSession, curObjFile, objectService, importingUser, needParentMap, addedList);
+			this.readInObject(clientSession, curObjFile, objectService, importingEntity, needParentMap, addedList);
 		}
 		
 		if(needParentMap.isEmpty()){
@@ -190,7 +190,7 @@ public class DataImportService {
 							clientSession,
 							curObj,
 							objectService,
-							importingUser,
+							importingEntity,
 							null,
 							newAddedList
 						);
@@ -215,7 +215,7 @@ public class DataImportService {
 	public DataImportResult importBundle(
 		InputStream bundleInputStream,
 		String fileName,
-		User importingUser
+		InteractingEntity importingEntity
 	) throws IOException {
 		if (!fileName.endsWith(".tar.gz")) {
 			throw new IllegalArgumentException("Invalid file type given.");
@@ -270,10 +270,10 @@ public class DataImportService {
 		){
 			session.withTransaction(()->{
 				try {
-					resultBuilder.numUnits(this.readInObjects(session, tempDirPath, this.customUnitService, importingUser));
-					resultBuilder.numImages(this.readInObjects(session, tempDirPath, this.imageService, importingUser));
-					resultBuilder.numStorageBlocks(this.readInObjects(session, tempDirPath, this.storageBlockService, importingUser));
-					resultBuilder.numInventoryItems(this.readInObjects(session, tempDirPath, this.inventoryItemService, importingUser));
+					resultBuilder.numUnits(this.readInObjects(session, tempDirPath, this.customUnitService, importingEntity));
+					resultBuilder.numImages(this.readInObjects(session, tempDirPath, this.imageService, importingEntity));
+					resultBuilder.numStorageBlocks(this.readInObjects(session, tempDirPath, this.storageBlockService, importingEntity));
+					resultBuilder.numInventoryItems(this.readInObjects(session, tempDirPath, this.inventoryItemService, importingEntity));
 					//TODO:: history
 				} catch(Throwable e){
 					session.abortTransaction();
@@ -292,9 +292,9 @@ public class DataImportService {
 	
 	public DataImportResult importBundle(
 		ImportBundleFileBody body,
-		User importingUser
+		InteractingEntity importingEntity
 	) throws IOException {
-		return this.importBundle(body.file, body.fileName, importingUser);
+		return this.importBundle(body.file, body.fileName, importingEntity);
 	}
 	
 }

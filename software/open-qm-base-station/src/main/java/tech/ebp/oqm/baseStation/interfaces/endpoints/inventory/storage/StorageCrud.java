@@ -20,8 +20,8 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
@@ -54,14 +54,14 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Inject
 	public StorageCrud(
 		StorageBlockService storageBlockService,
-		UserService userService,
+		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		@Location("tags/objView/objHistoryViewRows.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/storage/storageSearchResults.html")
 		Template storageSearchResultsTemplate
 	) {
-		super(StorageBlock.class, storageBlockService, userService, jwt, historyRowsTemplate);
+		super(StorageBlock.class, storageBlockService, interactingEntityService, jwt, historyRowsTemplate);
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
 	

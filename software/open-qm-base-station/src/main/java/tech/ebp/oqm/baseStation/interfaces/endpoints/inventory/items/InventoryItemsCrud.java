@@ -27,15 +27,15 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
-import tech.ebp.oqm.lib.core.object.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
@@ -75,7 +75,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Inject
 	public InventoryItemsCrud(
 		InventoryItemService inventoryItemService,
-		UserService userService,
+		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		@Location("tags/objView/objHistoryViewRows.html")
 		Template historyRowsTemplate,
@@ -83,7 +83,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		Template itemSearchResultsTemplate,
 		ObjectMapper objectMapper
 	) {
-		super(InventoryItem.class, inventoryItemService, userService, jwt, historyRowsTemplate);
+		super(InventoryItem.class, inventoryItemService, interactingEntityService, jwt, historyRowsTemplate);
 		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
 		this.objectMapper = objectMapper;
 	}
@@ -145,7 +145,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
 		logRequestContext(this.getJwt(), securityContext);
-		User user = this.getUserFromJwt();
+		InteractingEntity user = this.getInteractingEntityFromJwt();
 		
 		log.info("Processing item file: {}", body.fileName);
 		

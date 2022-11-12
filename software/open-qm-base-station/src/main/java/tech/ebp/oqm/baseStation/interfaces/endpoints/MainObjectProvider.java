@@ -13,12 +13,12 @@ import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -46,32 +46,32 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@Getter
 	private MongoHistoriedService<T, S> objectService;
 	@Getter
-	private UserService userService;
+	private InteractingEntityService interactingEntityService;
 	@Getter
 	private JsonWebToken jwt;
-	private User userFromJwt = null;
+	private InteractingEntity interactingEntityFromJwt = null;
 	@Getter
 	private Template historyRowsTemplate;
 	
 	protected MainObjectProvider(
 		Class<T> objectClass,
 		MongoHistoriedService<T, S> objectService,
-		UserService userService,
+		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		Template historyRowsTemplate
 	) {
 		this.objectClass = objectClass;
 		this.objectService = objectService;
-		this.userService = userService;
+		this.interactingEntityService = interactingEntityService;
 		this.jwt = jwt;
 		this.historyRowsTemplate = historyRowsTemplate;
 	}
 	
-	protected User getUserFromJwt() {
-		if (this.userFromJwt == null) {
-			this.userFromJwt = this.getUserService().getFromJwt(this.getJwt());
+	protected InteractingEntity getInteractingEntityFromJwt() {
+		if (this.interactingEntityFromJwt == null) {
+			this.interactingEntityFromJwt = this.getInteractingEntityService().getFromJwt(this.getJwt());
 		}
-		return this.userFromJwt;
+		return this.interactingEntityFromJwt;
 	}
 	
 	//<editor-fold desc="CRUD operations">
@@ -105,7 +105,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output = this.getObjectService().add(object, this.getUserFromJwt());
+		ObjectId output = this.getObjectService().add(object, this.getInteractingEntityFromJwt());
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
@@ -117,7 +117,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getUserFromJwt());
+		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntityFromJwt());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
@@ -264,7 +264,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
-		T updated = this.getObjectService().update(id, updates, this.getUserFromJwt());
+		T updated = this.getObjectService().update(id, updates, this.getInteractingEntityFromJwt());
 		
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;
@@ -308,7 +308,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
-		T output = this.getObjectService().remove(id, this.getUserFromJwt());
+		T output = this.getObjectService().remove(id, this.getInteractingEntityFromJwt());
 		
 		log.info("{} found, deleted.", output.getClass().getSimpleName());
 		return output;
@@ -368,7 +368,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 				rb = rb.entity(
 						   this.getHistoryRowsTemplate()
 							   .data("objectHistory", output)
-							   .data("userService", this.getUserService())
+							   .data("userService", this.getInteractingEntityService())
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
 				break;

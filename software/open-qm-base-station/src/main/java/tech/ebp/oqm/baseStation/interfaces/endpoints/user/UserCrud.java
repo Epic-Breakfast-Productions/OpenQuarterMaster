@@ -22,6 +22,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -65,6 +66,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	
 	@Inject
 	public UserCrud(
+		InteractingEntityService interactingEntityService,
 		UserService userService,
 		JsonWebToken jwt,
 		@Location("tags/objView/objHistoryViewRows.html")
@@ -73,7 +75,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		@ConfigProperty(name = "service.authMode")
 		AuthMode authMode
 	) {
-		super(User.class, userService, userService, jwt, historyRowsTemplate);
+		super(User.class, userService, interactingEntityService, jwt, historyRowsTemplate);
 		this.passwordService = passwordService;
 		this.authMode = authMode;
 	}
@@ -116,7 +118,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				add(Roles.USER);
 				add(Roles.INVENTORY_VIEW);
 			}};
-			if (this.getUserService().collectionEmpty()) {
+			if (this.getObjectService().collectionEmpty()) {
 				log.info("New user is the first user to enter system. Making them an admin.");
 				builder.disabled(false);
 				roles.add(Roles.USER_ADMIN);
@@ -300,7 +302,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		description = "No users found from query given.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@PermitAll//TODO:: require user?
+	@RolesAllowed(Roles.USER)
 	@SecurityRequirement(name = "JwtAuth")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSelfInfo(
@@ -308,7 +310,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving info for user.");
-		User user = this.getUserService().getFromJwt(this.getJwt());
+		User user = ((UserService)this.getObjectService()).getFromJwt(this.getJwt());
 		
 		return Response
 				   .status(Response.Status.OK)

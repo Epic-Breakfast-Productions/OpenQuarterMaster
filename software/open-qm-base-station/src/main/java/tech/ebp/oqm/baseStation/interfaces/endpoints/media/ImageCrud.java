@@ -20,11 +20,11 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
@@ -81,7 +81,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Inject
 	public ImageCrud(
 		ImageService imageService,
-		UserService userService,
+		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		@Location("tags/objView/objHistoryViewRows.html")
 		Template historyRowsTemplate,
@@ -91,7 +91,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		Template imageSearchResultsTemplate,
 		Validator validator
 	) {
-		super(Image.class, imageService, userService, jwt, historyRowsTemplate);
+		super(Image.class, imageService, interactingEntityService, jwt, historyRowsTemplate);
 		this.storageBlockService = storageBlockService;
 		this.itemService = itemService;
 		this.validator = validator;

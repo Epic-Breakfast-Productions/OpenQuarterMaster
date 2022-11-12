@@ -10,12 +10,12 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.lib.core.object.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.validation.Valid;
@@ -83,7 +83,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		return this.getHistoryFor(null, object);
 	}
 	
-	public ObjectId createHistoryFor(ClientSession session, T created, User user) {
+	public ObjectId createHistoryFor(ClientSession session, T created, InteractingEntity entity) {
 		try {
 			this.getHistoryFor(session, created);
 			throw new IllegalStateException(
@@ -93,7 +93,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 			// no history record should exist.
 		}
 		
-		ObjectHistory history = new ObjectHistory(created, user);
+		ObjectHistory history = new ObjectHistory(created, entity);
 		
 		return this.add(session, history);
 	}

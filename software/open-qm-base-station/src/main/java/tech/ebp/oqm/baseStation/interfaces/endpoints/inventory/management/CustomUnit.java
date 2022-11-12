@@ -12,8 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
@@ -45,7 +45,7 @@ public class CustomUnit extends EndpointProvider {
 	CustomUnitService customUnitService;
 	
 	@Inject
-	UserService userService;
+	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	@Getter
@@ -85,7 +85,7 @@ public class CustomUnit extends EndpointProvider {
 		
 		ObjectId id = this.customUnitService.add(
 			newUnit,
-			this.userService.getFromJwt(this.getJwt())
+			this.interactingEntityService.getFromJwt(this.getJwt())
 		);
 		
 		return id;

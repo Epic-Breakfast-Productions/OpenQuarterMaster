@@ -21,6 +21,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.user.User;
 
 import javax.validation.Valid;
@@ -43,16 +44,16 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 * TODO:: check if real user. Get userService in constructor?
 	 * TODO:: real exception
 	 *
-	 * @param user
+	 * @param interactingEntity
 	 */
-	private static void assertNotNullUser(User user) {
-		if (user == null) {
+	private static void assertNotNullEntity(InteractingEntity interactingEntity) {
+		if (interactingEntity == null) {
 			throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 		}
 		//TODO:: check has id
 	}
 	
-	protected final boolean allowNullUserForCreate;
+	protected final boolean allowNullEntityForCreate;
 	@Getter
 	private MongoHistoryService<T> historyService = null;
 	
@@ -63,11 +64,11 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		String collectionName,
 		Class<T> clazz,
 		MongoCollection<T> collection,
-		boolean allowNullUserForCreate,
+		boolean allowNullEntityForCreate,
 		MongoHistoryService<T> historyService
 	) {
 		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
-		this.allowNullUserForCreate = allowNullUserForCreate;
+		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.historyService = historyService;
 	}
 	
@@ -76,7 +77,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		MongoClient mongoClient,
 		String database,
 		Class<T> clazz,
-		boolean allowNullUserForCreate
+		boolean allowNullEntityForCreate
 	) {
 		super(
 			objectMapper,
@@ -84,7 +85,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 			database,
 			clazz
 		);
-		this.allowNullUserForCreate = allowNullUserForCreate;
+		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.historyService = new MongoHistoryService<>(
 			objectMapper,
 			mongoClient,
@@ -127,25 +128,25 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 *
 	 * @param id
 	 * @param updateJson
-	 * @param user
+	 * @param interactingEntity
 	 *
 	 * @return
 	 */
-	public T update(ObjectId id, ObjectNode updateJson, User user) {
-		assertNotNullUser(user);
+	public T update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		assertNotNullEntity(interactingEntity);
 		T updated = super.update(id, updateJson);
 		
 		this.getHistoryService().updateHistoryFor(
 			updated,
-			user,
+			interactingEntity,
 			updateJson
 		);
 		
 		return updated;
 	}
 	
-	public T update(String id, ObjectNode updateJson, User user) {
-		return this.update(new ObjectId(id), updateJson, user);
+	public T update(String id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		return this.update(new ObjectId(id), updateJson, interactingEntity);
 	}
 	
 	/**
@@ -155,30 +156,30 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(ClientSession session, @NonNull @Valid T object, User user) {
-		if (!this.allowNullUserForCreate) {
-			assertNotNullUser(user);
+	public ObjectId add(ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
+		if (!this.allowNullEntityForCreate) {
+			assertNotNullEntity(entity);
 		}
 		super.add(session, object);
 		
 		this.getHistoryService().createHistoryFor(
 			session,
 			object,
-			user
+			entity
 		);
 		
 		return object.getId();
 	}
 	
-	public ObjectId add(T object, User user) {
-		return this.add(null, object, user);
+	public ObjectId add(T object, InteractingEntity interactingEntity) {
+		return this.add(null, object, interactingEntity);
 	}
 	
 	public ObjectId add(@NonNull T object) {
 		return this.add(object, null);
 	}
 	
-	public List<ObjectId> addBulk(List<T> objects, User user) {
+	public List<ObjectId> addBulk(List<T> objects, InteractingEntity entity) {
 		try(
 			ClientSession session = this.getMongoClient().startSession();
 		){
@@ -187,7 +188,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 				
 				for (T cur : objects) {
 					try {
-						output.add(add(session, cur, user));
+						output.add(add(session, cur, entity));
 					} catch(Throwable e){
 						session.abortTransaction();
 						throw e;
@@ -207,21 +208,21 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 *
 	 * @return The object that was removed
 	 */
-	public T remove(ObjectId objectId, User user) {
+	public T remove(ObjectId objectId, InteractingEntity entity) {
 		//TODO:: client session
-		assertNotNullUser(user);
+		assertNotNullEntity(entity);
 		T removed = super.remove(objectId);
 		
 		this.getHistoryService().objectDeleted(
 			removed,
-			user
+			entity
 		);
 		
 		return removed;
 	}
 	
-	public T remove(String objectId, User user) {
-		return this.remove(new ObjectId(objectId), user);
+	public T remove(String objectId, InteractingEntity entity) {
+		return this.remove(new ObjectId(objectId), entity);
 	}
 	
 	public T remove(ObjectId objectId) {

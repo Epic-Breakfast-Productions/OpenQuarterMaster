@@ -182,6 +182,7 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 	 * @return The user the jwt was for. Null if no user found.
 	 */
 	public User getFromJwt(JsonWebToken jwt) {
+		//TODO:: check is user?
 		switch (this.authMode) {
 			case SELF:
 				log.debug("Getting user data from self.");
