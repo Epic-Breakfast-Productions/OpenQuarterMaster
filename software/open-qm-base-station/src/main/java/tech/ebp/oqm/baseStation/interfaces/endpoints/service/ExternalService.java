@@ -107,7 +107,7 @@ public class ExternalService extends EndpointProvider {
 		description = "Happens when too many requests to login were sent in a given time period.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.SERVICE)
+	@RolesAllowed(Roles.EXT_SERVICE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response setupExternalAuthMode(

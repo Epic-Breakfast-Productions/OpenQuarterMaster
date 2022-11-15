@@ -23,7 +23,7 @@ public class InteractingEntityService {
 	public InteractingEntity getFromJwt(JsonWebToken jwt) {
 		if(jwt.getGroups().contains(Roles.USER)){
 			return this.userService.getFromJwt(jwt);
-		} else if(jwt.getGroups().contains(Roles.SERVICE)){
+		} else if(jwt.getGroups().contains(Roles.EXT_SERVICE)){
 			return this.externalServiceService.getFromJwt(jwt);
 		}
 		//TODO:: better exception

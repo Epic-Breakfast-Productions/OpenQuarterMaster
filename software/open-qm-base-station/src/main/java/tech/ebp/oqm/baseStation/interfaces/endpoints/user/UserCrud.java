@@ -124,6 +124,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				roles.add(Roles.USER_ADMIN);
 				roles.add(Roles.INVENTORY_EDIT);
 				roles.add(Roles.INVENTORY_ADMIN);
+				roles.add(Roles.EXT_SERVICE_ADMIN);
 			} else {
 				log.info("New user is not the first. Disabling.");
 				builder.disabled(true);

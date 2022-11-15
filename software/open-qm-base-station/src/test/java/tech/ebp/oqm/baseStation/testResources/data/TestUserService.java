@@ -221,6 +221,7 @@ public class TestUserService {
 			if (admin) {
 				add(Roles.USER_ADMIN);
 				add(Roles.INVENTORY_ADMIN);
+				add(Roles.EXT_SERVICE_ADMIN);
 			}
 		}});
 		
