@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class UserRoles {
 	
@@ -15,7 +14,7 @@ public class UserRoles {
 		Roles.USER,
 		
 		Roles.USER_ADMIN,
-		Roles.SERVICE_ADMIN,
+		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		
 		Roles.INVENTORY_VIEW,
@@ -43,7 +42,7 @@ public class UserRoles {
 	 */
 	public static final List<String> SELECTABLE_ROLES = List.of(
 		Roles.USER_ADMIN,
-		Roles.SERVICE_ADMIN,
+		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		Roles.INVENTORY_VIEW,
 		Roles.INVENTORY_EDIT

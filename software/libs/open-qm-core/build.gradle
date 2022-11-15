@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.45-DEV'
+version '1.0.46-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -139,7 +139,7 @@ publishing {
 			//layout.buildDirectory.dir('repos/releases')
 			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 			//layout.buildDirectory.dir('repos/snapshots')
-			url = !version.endsWith('FINAL') ? snapshotsRepoUrl : releasesRepoUrl
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 			credentials {
 				username = project.properties.ossUsername
 				password = project.properties.ossPassword

@@ -15,8 +15,8 @@ public final class Roles {
 	public static final String USER = "user";
 	public static final String USER_DESCRIPTION = "Role for a human user. Applied automatically to all user accounts.";
 	/** Role for a service. */
-	public static final String SERVICE = "service";
-	public static final String SERVICE_DESCRIPTION = "Role for service. Applied automatically to all service accounts.";
+	public static final String EXT_SERVICE = "extService";
+	public static final String EXT_SERVICE_DESCRIPTION = "Role for service. Applied automatically to all service accounts.";
 	
 	/*
 		Admin Roles
@@ -25,9 +25,10 @@ public final class Roles {
 	public static final String USER_ADMIN_DESCRIPTION = "Role to enable user administration. Can enable/disable users, and " +
 														"control their roles.";
 	
-	public static final String SERVICE_ADMIN = "serviceAdmin";
-	public static final String SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable services, and " +
-														   "control their roles.";
+	public static final String EXT_SERVICE_ADMIN = "extServiceAdmin";
+	public static final String EXT_SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable services, and " +
+															   "control their roles. For plugins, can enable/disable individual plugin " +
+															   "entries.";
 	
 	public static final String INVENTORY_ADMIN = "inventoryAdmin";
 	public static final String INVENTORY_ADMIN_DESCRIPTION = "Role to enable inventory administration. Can import/export inventory data.";
@@ -46,10 +47,10 @@ public final class Roles {
 	 */
 	public static final Map<String, String> ROLE_DESCRIPTION_MAP = Collections.unmodifiableMap(new LinkedHashMap<>() {{
 		this.put(USER, USER_DESCRIPTION);
-		this.put(SERVICE, SERVICE_DESCRIPTION);
+		this.put(EXT_SERVICE, EXT_SERVICE_DESCRIPTION);
 		
 		this.put(USER_ADMIN, USER_ADMIN_DESCRIPTION);
-		this.put(SERVICE_ADMIN, SERVICE_ADMIN_DESCRIPTION);
+		this.put(EXT_SERVICE_ADMIN, EXT_SERVICE_ADMIN_DESCRIPTION);
 		this.put(INVENTORY_ADMIN, INVENTORY_ADMIN_DESCRIPTION);
 		
 		this.put(INVENTORY_VIEW, INVENTORY_VIEW_DESCRIPTION);

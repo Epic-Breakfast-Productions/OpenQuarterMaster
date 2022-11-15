@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 public class ServiceRoles {
 	
 	public static List<String> SERVICE_ROLES = List.of(
-		Roles.SERVICE,
+		Roles.EXT_SERVICE,
 		
-		Roles.SERVICE_ADMIN,
+		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		
 		Roles.INVENTORY_VIEW,
@@ -26,7 +26,7 @@ public class ServiceRoles {
 	
 	
 	public static final List<String> SELECTABLE_ROLES = List.of(
-		Roles.SERVICE_ADMIN,
+		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		Roles.INVENTORY_VIEW,
 		Roles.INVENTORY_EDIT
