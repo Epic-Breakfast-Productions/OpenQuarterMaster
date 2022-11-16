@@ -1,0 +1,78 @@
+{#include printouts/mainPrintoutTemplate}
+	{#title}{storageBlock.getLabelText()} - Inventory sheet{/title}
+	{#body}
+		<h1>
+			{storageBlock.getLabelText()} - Inventory sheet
+		</h1>
+		<p>
+			Generated {! TODO:: datetime !}
+		</p>
+		<table class="table table-striped table-bordered table-sm">
+		<thead>
+		<tr>
+			<th>
+				#
+			</th>
+			<th>
+				Image
+			</th>
+			<th>
+				Item
+			</th>
+			<th>
+				Amount Stored
+			</th>
+			<th>
+				Condition
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+		{#if itemsInBlock.isEmpty()}
+			<tr>
+				<td colspan="5" class="text-center">
+					<h3>
+						No Items Stored
+					</h3>
+				</td>
+			</tr>
+			{#else}
+				{#for curItem in itemsInBlock}
+					<tr>
+					<td class="text-center">
+						{curItem_count}
+					</td>
+					<td>
+					
+					</td>
+					<td>
+					{curItem.getName()}
+					</td>
+					<td></td>
+					<td></td>
+					</tr>
+				{/for}
+		{/if}
+		</tbody>
+		<tfoot>
+		<tr>
+			<th>
+				#
+			</th>
+			<th>
+				Image
+			</th>
+			<th>
+				Item
+			</th>
+			<th>
+				Amount Stored
+			</th>
+			<th>
+				Condition
+			</th>
+		</tr>
+		</tfoot>
+		</table>
+	{/body}
+{/include}

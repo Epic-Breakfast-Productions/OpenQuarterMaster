@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.service.reports;
+package tech.ebp.oqm.baseStation.service.printouts.reports;
 
 
 public abstract class ReportGenerator {

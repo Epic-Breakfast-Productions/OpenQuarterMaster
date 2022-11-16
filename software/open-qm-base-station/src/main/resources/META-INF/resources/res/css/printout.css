@@ -1,0 +1,25 @@
+
+
+html, body, div, p, table, ul, ol {
+	font-family: "Helvetica", sans-serif;
+}
+
+table {
+	width: 100%;
+	border: black 2px solid;
+	border-radius: 4px;
+}
+
+td, th {
+	margin: 0.25px;
+	border: black 1px solid;
+	padding: 5px 2px;
+}
+
+th {
+	background-color: #abc78e;
+}
+
+.text-center {
+	text-align: center;
+}
