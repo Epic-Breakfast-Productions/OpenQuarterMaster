@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.printouts.StorageBlockInventorySheetService;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
@@ -18,6 +19,7 @@ import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -65,14 +67,16 @@ public class InventorySheets extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces("application/pdf")
 	public Response getSheetPdf(
-		@Context SecurityContext securityContext
+		@Context SecurityContext securityContext,
+		@BeanParam InventorySheetsOptions options
 	) throws IOException {
 		logRequestContext(this.jwt, securityContext);
 		
 		Response.ResponseBuilder response = Response.ok(
 			this.storageSheetService.getPdfInventorySheet(
 				this.interactingEntityService.getFromJwt(this.jwt),
-				new ObjectId(this.id)
+				new ObjectId(this.id),
+				options
 			)
 		);
 		response.header("Content-Disposition", "attachment;filename=storageSheet-" + this.id + ".pdf");

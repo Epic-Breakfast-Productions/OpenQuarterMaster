@@ -13,7 +13,7 @@
 			<th>
 				#
 			</th>
-			<th>
+			<th class="imageTableCellHeader">
 				Image
 			</th>
 			<th>
@@ -38,19 +38,27 @@
 			</tr>
 			{#else}
 				{#for curItem in itemsInBlock}
-					<tr>
-					<td class="text-center">
-						{curItem_count}
-					</td>
-					<td>
-					
-					</td>
-					<td>
-					{curItem.getName()}
-					</td>
-					<td></td>
-					<td></td>
-					</tr>
+					{#let curWrapper = curItem.getStoredWrapperForStorage(storageBlock.getId())}
+						<tr>
+						<td class="text-center">
+							{curItem_count}
+						</td>
+							{#if !curItem.getImageIds().isEmpty()}
+						<td class="imageTableCell">
+								{#let curImage=imageService.get(curItem.getImageIds().get(0))}
+								<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.getName()}" class="imageTableCellImage">
+								{/let}
+						</td>
+								{#else}
+								<td></td>
+						{/if}
+						<td>
+							{curItem.getName()}
+						</td>
+						<td>{curWrapper.getTotal().getValue()}{curWrapper.getTotal().getUnit().getSymbol()}</td>
+						<td></td>
+						</tr>
+					{/let}
 				{/for}
 		{/if}
 		</tbody>
@@ -59,7 +67,7 @@
 			<th>
 				#
 			</th>
-			<th>
+			<th class="imageTableCellHeader">
 				Image
 			</th>
 			<th>

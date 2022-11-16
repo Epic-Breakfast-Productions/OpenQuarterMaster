@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
+import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
+import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
@@ -51,6 +54,9 @@ public class StorageBlockInventorySheetService {
 	InventoryItemService inventoryItemService;
 	
 	@Inject
+	ImageService imageService;
+	
+	@Inject
 	@Location("printouts/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
@@ -58,7 +64,8 @@ public class StorageBlockInventorySheetService {
 	private TemplateInstance getHtmlInventorySheet(StorageBlock storageBlock, List<InventoryItem> itemsInBlock) {
 		return this.inventorySheetTemplate
 				   .data("storageBlock", storageBlock)
-				   .data("itemsInBlock", itemsInBlock);
+				   .data("itemsInBlock", itemsInBlock)
+				   .data("imageService", this.imageService);
 	}
 	
 	/**
@@ -68,7 +75,8 @@ public class StorageBlockInventorySheetService {
 	 * @return
 	 * @throws IOException
 	 */
-	public File getPdfInventorySheet(InteractingEntity entity, ObjectId storageBlockId) throws IOException {
+	public File getPdfInventorySheet(InteractingEntity entity, ObjectId storageBlockId, InventorySheetsOptions options) throws IOException {
+		log.info("Getting inventory sheet for block {} with options: {}", storageBlockId, options);
 		StorageBlock block = this.storageBlockService.get(storageBlockId);
 		List<InventoryItem> itemsInBlock = this.inventoryItemService.getItemsInBlock(storageBlockId);
 		
@@ -84,7 +92,15 @@ public class StorageBlockInventorySheetService {
 		) {
 			PdfDocument doc = new PdfDocument(writer);
 			
-			doc.setDefaultPageSize(new PageSize(PageSize.A4).rotate());
+			{
+				PageSize size = new PageSize(options.getPageSize().size);
+				
+				if(PageOrientation.LANDSCAPE.equals(options.getPageOrientation())){
+					size = size.rotate();
+				}
+				doc.setDefaultPageSize(size);
+			}
+			
 			doc.getDocumentInfo().addCreationDate();
 			doc.getDocumentInfo().setCreator("Open QuarterMaster Base Station");
 			doc.getDocumentInfo().setProducer("Open QuarterMaster Base Station");
@@ -93,7 +109,9 @@ public class StorageBlockInventorySheetService {
 			doc.getDocumentInfo().setTitle(block.getLabelText() + " Inventory Sheet");
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
 			
-			HtmlConverter.convertToPdf(this.getHtmlInventorySheet(block, itemsInBlock).render(), doc, CONVERTER_PROPERTIES);
+			String html = this.getHtmlInventorySheet(block, itemsInBlock).render();
+			log.debug("Html generated: {}", html);
+			HtmlConverter.convertToPdf(html, doc, CONVERTER_PROPERTIES);
 		}
 		return outputFile;
 	}

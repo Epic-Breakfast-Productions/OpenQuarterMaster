@@ -1,5 +1,4 @@
 
-
 html, body, div, p, table, ul, ol {
 	font-family: "Helvetica", sans-serif;
 }
@@ -22,4 +21,20 @@ th {
 
 .text-center {
 	text-align: center;
+}
+
+.imageTableCellHeader {
+	width: 50px;
+}
+
+.imageTableCell {
+	width: 50px;
+	max-width: 50px;
+	padding: 0;
+}
+
+.imageTableCellImage {
+	width:100%;
+	margin: 0;
+	padding: 0;
 }
