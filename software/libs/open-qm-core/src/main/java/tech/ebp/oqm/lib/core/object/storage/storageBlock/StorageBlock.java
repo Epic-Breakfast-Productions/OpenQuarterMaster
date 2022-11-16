@@ -70,4 +70,11 @@ public class StorageBlock extends ImagedMainObject {
 	public boolean hasParent() {
 		return this.getParent() != null;
 	}
+	
+	public String getLabelText() {
+		if (this.getNickname().isBlank()) {
+			return this.getLabel();
+		}
+		return this.getLabel() + " / " + this.getNickname();
+	}
 }
