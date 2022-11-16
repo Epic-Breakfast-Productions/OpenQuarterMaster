@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.storageBlock;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import lombok.AllArgsConstructor;
@@ -71,6 +72,7 @@ public class StorageBlock extends ImagedMainObject {
 		return this.getParent() != null;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public String getLabelText() {
 		if (this.getNickname().isBlank()) {
 			return this.getLabel();
