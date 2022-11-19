@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>{#insert title}{/}</title>
 	
-	<link rel="stylesheet" href="/res/css/printout.css">
+	<link rel="stylesheet" href="/res/css/printout/printout.css">
 	{!<link href="/lib/bootstrap/bootstrap-5.2.2-dist/bootswatch.yeti.min.css" rel="stylesheet">!}
 	<link rel="stylesheet" href="/lib/fontawesome-free-6.1.2-web/css/all.css">
 	<style>
@@ -13,7 +13,7 @@
 				content: "{#insert title}{/}"
 			}
 			@bottom-right {
-				content: counter(page) " of " counter(pages);
+				content: "Page " counter(page) " of " counter(pages);
 			}
 			@bottom-left {
 				background-image: url(/media/logoSymbol.svg);
@@ -26,7 +26,13 @@
 				/*border: black 1px solid;*/
 			}
 			@bottom-center {
-			
+				content: "As of {generateDatetime.format(dateTimeFormatter)}"
+			}
+		}
+		
+		@page :first {
+			@top-left {
+				content: ""
 			}
 		}
 	</style>

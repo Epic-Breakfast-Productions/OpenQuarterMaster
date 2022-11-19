@@ -33,7 +33,7 @@ import java.util.List;
 @Slf4j
 @Traced
 @ApplicationScoped
-public class StorageBlockInventorySheetService {
+public class StorageBlockInventorySheetService extends PrintoutDataService {
 	
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
 	
@@ -61,8 +61,9 @@ public class StorageBlockInventorySheetService {
 	Template inventorySheetTemplate;
 	
 	
-	private TemplateInstance getHtmlInventorySheet(StorageBlock storageBlock, List<InventoryItem> itemsInBlock) {
-		return this.inventorySheetTemplate
+	private TemplateInstance getHtmlInventorySheet(StorageBlock storageBlock, List<InventoryItem> itemsInBlock, InventorySheetsOptions options) {
+		return this.setupBasicPrintoutData(this.inventorySheetTemplate)
+				   .data("options", options)
 				   .data("storageBlock", storageBlock)
 				   .data("itemsInBlock", itemsInBlock)
 				   .data("imageService", this.imageService);
@@ -109,7 +110,7 @@ public class StorageBlockInventorySheetService {
 			doc.getDocumentInfo().setTitle(block.getLabelText() + " Inventory Sheet");
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
 			
-			String html = this.getHtmlInventorySheet(block, itemsInBlock).render();
+			String html = this.getHtmlInventorySheet(block, itemsInBlock, options).render();
 			log.debug("Html generated: {}", html);
 			HtmlConverter.convertToPdf(html, doc, CONVERTER_PROPERTIES);
 		}
