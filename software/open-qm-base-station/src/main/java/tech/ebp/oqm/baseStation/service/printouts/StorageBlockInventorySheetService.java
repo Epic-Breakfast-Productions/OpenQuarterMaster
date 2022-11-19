@@ -71,6 +71,9 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	
 	/**
 	 * https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml
+	 * https://www.baeldung.com/java-pdf-creation
+	 * https://www.baeldung.com/java-html-to-pdf
+	 *
 	 * @param entity
 	 * @param storageBlockId
 	 * @return
