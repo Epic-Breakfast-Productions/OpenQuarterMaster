@@ -13,13 +13,12 @@ service:
     url: http://localhost:49185
     realm: apps
     clientId: quartermaster
-    clientSecret: secret # 12abaab8-0b4f-4ccb-a068-668764593c06
+    clientSecret: secret
     scope: openid
     realmBasePath: /auth/realms/${service.externalAuth.realm:}
     realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
     interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
-    #    signInLink: ${service.externalAuth.interactionBase:}/auth?response_type=code&client_id=${service.externalAuth.clientId}&redirect_uri=${service.externalAuth.callbackUrl}&scope=openid&state=TODO&audience=account`
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
     callbackUrl: ${runningInfo.baseUrl}/api/auth/user/callback
