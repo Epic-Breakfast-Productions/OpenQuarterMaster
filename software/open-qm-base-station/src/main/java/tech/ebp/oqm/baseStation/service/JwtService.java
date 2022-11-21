@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,17 +19,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * TODO:: add field in jwt for service or user
+ */
 @Slf4j
 @ApplicationScoped
 @Traced
 public class JwtService {
 	
 	public static final String JWT_USER_ID_CLAIM = "userId";
+	public static final String JWT_SERVICE_ID_CLAIM = "serviceId";
 	public static final String JWT_USER_TITLE_CLAIM = "title";
 	public static final String JWT_ISSUER_CLAIM = Claims.iss.name();
 	
 	private final long defaultExpiration;
 	private final long extendedExpiration;
+	private final long serviceExpiration;
 	private final String sigKeyId;
 	private final String issuer;
 	private final PrivateKey privateKey;
@@ -39,11 +46,14 @@ public class JwtService {
 		long defaultExpiration,
 		@ConfigProperty(name = "mp.jwt.expiration.extended")
 		long extendedExpiration,
+		@ConfigProperty(name = "externalService.serviceTokenExpires")
+		long serviceExpiration,
 		@ConfigProperty(name = "mp.jwt.verify.issuer")
 		String issuer
 	) throws Exception {
 		this.defaultExpiration = defaultExpiration;
 		this.extendedExpiration = extendedExpiration;
+		this.serviceExpiration = serviceExpiration;
 		this.sigKeyId = privateKeyLocation;
 		this.issuer = issuer.trim();
 		
@@ -71,6 +81,15 @@ public class JwtService {
 		return new UserLoginResponse(this.generateTokenString(user, expiration), expiration);
 	}
 	
+	public ExternalServiceLoginResponse getExtServiceJwt(ExternalService service) {
+		Instant expiration = Instant.now().plusSeconds(this.serviceExpiration);
+		
+		return new ExternalServiceLoginResponse(
+			this.generateTokenString(service, expiration),
+			expiration
+		);
+	}
+	
 	/**
 	 * Generates a jwt for use by the user.
 	 *
@@ -85,6 +104,19 @@ public class JwtService {
 	) {
 		//info on what claims are: https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
 		Map<String, Object> rawClaims = this.getUserClaims(user);
+		
+		JwtClaimsBuilder claims = Jwt.claims(rawClaims);
+		
+		claims.expiresAt(expires);
+		
+		return claims.jws().keyId(this.sigKeyId).sign(this.privateKey);
+	}
+	
+	public String generateTokenString(
+		ExternalService service,
+		Instant expires
+	) {
+		Map<String, Object> rawClaims = this.getServiceClaims(service);
 		
 		JwtClaimsBuilder claims = Jwt.claims(rawClaims);
 		
@@ -116,6 +148,30 @@ public class JwtService {
 		output.put("roleMappings", new HashMap<String, Object>());
 		
 		output.put(Claims.groups.name(), user.getRoles());
+		
+		return output;
+	}
+	
+	private Map<String, Object> getServiceClaims(ExternalService service) {
+		Map<String, Object> output = this.getBaseClaims();
+		
+		String serviceIdentification = service.getId() + ";" + service.getName();
+		
+		output.put(
+			"jti",
+			//TODO:: this, properly
+			//                user.getId() + "-" + user.getLastLogin().getTime() + "-" + user.getNumLogins()
+			service.getId() + "-" + UUID.randomUUID()
+		);//TODO: move to utility, test
+		output.put(Claims.sub.name(), service.getId());
+		output.put(Claims.aud.name(), serviceIdentification);
+		output.put(Claims.upn.name(), service.getName());
+		output.put(Claims.email.name(), service.getEmail());
+		output.put(JWT_SERVICE_ID_CLAIM, service.getId());
+		
+		output.put("roleMappings", new HashMap<String, Object>());
+		
+		output.put(Claims.groups.name(), service.getRoles());
 		
 		return output;
 	}

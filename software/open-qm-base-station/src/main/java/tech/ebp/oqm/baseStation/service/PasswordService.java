@@ -9,7 +9,9 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
+import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,9 +19,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Random;
 
 /**
- * <a href="https://www.javatips.net/api/wildfly-security-master/wildfly-elytron-master/src/test/java/org/wildfly/security/password/impl/BCryptPasswordTest.java">https://www.javatips.net/api/wildfly-security-master/wildfly-elytron-master/src/test/java/org/wildfly/security/password/impl/BCryptPasswordTest.java</a>
+ * <a
+ * href="https://www.javatips.net/api/wildfly-security-master/wildfly-elytron-master/src/test/java/org/wildfly/security/password/impl/BCryptPasswordTest.java">https://www.javatips.net/api/wildfly-security-master/wildfly-elytron-master/src/test/java/org/wildfly/security/password/impl/BCryptPasswordTest.java</a>
  */
 @ApplicationScoped
 @Slf4j
@@ -136,6 +140,10 @@ public class PasswordService {
 		return this.passwordMatchesHash(user.getPwHash(), loginRequest.getPassword());
 	}
 	
+	public boolean passwordMatchesHash(ExternalService service, ExternalServiceLoginRequest loginRequest) {
+		return this.passwordMatchesHash(service.getSetupTokenHash(), loginRequest.getSetupToken());
+	}
+	
 	/**
 	 * Gets a random salt.
 	 *
@@ -145,5 +153,26 @@ public class PasswordService {
 		byte[] salt = new byte[BCryptPassword.BCRYPT_SALT_SIZE];
 		getSecureRandom().nextBytes(salt);
 		return salt;
+	}
+	
+	private static final String UPPERCASE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String LOWERCASE_CHARS = "abcdefghijklmnopqrstuvwxyz";
+	private static final String NUMBER_CHARS = "0123456789";
+	// https://www.owasp.org/index.php/Password_special_characters
+	private static final String SPECIAL_CHARS = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+	private static final String ALL = UPPERCASE_CHARS + LOWERCASE_CHARS + NUMBER_CHARS + SPECIAL_CHARS;
+	
+	public String getRandString(int size) {
+		Random rand = getSecureRandom();
+		StringBuilder randomTokens = new StringBuilder();
+		
+		for (int i = 0; i < size; i++) {
+			randomTokens.append(ALL.charAt(rand.nextInt(ALL.length())));
+		}
+		return randomTokens.toString();
+	}
+	
+	public String getRandString(int sizeMin, int sizeMax) {
+		return this.getRandString(getSecureRandom().nextInt(sizeMax - sizeMin) + sizeMin);
 	}
 }

@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Filters;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -84,7 +85,7 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		switch (this.authMode) {
 			case SELF:
 				log.debug("Getting service data from self.");
-				String extServiceId = jwt.getClaim(JwtService.JWT_USER_ID_CLAIM);
+				String extServiceId = jwt.getClaim(JwtService.JWT_SERVICE_ID_CLAIM);
 				if(extServiceId == null){
 					return null;
 				}
@@ -98,5 +99,15 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 				return this.getExternalService(jwt);
 		}
 		return null;
+	}
+	
+	public ExternalService getFromServiceName(String name){
+		ExternalService service = this.getCollection().find(Filters.eq("name", name)).limit(1).first();
+		
+		if(service == null){
+			throw new DbNotFoundException("No service found with name \"" + name + "\"", this.getClazz(), null);
+		}
+		
+		return service;
 	}
 }

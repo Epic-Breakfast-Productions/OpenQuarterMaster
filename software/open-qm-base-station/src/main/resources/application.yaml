@@ -85,6 +85,13 @@ runningInfo:
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
   fromEmail: no-reply@${runningInfo.baseUrl}
+
+externalService:
+  secretSizeMin: 50
+  secretSizeMax: 100
+  serviceTokenExpires: 86400 # 1 day
+  extServices:
+    # Service entries here
   
 quarkus:
   rest-client:

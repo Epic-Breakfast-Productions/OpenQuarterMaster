@@ -64,6 +64,7 @@ public class TestUserService {
 				ConfigProvider.getConfig().getValue("mp.jwt.verify.privatekey.location", String.class),
 				ConfigProvider.getConfig().getValue("mp.jwt.expiration.default", Long.class),
 				ConfigProvider.getConfig().getValue("mp.jwt.expiration.extended", Long.class),
+				ConfigProvider.getConfig().getValue("externalService.serviceTokenExpires", Long.class),
 				ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class)
 			);
 		} catch(Exception e) {
