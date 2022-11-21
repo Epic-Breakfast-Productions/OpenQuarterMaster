@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
+import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
@@ -37,14 +39,19 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = CreateEvent.class, name = "CREATE"),
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
 	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
+	
 	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
 	@JsonSubTypes.Type(value = UserEnabledEvent.class, name = "USER_ENABLED"),
 	@JsonSubTypes.Type(value = UserDisabledEvent.class, name = "USER_DISABLED"),
+	
 	@JsonSubTypes.Type(value = ItemExpiryWarningEvent.class, name = "ITEM_EXPIRY_WARNING"),
 	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
-	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER")
+	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER"),
+	
+	@JsonSubTypes.Type(value = ExtServiceSetupEvent.class, name = "EXT_SERVICE_SETUP"),
+	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),
 })
 @BsonDiscriminator
 public abstract class HistoryEvent {

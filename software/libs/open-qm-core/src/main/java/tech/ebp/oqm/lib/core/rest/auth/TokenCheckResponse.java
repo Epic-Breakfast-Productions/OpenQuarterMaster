@@ -18,4 +18,6 @@ public class TokenCheckResponse {
 	private boolean tokenSecure = false;
 	private boolean expired = true;
 	private Date expirationDate = null;
+	
+	//TODO:: add entity id, type
 }

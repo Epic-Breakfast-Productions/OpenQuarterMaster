@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.object.externalService.GeneralService;
 import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
 
 @Data
@@ -15,9 +16,16 @@ import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
 @SuperBuilder
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class GeneralServiceSetupRequest extends ServiceSetupRequest {
+public class GeneralServiceSetupRequest extends ExternalServiceSetupRequest {
 	
 	public ServiceType getServiceType() {
 		return ServiceType.GENERAL;
+	}
+	
+	@Override
+	public GeneralService toExtService() {
+		GeneralService newService = new GeneralService();
+		this.setCoreData(newService);
+		return newService;
 	}
 }

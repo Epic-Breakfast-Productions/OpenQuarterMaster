@@ -88,11 +88,6 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 	/**
 	 * Only used when authmode == SELF
 	 */
-	private String secretHash;
-	
-	/**
-	 * Only used when authmode == SELF
-	 */
 	private String setupTokenHash;
 	
 	public abstract ServiceType getServiceType();
@@ -113,4 +108,5 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.EXTERNAL_SERVICE;
 	}
+	
 }

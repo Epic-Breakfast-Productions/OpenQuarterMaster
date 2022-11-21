@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -14,14 +16,25 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ServiceSetupResponse {
+public class ExternalServiceSetupResponse {
 	
 	@NonNull
 	@NotNull
-	private String setupSecret;
+	private ObjectId id;
+	
+	@NonNull
+	@NotNull
+	private String setupToken;
 	
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
 	private List<String> grantedRoles = new ArrayList<>();
+	
+	public ExternalServiceLoginRequest toLoginRequest() {
+		return ExternalServiceLoginRequest.builder()
+										  .setupToken(this.getSetupToken())
+										  .id(this.getId())
+										  .build();
+	}
 }

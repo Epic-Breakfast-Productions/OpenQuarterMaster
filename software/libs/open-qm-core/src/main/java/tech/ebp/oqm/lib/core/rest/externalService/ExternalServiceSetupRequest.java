@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
 import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 
@@ -33,7 +34,7 @@ import java.util.Set;
 	@JsonSubTypes.Type(value = GeneralServiceSetupRequest.class, name = "GENERAL"),
 	@JsonSubTypes.Type(value = PluginServiceSetupRequest.class, name = "PLUGIN"),
 })
-public abstract class ServiceSetupRequest {
+public abstract class ExternalServiceSetupRequest {
 	
 	@NonNull
 	@NotNull
@@ -65,6 +66,7 @@ public abstract class ServiceSetupRequest {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<@Valid RequestedRole> requestedRoles = new HashSet<>();
 	
 	/**
@@ -72,6 +74,16 @@ public abstract class ServiceSetupRequest {
 	 */
 	private String secret;
 	
-	
 	public abstract ServiceType getServiceType();
+	
+	public abstract ExternalService toExtService();
+	
+	protected void setCoreData(ExternalService externalService) {
+		externalService
+			.setName(this.getName())
+			.setDescription(this.getDescription())
+			.setDeveloperName(this.getDeveloperName())
+			.setDeveloperEmail(this.getDeveloperEmail())
+			.setRequestedRoles(this.getRequestedRoles());
+	}
 }
