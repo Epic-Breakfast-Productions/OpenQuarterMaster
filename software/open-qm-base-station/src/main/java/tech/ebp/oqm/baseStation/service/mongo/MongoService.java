@@ -147,7 +147,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
 	 */
-	public void ensureObjectValid(boolean newObject, T newOrChangedObject, ClientSession clientSession) {
+	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
 	}
 	
 	/**
