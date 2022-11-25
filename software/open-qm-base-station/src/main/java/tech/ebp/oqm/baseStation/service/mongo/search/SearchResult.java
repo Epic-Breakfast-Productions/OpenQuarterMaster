@@ -14,4 +14,17 @@ public class SearchResult<T> {
 	private long numResultsForEntireQuery;
 	private boolean hadSearchQuery;
 	private PagingOptions pagingOptions;
+	
+	public SearchResult(List<T> results){
+		this(
+			results,
+			results.size(),
+			false,
+			null
+		);
+	}
+	
+	public boolean isEmpty(){
+		return this.results.isEmpty();
+	}
 }

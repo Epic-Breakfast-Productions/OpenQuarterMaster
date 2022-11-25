@@ -34,7 +34,13 @@ th {
 }
 
 .imageTableCellImage {
-	width:100%;
+	width: 100%;
 	margin: 0;
 	padding: 0;
+}
+
+.tableTitle {
+	line-height: 16px;
+	margin-bottom: 1px;
+	padding-bottom: 1px;
 }

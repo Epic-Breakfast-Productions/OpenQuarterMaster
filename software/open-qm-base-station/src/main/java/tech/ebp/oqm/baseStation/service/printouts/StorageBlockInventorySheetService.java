@@ -14,11 +14,16 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
+import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,7 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.function.Predicate;
 
 @Slf4j
 @Traced
@@ -60,12 +65,48 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	@Location("printouts/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
+	private File getTempPdfFile(String name) throws IOException {
+		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
+		File tempDir = tempDirPath.toFile();
+		tempDir.deleteOnExit();
+		String exportFileName =
+			"oqm_storage_sheet_" + name + "_" + ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT) + ".pdf";
+		return new File(tempDir, exportFileName);
+	}
 	
-	private TemplateInstance getHtmlInventorySheet(StorageBlock storageBlock, List<InventoryItem> itemsInBlock, InventorySheetsOptions options) {
+	
+	private TemplateInstance getHtmlInventorySheet(
+		StorageBlock storageBlock,
+		StorageBlockSearch storageBlockSearch,
+		SearchResult<InventoryItem> itemsInBlock,
+		InventorySheetsOptions options
+	) {
+		Predicate<InventoryItem> simpleAmountFilter = new Predicate<InventoryItem>() {
+			@Override
+			public boolean test(InventoryItem inventoryItem) {
+				return inventoryItem instanceof SimpleAmountItem;
+			}
+		};
+		Predicate<InventoryItem> listAmountFilter = new Predicate<InventoryItem>() {
+			@Override
+			public boolean test(InventoryItem inventoryItem) {
+				return inventoryItem instanceof ListAmountItem;
+			}
+		};
+		Predicate<InventoryItem> trackedFilter = new Predicate<InventoryItem>() {
+			@Override
+			public boolean test(InventoryItem inventoryItem) {
+				return inventoryItem instanceof TrackedItem;
+			}
+		};
+		
 		return this.setupBasicPrintoutData(this.inventorySheetTemplate)
+				   .data("simpleAmountFilter", simpleAmountFilter)
+				   .data("listAmountFilter", listAmountFilter)
+				   .data("trackedFilter", trackedFilter)
 				   .data("options", options)
 				   .data("storageBlock", storageBlock)
-				   .data("itemsInBlock", itemsInBlock)
+				   .data("searchResult", itemsInBlock)
 				   .data("imageService", this.imageService);
 	}
 	
@@ -79,17 +120,21 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	 * @return
 	 * @throws IOException
 	 */
-	public File getPdfInventorySheet(InteractingEntity entity, ObjectId storageBlockId, InventorySheetsOptions options) throws IOException {
+	public File getPdfInventorySheet(
+		InteractingEntity entity,
+		ObjectId storageBlockId,
+		InventorySheetsOptions options
+	) throws IOException {
 		log.info("Getting inventory sheet for block {} with options: {}", storageBlockId, options);
 		StorageBlock block = this.storageBlockService.get(storageBlockId);
-		List<InventoryItem> itemsInBlock = this.inventoryItemService.getItemsInBlock(storageBlockId);
+		SearchResult<InventoryItem> itemsInBlock = new SearchResult<>(this.inventoryItemService.getItemsInBlock(storageBlockId));
 		
-		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
-		File tempDir = tempDirPath.toFile();
-		tempDir.deleteOnExit();
-		String exportFileName =
-			"oqm_storage_sheet_" + storageBlockId.toHexString() + "_" + ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT) + ".pdf";
-		File outputFile = new File(tempDir, exportFileName);
+		
+		
+//		itemsInBlock.getResults().stream().toArray();
+//		itemsInBlock.getResults().stream().filter(AMOUNT_SIMPLE::);
+		
+		File outputFile = getTempPdfFile(storageBlockId.toHexString());
 		
 		try (
 			PdfWriter writer = new PdfWriter(outputFile);
@@ -113,7 +158,9 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			doc.getDocumentInfo().setTitle(block.getLabelText() + " Inventory Sheet");
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
 			
-			String html = this.getHtmlInventorySheet(block, itemsInBlock, options).render();
+			
+			
+			String html = this.getHtmlInventorySheet(block, null, itemsInBlock, options).render();
 			log.debug("Html generated: {}", html);
 			HtmlConverter.convertToPdf(html, doc, CONVERTER_PROPERTIES);
 		}

@@ -4,12 +4,15 @@
 		<h1>
 			{storageBlock.getLabelText()} - Inventory sheet
 		</h1>
-		{! TODO:: table per item type !}
-		{#if itemsInBlock.isEmpty()}
+		<p>Total Items: {searchResult.getNumResultsForEntireQuery()}</p>
+		{#if searchResult.isEmpty()}
 			<h3>
 				No Items Stored
 			</h3>
 			{#else}
+			{#let simpleAmountItemList=searchResult.getResults().stream().filter(simpleAmountFilter).toArray()}
+				{! TODO:: finish this, do other types !}
+				<h3 class="tableTitle">Simple Amount Items ({simpleAmountItemList.length})</h3>
 				<table class="table table-striped table-bordered table-sm">
 				<thead>
 				<tr>
@@ -37,7 +40,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				{#for curItem in itemsInBlock}
+				{#for curItem in simpleAmountItemList}
 					{#let curWrapper = curItem.getStoredWrapperForStorage(storageBlock.getId())}
 						<tr>
 						{#if options.includeNumCol}
@@ -63,9 +66,9 @@
 						<td>{curWrapper.getTotal().getValue()}{curWrapper.getTotal().getUnit().getSymbol()}</td>
 						
 						{#if options.includeConditionCol}
-						<td>
-						
-						</td>
+							<td>
+							
+							</td>
 						{/if}
 						
 						</tr>
@@ -95,9 +98,14 @@
 						Condition
 					</th>
 				{/if}
-		</tr>
-			</tfoot>
-			</table>
+			</tr>
+				</tfoot>
+				</table>
+			{/let}
+		
+		{! TODO:: table per item type !}
+		
+		
 		{/if}
 	{/body}
 {/include}

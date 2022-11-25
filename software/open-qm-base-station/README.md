@@ -66,6 +66,9 @@ Native-specific tests:
   - fix search form
   - fix unit editing unit
   - stats
+  - link to storage block page on item view
+  - better block name in view
+  - low stock threshold/notification
   - UI tweaks
     - view improvements
   - External item lookup.
@@ -74,6 +77,7 @@ Native-specific tests:
       - Good leads:
         - https://opengtindb.org/index.php
         - https://upcdatabase.org/api
+        - https://www.mcmaster.com/help/api/
       - Backups:
         - https://devapi.barcodespider.com/
 - Overview
@@ -93,6 +97,8 @@ Native-specific tests:
 - REST
   - handle ParseException for expired, bad tokens for UI
 - Testing
+- Other
+  - file attachments
 
 ### From User feedback
 
