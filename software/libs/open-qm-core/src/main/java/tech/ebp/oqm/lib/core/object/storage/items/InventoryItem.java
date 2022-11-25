@@ -119,6 +119,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@NotNull
 	private Duration expiryWarningThreshold = Duration.ZERO;
 	
+	//	private Quantity<?> lowTotalStockWarningThreshold = null;
+	
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
 	 *
