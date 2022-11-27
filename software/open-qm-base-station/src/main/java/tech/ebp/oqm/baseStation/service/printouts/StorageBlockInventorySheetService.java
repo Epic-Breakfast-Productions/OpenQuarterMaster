@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -62,7 +65,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	ImageService imageService;
 	
 	@Inject
-	@Location("printouts/storageBlockInventorySheet.html")
+	@Location("printouts/storageBlockInvSheet/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
 	private File getTempPdfFile(String name) throws IOException {
@@ -78,6 +81,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	private TemplateInstance getHtmlInventorySheet(
 		StorageBlock storageBlock,
 		StorageBlockSearch storageBlockSearch,
+		List<StorageBlock> children,
 		SearchResult<InventoryItem> itemsInBlock,
 		InventorySheetsOptions options
 	) {
@@ -106,17 +110,18 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 				   .data("trackedFilter", trackedFilter)
 				   .data("options", options)
 				   .data("storageBlock", storageBlock)
+				   .data("storageBlockList", children)
 				   .data("searchResult", itemsInBlock)
 				   .data("imageService", this.imageService);
 	}
 	
 	/**
-	 * https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml
-	 * https://www.baeldung.com/java-pdf-creation
+	 * https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml https://www.baeldung.com/java-pdf-creation
 	 * https://www.baeldung.com/java-html-to-pdf
 	 *
 	 * @param entity
 	 * @param storageBlockId
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -124,15 +129,32 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		InteractingEntity entity,
 		ObjectId storageBlockId,
 		InventorySheetsOptions options
-	) throws IOException {
+	) throws Throwable {
 		log.info("Getting inventory sheet for block {} with options: {}", storageBlockId, options);
-		StorageBlock block = this.storageBlockService.get(storageBlockId);
-		SearchResult<InventoryItem> itemsInBlock = new SearchResult<>(this.inventoryItemService.getItemsInBlock(storageBlockId));
 		
-		
-		
-//		itemsInBlock.getResults().stream().toArray();
-//		itemsInBlock.getResults().stream().filter(AMOUNT_SIMPLE::);
+		StorageBlock block;
+		List<StorageBlock> storageBlockChildren;
+		SearchResult<InventoryItem> itemsInBlock;
+		{
+			CompletableFuture<StorageBlock> blockGetFut = CompletableFuture.supplyAsync(()->{
+				return this.storageBlockService.get(storageBlockId);
+			});
+			CompletableFuture<List<StorageBlock>> blockChildrenGetFut =
+				CompletableFuture.supplyAsync(()->{
+					return this.storageBlockService.getChildrenIn(storageBlockId);
+				});
+			CompletableFuture<SearchResult<InventoryItem>> itemsInBlockGetFut = CompletableFuture.supplyAsync(()->{
+				return new SearchResult<>(this.inventoryItemService.getItemsInBlock(storageBlockId));
+			});
+			
+			try {
+				block = blockGetFut.join();
+				storageBlockChildren = blockChildrenGetFut.join();
+				itemsInBlock = itemsInBlockGetFut.join();
+			} catch(CompletionException e){
+				throw e.getCause();
+			}
+		}
 		
 		File outputFile = getTempPdfFile(storageBlockId.toHexString());
 		
@@ -144,7 +166,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			{
 				PageSize size = new PageSize(options.getPageSize().size);
 				
-				if(PageOrientation.LANDSCAPE.equals(options.getPageOrientation())){
+				if (PageOrientation.LANDSCAPE.equals(options.getPageOrientation())) {
 					size = size.rotate();
 				}
 				doc.setDefaultPageSize(size);
@@ -159,8 +181,13 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
 			
 			
-			
-			String html = this.getHtmlInventorySheet(block, null, itemsInBlock, options).render();
+			String html = this.getHtmlInventorySheet(
+				block,
+				null,
+				storageBlockChildren,
+				itemsInBlock,
+				options
+			).render();
 			log.debug("Html generated: {}", html);
 			HtmlConverter.convertToPdf(html, doc, CONVERTER_PROPERTIES);
 		}

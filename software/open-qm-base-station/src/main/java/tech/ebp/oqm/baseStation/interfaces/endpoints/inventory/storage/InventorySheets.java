@@ -26,7 +26,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.io.IOException;
 
 @Traced
 @Slf4j
@@ -69,7 +68,7 @@ public class InventorySheets extends EndpointProvider {
 	public Response getSheetPdf(
 		@Context SecurityContext securityContext,
 		@BeanParam InventorySheetsOptions options
-	) throws IOException {
+	) throws Throwable {
 		logRequestContext(this.jwt, securityContext);
 		
 		Response.ResponseBuilder response = Response.ok(
