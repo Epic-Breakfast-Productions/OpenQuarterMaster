@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core;
 
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import tech.ebp.oqm.lib.core.jackson.MongoObjectIdModule;
 import tech.ebp.oqm.lib.core.jackson.TempQuantityJacksonModule;
 import tech.ebp.oqm.lib.core.jackson.UnitModule;
@@ -24,6 +25,7 @@ public class Utils {
 	 */
 	@SuppressWarnings("deprecation")
 	public static final Module[] MAPPER_MODULES = {
+		new BlackbirdModule(),
 		new UnitJacksonModule(),
 		new JavaTimeModule(),
 		new MongoObjectIdModule(),

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -99,14 +100,27 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
 	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
+	
+	//	/**
+	//	 * Don't call this method
+	//	 * @param total
+	//	 * @return
+	//	 */
+	//	@Deprecated(forRemoval = false)
+	//	public InventoryItem<S, C, W> setTotal(Quantity<?> total){
+	//		this.total = total;
+	//		return this;
+	//	}
 	
 	/**
 	 * The total value of everything stored.
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
 	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private BigDecimal valueOfStored = BigDecimal.ZERO;
 	

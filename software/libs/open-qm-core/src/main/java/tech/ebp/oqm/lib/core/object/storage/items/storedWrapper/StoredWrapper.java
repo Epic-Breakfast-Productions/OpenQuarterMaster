@@ -31,13 +31,18 @@ import java.util.stream.Stream;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class StoredWrapper<T, S extends Stored> {
 	
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
 	@Min(0L)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpired = 0L;
+	
 	@Min(0L)
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarned = 0L;
 	
