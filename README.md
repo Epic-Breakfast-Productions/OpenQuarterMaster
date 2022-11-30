@@ -4,7 +4,10 @@
 
 ![Lib - Core](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/coreLib.yml/badge.svg)
 ![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)
-![Station Captain](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![Station Captain](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg)
+
+[![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://chat.zulip.org)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
