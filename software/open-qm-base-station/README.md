@@ -51,7 +51,6 @@ Native-specific tests:
 - Expiry
   - tests
 - Other
-  - add "server admin" role
 - db
   - look into liquibase: https://quarkus.io/guides/liquibase-mongodb
 - Overview
@@ -60,6 +59,8 @@ Native-specific tests:
   - stats
     - \# of items, blocks
     - come up with helpful stats to show
+- Objects In General
+  - History view to include search, paging
 - Storage
   - do all stats
 - Items
@@ -92,6 +93,7 @@ Native-specific tests:
     - view your infos
   - self
     - stats? 
+    - figure out how to handle arbitrary roles from ext services/ plugins
   - give admins
     - search users
 - REST
