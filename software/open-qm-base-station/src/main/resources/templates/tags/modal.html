@@ -24,6 +24,7 @@ Ingests:
                 {#if submitForm??}
                 <button class="btn btn-success" type="submit" form="{submitForm}" {#if submitDismiss}{#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}{/if}>Submit</button>
                 {/if}
+                {#insert footerButtons}{/}
             </div>
         </div>
     </div>
