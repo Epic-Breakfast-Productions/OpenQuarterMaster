@@ -203,6 +203,60 @@ Accepts:
 {#search/image/imageSearchSelectModal otherModalId="addEditModal"}
 {/search/image/imageSearchSelectModal}
 
+{#modal id='storageBlockInventorySheetPrintout' large=true title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
+    <div class="row">
+        <form class="col" id="storageBlockInventorySheetPrintoutForm" method="get" action="">
+            <div class="mb-3 row">
+                <label for="storageBlockInventorySheetPrintoutFormBlockNameInput" class="col-sm-2 col-form-label">Storage Block</label>
+                <div class="col-sm-10">
+                    <input type="text" readonly class="form-control-plaintext" id="storageBlockInventorySheetPrintoutFormBlockNameInput">
+                </div>
+            </div>
+    
+            <div class="mb-3 row">
+                <label for="storageBlockInventorySheetPrintoutFormBlockOrientationInput" class="col-sm-2 col-form-label">Page Orientation</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="storageBlockInventorySheetPrintoutFormBlockOrientationInput" name="orientation">
+                        {#for curOrientation in pageOrientationOptions}
+                            <option value="{curOrientation.name()}" {#if curOrientation_count == 1}selected{/if}>{curOrientation.name().toLowerCase()}</option>
+                        {/for}
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="storageBlockInventorySheetPrintoutFormSizeInput" class="col-sm-2 col-form-label">Page Size</label>
+                <div class="col-sm-10">
+                    <select class="form-select" id="storageBlockInventorySheetPrintoutFormSizeInput" name="pageSize">
+                        {#for curSize in pageSizeOptions}
+                            <option value="{curSize}" {#if curSize_count == 1}selected{/if}>{curSize}</option>
+                        {/for}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-2 col-form-label">
+                    Options
+                </div>
+                <div class="col-sm-10">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" checked name="includeNumCol" id="storageBlockInventorySheetPrintoutFormIncludeNumInput">
+                        <label class="form-check-label" for="storageBlockInventorySheetPrintoutFormIncludeNumInput">Include # Column</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" checked name="includeImageCol" id="storageBlockInventorySheetPrintoutFormIncludeImageInput">
+                        <label class="form-check-label" for="storageBlockInventorySheetPrintoutFormIncludeImageInput">Include Image Column</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" checked name="includeConditionCol" id="storageBlockInventorySheetPrintoutFormIncludeConditionInput">
+                        <label class="form-check-label" for="storageBlockInventorySheetPrintoutFormIncludeConditionInput">Include Condition Column</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{/modal}
+
 {#modal id='storageBlockView' large=true title='Storage Block View'}
     <div class="row">
         <div class="col" id="storageBlockViewMessages">
@@ -216,6 +270,9 @@ Accepts:
                 <div class="card-body">
                     <h5 class="card-title" style="display: inline">Id:</h5>
                     <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>
+                    <p style="margin-bottom: 5px;">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()"><i class="fa-solid fa-fw fa-print"></i> Printout</button>
+                    </p>
                 </div>
             </div>
             <div class="card">
@@ -712,6 +769,16 @@ function getBulkInsertData(origStorageBlockData){
     }
     
     return output;
+}
+
+var storageBlockInventorySheetPrintoutForm = $("#storageBlockInventorySheetPrintoutForm");
+var storageBlockInventorySheetPrintoutFormBlockNameInput = $("#storageBlockInventorySheetPrintoutFormBlockNameInput");
+
+function setupStorageBlockInvSheetPrintoutForm(){
+    storageBlockInventorySheetPrintoutForm[0].reset();
+    
+    storageBlockInventorySheetPrintoutForm.attr("action", "/api/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
+    storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
 }
 
 // showTree("#mainTreeChart");

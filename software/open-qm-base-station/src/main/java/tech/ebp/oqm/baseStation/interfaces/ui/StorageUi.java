@@ -10,6 +10,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
+import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
@@ -85,10 +87,11 @@ public class StorageUi extends UiProvider {
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService)
-				.data("searchObject", storageBlockSearch),
+				.data("searchObject", storageBlockSearch)
+				.data("pageOrientationOptions", PageOrientation.values())
+				.data("pageSizeOptions", PageSizeOption.values()),
 			MediaType.TEXT_HTML_TYPE
 		);
-		
 		if (newCookies != null && !newCookies.isEmpty()) {
 			responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
 		}
