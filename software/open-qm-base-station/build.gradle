@@ -38,7 +38,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
-	implementation("org.amqphub.quarkus:quarkus-qpid-jms")
+	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 
