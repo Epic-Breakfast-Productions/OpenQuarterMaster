@@ -26,6 +26,12 @@
 						aria-controls="itemSearchProvidersContent" aria-selected="false">Item Search Providers
 				</button>
 			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="apiTab" data-bs-toggle="tab"
+						data-bs-target="#apiContent" type="button" role="tab"
+						aria-controls="apiContent" aria-selected="false">API
+				</button>
+			</li>
 		</ul>
 		<div class="tab-content" id="mainTabContent">
 		<div class="tab-pane fade show active" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
@@ -105,6 +111,18 @@
 		{/for}
 		</div>
 		
+		</div>
+		<div class="tab-pane fade" id="apiContent" role="tabpanel" aria-labelledby="apiTab">
+			<h2>
+				Rest API
+			</h2>
+			<p>
+				Full documentation of all endpoints is available at the <a href="/q/swagger-ui" target="_blank">Swagger UI</a>.
+			</p>
+			<hr />
+			TODO::
+			- explain logging in through api (show relevant steps for SELF or EXTERNAL auth modes)
+			
 		</div>
 		</div>
 	{/pageContent}
