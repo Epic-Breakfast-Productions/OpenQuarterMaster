@@ -163,6 +163,11 @@ quarkus:
       enabled: true
   mailer:
     from: ${runningInfo.fromEmail}
+  qpid-jms:
+    url: amqp://localhost:5672
+    username: quarkus
+    password: quarkus
+    
 mp:
   jwt:
     verify:
