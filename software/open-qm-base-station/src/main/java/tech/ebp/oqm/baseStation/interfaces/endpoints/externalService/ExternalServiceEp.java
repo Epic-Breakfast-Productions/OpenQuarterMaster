@@ -14,7 +14,6 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
@@ -112,16 +111,7 @@ public class ExternalServiceEp extends EndpointProvider {
 						   .build();
 		}
 		
-		ExternalService existentExtService;
-		
-		try {
-			existentExtService = this.externalServiceService.getFromServiceName(setupRequest.getName());
-			//TODO:: check if needs updated
-		} catch(DbNotFoundException e){
-			existentExtService = setupRequest.toExtService();
-			
-			this.externalServiceService.add(existentExtService);
-		}
+		ExternalService existentExtService = this.externalServiceService.getFromSetupRequest(setupRequest);
 		
 		String newToken = this.passwordService.getRandString(this.extServicesConfig.secretSizeMin(), this.extServicesConfig.secretSizeMax());
 		
@@ -143,14 +133,14 @@ public class ExternalServiceEp extends EndpointProvider {
 	@POST
 	@Path("setup/external")
 	@Operation(
-		summary = "Authenticates a user"
+		summary = "Sets up an external service. Only call when AuthMode is EXTERNAL"
 	)
 	@APIResponse(
 		responseCode = "202",
 		description = "User was logged in.",
 		content = @Content(
 			mediaType = "application/json",
-			schema = @Schema(implementation = UserLoginResponse.class)
+			schema = @Schema(implementation = ExternalServiceSetupRequest.class)
 		)
 	)
 	@APIResponse(
@@ -176,6 +166,7 @@ public class ExternalServiceEp extends EndpointProvider {
 		@Valid ExternalServiceSetupRequest setupRequest
 	) {
 		assertExternalAuthMode(this.authMode);
+		//TODO:: BS-37
 		return Response.ok().build();
 	}
 	
