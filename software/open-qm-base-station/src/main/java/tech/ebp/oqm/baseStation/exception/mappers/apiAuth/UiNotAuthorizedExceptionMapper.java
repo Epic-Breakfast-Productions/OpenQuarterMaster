@@ -3,32 +3,21 @@ package tech.ebp.oqm.baseStation.exception.mappers.apiAuth;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.exception.mappers.AwareExceptionMapper;
 import tech.ebp.oqm.baseStation.interfaces.ui.UiUtils;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ExceptionMapper;
 import java.net.URI;
 
 @Slf4j
-public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
-	
-	protected static boolean isUiEndpoint(URI uri) {
-		String path = uri.getPath();
-		
-		return !path.startsWith("/api") &&
-			   !path.startsWith("/q/") &&
-			   !path.startsWith("/openapi");
-	}
-	
-	@Context
-	UriInfo crc;
+public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> extends AwareExceptionMapper<E> {
 	
 	@Context
 	JsonWebToken jsonWebToken;
 	
+	//TODO:: something here isn't getting the appropriate error message; gives null/blank string
 	protected String getErrorMessage(E e) {
 		StringBuilder errorMessages = new StringBuilder();
 		
@@ -52,11 +41,11 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
 	public Response toResponse(E e) {
 		String errorMessage = this.getErrorMessage(e);
 		
-		log.warn("User not authorized to access: {} - {} Message(s): {}", crc.getRequestUri(), e.getClass().getName(), errorMessage);
+		log.warn("User not authorized to access: {} - {} Message(s): {}", this.getUriInfo().getRequestUri(), e.getClass().getName(), errorMessage);
 		
 		//        log.info("Cookie: {}", authCookies);
-		URI uri = this.crc.getRequestUri();
-		if (isUiEndpoint(uri)) {
+		URI uri = this.getUriInfo().getRequestUri();
+		if (isAtUiEndpoint()) {
 			return Response.seeOther( //seeOther = 303 redirect
 									  UriBuilder.fromUri("/")
 												.queryParam("messageHeading", "Unauthorized")
@@ -64,7 +53,8 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> implem
 												.queryParam("messageType", "danger")
 												.queryParam(
 													"returnPath",
-													uri.getPath() + (uri.getQuery() == null ? "" : "?" + uri.getQuery())
+													uri.getPath() + (uri.getQuery() == null || uri.getQuery().isBlank() ? "" :
+																												  "?" + uri.getQuery())
 												)
 												.build()
 						   )//build the URL where you want to redirect
