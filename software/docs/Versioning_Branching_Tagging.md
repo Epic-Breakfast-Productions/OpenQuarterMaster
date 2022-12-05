@@ -25,12 +25,12 @@ The labels we typically use are below:
 
 This project will adhere to the following branch strategy:
 
-- `master`
-  - `v{MAJOR}`
-    - `v{MAJOR}.lib`
-    - `v{MAJOR}.base`
-    - `v{MAJOR}.plugin`
-    - `v{MAJOR}.env`
+- `master` - Where the most recent release version is cut from 
+  - `dev` - Where 'current' development for most recent current major release
+    - `dev/{sub project}`
+      - `dev/{sub project}/{issue/card number}`- Optionally if working on specific issue/card number
+  - `v{MAJOR}` - Where development happens for past major releases
+    - `v{MAJOR}/{sub project}`
 
 ## Releases
 
