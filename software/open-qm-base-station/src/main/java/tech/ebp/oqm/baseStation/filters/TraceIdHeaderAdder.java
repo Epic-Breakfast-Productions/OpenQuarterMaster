@@ -36,6 +36,8 @@ public class TraceIdHeaderAdder implements ContainerResponseFilter {
 				.toTraceId();
 		}
 		
+		//TODO:: move to different class
+		//TODO:: move all mapping to ErrorMessage here. If Throwable (and if not ui), turn into message.
 		log.debug("Type of response: " + responseContext.getEntityType());
 		
 		if(responseContext.getEntity() instanceof ViolationReport){
