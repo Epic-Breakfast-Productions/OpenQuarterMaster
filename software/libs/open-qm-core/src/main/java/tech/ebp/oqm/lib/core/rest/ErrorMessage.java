@@ -27,7 +27,7 @@ public class ErrorMessage {
 	private Object cause = null;
 	
 	public ErrorMessage(String errorMessage) {
-		this(errorMessage, null);
+		this(errorMessage, new Object());
 	}
 	
 	public ErrorMessage(Throwable cause) {
