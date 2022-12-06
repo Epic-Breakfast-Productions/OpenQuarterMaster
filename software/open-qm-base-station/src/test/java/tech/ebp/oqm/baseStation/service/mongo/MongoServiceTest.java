@@ -135,7 +135,6 @@ class MongoServiceTest extends RunningServerTest {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
-		
 		List<ObjectId> returned = this.testMongoService.addBulk(originals);
 		
 		assertEquals(originals.size(), this.testMongoService.count());

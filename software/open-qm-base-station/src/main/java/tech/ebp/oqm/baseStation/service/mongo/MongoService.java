@@ -453,7 +453,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.add(null, object);
 	}
 	
-	public List<ObjectId> addBulk(List<T> objects) {
+	public List<ObjectId> addBulk(@NonNull List<@Valid @NonNull T> objects) {
 		try (
 			ClientSession session = this.getNewClientSession();
 		) {
