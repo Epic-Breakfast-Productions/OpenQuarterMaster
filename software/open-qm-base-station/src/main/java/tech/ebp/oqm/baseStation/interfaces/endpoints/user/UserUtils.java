@@ -26,9 +26,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/user/utils")
+@Path(ROOT_API_ENDPOINT_V1 + "/user/utils")
 @Tags({@Tag(name = "Users")})
 @RequestScoped
 public class UserUtils extends EndpointProvider {

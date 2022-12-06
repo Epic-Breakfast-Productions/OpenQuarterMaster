@@ -8,7 +8,7 @@ async function getStorageBlockItemData(blockId) {
 	return new Promise((done, fail) => {
 		doRestCall({
 			spinnerContainer: null,
-			url: "/api/inventory/item/inStorageBlock/" + blockId,
+			url: "/api/v1/inventory/item/inStorageBlock/" + blockId,
 			done: done,
 			fail: fail
 		})
@@ -20,7 +20,7 @@ async function getStorageBlockChildrenData(blockId) {
 	return new Promise((done, fail) => {
 		doRestCall({
 			spinnerContainer: null,
-			url: "/api/inventory/storage-block/" + blockId + "/children",
+			url: "/api/v1/inventory/storage-block/" + blockId + "/children",
 			done: done,
 			fail: fail
 		})
@@ -31,7 +31,7 @@ function getStorageBlockLabel(blockId, doneFunc) {
 	console.log("Getting label for storage block \"" + blockId + "\"");
 	return doRestCall({
 		spinnerContainer: null,
-		url: "/api/inventory/storage-block/" + blockId,
+		url: "/api/v1/inventory/storage-block/" + blockId,
 		done: function (data) {
 			console.log("Got label: " + data.label);
 			doneFunc(data.label);
@@ -42,7 +42,7 @@ function getStorageBlockLabel(blockId, doneFunc) {
 function getImageName(imageId, doneFunc) {
 	return doRestCall({
 		spinnerContainer: null,
-		url: "/api/media/image/" + imageId,
+		url: "/api/v1/media/image/" + imageId,
 		done: function (data) {
 			doneFunc(data.title)
 		}

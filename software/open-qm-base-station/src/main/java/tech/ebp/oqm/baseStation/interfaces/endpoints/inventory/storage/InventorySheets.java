@@ -27,9 +27,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/inventory/storage-block/{id}/storageSheet")
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block/{id}/storageSheet")
 @Tags({@Tag(name = "Storage Blocks")})
 @RequestScoped
 public class InventorySheets extends EndpointProvider {

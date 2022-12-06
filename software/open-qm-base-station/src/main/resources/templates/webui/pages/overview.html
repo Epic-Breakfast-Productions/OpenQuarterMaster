@@ -276,7 +276,7 @@
 				created[storageBlockId] = true;
 
 				doRestCall({
-					url: "/api/inventory/storage-block/" + storageBlockId,
+					url: "/api/v1/inventory/storage-block/" + storageBlockId,
 					method: "GET",
 					done: async function(data) {
 						let newContent = await createNewStorageBlockContent(data);

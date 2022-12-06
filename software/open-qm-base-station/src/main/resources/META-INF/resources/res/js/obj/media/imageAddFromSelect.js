@@ -37,7 +37,7 @@ imageAddImageForm.submit(function (ev) {
 
 		console.log("Adding new image.");
 		doRestCall({
-			url: "/api/media/image",
+			url: "/api/v1/media/image",
 			method: "POST",
 			data: addData,
 			async: false,

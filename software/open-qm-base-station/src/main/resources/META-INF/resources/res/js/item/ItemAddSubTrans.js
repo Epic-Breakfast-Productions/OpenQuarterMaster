@@ -145,10 +145,10 @@ function setupAddSubTransForm(itemId) {
 	console.log("Setting up addSubTrans form for item " + itemId);
 	resetAddSubTransForm();
 
-	itemAddSubtractTransferFormItemImg.attr("src", "/api/media/image/for/item/" + itemId);
+	itemAddSubtractTransferFormItemImg.attr("src", "/api/v1/media/image/for/item/" + itemId);
 
 	doRestCall({
-		url: "/api/inventory/item/" + itemId,
+		url: "/api/v1/inventory/item/" + itemId,
 		done: function (data) {
 			itemAddSubtractTransferFormItemData = data;
 			itemAddSubtractTransferFormItemNameLabel.text(itemAddSubtractTransferFormItemData.name);
@@ -186,7 +186,7 @@ itemAddSubtractTransferForm.on("submit", function (e) {
 	console.log("Submitting operation request.");
 
 	let data = getStoredDataFromItemAddSubtractTransferForm();
-	let endpoint = "/api/inventory/item/" + itemAddSubtractTransferFormItemIdInput.val() + "/";
+	let endpoint = "/api/v1/inventory/item/" + itemAddSubtractTransferFormItemIdInput.val() + "/";
 	let method = undefined;
 
 	switch (itemAddSubtractTransferOpSelect.val()) {

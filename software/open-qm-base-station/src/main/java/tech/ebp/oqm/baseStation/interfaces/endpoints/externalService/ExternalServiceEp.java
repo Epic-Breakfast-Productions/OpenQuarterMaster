@@ -38,9 +38,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/externalService")
+@Path(ROOT_API_ENDPOINT_V1 + "/externalService")
 @Tags({@Tag(name = "External Service", description = "Endpoints for external services to manage their interactions with this server.")})
 @RequestScoped
 public class ExternalServiceEp extends EndpointProvider {

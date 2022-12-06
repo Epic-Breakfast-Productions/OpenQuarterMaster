@@ -26,7 +26,7 @@ itemSearchSelectForm.on("submit", function(event){
 
     doRestCall({
     	spinnerContainer: itemSearchSelectModal.get(0),
-    	url: "/api/inventory/item?" + searchParams,
+    	url: "/api/v1/inventory/item?" + searchParams,
     	method: 'GET',
     	failNoResponse: null,
     	failNoResponseCheckStatus: true,

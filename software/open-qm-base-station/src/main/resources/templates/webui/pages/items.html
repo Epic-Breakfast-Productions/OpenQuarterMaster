@@ -395,7 +395,7 @@ $("#prodBarcodeSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/product/barcode/" + barcodeText,
+        url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
         done: handleExtItemSearchResults
     });
 });
@@ -408,7 +408,7 @@ $("#legoPartNumSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/lego/part/" + partNumber,
+        url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
         done: handleExtItemSearchResults
     });
 });
@@ -421,7 +421,7 @@ $("#websiteScanSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
+        url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
         done: handleExtItemSearchResults
     });
 });
@@ -576,7 +576,7 @@ function setupAddEditForEdit(itemId){
     
     doRestCall({
         spinnerContainer: addEditModal,
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         failMessagesDiv: addEditFormMessages,
         done: async function(data){
             addSelectedImages(addEditImagesSelected, data.imageIds);
@@ -965,7 +965,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
     $('   <div class="accordion-item storedAccordion" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
-      '                <img class="accordion-thumb" src="/api/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
+      '                <img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
       '                <span class="storageBlockName">'+blockName+'</span>\n'+
       '                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
       '            </button>\n'+
@@ -1082,7 +1082,7 @@ function removeItem(itemId){
     console.log("Removing item " + itemId);
     
     doRestCall({
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         method: "DELETE",
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));
@@ -1163,7 +1163,7 @@ addEditItemForm.submit(async function (event) {
         verb = "Created";
         console.log("Adding new item.");
         await doRestCall({
-            url: "/api/inventory/item",
+            url: "/api/v1/inventory/item",
             method: "POST",
             data: addEditData,
             async: false,
@@ -1179,7 +1179,7 @@ addEditItemForm.submit(async function (event) {
         console.log("Editing storage block " + id);
         
         await doRestCall({
-            url: "/api/inventory/item/" + id,
+            url: "/api/v1/inventory/item/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
@@ -1413,7 +1413,7 @@ function setupView(itemId){
     
     doRestCall({
         spinnerContainer: itemViewModal,
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         done: async function (data) {
             let promises = [];
             processKeywordDisplay(viewKeywordsSection, data.keywords);
@@ -1470,7 +1470,7 @@ function setupView(itemId){
                     await doRestCall({
                         spinnerContainer: null,
                         async: false,
-                        url: "/api/inventory/storage-block/" + key,
+                        url: "/api/v1/inventory/storage-block/" + key,
 						failMessagesDiv: itemViewMessages,
                         done: function (data) {
                             curBlockName = data.label;
@@ -1533,7 +1533,7 @@ $("#addItemFromFileForm").submit(function (e){
     formData.append("file", file);
     
     doRestCall({
-        url: '/api/inventory/item',
+        url: '/api/v1/inventory/item',
         method: "post",
         data: formData,
         done: function (data){

@@ -389,7 +389,7 @@ function removeStorageBlock(blockId) {
     console.log("Removing storage block " + blockId);
     
     doRestCall({
-        url: "/api/inventory/storage-block/" + blockId,
+        url: "/api/v1/inventory/storage-block/" + blockId,
         method: "DELETE",
         async: false,
         done: function (data) {
@@ -463,7 +463,7 @@ function setupAddEditForEdit(blockId){
 
     doRestCall({
     	spinnerContainer: addEditModal,
-    	url: "/api/inventory/storage-block/" + blockId,
+    	url: "/api/v1/inventory/storage-block/" + blockId,
     	done: function(data){
     	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
@@ -525,7 +525,7 @@ addEditStorageForm.submit(async function (event) {
             addEditData = getBulkInsertData(addEditData);
             console.log("Adding new storage blocks in bulk.");
             await doRestCall({
-                url: "/api/inventory/storage-block/bulk",
+                url: "/api/v1/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
                 async: false,
@@ -540,7 +540,7 @@ addEditStorageForm.submit(async function (event) {
         } else {
             console.log("Adding new storage block.");
             await doRestCall({
-                url: "/api/inventory/storage-block",
+                url: "/api/v1/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
                 async: false,
@@ -559,7 +559,7 @@ addEditStorageForm.submit(async function (event) {
         console.log("Editing storage block " + id);
         
         await doRestCall({
-            url: "/api/inventory/storage-block/" + id,
+            url: "/api/v1/inventory/storage-block/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
@@ -629,7 +629,7 @@ function setupView(blockId){
     //TODO:: do this in await getter
     doRestCall({
     	spinnerContainer: storageBlockViewModal,
-    	url: "/api/inventory/storage-block/" + blockId,
+    	url: "/api/v1/inventory/storage-block/" + blockId,
     	done: async function(data){
             let promises = [];
             let children = getStorageBlockChildrenData(blockId);
@@ -777,7 +777,7 @@ var storageBlockInventorySheetPrintoutFormBlockNameInput = $("#storageBlockInven
 function setupStorageBlockInvSheetPrintoutForm(){
     storageBlockInventorySheetPrintoutForm[0].reset();
     
-    storageBlockInventorySheetPrintoutForm.attr("action", "/api/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
+    storageBlockInventorySheetPrintoutForm.attr("action", "/api/v1/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
     storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
 }
 

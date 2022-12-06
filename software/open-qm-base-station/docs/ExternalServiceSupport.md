@@ -16,9 +16,9 @@ Reasons to treat external services in this manner:
 Generally speaking there are two external service specific endpoints:
 
 ```
-/api/externalService/setup/self
-/api/externalService/setup/external
-/api/externalService/auth
+/api/v1/externalService/setup/self
+/api/v1/externalService/setup/external
+/api/v1/externalService/auth
 ```
 
 ```mermaid

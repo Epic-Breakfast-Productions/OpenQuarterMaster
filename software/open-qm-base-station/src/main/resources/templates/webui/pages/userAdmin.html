@@ -249,7 +249,7 @@
 			function setupUserView(userId){
 				resetUserView();
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: userViewMessages,
 					done: function (data) {
@@ -277,7 +277,7 @@
 			
 			function enableUser(userId){
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: messageDiv,
 					done: function (data){
@@ -292,7 +292,7 @@
 						}
 
 						doRestCall({
-							url: "/api/user/" + userId,
+							url: "/api/v1/user/" + userId,
 							method: "PUT",
 							data: {
 								disabled: false
@@ -306,7 +306,7 @@
 			}
 			function disableUser(userId){
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: messageDiv,
 					done: function (data){
@@ -315,7 +315,7 @@
 						}
 
 						doRestCall({
-							url: "/api/user/" + userId,
+							url: "/api/v1/user/" + userId,
 							method: "PUT",
 							data: {
 								disabled: true
@@ -363,7 +363,7 @@
 				userEditFormUserId.val(userId);
 
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					fail: function (data) {
 						alert("Error: " + data);
@@ -399,7 +399,7 @@
 				}
 				
 				doRestCall({
-					url: "/api/user/" + userEditFormUserId.val(),
+					url: "/api/v1/user/" + userEditFormUserId.val(),
 					method: "PUT",
 					data: data,
 					failMessagesDiv: userEditFormMessages,

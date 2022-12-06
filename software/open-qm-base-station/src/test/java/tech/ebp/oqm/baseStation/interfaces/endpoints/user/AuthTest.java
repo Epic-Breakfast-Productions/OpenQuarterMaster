@@ -10,6 +10,7 @@ import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.UserAuth;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -106,7 +107,7 @@ class AuthTest extends RunningServerTest {
 		)
 													.contentType(ContentType.JSON)
 													.when()
-										   .basePath("/api/auth")
+										   .basePath(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/auth")
 													.get("/tokenCheck")
 													.then();
 		log.info("token check response: {}", response.extract().body().asString());

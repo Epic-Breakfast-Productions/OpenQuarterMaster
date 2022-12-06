@@ -30,13 +30,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 
 /**
  * TODO:: reorganize these endpoints
  */
 @Traced
 @Slf4j
-@Path("/api/externalItemLookup")
+@Path(ROOT_API_ENDPOINT_V1 + "/externalItemLookup")
 @Tags({@Tag(name = "External Item Lookup", description = "Endpoints for searching for items from other places.")})
 @RequestScoped
 public class ItemLookup extends EndpointProvider {
