@@ -45,11 +45,11 @@ async function setCarouselImagesFromIds(imageIds, carousel) {
 			ajaxPromises.push(
 				doRestCall({ //TODO:: move to getter
 					spinnerContainer: carousel[0],
-					url: "/api/media/image/" + id,
+					url: "/api/v1/media/image/" + id,
 					async: false,
 					done: function (data) {
 						carouselData[i] = {
-							src: "/api/media/image/" + id + "/data",
+							src: "/api/v1/media/image/" + id + "/data",
 							alt: data.name,
 							captionHeading: data.name,
 							caption: data.description

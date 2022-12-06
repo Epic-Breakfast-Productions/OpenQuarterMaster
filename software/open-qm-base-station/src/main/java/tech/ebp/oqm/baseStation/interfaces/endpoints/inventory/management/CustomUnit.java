@@ -31,12 +31,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 /**
  * TODO:: make this main object provider?
  */
 @Traced
 @Slf4j
-@Path("/api/inventory/manage/customUnit")
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/manage/customUnit")
 @Tags({@Tag(name = "Inventory Management", description = "Endpoints for inventory management.")})
 @RequestScoped
 public class CustomUnit extends EndpointProvider {

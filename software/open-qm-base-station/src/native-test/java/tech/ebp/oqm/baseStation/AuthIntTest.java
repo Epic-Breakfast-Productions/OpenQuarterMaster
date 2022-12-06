@@ -6,14 +6,16 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-import tech.ebp.oqm.lib.core.rest.user.UserLoginRequest;
+import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
 
 @Slf4j
 @QuarkusIntegrationTest
@@ -25,7 +27,7 @@ public class AuthIntTest {
         log.info("INTEGRATION TEST");
         UserLoginRequest ulr = new UserLoginRequest("bad", "login", true);
         ErrorMessage errorMessage = given()
-                .basePath("/api/auth/user")
+                .basePath(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/auth/user")
                 .contentType(ContentType.JSON)
                 .body(Utils.OBJECT_MAPPER.writeValueAsString(ulr))
                 .when()
@@ -35,6 +37,6 @@ public class AuthIntTest {
                 .extract().body().as(ErrorMessage.class);
 
         log.info("Error Message: {}", errorMessage);
-        assertEquals("User not found.", errorMessage.getError());
+        assertEquals("User not found.", errorMessage.getDisplayMessage());
     }
 }

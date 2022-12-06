@@ -173,14 +173,14 @@ function setupAddEditForEdit(id){
     addEditFormId.val(id);
 
     doRestCall({
-        url: "/api/media/image/" + id,
+        url: "/api/v1/media/image/" + id,
         method: "GET",
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
             addEditTitleInput.val(data.title);
             addEditDescriptionInput.text(data.description);
 
-            bindCroppie("/api/media/image/" + id + "/data");
+            bindCroppie("/api/v1/media/image/" + id + "/data");
 
             addKeywordInputs(keywordInputDiv, data.keywords);
             addAttInputs(attInputDiv, data.attributes);
@@ -209,7 +209,7 @@ addEditImageForm.submit(function (ev) {
         if (addEditFormMode.val() == "add") {
             console.log("Adding new image.");
             doRestCall({
-                url: "/api/media/image",
+                url: "/api/v1/media/image",
                 method: "POST",
                 data: addEditData,
                 done: function (data) {
@@ -226,7 +226,7 @@ addEditImageForm.submit(function (ev) {
             console.log("Editing image " + id);
         
             doRestCall({
-                url: "/api/media/image/" + id,
+                url: "/api/v1/media/image/" + id,
                 method: "PUT",
                 data: addEditData,
                 done: function (data) {
@@ -272,13 +272,13 @@ function resetView(){
 function setupViewForImage(id){
     resetView();
 
-    var curUrl = '/api/media/image/' + id + '/data';
+    var curUrl = '/api/v1/media/image/' + id + '/data';
     imageViewImages.each(function(i, cur){
         cur.src = curUrl;
     });
 
     doRestCall({
-        url: "/api/media/image/" + id,
+        url: "/api/v1/media/image/" + id,
         method: "GET",
         async: false,
         done: function(data) {
@@ -304,7 +304,7 @@ function setupViewForImage(id){
                 console.log("Deleting image " + id);
 
                 doRestCall({
-                    url: "/api/media/image/" + id,
+                    url: "/api/v1/media/image/" + id,
                     method: "DELETE",
                     done: function(data) {
                         console.log("Response from create request: " + JSON.stringify(data));

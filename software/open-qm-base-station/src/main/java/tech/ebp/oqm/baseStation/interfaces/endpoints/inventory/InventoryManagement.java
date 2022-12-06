@@ -36,6 +36,8 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.File;
 import java.io.IOException;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 /**
  *
  * TODO:: refactor to more specific classes
@@ -44,7 +46,7 @@ import java.io.IOException;
  */
 @Traced
 @Slf4j
-@Path("/api/inventory/manage")
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/manage")
 @Tags({@Tag(name = "Inventory Management", description = "Endpoints for inventory management.")})
 @RequestScoped
 public class InventoryManagement extends EndpointProvider {

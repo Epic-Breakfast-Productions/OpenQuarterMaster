@@ -25,7 +25,7 @@ storageSearchSelectForm.on("submit", function (event) {
 
 	doRestCall({
 		spinnerContainer: storageSearchSelectModal.get(0),
-		url: "/api/inventory/storage-block?" + searchParams,
+		url: "/api/v1/inventory/storage-block?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,

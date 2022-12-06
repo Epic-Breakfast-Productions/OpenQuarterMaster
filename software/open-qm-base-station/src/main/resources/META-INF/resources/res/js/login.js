@@ -11,7 +11,7 @@ function login(jwtVal, remember){
 
 function logout(){
     Cookies.remove(jwtCookieName);
-    window.location.replace("/api/auth/user/logout");
+    window.location.replace("/api/v1/auth/user/logout");
 }
 
 async function getToken(usernameEmail, password, rememberUser){
@@ -25,7 +25,7 @@ async function getToken(usernameEmail, password, rememberUser){
 
 
     await doRestCall({
-        url: "/api/auth/user",
+        url: "/api/v1/auth/user",
         method: "POST",
         data: loginRequestData,
         async: true,
@@ -48,7 +48,7 @@ async function checkToken(jwtToken){
 
     await doRestCall({
         spinnerContainer: null,
-        url: "/api/auth/tokenCheck",
+        url: "/api/v1/auth/tokenCheck",
         async: true,
         authorization: jwtToken,
         done: function(data){

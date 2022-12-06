@@ -48,9 +48,11 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/auth/user")
+@Path(ROOT_API_ENDPOINT_V1 + "/auth/user")
 @Tags({@Tag(name = "Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
 @NoCache

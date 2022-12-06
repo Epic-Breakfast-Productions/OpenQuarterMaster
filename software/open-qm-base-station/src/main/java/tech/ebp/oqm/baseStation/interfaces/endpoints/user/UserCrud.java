@@ -54,9 +54,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/user")
+@Path(ROOT_API_ENDPOINT_V1 + "/user")
 @Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
 @RequestScoped
 public class UserCrud extends MainObjectProvider<User, UserSearch> {
