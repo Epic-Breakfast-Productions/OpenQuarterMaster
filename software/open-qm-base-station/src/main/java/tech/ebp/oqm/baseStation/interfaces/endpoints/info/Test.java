@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -10,7 +11,10 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -36,8 +40,47 @@ public class Test extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getCurrency(@Context SecurityContext ctx) {
+	public Response illegalArgException(@Context SecurityContext ctx) {
 		throw new IllegalArgumentException("bad");
+	}
+	
+	@GET
+	@Path("illegalStateException")
+	@Operation(
+		summary = "The currency the base station is set to operate with."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response illegalStateException(@Context SecurityContext ctx) {
+		throw new IllegalStateException("bad");
+	}
+	
+	@NoArgsConstructor
+	public static class TestClass{
+		@NotBlank
+		public String field;
+	}
+	
+	@POST
+	@Path("validationException")
+	@Operation(
+		summary = "The currency the base station is set to operate with."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validationException(
+		@Context SecurityContext ctx,
+		@Valid TestClass test
+		) {
+		return Response.ok().build();
 	}
 	
 }

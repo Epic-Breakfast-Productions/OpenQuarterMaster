@@ -4,7 +4,7 @@
 #
 #  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
 #
-#  TODO:: how to update image used?
+#  TODO:: figure out better username/password situation
 
 [Unit]
 Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "4".

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.rest;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,16 +18,20 @@ public class ErrorMessage {
 	
 	@lombok.Builder.Default
 	private String displayMessage = "";
+	
+	@JsonTypeInfo(
+		use = JsonTypeInfo.Id.CLASS,
+		include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "causeType"
+	)
 	@lombok.Builder.Default
-	private Throwable cause = null;
+	private Object cause = null;
 	
 	public ErrorMessage(String errorMessage) {
-		this(errorMessage, null);
+		this(errorMessage, new Object());
 	}
 	
 	public ErrorMessage(Throwable cause) {
 		this(cause.getMessage(), cause);
 	}
 	
-	//TODO:: builders for types of exceptions?
 }

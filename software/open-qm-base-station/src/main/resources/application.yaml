@@ -163,6 +163,16 @@ quarkus:
       enabled: true
   mailer:
     from: ${runningInfo.fromEmail}
+  reactive-messaging:
+    health:
+      enabled: true
+    metrics:
+      enabled: true
+  qpid-jms:
+    url: amqp://localhost:5672
+    username: quarkus
+    password: quarkus
+    
 mp:
   jwt:
     verify:

@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo" "prometheus")
+packages=("jaeger" "mongo" "prometheus" "artemis")
 
 #
 # Clean

@@ -1419,7 +1419,7 @@ function setupView(itemId){
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
             displayObjHistory(itemHistory, "/inventory/item/" + data.id);
-            itemViewModalLabel.text(data.name);
+            itemViewModalLabel.text(data.labelText);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);

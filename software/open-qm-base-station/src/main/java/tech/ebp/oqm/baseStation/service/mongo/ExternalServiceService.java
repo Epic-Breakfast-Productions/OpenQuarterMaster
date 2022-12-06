@@ -10,11 +10,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.config.ExtServicesConfig;
 import tech.ebp.oqm.baseStation.rest.search.ExternalServiceSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
+import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,6 +30,8 @@ import static com.mongodb.client.model.Filters.eq;
 public class ExternalServiceService extends MongoHistoriedService<ExternalService, ExternalServiceSearch> {
 	//    private Validator validator;
 	private AuthMode authMode;
+	private PasswordService passwordService;
+	ExtServicesConfig extServicesConfig;
 	
 	ExternalServiceService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -40,7 +45,9 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
 		@ConfigProperty(name = "service.authMode")
-		AuthMode authMode
+		AuthMode authMode,
+		PasswordService passwordService,
+		ExtServicesConfig extServicesConfig
 	) {
 		super(
 			objectMapper,
@@ -50,6 +57,8 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 			true
 		);
 		this.authMode = authMode;
+		this.passwordService = passwordService;
+		this.extServicesConfig = extServicesConfig;
 		//        this.validator = validator;
 	}
 	
@@ -110,4 +119,20 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		
 		return service;
 	}
+	
+	public ExternalService getFromSetupRequest(ExternalServiceSetupRequest setupRequest){
+		ExternalService existentExtService;
+		try {
+			existentExtService = this.getFromServiceName(setupRequest.getName());
+			
+			//TODO:: check if needs updated
+		} catch(DbNotFoundException e){
+			existentExtService = setupRequest.toExtService();
+			
+			this.add(existentExtService);
+		}
+		
+		return existentExtService;
+	}
+	
 }

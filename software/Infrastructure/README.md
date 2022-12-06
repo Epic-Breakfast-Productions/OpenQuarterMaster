@@ -14,12 +14,18 @@ sudo systemctl daemon-reload
 
 ## Host Ports used by the various infra pieces
 
-| Port  | Infra Service | Purpose                 |
-|-------|---------------|-------------------------|
-| 27017 | Mongo         | Mongodb connection port |
-| 8090  | Jaeger        | Jaeger UI               |
-| 8091  | Jaeger        | Jaeger collector        |
-| 8092  | Jaeger        | Jaeger collector 2?     |
-| 8093  | Prometheus    | Prometheus UI           |
-| 8094  | OpenTelemetry | Prometheus UI           |
+| Port    | Infra Service    | Purpose                           |
+|---------|------------------|-----------------------------------|
+| 27017   | Mongo            | Mongodb connection port           |
+| 8090    | Jaeger           | Jaeger UI                         |
+| 8091    | Jaeger           | Jaeger collector                  |
+| 8092    | Jaeger           | Jaeger collector 2?               |
+| 8093    | Prometheus       | Prometheus UI                     |
+| 8094    | OpenTelemetry    | Prometheus UI                     |
+| 8095    | ActiveMQ Artemis | Artemis UI                        |
+| 5672    | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    |
+| 61616   | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
 
+## TODO's
+
+- Figure out how service username/passwords are to be handled

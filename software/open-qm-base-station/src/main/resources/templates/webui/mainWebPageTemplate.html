@@ -109,22 +109,11 @@ Ingests:
 	<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
 		<div class="input-group">
 			<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
-			<button class="btn btn-secondary" type="submit">Search</button>
-			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchSelectButton">
-				Items
-			</button>
-			<ul class="dropdown-menu dropdown-menu-end">
-				<li>
-					<button type="button" class="dropdown-item btn btn-link"
-							onclick="setNavSearch('/items', 'name', this);">Items
-					</button>
-				</li>
-				<li>
-					<button type="button" class="dropdown-item btn btn-link"
-							onclick="setNavSearch('/storage', 'label', this);">Storage Blocks
-					</button>
-				</li>
-			</ul>
+			<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
+				<option data-action="/items" data-field="name" selected>Items</option>
+				<option data-action="/storage" data-field="label">Storage Blocks</option>
+			</select>
+			<button class="btn btn-outline-dark" type="submit">Search</button>
 		</div>
 	</form>
 	<ul class="d-flex navbar-nav me-auto">

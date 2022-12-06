@@ -32,6 +32,7 @@ public class TraceIdHeaderAdder implements ContainerResponseFilter {
 				.context()
 				.toTraceId();
 		}
+		
 		responseContext.getHeaders().add("traceId", traceId);
 	}
 }
