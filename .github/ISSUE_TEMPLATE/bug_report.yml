@@ -11,10 +11,11 @@ body:
         Thanks for taking the time to fill out this bug report!
         
   - type: dropdown
-    id: version
+    id: softwareComponent
     attributes:
-      label: Version
-      description: What version of our software are you running?
+      label: Software
+      description: What component(s) are part of the bug?
+      multiple: true
       options:
         - Base Station
         - Station Captain
