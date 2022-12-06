@@ -16,10 +16,11 @@ body:
       label: Software
       description: What component(s) are part of the bug?
       multiple: true
+      required: true
       options:
         - Base Station
         - Station Captain
-        - Infra - Jaeger
+        - Infra - Mongo
         - Plugins- *
         
   - type: textarea
