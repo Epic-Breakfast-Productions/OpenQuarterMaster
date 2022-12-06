@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Open QuarterMaster Zulip
+    url: https://oqm.zulipchat.com/
+    about: Chat hangout for all things OpenQuarterMaster
