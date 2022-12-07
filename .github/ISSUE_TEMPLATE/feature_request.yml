@@ -1,6 +1,6 @@
 name: Feature Request
 description: File Feature Request
-title: "[Bug]: "
+title: "[Feature Request]: "
 labels: ["type-enhancement", "state-triage"]
 assignees:
   - gregjstewart
