@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to fill out this feature request!
         
   - type: dropdown
     id: softwareComponent
@@ -23,25 +23,39 @@ body:
         - Station Captain
         - Infra - Mongo
         - Plugins- *
+        - Other / New
         
   - type: textarea
-    id: what-happened
+    id: what-is-problem
     attributes:
-      label: What happened?
-      description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
+      label: "Describe what you'd like to see"
+      description: "What don't we currently support that you would you like to see? Please be specific."
     validations:
-      required: true
+      required: false
+        
+  - type: textarea
+    id: describe-what-like
+    attributes:
+      label: Is your feature request related to a problem?
+      description: "A clear and concise description of what the problem is. Ex. I'm always frustrated when ..."
+    validations:
+      required: false
+        
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Describe alternatives you've considered"
+      description: "If you have any workarounds, you can describe them here."
+      value: "None"
+    validations:
+      required: false
       
   - type: textarea
-    id: env
+    id: additional-details
     attributes:
-      label: In what context(s) are you seeing this issue?
-      description: What OS(s) are you using? What Browser(s)? Any other useful context surrounding how you are using the software?
+      label: "Additional context"
+      description: "Anything else you would like to say."
+      value: "None"
+    validations:
+      required: false
       
-  - type: textarea
-    id: logs
-    attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks. Reminder to not include sensitive information.
-      render: shell
