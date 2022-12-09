@@ -139,6 +139,25 @@ public abstract class InventoryItemTest extends BasicTest {
 		assertEquals(expectedExpired.size(), expiredEvents.size());
 		assertEquals(expectedExpiryWarn.size(), expiryWarnEvents.size());
 		
+		events = item.updateExpiredStates();
+		
+		expiredEvents = events.stream()
+							  .filter((ItemExpiryEvent e)->{
+								  return e instanceof ItemExpiredEvent;
+							  }).map((ItemExpiryEvent e)->{
+				return (ItemExpiredEvent) e;
+			})
+							  .collect(Collectors.toList());
+		expiryWarnEvents = events.stream()
+								 .filter((ItemExpiryEvent e)->{
+									 return e instanceof ItemExpiryWarningEvent;
+								 }).map((ItemExpiryEvent e)->{
+				return (ItemExpiryWarningEvent) e;
+			})
+								 .collect(Collectors.toList());
+		
+		assertEquals(0, expiredEvents.size());
+		assertEquals(0, expiryWarnEvents.size());
 	}
 	
 }

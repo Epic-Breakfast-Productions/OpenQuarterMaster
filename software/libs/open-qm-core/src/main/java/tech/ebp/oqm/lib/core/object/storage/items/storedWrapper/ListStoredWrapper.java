@@ -90,24 +90,6 @@ public abstract class ListStoredWrapper<S extends Stored>
 		return output;
 	}
 	
-	@Override
-	public void recalculateExpiredRelated() {
-		AtomicLong newExpiredCount = new AtomicLong();
-		AtomicLong newExpiryWarnCount = new AtomicLong();
-		
-		this.getStored()
-			.forEach((Stored s)->{
-				if (s.getNotificationStatus().isExpired()) {
-					newExpiredCount.getAndIncrement();
-				} else if (s.getNotificationStatus().isExpiredWarning()) {
-					newExpiryWarnCount.getAndIncrement();
-				}
-			});
-		
-		this.setNumExpired(newExpiredCount.get());
-		this.setNumExpiryWarned(newExpiryWarnCount.get());
-	}
-	
 	// <editor-fold desc="List pass-through methods">
 	//	@Override
 	public int size() {
