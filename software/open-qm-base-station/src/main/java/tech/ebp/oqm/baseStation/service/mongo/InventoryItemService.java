@@ -221,4 +221,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return this.getSumOfIntField("numExpiryWarn");
 	}
 	
+	public long getNumLowStock() {
+		return this.getSumOfIntField("numLowStock");
+	}
 }
