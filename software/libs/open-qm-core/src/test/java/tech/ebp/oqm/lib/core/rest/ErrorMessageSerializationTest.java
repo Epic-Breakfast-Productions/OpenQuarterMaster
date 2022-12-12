@@ -15,14 +15,14 @@ class ErrorMessageSerializationTest extends ObjectSerializationTest<ErrorMessage
 	//TODO:: work out how to accommodate commented out tests
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			//			Arguments.of(
-			//				new ErrorMessage()
-			//			),
-			//			Arguments.of(
-			//				ErrorMessage.builder()
-			//							.displayMessage(FAKER.lorem().paragraph())
-			//							.build()
-			//			),
+			Arguments.of(
+				new ErrorMessage()
+			),
+			Arguments.of(
+				ErrorMessage.builder()
+							.displayMessage(FAKER.lorem().paragraph())
+							.build()
+			),
 			Arguments.of(
 				ErrorMessage.builder()
 							.displayMessage(FAKER.lorem().paragraph())
@@ -35,12 +35,19 @@ class ErrorMessageSerializationTest extends ObjectSerializationTest<ErrorMessage
 							.cause(ZonedDateTime.now())
 							.build()
 			)
-			//			Arguments.of(
-			//				ErrorMessage.builder()
-			//							.displayMessage(FAKER.lorem().paragraph())
-			//							.cause(new IllegalArgumentException(FAKER.lorem().paragraph()))
-			//							.build()
-			//			)
+//			,
+//			Arguments.of(
+//				ErrorMessage.builder()
+//							.displayMessage("world")
+//							.cause(new IllegalArgumentException("hello"))
+//							.build()
+//			),
+//			Arguments.of(
+//				ErrorMessage.builder()
+//							.displayMessage(FAKER.lorem().paragraph())
+//							.cause(new IllegalArgumentException(FAKER.lorem().paragraph()))
+//							.build()
+//			)
 		);
 	}
 }

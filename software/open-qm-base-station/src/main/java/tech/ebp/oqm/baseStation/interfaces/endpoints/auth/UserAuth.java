@@ -133,16 +133,23 @@ public class UserAuth extends EndpointProvider {
 		User user = this.userService.getFromLoginRequest(loginRequest);
 		
 		if (user == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User not found.")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(ErrorMessage.builder().displayMessage("User not found.").build()).build();
 		}
 		if(user.isDisabled()){
-			return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage("Account Disabled. Contact an admin for details.")).build();
+			return Response.status(Response.Status.UNAUTHORIZED)
+						   .entity(
+							   ErrorMessage.builder()
+										   .displayMessage("Account Disabled. Contact an admin for details.")
+										   .build()
+						   ).build();
 		}
 		
 		//TODO:: check for # of login attempts?
 		
 		if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password.")).build();
+			return Response.status(Response.Status.BAD_REQUEST)
+						   .entity(ErrorMessage.builder().displayMessage("Invalid Password.").build())
+						   .build();
 		}
 		
 		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());
