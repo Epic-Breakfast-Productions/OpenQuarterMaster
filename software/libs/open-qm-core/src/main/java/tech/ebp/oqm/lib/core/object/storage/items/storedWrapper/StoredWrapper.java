@@ -14,6 +14,7 @@ import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.quantities.QuantitiesUtils;
 import tech.uom.lib.common.function.QuantityFunctions;
 
 import javax.measure.Quantity;
@@ -54,27 +55,26 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarned = 0L;
 	
+	/**
+	 * The low stock threshold for the items stored in this associated Storeage Block.
+	 * <p>
+	 * Null for no threshold, a Quantity of a compatible unit to set that threshold.
+	 */
 	private Quantity lowStockThreshold = null;
 	
+	/**
+	 * Updates the low stock threshold state.
+	 *
+	 * @return If this storage block is low on stock, builder of event.
+	 */
 	public Optional<ItemLowStockEvent.Builder<?, ?>> updateLowStockState() {
 		this.recalcTotal();
 		
 		Quantity total = this.getTotal();
 		Quantity lowStockThreshold = this.getLowStockThreshold();
 		
-		QuantityFunctions.isLessThan(total);
 		
-		if (lowStockThreshold == null || total == null) {
-			return Optional.empty();
-		}
-		
-		if (!total.getUnit().equals(lowStockThreshold.getUnit())) {
-			lowStockThreshold = lowStockThreshold.to(total.getUnit());
-		}
-		
-		if (
-			total.getValue().doubleValue() < lowStockThreshold.getValue().doubleValue()
-		) {
+		if (QuantitiesUtils.isLowStock(total, lowStockThreshold)) {
 			boolean previouslyLow = this.getNotificationStatus().isLowStock();
 			this.getNotificationStatus().setLowStock(true);
 			
