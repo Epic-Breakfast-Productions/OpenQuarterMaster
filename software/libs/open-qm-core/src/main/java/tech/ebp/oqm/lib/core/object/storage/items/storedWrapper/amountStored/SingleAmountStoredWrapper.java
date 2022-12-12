@@ -24,7 +24,6 @@ import java.util.Optional;
 @ToString(callSuper = true)
 public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored> {
 	
-	
 	@NonNull
 	@NotNull
 	private AmountStored stored;

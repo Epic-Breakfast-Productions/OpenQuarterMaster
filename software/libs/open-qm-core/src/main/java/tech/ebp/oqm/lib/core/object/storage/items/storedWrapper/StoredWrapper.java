@@ -9,12 +9,12 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
-import tech.ebp.oqm.lib.core.object.history.events.item.ItemStorageBlockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.uom.lib.common.function.QuantityFunctions;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.Min;
@@ -56,28 +56,37 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	
 	private Quantity lowStockThreshold = null;
 	
-	//TODO:: review, make similar to expiry, test
-	public Optional<ItemLowStockEvent.Builder<?, ?>> updateLowStockState(ObjectId blockKey) {
+	public Optional<ItemLowStockEvent.Builder<?, ?>> updateLowStockState() {
 		this.recalcTotal();
-		if (this.getLowStockThreshold() == null || this.total == null) {
+		
+		Quantity total = this.getTotal();
+		Quantity lowStockThreshold = this.getLowStockThreshold();
+		
+		QuantityFunctions.isLessThan(total);
+		
+		if (lowStockThreshold == null || total == null) {
 			return Optional.empty();
 		}
 		
-		//		if (
-		//			this.getTotal()
-		//		) {
-		//			boolean previouslyLow = this.getNotificationStatus().isLowStock();
-		//			this.getNotificationStatus().setLowStock(true);
-		//
-		//			if (!previouslyLow) {
-		//				return Optional.of(
-		//					ItemLowStockEvent.builder().storageBlockId(blockKey)
-		//				);
-		//			}
-		//			return Optional.empty();
-		//		} else {
-		//			this.getNotificationStatus().setLowStock(false);
-		//		}
+		if (!total.getUnit().equals(lowStockThreshold.getUnit())) {
+			lowStockThreshold = lowStockThreshold.to(total.getUnit());
+		}
+		
+		if (
+			total.getValue().doubleValue() < lowStockThreshold.getValue().doubleValue()
+		) {
+			boolean previouslyLow = this.getNotificationStatus().isLowStock();
+			this.getNotificationStatus().setLowStock(true);
+			
+			if (!previouslyLow) {
+				return Optional.of(
+					ItemLowStockEvent.builder()
+				);
+			}
+			return Optional.empty();
+		} else {
+			this.getNotificationStatus().setLowStock(false);
+		}
 		
 		return Optional.empty();
 	}
