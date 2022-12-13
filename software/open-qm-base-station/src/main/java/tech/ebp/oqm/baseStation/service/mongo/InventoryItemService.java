@@ -8,7 +8,10 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
@@ -33,6 +36,8 @@ import static com.mongodb.client.model.Filters.exists;
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedService<InventoryItem, InventoryItemSearch> {
 	
+	private ItemLowStockEventNotificationService ilsens;
+	
 	InventoryItemService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
 	}
@@ -42,7 +47,8 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		ItemLowStockEventNotificationService ilsens
 	) {
 		super(
 			objectMapper,
@@ -51,6 +57,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			InventoryItem.class,
 			false
 		);
+		this.ilsens = ilsens;
 	}
 	
 	@Override
@@ -58,6 +65,16 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		newOrChangedObject.recalculateDerived();
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant, storage block ids exist, image ids exist
+	}
+	
+	@Override
+	public InventoryItem update(InventoryItem object) throws DbNotFoundException {
+		List<ItemLowStockEvent> lowStockEvents = object.updateLowStockState();
+		InventoryItem item = super.update(object);
+		
+		this.ilsens.sendEvents(object, lowStockEvents);
+		
+		return item;
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(

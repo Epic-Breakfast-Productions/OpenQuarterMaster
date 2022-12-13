@@ -7,6 +7,8 @@ import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 
+import java.util.Collection;
+
 @Traced
 public abstract class ItemEventNotificationService<T extends HistoryEvent> extends HistoryEventNotificationService<T> {
 	
@@ -14,4 +16,13 @@ public abstract class ItemEventNotificationService<T extends HistoryEvent> exten
 		I item,
 		T event
 	);
+	
+	public <S extends Stored, C, W extends StoredWrapper<C, S>, I extends InventoryItem<S, C, W>> void sendEvents(
+		I item,
+		Collection<T> events
+	){
+		events.stream().forEach((T event)->{
+			sendEvent(item, event);
+		});
+	}
 }
