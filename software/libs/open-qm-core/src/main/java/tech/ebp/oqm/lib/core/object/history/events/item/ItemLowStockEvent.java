@@ -17,8 +17,16 @@ import javax.validation.constraints.NotNull;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public class ItemLowStockEvent extends ItemStorageBlockEvent {
+public class ItemLowStockEvent extends HistoryEvent {
 	
+	@lombok.Builder.Default
+	private ObjectId storageBlockId = null;
+	
+	@lombok.Builder.Default
+	private String identifier = null;
+	
+	@lombok.Builder.Default
+	private Integer index = null;
 	
 	@Override
 	public EventType getType() {
