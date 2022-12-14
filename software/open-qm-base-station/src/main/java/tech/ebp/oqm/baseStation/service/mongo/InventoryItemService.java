@@ -69,6 +69,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	
 	@Override
 	public InventoryItem update(InventoryItem object) throws DbNotFoundException {
+		//TODO:: this doesn't happen all the time. Investigate
 		List<ItemLowStockEvent> lowStockEvents = object.updateLowStockState();
 		InventoryItem item = super.update(object);
 		
