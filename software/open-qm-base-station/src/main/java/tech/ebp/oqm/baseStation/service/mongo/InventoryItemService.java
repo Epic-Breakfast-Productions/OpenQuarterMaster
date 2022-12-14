@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -67,13 +68,38 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
+	
+	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
+		if(!lowStockEvents.isEmpty()) {
+			for(ItemLowStockEvent event : lowStockEvents) {
+				this.getHistoryService().addHistoryEvent(
+					item.getId(), event
+				);
+			}
+			this.ilsens.sendEvents(item, lowStockEvents);
+		}
+	}
+	
 	@Override
 	public InventoryItem update(InventoryItem object) throws DbNotFoundException {
-		//TODO:: this doesn't happen all the time. Investigate
 		List<ItemLowStockEvent> lowStockEvents = object.updateLowStockState();
 		InventoryItem item = super.update(object);
 		
-		this.ilsens.sendEvents(object, lowStockEvents);
+		handleLowStockEvents(item, lowStockEvents);
+		
+		return item;
+	}
+	
+	@Override
+	public InventoryItem update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		InventoryItem item = super.update(id, updateJson, interactingEntity);
+		
+		List<ItemLowStockEvent> lowStockEvents = item.updateLowStockState();
+		
+		if(!lowStockEvents.isEmpty()) {
+			this.update(item);
+			this.handleLowStockEvents(item, lowStockEvents);
+		}
 		
 		return item;
 	}
