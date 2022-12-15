@@ -10,3 +10,8 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/software/libs/open-qm-moduleDriver"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
