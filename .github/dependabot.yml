@@ -9,4 +9,4 @@ updates:
     directory: "/software/libs/open-qm-core"
     target-branch: "dev"
     schedule:
-      interval: "weekly"
+      interval: "daily"
