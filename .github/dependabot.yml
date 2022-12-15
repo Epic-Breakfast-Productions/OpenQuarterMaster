@@ -7,5 +7,6 @@ version: 2
 updates:
   - package-ecosystem: "gradle"
     directory: "/software/libs/open-qm-core"
+    target-branch: "dev"
     schedule:
       interval: "weekly"
