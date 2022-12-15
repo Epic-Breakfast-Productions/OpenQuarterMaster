@@ -96,8 +96,8 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		List<ItemLowStockEvent> lowStockEvents = item.updateLowStockState();
 		
+		super.update(item);
 		if(!lowStockEvents.isEmpty()) {
-			this.update(item);
 			this.handleLowStockEvents(item, lowStockEvents);
 		}
 		
