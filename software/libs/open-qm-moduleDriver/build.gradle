@@ -50,7 +50,7 @@ dependencies {
 //	implementation 'commons-io:commons-io:2.11.0'
 //	implementation 'commons-codec:commons-codec:1.15'
 
-	testImplementation 'org.hibernate:hibernate-validator:6.2.5.Final'
+	testImplementation 'org.hibernate:hibernate-validator:8.0.0.Final'
 	testImplementation 'javax.el:javax.el-api:3.0.0'
 	testImplementation 'org.glassfish.web:javax.el:2.2.4'
 //    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
