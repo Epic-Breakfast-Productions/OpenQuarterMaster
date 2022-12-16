@@ -50,7 +50,7 @@ dependencies {
 //	implementation 'commons-io:commons-io:2.11.0'
 //	implementation 'commons-codec:commons-codec:1.15'
 
-	testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
+	testImplementation 'org.hibernate:hibernate-validator:6.2.5.Final'
 	testImplementation 'javax.el:javax.el-api:3.0.0'
 	testImplementation 'org.glassfish.web:javax.el:2.2.4'
 //    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
@@ -66,7 +66,7 @@ dependencies {
 //	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
 	testImplementation 'com.github.javafaker:javafaker:1.0.2'
-	testImplementation 'ch.qos.logback:logback-classic:1.2.11'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.5'
 }
 
 test {
