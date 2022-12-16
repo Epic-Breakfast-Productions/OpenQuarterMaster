@@ -544,7 +544,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				addObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			)
+			),
+			this.getInteractingEntityFromJwt()
 		);
 		
 		return Response.ok(item).build();
@@ -588,7 +589,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				subtractObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			)
+			),
+			this.getInteractingEntityFromJwt()
 		);
 		
 		return Response.ok(item).build();
@@ -634,7 +636,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			(Stored) Utils.OBJECT_MAPPER.treeToValue(
 				transferObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
-			)
+			),
+			this.getInteractingEntityFromJwt()
 		);
 		
 		return Response.ok(item).build();

@@ -20,6 +20,8 @@
 		</div>
 		<div class="card-body">
 		{#if config:['service.authMode'] == 'SELF'}
+			<div id="loginFormMessages">
+			</div>
 			<div class="mb-3">
 				<label for="emailUsernameInput">Email address or Username:</label>
 				<input type="text" class="form-control text-center" id="emailUsernameInput" placeholder="Email or Username">
@@ -69,7 +71,7 @@
 				);
 
 				if (!result) {
-					addMessage("danger", "Login failed", "Login Failed", null);
+					addMessage("danger", "Login failed", "Login Failed", loginFormMessages);
 				} else {
 					login(result, rememberUser);
 				}

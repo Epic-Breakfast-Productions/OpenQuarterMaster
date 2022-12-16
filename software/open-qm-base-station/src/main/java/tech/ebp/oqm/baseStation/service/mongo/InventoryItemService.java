@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -8,18 +9,23 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 
 /**
@@ -31,6 +37,8 @@ import static com.mongodb.client.model.Filters.exists;
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedService<InventoryItem, InventoryItemSearch> {
 	
+	private ItemLowStockEventNotificationService ilsens;
+	
 	InventoryItemService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
 	}
@@ -40,7 +48,8 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		ItemLowStockEventNotificationService ilsens
 	) {
 		super(
 			objectMapper,
@@ -49,6 +58,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			InventoryItem.class,
 			false
 		);
+		this.ilsens = ilsens;
 	}
 	
 	@Override
@@ -58,10 +68,48 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
+	
+	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
+		if(!lowStockEvents.isEmpty()) {
+			for(ItemLowStockEvent event : lowStockEvents) {
+				this.getHistoryService().addHistoryEvent(
+					item.getId(), event
+				);
+			}
+			this.ilsens.sendEvents(item, lowStockEvents);
+		}
+	}
+	
+	@Override
+	public InventoryItem update(InventoryItem object) throws DbNotFoundException {
+		List<ItemLowStockEvent> lowStockEvents = object.updateLowStockState();
+		InventoryItem item = super.update(object);
+		
+		handleLowStockEvents(item, lowStockEvents);
+		
+		return item;
+	}
+	
+	@Override
+	public InventoryItem update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		InventoryItem item = super.update(id, updateJson, interactingEntity);
+		
+		List<ItemLowStockEvent> lowStockEvents = item.updateLowStockState();
+		
+		super.update(item);
+		if(!lowStockEvents.isEmpty()) {
+			this.handleLowStockEvents(item, lowStockEvents);
+		}
+		
+		return item;
+	}
+	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
-		T toAdd
+		T toAdd,
+		@Valid
+		InteractingEntity entity
 	) {
 		this.get(item.getId());//ensure exists
 		try {
@@ -72,17 +120,15 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			throw e;
 		}
 		
-		Object result = this.getCollection().findOneAndReplace(eq("_id", item.getId()), item);
 		
-		{
-			ItemAddEvent.Builder<?, ?> builder = ItemAddEvent.builder().storageBlockId(storageBlockId);
-			
-			this.getHistoryService().addHistoryEvent(
-				item.getId(),
-				builder.build()
-			);
-			
-		}
+		this.update(
+			item,
+			ItemAddEvent.builder()//TODO:: add quantity?
+						.entityId(entity.getId())
+						.entityType(entity.getInteractingEntityType())
+						.storageBlockId(storageBlockId)
+						.build()
+		);
 		
 		return item;
 	}
@@ -90,19 +136,28 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		ObjectId itemId,
 		ObjectId storageBlockId,
-		T toAdd
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
 	) {
-		return this.add(this.get(itemId), storageBlockId, toAdd);
+		return this.add(this.get(itemId), storageBlockId, toAdd, entity);
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(String itemId, String storageBlockId, T toAdd) {
-		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String itemId,
+		String storageBlockId,
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
-		T toSubtract
+		T toSubtract,
+		InteractingEntity entity
 	) {
 		this.get(item.getId());//ensure exists
 		try {
@@ -113,16 +168,14 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			throw e;
 		}
 		
-		Object result = this.getCollection().findOneAndReplace(eq("_id", item.getId()), item);
-		
-		{
-			ItemSubEvent.Builder<?, ?> builder = ItemSubEvent.builder().storageBlockId(storageBlockId);
-			
-			this.getHistoryService().addHistoryEvent(
-				item.getId(),
-				builder.build()
-			);
-		}
+		this.update(
+			item,
+			ItemSubEvent.builder()//TODO:: add quantity?
+						.entityId(entity.getId())
+						.entityType(entity.getInteractingEntityType())
+						.storageBlockId(storageBlockId)
+						.build()
+		);
 		
 		return item;
 	}
@@ -130,24 +183,30 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		ObjectId itemId,
 		ObjectId storageBlockId,
-		T toAdd
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
 	) {
-		return this.subtract(this.get(itemId), storageBlockId, toAdd);
+		return this.subtract(this.get(itemId), storageBlockId, toAdd, entity);
 	}
 	
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		String itemId,
 		String storageBlockId,
-		T toAdd
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
 	) {
-		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd);
+		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
-	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
-		T toTransfer
+		T toTransfer,
+		@NotNull
+		InteractingEntity entity
 	) {
 		this.get(item.getId());//ensure exists
 		try {
@@ -158,17 +217,15 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			throw e;
 		}
 		
-		Object result = this.getCollection().findOneAndReplace(eq("_id", item.getId()), item);
-		
-		{
-			ItemTransferEvent.Builder<?, ?> builder =
-				ItemTransferEvent.builder().storageBlockFromId(storageBlockIdFrom).storageBlockToId(storageBlockIdTo);
-			
-			this.getHistoryService().addHistoryEvent(
-				item.getId(),
-				builder.build()
-			);
-		}
+		this.update(
+			item,
+			ItemTransferEvent.builder()//TODO:: add quantity?
+						.entityId(entity.getId())
+						.entityType(entity.getInteractingEntityType())
+				.storageBlockFromId(storageBlockIdFrom)
+				.storageBlockToId(storageBlockIdTo)
+						.build()
+		);
 		
 		return item;
 	}
@@ -177,13 +234,16 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		ObjectId itemId,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
-		T toTransfer
+		T toTransfer,
+		@NotNull
+		InteractingEntity entity
 	) {
 		return this.transfer(
 			this.get(itemId),
 			storageBlockIdFrom,
 			storageBlockIdTo,
-			toTransfer
+			toTransfer,
+			entity
 		);
 	}
 	
@@ -191,13 +251,16 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		String itemId,
 		String storageBlockIdFrom,
 		String storageBlockIdTo,
-		T toTransfer
+		T toTransfer,
+		@NotNull
+		InteractingEntity entity
 	) {
 		return this.transfer(
 			new ObjectId(itemId),
 			new ObjectId(storageBlockIdFrom),
 			new ObjectId(storageBlockIdTo),
-			toTransfer
+			toTransfer,
+			entity
 		);
 	}
 	
@@ -221,4 +284,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		return this.getSumOfIntField("numExpiryWarn");
 	}
 	
+	public long getNumLowStock() {
+		return this.getSumOfIntField("numLowStock");
+	}
 }
