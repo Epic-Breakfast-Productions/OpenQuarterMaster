@@ -72,25 +72,6 @@ public abstract class MapStoredWrapper<S extends Stored>
 	}
 	
 	@Override
-	public void recalculateExpiredRelated() {
-		AtomicLong newExpiredCount = new AtomicLong();
-		AtomicLong newExpiryWarnCount = new AtomicLong();
-		
-		this.getStored()
-			.values()
-			.forEach((Stored s)->{
-				if (s.getNotificationStatus().isExpired()) {
-					newExpiredCount.getAndIncrement();
-				} else if (s.getNotificationStatus().isExpiredWarning()) {
-					newExpiryWarnCount.getAndIncrement();
-				}
-			});
-		
-		this.setNumExpired(newExpiredCount.get());
-		this.setNumExpiryWarned(newExpiryWarnCount.get());
-	}
-	
-	@Override
 	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
 		List<ItemExpiryEvent> events = new ArrayList<>();
 		for (Map.Entry<String, S> curStored : this.entrySet()) {

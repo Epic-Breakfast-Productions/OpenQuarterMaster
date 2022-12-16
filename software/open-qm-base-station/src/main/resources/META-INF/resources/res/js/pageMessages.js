@@ -10,7 +10,7 @@ function buildMessageDiv(type, message, heading, id, infoContent){
 	}
 	let infoContentId = id + "-infoContent"
 
-	let output = $('<div class="alert alert-'+type+' alert-dismissible fade show alertMessage m-1" role="alert">\n'+
+	let output = $('<div class="alert alert-'+type+' alert-dismissible fade show alertMessage m-1 text-start" role="alert">\n'+
 		'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
 		'</div>');
 	output.attr("id", id);
@@ -25,7 +25,7 @@ function buildMessageDiv(type, message, heading, id, infoContent){
 				.attr("data-bs-target", "#" + infoContentId)
 		);
 		infoContentObj = $('<div class="collapse mt-2">\n' +
-			'  <div class="card card-body card-'+type+' bg-'+type+'">\n' +
+			'  <div class="card card-body card-'+type+' bg-'+type+' user-select-all">\n' +
 			'  </div>\n' +
 			'</div>');
 		infoContentObj.attr("id", infoContentId)
@@ -44,7 +44,8 @@ function buildMessageDiv(type, message, heading, id, infoContent){
 
 
 function addMessageToDiv(jqueryObj, type, message, heading, id, infoContent){
-	buildMessageDiv(type, message, heading, id, infoContent).appendTo(jqueryObj.get(0))
+	let messageDiv = buildMessageDiv(type, message, heading, id, infoContent);
+	messageDiv.appendTo(jqueryObj.get(0));
 }
 
 function addMessage(type, message, heading, id, infoContent){

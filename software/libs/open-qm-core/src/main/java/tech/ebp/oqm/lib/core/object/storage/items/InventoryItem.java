@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
@@ -22,6 +23,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.utils.QuantitySumHelper;
+import tech.ebp.oqm.lib.core.quantities.QuantitiesUtils;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -29,9 +31,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -124,6 +128,9 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@Setter(AccessLevel.PROTECTED)
 	private BigDecimal valueOfStored = BigDecimal.ZERO;
 	
+	
+	private ItemNotificationStatus notificationStatus = new ItemNotificationStatus();
+	
 	/**
 	 * When before a stored item expired to send a warning out about that expiration.
 	 * <p>
@@ -133,7 +140,63 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@NotNull
 	private Duration expiryWarningThreshold = Duration.ZERO;
 	
-	//	private Quantity<?> lowTotalStockWarningThreshold = null;
+	/**
+	 * The threshold of low stock for the entire object.
+	 * <p>
+	 * See {@link StoredWrapper#getLowStockThreshold()} for low stock warnings on individual blocks.
+	 * <p>
+	 * Null for no threshold, Quantity with compatible unit to set the threshold.
+	 */
+	private Quantity lowStockThreshold = null;
+	
+	/**
+	 * The number of low stock storage blocks, also including overall.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
+	 */
+	@Setter(AccessLevel.PUBLIC)
+	private long numLowStock = 0;
+	
+	public List<ItemLowStockEvent> updateLowStockState() {
+		List<ItemLowStockEvent> output = new ArrayList<>();
+		int newNumLowStock = 0;
+		
+		Quantity total = this.recalcTotal();
+		Quantity lowStockThreshold = this.getLowStockThreshold();
+		
+		if (QuantitiesUtils.isLowStock(total, lowStockThreshold)) {
+			boolean previouslyLow = this.getNotificationStatus().isLowStock();
+			this.getNotificationStatus().setLowStock(true);
+			newNumLowStock++;
+			
+			if (!previouslyLow) {
+				output.add(
+					ItemLowStockEvent.builder()
+									 .build()
+				);
+			}
+		} else {
+			this.getNotificationStatus().setLowStock(false);
+		}
+		
+		for (Map.Entry<ObjectId, W> curEntry : this.getStorageMap().entrySet()) {
+			Optional<ItemLowStockEvent.Builder<?, ?>> result = curEntry.getValue().updateLowStockState();
+			
+			if (curEntry.getValue().getNotificationStatus().isLowStock()) {
+				newNumLowStock++;
+			}
+			
+			//noinspection OptionalIsPresent
+			if (result.isPresent()) {
+				output.add(
+					result.get().storageBlockId(curEntry.getKey()).build()
+				);
+			}
+		}
+		
+		this.setNumLowStock(newNumLowStock);
+		return output;
+	}
 	
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
@@ -205,7 +268,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	/**
 	 * The number of expired stored items held.
 	 * <p>
-	 * Calculated in {@link #recalculateDerived()}
+	 * Calculated in {@link #recalculateExpiryDerivedStats()}
 	 */
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpired = 0;
@@ -213,7 +276,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	/**
 	 * The number of stored items close to expiring held.
 	 * <p>
-	 * Calculated in {@link #recalculateDerived()}
+	 * Calculated in {@link #recalculateExpiryDerivedStats()}
 	 */
 	@Setter(AccessLevel.PROTECTED)
 	private long numExpiryWarn = 0;
@@ -426,6 +489,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Gets a stream of all stored items held
+	 *
 	 * @return a stream of all stored items held
 	 */
 	public Stream<S> storedStream() {

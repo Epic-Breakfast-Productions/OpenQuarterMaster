@@ -1,3 +1,4 @@
+var loginFormMessages = $("#loginFormMessages");
 var jwtCookieName = "jwt";
 
 function login(jwtVal, remember){
@@ -32,7 +33,8 @@ async function getToken(usernameEmail, password, rememberUser){
         done: function(data) {
             console.log("Response from login request: " + JSON.stringify(data));
             result = data.token;
-        }
+        },
+        failMessagesDiv: loginFormMessages
     });
 
     return result;
