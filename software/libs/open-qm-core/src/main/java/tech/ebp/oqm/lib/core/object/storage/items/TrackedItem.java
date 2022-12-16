@@ -13,6 +13,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.utils.BigDecimalSumHelper;
 
+import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
@@ -52,7 +53,6 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	@NonNull
 	@DecimalMin("0.0")
 	private BigDecimal defaultValue = BigDecimal.ZERO;
-	
 	
 	@BsonIgnore
 	@JsonIgnore

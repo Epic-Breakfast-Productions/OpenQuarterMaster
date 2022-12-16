@@ -13,14 +13,20 @@
 		<ul class="nav nav-tabs" id="mainTab" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
-					Overview
+					<i class="fa-solid fa-binoculars fa-fw"></i> Overview
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
-					Expiring
+					<i class="fa-regular fa-hourglass-half fa-fw"></i> Expiring
 					{#if totalExpired > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</span>{/if}
 					{#if totalExpiryWarn > 0}<span class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</span>{/if}
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
+					<i class="fa-solid fa-arrow-trend-down fa-fw"></i> Low Stock
+					{#if totalLowStock > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</span>{/if}
 				</button>
 			</li>
 		</ul>
@@ -139,6 +145,54 @@
 					</div>
 				</div>
 			</div>
+		<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
+			<div class="row">
+				<div class="col">
+					<h3>
+						Low Stock:
+					</h3>
+					{#if lowStockList.isEmpty()}
+						<p>
+							No stock is low!
+						</p>
+					{#else}
+						<table class="table table-bordered table-sm table-striped">
+							<thead>
+							<tr>
+								<th class="searchResultImageCol">
+									Image
+								</th>
+								<th>
+									Item
+								</th>
+								<th>
+									# Low Stock
+								</th>
+								<th>
+									Actions
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							{#for curLowStockItem in lowStockList}
+								<tr class="align-middle">
+									<td>
+										{#if !curLowStockItem.getImageIds().isEmpty()}
+											<img src="/api/v1/media/image/for/item/{curLowStockItem.getId()}" class="searchResultImage">
+										{/if}
+									</td>
+									<td>{curLowStockItem.getName()}</td>
+									<td>{curLowStockItem.getNumLowStock()}</td>
+									<td></td>
+								</tr>
+								
+							{/for}
+							</tbody>
+						</table>
+					{/if}
+				</div>
+			</div>
+		</div>
 		</div>
 	{/pageContent}
 	{#scripts}
