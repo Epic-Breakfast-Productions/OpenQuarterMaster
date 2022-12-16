@@ -160,4 +160,6 @@ public abstract class InventoryItemTest extends BasicTest {
 		assertEquals(0, expiryWarnEvents.size());
 	}
 	
+	//	public abstract void testLowStockEmpty();
+	//TODO:: test low stock
 }

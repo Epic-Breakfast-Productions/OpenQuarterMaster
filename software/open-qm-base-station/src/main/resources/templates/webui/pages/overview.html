@@ -156,7 +156,7 @@
 							No stock is low!
 						</p>
 					{#else}
-						<table class="table">
+						<table class="table table-bordered table-sm table-striped">
 							<thead>
 							<tr>
 								<th>
@@ -166,7 +166,7 @@
 									Item
 								</th>
 								<th>
-									# Expired
+									# Low Stock
 								</th>
 								<th>
 									Actions
@@ -174,7 +174,15 @@
 							</tr>
 							</thead>
 							<tbody>
-							{!TODO!}
+							{#for curLowStockItem in lowStockList}
+								<tr>
+									<td></td>
+									<td>{curLowStockItem.getName()}</td>
+									<td>{curLowStockItem.getNumLowStock()}</td>
+									<td></td>
+								</tr>
+								
+							{/for}
 							</tbody>
 						</table>
 					{/if}

@@ -154,12 +154,12 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
 	 */
-	@Setter(AccessLevel.PROTECTED)
+	@Setter(AccessLevel.PUBLIC)
 	private long numLowStock = 0;
 	
 	public List<ItemLowStockEvent> updateLowStockState() {
 		List<ItemLowStockEvent> output = new ArrayList<>();
-		long newNumLowStock = 0;
+		int newNumLowStock = 0;
 		
 		Quantity total = this.recalcTotal();
 		Quantity lowStockThreshold = this.getLowStockThreshold();

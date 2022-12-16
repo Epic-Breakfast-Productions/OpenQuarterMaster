@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
@@ -271,5 +274,74 @@ class SimpleAmountItemTest extends InventoryItemTest {
 			item.subtract(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		});
 		
+	}
+	
+	//TODO:: mode low stock tests to super class
+	@Test
+	//	@Override
+	public void testLowStockEmpty() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		List<ItemLowStockEvent> events = item.updateLowStockState();
+		
+		assertTrue(events.isEmpty());
+		assertFalse(item.getNotificationStatus().isLowStock());
+		assertEquals(0, item.getNumLowStock());
+	}
+	
+	@Test
+	//	@Override
+	public void testLowStockNoThreshold() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		item.add(ObjectId.get(), new AmountStored(5, OqmProvidedUnits.UNIT));
+		
+		List<ItemLowStockEvent> events = item.updateLowStockState();
+		
+		assertTrue(events.isEmpty());
+		assertFalse(item.getNotificationStatus().isLowStock());
+		assertEquals(0, item.getNumLowStock());
+	}
+	
+	@Test
+	//	@Override
+	public void testTotalLowStock() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		item.add(ObjectId.get(), new AmountStored(5, OqmProvidedUnits.UNIT));
+		item.setLowStockThreshold(Quantities.getQuantity(6, OqmProvidedUnits.UNIT));
+		
+		List<ItemLowStockEvent> events = item.updateLowStockState();
+		
+		assertEquals(1, events.size());
+		assertTrue(item.getNotificationStatus().isLowStock());
+		assertEquals(1, item.getNumLowStock());
+	}
+	
+	@Test
+	//	@Override
+	public void testTotalLowStockReturned() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		item.add(ObjectId.get(), new AmountStored(5, OqmProvidedUnits.UNIT));
+		item.setLowStockThreshold(Quantities.getQuantity(6, OqmProvidedUnits.UNIT));
+		
+		List<ItemLowStockEvent> events = item.updateLowStockState();
+		
+		assertEquals(1, events.size());
+		assertTrue(item.getNotificationStatus().isLowStock());
+		assertEquals(1, item.getNumLowStock());
+		
+		events = item.updateLowStockState();
+		
+		assertTrue(events.isEmpty());
+		assertTrue(item.getNotificationStatus().isLowStock());
+		assertEquals(1, item.getNumLowStock());
+		
+		item.add(ObjectId.get(), new AmountStored(5, OqmProvidedUnits.UNIT));
+		
+		
+		events = item.updateLowStockState();
+		
+		assertTrue(events.isEmpty());
+		assertFalse(item.getNotificationStatus().isLowStock());
+		assertEquals(0, item.getNumLowStock());
 	}
 }
