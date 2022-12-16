@@ -33,7 +33,7 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
-	implementation 'com.fazecast:jSerialComm:2.9.2'
+	implementation 'com.fazecast:jSerialComm:2.9.3'
 
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
