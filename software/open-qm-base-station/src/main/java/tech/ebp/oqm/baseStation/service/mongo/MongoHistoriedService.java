@@ -118,7 +118,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	}
 	
 	public T update(T object, HistoryEvent event) throws DbNotFoundException {
-		object = super.update(object);
+		object = this.update(object);
 		this.addHistoryFor(object, event);
 		return object;
 	}
@@ -134,7 +134,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	 */
 	public T update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
 		assertNotNullEntity(interactingEntity);
-		T updated = super.update(id, updateJson);
+		T updated = this.update(id, updateJson);
 		
 		this.getHistoryService().updateHistoryFor(
 			updated,

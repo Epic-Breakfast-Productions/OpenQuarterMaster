@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.service.notification.item;
 
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
@@ -19,6 +20,8 @@ public class ItemEventNotificationDispatchService extends ItemEventNotificationS
 	ItemExpiredEventNotificationService ieens;
 	@Inject
 	ItemExpiryWarnEventNotificationService iewens;
+	@Inject
+	ItemLowStockEventNotificationService ilsens;
 	
 	/**
 	 * TODO:: other events
@@ -36,9 +39,11 @@ public class ItemEventNotificationDispatchService extends ItemEventNotificationS
 	) {
 		Class<? extends HistoryEvent> eventClass = event.getClass();
 		if(eventClass.isAssignableFrom(ItemExpiredEvent.class)) {
-			ieens.sendEvent(item, (ItemExpiredEvent) event);
+			this.ieens.sendEvent(item, (ItemExpiredEvent) event);
 		} else if(eventClass.isAssignableFrom(ItemExpiryWarningEvent.class)){
-			iewens.sendEvent(item, (ItemExpiryWarningEvent) event);
+			this.iewens.sendEvent(item, (ItemExpiryWarningEvent) event);
+		} else if(eventClass.isAssignableFrom(ItemLowStockEvent.class)){
+			this.ilsens.sendEvent(item, (ItemLowStockEvent) event);
 		} else {
 			throw new IllegalStateException("Unsupported item history given. Cannot determine which service to pass to.");
 		}

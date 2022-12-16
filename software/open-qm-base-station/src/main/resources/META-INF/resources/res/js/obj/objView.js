@@ -56,7 +56,7 @@ function processAttDisplay(container, attributes){
 
 async function displayObjHistory(container, historyObjectEndpoint){
     return doRestCall({
-        url: "/api" + historyObjectEndpoint + "/history",
+        url: "/api/v1/" + historyObjectEndpoint + "/history",
         method: "GET",
         extraHeaders: {
             "accept": "text/html"

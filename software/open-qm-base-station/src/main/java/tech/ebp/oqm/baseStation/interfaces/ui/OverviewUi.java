@@ -81,6 +81,8 @@ public class OverviewUi extends UiProvider {
 				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
 				.data("totalExpiryWarn", inventoryItemService.getNumStoredExpiryWarn())
 				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
+				.data("totalLowStock", inventoryItemService.getNumLowStock())
+				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageBlockService", storageBlockService),
 			MediaType.TEXT_HTML_TYPE

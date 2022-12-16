@@ -6,6 +6,6 @@ import net.datafaker.Faker;
 
 public abstract class BasicTest {
 	
-	public static final Faker FAKER = Faker.instance();
+	public static final Faker FAKER = new Faker();
 	public static final ObjectMapper OBJECT_MAPPER = Utils.OBJECT_MAPPER;
 }

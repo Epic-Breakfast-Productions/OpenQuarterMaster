@@ -74,6 +74,8 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 											   .identifier(FAKER.lorem().characters())
 											   .index(5)
 											   .build()),
+			//item low stock
+			
 			//item add
 			Arguments.of(ItemAddEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
 			Arguments.of(ItemAddEvent.builder()
