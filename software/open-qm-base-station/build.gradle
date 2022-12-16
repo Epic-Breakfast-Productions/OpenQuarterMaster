@@ -64,7 +64,7 @@ dependencies {
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
-	implementation 'org.apache.commons:commons-compress:1.21'
+	implementation 'org.apache.commons:commons-compress:1.22'
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.3.3'
 
