@@ -49,7 +49,9 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> extend
 			return Response.seeOther( //seeOther = 303 redirect
 									  UriBuilder.fromUri("/")
 												.queryParam("messageHeading", "Unauthorized")
-												.queryParam("message", "Please login to access this page. Error: " + errorMessage)
+												.queryParam("message",
+															"Please login to access this page. " + (errorMessage != null && !errorMessage.isBlank() ?
+															"Error: " + errorMessage : ""))
 												.queryParam("messageType", "danger")
 												.queryParam(
 													"returnPath",

@@ -1,6 +1,5 @@
-package tech.ebp.oqm.lib.core.object.history.events.item.expiry;
+package tech.ebp.oqm.lib.core.object.history.events.item;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
-import tech.ebp.oqm.lib.core.object.history.events.item.ItemStorageBlockEvent;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +16,15 @@ import javax.validation.constraints.NotNull;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
-public abstract class ItemExpiryEvent extends ItemStorageBlockEvent {
-
+public abstract class ItemStorageBlockEvent extends HistoryEvent {
+	
+	@NotNull
+	@NonNull
+	private ObjectId storageBlockId;
+	
+	@lombok.Builder.Default
+	private String identifier = null;
+	
+	@lombok.Builder.Default
+	private Integer index = null;
 }

@@ -123,6 +123,8 @@ async function doRestCall(
 			);
 		}
 
+
+
 		var response = data.responseJSON;
 		if (data.status == 0) { // no response from server
 			if (failNoResponseCheckStatus) {

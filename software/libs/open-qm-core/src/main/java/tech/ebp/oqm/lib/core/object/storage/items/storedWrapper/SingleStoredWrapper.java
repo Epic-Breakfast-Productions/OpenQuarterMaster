@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
@@ -52,18 +53,4 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 		return List.of(output.get().build());
 	}
 	
-	@Override
-	public void recalculateExpiredRelated() {
-		long expiredResult = 0;
-		long expiryWarnResult = 0;
-		
-		if (this.getStored().getNotificationStatus().isExpired()) {
-			expiredResult = 1;
-		} else if (this.getStored().getNotificationStatus().isExpiredWarning()) {
-			expiryWarnResult = 1;
-		}
-		
-		this.setNumExpired(expiredResult);
-		this.setNumExpiryWarned(expiryWarnResult);
-	}
 }

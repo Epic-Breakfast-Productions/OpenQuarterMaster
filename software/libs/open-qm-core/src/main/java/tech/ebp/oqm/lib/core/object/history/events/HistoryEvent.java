@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
@@ -46,6 +47,7 @@ import java.time.ZonedDateTime;
 	
 	@JsonSubTypes.Type(value = ItemExpiryWarningEvent.class, name = "ITEM_EXPIRY_WARNING"),
 	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
+	@JsonSubTypes.Type(value = ItemLowStockEvent.class, name = "ITEM_LOW_STOCK"),
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER"),
