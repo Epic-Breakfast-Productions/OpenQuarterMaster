@@ -159,7 +159,7 @@
 						<table class="table table-bordered table-sm table-striped">
 							<thead>
 							<tr>
-								<th>
+								<th class="searchResultImageCol">
 									Image
 								</th>
 								<th>
@@ -175,8 +175,12 @@
 							</thead>
 							<tbody>
 							{#for curLowStockItem in lowStockList}
-								<tr>
-									<td></td>
+								<tr class="align-middle">
+									<td>
+										{#if !curLowStockItem.getImageIds().isEmpty()}
+											<img src="/api/v1/media/image/for/item/{curLowStockItem.getId()}" class="searchResultImage">
+										{/if}
+									</td>
 									<td>{curLowStockItem.getName()}</td>
 									<td>{curLowStockItem.getNumLowStock()}</td>
 									<td></td>
