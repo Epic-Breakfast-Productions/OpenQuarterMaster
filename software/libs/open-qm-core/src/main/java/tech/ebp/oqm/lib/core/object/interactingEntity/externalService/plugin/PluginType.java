@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService.plugin;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin;
 
 /**
  * Other ideas: - Overview page tab entry

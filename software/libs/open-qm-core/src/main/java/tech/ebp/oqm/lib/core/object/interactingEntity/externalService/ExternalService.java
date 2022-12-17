@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -12,8 +12,8 @@ import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginService;
-import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.PluginService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.roles.RequestedRole;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 

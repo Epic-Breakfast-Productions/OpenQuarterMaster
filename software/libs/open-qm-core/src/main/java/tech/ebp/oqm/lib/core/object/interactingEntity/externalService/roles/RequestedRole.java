@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService.roles;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService.roles;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

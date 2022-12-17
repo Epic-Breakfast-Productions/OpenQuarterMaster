@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService.plugin;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav.NavItem;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav.NavSubMenu;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.components.nav.NavItem;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.components.nav.NavSubMenu;
 
 @Data
 //@AllArgsConstructor

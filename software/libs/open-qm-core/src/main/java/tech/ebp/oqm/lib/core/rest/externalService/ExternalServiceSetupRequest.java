@@ -5,14 +5,13 @@ package tech.ebp.oqm.lib.core.rest.externalService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
-import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ServiceType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.roles.RequestedRole;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
