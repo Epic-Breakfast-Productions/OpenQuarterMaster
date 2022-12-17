@@ -33,7 +33,7 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
-	implementation 'com.fazecast:jSerialComm:2.9.2'
+	implementation 'com.fazecast:jSerialComm:2.9.3'
 
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -52,7 +52,7 @@ dependencies {
 
 	testImplementation 'org.hibernate:hibernate-validator:6.2.5.Final'
 	testImplementation 'javax.el:javax.el-api:3.0.0'
-	testImplementation 'org.glassfish.web:javax.el:2.2.4'
+	testImplementation 'org.glassfish.web:javax.el:2.2.6'
 //    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
 //    testImplementation 'org.hibernate:hibernate-validator:7.0.3.Final'
 //    testImplementation 'org.hibernate.validator:hibernate-validator-cdi:7.0.1.Final'
