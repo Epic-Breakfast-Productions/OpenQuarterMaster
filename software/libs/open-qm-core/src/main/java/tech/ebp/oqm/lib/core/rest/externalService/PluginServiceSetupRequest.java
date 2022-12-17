@@ -38,7 +38,7 @@ public class PluginServiceSetupRequest extends ExternalServiceSetupRequest {
 	public PluginService toExtService() {
 		PluginService newService = new PluginService();
 		this.setCoreData(newService);
-		newService.setPageComponents(this.getPageComponents());
+		newService.setDisabledPageComponents(this.getPageComponents());
 		return newService;
 	}
 }

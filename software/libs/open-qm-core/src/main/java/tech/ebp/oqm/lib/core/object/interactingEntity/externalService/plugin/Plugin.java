@@ -3,12 +3,17 @@ package tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.components.nav.NavItem;
 import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.components.nav.NavSubMenu;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 //@AllArgsConstructor
@@ -25,8 +30,18 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.com
 @SuperBuilder
 public abstract class Plugin {
 	
+	//	@lombok.Builder.Default
+	//	public boolean enabled = true;
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	public String name;
+	
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
-	public boolean enabled = true;
+	public String description = "";
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract PluginType getPluginType();

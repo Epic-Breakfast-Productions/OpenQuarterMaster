@@ -22,7 +22,11 @@ public class PluginService extends ExternalService {
 	
 	@NonNull
 	@NotNull
-	List<Plugin> pageComponents = new ArrayList<>();
+	List<Plugin> enabledPageComponents = new ArrayList<>();
+	
+	@NonNull
+	@NotNull
+	List<Plugin> disabledPageComponents = new ArrayList<>();
 	
 	@Override
 	public ServiceType getServiceType() {
