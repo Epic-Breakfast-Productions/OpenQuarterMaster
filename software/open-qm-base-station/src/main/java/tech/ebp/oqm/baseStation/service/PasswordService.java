@@ -9,8 +9,8 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 

@@ -2,7 +2,7 @@ package tech.ebp.oqm.baseStation.rest.search;
 
 import lombok.Getter;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;

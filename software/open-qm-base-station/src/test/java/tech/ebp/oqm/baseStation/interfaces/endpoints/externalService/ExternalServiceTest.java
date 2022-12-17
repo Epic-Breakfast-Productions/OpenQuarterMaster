@@ -19,7 +19,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;

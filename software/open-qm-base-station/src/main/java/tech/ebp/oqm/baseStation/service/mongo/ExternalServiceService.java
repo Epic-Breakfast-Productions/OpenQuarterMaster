@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupRequest;
 
 import javax.enterprise.context.ApplicationScoped;
