@@ -2,7 +2,7 @@ package tech.ebp.oqm.lib.core.rest.user;
 
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

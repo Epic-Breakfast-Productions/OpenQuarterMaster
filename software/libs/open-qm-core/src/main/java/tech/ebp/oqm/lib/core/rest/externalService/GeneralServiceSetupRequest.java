@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.externalService.GeneralService;
-import tech.ebp.oqm.lib.core.object.externalService.ServiceType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.GeneralService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ServiceType;
 
 @Data
 //@AllArgsConstructor

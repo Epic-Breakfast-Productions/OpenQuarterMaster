@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -12,9 +12,10 @@ import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginService;
-import tech.ebp.oqm.lib.core.object.externalService.roles.RequestedRole;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.PluginService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.roles.RequestedRole;
+import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupRequest;
 import tech.ebp.oqm.lib.core.validation.annotations.ValidServiceRole;
 
 import javax.validation.Valid;
@@ -108,5 +109,30 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.EXTERNAL_SERVICE;
 	}
+	
+	
+	public boolean changedGiven(ExternalServiceSetupRequest newServiceIn) {
+		if (!this.getServiceType().equals(newServiceIn.getServiceType())) {
+			return true;
+		}
+		if (!this.getName().equals(newServiceIn.getName())) {
+			return true;
+		}
+		if (!this.getDescription().equals(newServiceIn.getDescription())) {
+			return true;
+		}
+		if (!this.getDeveloperEmail().equals(newServiceIn.getDeveloperEmail())) {
+			return true;
+		}
+		if (!this.getDeveloperName().equals(newServiceIn.getDeveloperName())) {
+			return true;
+		}
+		if (!this.getRequestedRoles().equals(newServiceIn.getRequestedRoles())) {
+			return true;
+		}
+		return false;
+	}
+	
+	//TODO:: do a updater from
 	
 }

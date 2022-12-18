@@ -22,7 +22,7 @@ import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -229,6 +229,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
+	//TODO:: change to interacting entity
 	public long removeAll(User user) {
 		//TODO:: client session
 		//TODO:: add history event to each

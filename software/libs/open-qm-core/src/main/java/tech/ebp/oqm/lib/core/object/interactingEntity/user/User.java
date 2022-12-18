@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.user;
+package tech.ebp.oqm.lib.core.object.interactingEntity.user;
 
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;

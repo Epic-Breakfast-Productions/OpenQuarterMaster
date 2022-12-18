@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService.plugin.components.nav;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.components.nav;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.Plugin;
-import tech.ebp.oqm.lib.core.object.externalService.plugin.PluginType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.Plugin;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.PluginType;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;

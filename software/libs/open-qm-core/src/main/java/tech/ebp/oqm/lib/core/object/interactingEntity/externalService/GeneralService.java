@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.externalService;
+package tech.ebp.oqm.lib.core.object.interactingEntity.externalService;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

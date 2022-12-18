@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.testResources.ui.assertions.UserRelated;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.General;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.KeycloakLogin;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.Root;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
 import javax.inject.Inject;
 

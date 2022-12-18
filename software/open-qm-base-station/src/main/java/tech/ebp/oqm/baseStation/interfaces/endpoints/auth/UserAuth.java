@@ -23,7 +23,7 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
