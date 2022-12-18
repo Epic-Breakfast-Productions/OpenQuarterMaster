@@ -16,11 +16,18 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
+import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.Plugin;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.PluginService;
 import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupRequest;
+import tech.ebp.oqm.lib.core.rest.externalService.PluginServiceSetupRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -28,6 +35,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @ApplicationScoped
 public class ExternalServiceService extends MongoHistoriedService<ExternalService, ExternalServiceSearch> {
+	
 	//    private Validator validator;
 	private AuthMode authMode;
 	private PasswordService passwordService;
@@ -43,7 +51,7 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
+		String database,
 		@ConfigProperty(name = "service.authMode")
 		AuthMode authMode,
 		PasswordService passwordService,
@@ -95,12 +103,12 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 			case SELF:
 				log.debug("Getting service data from self.");
 				String extServiceId = jwt.getClaim(JwtService.JWT_SERVICE_ID_CLAIM);
-				if(extServiceId == null){
+				if (extServiceId == null) {
 					return null;
 				}
 				try {
 					return this.get(extServiceId);
-				} catch(DbNotFoundException e){
+				} catch(DbNotFoundException e) {
 					throw new UnauthorizedException("Service in JWT not found.");
 				}
 			case EXTERNAL:
@@ -110,23 +118,85 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		return null;
 	}
 	
-	public ExternalService getFromServiceName(String name){
+	public ExternalService getFromServiceName(String name) {
 		ExternalService service = this.getCollection().find(Filters.eq("name", name)).limit(1).first();
 		
-		if(service == null){
+		if (service == null) {
 			throw new DbNotFoundException("No service found with name \"" + name + "\"", this.getClazz(), null);
 		}
 		
 		return service;
 	}
 	
-	public ExternalService getFromSetupRequest(ExternalServiceSetupRequest setupRequest){
+	private ExternalService updateExtServiceFromSetupRequest(ExternalService existentExtService, ExternalServiceSetupRequest setupRequest) {
+		if (!existentExtService.getServiceType().equals(setupRequest.getServiceType())) {
+			log.debug("Updated external service was a different type than previously.");
+			ExternalService newExtService = setupRequest.toExtService();
+			
+			newExtService.setId(existentExtService.getId());
+			newExtService.setAttributes(existentExtService.getAttributes());
+			newExtService.setKeywords(existentExtService.getKeywords());
+			newExtService.setDisabled(existentExtService.isDisabled());
+			
+			existentExtService = newExtService;
+		} else {
+			existentExtService.setDescription(setupRequest.getDescription());
+			existentExtService.setDeveloperName(setupRequest.getDeveloperName());
+			existentExtService.setDeveloperEmail(setupRequest.getDeveloperEmail());
+			
+			existentExtService.setRequestedRoles(setupRequest.getRequestedRoles());
+			existentExtService.getRoles().retainAll(existentExtService.getRequestedRoles());
+			
+			switch (existentExtService.getServiceType()) {
+				case GENERAL:
+					//Nothing extra for general
+					break;
+				case PLUGIN: //ensure previously enabled plugins still exist, everything else is disabled.
+					List<Plugin> origEnabledPlugins = ((PluginService)existentExtService).getEnabledPageComponents();
+					LinkedList<Plugin> newPlugins = new LinkedList<>(((PluginServiceSetupRequest)setupRequest).getPageComponents());
+					
+					((PluginService)existentExtService).setEnabledPageComponents(new ArrayList<>());
+					((PluginService)existentExtService).setDisabledPageComponents(new ArrayList<>());
+					
+					for(Plugin curPlugin : newPlugins){
+						if(origEnabledPlugins.contains(curPlugin)){
+							((PluginService)existentExtService).getEnabledPageComponents().add(curPlugin);
+						} else {
+							((PluginService)existentExtService).getDisabledPageComponents().add(curPlugin);
+						}
+					}
+					
+					break;
+			}
+		}
+		
+		this.update(
+			existentExtService,
+			UpdateEvent.builder()
+					   .entityId(existentExtService.getId())
+					   .entityType(existentExtService.getInteractingEntityType())
+					   .description("Update from Setup Request.")
+					   .build()
+		);
+		return existentExtService;
+	}
+	
+	
+	public ExternalService getFromSetupRequest(ExternalServiceSetupRequest setupRequest) {
 		ExternalService existentExtService;
 		try {
 			existentExtService = this.getFromServiceName(setupRequest.getName());
 			
-			//TODO:: check if needs updated
-		} catch(DbNotFoundException e){
+			if (existentExtService.changedGiven(setupRequest)) {
+				log.info("Previously seen external service's setup request changed what was stored. Updating.");
+				existentExtService = this.updateExtServiceFromSetupRequest(
+					existentExtService,
+					setupRequest
+				);
+			}
+			
+		} catch(DbNotFoundException e) {
+			log.info("New external service. Adding to database.");
 			existentExtService = setupRequest.toExtService();
 			
 			this.add(existentExtService);
