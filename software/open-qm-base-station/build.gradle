@@ -74,7 +74,7 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
-	testImplementation 'org.testcontainers:mongodb:1.17.2'
+	testImplementation 'org.testcontainers:mongodb:1.17.6'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
 	//2.1.2 seems dud, fails to start & null pointers
 	testImplementation 'org.keycloak:keycloak-admin-client:16.1.1'
