@@ -40,7 +40,7 @@ import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 @ApplicationScoped
 @Slf4j
 public class TestUserService {
-	private final static Faker FAKER = Faker.instance();
+	private final static Faker FAKER = new Faker();
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
 	
