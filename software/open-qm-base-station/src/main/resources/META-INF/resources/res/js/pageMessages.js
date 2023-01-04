@@ -20,7 +20,7 @@ function buildMessageDiv(type, message, heading, id, infoContent){
 
 	if(infoContent != null){
 		headingObj.append(
-			$('<button type="button" class="btn btn-'+type+' mx-2" data-bs-toggle="collapse" aria-expanded="false"><i class="fa-solid fa-info"></i></button>')
+			$('<button type="button" class="btn btn-'+type+' mx-2" data-bs-toggle="collapse" aria-expanded="false"><i class="bi bi-info"></i></button>')
 				.attr("aria-controls", infoContentId)
 				.attr("data-bs-target", "#" + infoContentId)
 		);

@@ -5,13 +5,18 @@ function buildErrorMessageFromResponse(response, statusMessage){
 
 	if(
 		Object.prototype.hasOwnProperty.call(response, "responseJSON")
-		&& (Object.prototype.hasOwnProperty.call(response.responseJSON, "displayMessage")
-		|| Object.prototype.hasOwnProperty.call(response.responseJSON, "message"))
+		&& (
+			Object.prototype.hasOwnProperty.call(response.responseJSON, "displayMessage")
+			|| Object.prototype.hasOwnProperty.call(response.responseJSON, "message")
+			|| Object.prototype.hasOwnProperty.call(response.responseJSON, "details")
+		)
 	){
 		if(Object.prototype.hasOwnProperty.call(response.responseJSON, "displayMessage")){
 			output = response.responseJSON.displayMessage;
-		} else {
+		} else if(Object.prototype.hasOwnProperty.call(response.responseJSON, "message")) {
 			output = response.responseJSON.message;
+		} else {
+			output = response.responseJSON.details;
 		}
 	} else if(
 		response.responseText
