@@ -1,4 +1,4 @@
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Images' titleIcon='images' page='images'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Images' page='images'}
 {#styleSheets}
 <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
@@ -9,8 +9,8 @@
 <div class="row mb-2">
     <div class="col-6 d-grid gap-2 text-center">
         <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
-                class="fas fa-plus"></i> Add Image
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+            {#icons/add}{/icons/add} Add Image
         </button>
     </div>
 </div>
@@ -21,7 +21,7 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    <i class="fas fa-search"></i> Search Fields
+                    {#icons/search}{/icons/search} Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
@@ -113,9 +113,9 @@
 <hr />
 <div class="text-end">
     <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
-        data-bs-target="#addEditModal" id="imageEditButton"><i class="fas fa-edit"></i> Edit
+        data-bs-target="#addEditModal" id="imageEditButton">{#icons/edit}{/icons/edit} Edit
 </button>
-<button type="button" class="btn btn-danger" id="imageDeleteButton"><i class="fas fa-trash"></i> Delete
+<button type="button" class="btn btn-danger" id="imageDeleteButton">{#icons/remove}{/icons/remove} Delete
 </button>
 </div>
 {/modal}
@@ -161,14 +161,14 @@ function setupAddEditForAdd(){
     resetAddEdit();
     addEditFormMode.val("add");
     addEditModalLabel.text("Add Image");
-    addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Image');
+    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Image');
 }
 function setupAddEditForEdit(id){
     console.log("Setting up add/edit form for edit.");
     resetAddEdit();
     addEditFormMode.val("edit");
     addEditModalLabel.text("Edit Image");
-    addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Image');
+    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Image');
 
     addEditFormId.val(id);
 

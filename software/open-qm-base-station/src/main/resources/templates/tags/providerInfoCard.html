@@ -13,14 +13,18 @@ Ingests:
     <ul class="list-group list-group-flush">
         {#if !providerInfo.getCost().isBlank()}
             <li class="list-group-item">
-                <i class="fa-solid fa-money-bill fa-fw"></i> {providerInfo.getCost()}
+                {#icons/icon icon='cash-stack'}{/icons/icon} {providerInfo.getCost()}
             </li>
         {/if}
         <li class="list-group-item">
-            <i class="fa-solid fa-person-circle-plus fa-fw"></i> {providerInfo.isAcceptsContributions() ? 'Accepts contributions' : 'No community input'}
+            {#icons/icon icon='globe'}{/icons/icon} {providerInfo.isAcceptsContributions() ? 'Accepts contributions' : 'No community input'}
         </li>
         <li class="list-group-item">
-            <i class="fa-solid fa-{providerInfo.isEnabled() ? 'check' : 'xmark'} fa-fw"></i> {providerInfo.isEnabled() ? 'Enabled' : 'Disabled'}
+            {#if providerInfo.isEnabled()}
+                {#icons/icon icon='check-circle'}{/icons/icon} Enabled
+            {#else}
+                {#icons/icon icon='x-circle'}{/icons/icon} Disabled
+            {/if}
         </li>
         {#if !providerInfo.getDescription().isBlank()}
             <li class="list-group-item">{providerInfo.getDescription()}</li>

@@ -1,4 +1,4 @@
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' titleIcon='balance-scale' page='items'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {@java.util.Map allowedUnitsMap}
 {#styleSheets}
     <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
@@ -7,15 +7,15 @@
 <div class="row">
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
-                onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Item
+                onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
         </button>
     </div>
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal"><i class="fas fa-solid fa-file-circle-plus"></i> Add Item(s) from file
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile}{/icons/addFile} Add Item(s) from file
         </button>
     </div>
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Item stats</button>
+        <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Item stats</button>
     </div>
 </div>
 <br/>
@@ -62,7 +62,7 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="toggleAddEditProductSearchPane();" title="Search for Products">
-                <i class="fas fa-search"></i> Search for Products
+                {#icons/search}{/icons/search} Search for Products
             </button>
         </div>
     </div>
@@ -223,7 +223,7 @@
                         </div>
                         <div class="col d-grid gap-2 mt-3">
                             <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="storageSearchSelectForm.submit();">
-                                <i class="fas fa-plus"></i> Add Associated Storage
+                                {#icons/add}{/icons/add} Add Associated Storage
                             </button>
                         </div>
                     </div>
@@ -777,7 +777,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
             keywordInputTemplate.html() +
             attInputTemplate.html() +
             '<div class="mb-3 ">\n'+
-            '    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');"><i class="fas fa-trash-alt"></i> Remove Stored</button> '+
+            '    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');">{#icons/remove}{/icons/remove} Remove Stored</button> '+
             '</div>\n'
             ;
 }
@@ -1024,10 +1024,10 @@ function createStorageBlockAccord(blockName, blockId, add = true){
     
                 accordBodyButtonWrapper.append($(
                         '<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="createNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
-                        '    <i class="fas fa-plus"></i> Add\n'+
+                        '    {#icons/add}{/icons/add} Add\n'+
                         '</button>\n'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '    {#icons/remove}{/icons/remove} Remove Associated Storage\n'+
                         '</button>'
                 ));
             },
@@ -1037,11 +1037,11 @@ function createStorageBlockAccord(blockName, blockId, add = true){
                         '<div class="input-group mt-2">\n'+
                         '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
                         '    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="createNewTrackedStored(\''+accordFormContentId+'\', this);">' +
-                        '        <i class="fas fa-plus"></i> Add\n'+
+                        '        {#icons/add}{/icons/add} Add\n'+
                         '    </button>\n'+
                         '</div>'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '    {#icons/remove}{/icons/remove} Remove Associated Storage\n'+
                         '</button>'
                 ));
             }

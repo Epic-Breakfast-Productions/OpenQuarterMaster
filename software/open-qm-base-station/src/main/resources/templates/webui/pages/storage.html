@@ -1,7 +1,7 @@
 {@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult searchResult}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {@java.util.Map allowedUnitsMap}
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Storage' titleIcon='boxes' page='storage'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Storage' page='storage'}
 {!
 Accepts:
 - showSearch: bool, to have the search form expanded already
@@ -25,11 +25,11 @@ Accepts:
     <div class="row mb-2">
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
-                    onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Storage Block
+                    onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Storage Block
             </button>
         </div>
         <div class="col d-grid gap-2">
-            <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Storage block stats</button>
+            <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Storage block stats</button>
         </div>
 </div>
 <div class="row">
@@ -39,7 +39,7 @@ Accepts:
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    <i class="fas fa-search"></i> Search Fields
+                    {#icons/search}{/icons/search} Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
@@ -120,9 +120,9 @@ Accepts:
                         <div class="col-sm-10">
                             <div class="input-group">
                                 <input type="hidden" id="addEditParentInputId" name="parentId">
-                                <button class="btn btn-outline-dark" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="setupStorageSearchModal('addEditParentInput');storageSearchSelectForm.submit();"><i class="fas fa-search"></i></button>
+                                <button class="btn btn-outline-dark" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="setupStorageSearchModal('addEditParentInput');storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
                                 <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" disabled>
-                                <button class="btn btn-outline-dark" type="button" onclick="clearParentInput($(this));"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-outline-dark" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
                             </div>
                         </div>
                     </div>
@@ -271,7 +271,7 @@ Accepts:
                     <h5 class="card-title" style="display: inline">Id:</h5>
                     <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>
                     <p style="margin-bottom: 5px;">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()"><i class="fa-solid fa-fw fa-print"></i> Printout</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()">{#icons/print}{/icons/print} Printout</button>
                     </p>
                 </div>
             </div>
@@ -450,7 +450,7 @@ function setupAddEditForAdd(){
     addBulkAccord.show();
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add");
-    addEditFormSubmitButton.html('<i class="fas fa-plus"></i> Add Storage Block');
+    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Storage Block');
 }
 
 function setupAddEditForEdit(blockId){
@@ -459,7 +459,7 @@ function setupAddEditForEdit(blockId){
     addBulkAccord.hide();
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit");
-    addEditFormSubmitButton.html('<i class="fas fa-edit"></i> Edit Storage Block');
+    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Storage Block');
 
     doRestCall({
     	spinnerContainer: addEditModal,
@@ -680,7 +680,7 @@ function setupView(blockId){
                             '<td class="blockViewItemName"></td>' +//name
                             '<td class="blockViewItemAmountIn"></td>' +//amount in
                             '<td class="blockViewItemTotal"></td>' +//total
-                            '<td class="blockViewItemActions"><a href="/items?view='+item.id+'" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a> </td>' +//actions
+                            '<td class="blockViewItemActions"><a href="/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
                             '</tr>');
                     row.find(".blockViewItemName").text(item.name);
                     row.find(".blockViewItemAmountIn").text(item.storageMap[blockId].total.value + item.storageMap[blockId].total.unit.symbol);

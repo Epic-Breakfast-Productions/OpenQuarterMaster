@@ -38,8 +38,8 @@
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
-                class="fas fa-plus"></i> Add Storage Block
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+          {#icons/add}{/icons/add} Add Storage Block
         </button>
       </div>
       {/if}
@@ -60,19 +60,19 @@
     {#if actionType == 'full'}
     <td>
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');">
-        <i class="fas fa-eye"></i>
+        {#icons/view}{/icons/view}
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">
-        <i class="fas fa-edit"></i>
+        {#icons/edit}{/icons/edit}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeStorageBlock('{result.getId()}');"><i class="fas fa-trash"></i></button>
+              onclick="removeStorageBlock('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
       {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getLabel()}"
               data-bs-toggle="modal" data-bs-target="#{otherModalId}"
               onclick="selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">
-        <i class="fas fa-check-circle"></i> Select
+        {#icons/select}{/icons/select} Select
       </button>
       {/if}
     </td>
