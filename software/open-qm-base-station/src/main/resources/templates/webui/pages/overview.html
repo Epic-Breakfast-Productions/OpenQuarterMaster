@@ -1,7 +1,7 @@
 {@tech.ebp.oqm.baseStation.service.mongo.StorageBlockService storageBlockService}
 {@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredList}
 {@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredWarnList}
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' page='overview'}
 	{#pageStyle}
 		.buttonCell{
 		border: 1px solid black;
@@ -13,19 +13,19 @@
 		<ul class="nav nav-tabs" id="mainTab" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
-					<i class="fa-solid fa-binoculars fa-fw"></i> Overview
+					{#icons/icon icon='diagram-3'}{/icons/icon} Overview
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
-					<i class="fa-regular fa-hourglass-half fa-fw"></i> Expiring
+					{#icons/expiring}{/icons/expiring} Expiring
 					{#if totalExpired > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</span>{/if}
 					{#if totalExpiryWarn > 0}<span class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</span>{/if}
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
-					<i class="fa-solid fa-arrow-trend-down fa-fw"></i> Low Stock
+					{#icons/lowStock}{/icons/lowStock} Low Stock
 					{#if totalLowStock > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</span>{/if}
 				</button>
 			</li>
@@ -44,12 +44,12 @@
 								</h2>
 								<p>
 									No storage blocks currently exist. Go to
-									<a href="/storage"><i class="fas fa-boxes fa-fw"></i> Storage</a>
+									{#icons/storage}{/icons/storage} Storage</a>
 									to add a place where items are stored!
 								</p>
 								<p>
 									You can then go to
-									<a href="/items"><i class="fas fa-balance-scale fa-fw"></i> Items</a>
+									<a href="/items">{#icons/item}{/icons/item} Items</a>
 									to add an item that is stored in that location!
 								</p>
 							{#else}
@@ -205,7 +205,7 @@
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.length === 0){
-					return $('<p><i class="fas fa-balance-scale fa-fw"></i> No inventory items held.</p>');
+					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -230,14 +230,14 @@
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5><i class="fas fa-balance-scale fa-fw"></i> Items held ('+invItemArr.length+'):</h5>');
+				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
 			
 			function getStorageBlockSection(storageBlockArr, parentId){
 				if(storageBlockArr.length === 0){
-					return $('<p><i class="fas fa-boxes fa-fw"></i> No children.</p>');
+					return $('<p>{#icons/storage}{/icons/storage} No children.</p>');
 				}
 				let accordId = "storageBlockAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -262,7 +262,7 @@
 					accordion = accordion.append(curAccord);
 				});
 				
-				let output = $('<h5><i class="fas fa-boxes fa-fw"></i> Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				let output = $('<h5>{#icons/storage}{/icons/storage} Storage Blocks ('+storageBlockArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}

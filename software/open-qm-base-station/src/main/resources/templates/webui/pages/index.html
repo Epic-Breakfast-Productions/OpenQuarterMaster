@@ -15,7 +15,7 @@
 				Please sign in
 			</h1>
 			{#if config:['service.authMode'] == 'SELF'}
-				<a href="/accountCreate">Or, Create account <i class="fa-solid fa-user-plus"></i></a>
+				<a href="/accountCreate">Or, Create account {#icons/addUser}{/icons/addUser}</a>
 			{/if}
 		</div>
 		<div class="card-body">
@@ -36,12 +36,12 @@
 				</label>
 			</div>
 			
-			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton"><i
-						class="fas fa-sign-in-alt"></i> Sign in
+			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton">
+				{#icons/icon icon='door-open'}{/icons/icon} Sign in
 			</button>
 			{#else}
 			<a href="{signInLink}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
-				<i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
+				{#icons/icon icon='door-open'}{/icons/icon} Sign in with {config:['service.externalAuth.name']}
 			</a>
 		{/if}
 		
