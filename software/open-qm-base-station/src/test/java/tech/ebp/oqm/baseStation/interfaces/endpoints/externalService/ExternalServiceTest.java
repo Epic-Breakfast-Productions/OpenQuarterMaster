@@ -14,11 +14,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.config.ExtServicesConfig;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;
@@ -142,7 +143,7 @@ class ExternalServiceTest extends RunningServerTest {
 													)
 													.contentType(ContentType.JSON)
 													.when()
-													.basePath("/api/auth")
+													.basePath(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/auth")
 													.get("/tokenCheck")
 													.then();
 		log.info("token check response: {}", tokenCheckResponse.extract().body().asString());

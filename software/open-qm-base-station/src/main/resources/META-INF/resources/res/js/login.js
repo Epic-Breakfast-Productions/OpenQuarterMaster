@@ -1,3 +1,4 @@
+var loginFormMessages = $("#loginFormMessages");
 var jwtCookieName = "jwt";
 
 function login(jwtVal, remember){
@@ -11,7 +12,7 @@ function login(jwtVal, remember){
 
 function logout(){
     Cookies.remove(jwtCookieName);
-    window.location.replace("/api/auth/user/logout");
+    window.location.replace("/api/v1/auth/user/logout");
 }
 
 async function getToken(usernameEmail, password, rememberUser){
@@ -25,14 +26,15 @@ async function getToken(usernameEmail, password, rememberUser){
 
 
     await doRestCall({
-        url: "/api/auth/user",
+        url: "/api/v1/auth/user",
         method: "POST",
         data: loginRequestData,
         async: true,
         done: function(data) {
             console.log("Response from login request: " + JSON.stringify(data));
             result = data.token;
-        }
+        },
+        failMessagesDiv: loginFormMessages
     });
 
     return result;
@@ -48,7 +50,7 @@ async function checkToken(jwtToken){
 
     await doRestCall({
         spinnerContainer: null,
-        url: "/api/auth/tokenCheck",
+        url: "/api/v1/auth/tokenCheck",
         async: true,
         authorization: jwtToken,
         done: function(data){

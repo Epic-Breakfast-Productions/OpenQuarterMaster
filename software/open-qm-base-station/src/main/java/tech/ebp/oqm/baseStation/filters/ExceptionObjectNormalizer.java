@@ -2,13 +2,11 @@ package tech.ebp.oqm.baseStation.filters;
 
 
 import io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport;
-import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.utils.UrlUtils;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
@@ -69,7 +67,11 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 		}
 		
 		if (outputBuilder != null) {
-			responseContext.setEntity(outputBuilder.build());
+			ErrorMessage message = outputBuilder.build();
+			
+			log.info("Error cause type: {}", message.getCause().getClass().getCanonicalName());
+			
+			responseContext.setEntity(message);
 		}
 	}
 }

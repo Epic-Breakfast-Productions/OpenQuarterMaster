@@ -1,6 +1,6 @@
-{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.user.User> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.interactingEntity.user.User> searchResults}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
-{#include webui/mainWebPageTemplate navbar="full"  showTitle=true title="User Administration" titleIcon='users-gear' page='userAdmin'}
+{#include webui/mainWebPageTemplate navbar="full"  showTitle=true title="User Administration" page='userAdmin'}
 	{#styleSheets}
 	{/styleSheets}
 	{#pageStyle}
@@ -67,18 +67,18 @@
 					<td>{result.isDisabled()}</td>
 					<td>
 					<button type="button" class="btn btn-sm btn-primary" title="View User" data-bs-toggle="modal" data-bs-target="#userViewModal" onclick="setupUserView('{result.getId()}');">
-						<i class="fas fa-eye"></i>
+						{#icons/view}{/icons/view}
 					</button>
 					<button type="button" class="btn btn-sm btn-warning" title="Edit User" data-bs-toggle="modal" data-bs-target="#userEditModal" onclick="setupUserEdit('{result.getId()}');">
-						<i class="fas fa-edit"></i>
+						{#icons/edit}{/icons/edit}
 					</button>
 					{#if result.isDisabled()}
 					<button type="button" class="btn btn-sm btn-success" title="Enable User" onclick="enableUser('{result.getId()}');">
-						<i class="fas fa-thumbs-up"></i>
+						{#icons/icon icon='hand-thumbs-up-fill'}{/icons/icon}
 					</button>
 					{#else}
 						<button type="button" class="btn btn-sm btn-danger" title="Disable User" onclick="disableUser('{result.getId()}');">
-							<i class="fas fa-thumbs-down"></i>
+							{#icons/icon icon='hand-thumbs-down-fill'}{/icons/icon}
 						</button>
 					{/if}
 					</td>
@@ -249,7 +249,7 @@
 			function setupUserView(userId){
 				resetUserView();
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: userViewMessages,
 					done: function (data) {
@@ -277,7 +277,7 @@
 			
 			function enableUser(userId){
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: messageDiv,
 					done: function (data){
@@ -292,7 +292,7 @@
 						}
 
 						doRestCall({
-							url: "/api/user/" + userId,
+							url: "/api/v1/user/" + userId,
 							method: "PUT",
 							data: {
 								disabled: false
@@ -306,7 +306,7 @@
 			}
 			function disableUser(userId){
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					failMessagesDiv: messageDiv,
 					done: function (data){
@@ -315,7 +315,7 @@
 						}
 
 						doRestCall({
-							url: "/api/user/" + userId,
+							url: "/api/v1/user/" + userId,
 							method: "PUT",
 							data: {
 								disabled: true
@@ -363,7 +363,7 @@
 				userEditFormUserId.val(userId);
 
 				doRestCall({
-					url: "/api/user/" + userId,
+					url: "/api/v1/user/" + userId,
 					method: "GET",
 					fail: function (data) {
 						alert("Error: " + data);
@@ -399,7 +399,7 @@
 				}
 				
 				doRestCall({
-					url: "/api/user/" + userEditFormUserId.val(),
+					url: "/api/v1/user/" + userEditFormUserId.val(),
 					method: "PUT",
 					data: data,
 					failMessagesDiv: userEditFormMessages,

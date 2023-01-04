@@ -34,9 +34,11 @@ import java.util.Currency;
 import java.util.Map;
 import java.util.Set;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/info")
+@Path(ROOT_API_ENDPOINT_V1 + "/info")
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
 @ApplicationScoped
 public class GeneralInfo extends EndpointProvider {

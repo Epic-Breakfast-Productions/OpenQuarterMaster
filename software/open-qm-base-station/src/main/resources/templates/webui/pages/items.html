@@ -1,4 +1,4 @@
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' titleIcon='balance-scale' page='items'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {@java.util.Map allowedUnitsMap}
 {#styleSheets}
     <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
@@ -7,15 +7,15 @@
 <div class="row">
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
-                onclick="setupAddEditForAdd();"><i class="fas fa-plus"></i> Add Item
+                onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
         </button>
     </div>
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal"><i class="fas fa-solid fa-file-circle-plus"></i> Add Item(s) from file
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile}{/icons/addFile} Add Item(s) from file
         </button>
     </div>
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-info"><i class="fas fa-eye"></i> Item stats</button>
+        <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Item stats</button>
     </div>
 </div>
 <br/>
@@ -62,7 +62,7 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="toggleAddEditProductSearchPane();" title="Search for Products">
-                <i class="fas fa-search"></i> Search for Products
+                {#icons/search}{/icons/search} Search for Products
             </button>
         </div>
     </div>
@@ -200,6 +200,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="addEditTotalLowStockThresholdInput" class="col-sm-2 col-form-label">Total Low Stock Threshold</label>
+                    <div class="col-sm-10">
+                        <div class="input-group mt-2 mb-3">
+                            <input type="number" class="form-control amountStoredValueInput" id="addEditTotalLowStockThresholdInput" placeholder="Value" min="0.00" step="any">
+                            <select class="form-select amountStoredUnitInput unitInput" id="addEditTotalLowStockThresholdUnitInput">
+                            </select>
+                        </div>
+                        <div id="addEditTotalLowStockThresholdHelp" class="form-text">
+                            The lowest amount to be stored before being marked as low on stock. Leave blank for no threshold.<br />
+                            Unit taken from the item's unit.
+                        </div>
+                    </div>
+                </div>
                 <hr />
                 <div class="mb-3 row">
                     <div class="col-sm-2 col-form-label">Stored</div>
@@ -209,7 +223,7 @@
                         </div>
                         <div class="col d-grid gap-2 mt-3">
                             <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="storageSearchSelectForm.submit();">
-                                <i class="fas fa-plus"></i> Add Associated Storage
+                                {#icons/add}{/icons/add} Add Associated Storage
                             </button>
                         </div>
                     </div>
@@ -262,6 +276,13 @@
                 </div>
             </div>
         </div>
+        <div class="card" id="itemViewTotalLowStockThresholdContainer">
+            <div class="card-body">
+                <h5 class="card-title">Total Low Stock Threshold:</h5>
+                <div id="itemViewTotalLowStockThreshold">
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
@@ -282,7 +303,6 @@
             <div class="card-body">
                 <h5 class="card-title">Identifying Attribute:</h5>
                 <div id="itemViewIdentifyingAtt">
-                
                 </div>
             </div>
         </div>
@@ -395,7 +415,7 @@ $("#prodBarcodeSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/product/barcode/" + barcodeText,
+        url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
         done: handleExtItemSearchResults
     });
 });
@@ -408,7 +428,7 @@ $("#legoPartNumSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/lego/part/" + partNumber,
+        url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
         done: handleExtItemSearchResults
     });
 });
@@ -421,7 +441,7 @@ $("#websiteScanSearchForm").submit(function(event){
     extSearchResults.html("");
     
     doRestCall({
-        url: "/api/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
+        url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
         done: handleExtItemSearchResults
     });
 });
@@ -455,6 +475,8 @@ var addEditDescriptionInput = $('#addEditDescriptionInput');
 var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
 var addEditExpiryWarningThresholdInput = $('#addEditExpiryWarningThresholdInput');
 var addEditExpiryWarningThresholdUnitInput = $('#addEditExpiryWarningThresholdUnitInput');
+var addEditTotalLowStockThresholdInput = $("#addEditTotalLowStockThresholdInput");
+var addEditTotalLowStockThresholdUnitInput = $("#addEditTotalLowStockThresholdUnitInput");
 var addEditStorageTypeInput = $('#addEditStorageTypeInput');
 var addEditUnitInput = $('#addEditUnitInput');
 var addEditIdentifyingAttInput = $('#addEditIdentifyingAttInput');
@@ -506,13 +528,13 @@ function haveStored(){
 }
 
 
-updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
+updateCompatibleUnits(addEditUnitInput.val(), addEditItemForm);
 
 function handleItemUnitChange(){
     if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
         //TODO:: handle changing back to old value
     } else {
-        updateCompatibleUnits(addEditUnitInput.val(), storedContainer);
+        updateCompatibleUnits(addEditUnitInput.val(), addEditItemForm);
     }
 }
 
@@ -524,6 +546,7 @@ function resetAddEditForm(){
     addEditPricePerUnitInput.val("0.00");
     addEditExpiryWarningThresholdInput.val(0);
     addEditExpiryWarningThresholdUnitInput.prop('selectedIndex',2);
+    addEditTotalLowStockThresholdInput.val("");
     addEditIdentifyingAttInput.val("");
     addEditStorageTypeInput.prop( "disabled", false );
     addEditStorageTypeInput.val($("#addEditStorageTypeInput option:first").val());
@@ -576,7 +599,7 @@ function setupAddEditForEdit(itemId){
     
     doRestCall({
         spinnerContainer: addEditModal,
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         failMessagesDiv: addEditFormMessages,
         done: async function(data){
             addSelectedImages(addEditImagesSelected, data.imageIds);
@@ -588,6 +611,11 @@ function setupAddEditForEdit(itemId){
             addEditDescriptionInput.val(data.description);
             addEditStorageTypeInput.val(data.storageType);
             addEditStoredTypeInputChanged();
+            
+            if(data.lowStockThreshold) {
+                addEditTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
+                addEditTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
+            }
     
             let setAmountStoredVars = async function(){
                 addEditUnitInput.val(data.unit.string);
@@ -749,7 +777,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
             keywordInputTemplate.html() +
             attInputTemplate.html() +
             '<div class="mb-3 ">\n'+
-            '    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');"><i class="fas fa-trash-alt"></i> Remove Stored</button> '+
+            '    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');">{#icons/remove}{/icons/remove} Remove Stored</button> '+
             '</div>\n'
             ;
 }
@@ -965,7 +993,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
     $('   <div class="accordion-item storedAccordion" id="'+accordId+'">\n'+
       '        <h2 class="accordion-header" id="'+accordHeaderId+'">\n'+
       '            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
-      '                <img class="accordion-thumb" src="/api/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
+      '                <img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
       '                <span class="storageBlockName">'+blockName+'</span>\n'+
       '                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
       '            </button>\n'+
@@ -996,10 +1024,10 @@ function createStorageBlockAccord(blockName, blockId, add = true){
     
                 accordBodyButtonWrapper.append($(
                         '<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="createNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
-                        '    <i class="fas fa-plus"></i> Add\n'+
+                        '    {#icons/add}{/icons/add} Add\n'+
                         '</button>\n'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '    {#icons/remove}{/icons/remove} Remove Associated Storage\n'+
                         '</button>'
                 ));
             },
@@ -1009,11 +1037,11 @@ function createStorageBlockAccord(blockName, blockId, add = true){
                         '<div class="input-group mt-2">\n'+
                         '    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
                         '    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="createNewTrackedStored(\''+accordFormContentId+'\', this);">' +
-                        '        <i class="fas fa-plus"></i> Add\n'+
+                        '        {#icons/add}{/icons/add} Add\n'+
                         '    </button>\n'+
                         '</div>'+
                         '<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-                        '    <i class="fas fa-trash-alt"></i> Remove Associated Storage\n'+
+                        '    {#icons/remove}{/icons/remove} Remove Associated Storage\n'+
                         '</button>'
                 ));
             }
@@ -1082,7 +1110,7 @@ function removeItem(itemId){
     console.log("Removing item " + itemId);
     
     doRestCall({
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         method: "DELETE",
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));
@@ -1104,6 +1132,10 @@ addEditItemForm.submit(async function (event) {
         description: addEditDescriptionInput.val(),
         storageType: addEditStorageTypeInput.val(),
         expiryWarningThreshold: addEditExpiryWarningThresholdInput.val() * addEditExpiryWarningThresholdUnitInput.val(),
+        lowStockThreshold: (addEditTotalLowStockThresholdInput.val() ? getQuantityObj(
+                addEditTotalLowStockThresholdInput.val(),
+                addEditTotalLowStockThresholdUnitInput.val()
+        ) : null),
         storageMap: { }
     };
     
@@ -1163,7 +1195,7 @@ addEditItemForm.submit(async function (event) {
         verb = "Created";
         console.log("Adding new item.");
         await doRestCall({
-            url: "/api/inventory/item",
+            url: "/api/v1/inventory/item",
             method: "POST",
             data: addEditData,
             async: false,
@@ -1179,7 +1211,7 @@ addEditItemForm.submit(async function (event) {
         console.log("Editing storage block " + id);
         
         await doRestCall({
-            url: "/api/inventory/item/" + id,
+            url: "/api/v1/inventory/item/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
@@ -1214,6 +1246,8 @@ var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
 var itemViewDescription = $("#itemViewDescription");
 var itemViewTotal = $("#itemViewTotal");
+var itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
+var itemViewTotalLowStockThreshold = $("#itemViewTotalLowStockThreshold");
 var itemViewIdentifyingAttContainer = $("#itemViewIdentifyingAttContainer");
 var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
 
@@ -1231,14 +1265,16 @@ function resetView(){
     itemViewStoredAccordion.text("");
     itemViewValPerUnitDefault.hide();
     itemViewValPerUnit.text("");
+    itemViewIdentifyingAttContainer.hide();
     itemViewTotalVal.text("");
     
-    itemViewIdentifyingAttContainer.hide();
     itemViewIdentifyingAtt.text("");
     
     itemViewStorageType.text("");
     itemViewDescription.text("");
     itemViewTotal.text("");
+    itemViewTotalLowStockThreshold.text("");
+    itemViewTotalLowStockThresholdContainer.hide();
     
     itemHistory.text('');
     clearCarousel(itemViewCarousel);
@@ -1413,7 +1449,7 @@ function setupView(itemId){
     
     doRestCall({
         spinnerContainer: itemViewModal,
-        url: "/api/inventory/item/" + itemId,
+        url: "/api/v1/inventory/item/" + itemId,
         done: async function (data) {
             let promises = [];
             processKeywordDisplay(viewKeywordsSection, data.keywords);
@@ -1424,6 +1460,11 @@ function setupView(itemId){
             itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
+            
+            if(data.lowStockThreshold){
+                itemViewTotalLowStockThreshold.text(data.lowStockThreshold.value + "" + data.lowStockThreshold.unit.symbol);
+                itemViewTotalLowStockThresholdContainer.show();
+            }
     
             if (data.imageIds.length) {
                 console.log("Item had images to show.");
@@ -1470,7 +1511,7 @@ function setupView(itemId){
                     await doRestCall({
                         spinnerContainer: null,
                         async: false,
-                        url: "/api/inventory/storage-block/" + key,
+                        url: "/api/v1/inventory/storage-block/" + key,
 						failMessagesDiv: itemViewMessages,
                         done: function (data) {
                             curBlockName = data.label;
@@ -1533,7 +1574,7 @@ $("#addItemFromFileForm").submit(function (e){
     formData.append("file", file);
     
     doRestCall({
-        url: '/api/inventory/item',
+        url: '/api/v1/inventory/item',
         method: "post",
         data: formData,
         done: function (data){

@@ -135,7 +135,6 @@ class MongoServiceTest extends RunningServerTest {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
-		
 		List<ObjectId> returned = this.testMongoService.addBulk(originals);
 		
 		assertEquals(originals.size(), this.testMongoService.count());
@@ -154,14 +153,32 @@ class MongoServiceTest extends RunningServerTest {
 	@Test
 	public void testAddBulkError() {
 		List<TestMainObject> originals = new ArrayList<>();
-
+		
 		for(int i = 1; i <= 5; i++){
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		originals.add(new TestMainObject());
 		
+		log.info("Originals: {}", originals);
+		
 		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(originals));
-
+		
+		assertEquals(0, this.testMongoService.count());
+	}
+	
+	@Test
+	public void testAddBulkError2() {
+		List<TestMainObject> originals = new ArrayList<>();
+		
+		originals.add(new TestMainObject());
+		for(int i = 1; i <= 5; i++){
+			originals.add(new TestMainObject("Hello world " + i));
+		}
+		
+		log.info("Originals: {}", originals);
+		
+		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(originals));
+		
 		assertEquals(0, this.testMongoService.count());
 	}
 	// </editor-fold>

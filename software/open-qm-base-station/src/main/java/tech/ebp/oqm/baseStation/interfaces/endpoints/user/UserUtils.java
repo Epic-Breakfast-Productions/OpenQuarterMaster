@@ -13,7 +13,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.EmailUtils;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
@@ -26,9 +26,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/user/utils")
+@Path(ROOT_API_ENDPOINT_V1 + "/user/utils")
 @Tags({@Tag(name = "Users")})
 @RequestScoped
 public class UserUtils extends EndpointProvider {

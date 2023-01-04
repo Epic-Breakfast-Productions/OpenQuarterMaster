@@ -22,9 +22,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/test")
+@Path(ROOT_API_ENDPOINT_V1 + "/test")
 @Tags({@Tag(name = "Test")})
 @ApplicationScoped
 public class Test extends EndpointProvider {

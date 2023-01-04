@@ -1,7 +1,7 @@
 {@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}
 {@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}
 {@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Create QR & Bar Codes" titleIcon='qrcode' page='codes'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Create QR & Bar Codes" page='codes'}
 	{#pageStyle}
 	#outputImage {
 		min-height: 100px;
@@ -71,10 +71,10 @@
 										<div class="row">
 											<div class="col">
 												<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal">
-													<i class="fas fa-boxes"></i> For Storage Block
+													{#icons/storage}{/icons/storage} For Storage Block
 												</button>
 												<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal">
-													<i class="fas fa-balance-scale"></i> For Inventory Item
+													{#icons/item}{/icons/item} For Inventory Item
 												</button>
 											</div>
 										</div>
@@ -155,18 +155,18 @@
 			}
 			
 			function generateQrFromData(data){
-				outputImage.attr("src", "/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(data));
+				outputImage.attr("src", "/api/v1/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(data));
 				showGenerated();
 			}
 			
 			
 			var objectContentTypeInput = $("#objectContentTypeInput");
 			function selectStorageBlock(label, id, thing){
-				outputImage.attr("src", "/api/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
+				outputImage.attr("src", "/api/v1/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
 			function selectItem(label, id, thing){
-				outputImage.attr("src", "/api/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
+				outputImage.attr("src", "/api/v1/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
 		</script>

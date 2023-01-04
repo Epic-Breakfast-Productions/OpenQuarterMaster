@@ -26,15 +26,15 @@
     {#if actionType == 'full'}
     {! TODO:: make the anchor of the page the id of the image !}
     <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-            data-bs-target="#addEditModal" onclick="setupAddEditForAdd();"><i
-            class="fas fa-plus"></i> Add Image
+            data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+      {#icons/add}{/icons/add} Add Image
     </button>
     {/if}
   </div>
   {#else}
   {#for result in searchResults.getResults()}
     <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="selectImage('{result.getTitle()}', '{result.getId()}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{result.getId()}')"{/if}>
-      <img src="/api/media/image/{result.getId()}/data" class="card-img-top img-thumbnail" alt="{result.getTitle()}">
+      <img src="/api/v1/media/image/{result.getId()}/data" class="card-img-top img-thumbnail" alt="{result.getTitle()}">
       <div class="card-body">
         <h5 class="card-title">{result.getTitle()}</h5>
         {#if result.getDescription() != null && !result.getDescription().isBlank() }

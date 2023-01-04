@@ -9,17 +9,19 @@
 			<h3>As Run By {config:['service.runBy.name']}</h3>
 			{/if}
 			{#if config:['service.runBy.banner'] != " "}
-				<img src="/api/media/runBy/banner" style="max-height: 150px;">
+				<img src="/api/v1/media/runBy/banner" style="max-height: 150px;">
 			{/if}
 			<h1>
 				Please sign in
 			</h1>
 			{#if config:['service.authMode'] == 'SELF'}
-				<a href="/accountCreate">Or, Create account <i class="fa-solid fa-user-plus"></i></a>
+				<a href="/accountCreate">Or, Create account {#icons/addUser}{/icons/addUser}</a>
 			{/if}
 		</div>
 		<div class="card-body">
 		{#if config:['service.authMode'] == 'SELF'}
+			<div id="loginFormMessages">
+			</div>
 			<div class="mb-3">
 				<label for="emailUsernameInput">Email address or Username:</label>
 				<input type="text" class="form-control text-center" id="emailUsernameInput" placeholder="Email or Username">
@@ -34,12 +36,12 @@
 				</label>
 			</div>
 			
-			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton"><i
-						class="fas fa-sign-in-alt"></i> Sign in
+			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton">
+				{#icons/icon icon='door-open'}{/icons/icon} Sign in
 			</button>
 			{#else}
 			<a href="{signInLink}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
-				<i class="fas fa-external-link-square-alt"></i> Sign in with {config:['service.externalAuth.name']}
+				{#icons/icon icon='door-open'}{/icons/icon} Sign in with {config:['service.externalAuth.name']}
 			</a>
 		{/if}
 		
@@ -69,7 +71,7 @@
 				);
 
 				if (!result) {
-					addMessage("danger", "Login failed", "Login Failed", null);
+					addMessage("danger", "Login failed", "Login Failed", loginFormMessages);
 				} else {
 					login(result, rememberUser);
 				}

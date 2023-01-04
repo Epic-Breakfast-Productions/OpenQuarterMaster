@@ -31,7 +31,7 @@ function addChildrenToList(childrenList, curBlock){
         };
 
     if(curBlock.firstImageId){
-        curNode.image = "/api/media/image/"+curBlock.firstImageId+"/data";
+        curNode.image = "/api/v1/media/image/"+curBlock.firstImageId+"/data";
     }
 
     if(curBlock.children){
@@ -49,7 +49,7 @@ function showTree(containerSelector){
 
     doRestCall({
 //        spinnerContainer: $(containerSelector),
-        url: "/api/inventory/storage-block/tree",
+        url: "/api/v1/inventory/storage-block/tree",
         done: function(data){
             console.log("Successfully got tree data.");
             var rootChildrenList = chartConfig.nodeStructure.children;
@@ -84,7 +84,7 @@ function addCrumbs(cur, crumbList, toKeepId){
 
 async function getBlockBreadcrumbs(crumbContainer, toKeepId){
     doRestCall({
-            url: "/api/inventory/storage-block/tree?onlyInclude="+toKeepId,
+            url: "/api/v1/inventory/storage-block/tree?onlyInclude="+toKeepId,
             done: function(data){
                 console.log("Successfully got tree data.");
 

@@ -23,7 +23,7 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
@@ -48,9 +48,11 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/auth/user")
+@Path(ROOT_API_ENDPOINT_V1 + "/auth/user")
 @Tags({@Tag(name = "Auth", description = "Endpoints for user authorization.")})
 @RequestScoped
 @NoCache
@@ -131,16 +133,23 @@ public class UserAuth extends EndpointProvider {
 		User user = this.userService.getFromLoginRequest(loginRequest);
 		
 		if (user == null) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("User not found.")).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(ErrorMessage.builder().displayMessage("User not found.").build()).build();
 		}
 		if(user.isDisabled()){
-			return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage("Account Disabled. Contact an admin for details.")).build();
+			return Response.status(Response.Status.UNAUTHORIZED)
+						   .entity(
+							   ErrorMessage.builder()
+										   .displayMessage("Account Disabled. Contact an admin for details.")
+										   .build()
+						   ).build();
 		}
 		
 		//TODO:: check for # of login attempts?
 		
 		if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Invalid Password.")).build();
+			return Response.status(Response.Status.BAD_REQUEST)
+						   .entity(ErrorMessage.builder().displayMessage("Invalid Password.").build())
+						   .build();
 		}
 		
 		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());

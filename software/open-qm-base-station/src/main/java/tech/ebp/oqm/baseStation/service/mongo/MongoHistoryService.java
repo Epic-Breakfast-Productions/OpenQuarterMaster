@@ -16,7 +16,7 @@ import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
 import javax.validation.Valid;
 
@@ -98,6 +98,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		return this.add(session, history);
 	}
 	
+	//TODO:: change to interacting entity
 	public ObjectId createHistoryFor(T created, User user) {
 		return this.createHistoryFor(null, created, user);
 	}

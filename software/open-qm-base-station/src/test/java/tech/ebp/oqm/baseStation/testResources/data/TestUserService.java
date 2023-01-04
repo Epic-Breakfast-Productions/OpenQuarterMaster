@@ -21,7 +21,7 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.Utils;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,7 +40,7 @@ import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 @ApplicationScoped
 @Slf4j
 public class TestUserService {
-	private final static Faker FAKER = Faker.instance();
+	private final static Faker FAKER = new Faker();
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
 	

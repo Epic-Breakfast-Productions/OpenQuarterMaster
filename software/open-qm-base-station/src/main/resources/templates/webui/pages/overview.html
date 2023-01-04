@@ -1,7 +1,7 @@
 {@tech.ebp.oqm.baseStation.service.mongo.StorageBlockService storageBlockService}
 {@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredList}
 {@java.util.List<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> expiredWarnList}
-{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' titleIcon='tachometer-alt' page='overview'}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' page='overview'}
 	{#pageStyle}
 		.buttonCell{
 		border: 1px solid black;
@@ -13,14 +13,20 @@
 		<ul class="nav nav-tabs" id="mainTab" role="tablist">
 			<li class="nav-item" role="presentation">
 				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
-					Overview
+					{#icons/icon icon='diagram-3'}{/icons/icon} Overview
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
-					Expiring
+					{#icons/expiring}{/icons/expiring} Expiring
 					{#if totalExpired > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</span>{/if}
 					{#if totalExpiryWarn > 0}<span class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</span>{/if}
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
+					{#icons/lowStock}{/icons/lowStock} Low Stock
+					{#if totalLowStock > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</span>{/if}
 				</button>
 			</li>
 		</ul>
@@ -38,12 +44,12 @@
 								</h2>
 								<p>
 									No storage blocks currently exist. Go to
-									<a href="/storage"><i class="fas fa-boxes fa-fw"></i> Storage</a>
+									<a href="/storage">{#icons/storage}{/icons/storage} Storage</a>
 									to add a place where items are stored!
 								</p>
 								<p>
 									You can then go to
-									<a href="/items"><i class="fas fa-balance-scale fa-fw"></i> Items</a>
+									<a href="/items">{#icons/item}{/icons/item} Items</a>
 									to add an item that is stored in that location!
 								</p>
 							{#else}
@@ -139,6 +145,54 @@
 					</div>
 				</div>
 			</div>
+		<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
+			<div class="row">
+				<div class="col">
+					<h3>
+						Low Stock:
+					</h3>
+					{#if lowStockList.isEmpty()}
+						<p>
+							No stock is low!
+						</p>
+					{#else}
+						<table class="table table-bordered table-sm table-striped">
+							<thead>
+							<tr>
+								<th class="searchResultImageCol">
+									Image
+								</th>
+								<th>
+									Item
+								</th>
+								<th>
+									# Low Stock
+								</th>
+								<th>
+									Actions
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							{#for curLowStockItem in lowStockList}
+								<tr class="align-middle">
+									<td>
+										{#if !curLowStockItem.getImageIds().isEmpty()}
+											<img src="/api/v1/media/image/for/item/{curLowStockItem.getId()}" class="searchResultImage">
+										{/if}
+									</td>
+									<td>{curLowStockItem.getName()}</td>
+									<td>{curLowStockItem.getNumLowStock()}</td>
+									<td></td>
+								</tr>
+								
+							{/for}
+							</tbody>
+						</table>
+					{/if}
+				</div>
+			</div>
+		</div>
 		</div>
 	{/pageContent}
 	{#scripts}
@@ -151,7 +205,7 @@
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.length === 0){
-					return $('<p><i class="fas fa-balance-scale fa-fw"></i> No inventory items held.</p>');
+					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -176,14 +230,14 @@
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5><i class="fas fa-balance-scale fa-fw"></i> Items held ('+invItemArr.length+'):</h5>');
+				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
 			
 			function getStorageBlockSection(storageBlockArr, parentId){
 				if(storageBlockArr.length === 0){
-					return $('<p><i class="fas fa-boxes fa-fw"></i> No children.</p>');
+					return $('<p>{#icons/storage}{/icons/storage} No children.</p>');
 				}
 				let accordId = "storageBlockAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -208,7 +262,7 @@
 					accordion = accordion.append(curAccord);
 				});
 				
-				let output = $('<h5><i class="fas fa-boxes fa-fw"></i> Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				let output = $('<h5>{#icons/storage}{/icons/storage} Storage Blocks ('+storageBlockArr.length+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
@@ -276,7 +330,7 @@
 				created[storageBlockId] = true;
 
 				doRestCall({
-					url: "/api/inventory/storage-block/" + storageBlockId,
+					url: "/api/v1/inventory/storage-block/" + storageBlockId,
 					method: "GET",
 					done: async function(data) {
 						let newContent = await createNewStorageBlockContent(data);

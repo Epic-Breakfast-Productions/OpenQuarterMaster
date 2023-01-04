@@ -30,9 +30,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/media/code")
+@Path(ROOT_API_ENDPOINT_V1 + "/media/code")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @ApplicationScoped
 public class BarcodeCreation extends EndpointProvider {
@@ -114,7 +116,7 @@ public class BarcodeCreation extends EndpointProvider {
 						data = id;
 						break;
 					case apilink:
-						data = this.selfBaseUrl + "/api/inventory/storage-block/" + id;
+						data = this.selfBaseUrl + EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/storage-block/" + id;
 						break;
 					case uilink:
 						data = this.selfBaseUrl + "/storage?view=" + id;
@@ -127,7 +129,7 @@ public class BarcodeCreation extends EndpointProvider {
 						data = id;
 						break;
 					case apilink:
-						data = this.selfBaseUrl + "/api/inventory/item/" + id;
+						data = this.selfBaseUrl + EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/item/" + id;
 						break;
 					case uilink:
 						data = this.selfBaseUrl + "/items?view=" + id;

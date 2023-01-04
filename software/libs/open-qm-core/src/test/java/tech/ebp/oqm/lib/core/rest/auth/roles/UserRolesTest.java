@@ -1,7 +1,6 @@
 package tech.ebp.oqm.lib.core.rest.auth.roles;
 
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.lib.core.object.user.User;
 
 import java.util.List;
 

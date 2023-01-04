@@ -1,4 +1,4 @@
-{#include webui/mainWebPageTemplate title='Account Create' navbar="toLogin" showTitle=true titleIcon="user-plus"}
+{#include webui/mainWebPageTemplate title='Account Create' navbar="toLogin" showTitle=true page="accountCreate"}
 	{#pageContent}
 		{#if firstUser}
 			<div class="alert alert-warning" role="alert">
@@ -58,7 +58,7 @@
 					<label for="passwordConfirmInput">Password Confirm</label>
 				</div>
 				<button type="submit" class="btn btn-success btn-lg">
-					<i class="fa-solid fa-user-plus"></i> Create User
+					{#icons/addUser}{/icons/addUser} Create User
 				</button>
 			</form>
 		</div>
@@ -86,7 +86,7 @@
 				};
 
 				await doRestCall({
-					url: "/api/user",
+					url: "/api/v1/user",
 					method: "POST",
 					data: createRequestData,
 					async: false,

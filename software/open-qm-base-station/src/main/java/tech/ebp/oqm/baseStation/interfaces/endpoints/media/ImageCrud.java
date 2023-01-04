@@ -56,9 +56,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/media/image")
+@Path(ROOT_API_ENDPOINT_V1 + "/media/image")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RequestScoped
 public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {

@@ -41,9 +41,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/inventory/storage-block")
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
 @RequestScoped
 @NoArgsConstructor

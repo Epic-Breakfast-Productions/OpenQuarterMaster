@@ -13,7 +13,7 @@ import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 

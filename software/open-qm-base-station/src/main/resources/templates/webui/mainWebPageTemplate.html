@@ -26,8 +26,8 @@ Ingests:
 	
 	<!-- CSS -->
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
-	<link href="/lib/bootstrap/bootstrap-5.2.2-dist/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/fontawesome-free-6.1.2-web/css/all.css">
+	<link href="/lib/bootstrap/5.2.3/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.3/bootstrap-icons.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/res/css/main.css">
 	{#insert styleSheets}{/}
@@ -57,7 +57,7 @@ Ingests:
 	<ul class="navbar-nav me-auto">
 		<li class="nav-item">
 			<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
-				<i class="fas fa-tachometer-alt fa-fw"></i> Overview
+				{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
 				{#if page is 'overview'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
@@ -65,15 +65,15 @@ Ingests:
 		</li>
 		<li class="nav-item">
 			<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
-				<i class="fas fa-boxes fa-fw"></i> Storage
+				{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
 				{#if page is 'storage'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
 			</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link {#if page is 'items'}active{/if}" href="/items"><i
-						class="fas fa-balance-scale fa-fw"></i> Items
+			<a class="nav-link {#if page is 'items'}active{/if}" href="/items">
+				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
 				{#if page is 'items'}
 					<span class="visually-hidden">(current)</span>
 				{/if}
@@ -81,23 +81,23 @@ Ingests:
 		</li>
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-					aria-haspopup="true" aria-expanded="false"><i
-						class="fas fa-infinity fa-fw"></i> Other</a>
+					aria-haspopup="true" aria-expanded="false">
+				{#icons/icon icon='infinity'}{/icons/icon} Other</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
-					<i class="fas fa-images fa-fw"></i> Images
+					{#icons/pageIcon page='images'}{/icons/pageIcon} Images
 					{#if page is 'images'}
 						<span class="visually-hidden">(current)</span>
 					{/if}
 				</a>
 				<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
-					<i class="fas fa-qrcode fa-fw"></i> QR &amp; Bar Code Generator
+					{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
 					{#if page is 'codes'}
 						<span class="visually-hidden">(current)</span>
 					{/if}
 				</a>
 				<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
-					<i class="fas fa-question fa-fw"></i> Help & User Guide
+					{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
 					{#if page is 'help'}
 						<span class="visually-hidden">(current)</span>
 					{/if}
@@ -113,34 +113,34 @@ Ingests:
 				<option data-action="/items" data-field="name" selected>Items</option>
 				<option data-action="/storage" data-field="label">Storage Blocks</option>
 			</select>
-			<button class="btn btn-outline-dark" type="submit">Search</button>
+			<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
 		</div>
 	</form>
 	<ul class="d-flex navbar-nav me-auto">
 	<li class="nav-item dropdown">
-	<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-			aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i>
+	<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+		{#icons/user}{/icons/user}
 		<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
 	<div class="dropdown-menu">
 	<a class="dropdown-item" href="/you" id="youLink">
-		<i class="fas fa-user fa-fw"></i> You
+		{#icons/you}{/icons/you} You
 	</a>
 	{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
 	<div class="dropdown-divider"></div>
 	{/if}
 	{#if userInfo.getRoles().contains('userAdmin')}
 		<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
-			<i class="fas fa-users-gear fa-fw"></i> User Administration
+			{#icons/userAdmin}{/icons/userAdmin} User Administration
 		</a>
 	{/if}
 	{#if userInfo.getRoles().contains('inventoryAdmin')}
 		<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-			<i class="fas fa-screwdriver-wrench fa-fw"></i> Inventory Administration
+			{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
 		</a>
 	{/if}
 	<div class="dropdown-divider"></div>
 	<a class="dropdown-item" href="#" id="logoutButton">
-		<i class="fas fa-sign-out-alt fa-fw"></i> Logout
+		{#icons/icon icon='door-closed'}{/icons/icon} Logout
 	</a>
 	</div>
 	</li>
@@ -164,7 +164,7 @@ Ingests:
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
 					<a class="nav-link" href="/">
-						<i class="fas fa-arrow-right-to-bracket fa-fw"></i> Login
+						{#icons/icon icon='door-open'}{/icons/icon} Login
 					</a>
 				</li>
 			</ul>
@@ -175,7 +175,7 @@ Ingests:
 {/if}
 <div id="mainContainer" class="container">
 	{#if showTitle}
-		<h1>{#if titleIcon??}<i class="fas fa-{titleIcon}"></i> {/if}{title}</h1>
+		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon}{title}</h1>
 		<hr/>
 	{/if}
 	<div id="messageDiv">
@@ -193,7 +193,7 @@ Ingests:
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0
 				License</a><br/>
 			Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
-			<a href="/help"><i class="fas fa-question fa-fw"></i> Help & User Guide</a><br />
+			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
 					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
@@ -215,7 +215,7 @@ Ingests:
 		</div>
 		<div id="serverInfo" class="col-sm-4">
 			{#if config:['service.runBy.logo'] != " "}
-				<img src="/api/media/runBy/logo" style="float:right; max-width: 30%;">
+				<img src="/api/v1/media/runBy/logo" style="float:right; max-width: 30%;">
 			{/if}
 			{#if config:['service.runBy.name'] != " "}
 				<span class="h4">Run by:</span><br/>
@@ -242,7 +242,7 @@ Ingests:
 
 <!-- scripts -->
 <script src="/webjars/jquery/3.6.1/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.2.2/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
 <script src="/res/js/spinnerHelpers.js"></script>

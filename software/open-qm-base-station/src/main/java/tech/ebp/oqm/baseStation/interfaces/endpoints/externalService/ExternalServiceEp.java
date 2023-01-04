@@ -15,8 +15,8 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
@@ -38,9 +38,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+
 @Traced
 @Slf4j
-@Path("/api/externalService")
+@Path(ROOT_API_ENDPOINT_V1 + "/externalService")
 @Tags({@Tag(name = "External Service", description = "Endpoints for external services to manage their interactions with this server.")})
 @RequestScoped
 public class ExternalServiceEp extends EndpointProvider {

@@ -10,12 +10,13 @@ import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.UserAuth;
 import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
@@ -106,7 +107,7 @@ class AuthTest extends RunningServerTest {
 		)
 													.contentType(ContentType.JSON)
 													.when()
-										   .basePath("/api/auth")
+										   .basePath(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/auth")
 													.get("/tokenCheck")
 													.then();
 		log.info("token check response: {}", response.extract().body().asString());

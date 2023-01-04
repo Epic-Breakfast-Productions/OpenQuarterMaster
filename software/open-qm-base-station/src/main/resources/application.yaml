@@ -21,7 +21,7 @@ service:
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackUrl: ${runningInfo.baseUrl}/api/auth/user/callback
+    callbackUrl: ${runningInfo.baseUrl}/api/v1/auth/user/callback
   runBy:
     name: " "
     email: " "
@@ -76,6 +76,9 @@ productLookup:
       enabled: true
       url: https://rebrickable.com
       apiKey: " "
+      
+messaging:
+  connector: ""
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -168,11 +171,7 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
-  qpid-jms:
-    url: amqp://localhost:5672
-    username: quarkus
-    password: quarkus
-    
+      
 mp:
   jwt:
     verify:
@@ -190,6 +189,10 @@ mp:
     token:
       header: Cookie
       cookie: jwt
+#  messaging:
+#    outgoing:
+#      items.add:
+#        connector: ${messaging.connector}
 
 smallrye:
   jwt:

@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.opentracing.Traced;
-import tech.ebp.oqm.lib.core.object.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.user.User;
+import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
 
