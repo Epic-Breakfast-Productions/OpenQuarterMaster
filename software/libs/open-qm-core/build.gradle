@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.56-bs.1-2-SNAPSHOT'
+version '1.0.57-SNAPSHOT'
 
 repositories {
 	mavenLocal()
