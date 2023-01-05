@@ -855,6 +855,7 @@ function cleanupDialog() {
 
 			# TODO::: check for any other steps?
 			docker system prune --volumes
+			docker image prune -a
 
 			showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
 			;;
