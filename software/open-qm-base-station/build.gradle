@@ -47,7 +47,7 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	//webjars
-	implementation 'org.webjars:jquery:3.6.1'
+	implementation 'org.webjars:jquery:3.6.3'
 	implementation 'org.webjars:bootstrap:5.2.3'
 //	implementation 'org.webjars.npm:bootstrap-icons:1.10.2' //doesn't contain everything needed
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
