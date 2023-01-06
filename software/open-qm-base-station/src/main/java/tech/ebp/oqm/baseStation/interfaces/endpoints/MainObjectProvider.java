@@ -378,7 +378,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 				rb = rb.entity(
 						   this.getHistoryRowsTemplate()
 							   .data("objectHistory", output)
-							   .data("userService", this.getInteractingEntityService())
+							   .data("interactingEntityService", this.getInteractingEntityService())
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
 				break;

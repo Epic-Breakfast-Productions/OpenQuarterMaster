@@ -1454,7 +1454,7 @@ function setupView(itemId){
             let promises = [];
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(itemHistory, "/inventory/item/" + data.id);
+            displayObjHistory(itemHistory, "inventory/item/" + data.id);
             itemViewModalLabel.text(data.labelText);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
