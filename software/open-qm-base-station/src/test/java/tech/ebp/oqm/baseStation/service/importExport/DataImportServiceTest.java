@@ -24,8 +24,8 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 import tech.ebp.oqm.lib.core.units.ValidUnitDimension;
 
 import javax.inject.Inject;
@@ -70,6 +70,7 @@ class DataImportServiceTest extends RunningServerTest {
 		User testUser = testUserService.getTestUser();
 		
 		//TODO:: refactor
+		
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry curImage = new CustomUnitEntry(
 				UnitCategory.Number,
@@ -81,6 +82,9 @@ class DataImportServiceTest extends RunningServerTest {
 			);
 			this.customUnitService.add(curImage, testUser);
 		}
+		List<CustomUnitEntry> customUnits = this.customUnitService.list();
+		UnitUtils.registerAllUnits(customUnits);
+		
 		for (int i = 0; i < 5; i++) {
 			Image curImage = new Image();
 			curImage.setTitle(FAKER.name().name());
@@ -111,9 +115,10 @@ class DataImportServiceTest extends RunningServerTest {
 			SimpleAmountItem item = new SimpleAmountItem();
 			item.setDescription(FAKER.lorem().paragraph());
 			item.setName(FAKER.name().name());
+			item.setUnit(customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit());
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(rand.nextInt(), OqmProvidedUnits.UNIT)
+					.setAmount(rand.nextInt(), item.getUnit())
 					.setCondition(rand.nextInt(100))
 					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
@@ -129,7 +134,7 @@ class DataImportServiceTest extends RunningServerTest {
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size()))).add(
 					(AmountStored) new AmountStored()
-									   .setAmount(rand.nextInt(), OqmProvidedUnits.UNIT)
+									   .setAmount(rand.nextInt(),  item.getUnit())
 									   .setCondition(rand.nextInt(100))
 									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())
@@ -159,9 +164,6 @@ class DataImportServiceTest extends RunningServerTest {
 			storageIds.add(this.inventoryItemService.add(item, testUser));
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
-		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
-		this.customUnitService.removeAll(testUser);
-		this.customUnitService.getHistoryService().removeAll();
 		List<InventoryItem> oldItems = this.inventoryItemService.list(null, Sorts.ascending("name"), null);
 		this.inventoryItemService.removeAll(testUser);
 		this.inventoryItemService.getHistoryService().removeAll();
@@ -171,6 +173,10 @@ class DataImportServiceTest extends RunningServerTest {
 		List<Image> oldImages = this.imageService.list(null, Sorts.ascending("title"), null);
 		this.imageService.removeAll(testUser);
 		this.imageService.getHistoryService().removeAll();
+		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
+		this.customUnitService.removeAll(testUser);
+		this.customUnitService.getHistoryService().removeAll();
+		UnitUtils.reInitUnitCollections();
 		
 		try(InputStream is = new FileInputStream(bundle)) {
 			this.dataImportService.importBundle(is, "test.tar.gz", testUser);
@@ -189,4 +195,6 @@ class DataImportServiceTest extends RunningServerTest {
 		assertEquals(oldImages, this.imageService.list(null, Sorts.ascending("title"), null));
 		
 	}
+	
+	//TODO:: test failed import doesn't break things
 }

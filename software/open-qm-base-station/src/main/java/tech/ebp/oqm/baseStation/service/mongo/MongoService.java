@@ -128,7 +128,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.collection;
 	}
 	
-	public TransactionOptions getDefaultTransactionOptions() {
+	public static TransactionOptions getDefaultTransactionOptions() {
 		return TransactionOptions.builder()
 								 .readPreference(ReadPreference.primary())
 								 .readConcern(ReadConcern.LOCAL)

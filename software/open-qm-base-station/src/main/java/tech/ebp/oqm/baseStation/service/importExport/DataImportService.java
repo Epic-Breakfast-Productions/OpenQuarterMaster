@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -15,12 +16,15 @@ import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -194,9 +198,21 @@ public class DataImportService {
 							null,
 							newAddedList
 						);
+						
+						
 					}
 				}
 				addedList = newAddedList;
+			}
+		}
+		
+		if(objectService instanceof CustomUnitService){
+			log.info("Registering unit objects.");
+			for(File curFile : filesForObject){
+				String curId = curFile.getName().replaceAll("(?<!^)[.][^.]*$", "");//remove extension from file name
+				log.info("Registering unit with id of {}", curId);
+				CustomUnitEntry entry = (CustomUnitEntry) objectService.get(clientSession, new ObjectId(curId));
+				UnitUtils.registerAllUnits(entry);
 			}
 		}
 		
@@ -281,7 +297,17 @@ public class DataImportService {
 				}
 				session.commitTransaction();
 				return true;
-			}, this.imageService.getDefaultTransactionOptions());
+			}, MongoService.getDefaultTransactionOptions());
+		} catch(Throwable e){
+			UnitUtils.reInitUnitCollections();
+			
+			this.customUnitService.listIterator(
+				null,
+				Sorts.ascending("order"),
+				null
+			).forEach(UnitUtils::registerAllUnits);
+			
+			throw e;
 		}
 		
 		sw.stop();
