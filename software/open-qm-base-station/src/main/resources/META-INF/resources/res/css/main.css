@@ -1,3 +1,13 @@
+#topLogo{
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.top-nav {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
 
 .bordered {
 	border: 1px solid black;
