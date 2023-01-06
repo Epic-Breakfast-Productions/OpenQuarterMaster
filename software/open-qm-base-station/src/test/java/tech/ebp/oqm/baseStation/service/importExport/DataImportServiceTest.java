@@ -23,6 +23,7 @@ import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
+import tech.ebp.oqm.lib.core.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,6 +70,7 @@ class DataImportServiceTest extends RunningServerTest {
 	@Test
 	public void testImportService() throws IOException {
 		User testUser = testUserService.getTestUser();
+		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
 		
@@ -86,6 +89,25 @@ class DataImportServiceTest extends RunningServerTest {
 		UnitUtils.registerAllUnits(customUnits);
 		
 		for (int i = 0; i < 5; i++) {
+			CustomUnitEntry curImage = new CustomUnitEntry(
+				UnitCategory.Number,
+				i,
+				new NewDerivedCustomUnitRequest(
+					customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit(),
+					new BigDecimal(rand.nextInt()),
+					NewDerivedCustomUnitRequest.DeriveType.multiply
+				)
+					.setUnitCategory(UnitCategory.Number)
+					.setName(FAKER.name().name())
+					.setSymbol(FAKER.food().dish())
+			);
+			this.customUnitService.add(curImage, testUser);
+		}
+		customUnits = this.customUnitService.list();
+		UnitUtils.registerAllUnits(customUnits);
+		
+		
+		for (int i = 0; i < 5; i++) {
 			Image curImage = new Image();
 			curImage.setTitle(FAKER.name().name());
 			curImage.setData(Base64.getEncoder().encodeToString("hello world".getBytes()));
@@ -94,7 +116,6 @@ class DataImportServiceTest extends RunningServerTest {
 			curImage.getKeywords().add("hello world");
 			this.imageService.add(curImage, testUser);
 		}
-		Random rand = new SecureRandom();
 		List<ObjectId> storageIds = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			StorageBlock storageBlock = new StorageBlock();

@@ -150,11 +150,13 @@
 												<div id="importBulkCollapse" class="accordion-collapse collapse show" aria-labelledby="importBulkHeading" data-bs-parent="#importAccordion">
 													<div class="accordion-body">
 														<form id="bulkImportForm">
-															<div class="col-12 mb-3">
-																	<label for="importBulkFileInput" class="form-label">Exported bundle file:</label>
-																	<input class="form-control" type="file" id="importBulkFileInput" name="file">
+															<div id="dataImportMessages">
 															</div>
-															<div class="col-12">
+															<div class="mb-3">
+																<label for="importBulkFileInput" class="form-label">Exported bundle file:</label>
+																<input class="form-control" type="file" id="importBulkFileInput" name="file">
+															</div>
+															<div class="">
 																<button type="submit" class="btn btn-primary">
 																	{#icons/icon icon='cloud-upload'}{/icons/icon}
 																	Import
@@ -229,6 +231,7 @@
 					url: '/api/v1/inventory/manage/import/file/bundle',
 					method: "post",
 					data: formData,
+					failMessagesDiv: $("#dataImportMessages"),
 					done: function (data){
 						console.log("Successfully imported the data.");
 						reloadPageWithMessage("Imported data successfully!", "success", "Success!");
