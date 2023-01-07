@@ -23,7 +23,6 @@ import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -203,16 +202,6 @@ public class DataImportService {
 					}
 				}
 				addedList = newAddedList;
-			}
-		}
-		
-		if(objectService instanceof CustomUnitService){
-			log.info("Registering unit objects.");
-			for(File curFile : filesForObject){
-				String curId = curFile.getName().replaceAll("(?<!^)[.][^.]*$", "");//remove extension from file name
-				log.info("Registering unit with id of {}", curId);
-				CustomUnitEntry entry = (CustomUnitEntry) objectService.get(clientSession, new ObjectId(curId));
-				UnitUtils.registerAllUnits(entry);
 			}
 		}
 		
