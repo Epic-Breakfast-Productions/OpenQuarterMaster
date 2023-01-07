@@ -574,6 +574,17 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return returned.get("value", Number.class).doubleValue();
 	}
 	
+	public boolean fieldValueExists(
+		String field,
+		String value
+	){
+		return this.getCollection()
+				   .find(
+					   eq(field, value)
+				   ).limit(1)
+				   .first() != null;
+	}
+	
 	//TODO
 	//	protected BigInteger getSumOfBigIntField(String field){
 	//		Document returned = this.getCollection().aggregate(

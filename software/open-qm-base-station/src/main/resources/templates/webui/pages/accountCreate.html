@@ -28,34 +28,40 @@
 		<div class="row">
 			<form id="userAccountCreateForm">
 				<div id="createMessageDiv"></div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
-					<label for="emailInput">Email address</label>
+					<label for="emailInput" aria-describedby="emailHelp">Email address *</label>
+					<div id="emailHelp" class="form-text">
+						Emails are stored on the server for identification and notification purposes only. Fellow users, admins, and certain plugins will have access to this as well.
+					</div>
 				</div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
-					<label for="usernameInput">Username</label>
+					<label for="usernameInput">Username *</label>
 				</div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
-					<label for="firstnameInput">First name</label>
+					<label for="firstnameInput">First name *</label>
 				</div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="text" class="form-control" id="lastnameInput" placeholder="Last Name" required>
-					<label for="lastnameInput">Last name</label>
+					<label for="lastnameInput">Last name *</label>
 				</div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="text" class="form-control" id="titleInput" placeholder="Title">
 					<label for="titleInput">Title</label>
 				</div>
-				<div class="form-floating mb-2">
-					<input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
-					<label for="passwordInput">Password</label>
+				<div class="form-floating mb-3">
+					<input type="password" class="form-control" id="passwordInput" placeholder="Password" aria-describedby="passwordHelp" required>
+					<label for="passwordInput">Password *</label>
+					<div id="passwordHelp" class="form-text">
+						{passwordHelpText.raw()}
+					</div>
 				</div>
-				<div class="form-floating mb-2">
+				<div class="form-floating mb-3">
 					<input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
 							required>
-					<label for="passwordConfirmInput">Password Confirm</label>
+					<label for="passwordConfirmInput">Password Confirm *</label>
 				</div>
 				<button type="submit" class="btn btn-success btn-lg">
 					{#icons/addUser}{/icons/addUser} Create User
