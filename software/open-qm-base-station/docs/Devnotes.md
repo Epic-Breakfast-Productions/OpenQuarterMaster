@@ -19,3 +19,13 @@
   - RPM:
     - https://www.redhat.com/sysadmin/create-rpm-package
     - https://stackoverflow.com/questions/59248180/how-to-install-rpmdev-tools-on-ubuntu
+- Maven deployment
+  - https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories
+  - https://www.jetbrains.com/help/space/publish-artifacts-from-a-gradle-project.html
+  - https://www.albertgao.xyz/2018/01/18/how-to-publish-artifact-to-maven-central-via-gradle/
+  - https://central.sonatype.org/publish/publish-gradle/#metadata-and-signing
+  - https://central.sonatype.org/publish/requirements/gpg/
+  - https://central.sonatype.org/publish/requirements/coordinates/
+  - https://issues.sonatype.org/secure/BrowseProjects.jspa?selectedCategory=all
+  - https://unix.stackexchange.com/questions/481939/how-to-export-a-gpg-private-key-and-public-key-to-a-file
+  - 
