@@ -23,7 +23,7 @@ import java.util.Map;
 public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBlockSearch, StorageBlockService>{
 	
 	
-	protected StorageBlockImporter(StorageBlockService mongoService) {
+	public StorageBlockImporter(StorageBlockService mongoService) {
 		super(mongoService);
 	}
 	

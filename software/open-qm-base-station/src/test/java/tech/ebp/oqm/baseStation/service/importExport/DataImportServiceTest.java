@@ -73,11 +73,11 @@ class DataImportServiceTest extends RunningServerTest {
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
-		
+		int unitCount = 0;
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry curImage = new CustomUnitEntry(
 				UnitCategory.Number,
-				i,
+				unitCount++,
 				new NewBaseCustomUnitRequest(ValidUnitDimension.amount)
 					.setUnitCategory(UnitCategory.Number)
 					.setName(FAKER.name().name())
@@ -91,7 +91,7 @@ class DataImportServiceTest extends RunningServerTest {
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry curImage = new CustomUnitEntry(
 				UnitCategory.Number,
-				i,
+				unitCount++,
 				new NewDerivedCustomUnitRequest(
 					customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit(),
 					new BigDecimal(rand.nextInt()),
