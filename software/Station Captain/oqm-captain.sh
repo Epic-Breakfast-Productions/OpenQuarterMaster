@@ -864,11 +864,11 @@ function cleanupDialog() {
 			case $? in
 			0)
 				showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
-				systemctl stop open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+				systemctl stop open\\x2bquarter\\x2bmaster*
 
 				rm -rf /data/oqm/db/*
 
-				sudo systemctl start open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+				systemctl start open\\x2bquarter\\x2bmaster* --all
 
 				showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;

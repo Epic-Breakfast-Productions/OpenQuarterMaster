@@ -10,6 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
@@ -46,6 +47,8 @@ public class UserUi extends UiProvider {
 	@Inject
 	UserService userService;
 	@Inject
+	InteractingEntityService interactingEntityService;
+	@Inject
 	InventoryItemService inventoryItemService;
 	@Inject
 	StorageBlockService storageBlockService;
@@ -76,6 +79,7 @@ public class UserUi extends UiProvider {
 			this.setupPageTemplate(overview, tracer, ugr)
 				.data("user", ugr)
 				.data("userService", userService)
+				.data("interactingEntityService", interactingEntityService)
 				.data("userHistory", userHistory)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())

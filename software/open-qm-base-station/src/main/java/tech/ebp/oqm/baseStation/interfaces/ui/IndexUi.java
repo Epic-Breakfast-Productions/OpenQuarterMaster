@@ -14,6 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
+import tech.ebp.oqm.lib.core.validation.validators.PasswordConstraintValidator;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
@@ -129,6 +130,8 @@ public class IndexUi extends UiProvider {
 			//TODO:: redirect to login, message about
 		}
 		
-		return this.setupPageTemplate(accountCreate, tracer).data("firstUser", this.userService.collectionEmpty());
+		return this.setupPageTemplate(accountCreate, tracer)
+				   .data("firstUser", this.userService.collectionEmpty())
+				   .data("passwordHelpText", PasswordConstraintValidator.getPasswordRulesDescriptionHtml());
 	}
 }
