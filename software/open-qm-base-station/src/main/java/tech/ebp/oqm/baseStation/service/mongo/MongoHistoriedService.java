@@ -53,6 +53,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		//TODO:: check has id
 	}
 	
+	@Getter
 	protected final boolean allowNullEntityForCreate;
 	@Getter
 	private MongoHistoryService<T> historyService = null;

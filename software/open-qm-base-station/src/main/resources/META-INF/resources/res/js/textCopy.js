@@ -5,7 +5,7 @@ function copyText(buttonClicked, textContainerId){
     buttonClicked = $(buttonClicked);
     let oldContent = buttonClicked.html();
     // console.log("old content: " + oldContent);
-    buttonClicked.html('<i class="fa-solid fa-clipboard-check"></i>');
+    buttonClicked.html('<i class="bi bi-clipboard-check-fill"></i>');
     setTimeout(
         function (){
             // console.log("Setting copy symbol back.");

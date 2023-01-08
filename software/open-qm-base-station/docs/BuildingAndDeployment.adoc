@@ -286,3 +286,69 @@ Note: As a service admin, goto the "Service Admin" page to send a test email to 
 | your-email@gmail.com
 | The email to use as the sender for emails. `quarkus.mailer.from` is set to this value.
 |===
+
+==== Messaging
+
+For information on setting up your specific messaging settings, see https://quarkus.io/guides/amqp-reference#configuring-the-amqp-broker-access
+
+https://smallrye.io/smallrye-reactive-messaging/3.22.1/
+
+See the subsections for further configuration of specific connectors.
+
+Currently, just AMQP/ Artemis is supported. Please make a Feature Request ticket to have us also include one of the following:
+
+ - Apache Kafka
+ - RabbitMQ
+ - Apache Camel
+ - JMS
+ - MQTT
+
+Connectors:
+
+|===
+| Config | Default | Examples | Explain
+
+| messaging.connector
+|
+| `smallrye-amqp` (Artemis)
+| The connector to use for a messaging broker. Currently just support the
+|===
+
+===== Routes Produced To
+
+These configs must specifically be set when deployed for the messages to reach the message broker.
+
+|===
+| Route | Object | baseStation Config to set | Explain
+
+| items.add
+| ItemAddHistoryEvent
+| `messaging.outgoing."items.add".connector=${messaging.connector}`
+| The route where item add events go.
+|===
+
+===== Artemis AMQP Configuration
+
+|===
+| Config | Default | Examples | Explain
+
+| amqp-host
+|
+| `localhost`
+| The host of the Artemis instance to connect to
+
+| amqp-port
+| `5672`
+|
+| The port of the Artemis instance to connect to
+
+| amqp-username
+|
+| `username`
+| The username used to connect to the Artemis instance.
+
+| amqp-password
+|
+| `password`
+| The password used to connect to the Artemis instance.
+|===

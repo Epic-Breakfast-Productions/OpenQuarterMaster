@@ -4,7 +4,7 @@ import net.datafaker.Faker;
 
 public abstract class TestObjectCreator<T> {
 	
-	protected final Faker faker = Faker.instance();
+	protected final Faker faker = new Faker();
 	
 	public abstract T getTestObject();
 }

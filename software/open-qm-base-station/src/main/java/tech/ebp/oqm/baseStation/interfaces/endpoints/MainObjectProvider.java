@@ -105,7 +105,17 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output = this.getObjectService().add(object, this.getInteractingEntityFromJwt());
+		ObjectId output;
+		if(
+			this.getObjectService().isAllowNullEntityForCreate()
+			&& this.getJwt().getRawToken() == null
+		){
+			output = this.getObjectService().add(object, null);
+		} else {
+			output = this.getObjectService().add(object, this.getInteractingEntityFromJwt());
+		}
+		
+		
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
@@ -368,7 +378,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 				rb = rb.entity(
 						   this.getHistoryRowsTemplate()
 							   .data("objectHistory", output)
-							   .data("userService", this.getInteractingEntityService())
+							   .data("interactingEntityService", this.getInteractingEntityService())
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
 				break;

@@ -21,6 +21,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -112,6 +116,22 @@ public class UserService extends MongoHistoriedService<User, UserSearch> {
 				   )
 				   .limit(1)
 				   .first();
+	}
+	
+	public boolean usernameAvailable(
+		@NotNull
+		@NotBlank
+		@Size(max = 30)
+		String username
+	){
+		return !this.fieldValueExists("username", username);
+	}
+	
+	public boolean emailAvailable(
+		@Email
+		String email
+	){
+		return !this.fieldValueExists("email", email);
 	}
 	
 	public User getFromLoginRequest(UserLoginRequest loginRequest) {

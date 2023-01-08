@@ -1,11 +1,11 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "6.3.0"
+	id "io.freefair.lombok" version "6.6.1"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.17-DEV'
+version '1.0.19-DEV'
 
 repositories {
 	mavenCentral()
@@ -16,29 +16,28 @@ repositories {
 
 dependencies {
 	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-resteasy-reactive'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
+	implementation 'io.quarkus:quarkus-smallrye-openapi'
+	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
+	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-smallrye-opentracing'
+	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
+	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-arc'
-	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-mongodb-panache'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
-	// https://quarkus.io/guides/security-properties
-	implementation 'io.quarkus:quarkus-smallrye-jwt'
-	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-elytron-security'
-	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
-	implementation 'io.quarkus:quarkus-smallrye-opentracing'
 	implementation 'io.quarkus:quarkus-container-image-docker'
-	implementation 'io.opentracing.contrib:opentracing-mongo-common'
 	implementation 'io.quarkus:quarkus-rest-client'
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
-	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
+	implementation 'io.opentracing.contrib:opentracing-mongo-common'
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 
@@ -48,12 +47,13 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	//webjars
-	implementation 'org.webjars:jquery:3.6.1'
-	implementation 'org.webjars:bootstrap:5.2.2'
+	implementation 'org.webjars:jquery:3.6.3'
+	implementation 'org.webjars:bootstrap:5.2.3'
+//	implementation 'org.webjars.npm:bootstrap-icons:1.10.2' //doesn't contain everything needed
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.56-bs.1-2-SNAPSHOT'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.58-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -75,16 +75,16 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
-	testImplementation 'org.testcontainers:mongodb:1.17.2'
+	testImplementation 'org.testcontainers:mongodb:1.17.6'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
 	//2.1.2 seems dud, fails to start & null pointers
 	testImplementation 'org.keycloak:keycloak-admin-client:16.1.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.2.1'
-	testImplementation 'org.testcontainers:selenium:1.17.2'
+	testImplementation 'org.testcontainers:selenium:1.17.6'
 	testImplementation 'com.deque:axe-selenium:3.0'
-	testImplementation 'net.datafaker:datafaker:1.5.0'
+	testImplementation 'net.datafaker:datafaker:1.7.0'
 }
 
 java {

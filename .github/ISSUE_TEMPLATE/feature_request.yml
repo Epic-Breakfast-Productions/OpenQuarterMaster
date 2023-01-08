@@ -1,0 +1,61 @@
+name: Feature Request
+description: File Feature Request
+title: "[FR]: "
+labels: ["type-enhancement", "state-triage"]
+assignees:
+  - gregjstewart
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+        
+  - type: dropdown
+    id: softwareComponent
+    validations:
+      required: true
+    attributes:
+      label: Software
+      description: What component(s) are part of the bug?
+      multiple: true
+      options:
+        - Base Station
+        - Station Captain
+        - Infra - Mongo
+        - Plugins- *
+        - Other / New
+        
+  - type: textarea
+    id: what-is-problem
+    attributes:
+      label: "Describe what you'd like to see"
+      description: "What don't we currently support that you would you like to see? Please be specific."
+    validations:
+      required: false
+        
+  - type: textarea
+    id: describe-what-like
+    attributes:
+      label: Is your feature request related to a problem?
+      description: "A clear and concise description of what the problem is. Ex. I'm always frustrated when ..."
+    validations:
+      required: false
+        
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Describe alternatives you've considered"
+      description: "If you have any workarounds, you can describe them here."
+      value: "None"
+    validations:
+      required: false
+      
+  - type: textarea
+    id: additional-details
+    attributes:
+      label: "Additional context"
+      description: "Anything else you would like to say."
+      value: "None"
+    validations:
+      required: false
+      

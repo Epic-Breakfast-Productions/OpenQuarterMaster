@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	// https://plugins.gradle.org/plugin/io.freefair.lombok
-	id "io.freefair.lombok" version "6.5.1"
+	id "io.freefair.lombok" version "6.6.1"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.56-bs.1-2-SNAPSHOT'
+version '1.0.58-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -47,6 +47,7 @@ dependencies {
 	implementation 'org.passay:passay:1.6.2'
 	implementation 'commons-io:commons-io:2.11.0'
 	implementation 'commons-codec:commons-codec:1.15'
+//	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'//https://search.maven.org/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
 
 	testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
 	testImplementation 'javax.el:javax.el-api:3.0.0'

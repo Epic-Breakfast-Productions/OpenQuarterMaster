@@ -28,13 +28,13 @@ Ingests:
     <hr />
     <div class="row">
         <div class="col col-2 text-center">
-            <button type="submit" class="btn btn-info mb-1"><i class="fas fa-search"></i> Search</button>
+            <button type="submit" class="btn btn-info mb-1">{#icons/search}{/icons/search} Search</button>
             <button type="reset" class="btn btn-warning mb-1">Reset</button>
         </div>
         <div class="col col-2">
             <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="{#if pagingOptions??}{pagingOptions.getPageNum()}{#else}1{/if}">
             <div class="input-group" title="Number of results per page">
-                <label for="{id}-pageSizeInput" class="input-group-text"><i class="fas fa-hashtag"></i></label>
+                <label for="{id}-pageSizeInput" class="input-group-text">{#icons/icon icon='hash'}{/icons/icon}</label>
                 <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="{searchObject.getDefaultPageSize()}" value="{#if pagingOptions??}{pagingOptions.getPageSize()}{/if}" min="1">
             </div>
         </div>
