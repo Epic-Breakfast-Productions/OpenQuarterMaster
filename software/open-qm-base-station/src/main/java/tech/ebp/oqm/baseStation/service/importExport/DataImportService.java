@@ -1,27 +1,31 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.time.StopWatch;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
-import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
+import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
+import tech.ebp.oqm.baseStation.service.importExport.importer.StorageBlockImporter;
+import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
-import tech.ebp.oqm.lib.core.Utils;
-import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.BufferedInputStream;
@@ -31,10 +35,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,116 +101,17 @@ public class DataImportService {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	private <T extends MainObject, S extends SearchObject<T>> void readInObject(
-		ClientSession clientSession,
-		T curObj,
-		MongoHistoriedService<T, S> objectService,
-		InteractingEntity importingEntity,
-		Map<ObjectId, List<T>> needParentMap,
-		List<ObjectId> addedList
-	) {
-		ObjectId oldId = curObj.getId();
-		ObjectId newId;
-		try {
-			newId = objectService.add(clientSession, curObj, importingEntity);
-		} catch(DbModValidationException e){
-			if(e.getMessage().contains("No parent exists")){
-				ObjectId curParent = ((StorageBlock)curObj).getParent();
-				needParentMap.computeIfAbsent(curParent, k->new ArrayList<>()).add(curObj);
-				return;
-			}
-			throw e;
-		} catch(Throwable e) {
-			log.error("Failed to import object: ", e);
-			throw e;
-		}
-		log.info("Read in object. new id == old? {}", newId.equals(oldId));
-		assert newId.equals(oldId); //TODO:: better check?
-		addedList.add(oldId);
-	}
+	private UnitImporter unitImporter;
+	private GenericImporter<Image, ImageSearch> imageImporter;
+	private StorageBlockImporter storageBlockImporter;
+	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
 	
-	private <T extends MainObject, S extends SearchObject<T>> void readInObject(
-		ClientSession clientSession,
-		File curFile,
-		MongoHistoriedService<T, S> objectService,
-		InteractingEntity importingEntity,
-		Map<ObjectId, List<T>> needParentMap,
-		List<ObjectId> addedList
-	) throws IOException {
-		try {
-			this.readInObject(
-				clientSession,
-				Utils.OBJECT_MAPPER.readValue(curFile, objectService.getClazz()),
-				objectService,
-				importingEntity,
-				needParentMap,
-				addedList
-			);
-		} catch(Throwable e){
-			log.error("Failed to process object file {}: ", curFile, e);
-			throw e;
-		}
-	}
-	
-	private <T extends MainObject, S extends SearchObject<T>> long readInObjects(
-		ClientSession clientSession,
-		Path directory,
-		MongoHistoriedService<T, S> objectService,
-		InteractingEntity importingEntity
-	) throws IOException {
-		Path objectDirPath = directory.resolve(objectService.getCollectionName());
-		List<File> filesForObject = getObjectFiles(objectDirPath);
-		
-		log.info("Found {} files for {} in {}", filesForObject.size(), objectService.getCollectionName(), objectDirPath);
-		StopWatch sw = StopWatch.createStarted();
-		Map<ObjectId, List<T>> needParentMap = new HashMap<>();
-		List<ObjectId> addedList = new ArrayList<>();
-		for (File curObjFile : filesForObject) {
-			this.readInObject(clientSession, curObjFile, objectService, importingEntity, needParentMap, addedList);
-		}
-		
-		if(needParentMap.isEmpty()){
-			log.info("No objects need parents.");
-		} else {
-			log.info("{} objects need parents.", needParentMap.size());
-			
-			while(!needParentMap.isEmpty()){
-				List<ObjectId> newAddedList = new ArrayList<>(addedList.size());
-				
-				while (!addedList.isEmpty()){
-					ObjectId curParent = addedList.remove(0);
-					
-					List<T> toAdd = needParentMap.remove(curParent);
-					
-					if(toAdd == null){
-						continue;
-					}
-					
-					for(T curObj : toAdd){
-						this.readInObject(
-							clientSession,
-							curObj,
-							objectService,
-							importingEntity,
-							null,
-							newAddedList
-						);
-					}
-				}
-				addedList = newAddedList;
-			}
-		}
-		
-		sw.stop();
-		log.info(
-			"Read in {} {} objects in {}",
-			filesForObject.size(),
-			objectService.getCollectionName(),
-			sw
-		);
-		
-		
-		return filesForObject.size();
+	@PostConstruct
+	public void setup(){
+		this.unitImporter = new UnitImporter(this.customUnitService);
+		this.storageBlockImporter = new StorageBlockImporter(this.storageBlockService);
+		this.imageImporter = new GenericImporter<>(this.imageService);
+		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
 	}
 	
 	public DataImportResult importBundle(
@@ -270,18 +172,28 @@ public class DataImportService {
 		){
 			session.withTransaction(()->{
 				try {
-					resultBuilder.numUnits(this.readInObjects(session, tempDirPath, this.customUnitService, importingEntity));
-					resultBuilder.numImages(this.readInObjects(session, tempDirPath, this.imageService, importingEntity));
-					resultBuilder.numStorageBlocks(this.readInObjects(session, tempDirPath, this.storageBlockService, importingEntity));
-					resultBuilder.numInventoryItems(this.readInObjects(session, tempDirPath, this.inventoryItemService, importingEntity));
+					resultBuilder.numUnits(this.unitImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numImages(this.imageImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numInventoryItems(this.itemImporter.readInObjects(session, tempDirPath, importingEntity));
 					//TODO:: history
 				} catch(Throwable e){
 					session.abortTransaction();
-					throw new RuntimeException(e);
+					throw new RuntimeException("A data error prevented import of the bundle: " + e.getMessage(), e);
 				}
 				session.commitTransaction();
 				return true;
-			}, this.imageService.getDefaultTransactionOptions());
+			}, MongoService.getDefaultTransactionOptions());
+		} catch(Throwable e){
+			UnitUtils.reInitUnitCollections();
+			
+			this.customUnitService.listIterator(
+				null,
+				Sorts.ascending("order"),
+				null
+			).forEach(UnitUtils::registerAllUnits);
+			
+			throw e;
 		}
 		
 		sw.stop();

@@ -636,7 +636,7 @@ function setupView(blockId){
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(storageBlockHistory, "/inventory/storage-block/"+data.id);
+            displayObjHistory(storageBlockHistory, "inventory/storage-block/"+data.id);
             
             if(data.nickname){
                 storageBlockViewModalLabel.text(data.label + " / " + data.nickname);

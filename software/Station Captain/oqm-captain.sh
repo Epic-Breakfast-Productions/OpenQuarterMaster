@@ -11,7 +11,7 @@
 #  - sponge (from moreutils)
 #  - curl
 #  - jq
-SCRIPT_VERSION="1.0.8-DEV"
+SCRIPT_VERSION="1.0.9-DEV"
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
@@ -864,11 +864,11 @@ function cleanupDialog() {
 			case $? in
 			0)
 				showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
-				systemctl stop open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+				systemctl stop open\\x2bquarter\\x2bmaster*
 
 				rm -rf /data/oqm/db/*
 
-				sudo systemctl start open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
+				systemctl start open\\x2bquarter\\x2bmaster* --all
 
 				showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;

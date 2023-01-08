@@ -8,10 +8,14 @@ Ingests:
 
 <ul class="nav nav-tabs" id="imageSelectTab" role="tablist">
     <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="imageSelectSearchTab" data-bs-toggle="tab" data-bs-target="#imageSelectSearchTabContent" type="button" role="tab" aria-controls="imageSelectSearchTabContent" aria-selected="true">Search</button>
+    <button class="nav-link active" id="imageSelectSearchTab" data-bs-toggle="tab" data-bs-target="#imageSelectSearchTabContent" type="button" role="tab" aria-controls="imageSelectSearchTabContent" aria-selected="true">
+        {#icons/search}{/icons/search} Search
+    </button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="imageSelectNewImageTab" data-bs-toggle="tab" data-bs-target="#imageSelectNewImageTabContent" type="button" role="tab" aria-controls="imageSelectNewImageTabContent" aria-selected="false">Add New</button>
+    <button class="nav-link" id="imageSelectNewImageTab" data-bs-toggle="tab" data-bs-target="#imageSelectNewImageTabContent" type="button" role="tab" aria-controls="imageSelectNewImageTabContent" aria-selected="false">
+        {#icons/add}{/icons/add} Add New
+    </button>
   </li>
 </ul>
 <div class="tab-content" id="imageSelectTabContent">
@@ -52,7 +56,7 @@ Ingests:
         <hr />
     <div class="mb-3">
         <button type="submit" class="btn btn-success">
-            Add and Select image
+            {#icons/add}{/icons/add} Add and Select image
         </button>
     </div>
       </form>

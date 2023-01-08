@@ -60,6 +60,7 @@ public class MessagerBehaviorTest extends RunningServerTest {
 		}
 		log.info("END sending messages.");
 		
+		Thread.sleep(5_000L);
 		assertEquals(NUM_MESSAGES, this.consumers.getReceivedOne().size());
 		assertEquals(NUM_MESSAGES, this.consumers.getReceivedTwo().size());
 		

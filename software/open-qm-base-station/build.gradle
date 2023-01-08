@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.18-DEV'
+version '1.0.19-DEV'
 
 repositories {
 	mavenCentral()
@@ -47,13 +47,13 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	//webjars
-	implementation 'org.webjars:jquery:3.6.1'
+	implementation 'org.webjars:jquery:3.6.3'
 	implementation 'org.webjars:bootstrap:5.2.3'
 //	implementation 'org.webjars.npm:bootstrap-icons:1.10.2' //doesn't contain everything needed
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.57-SNAPSHOT'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.58-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya

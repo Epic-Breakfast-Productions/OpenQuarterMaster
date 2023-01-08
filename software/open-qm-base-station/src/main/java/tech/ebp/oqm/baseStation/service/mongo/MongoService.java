@@ -128,7 +128,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.collection;
 	}
 	
-	public TransactionOptions getDefaultTransactionOptions() {
+	public static TransactionOptions getDefaultTransactionOptions() {
 		return TransactionOptions.builder()
 								 .readPreference(ReadPreference.primary())
 								 .readConcern(ReadConcern.LOCAL)
@@ -150,6 +150,19 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
 	}
 	
+	private FindIterable<T> find(ClientSession session, Bson filter) {
+		if (filter != null) {
+			if (session == null) {
+				return getCollection().find(filter);
+			}
+			return getCollection().find(session, filter);
+		}
+		if (session == null) {
+			return getCollection().find();
+		}
+		return getCollection().find(session);
+	}
+	
 	/**
 	 * Gets an iterator of entries based on the options given.
 	 * <p>
@@ -163,13 +176,8 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 * @return a list of entries based on the options given.
 	 */
 	public FindIterable<T> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
-		FindIterable<T> results;
+		FindIterable<T> results = this.find(clientSession, filter);
 		
-		if (filter == null) {
-			results = getCollection().find();
-		} else {
-			results = getCollection().find(filter);
-		}
 		
 		if (sort != null) {
 			results = results.sort(sort);
@@ -327,7 +335,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public T get(ClientSession clientSession, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
 		T found;
 		
-		if(clientSession == null) {
+		if (clientSession == null) {
 			found = getCollection()
 						.find(eq("_id", objectId))
 						.limit(1)
@@ -525,57 +533,70 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	
 	/**
 	 * Gets the sum of an integer(or long) field in the object stored.
+	 *
 	 * @param field The field to sum
+	 *
 	 * @return The sum of all values at the field
 	 */
-	protected long getSumOfIntField(String field){
+	protected long getSumOfIntField(String field) {
 		Document returned = this.getCollection().aggregate(
 			List.of(
 				new Document(
 					"$group",
 					new Document("_id", new BsonNull())
-						.append("value", new Document("$sum", "$"+field))
+						.append("value", new Document("$sum", "$" + field))
 				)),
 			Document.class
 		).first();
 		
-		if(returned == null){
+		if (returned == null) {
 			return 0;
 		}
 		
 		return returned.get("value", Number.class).longValue();
 	}
 	
-	protected double getSumOfFloatField(String field){
+	protected double getSumOfFloatField(String field) {
 		Document returned = this.getCollection().aggregate(
 			List.of(
 				new Document(
 					"$group",
 					new Document("_id", new BsonNull())
-						.append("value", new Document("$sum", "$"+field))
+						.append("value", new Document("$sum", "$" + field))
 				)),
 			Document.class
 		).first();
 		
-		if(returned == null){
+		if (returned == null) {
 			return 0.0;
 		}
 		
 		return returned.get("value", Number.class).doubleValue();
 	}
 	
+	public boolean fieldValueExists(
+		String field,
+		String value
+	){
+		return this.getCollection()
+				   .find(
+					   eq(field, value)
+				   ).limit(1)
+				   .first() != null;
+	}
+	
 	//TODO
-//	protected BigInteger getSumOfBigIntField(String field){
-//		Document returned = this.getCollection().aggregate(
-//			List.of(
-//				new Document(
-//					"$group",
-//					new Document("_id", new BsonNull())
-//						.append("value", new Document("$sum", "$"+field))
-//				)),
-//			Document.class
-//		).first();
-//
-//		return returned.get("value", Number.class).doubleValue();
-//	}
+	//	protected BigInteger getSumOfBigIntField(String field){
+	//		Document returned = this.getCollection().aggregate(
+	//			List.of(
+	//				new Document(
+	//					"$group",
+	//					new Document("_id", new BsonNull())
+	//						.append("value", new Document("$sum", "$"+field))
+	//				)),
+	//			Document.class
+	//		).first();
+	//
+	//		return returned.get("value", Number.class).doubleValue();
+	//	}
 }
