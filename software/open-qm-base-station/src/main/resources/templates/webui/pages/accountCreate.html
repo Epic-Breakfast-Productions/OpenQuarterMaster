@@ -29,14 +29,14 @@
 			<form id="userAccountCreateForm">
 				<div id="createMessageDiv"></div>
 				<div class="form-floating mb-3">
-					<input type="email" class="form-control" id="emailInput" name="email" placeholder="name@example.com" aria-describedby="emailHelp" onchange="checkUsernameEmail(this)" required>
+					<input type="email" class="form-control" id="emailInput" name="email" placeholder="name@example.com" aria-describedby="emailHelp" oninput="checkUsernameEmail(this)" required>
 					<label for="emailInput">Email address *</label>
 					<div id="emailHelp" class="form-text">
 						Emails are stored on the server for identification and notification purposes only. Fellow users, admins, and certain plugins will have access to this as well. Must not already be in use by another user.
 					</div>
 				</div>
 				<div class="form-floating mb-3">
-					<input type="text" class="form-control" name="username" id="usernameInput" placeholder="Username" aria-describedby="usernameHelp" onchange="checkUsernameEmail(this)" required>
+					<input type="text" class="form-control" name="username" id="usernameInput" placeholder="Username" aria-describedby="usernameHelp" oninput="checkUsernameEmail(this)" required>
 					<label for="usernameInput">Username *</label>
 					<div id="usernameHelp" class="form-text">
 						Must not already be in use by another user.
@@ -55,7 +55,7 @@
 					<label for="titleInput">Title</label>
 				</div>
 				<div class="form-floating mb-3">
-					<input type="password" class="form-control" id="passwordInput" placeholder="Password" aria-describedby="passwordHelp" required>
+					<input type="password" class="form-control" id="passwordInput" placeholder="Password" aria-describedby="passwordHelp" oninput="checkPassConfirmMatch()" required>
 					<label for="passwordInput">Password *</label>
 					<div id="passwordHelp" class="form-text">
 						{passwordHelpText.raw()}
@@ -63,7 +63,7 @@
 				</div>
 				<div class="form-floating mb-3">
 					<input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
-							required>
+							oninput="checkPassConfirmMatch()" required>
 					<label for="passwordConfirmInput">Password Confirm *</label>
 					<div id="passwordConfirmHelp" class="form-text">
 						Must equal your password.
@@ -81,7 +81,7 @@
 			
 			function checkUsernameEmail(input){
 				doRestCall({
-				spinnerContainer: $(input.parent),
+				spinnerContainer: null,
 				url: "/api/v1/user/utils/availability/"+input.name+"/"+input.value,
 					method: "GET",
 					done: function (data){
@@ -93,15 +93,22 @@
 					}
 				});
 			}
+			
+			var passwordInput = $("#passwordInput");
+			var passwordConfirmInput = $("#passwordConfirmInput");
+			
+			function checkPassConfirmMatch(){
+				if(passwordInput.val() === passwordConfirmInput.val()){
+					passwordConfirmInput[0].setCustomValidity('');
+				} else {
+					passwordConfirmInput[0].setCustomValidity('Password and confirmation must match');
+				}
+			}
+			
 
 			$("#userAccountCreateForm").submit(async function (event) {
 				event.preventDefault();
 				console.log("Submitting login form.");
-
-				if ($("#passwordInput").val() != $("#passwordConfirmInput").val()) {
-					addMessageToDiv($("#createMessageDiv"), "warning", "Password must match confirm!", null, null);
-					return;
-				}
 
 				var createRequestData = {
 					firstName: $("#firstnameInput").val(),
