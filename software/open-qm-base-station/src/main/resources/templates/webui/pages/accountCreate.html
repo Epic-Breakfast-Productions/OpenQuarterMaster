@@ -9,7 +9,7 @@
 					will need to enable users after yourself for them to interact with data.
 				</p>
 				<p class="mb-0">
-					See the "User Administration" page for more information.
+					See the "User Administration" page once logged in for more information.
 				</p>
 			</div>
 			{#else}
@@ -125,7 +125,6 @@
 					data: createRequestData,
 					async: false,
 					done: function (data) {
-						console.log("Response from user create request.");
 						window.location.replace("/?message=User Registration Successful!&messageType=success");
 					},
 					failMessagesDiv: "#createMessageDiv"
