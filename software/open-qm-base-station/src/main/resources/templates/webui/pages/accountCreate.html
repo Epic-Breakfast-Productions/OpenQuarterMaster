@@ -6,7 +6,7 @@
 				<hr>
 				<p>
 					You are the first user to create an account. You will be made an admin of both users and data. You
-					will need to enable users after yourself to interact with data.
+					will need to enable users after yourself for them to interact with data.
 				</p>
 				<p class="mb-0">
 					See the "User Administration" page for more information.
@@ -29,15 +29,18 @@
 			<form id="userAccountCreateForm">
 				<div id="createMessageDiv"></div>
 				<div class="form-floating mb-3">
-					<input type="email" class="form-control" id="emailInput" placeholder="name@example.com" required>
-					<label for="emailInput" aria-describedby="emailHelp">Email address *</label>
+					<input type="email" class="form-control" id="emailInput" name="email" placeholder="name@example.com" aria-describedby="emailHelp" onchange="checkUsernameEmail(this)" required>
+					<label for="emailInput">Email address *</label>
 					<div id="emailHelp" class="form-text">
-						Emails are stored on the server for identification and notification purposes only. Fellow users, admins, and certain plugins will have access to this as well.
+						Emails are stored on the server for identification and notification purposes only. Fellow users, admins, and certain plugins will have access to this as well. Must not already be in use by another user.
 					</div>
 				</div>
 				<div class="form-floating mb-3">
-					<input type="text" class="form-control" id="usernameInput" placeholder="Username" required>
+					<input type="text" class="form-control" name="username" id="usernameInput" placeholder="Username" aria-describedby="usernameHelp" onchange="checkUsernameEmail(this)" required>
 					<label for="usernameInput">Username *</label>
+					<div id="usernameHelp" class="form-text">
+						Must not already be in use by another user.
+					</div>
 				</div>
 				<div class="form-floating mb-3">
 					<input type="text" class="form-control" id="firstnameInput" placeholder="First Name" required>
@@ -62,6 +65,9 @@
 					<input type="password" class="form-control" id="passwordConfirmInput" placeholder="Password Confirm"
 							required>
 					<label for="passwordConfirmInput">Password Confirm *</label>
+					<div id="passwordConfirmHelp" class="form-text">
+						Must equal your password.
+					</div>
 				</div>
 				<button type="submit" class="btn btn-success btn-lg">
 					{#icons/addUser}{/icons/addUser} Create User
@@ -72,6 +78,21 @@
 	{#pageScript}
 		<script>
 			assertNotLoggedIn();
+			
+			function checkUsernameEmail(input){
+				doRestCall({
+				spinnerContainer: $(input.parent),
+				url: "/api/v1/user/utils/availability/"+input.name+"/"+input.value,
+					method: "GET",
+					done: function (data){
+						if(data.available){
+							input.setCustomValidity('');
+						} else {
+							input.setCustomValidity('"' + input.value + '" is taken.');
+						}
+					}
+				});
+			}
 
 			$("#userAccountCreateForm").submit(async function (event) {
 				event.preventDefault();
