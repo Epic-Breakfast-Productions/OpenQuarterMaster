@@ -216,11 +216,6 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-  mp:
-    jwt:
-      expiration:
-        # TODO:: unset this when done.
-        default: 45
 #  demo:
 #    perform: true
 
