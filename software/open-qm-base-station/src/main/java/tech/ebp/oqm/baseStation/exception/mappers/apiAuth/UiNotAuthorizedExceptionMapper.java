@@ -17,7 +17,6 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> extend
 	@Context
 	JsonWebToken jsonWebToken;
 	
-	//TODO:: something here isn't getting the appropriate error message; gives null/blank string
 	protected String getErrorMessage(E e) {
 		StringBuilder errorMessages = new StringBuilder();
 		
@@ -47,24 +46,30 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> extend
 		URI uri = this.getUriInfo().getRequestUri();
 		if (isAtUiEndpoint()) {
 			return Response.seeOther( //seeOther = 303 redirect
-									  UriBuilder.fromUri("/")
-												.queryParam("messageHeading", "Unauthorized")
-												.queryParam("message",
-															"Please login to access this page. " + (errorMessage != null && !errorMessage.isBlank() ?
-															"Error: " + errorMessage : ""))
-												.queryParam("messageType", "danger")
-												.queryParam(
-													"returnPath",
-													uri.getPath() + (uri.getQuery() == null || uri.getQuery().isBlank() ? "" :
-																												  "?" + uri.getQuery())
-												)
-												.build()
-						   )//build the URL where you want to redirect
-						   //                    .entity("Not authorized")//entity is not required
-						   .cookie(
-							   UiUtils.getAuthRemovalCookie()
-						   )
-						   .build();
+					UriBuilder.fromUri("/")
+						.queryParam("messageHeading", "Unauthorized")
+						.queryParam(
+							"message",
+							"Please login to access this page. " + (
+								errorMessage != null && !errorMessage.isBlank() ?
+									"Error: " + errorMessage : ""
+							)
+						)
+						.queryParam("messageType", "danger")
+						.queryParam(
+							"returnPath",//TODO:: more smartly handle return path (prevent infinitely growing path)
+							uri.getPath() + (
+								uri.getQuery() == null || uri.getQuery().isBlank() ? "" :
+									"?" + uri.getQuery()
+							)
+						)
+						.build()
+				)//build the URL where you want to redirect
+					   //                    .entity("Not authorized")//entity is not required
+					   .cookie(
+						   UiUtils.getAuthRemovalCookie(this.getUriInfo())
+					   )
+					   .build();
 		}
 		log.info("Erring exception for url that wasn't in ui.");
 		return Response.status(Response.Status.UNAUTHORIZED).entity(errorMessage).build();

@@ -55,6 +55,7 @@ public class UserUi extends UiProvider {
 	
 	@Inject
 	JsonWebToken jwt;
+	
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;
@@ -74,7 +75,10 @@ public class UserUi extends UiProvider {
 		User user = userService.getFromJwt(this.jwt);
 		ObjectHistory userHistory = userService.getHistoryFor(user);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(
+			this.getUri(),
+			refreshAuthToken(ksc, refreshToken)
+		);
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, tracer, ugr)
 				.data("user", ugr)

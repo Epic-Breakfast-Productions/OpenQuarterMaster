@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -14,7 +15,9 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.time.ZonedDateTime;
 import java.util.Currency;
 
@@ -76,6 +79,10 @@ public abstract class UiProvider {
 		
 		return response;
 	}
+	
+	@Getter
+	@Context
+	protected UriInfo uri;
 	
 	protected TemplateInstance setupPageTemplate(Template template, Tracer tracer) {
 		return template

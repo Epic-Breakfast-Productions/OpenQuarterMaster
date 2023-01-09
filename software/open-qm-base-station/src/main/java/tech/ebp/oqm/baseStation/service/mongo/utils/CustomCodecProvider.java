@@ -17,13 +17,14 @@ import java.util.List;
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
 	
+	@SuppressWarnings("deprecation")
 	List<Codec<?>> codecs = List.of(
 		new UUIDCodec(),
 		new QuantityCodec(),
 		new UnitCodec(),
 		new ZonedDateTimeCodec(),
 		new DurationCodec(),
-		new MapCodec()
+		new MapCodec()//deprecated
 	);
 	
 	@Override

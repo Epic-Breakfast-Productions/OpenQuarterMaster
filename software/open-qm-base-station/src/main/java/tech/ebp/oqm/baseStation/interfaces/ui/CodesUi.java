@@ -66,7 +66,7 @@ public class CodesUi extends UiProvider {
 		
 		User user = userService.getFromJwt(this.jwt);
 		
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build()),
 			MediaType.TEXT_HTML_TYPE

@@ -87,7 +87,7 @@ public class HelpUi extends UiProvider {
 					   .data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo())
 		;
 		
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			template,
 			MediaType.TEXT_HTML_TYPE
