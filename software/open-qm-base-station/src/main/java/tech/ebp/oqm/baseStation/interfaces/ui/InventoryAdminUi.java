@@ -79,7 +79,7 @@ public class InventoryAdminUi extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
 				.data("unitDerivisionTypes", NewDerivedCustomUnitRequest.DeriveType.values())

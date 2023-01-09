@@ -84,7 +84,7 @@ public class UserAdminUi extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
 		UserSearch search = new UserSearch();
 		SearchResult<User> userResults = userService.search(search, true);
