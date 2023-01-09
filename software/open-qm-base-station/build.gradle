@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.19-1-DEV'
+version '1.0.19-2-DEV'
 
 repositories {
 	mavenCentral()
@@ -32,7 +32,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
 	implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
-	implementation 'io.quarkus:quarkus-container-image-docker'
+	implementation 'io.quarkus:quarkus-container-image-jib'
 	implementation 'io.quarkus:quarkus-rest-client'
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
