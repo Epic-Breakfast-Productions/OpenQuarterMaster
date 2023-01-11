@@ -4,7 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.object.history.EventType;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 
 /**
  * Event for the creation of an object.
@@ -13,8 +14,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
-public class CreateEvent extends HistoryEvent {
+//@SuperBuilder
+public class CreateEvent extends ObjectHistoryEvent {
 	
 	@Override
 	public EventType getType() {

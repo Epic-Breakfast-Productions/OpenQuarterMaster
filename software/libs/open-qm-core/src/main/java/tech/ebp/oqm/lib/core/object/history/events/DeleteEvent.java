@@ -4,7 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.lib.core.object.history.DescriptiveEvent;
+import tech.ebp.oqm.lib.core.object.history.EventType;
 
 /**
  * Event for the deletion of an object.
@@ -13,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+//@SuperBuilder
 public class DeleteEvent extends DescriptiveEvent {
 	
 	@Override

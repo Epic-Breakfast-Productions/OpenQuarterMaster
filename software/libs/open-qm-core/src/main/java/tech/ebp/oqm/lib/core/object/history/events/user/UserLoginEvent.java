@@ -1,8 +1,8 @@
 package tech.ebp.oqm.lib.core.object.history.events.user;
 
 import lombok.NoArgsConstructor;
-import tech.ebp.oqm.lib.core.object.history.events.EventType;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.EventType;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public class UserLoginEvent extends HistoryEvent {
+public class UserLoginEvent extends ObjectHistoryEvent {
 	
 	@Override
 	public EventType getType() {

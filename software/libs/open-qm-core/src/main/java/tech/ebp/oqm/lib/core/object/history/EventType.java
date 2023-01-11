@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.history.events;
+package tech.ebp.oqm.lib.core.object.history;
 
 public enum EventType {
 	CREATE,

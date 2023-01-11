@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.object.history.events.item;
 
 import lombok.NoArgsConstructor;
-import tech.ebp.oqm.lib.core.object.history.events.EventType;
+import tech.ebp.oqm.lib.core.object.history.EventType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+//@SuperBuilder
 public class ItemAddEvent extends ItemAddSubEvent {
 	
 	@NonNull

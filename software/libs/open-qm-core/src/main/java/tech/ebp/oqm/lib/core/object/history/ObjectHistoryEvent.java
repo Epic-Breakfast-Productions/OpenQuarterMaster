@@ -1,22 +1,34 @@
 package tech.ebp.oqm.lib.core.object.history;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
+import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
+import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
+import tech.ebp.oqm.lib.core.object.history.events.user.UserDisabledEvent;
+import tech.ebp.oqm.lib.core.object.history.events.user.UserEnabledEvent;
+import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Describes an object's history.
@@ -25,7 +37,31 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ObjectHistoryEvent extends MainObject {
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
+)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = CreateEvent.class, name = "CREATE"),
+	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
+	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
+	
+	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
+	@JsonSubTypes.Type(value = UserEnabledEvent.class, name = "USER_ENABLED"),
+	@JsonSubTypes.Type(value = UserDisabledEvent.class, name = "USER_DISABLED"),
+	
+	@JsonSubTypes.Type(value = ItemExpiryWarningEvent.class, name = "ITEM_EXPIRY_WARNING"),
+	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
+	@JsonSubTypes.Type(value = ItemLowStockEvent.class, name = "ITEM_LOW_STOCK"),
+	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
+	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
+	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER"),
+	
+	@JsonSubTypes.Type(value = ExtServiceSetupEvent.class, name = "EXT_SERVICE_SETUP"),
+	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),
+})
+@BsonDiscriminator
+public abstract class ObjectHistoryEvent extends MainObject {
 	
 	/**
 	 * The id of the object this history is for
@@ -33,69 +69,27 @@ public class ObjectHistoryEvent extends MainObject {
 	private ObjectId objectId;
 	
 	/**
-	 * The list of history events. Modified by the base station only.
-	 * <p>
-	 * Don't directly modify the values in this list, use {@link #updated(HistoryEvent)} to add a new event.
+	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
+	 */
+	private InteractingEntityReference entity;
+	
+	/**
+	 * When the event occurred
 	 */
 	@NonNull
 	@NotNull
-	private List<@NotNull HistoryEvent> history = new ArrayList<>();
+	@lombok.Builder.Default
+	private ZonedDateTime timestamp = ZonedDateTime.now();
+	
+	public abstract EventType getType();
 	
 	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
-		this.updated(
-			CreateEvent.builder()
-				.entityId((entity == null ? null : entity.getId()))
-				.entityType((entity == null ? null : entity.getInteractingEntityType()))
-				.build()
-		);
+		this.entity = entity.getReference();
 	}
 	
 	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
 		this(object.getId(), entity);
 	}
 	
-	/**
-	 * Adds a history event to the set held, to the front of the list.
-	 *
-	 * @param event The event to add
-	 *
-	 * @return This historied object.
-	 */
-	@JsonIgnore
-	public ObjectHistoryEvent updated(@NonNull HistoryEvent event) {
-		if (this.history.isEmpty() && !(event instanceof CreateEvent)) {
-			throw new IllegalArgumentException("First event must be a create");
-		}
-		if (!this.history.isEmpty() && (event instanceof CreateEvent)) {
-			throw new IllegalArgumentException("Cannot add another CREATE event type.");
-		}
-		
-		this.getHistory().add(0, event);
-		return this;
-	}
-	
-	/**
-	 * Gets the last event that occurred in this object's history.
-	 *
-	 * @return The last event in the object's history
-	 */
-	@BsonIgnore
-	@JsonIgnore
-	public HistoryEvent lastHistoryEvent() {
-		return this.getHistory().get(0);
-	}
-	
-	/**
-	 * Gets the time of the last events in the object's history.
-	 * <p>
-	 * Wrapper for {@link #lastHistoryEvent()}
-	 *
-	 * @return the time of the last events in the object's history.
-	 */
-	@BsonIgnore
-	@JsonIgnore
-	public ZonedDateTime lastHistoryEventTime() {
-		return this.lastHistoryEvent().getTimestamp();
-	}
 }

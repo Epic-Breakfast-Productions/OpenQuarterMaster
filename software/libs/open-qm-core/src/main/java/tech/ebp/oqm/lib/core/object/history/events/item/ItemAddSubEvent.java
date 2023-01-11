@@ -1,13 +1,11 @@
 package tech.ebp.oqm.lib.core.object.history.events.item;
 
 import lombok.NoArgsConstructor;
-import tech.ebp.oqm.lib.core.object.history.events.DescriptiveEvent;
-import tech.ebp.oqm.lib.core.object.history.events.EventType;
+import tech.ebp.oqm.lib.core.object.history.DescriptiveEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import javax.measure.Quantity;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +20,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
+//@SuperBuilder
 public abstract class ItemAddSubEvent
 	extends DescriptiveEvent
 	//	implements AttKeywordContaining

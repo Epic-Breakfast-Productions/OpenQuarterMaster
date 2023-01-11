@@ -13,4 +13,8 @@ public interface InteractingEntity {
 	public String getEmail();
 	
 	public InteractingEntityType getInteractingEntityType();
+	
+	public default InteractingEntityReference getReference() {
+		return new InteractingEntityReference(this.getId(), this.getInteractingEntityType());
+	}
 }
