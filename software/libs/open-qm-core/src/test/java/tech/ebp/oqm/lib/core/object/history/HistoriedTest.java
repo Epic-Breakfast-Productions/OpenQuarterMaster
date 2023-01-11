@@ -17,18 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class HistoriedTest extends BasicTest {
 	
-	public ObjectHistory getBasicTestItem() {
-		return new ObjectHistory();
+	public ObjectHistoryEvent getBasicTestItem() {
+		return new ObjectHistoryEvent();
 	}
 	
 	@Test
 	public void testUpdated() {
-		ObjectHistory o = this.getBasicTestItem();
+		ObjectHistoryEvent o = this.getBasicTestItem();
 		
 		assertTrue(o.getHistory().isEmpty());
 		assertEquals(0, o.getHistory().size());
 		
-		ObjectHistory o2 = o.updated(
+		ObjectHistoryEvent o2 = o.updated(
 			CreateEvent.builder().build()
 		);
 		assertSame(o, o2);
@@ -43,7 +43,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testUpdatedCreate() {
-		ObjectHistory o = this.getBasicTestItem();
+		ObjectHistoryEvent o = this.getBasicTestItem();
 		
 		o.updated(CreateEvent.builder().build());
 		
@@ -54,7 +54,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testUpdatedUpdateFirst() {
-		ObjectHistory o = this.getBasicTestItem();
+		ObjectHistoryEvent o = this.getBasicTestItem();
 		
 		Assertions.assertThrows(IllegalArgumentException.class, ()->{
 			o.updated(UpdateEvent.builder().build());
@@ -63,7 +63,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testGetLastUpdate() {
-		ObjectHistory o = this.getBasicTestItem();
+		ObjectHistoryEvent o = this.getBasicTestItem();
 		
 		o.updated(
 			CreateEvent.builder().build()
@@ -79,7 +79,7 @@ class HistoriedTest extends BasicTest {
 	
 	@Test
 	public void testGetLastUpdateTime() {
-		ObjectHistory o = this.getBasicTestItem();
+		ObjectHistoryEvent o = this.getBasicTestItem();
 		
 		o.updated(
 			CreateEvent.builder().build()

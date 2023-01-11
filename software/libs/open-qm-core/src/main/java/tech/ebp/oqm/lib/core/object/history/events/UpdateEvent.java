@@ -25,26 +25,6 @@ import java.util.Map;
 @SuperBuilder
 public class UpdateEvent extends DescriptiveEvent {
 	
-	public static List<String> fieldListFromJson(ObjectNode updateJson) {
-		List<String> output = new ArrayList<>();
-		
-		for (Iterator<Map.Entry<String, JsonNode>> it = updateJson.fields(); it.hasNext(); ) {
-			Map.Entry<String, JsonNode> cur = it.next();
-			String curKey = cur.getKey();
-			
-			if (cur.getValue().isObject()) {
-				List<String> curSubs = fieldListFromJson((ObjectNode) cur.getValue());
-				
-				for (String curSubKey : curSubs) {
-					output.add(curKey + "." + curSubKey);
-				}
-			} else {
-				output.add(curKey);
-			}
-		}
-		
-		return output;
-	}
 	
 	@NonNull
 	@NotNull

@@ -1,6 +1,5 @@
 package tech.ebp.oqm.lib.core.object.history;
 
-import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import lombok.NoArgsConstructor;
@@ -15,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-class HistoriedValidationTest extends ObjectValidationTest<ObjectHistory> {
+class HistoriedValidationTest extends ObjectValidationTest<ObjectHistoryEvent> {
 	
 	@NoArgsConstructor
-	public static class TestHistoried extends ObjectHistory {
+	public static class TestHistoried extends ObjectHistoryEvent {
 	
 	}
 	

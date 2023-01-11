@@ -25,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ObjectHistory extends MainObject {
+public class ObjectHistoryEvent extends MainObject {
 	
 	/**
 	 * The id of the object this history is for
@@ -41,17 +41,17 @@ public class ObjectHistory extends MainObject {
 	@NotNull
 	private List<@NotNull HistoryEvent> history = new ArrayList<>();
 	
-	public ObjectHistory(ObjectId objectId, InteractingEntity entity) {
+	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
 		this.updated(
 			CreateEvent.builder()
-					   .entityId((entity == null ? null : entity.getId()))
-					   .entityType((entity == null ? null : entity.getInteractingEntityType()))
-					   .build()
+				.entityId((entity == null ? null : entity.getId()))
+				.entityType((entity == null ? null : entity.getInteractingEntityType()))
+				.build()
 		);
 	}
 	
-	public ObjectHistory(MainObject object, InteractingEntity entity) {
+	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
 		this(object.getId(), entity);
 	}
 	
@@ -63,7 +63,7 @@ public class ObjectHistory extends MainObject {
 	 * @return This historied object.
 	 */
 	@JsonIgnore
-	public ObjectHistory updated(@NonNull HistoryEvent event) {
+	public ObjectHistoryEvent updated(@NonNull HistoryEvent event) {
 		if (this.history.isEmpty() && !(event instanceof CreateEvent)) {
 			throw new IllegalArgumentException("First event must be a create");
 		}

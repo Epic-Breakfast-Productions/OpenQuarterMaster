@@ -14,14 +14,14 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
-class HistoriedSerializationTest extends ObjectSerializationTest<ObjectHistory> {
+class HistoriedSerializationTest extends ObjectSerializationTest<ObjectHistoryEvent> {
 	
 	HistoriedSerializationTest() {
-		super(ObjectHistory.class);
+		super(ObjectHistoryEvent.class);
 	}
 	
-	public static ObjectHistory getHistory(int numEvents) {
-		ObjectHistory output = new ObjectHistory();
+	public static ObjectHistoryEvent getHistory(int numEvents) {
+		ObjectHistoryEvent output = new ObjectHistoryEvent();
 		
 		output.setId(ObjectId.get());
 		output.setObjectId(ObjectId.get());
@@ -31,7 +31,7 @@ class HistoriedSerializationTest extends ObjectSerializationTest<ObjectHistory> 
 		for (int i = 1; i < numEvents; i++) {
 			output.updated(
 				UpdateEvent.builder()
-						   .entityId(ObjectId.get())
+					.entityId(ObjectId.get())
 						   .entityType(InteractingEntityType.USER)
 						   .description(FAKER.lorem().paragraph())
 						   .build()
@@ -43,8 +43,8 @@ class HistoriedSerializationTest extends ObjectSerializationTest<ObjectHistory> 
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new ObjectHistory()),
-			Arguments.of(new ObjectHistory().setObjectId(ObjectId.get()).setId(ObjectId.get())),
+			Arguments.of(new ObjectHistoryEvent()),
+			Arguments.of(new ObjectHistoryEvent().setObjectId(ObjectId.get()).setId(ObjectId.get())),
 			Arguments.of(getHistory(1)),
 			Arguments.of(getHistory(10)),
 			Arguments.of(getHistory(10_000))
