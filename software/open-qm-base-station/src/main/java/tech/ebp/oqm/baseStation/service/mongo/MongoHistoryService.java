@@ -11,14 +11,12 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-
-import javax.validation.Valid;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -29,7 +27,7 @@ import static com.mongodb.client.model.Filters.eq;
  */
 @Slf4j
 @Traced
-public class MongoHistoryService<T extends MainObject> extends MongoService<ObjectHistory, HistorySearch> {
+public class MongoHistoryService<T extends MainObject> extends MongoService<ObjectHistoryEvent, HistorySearch> {
 	
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	
@@ -46,14 +44,14 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 			mongoClient,
 			database,
 			getCollectionNameFromClass(clazz) + COLLECTION_HISTORY_APPEND,
-			ObjectHistory.class,
+			ObjectHistoryEvent.class,
 			null
 		);
 		this.clazzForObjectHistoryIsFor = clazz;
 	}
 	
-	public ObjectHistory getHistoryFor(ClientSession clientSession, ObjectId id) {
-		ObjectHistory found;
+	public ObjectHistoryEvent getHistoryFor(ClientSession clientSession, ObjectId id) {
+		ObjectHistoryEvent found;
 		if (clientSession != null) {
 			found = getCollection()
 						.find(clientSession, eq("objectId", id))
@@ -71,19 +69,19 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		return found;
 	}
 	
-	public ObjectHistory getHistoryFor(ObjectId id) {
+	public ObjectHistoryEvent getHistoryFor(ObjectId id) {
 		return this.getHistoryFor(null, id);
 	}
 	
-	public ObjectHistory getHistoryFor(ClientSession clientSession, T object) {
+	public ObjectHistoryEvent getHistoryFor(ClientSession clientSession, T object) {
 		return this.getHistoryFor(clientSession, object.getId());
 	}
 	
-	public ObjectHistory getHistoryFor(T object) {
+	public ObjectHistoryEvent getHistoryFor(T object) {
 		return this.getHistoryFor(null, object);
 	}
 	
-	public ObjectId createHistoryFor(ClientSession session, T created, InteractingEntity entity) {
+	public ObjectId objectCreated(ClientSession session, T created, InteractingEntity entity) {
 		try {
 			this.getHistoryFor(session, created);
 			throw new IllegalStateException(
@@ -93,83 +91,61 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 			// no history record should exist.
 		}
 		
-		ObjectHistory history = new ObjectHistory(created, entity);
+		ObjectHistoryEvent history = new CreateEvent(created, entity);
 		
 		return this.add(session, history);
 	}
 	
-	//TODO:: change to interacting entity
-	public ObjectId createHistoryFor(T created, User user) {
-		return this.createHistoryFor(null, created, user);
+	public ObjectId objectCreated(T created, InteractingEntity interactingEntity) {
+		return this.objectCreated(null, created, interactingEntity);
 	}
 	
-	public ObjectHistory addHistoryEvent(ClientSession clientSession, ObjectId objectId, @Valid HistoryEvent event) {
-		ObjectHistory history;
-		try {
-			history = this.getHistoryFor(clientSession, objectId);
-		} catch(DbNotFoundException e) {
-			log.error("Could not find history for object! (Should not happen)");
-			throw e;
+	public ObjectId objectUpdated(
+		ClientSession clientSession,
+		T updated,
+		InteractingEntity entity,
+		ObjectNode updateJson,
+		String description
+	) {
+		
+		UpdateEvent event = new UpdateEvent(updated, entity);
+		
+		if (updateJson != null) {
+			event.setFieldsUpdated(ObjectUtils.fieldListFromJson(updateJson));
 		}
 		
-		history.updated(event);
-		this.update(clientSession, history);
+		return this.add(clientSession, event);
+	}
+	
+	public ObjectId objectUpdated(T updated, InteractingEntity entity, ObjectNode updateJson, String description) {
+		return this.objectUpdated(null, updated, entity, updateJson, description);
+	}
+	
+	
+	public ObjectId objectUpdated(ClientSession clientSession, T updated, InteractingEntity entity, ObjectNode updateJson) {
+		return this.objectUpdated(clientSession, updated, entity, updateJson, "");
+	}
+	
+	public ObjectId objectUpdated(T updated, InteractingEntity entity, ObjectNode updateJson) {
+		return this.objectUpdated(null, updated, entity, updateJson);
+	}
+	
+	public ObjectId objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity, String description) {
+		DeleteEvent event = (DeleteEvent) new DeleteEvent(updated, entity)
+											  .setDescription(description);
 		
-		return history;
+		return this.add(clientSession, event);
 	}
 	
-	public ObjectHistory addHistoryEvent(ObjectId objectId, @Valid HistoryEvent event) {
-		return addHistoryEvent(null, objectId, event);
-	}
-	
-	public ObjectHistory updateHistoryFor(ClientSession clientSession, T updated, InteractingEntity entity, ObjectNode updateJson,
-										  String description) {
-		return this.addHistoryEvent(
-			clientSession,
-			updated.getId(),
-			UpdateEvent.builder()
-					   .entityId(entity.getId())
-					   .entityType(entity.getInteractingEntityType())
-					   .fieldsUpdated(UpdateEvent.fieldListFromJson(updateJson))
-					   .description(description)
-					   .build()
-		);
-	}
-	
-	public ObjectHistory updateHistoryFor(T updated, InteractingEntity entity, ObjectNode updateJson, String description) {
-		return this.updateHistoryFor(null, updated, entity, updateJson, description);
-	}
-	
-	
-	public ObjectHistory updateHistoryFor(ClientSession clientSession, T updated, InteractingEntity entity, ObjectNode updateJson) {
-		return this.updateHistoryFor(updated, entity, updateJson, "");
-	}
-	
-	public ObjectHistory updateHistoryFor(T updated, InteractingEntity entity, ObjectNode updateJson) {
-		return this.updateHistoryFor(null, updated, entity, updateJson);
-	}
-	
-	public ObjectHistory objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity, String description) {
-		return this.addHistoryEvent(
-			clientSession,
-			updated.getId(),
-			DeleteEvent.builder()
-					   .entityId(entity.getId())
-					   .entityType(entity.getInteractingEntityType())
-					   .description(description)
-					   .build()
-		);
-	}
-	
-	public ObjectHistory objectDeleted(T updated, InteractingEntity entity, String description) {
+	public ObjectId objectDeleted(T updated, InteractingEntity entity, String description) {
 		return this.objectDeleted(null, updated, entity, description);
 	}
 	
-	public ObjectHistory objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity) {
+	public ObjectId objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity) {
 		return this.objectDeleted(clientSession, updated, entity, "");
 	}
 	
-	public ObjectHistory objectDeleted(T updated, InteractingEntity entity) {
+	public ObjectId objectDeleted(T updated, InteractingEntity entity) {
 		return this.objectDeleted(null, updated, entity);
 	}
 }
