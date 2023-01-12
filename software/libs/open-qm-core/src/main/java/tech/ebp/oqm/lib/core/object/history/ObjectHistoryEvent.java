@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
@@ -61,16 +62,18 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),
 })
 @BsonDiscriminator
-public abstract class ObjectHistoryEvent extends MainObject {
+public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	
 	/**
 	 * The id of the object this history is for
 	 */
+	@NotNull
 	private ObjectId objectId;
 	
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
+	@NotNull
 	private InteractingEntityReference entity;
 	
 	/**
@@ -78,7 +81,6 @@ public abstract class ObjectHistoryEvent extends MainObject {
 	 */
 	@NonNull
 	@NotNull
-	@lombok.Builder.Default
 	private ZonedDateTime timestamp = ZonedDateTime.now();
 	
 	public abstract EventType getType();

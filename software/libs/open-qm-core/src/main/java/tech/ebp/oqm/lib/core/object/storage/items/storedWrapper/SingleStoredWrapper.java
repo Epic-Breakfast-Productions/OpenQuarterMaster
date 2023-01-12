@@ -40,7 +40,7 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 	
 	@Override
 	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
-		Optional<ItemExpiryEvent.Builder<?, ?>> output = this.updateExpiredStateForStored(
+		Optional<ItemExpiryEvent> output = updateExpiredStateForStored(
 			this.getStored(),
 			blockKey,
 			expiredWarningThreshold
@@ -50,7 +50,7 @@ public abstract class SingleStoredWrapper<T extends Stored> extends StoredWrappe
 			return List.of();
 		}
 		
-		return List.of(output.get().build());
+		return List.of(output.get());
 	}
 	
 }

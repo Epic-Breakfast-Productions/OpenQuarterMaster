@@ -67,7 +67,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 *
 	 * @return If this storage block is low on stock, builder of event.
 	 */
-	public Optional<ItemLowStockEvent.Builder<?, ?>> updateLowStockState() {
+	public Optional<ItemLowStockEvent> updateLowStockState() {
 		this.recalcTotal();
 		
 		Quantity total = this.getTotal();
@@ -80,7 +80,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 			
 			if (!previouslyLow) {
 				return Optional.of(
-					ItemLowStockEvent.builder()
+					new ItemLowStockEvent()
 				);
 			}
 			return Optional.empty();
@@ -121,7 +121,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 		return this.total;
 	}
 	
-	protected static Optional<ItemExpiryEvent.Builder<?, ?>> updateExpiredStateForStored(
+	protected static Optional<ItemExpiryEvent> updateExpiredStateForStored(
 		Stored stored,
 		ObjectId blockKey,
 		Duration expiredWarningThreshold
@@ -140,7 +140,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 			if (!previouslyExpired) {
 				stored.getNotificationStatus().setExpiredWarning(false);
 				return Optional.of(
-					ItemExpiredEvent.builder().storageBlockId(blockKey)
+					(ItemExpiryEvent) new ItemExpiredEvent().setStorageBlockId(blockKey)
 				);
 			}
 			return Optional.empty();
@@ -159,7 +159,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 			if (!previouslyExpiredWarn) {
 				stored.getNotificationStatus().setExpiredWarning(true);
 				return Optional.of(
-					ItemExpiryWarningEvent.builder().storageBlockId(blockKey)
+					(ItemExpiryEvent) new ItemExpiryWarningEvent().setStorageBlockId(blockKey)
 				);
 			}
 		} else {

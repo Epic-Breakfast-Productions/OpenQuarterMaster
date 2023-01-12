@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.history.EventType;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
@@ -13,16 +12,13 @@ import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
+//@SuperBuilder
 public class ItemLowStockEvent extends ObjectHistoryEvent {
 	
-	@lombok.Builder.Default
 	private ObjectId storageBlockId = null;
 	
-	@lombok.Builder.Default
 	private String identifier = null;
 	
-	@lombok.Builder.Default
 	private Integer index = null;
 	
 	@Override

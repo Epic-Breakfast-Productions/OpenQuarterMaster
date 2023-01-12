@@ -18,12 +18,10 @@ import javax.validation.constraints.NotNull;
 public abstract class ItemStorageBlockEvent extends ObjectHistoryEvent {
 	
 	@NotNull
-	@NonNull
+//	@NonNull
 	private ObjectId storageBlockId;
 	
-	@lombok.Builder.Default
 	private String identifier = null;
 	
-	@lombok.Builder.Default
 	private Integer index = null;
 }

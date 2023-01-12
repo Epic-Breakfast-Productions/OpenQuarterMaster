@@ -21,7 +21,7 @@ class SingleAmountStoredWrapperTest extends StoredWrapperTest {
 	public void testLowStockThresholdNoEventOnEmpty() {
 		SingleAmountStoredWrapper wrapper = new SingleAmountStoredWrapper(new AmountStored(0, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -32,7 +32,7 @@ class SingleAmountStoredWrapperTest extends StoredWrapperTest {
 	public void testLowStockThresholdNoEventOnExisting() {
 		SingleAmountStoredWrapper wrapper = new SingleAmountStoredWrapper(new AmountStored(5, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -46,7 +46,7 @@ class SingleAmountStoredWrapperTest extends StoredWrapperTest {
 			(SingleAmountStoredWrapper) new SingleAmountStoredWrapper(new AmountStored(5, OqmProvidedUnits.UNIT))
 											.setLowStockThreshold(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -63,7 +63,7 @@ class SingleAmountStoredWrapperTest extends StoredWrapperTest {
 												OqmProvidedUnits.UNIT
 											));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isPresent());
 		assertTrue(wrapper.getNotificationStatus().isLowStock());
@@ -86,7 +86,7 @@ class SingleAmountStoredWrapperTest extends StoredWrapperTest {
 												OqmProvidedUnits.UNIT
 											));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isPresent());
 		assertTrue(wrapper.getNotificationStatus().isLowStock());

@@ -21,7 +21,7 @@ public class TrackedStoredWrapperTest extends StoredWrapperTest {
 	public void testLowStockThresholdNoEventOnEmpty() {
 		TrackedMapStoredWrapper wrapper = new TrackedMapStoredWrapper();
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -33,7 +33,7 @@ public class TrackedStoredWrapperTest extends StoredWrapperTest {
 		TrackedMapStoredWrapper wrapper = new TrackedMapStoredWrapper();
 		wrapper.addStored(new TrackedStored(FAKER.idNumber().valid()));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -50,7 +50,7 @@ public class TrackedStoredWrapperTest extends StoredWrapperTest {
 		wrapper.addStored(new TrackedStored(FAKER.idNumber().valid()));
 		wrapper.setLowStockThreshold(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isEmpty());
 		assertFalse(wrapper.getNotificationStatus().isLowStock());
@@ -67,7 +67,7 @@ public class TrackedStoredWrapperTest extends StoredWrapperTest {
 		wrapper.addStored(new TrackedStored(FAKER.idNumber().valid()));
 		wrapper.setLowStockThreshold(Quantities.getQuantity(6, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isPresent());
 		assertTrue(wrapper.getNotificationStatus().isLowStock());
@@ -89,7 +89,7 @@ public class TrackedStoredWrapperTest extends StoredWrapperTest {
 		wrapper.addStored(new TrackedStored(FAKER.idNumber().valid()));
 		wrapper.setLowStockThreshold(Quantities.getQuantity(6, OqmProvidedUnits.UNIT));
 		
-		Optional<ItemLowStockEvent.Builder<?, ?>> result = wrapper.updateLowStockState();
+		Optional<ItemLowStockEvent> result = wrapper.updateLowStockState();
 		
 		assertTrue(result.isPresent());
 		assertTrue(wrapper.getNotificationStatus().isLowStock());

@@ -24,7 +24,6 @@ public abstract class DescriptiveEvent extends ObjectHistoryEvent {
 	/** Description of the event */
 	@NonNull
 	@NotNull
-	@lombok.Builder.Default
 	private String description = "";
 	
 	protected DescriptiveEvent(String description) {

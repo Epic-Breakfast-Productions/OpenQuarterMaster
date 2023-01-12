@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+//@SuperBuilder
 public class UserLoginEvent extends ObjectHistoryEvent {
 	
 	@Override

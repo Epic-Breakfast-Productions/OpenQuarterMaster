@@ -30,8 +30,8 @@ dependencies {
 	//if need ObjectIds, BsonIgnore
 	implementation 'org.mongodb:bson:4.7.2' //matched to quarkus version
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.24'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+//	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+//	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
 	// https://mvnrepository.com/artifact/tech.units/indriya

@@ -14,6 +14,7 @@ public interface InteractingEntity {
 	
 	public InteractingEntityType getInteractingEntityType();
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public default InteractingEntityReference getReference() {
 		return new InteractingEntityReference(this.getId(), this.getInteractingEntityType());
 	}

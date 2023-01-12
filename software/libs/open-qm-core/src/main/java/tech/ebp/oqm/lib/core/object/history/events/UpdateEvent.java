@@ -24,7 +24,6 @@ public class UpdateEvent extends DescriptiveEvent {
 	
 	@NonNull
 	@NotNull
-	@lombok.Builder.Default
 	private List<String> fieldsUpdated = new ArrayList<>();
 	
 	
