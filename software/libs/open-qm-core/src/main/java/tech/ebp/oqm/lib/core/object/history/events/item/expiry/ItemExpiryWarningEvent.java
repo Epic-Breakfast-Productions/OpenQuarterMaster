@@ -4,7 +4,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.EventType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 /**
  * Event for the addition of items to a storage block.
@@ -15,6 +18,14 @@ import tech.ebp.oqm.lib.core.object.history.EventType;
 @EqualsAndHashCode(callSuper = true)
 //@SuperBuilder
 public class ItemExpiryWarningEvent extends ItemExpiryEvent {
+	
+	public ItemExpiryWarningEvent(ObjectId objectId, InteractingEntity entity) {
+		super(objectId, entity);
+	}
+	
+	public ItemExpiryWarningEvent(MainObject object, InteractingEntity entity) {
+		super(object, entity);
+	}
 	
 	@Override
 	public EventType getType() {
