@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo.exception;
 
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 
 /**
  * TODO:: rest mapping
@@ -27,5 +28,9 @@ public class DbDeletedException extends DbNotFoundException {
 	
 	public DbDeletedException(DbNotFoundException cause){
 		this(cause.getClazzNotFound(), cause.getIdNotFound(), cause);
+	}
+	
+	public DbDeletedException(Class<?> clazzNotFound, DeleteEvent deleteEvent){
+		this(clazzNotFound, deleteEvent.getId(), "Deleted at " + deleteEvent.getTimestamp());
 	}
 }

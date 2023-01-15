@@ -19,8 +19,8 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
@@ -107,20 +107,19 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 			return super.get(objectId);
 		} catch(DbNotFoundException e) {
 			try {
-				ObjectHistory history = this.getHistoryService().getHistoryFor(objectId);
-				//if we had history, was deleted
-				//TODO:: check that last event was actually a DELETE?
-				throw new DbDeletedException(e);
-			} catch(DbNotFoundException e2) {
+				DeleteEvent deletedEvent = this.getHistoryService().isDeleted(objectId);
+				
+				throw new DbDeletedException(this.clazz, deletedEvent);
+			} catch(DbDeletedException e2) {
 				//nothing to do. If no history, we never had it.
 			}
 			throw e;
 		}
 	}
 	
-	public T update(T object, HistoryEvent event) throws DbNotFoundException {
+	public T update(T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
 		object = this.update(object);
-		this.addHistoryFor(object, event);
+		this.addHistoryFor(object, entity, event);
 		return object;
 	}
 	
@@ -137,7 +136,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		assertNotNullEntity(interactingEntity);
 		T updated = this.update(id, updateJson);
 		
-		this.getHistoryService().updateHistoryFor(
+		this.getHistoryService().objectUpdated(
 			updated,
 			interactingEntity,
 			updateJson
@@ -163,7 +162,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		}
 		super.add(session, object);
 		
-		this.getHistoryService().createHistoryFor(
+		this.getHistoryService().objectCreated(
 			session,
 			object,
 			entity
@@ -246,37 +245,37 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
-	public List<ObjectHistory> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
+	public List<ObjectHistoryEvent> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
 		return this.getHistoryService().list(filter, sort, pageOptions);
 	}
 	
-	public Iterator<ObjectHistory> historyIterator() {
+	public Iterator<ObjectHistoryEvent> historyIterator() {
 		return this.getHistoryService().iterator();
 	}
 	
-	public SearchResult<ObjectHistory> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){
+	public SearchResult<ObjectHistoryEvent> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){
 		return this.getHistoryService().search(search, defaultPageSizeIfNotSet);
 	}
 	
 	
-	public ObjectHistory getHistoryFor(ObjectId objectId){
+	public List<ObjectHistoryEvent> getHistoryFor(ObjectId objectId){
 		return this.getHistoryService().getHistoryFor(objectId);
 	}
 	
-	public ObjectHistory getHistoryFor(String objectId){
+	public List<ObjectHistoryEvent> getHistoryFor(String objectId){
 		return this.getHistoryFor(new ObjectId(objectId));
 	}
 	
-	public ObjectHistory getHistoryFor(T object){
+	public List<ObjectHistoryEvent> getHistoryFor(T object){
 		return this.getHistoryFor(object.getId());
 	}
 	
-	public ObjectHistory addHistoryFor(ClientSession clientSession, T object, HistoryEvent event){
-		return this.getHistoryService().addHistoryEvent(object.getId(), event);
+	public ObjectId addHistoryFor(ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event){
+		return this.getHistoryService().addHistoryFor(clientSession, object, entity, event);
 	}
 	
-	public ObjectHistory addHistoryFor(T object, HistoryEvent event) {
-		return this.addHistoryFor(null, object, event);
+	public ObjectId addHistoryFor(T object, InteractingEntity entity, ObjectHistoryEvent event) {
+		return this.addHistoryFor(null, object, entity, event);
 	}
 		
 		//TODO:: more aggregate history functions (counts updated since, etc)?
