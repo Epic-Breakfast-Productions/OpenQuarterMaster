@@ -6,11 +6,10 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 
 import javax.inject.Singleton;
 import java.time.Duration;
-
-import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 
 @Singleton
@@ -19,7 +18,7 @@ public class DurationCodec implements Codec<Duration> {
 	@Override
 	public Duration decode(BsonReader bsonReader, DecoderContext decoderContext) {
 		try {
-			return OBJECT_MAPPER.readValue(bsonReader.readString(), this.getEncoderClass());
+			return ObjectUtils.OBJECT_MAPPER.readValue(bsonReader.readString(), this.getEncoderClass());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to decode ZonedDateTime field.", e);
 		}
@@ -28,7 +27,7 @@ public class DurationCodec implements Codec<Duration> {
 	@Override
 	public void encode(BsonWriter bsonWriter, Duration zonedDateTime, EncoderContext encoderContext) {
 		try {
-			bsonWriter.writeString(OBJECT_MAPPER.writeValueAsString(zonedDateTime));
+			bsonWriter.writeString(ObjectUtils.OBJECT_MAPPER.writeValueAsString(zonedDateTime));
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to encode ZonedDateTime field.", e);
 		}

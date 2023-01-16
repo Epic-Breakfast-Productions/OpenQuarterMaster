@@ -8,7 +8,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
@@ -64,12 +64,12 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 		CustomUnitEntry curObj;
 		
 		try {
-			curObj = Utils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class);
+			curObj = ObjectUtils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class);
 		} catch(JsonProcessingException e) {
 			
 			if (isUnitNotFoundJsonException(e)) {
 				log.info("Got derived unit before parent: {}", e.getMessage());
-				ObjectNode curUnitEntryJson = (ObjectNode) Utils.OBJECT_MAPPER.readTree(curFile);
+				ObjectNode curUnitEntryJson = (ObjectNode) ObjectUtils.OBJECT_MAPPER.readTree(curFile);
 				
 				needParentMap.computeIfAbsent(
 								 curUnitEntryJson.get("unitCreator").get("symbol").asText(),
@@ -122,7 +122,7 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 				for(ObjectNode curUnitEntryJson : curUnitEntryList){
 					CustomUnitEntry curEntry;
 					try{
-						curEntry = Utils.OBJECT_MAPPER.treeToValue(curUnitEntryJson, CustomUnitEntry.class);
+						curEntry = ObjectUtils.OBJECT_MAPPER.treeToValue(curUnitEntryJson, CustomUnitEntry.class);
 					} catch(JsonProcessingException e){
 						if(isUnitNotFoundJsonException(e)){
 							newNeedParentMap.put(curKey, curUnitEntryList);

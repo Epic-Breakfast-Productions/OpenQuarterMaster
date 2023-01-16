@@ -14,8 +14,8 @@ import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -67,7 +67,7 @@ public class DataExportService {
 				throw new IOException("Failed to create data file for object.");
 			}
 			
-			Utils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+			ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
 		}
 		
 		if (service instanceof MongoHistoriedService && includeHistory) {
@@ -89,7 +89,7 @@ public class DataExportService {
 					throw new IOException("Failed to create data file for object history.");
 				}
 				
-				Utils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
 			}
 		}
 		

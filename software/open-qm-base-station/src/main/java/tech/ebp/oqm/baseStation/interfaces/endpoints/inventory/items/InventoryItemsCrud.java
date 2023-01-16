@@ -31,8 +31,7 @@ import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.Utils;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
@@ -541,7 +540,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		item = ((InventoryItemService) this.getObjectService()).add(
 			itemId,
 			storageBlockId,
-			(Stored) Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
 				addObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),
@@ -586,7 +585,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		item = ((InventoryItemService) this.getObjectService()).subtract(
 			itemId,
 			storageBlockId,
-			(Stored) Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
 				subtractObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),
@@ -633,7 +632,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			itemId,
 			storageBlockIdFrom,
 			storageBlockIdTo,
-			(Stored) Utils.OBJECT_MAPPER.treeToValue(
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
 				transferObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),

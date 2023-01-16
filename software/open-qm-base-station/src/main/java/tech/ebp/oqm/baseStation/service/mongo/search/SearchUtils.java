@@ -5,7 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -104,7 +104,7 @@ public class SearchUtils {
 			try {
 				output.add(Quantities.getQuantity(
 					capacities.get(i),
-					(Unit<?>) Utils.OBJECT_MAPPER.readValue(units.get(i), Unit.class)
+					(Unit<?>) ObjectUtils.OBJECT_MAPPER.readValue(units.get(i), Unit.class)
 				));
 			} catch(JsonProcessingException e) {
 				throw new IllegalArgumentException("Unable to parse unit: \"" + units.get(i) + "\"", e);

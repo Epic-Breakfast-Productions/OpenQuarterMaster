@@ -6,11 +6,10 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 
 import javax.inject.Singleton;
 import javax.measure.Unit;
-
-import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 
 @Singleton
@@ -19,7 +18,7 @@ public class UnitCodec implements Codec<Unit> {
 	@Override
 	public Unit decode(BsonReader bsonReader, DecoderContext decoderContext) {
 		try {
-			return OBJECT_MAPPER.readValue(bsonReader.readString(), Unit.class);
+			return ObjectUtils.OBJECT_MAPPER.readValue(bsonReader.readString(), Unit.class);
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to decode unit field.", e);
 		}
@@ -28,7 +27,7 @@ public class UnitCodec implements Codec<Unit> {
 	@Override
 	public void encode(BsonWriter bsonWriter, Unit unit, EncoderContext encoderContext) {
 		try {
-			bsonWriter.writeString(OBJECT_MAPPER.writeValueAsString(unit));
+			bsonWriter.writeString(ObjectUtils.OBJECT_MAPPER.writeValueAsString(unit));
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to encode unit field.", e);
 		}
