@@ -43,7 +43,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	//if need ObjectIds, BsonIgnore
-	implementation 'org.mongodb:bson:4.7.2' //matched to quarkus version
+	implementation 'org.mongodb:bson:4.8.2' //matched to quarkus version
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
