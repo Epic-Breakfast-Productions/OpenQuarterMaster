@@ -25,15 +25,22 @@ configurations.all {
 		if (details.requested.group == 'org.junit.jupiter') {
 			details.useVersion "5.9.2"
 		}
+		if (
+			details.requested.group == 'com.fasterxml.jackson.core'
+				|| details.requested.group == 'com.fasterxml.jackson.datatype'
+				|| details.requested.group == 'com.fasterxml.jackson.module'
+		) {
+			details.useVersion "2.14.1"
+		}
 	}
 }
 
 dependencies {
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.1'
-	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird:2.14.1'
+	implementation 'com.fasterxml.jackson.core:jackson-core'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	//if need ObjectIds, BsonIgnore
 	implementation 'org.mongodb:bson:4.7.2' //matched to quarkus version
