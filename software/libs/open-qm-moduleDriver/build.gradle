@@ -77,7 +77,7 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	testImplementation 'org.junit.jupiter:junit-jupiter-params'
-	testImplementation 'org.assertj:assertj-core:3.23.1'
+	testImplementation 'org.assertj:assertj-core:3.24.2'
 //	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
 	testImplementation 'com.github.javafaker:javafaker:1.0.2'
