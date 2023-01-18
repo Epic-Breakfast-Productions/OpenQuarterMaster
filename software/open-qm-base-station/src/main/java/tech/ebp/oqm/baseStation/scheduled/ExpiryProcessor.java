@@ -54,7 +54,7 @@ public class ExpiryProcessor {
 			if (!expiryEvents.isEmpty()) {
 				inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
-					inventoryItemService.addHistoryFor(cur, curEvent);
+					inventoryItemService.addHistoryFor(cur, null, curEvent);
 					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}
 			}

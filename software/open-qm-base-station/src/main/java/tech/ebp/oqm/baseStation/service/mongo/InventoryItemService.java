@@ -72,8 +72,9 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
 		if(!lowStockEvents.isEmpty()) {
 			for(ItemLowStockEvent event : lowStockEvents) {
-				this.getHistoryService().addHistoryEvent(
-					item.getId(), event
+				
+				this.getHistoryService().addHistoryFor(
+					item, null, event
 				);
 			}
 			this.ilsens.sendEvents(item, lowStockEvents);

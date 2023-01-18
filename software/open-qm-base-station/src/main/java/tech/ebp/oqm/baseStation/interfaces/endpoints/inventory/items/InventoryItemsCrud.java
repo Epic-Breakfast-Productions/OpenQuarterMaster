@@ -32,6 +32,7 @@ import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
@@ -402,7 +403,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular Inventory Item's history."
+		summary = "Gets a particular object's history."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -410,7 +411,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = {
 			@Content(
 				mediaType = "application/json",
-				schema = @Schema(implementation = ObjectHistory.class)
+				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
 			),
 			@Content(
 				mediaType = "text/html",
@@ -433,9 +434,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
+		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal
 	) {
-		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal);
 	}
 	
 	@GET
@@ -451,7 +453,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				mediaType = "application/json",
 				schema = @Schema(
 					type = SchemaType.ARRAY,
-					implementation = ObjectHistory.class
+					implementation = ObjectHistoryEvent.class
 				)
 			)
 		},
@@ -462,14 +464,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public SearchResult<ObjectHistory> searchHistory(
+	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Searching for objects with: {}", searchObject);
-		
-		return this.getObjectService().searchHistory(searchObject, false);
+		return super.searchHistory(securityContext, searchObject);
 	}
 	
 	@GET

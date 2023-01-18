@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -78,9 +78,9 @@ public class DataExportService {
 				throw new IOException("Failed to create directory for object history.");
 			}
 			
-			Iterator<ObjectHistory> hIt = ((MongoHistoriedService<T, S>) service).historyIterator();
+			Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedService<T, S>) service).historyIterator();
 			while (hIt.hasNext()) {
-				ObjectHistory curObj = hIt.next();
+				ObjectHistoryEvent curObj = hIt.next();
 				ObjectId curId = curObj.getId();
 				File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
 				

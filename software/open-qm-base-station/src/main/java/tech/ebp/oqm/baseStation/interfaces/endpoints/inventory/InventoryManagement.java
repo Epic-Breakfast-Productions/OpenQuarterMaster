@@ -127,7 +127,7 @@ public class InventoryManagement extends EndpointProvider {
 	) throws IOException {
 		logRequestContext(this.jwt, securityContext);
 		
-		DataImportResult result = this.dataImportService.importBundle(body, this.interactingEntityService.getFromJwt(this.jwt));
+		DataImportResult result = this.dataImportService.importBundle(body, this.interactingEntityService.getEntity(this.jwt));
 		
 		return Response.ok(result).build();
 	}

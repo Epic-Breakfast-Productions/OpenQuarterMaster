@@ -167,6 +167,9 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		
 		return this.add(session, history);
 	}
+	public ObjectId addHistoryFor(T created, InteractingEntity entity, ObjectHistoryEvent history){
+		return this.addHistoryFor(null, created, entity, history);
+	}
 	
 	
 	public ObjectId objectCreated(ClientSession session, T created, InteractingEntity entity) {
