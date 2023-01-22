@@ -41,7 +41,7 @@ dependencies {
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
 
-	implementation 'com.itextpdf:html2pdf:4.0.4'
+	implementation 'com.itextpdf:html2pdf:4.0.5'
 
 	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
@@ -78,7 +78,7 @@ dependencies {
 	testImplementation 'org.testcontainers:mongodb:1.17.6'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:16.1.1'
+	testImplementation 'org.keycloak:keycloak-admin-client:20.0.3'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.2.1'
