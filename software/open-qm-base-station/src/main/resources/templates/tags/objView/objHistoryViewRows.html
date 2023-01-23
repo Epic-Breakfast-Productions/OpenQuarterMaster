@@ -3,7 +3,8 @@ Inputs:
     - objectHistory - the object history we are dealing with
 !}
 {#if objectHistory?? }
-    {#for historyEvent in objectHistory.getHistory()}
+    {! TODO:: this {#for historyEvent in objectHistory.getHistory()}
         {#objView/objHistoryViewRow event=historyEvent}{/objView/objHistoryViewRow}
     {/for}
+    !}
 {/if}

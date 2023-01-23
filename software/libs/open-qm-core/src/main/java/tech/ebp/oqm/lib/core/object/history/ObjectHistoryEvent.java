@@ -1,9 +1,12 @@
 package tech.ebp.oqm.lib.core.object.history;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
@@ -73,8 +76,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
-	@NotNull
-	private InteractingEntityReference entity;
+	private InteractingEntityReference entity = null;
 	
 	/**
 	 * When the event occurred
@@ -87,11 +89,12 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	
 	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
-		this.entity = entity.getReference();
+		if(entity != null) {
+			this.entity = entity.getReference();
+		}
 	}
 	
 	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
 		this(object.getId(), entity);
 	}
-	
 }

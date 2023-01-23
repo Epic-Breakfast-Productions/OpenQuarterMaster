@@ -172,11 +172,9 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		
 		this.update(
 			existentExtService,
-			UpdateEvent.builder()
-					   .entityId(existentExtService.getId())
-					   .entityType(existentExtService.getInteractingEntityType())
-					   .description("Update from Setup Request.")
-					   .build()
+			existentExtService,
+			new UpdateEvent(existentExtService, existentExtService)
+				.setDescription("Update from Setup Request.")
 		);
 		return existentExtService;
 	}

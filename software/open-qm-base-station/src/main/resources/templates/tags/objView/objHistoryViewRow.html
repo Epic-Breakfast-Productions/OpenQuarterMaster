@@ -10,7 +10,7 @@ Inputs:
     <td>
         {#if event.getEntityId() != null}
             {#let entity=interactingEntityService.getEntity(event)}
-                {entity.getInteractingEntityType()} / {entity.getName()}
+                {entity.getInteractingEntityType()}{#if entity.getName() ??} / {entity.getName()}{/if}
             {/let}
         {/if}
     </td>
