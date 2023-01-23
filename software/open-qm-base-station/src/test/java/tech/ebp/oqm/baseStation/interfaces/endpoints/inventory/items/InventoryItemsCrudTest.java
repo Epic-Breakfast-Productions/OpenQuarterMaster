@@ -21,6 +21,7 @@ import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreato
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
@@ -38,7 +39,6 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.ebp.oqm.baseStation.testResources.TestRestUtils.setupJwtCall;
-import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 @Tag("integration")
 @Slf4j
@@ -168,7 +168,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		item.add(ObjectId.get(), new TrackedStored("1"));
 		ObjectId returned = create(user, item);
 		
-		ObjectNode updateData = OBJECT_MAPPER.createObjectNode();
+		ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updateData.put("name", FAKER.commerce().productName());
 		
 	}

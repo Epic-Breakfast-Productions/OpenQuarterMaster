@@ -5,9 +5,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,16 +16,22 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@SuperBuilder
-public abstract class ItemStorageBlockEvent extends HistoryEvent {
+//@SuperBuilder
+public abstract class ItemStorageBlockEvent extends ObjectHistoryEvent {
+	
+	public ItemStorageBlockEvent(ObjectId objectId, InteractingEntity entity) {
+		super(objectId, entity);
+	}
+	
+	public ItemStorageBlockEvent(MainObject object, InteractingEntity entity) {
+		super(object, entity);
+	}
 	
 	@NotNull
-	@NonNull
+	//	@NonNull
 	private ObjectId storageBlockId;
 	
-	@lombok.Builder.Default
 	private String identifier = null;
 	
-	@lombok.Builder.Default
 	private Integer index = null;
 }

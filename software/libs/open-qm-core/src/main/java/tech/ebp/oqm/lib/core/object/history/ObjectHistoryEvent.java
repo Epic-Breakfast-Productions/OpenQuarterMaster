@@ -1,13 +1,15 @@
-package tech.ebp.oqm.lib.core.object.history.events;
+package tech.ebp.oqm.lib.core.object.history;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.experimental.SuperBuilder;
+import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.types.ObjectId;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
+import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
+import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
+import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
@@ -19,19 +21,26 @@ import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarning
 import tech.ebp.oqm.lib.core.object.history.events.user.UserDisabledEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserEnabledEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**
- * Describes an event in an object's history.
- * <p>
- * TODO:: validator to ensure type
+ * Describes an object's history.
  */
 @Data
 @NoArgsConstructor
-@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
@@ -56,23 +65,36 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),
 })
 @BsonDiscriminator
-public abstract class HistoryEvent {
+public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	
 	/**
-	 * The user that performed the event Not required to be anything, as in some niche cases there wouldn't be one (adding user)
+	 * The id of the object this history is for
 	 */
-	private ObjectId entityId;
+	@NotNull
+	private ObjectId objectId;
 	
-	private InteractingEntityType entityType;
-	
+	/**
+	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
+	 */
+	private InteractingEntityReference entity = null;
 	
 	/**
 	 * When the event occurred
 	 */
 	@NonNull
 	@NotNull
-	@lombok.Builder.Default
 	private ZonedDateTime timestamp = ZonedDateTime.now();
 	
 	public abstract EventType getType();
+	
+	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
+		this.objectId = objectId;
+		if(entity != null) {
+			this.entity = entity.getReference();
+		}
+	}
+	
+	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
+		this(object.getId(), entity);
+	}
 }

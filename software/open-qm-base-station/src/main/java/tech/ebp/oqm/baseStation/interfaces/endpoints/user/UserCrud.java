@@ -27,7 +27,7 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
@@ -321,11 +321,10 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				   .build();
 	}
 	
-	
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular User's history."
+		summary = "Gets a particular object's history."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -333,7 +332,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		content = {
 			@Content(
 				mediaType = "application/json",
-				schema = @Schema(implementation = ObjectHistory.class)
+				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
 			),
 			@Content(
 				mediaType = "text/html",
@@ -356,9 +355,10 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
+		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal
 	) {
-		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal);
 	}
 	
 	@GET
@@ -374,7 +374,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				mediaType = "application/json",
 				schema = @Schema(
 					type = SchemaType.ARRAY,
-					implementation = ObjectHistory.class
+					implementation = ObjectHistoryEvent.class
 				)
 			)
 		},
@@ -385,14 +385,11 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.USER_ADMIN)
-	public SearchResult<ObjectHistory> searchHistory(
+	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Searching for objects with: {}", searchObject);
-		
-		return this.getObjectService().searchHistory(searchObject, false);
+		return super.searchHistory(securityContext, searchObject);
 	}
 	
 	//TODO:: update self

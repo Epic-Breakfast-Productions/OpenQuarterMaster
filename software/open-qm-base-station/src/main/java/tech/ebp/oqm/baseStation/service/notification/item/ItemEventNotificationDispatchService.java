@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.service.notification.item;
 
 import org.eclipse.microprofile.opentracing.Traced;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 @Traced
 @ApplicationScoped
-public class ItemEventNotificationDispatchService extends ItemEventNotificationService<HistoryEvent> {
+public class ItemEventNotificationDispatchService extends ItemEventNotificationService<ObjectHistoryEvent> {
 	
 	@Inject
 	ItemExpiredEventNotificationService ieens;
@@ -35,9 +35,9 @@ public class ItemEventNotificationDispatchService extends ItemEventNotificationS
 	@Override
 	public <S extends Stored, C, W extends StoredWrapper<C, S>, I extends InventoryItem<S, C, W>> void sendEvent(
 		I item,
-		HistoryEvent event
+		ObjectHistoryEvent event
 	) {
-		Class<? extends HistoryEvent> eventClass = event.getClass();
+		Class<? extends ObjectHistoryEvent> eventClass = event.getClass();
 		if(eventClass.isAssignableFrom(ItemExpiredEvent.class)) {
 			this.ieens.sendEvent(item, (ItemExpiredEvent) event);
 		} else if(eventClass.isAssignableFrom(ItemExpiryWarningEvent.class)){

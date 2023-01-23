@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
@@ -37,6 +38,7 @@ import static com.mongodb.client.model.Filters.exists;
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedService<InventoryItem, InventoryItemSearch> {
 	
+	private BaseStationInteractingEntity baseStationInteractingEntity;
 	private ItemLowStockEventNotificationService ilsens;
 	
 	InventoryItemService() {//required for DI
@@ -49,7 +51,8 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
-		ItemLowStockEventNotificationService ilsens
+		ItemLowStockEventNotificationService ilsens,
+		BaseStationInteractingEntity baseStationInteractingEntity
 	) {
 		super(
 			objectMapper,
@@ -58,6 +61,7 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 			InventoryItem.class,
 			false
 		);
+		this.baseStationInteractingEntity = baseStationInteractingEntity;
 		this.ilsens = ilsens;
 	}
 	
@@ -72,8 +76,11 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
 		if(!lowStockEvents.isEmpty()) {
 			for(ItemLowStockEvent event : lowStockEvents) {
-				this.getHistoryService().addHistoryEvent(
-					item.getId(), event
+				
+				event.setEntity(this.baseStationInteractingEntity.getReference());
+				
+				this.getHistoryService().addHistoryFor(
+					item, null, event
 				);
 			}
 			this.ilsens.sendEvents(item, lowStockEvents);
@@ -123,11 +130,9 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		this.update(
 			item,
-			ItemAddEvent.builder()//TODO:: add quantity?
-						.entityId(entity.getId())
-						.entityType(entity.getInteractingEntityType())
-						.storageBlockId(storageBlockId)
-						.build()
+			entity,
+			new ItemAddEvent(item, entity)
+				.setStorageBlockId(storageBlockId)//TODO:: add quantity?
 		);
 		
 		return item;
@@ -170,11 +175,9 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		this.update(
 			item,
-			ItemSubEvent.builder()//TODO:: add quantity?
-						.entityId(entity.getId())
-						.entityType(entity.getInteractingEntityType())
-						.storageBlockId(storageBlockId)
-						.build()
+			entity,
+			new ItemSubEvent(item, entity)
+				.setStorageBlockId(storageBlockId)//TODO:: add quantity?
 		);
 		
 		return item;
@@ -219,12 +222,10 @@ public class InventoryItemService extends MongoHistoriedService<InventoryItem, I
 		
 		this.update(
 			item,
-			ItemTransferEvent.builder()//TODO:: add quantity?
-						.entityId(entity.getId())
-						.entityType(entity.getInteractingEntityType())
-				.storageBlockFromId(storageBlockIdFrom)
-				.storageBlockToId(storageBlockIdTo)
-						.build()
+			entity,
+			new ItemTransferEvent(item, entity)
+				.setStorageBlockFromId(storageBlockIdFrom)
+				.setStorageBlockToId(storageBlockIdTo)//TODO:: add quantity?
 		);
 		
 		return item;

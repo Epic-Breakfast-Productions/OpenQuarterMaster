@@ -1,18 +1,24 @@
-package tech.ebp.oqm.lib.core;
+package tech.ebp.oqm.lib.core.object;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import tech.ebp.oqm.lib.core.jackson.MongoObjectIdModule;
 import tech.ebp.oqm.lib.core.jackson.TempQuantityJacksonModule;
 import tech.ebp.oqm.lib.core.jackson.UnitModule;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import tech.uom.lib.jackson.UnitJacksonModule;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
-public class Utils {
+public final class ObjectUtils {
 	
 	/**
 	 * A global object mapper that is pre-configured to handle all objects in lib.
@@ -34,7 +40,7 @@ public class Utils {
 	};
 	
 	static {
-		setupObjectMapper(OBJECT_MAPPER);
+		ObjectUtils.setupObjectMapper(ObjectUtils.OBJECT_MAPPER);
 	}
 	
 	/**
@@ -53,4 +59,24 @@ public class Utils {
 		mapper.setTimeZone(TimeZone.getDefault());
 	}
 	
+	public static List<String> fieldListFromJson(ObjectNode updateJson) {
+		List<String> output = new ArrayList<>();
+		
+		for (Iterator<Map.Entry<String, JsonNode>> it = updateJson.fields(); it.hasNext(); ) {
+			Map.Entry<String, JsonNode> cur = it.next();
+			String curKey = cur.getKey();
+			
+			if (cur.getValue().isObject()) {
+				List<String> curSubs = fieldListFromJson((ObjectNode) cur.getValue());
+				
+				for (String curSubKey : curSubs) {
+					output.add(curKey + "." + curSubKey);
+				}
+			} else {
+				output.add(curKey);
+			}
+		}
+		
+		return output;
+	}
 }

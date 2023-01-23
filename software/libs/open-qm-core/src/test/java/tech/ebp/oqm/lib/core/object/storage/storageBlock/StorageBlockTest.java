@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.object.storage.storageBlock;
 
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
-import tech.ebp.oqm.lib.core.Utils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -52,12 +52,12 @@ class StorageBlockTest extends BasicTest {
 	@ParameterizedTest(name = "jsonTest[{index}]")
 	@MethodSource("jsonTestArgs")
 	public void jsonTest(StorageBlock testStored) throws JsonProcessingException {
-		String storedJson = Utils.OBJECT_MAPPER.writeValueAsString(testStored);
+		String storedJson = ObjectUtils.OBJECT_MAPPER.writeValueAsString(testStored);
 		
 		log.info("Storage block object: {}", testStored);
 		log.info("Storage block json: {}", storedJson);
 		
-		StorageBlock deserialized = Utils.OBJECT_MAPPER.readValue(storedJson, StorageBlock.class);
+		StorageBlock deserialized = ObjectUtils.OBJECT_MAPPER.readValue(storedJson, StorageBlock.class);
 		
 		assertEquals(testStored, deserialized, "Deserialized object was not equal to original.");
 	}

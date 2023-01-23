@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.58-SNAPSHOT'
+version '1.0.58-1-47-8-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -45,8 +45,8 @@ dependencies {
 	//if need ObjectIds, BsonIgnore
 	implementation 'org.mongodb:bson:4.8.1' //matched to quarkus version
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.24'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+//	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+//	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
 	// https://mvnrepository.com/artifact/tech.units/indriya

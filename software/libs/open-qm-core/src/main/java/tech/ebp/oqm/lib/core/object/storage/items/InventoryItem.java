@@ -171,8 +171,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 			
 			if (!previouslyLow) {
 				output.add(
-					ItemLowStockEvent.builder()
-									 .build()
+					new ItemLowStockEvent()
 				);
 			}
 		} else {
@@ -180,7 +179,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		}
 		
 		for (Map.Entry<ObjectId, W> curEntry : this.getStorageMap().entrySet()) {
-			Optional<ItemLowStockEvent.Builder<?, ?>> result = curEntry.getValue().updateLowStockState();
+			Optional<ItemLowStockEvent> result = curEntry.getValue().updateLowStockState();
 			
 			if (curEntry.getValue().getNotificationStatus().isLowStock()) {
 				newNumLowStock++;
@@ -189,7 +188,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 			//noinspection OptionalIsPresent
 			if (result.isPresent()) {
 				output.add(
-					result.get().storageBlockId(curEntry.getKey()).build()
+					result.get().setStorageBlockId(curEntry.getKey())
 				);
 			}
 		}

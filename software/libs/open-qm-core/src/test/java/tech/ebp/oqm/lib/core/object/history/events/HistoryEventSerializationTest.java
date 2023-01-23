@@ -1,5 +1,7 @@
 package tech.ebp.oqm.lib.core.object.history.events;
 
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
@@ -23,7 +25,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
-class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent> {
+class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistoryEvent> {
 	
 	private static final Quantity<?> testQuantity = Quantities.getQuantity(20, OqmProvidedUnits.UNIT);
 	
@@ -35,73 +37,73 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<HistoryEvent
 	
 	
 	HistoryEventSerializationTest() {
-		super(HistoryEvent.class);
+		super(ObjectHistoryEvent.class);
 	}
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
 			//create
-			Arguments.of(CreateEvent.builder().build()),
-			Arguments.of(CreateEvent.builder().entityId(ObjectId.get()).entityType(InteractingEntityType.USER).build()),
+			Arguments.of(new CreateEvent()),
+			Arguments.of(new CreateEvent().setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))),
 			//update
-			Arguments.of(UpdateEvent.builder().build()),
-			Arguments.of(UpdateEvent.builder()
-									.entityId(ObjectId.get())
-									.entityType(InteractingEntityType.USER)
-									.description(FAKER.lorem().paragraph())
-									.build()),
+			Arguments.of(new UpdateEvent()),
+			Arguments.of(new UpdateEvent()
+							 .setDescription(FAKER.lorem().paragraph())
+							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+			),
 			//			Arguments.of(UpdateEvent.builder().updateJson(getRandJsonNode()).build()),
 			//delete
-			Arguments.of(DeleteEvent.builder().build()),
-			Arguments.of(DeleteEvent.builder()
-									.entityId(ObjectId.get())
-									.entityType(InteractingEntityType.USER)
-									.description(FAKER.lorem().paragraph())
-									.build()),
+			Arguments.of(new DeleteEvent()),
+			Arguments.of(new DeleteEvent()
+							 .setDescription(FAKER.lorem().paragraph())
+							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+			),
 			//login
-			Arguments.of(UserLoginEvent.builder().build()),
-			Arguments.of(UserLoginEvent.builder().entityId(ObjectId.get()).entityType(InteractingEntityType.USER).build()),
+			Arguments.of(new UserLoginEvent()),
+			Arguments.of(new UserLoginEvent().setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))),
 			//item expired
-			Arguments.of(ItemExpiredEvent.builder().storageBlockId(ObjectId.get()).build()),
-			Arguments.of(ItemExpiredEvent.builder()
-										 .storageBlockId(ObjectId.get())
-										 .identifier(FAKER.lorem().characters())
-										 .index(5)
-										 .build()),
-			Arguments.of(ItemExpiryWarningEvent.builder().storageBlockId(ObjectId.get()).build()),
-			Arguments.of(ItemExpiryWarningEvent.builder()
-											   .storageBlockId(ObjectId.get())
-											   .identifier(FAKER.lorem().characters())
-											   .index(5)
-											   .build()),
+			Arguments.of(new ItemExpiredEvent().setStorageBlockId(ObjectId.get())),
+			Arguments.of(
+				new ItemExpiredEvent()
+					.setIndex(5)
+					.setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+			),
+			Arguments.of(new ItemExpiryWarningEvent().setStorageBlockId(ObjectId.get())),
+			Arguments.of(new ItemExpiryWarningEvent()
+							 .setStorageBlockId(ObjectId.get())
+							 .setIndex(5)
+							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+			),
 			//item low stock
 			
 			//item add
-			Arguments.of(ItemAddEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
-			Arguments.of(ItemAddEvent.builder()
-									 .storageBlockId(ObjectId.get())
-									 .quantity(testQuantity)
-									 .description(FAKER.lorem().paragraph())
-									 .build()),
+			Arguments.of(new ItemAddEvent().setStorageBlockId(ObjectId.get()).setQuantity(testQuantity)),
+			Arguments.of(
+				new ItemAddEvent()
+					.setStorageBlockId(ObjectId.get())
+					.setQuantity(testQuantity)
+					.setDescription((FAKER.lorem().paragraph())
+					)
+			),
 			//item sub
-			Arguments.of(ItemSubEvent.builder().storageBlockId(ObjectId.get()).quantity(testQuantity).build()),
-			Arguments.of(ItemSubEvent.builder()
-									 .storageBlockId(ObjectId.get())
-									 .quantity(testQuantity)
-									 .description(FAKER.lorem().paragraph())
-									 .build()),
+			Arguments.of(new ItemSubEvent().setStorageBlockId(ObjectId.get()).setQuantity(testQuantity)),
+			Arguments.of(new ItemSubEvent()
+							 .setStorageBlockId(ObjectId.get())
+							 .setQuantity(testQuantity)
+							 .setDescription(FAKER.lorem().paragraph())
+			),
 			//item transfer
-			Arguments.of(ItemTransferEvent.builder()
-										  .storageBlockToId(ObjectId.get())
-										  .storageBlockFromId(ObjectId.get())
-										  .quantity(testQuantity)
-										  .build()),
-			Arguments.of(ItemTransferEvent.builder()
-										  .storageBlockToId(ObjectId.get())
-										  .storageBlockFromId(ObjectId.get())
-										  .quantity(testQuantity)
-										  .description(FAKER.lorem().paragraph())
-										  .build())
+			Arguments.of(new ItemTransferEvent()
+							 .setStorageBlockToId(ObjectId.get())
+							 .setStorageBlockFromId(ObjectId.get())
+							 .setQuantity(testQuantity)
+			),
+			Arguments.of(new ItemTransferEvent()
+							 .setStorageBlockToId(ObjectId.get())
+							 .setStorageBlockFromId(ObjectId.get())
+							 .setQuantity(testQuantity)
+							 .setDescription(FAKER.lorem().paragraph())
+			)
 		);
 	}
 	

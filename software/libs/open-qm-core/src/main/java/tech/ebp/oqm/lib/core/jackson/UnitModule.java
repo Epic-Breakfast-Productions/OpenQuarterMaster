@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.jackson;
 
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
-import tech.ebp.oqm.lib.core.Utils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -37,7 +37,7 @@ public class UnitModule extends TestableModule<Unit> {
 			if (!UnitUtils.UNIT_LIST.contains(value)) {
 				serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
 			} else {
-				ObjectNode node = Utils.OBJECT_MAPPER.createObjectNode();
+				ObjectNode node = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 				node.put(STRING_TOKEN, UnitUtils.stringFromUnit(value));
 				node.put("name", value.getName());
 				node.put("symbol", value.getSymbol());
@@ -57,7 +57,7 @@ public class UnitModule extends TestableModule<Unit> {
 			
 			if (output == null) {
 				output = (Unit<?>) ctxt.findNonContextualValueDeserializer(
-					Utils.OBJECT_MAPPER.constructType(Unit.class)).deserialize(p, ctxt);
+					ObjectUtils.OBJECT_MAPPER.constructType(Unit.class)).deserialize(p, ctxt);
 			}
 			return output;
 		}

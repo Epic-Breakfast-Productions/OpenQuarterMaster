@@ -10,7 +10,7 @@ import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreato
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
@@ -122,7 +122,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		item.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
 		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
 		
-		ObjectNode update = Utils.OBJECT_MAPPER.valueToTree(item);
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);
@@ -138,7 +138,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		item.add(ObjectId.get(), new AmountStored(0, item.getUnit()));
 		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
 		
-		ObjectNode update = Utils.OBJECT_MAPPER.valueToTree(item);
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);
@@ -156,7 +156,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		item.add(ObjectId.get(), new TrackedStored(FAKER.commerce().productName()));
 		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
 		
-		ObjectNode update = Utils.OBJECT_MAPPER.valueToTree(item);
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);

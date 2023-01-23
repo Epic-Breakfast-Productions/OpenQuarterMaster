@@ -20,7 +20,7 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
@@ -73,7 +73,7 @@ public class TestUserService {
 		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
 			this.userService = new UserService(
 				validatorFactory.getValidator(),
-				Utils.OBJECT_MAPPER,
+				ObjectUtils.OBJECT_MAPPER,
 				this.mongoTestConnector.getClient(),
 				this.mongoTestConnector.mongoDatabaseName,
 				this.authMode

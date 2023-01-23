@@ -121,7 +121,8 @@ public class ExternalServiceEp extends EndpointProvider {
 		this.externalServiceService.update(existentExtService);
 		this.externalServiceService.addHistoryFor(
 			existentExtService,
-			ExtServiceSetupEvent.builder().build()
+			null,
+			new ExtServiceSetupEvent(existentExtService, null)
 		);
 		
 		ExternalServiceSetupResponse.Builder<?, ?> builder = ExternalServiceSetupResponse.builder();

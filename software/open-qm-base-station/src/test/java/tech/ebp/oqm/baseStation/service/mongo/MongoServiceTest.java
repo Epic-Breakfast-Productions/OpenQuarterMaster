@@ -16,6 +16,7 @@ import tech.ebp.oqm.baseStation.testResources.data.TestMainObject;
 import tech.ebp.oqm.baseStation.testResources.data.TestMongoService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -25,7 +26,6 @@ import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
-import static tech.ebp.oqm.lib.core.Utils.OBJECT_MAPPER;
 
 @Slf4j
 @QuarkusTest
@@ -239,7 +239,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "something completely different");
 		ObjectNode atts = update.putObject("attributes");
 		atts.put("some", "val");
@@ -259,7 +259,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "something completely different");
 		ObjectNode atts = update.putObject("attributes");
 		atts.put("some", "val");
@@ -279,7 +279,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("invalidField", "something");
 		
 		assertThrows(
@@ -295,7 +295,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("id", ObjectId.get().toHexString());
 		
 		assertThrows(
@@ -311,7 +311,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "");
 		
 		assertThrows(
@@ -327,7 +327,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.putObject("history");
 		
 		assertThrows(
@@ -343,7 +343,7 @@ class MongoServiceTest extends RunningServerTest {
 		TestMainObject original = new TestMainObject("hello world");
 		testMongoService.add(original);
 		
-		ObjectNode update = OBJECT_MAPPER.createObjectNode();
+		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.putObject("history");
 		
 		assertThrows(

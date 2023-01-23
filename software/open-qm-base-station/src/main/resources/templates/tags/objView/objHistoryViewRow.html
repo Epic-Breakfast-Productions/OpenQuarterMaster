@@ -9,8 +9,8 @@ Inputs:
     </td>
     <td>
         {#if event.getEntityId() != null}
-            {#let entity=interactingEntityService.getFromHistoryEvent(event)}
-                {entity.getInteractingEntityType()} / {entity.getName()}
+            {#let entity=interactingEntityService.getEntity(event)}
+                {entity.getInteractingEntityType()}{#if entity.getName() ??} / {entity.getName()}{/if}
             {/let}
         {/if}
     </td>
