@@ -79,7 +79,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		InventoryItemService inventoryItemService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
-		@Location("tags/objView/objHistoryViewRows.html")
+		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/item/itemSearchResults.html")
 		Template itemSearchResultsTemplate,
@@ -435,9 +435,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@Context SecurityContext securityContext,
 		@PathParam String id,
 		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET

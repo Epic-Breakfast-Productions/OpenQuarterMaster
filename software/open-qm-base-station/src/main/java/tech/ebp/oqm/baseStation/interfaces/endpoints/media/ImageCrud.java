@@ -85,7 +85,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		ImageService imageService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
-		@Location("tags/objView/objHistoryViewRows.html")
+		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		StorageBlockService storageBlockService,
 		InventoryItemService itemService,
@@ -378,9 +378,10 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		@Context SecurityContext securityContext,
 		@PathParam String id,
 		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET

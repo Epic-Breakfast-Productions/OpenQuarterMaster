@@ -20,6 +20,7 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
@@ -371,7 +372,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		@Context SecurityContext securityContext,
 		@PathParam String id,
 		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
@@ -379,6 +381,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		searchObject.setObjectId(new ObjectId(id));
 		
 		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(searchObject, false);
+		
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
@@ -389,8 +392,10 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 				log.debug("Requestor wanted html.");
 				rb = rb.entity(
 						   this.getHistoryRowsTemplate()
-							   .data("objectHistory", searchResult.getResults())//TODO:: update template for full search
+							   .data("searchFormId", searchFormId)
+							   .data("searchResults", searchResult)
 							   .data("interactingEntityService", this.getInteractingEntityService())
+							   .data("pagingCalculations", new PagingCalculations(searchResult))
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
 				break;

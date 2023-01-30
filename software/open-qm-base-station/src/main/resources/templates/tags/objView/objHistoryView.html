@@ -27,26 +27,8 @@ Inputs:
                         </div>
                     </div>
                 </div>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody id="{containerId}" class="historyViewResults">
-                    {#objView/objHistoryViewRows}{/objView/objHistoryViewRows}
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                    </tr>
-                    </tfoot>
+                <table class="table table-hover historyViewResults" id="{containerId}">
+                
                 </table>
             </div>
         </div>
