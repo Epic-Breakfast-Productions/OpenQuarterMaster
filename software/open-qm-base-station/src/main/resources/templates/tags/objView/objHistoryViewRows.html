@@ -2,6 +2,11 @@
 Inputs:
     - objectHistory - the object history we are dealing with
 !}
+<tr>
+	<td>
+		history!
+	</td>
+</tr>
 {#if objectHistory?? }
     {! TODO:: this {#for historyEvent in objectHistory.getHistory()}
         {#objView/objHistoryViewRow event=historyEvent}{/objView/objHistoryViewRow}

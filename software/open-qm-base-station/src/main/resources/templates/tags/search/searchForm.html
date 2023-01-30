@@ -9,7 +9,7 @@ Ingests:
 !}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions pagingOptions}
 {@tech.ebp.oqm.baseStation.rest.search.SearchObject searchObject}
-<form id="{id}" action="{action}" method="get" class="pagingSearchForm {#if searchFormClasses??}{searchFormClasses}{/if}">
+<form id="{id}" action="{action}" method="get" class="pagingSearchForm {#if searchFormClasses??}{searchFormClasses}{/if}" {#if onSubmit??}onsubmit="{onSubmit}"{/if}>
     <div class="row">
         {#insert inputs}<!-- No additional inputs -->{/}
         {#if showKeywords?? && showKeywords == true}

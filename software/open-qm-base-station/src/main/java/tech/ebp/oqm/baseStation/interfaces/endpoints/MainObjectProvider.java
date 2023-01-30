@@ -376,10 +376,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
-		log.info("Retrieving history for object with id {}", id);
 		searchObject.setObjectId(new ObjectId(id));
 		
 		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(searchObject, false);
+		
+		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
 		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
 		log.debug("Accept header value: \"{}\"", acceptHeaderVal);

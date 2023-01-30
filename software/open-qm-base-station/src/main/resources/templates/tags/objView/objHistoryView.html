@@ -21,7 +21,7 @@ Inputs:
                         </h2>
                         <div id="{containerId}SearchAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="{containerId}SearchAccordionHeading" data-bs-parent="#{containerId}SearchAccordion">
                             <div class="accordion-body table-responsive">
-                                {#include tags/objView/history/objHistorySearchForm id=id objectUrl=objectUrl }
+                                {#include tags/objView/history/objHistorySearchForm id=(containerId + 'Form') objectUrl=objectUrl }
                                 {/include}
                             </div>
                         </div>
@@ -36,9 +36,17 @@ Inputs:
                         <th>Description</th>
                     </tr>
                     </thead>
-                    <tbody id="{containerId}">
+                    <tbody id="{containerId}" class="historyViewResults">
                     {#objView/objHistoryViewRows}{/objView/objHistoryViewRows}
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Time</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
