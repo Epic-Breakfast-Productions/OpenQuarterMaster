@@ -53,18 +53,3 @@ function processAttDisplay(container, attributes){
         console.log("did not have attributes.");
     }
 }
-
-
-async function displayObjHistory(container, historyObjectEndpoint){
-    return doRestCall({
-        url: "/api/v1/" + historyObjectEndpoint + "/history",
-        method: "GET",
-        extraHeaders: {
-            "accept": "text/html"
-        },
-        done: function (historyObject) {
-            console.log("Displaying object history.");
-            container.html(historyObject);
-        }
-    });
-}

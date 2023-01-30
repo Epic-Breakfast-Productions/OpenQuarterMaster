@@ -34,7 +34,7 @@ function setupHistorySearch(historyViewContainer, id){
 }
 
 
-function runHistorySearch(historySearchFormJs, event){
+async function runHistorySearch(historySearchFormJs, event){
 	event.preventDefault();
 
 	let historySearchForm = $(historySearchFormJs);
@@ -55,7 +55,7 @@ function runHistorySearch(historySearchFormJs, event){
 		"/history?" +
 		new URLSearchParams(formData).toString();
 
-	doRestCall({
+	return doRestCall({
 		spinnerContainer: historySearchContainer.get(0),
 		url: historyUrl,
 		method: 'GET',
@@ -71,6 +71,4 @@ function runHistorySearch(historySearchFormJs, event){
 			historySearchResults.html(data);
 		}
 	});
-
-
 }
