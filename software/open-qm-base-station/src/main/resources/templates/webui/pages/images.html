@@ -108,7 +108,8 @@
     {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
 </div>
 <div class="row">
-    {#objView/objHistoryView containerId='historyViewContainer'}{/objView/objHistoryView}
+    {#objView/objHistoryView containerId='imageHistory' objectUrl='/api/v1/media/image/'}{/objView/objHistoryView}
+    
 </div>
 <hr />
 <div class="text-end">
@@ -124,6 +125,7 @@
 {#scripts}
     <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
     <script src="/res/js/search.js"></script>
+    <script src="/res/js/historySearch.js"></script>
     <script src="/res/js/obj/objEdit.js"></script>
     <script src="/res/js/obj/objView.js"></script>
     <script src="/res/js/obj/media/imageAdd.js"></script>
@@ -252,7 +254,8 @@ var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 var imageDeleteButton = $('#imageDeleteButton');
 var imageEditButton = $('#imageEditButton');
-var historyViewContainer = $('#historyViewContainer');
+
+var imageHistoryAccordionCollapse = $('#imageHistoryAccordionCollapse');
 
 function resetView(){
     imageViewMessages.text("");
@@ -264,7 +267,8 @@ function resetView(){
     viewDescriptionText.text("");
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
-    historyViewContainer.text("");
+    
+    resetHistorySearch(imageHistoryAccordionCollapse);
 
     imageDeleteButton.off('click');
 }
@@ -291,7 +295,6 @@ function setupViewForImage(id){
             }
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(historyViewContainer, "media/image/"+data.id);
 
             imageEditButton.click(function(event){
                 setupAddEditForEdit(id);
@@ -316,6 +319,9 @@ function setupViewForImage(id){
         },
         failMessagesDiv: imageViewMessages
     });
+    
+    setupHistorySearch(imageHistoryAccordionCollapse, id);
+    
 }
 </script>
 {/pageScript}

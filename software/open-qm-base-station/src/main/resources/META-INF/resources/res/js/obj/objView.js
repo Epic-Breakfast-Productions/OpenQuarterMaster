@@ -54,6 +54,7 @@ function processAttDisplay(container, attributes){
     }
 }
 
+
 async function displayObjHistory(container, historyObjectEndpoint){
     return doRestCall({
         url: "/api/v1/" + historyObjectEndpoint + "/history",

@@ -166,7 +166,7 @@
 		</div>
 		<div class="row">
 		<div class="col">
-		{#objView/objHistoryView containerId='userHistory'}{/objView/objHistoryView}
+		{#objView/objHistoryView containerId='userHistory' objectUrl='/api/v1/user/'}{/objView/objHistoryView}
 	</div>
 	</div>
 	{/modal}
@@ -214,6 +214,8 @@
 	{/modal}
 	{/modals}
 	{#scripts}
+		<script src="/res/js/search.js"></script>
+		<script src="/res/js/historySearch.js"></script>
 		<script src="/res/js/obj/objView.js"></script>
 		<script src="/res/js/obj/objEdit.js"></script>
 	{/scripts}
@@ -229,7 +231,8 @@
 			var userViewRoles = $("#userViewRoles");
 			var viewKeywordsSection = $("#viewKeywordsSection");
 			var viewAttsSection = $("#viewAttsSection");
-			var userHistory = $("#userHistory");
+			
+			var userHistoryAccordionCollapse = $("#userHistoryAccordionCollapse");
 			
 			function resetUserView(){
 				userViewMessages.text("");
@@ -240,8 +243,9 @@
 				userViewTitle.text("");
 				userViewDisabled.text("");
 				userViewRoles.text("");
-				userHistory.text("");
 				
+				resetHistorySearch(userHistoryAccordionCollapse);
+
 				clearHideKeywordDisplay(viewKeywordsSection);
 				clearHideAttDisplay(viewAttsSection);
 			}
@@ -268,9 +272,10 @@
 
 						processKeywordDisplay(viewKeywordsSection, data.keywords);
 						processAttDisplay(viewAttsSection, data.attributes);
-						displayObjHistory(userHistory, "user/"+data.id);
 					}
 				});
+				setupHistorySearch(userHistoryAccordionCollapse, userId);
+
 			}
 			
 			

@@ -1,7 +1,7 @@
-{@tech.ebp.oqm.baseStation.rest.search.HistorySearch searchObject}
-{#include tags/search/searchForm id=id action=objectUrl showKeywords=true showAttributes=true pagingOptions=searchObject.getPagingOptions(true) searchFormClasses="historySearchForm" onSubmit="runHistorySearch(this, event);"}
+{@tech.ebp.oqm.baseStation.rest.search.HistorySearch historySearchObject}
+{#include tags/search/searchForm id=id action=objectUrl searchObject=historySearchObject showKeywords=true showAttributes=true pagingOptions=historySearchObject.getPagingOptions(true) searchFormClasses="historySearchForm" onSubmit="runHistorySearch(this, event);"}
 	{#inputs}
-		<input type="hidden" name="objectId" id="{id}ObjectId">
+		<input type="hidden" name="objectId" id="{id}ObjectId" value="{#if objectId??}{objectId}{/if}">
 		{! TODO:: this
 		<div class="mb-3 col col-3">
 		<label for="{id}-itemNameInput" class="form-label">Name</label>

@@ -30,8 +30,7 @@ function setupHistorySearch(historyViewContainer, id){
 
 	historySearchForm.find("input[name='objectId']").val(id);
 
-	const domEvent = new Event('submit');
-	historySearchForm[0].dispatchEvent(domEvent);
+	historySearchForm.submit();
 }
 
 
