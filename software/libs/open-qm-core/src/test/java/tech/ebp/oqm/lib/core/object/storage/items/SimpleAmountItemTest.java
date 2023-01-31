@@ -61,7 +61,7 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		return Stream.of(
 			Arguments.of(
 				new SimpleAmountItem(),
-				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
+				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new SimpleAmountItem().add(ObjectId.get(), new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)), true),

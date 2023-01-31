@@ -66,7 +66,7 @@ class ListAmountItemTest extends BasicTest {
 		return Stream.of(
 			Arguments.of(
 				new ListAmountItem(),
-				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
+				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new ListAmountItem()

@@ -36,7 +36,7 @@ class QuantitySumHelperTest extends BasicTest {
 					Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 				),
 				OqmProvidedUnits.UNIT,
-				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
+				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				List.of(
