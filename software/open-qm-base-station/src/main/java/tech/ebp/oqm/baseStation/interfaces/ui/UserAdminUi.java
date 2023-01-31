@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
@@ -99,6 +100,7 @@ public class UserAdminUi extends UiProvider {
 				.data("pagingCalculations", pagingCalculations)
 				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES_DESC_MAP)
 				.data("searchObject", search)
+				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
