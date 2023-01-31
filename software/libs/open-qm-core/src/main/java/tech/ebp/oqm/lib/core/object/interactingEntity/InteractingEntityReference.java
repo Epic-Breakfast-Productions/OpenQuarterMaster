@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * An identifier for an interacting entity.
  */
 @Data
-@Setter(AccessLevel.PROTECTED)
+@Setter()
 @AllArgsConstructor
 @NoArgsConstructor
 @ValidInteractingEntityReference
