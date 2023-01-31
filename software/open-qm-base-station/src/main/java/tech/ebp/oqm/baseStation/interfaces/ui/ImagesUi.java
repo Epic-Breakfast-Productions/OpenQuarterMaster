@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
@@ -86,7 +87,8 @@ public class ImagesUi extends UiProvider {
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
-				.data("searchObject", imageSearch),
+				.data("searchObject", imageSearch)
+				.data("historySearchObject", new HistorySearch()),
 			MediaType.TEXT_HTML_TYPE
 		);
 		
