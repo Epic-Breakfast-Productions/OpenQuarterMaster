@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 function getHistorySearchForm(historyViewContainer){
 	return historyViewContainer.find(".historySearchForm");
 }
