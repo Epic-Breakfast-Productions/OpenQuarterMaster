@@ -58,7 +58,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		StorageBlockService storageBlockService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
-		@Location("tags/objView/objHistoryViewRows.html")
+		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/storage/storageSearchResults.html")
 		Template storageSearchResultsTemplate
@@ -405,9 +405,10 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@Context SecurityContext securityContext,
 		@org.jboss.resteasy.annotations.jaxrs.PathParam String id,
 		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET

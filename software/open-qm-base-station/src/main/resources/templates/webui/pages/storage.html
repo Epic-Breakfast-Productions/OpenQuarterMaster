@@ -344,7 +344,7 @@ Accepts:
     </div>
     <div class="row">
         <div class="col">
-            {#objView/objHistoryView containerId='storageBlockHistory'}{/objView/objHistoryView}
+            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/v1/inventory/storage-block/'}{/objView/history/objHistoryView}
         </div>
     </div>
 {/modal}
@@ -353,6 +353,7 @@ Accepts:
 
 {#scripts}
 <script src="/res/js/search.js"></script>
+<script src="/res/js/historySearch.js"></script>
 <script src="/res/js/obj/objEdit.js"></script>
 <script src="/res/js/obj/objView.js"></script>
 <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
@@ -582,7 +583,11 @@ var storageBlockViewModal = $('#storageBlockViewModal');
 var storageBlockViewMessages = $("#storageBlockViewMessages");
 var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 var storageBlockViewCarousel = $('#storageBlockViewCarousel');
+
+var storageBlockHistoryAccordionCollapse = $("#storageBlockHistoryAccordionCollapse");
+var storageBlockHistoryForm = $('#storageBlockHistoryForm');
 var storageBlockHistory = $('#storageBlockHistory');
+
 var storageBlockViewId = $('#storageBlockViewId');
 var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
 var storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
@@ -606,12 +611,13 @@ function resetView(){
     
     storageBlockViewDescriptionContainer.hide();
     storageBlockViewDescription.text("");
-
+    
     storageBlockViewCapacity.text('');
     storageBlockViewCapacityContainer.hide();
+    
+    resetHistorySearch(storageBlockHistoryAccordionCollapse);
 
     storageBlockViewModalLabel.text("");
-    storageBlockHistory.text('');
     storageBlockViewItemsStoredContent.text("");
     clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
@@ -636,7 +642,6 @@ function setupView(blockId){
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(storageBlockHistory, "inventory/storage-block/"+data.id);
             
             if(data.nickname){
                 storageBlockViewModalLabel.text(data.label + " / " + data.nickname);
@@ -708,6 +713,8 @@ function setupView(blockId){
     	},
     	failMessagesDiv: storageBlockViewMessages
     });
+    
+    setupHistorySearch(storageBlockHistoryAccordionCollapse, blockId);
 }
 
 var viewModal = new bootstrap.Modal(storageBlockViewModal, { });
