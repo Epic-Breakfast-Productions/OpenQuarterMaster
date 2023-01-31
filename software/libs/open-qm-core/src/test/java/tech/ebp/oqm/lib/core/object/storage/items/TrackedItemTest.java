@@ -63,7 +63,7 @@ class TrackedItemTest extends BasicTest {
 		return Stream.of(
 			Arguments.of(
 				new TrackedItem(),
-				Quantities.getQuantity(0, OqmProvidedUnits.UNIT)
+				Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT)
 			),
 			Arguments.of(
 				new TrackedItem().add(ObjectId.get(), new TrackedStored(FAKER.name().name()), true),

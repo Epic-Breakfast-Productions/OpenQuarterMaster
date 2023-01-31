@@ -26,6 +26,7 @@ public final class ObjectUtils {
 	 * Configured by {@link #setupObjectMapper(ObjectMapper)}.
 	 */
 	public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	
 	/**
 	 * Modules needed for proper serialization of lib objects. Registered with {@link #OBJECT_MAPPER}
 	 */
