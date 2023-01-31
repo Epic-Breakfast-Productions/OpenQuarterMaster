@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.history.events;
+package tech.ebp.oqm.lib.core.object.history;
 
 //@Slf4j
 //class HistoryEventValidationTest extends ObjectValidationTest<HistoryEvent> {
