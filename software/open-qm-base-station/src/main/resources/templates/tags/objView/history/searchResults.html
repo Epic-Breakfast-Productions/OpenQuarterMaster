@@ -28,11 +28,11 @@
 	</td>
 	<td>
 		{#if event.getEntity() != null && event.getEntity().getEntityType() != null}
-			{#if event.getEntity().getEntityType().equals(BASE_STAION)}
+			{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(event.getEntity())}
 				Base Station
 			{#else}
 				{#let entity=interactingEntityService.getEntity(event)}
-					{entity.getInteractingEntityType()}{#if entity.getName() ??} / {entity.getName()}{/if}
+					{entity.getInteractingEntityType()}{#if entity.getName() != null} / {entity.getName()}{/if}
 				{/let}
 			{/if}
 		{/if}
