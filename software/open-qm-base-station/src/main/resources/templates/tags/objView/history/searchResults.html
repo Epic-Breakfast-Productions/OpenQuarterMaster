@@ -35,6 +35,7 @@
 			{#else}
 				{#let entity=interactingEntityService.getEntity(event)}
 					<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none" target="_blank">
+						{!TODO:: icon for type instead of text!}
 						{entity.getInteractingEntityType()}{#if entity.getName() != null} / {entity.getName()}{/if} {#icons/newTab}{/icons/newTab}
 					</a>
 				{/let}

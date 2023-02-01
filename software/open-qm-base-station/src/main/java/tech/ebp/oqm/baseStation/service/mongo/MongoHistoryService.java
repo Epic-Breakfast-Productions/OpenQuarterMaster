@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.EventType;
@@ -137,7 +139,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		List<ObjectHistoryEvent> output = this.list(
 			clientSession,
 			eq("objectId", id),
-			Sorts.descending("timestamp"),
+			Sorts.ascending("timestamp"),
 			null
 		);
 		
@@ -209,6 +211,11 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		}
 		
 		return this.addHistoryFor(clientSession, updated, entity, event);
+	}
+	
+	@Override
+	public FindIterable<ObjectHistoryEvent> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
+		return super.listIterator(clientSession, filter, (sort != null ? sort : Sorts.descending("timestamp")), pageOptions);
 	}
 	
 	public ObjectId objectUpdated(T updated, InteractingEntity entity, ObjectNode updateJson, String description) {
