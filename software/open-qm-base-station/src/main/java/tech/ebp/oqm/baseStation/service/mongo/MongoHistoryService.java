@@ -139,7 +139,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoService<Obje
 		List<ObjectHistoryEvent> output = this.list(
 			clientSession,
 			eq("objectId", id),
-			Sorts.ascending("timestamp"),
+			null,
 			null
 		);
 		
