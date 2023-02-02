@@ -130,7 +130,7 @@ public class InteractingEntityView extends UiProvider {
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, tracer, ugr)
-				.data("entity", baseStationInteractingEntity)
+				.data("entity", this.baseStationInteractingEntity)
 				.data("user", ugr)
 				.data("userService", userService)
 				.data("interactingEntityService", interactingEntityService)

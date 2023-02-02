@@ -29,7 +29,7 @@
 	<td>
 		{#if event.getEntity() != null && event.getEntity().getEntityType() != null}
 			{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(event.getEntity())}
-				<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none" target="_blank">
+				<a href="/entityView/baseStation" class="text-decoration-none" target="_blank">
 					Base Station {#icons/newTab}{/icons/newTab}
 				</a>
 			{#else}

@@ -7,6 +7,8 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApplicationScoped
 public class BaseStationInteractingEntity implements InteractingEntity {
@@ -33,5 +35,10 @@ public class BaseStationInteractingEntity implements InteractingEntity {
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.BASE_STATION;
+	}
+	
+	@Override
+	public Set<String> getRoles() {
+		return new HashSet<>(){{add("Yes");}};
 	}
 }
