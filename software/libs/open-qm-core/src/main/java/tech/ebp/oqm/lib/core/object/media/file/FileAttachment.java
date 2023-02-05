@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.media;
+package tech.ebp.oqm.lib.core.object.media.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
