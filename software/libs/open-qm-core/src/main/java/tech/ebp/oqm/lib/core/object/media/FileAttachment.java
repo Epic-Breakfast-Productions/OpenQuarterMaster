@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.Binary;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
+import tech.ebp.oqm.lib.core.object.media.file.FileHashes;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,10 @@ public class FileAttachment extends AttKeywordMainObject {
 	@NonNull
 	@NotBlank
 	private String mimeType;
+	
+	@NotNull
+	@NonNull
+	private FileHashes hashes;
 	
 	@NotNull
 	@NonNull
