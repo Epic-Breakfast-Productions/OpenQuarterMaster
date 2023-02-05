@@ -39,8 +39,4 @@ public class FileAttachment extends AttKeywordMainObject {
 	@NotNull
 	@NonNull
 	private FileHashes hashes;
-	
-	@NotNull
-	@NonNull
-	private Binary data;
 }
