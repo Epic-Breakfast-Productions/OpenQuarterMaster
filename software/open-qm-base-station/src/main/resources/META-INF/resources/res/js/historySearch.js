@@ -57,7 +57,7 @@ async function runHistorySearch(historySearchFormJs, event){
 		failNoResponseCheckStatus: true,
 		extraHeaders: {
 			"accept": "text/html",
-			"searchFormId": historySearchForm.id,
+			"searchFormId": historySearchForm.attr("id"),
 			// "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
 		},
 		// async: false,
