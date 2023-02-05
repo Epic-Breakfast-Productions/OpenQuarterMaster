@@ -104,6 +104,10 @@ compileTestJava {
 	options.encoding = 'UTF-8'
 }
 
+//task runApp(type: JavaExec) {
+//	jvmArgs ('--add-opens java.base/jdk.lang=ALL-UNNAMED')
+//}
+
 test {
 	minHeapSize = "128m" // initial heap size
 	maxHeapSize = "1g" // maximum heap size
