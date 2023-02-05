@@ -9,11 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -25,15 +20,10 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -337,37 +327,38 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//</editor-fold>
 	
 	//<editor-fold desc="History">
-	@GET
-	@Path("{id}/history")
-	@Operation(
-		summary = "Gets a particular object's history."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
-			)
-		}
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No history found for object with that id.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	@RolesAllowed(Roles.INVENTORY_VIEW)
+	
+//	@GET
+//	@Path("{id}/history")
+//	@Operation(
+//		summary = "Gets a particular object's history."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Object retrieved.",
+//		content = {
+//			@Content(
+//				mediaType = "application/json",
+//				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
+//			),
+//			@Content(
+//				mediaType = "text/html",
+//				schema = @Schema(type = SchemaType.STRING)
+//			)
+//		}
+//	)
+//	@APIResponse(
+//		responseCode = "400",
+//		description = "Bad request given. Data given could not pass validation.",
+//		content = @Content(mediaType = "text/plain")
+//	)
+//	@APIResponse(
+//		responseCode = "404",
+//		description = "No history found for object with that id.",
+//		content = @Content(mediaType = "text/plain")
+//	)
+//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
