@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +17,7 @@ class FileHashesTest extends BasicTest {
 	private static final String EXPECTED_SHA256 = "7c09c10e5424bdf87cf224cc3f2c7d1cbb79b0601137e958fffe80bce257c039";
 	
 	@Test
-	public void testFromFile() throws IOException {
+	public void testFromFile() {
 		FileHashes hashes;
 		
 		File testFile = new File(FileHashesTest.class.getResource(TEST_FILE).getFile());

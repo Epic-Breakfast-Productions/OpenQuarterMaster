@@ -36,7 +36,10 @@ public class FileHashes {
 	
 	/**
 	 * If proves too slow, or if need to use input stream, use the howtoinjava method to read in all at same time
-	 * https://howtodoinjava.com/java/java-security/sha-md5-file-checksum-hash/ https://stackoverflow.com/questions/304268/getting-a-files-md5-checksum-in-java
+	 * <p>
+	 * https://howtodoinjava.com/java/java-security/sha-md5-file-checksum-hash/
+	 * <p>
+	 * https://stackoverflow.com/questions/304268/getting-a-files-md5-checksum-in-java
 	 */
 	public static FileHashes fromFile(File file) {
 		FileHashes.Builder<?, ?> builder = FileHashes.builder();
