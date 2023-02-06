@@ -15,7 +15,7 @@ import javax.inject.Inject;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class ImageService extends MongoHistoriedService<Image, ImageSearch> {
+public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch> {
 	//    private Validator validator;
 	
 	ImageService() {//required for DI

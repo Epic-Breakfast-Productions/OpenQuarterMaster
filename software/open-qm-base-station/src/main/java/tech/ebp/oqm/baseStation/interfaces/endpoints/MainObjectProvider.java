@@ -14,7 +14,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
@@ -45,7 +45,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@Getter
 	private Class<T> objectClass;
 	@Getter
-	private MongoHistoriedService<T, S> objectService;
+	private MongoHistoriedObjectService<T, S> objectService;
 	@Getter
 	private InteractingEntityService interactingEntityService;
 	@Getter
@@ -56,7 +56,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	protected MainObjectProvider(
 		Class<T> objectClass,
-		MongoHistoriedService<T, S> objectService,
+		MongoHistoriedObjectService<T, S> objectService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		Template historyRowsTemplate

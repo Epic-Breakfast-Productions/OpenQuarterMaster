@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-class MongoHistoriedServiceTest extends RunningServerTest {
+class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	
 	@Inject
 	TestMongoHistoriedService testMongoService;

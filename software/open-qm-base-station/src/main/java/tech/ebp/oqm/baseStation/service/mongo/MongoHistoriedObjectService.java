@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Slf4j
 @Traced
-public abstract class MongoHistoriedService<T extends MainObject, S extends SearchObject<T>> extends MongoObjectService<T, S> {
+public abstract class MongoHistoriedObjectService<T extends MainObject, S extends SearchObject<T>> extends MongoObjectService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -58,7 +58,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	@Getter
 	private MongoHistoryService<T> historyService = null;
 	
-	public MongoHistoriedService(
+	public MongoHistoriedObjectService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
@@ -73,7 +73,7 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 		this.historyService = historyService;
 	}
 	
-	protected MongoHistoriedService(
+	protected MongoHistoriedObjectService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,

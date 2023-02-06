@@ -36,7 +36,7 @@ import static com.mongodb.client.model.Filters.exists;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class InventoryItemService extends MongoHistoriedService<InventoryItem, InventoryItemSearch> {
+public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch> {
 	
 	private BaseStationInteractingEntity baseStationInteractingEntity;
 	private ItemLowStockEventNotificationService ilsens;

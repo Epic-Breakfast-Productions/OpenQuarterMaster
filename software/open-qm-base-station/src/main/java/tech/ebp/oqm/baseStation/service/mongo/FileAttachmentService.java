@@ -20,7 +20,7 @@ import javax.inject.Inject;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class FileAttachmentService extends MongoHistoriedService<FileAttachment, FileAttachmentSearch> {
+public class FileAttachmentService extends MongoHistoriedObjectService<FileAttachment, FileAttachmentSearch> {
 	
 	GridFSBucket gridFSBucket = null;
 
