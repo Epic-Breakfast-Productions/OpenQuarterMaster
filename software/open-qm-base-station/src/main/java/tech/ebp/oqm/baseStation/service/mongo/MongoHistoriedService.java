@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Slf4j
 @Traced
-public abstract class MongoHistoriedService<T extends MainObject, S extends SearchObject<T>> extends MongoService<T, S> {
+public abstract class MongoHistoriedService<T extends MainObject, S extends SearchObject<T>> extends MongoObjectService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -176,6 +176,10 @@ public abstract class MongoHistoriedService<T extends MainObject, S extends Sear
 	}
 	
 	public ObjectId add(@NonNull T object) {
+		//TODO:: tweak see if this works/ passes tests/ test manually
+//		if (!this.allowNullEntityForCreate) {
+//			assertNotNullEntity(entity);
+//		}
 		return this.add(object, null);
 	}
 	

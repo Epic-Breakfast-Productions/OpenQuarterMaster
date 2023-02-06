@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
@@ -43,7 +43,7 @@ public class DataExportService {
 	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
-		MongoService<T, S> service,
+		MongoObjectService<T, S> service,
 		boolean includeHistory
 	) throws IOException {
 		String dataTypeName = service.getCollectionName();
