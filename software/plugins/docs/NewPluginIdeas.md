@@ -8,3 +8,9 @@ TODO:: where to go to vote for the next one
 
 ## Storage Interaction
 
+https://github.com/LAION-AI/Open-Assistant
+
+## Fridge Integration
+
+
+
