@@ -3,9 +3,8 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.GridFSBuckets;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
@@ -20,41 +19,37 @@ import javax.inject.Inject;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class FileAttachmentService extends MongoHistoriedObjectService<FileAttachment, FileAttachmentSearch> {
+public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch> {
 	
-	GridFSBucket gridFSBucket = null;
-
+	
 	FileAttachmentService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null, null);
 	}
-
+	
 	@Inject
 	FileAttachmentService(
 		//            Validator validator,
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+		String database,
+		CodecRegistry codecRegistry
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			FileAttachment.class,
-			false
+			false,
+			codecRegistry
 		);
 	}
 	
-	protected GridFSBucket getGridFSBucket() {
-		if (this.gridFSBucket == null) {
-			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getCollectionName());
-		}
-		return this.gridFSBucket;
-	}
-
-
+	
 	@Override
 	public void ensureObjectValid(boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 	}
+	
+	
 }
