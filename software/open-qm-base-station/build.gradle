@@ -54,7 +54,7 @@ dependencies {
 //    implementation 'org.webjars:spin-js:2.1.0'
 
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.58-4-28-1-SNAPSHOT'
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.1-DEV'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.2-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
@@ -112,7 +112,6 @@ test {
 	minHeapSize = "128m" // initial heap size
 	maxHeapSize = "1g" // maximum heap size
 	jvmArgs(
-		"--illegal-access=permit",
 		"--add-opens", "java.base/java.lang=ALL-UNNAMED",
 		"--add-opens", "java.base/java.io=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
