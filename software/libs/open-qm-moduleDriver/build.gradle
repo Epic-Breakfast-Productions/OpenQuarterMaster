@@ -11,7 +11,7 @@ plugins {
 
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-moduleDriver"
-version '1.0.1-DEV'
+version '1.0.2-DEV'
 
 repositories {
 	mavenLocal()
@@ -44,7 +44,7 @@ dependencies {
 	//if need ObjectIds, BsonIgnore
 //	implementation 'org.mongodb:bson:4.4.0'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+	testCompileOnly 'org.projectlombok:lombok:1.18.26'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
@@ -97,6 +97,11 @@ jacocoTestReport {
 }
 
 java {
+	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(17))
+		}
+	}
 	withJavadocJar()
 	withSourcesJar()
 }
