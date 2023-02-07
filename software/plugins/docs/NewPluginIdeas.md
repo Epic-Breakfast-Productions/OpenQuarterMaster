@@ -10,6 +10,8 @@ TODO:: where to go to vote for the next one
 
 https://github.com/LAION-AI/Open-Assistant
 
+https://cmusphinx.github.io/wiki/tutorial/
+
 ## Fridge Integration
 
 
