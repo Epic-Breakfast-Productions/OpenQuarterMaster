@@ -11,7 +11,7 @@ repositories {
 	mavenCentral()
 	mavenLocal()
 	//for getting OQM Library snapshot versions
-	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
+	maven({ url = "https://s01.oss.sonatype.org/content/repositories/snapshots/" })
 }
 
 dependencies {
@@ -107,7 +107,13 @@ compileTestJava {
 test {
 	minHeapSize = "128m" // initial heap size
 	maxHeapSize = "1g" // maximum heap size
-//	jvmArgs '-XX:MaxPermSize=1g' // mem argument for the test JVM //no worky with j17
+	jvmArgs(
+		"--illegal-access=permit",
+		"--add-opens", "java.base/java.lang=ALL-UNNAMED",
+		"--add-opens", "java.base/java.io=ALL-UNNAMED",
+		"--add-opens", "java.base/java.util=ALL-UNNAMED",
+		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
+	)
 }
 
 /**
