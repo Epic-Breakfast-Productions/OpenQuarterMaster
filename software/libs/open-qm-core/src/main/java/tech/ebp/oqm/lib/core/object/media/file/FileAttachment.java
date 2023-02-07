@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.Binary;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
+import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.file.FileHashes;
 
 import javax.validation.constraints.NotBlank;
@@ -24,19 +25,13 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
-public class FileAttachment extends AttKeywordMainObject {
-	
-	@NotNull
-	@NonNull
-	@NotBlank
-	private String fileName;
-	
-	@NotNull
-	@NonNull
-	@NotBlank
-	private String mimeType;
+public class FileAttachment extends FileMainObject {
 	
 	@NotNull
 	@NonNull
 	private FileHashes hashes;
+	
+	@NotNull
+	@NonNull
+	private String description;
 }
