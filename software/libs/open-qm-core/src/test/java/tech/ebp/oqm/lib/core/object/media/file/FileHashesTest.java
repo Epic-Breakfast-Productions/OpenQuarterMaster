@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.media.file;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.object.media.FileHashes;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 
 import java.io.File;

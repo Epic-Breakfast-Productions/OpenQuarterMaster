@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.media.file;
+package tech.ebp.oqm.lib.core.object.media;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Data
 @AllArgsConstructor

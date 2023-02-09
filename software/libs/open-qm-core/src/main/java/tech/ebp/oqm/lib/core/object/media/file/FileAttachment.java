@@ -1,18 +1,13 @@
 package tech.ebp.oqm.lib.core.object.media.file;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.bson.types.Binary;
-import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
-import tech.ebp.oqm.lib.core.object.media.file.FileHashes;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,13 +19,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Builder(builderClassName = "Builder")
 public class FileAttachment extends FileMainObject {
-	
-	@NotNull
-	@NonNull
-	private FileHashes hashes;
-	
 	@NotNull
 	@NonNull
 	private String description;
