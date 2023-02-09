@@ -17,7 +17,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
+import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import java.io.InputStream;
  */
 @Slf4j
 @Traced
-public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
+public abstract class MongoHistoriedFileService<T extends MainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -49,7 +49,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	@Getter
 	protected final boolean allowNullEntityForCreate;
 	@Getter
-	private MongoHistoryService<T> historyService = null;
+	private MongoHistoriedObjectService<T, S> fileMetadataService = null;
 	
 	public MongoHistoriedFileService(
 		ObjectMapper objectMapper,
@@ -59,19 +59,19 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService,
+		MongoHistoriedObjectService<T, S> fileMetadataService,
 		CodecRegistry codecRegistry
 	) {
 		super(objectMapper, mongoClient, database, collectionName, clazz, collection, codecRegistry);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.historyService = historyService;
+		this.fileMetadataService = fileMetadataService;
 	}
 	
 	protected MongoHistoriedFileService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		Class<T> clazz,
+		Class<T> metadataClazz,
 		boolean allowNullEntityForCreate,
 		CodecRegistry codecRegistry
 	) {
@@ -79,16 +79,40 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			objectMapper,
 			mongoClient,
 			database,
-			clazz,
+			metadataClazz,
 			codecRegistry
 		);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.historyService = new MongoHistoryService<>(
-			objectMapper,
-			mongoClient,
-			database,
-			clazz
-		);
+		this.fileMetadataService =
+			new FileMetadataService(
+				objectMapper,
+				mongoClient,
+				database,
+				metadataClazz
+			);
+	}
+	
+	
+	private class FileMetadataService extends MongoHistoriedObjectService<T, S> {
+		FileMetadataService() {//required for DI
+			super(null, null, null, null, null, null, false, null);
+		}
+		
+		FileMetadataService(
+			ObjectMapper objectMapper,
+			MongoClient mongoClient,
+			String database,
+			Class<T> clazz
+		) {
+			super(
+				objectMapper,
+				mongoClient,
+				database,
+				clazz,
+				false
+			);
+			//        this.validator = validator;
+		}
 	}
 	
 	
@@ -113,13 +137,13 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 									  .chunkSizeBytes(1048576)
 									  .metadata(this.objectToDocument(attachmentData));
 		
-		ObjectId newId;
+		ObjectId newId = null;
 		
-		if(clientSession == null) {
-			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
-		} else {
-			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
-		}
+//		if(clientSession == null) {
+//			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
+//		} else {
+//			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
+//		}
 		
 		return newId;
 	}

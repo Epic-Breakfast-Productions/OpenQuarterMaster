@@ -10,10 +10,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
+import tech.ebp.oqm.lib.core.object.MainObject;
 
 @Slf4j
-public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
+public abstract class MongoFileService<T extends MainObject, S extends SearchObject<T>> extends MongoService<T, S> {
 	
 	GridFSBucket gridFSBucket = null;
 	@Getter(AccessLevel.PROTECTED)
@@ -43,6 +43,10 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		this.codecRegistry = codecRegistry;
 	}
 	
+	@Override
+	public String getCollectionName() {
+		return super.getCollectionName() + "-grid";
+	}
 	
 	protected GridFSBucket getGridFSBucket() {
 		if (this.gridFSBucket == null) {

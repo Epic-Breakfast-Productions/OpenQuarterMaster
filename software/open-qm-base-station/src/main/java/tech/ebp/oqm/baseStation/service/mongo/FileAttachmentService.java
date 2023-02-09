@@ -21,7 +21,6 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch> {
 	
-	
 	FileAttachmentService() {//required for DI
 		super(null, null, null, null, null, null, false, null, null);
 	}
@@ -50,6 +49,5 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 	public void ensureObjectValid(boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 	}
-	
 	
 }
