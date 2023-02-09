@@ -116,8 +116,18 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 								 .build();
 	}
 	
+	public ClientSession getNewClientSession(boolean startTransaction) {
+		ClientSession clientSession = this.getMongoClient().startSession();
+		
+		if(startTransaction){
+			clientSession.startTransaction();
+		}
+		
+		return clientSession;
+	}
+	
 	public ClientSession getNewClientSession() {
-		return this.getMongoClient().startSession();
+		return this.getNewClientSession(false);
 	}
 	
 	/**

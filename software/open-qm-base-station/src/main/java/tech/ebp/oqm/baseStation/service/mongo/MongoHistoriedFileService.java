@@ -8,6 +8,7 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentWriter;
 import org.bson.BsonWriter;
@@ -19,7 +20,11 @@ import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -116,11 +121,11 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 	}
 	
 	
-	protected Document objectToDocument(T object){
+	protected Document metadataToDocument(FileMetadata object){
 		BsonDocument outDoc = new BsonDocument();
 		BsonWriter writer = new BsonDocumentWriter(outDoc);
 		
-		this.getCodecRegistry().get(this.getClazz()).encode(
+		this.getCodecRegistry().get(FileMetadata.class).encode(
 			writer,
 			object,
 			EncoderContext.builder().build()
@@ -130,20 +135,54 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 	}
 	
 	
-	public ObjectId add(ClientSession clientSession, T attachmentData, InputStream is, InteractingEntity interactingEntity){
+	public ObjectId add(ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+		FileMetadata fileMetadata = new FileMetadata(file);
+		
+		try(
+			InputStream is = new FileInputStream(file);
+			){
+			return this.add(
+				clientSession,
+				fileObject,
+				fileMetadata,
+				is,
+				interactingEntity
+			);
+		}
+	}
+	
+	protected ObjectId add(ClientSession clientSession, T fileObject, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity){
+		ObjectId newId = null;
 		GridFSBucket bucket = this.getGridFSBucket();
 		
-		GridFSUploadOptions ops = new GridFSUploadOptions()
-									  .chunkSizeBytes(1048576)
-									  .metadata(this.objectToDocument(attachmentData));
-		
-		ObjectId newId = null;
-		
-//		if(clientSession == null) {
-//			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
-//		} else {
-//			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
-//		}
+		boolean sessionGiven = clientSession == null;
+		try(
+			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
+		){
+			if(!sessionGiven){
+				clientSession = session;
+			}
+			
+			newId = this.getFileMetadataService().add(clientSession, fileObject, interactingEntity);
+			
+			GridFSUploadOptions ops = new GridFSUploadOptions()
+										  .chunkSizeBytes(1048576)
+										  .metadata(
+											  this.metadataToDocument(metadata)
+										  );
+			
+			String filename = newId.toHexString() + FilenameUtils.getExtension(metadata.getOrigName());
+			
+			if(clientSession == null) {
+				bucket.uploadFromStream(filename, is, ops);
+			} else {
+				bucket.uploadFromStream(clientSession, filename, is, ops);
+			}
+			
+			if(!sessionGiven){
+				clientSession.commitTransaction();
+			}
+		}
 		
 		return newId;
 	}
