@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
@@ -22,25 +21,22 @@ import javax.inject.Inject;
 public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch> {
 	
 	FileAttachmentService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject
 	FileAttachmentService(
-		//            Validator validator,
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		CodecRegistry codecRegistry
+		String database
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			FileAttachment.class,
-			false,
-			codecRegistry
+			false
 		);
 	}
 	

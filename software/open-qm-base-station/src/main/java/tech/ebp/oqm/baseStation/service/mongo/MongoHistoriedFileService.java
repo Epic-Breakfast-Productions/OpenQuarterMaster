@@ -9,12 +9,6 @@ import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentWriter;
-import org.bson.BsonWriter;
-import org.bson.Document;
-import org.bson.codecs.EncoderContext;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
@@ -54,7 +48,7 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 	@Getter
 	protected final boolean allowNullEntityForCreate;
 	@Getter
-	private MongoHistoriedObjectService<T, S> fileMetadataService = null;
+	private MongoHistoriedObjectService<T, S> fileObjectService = null;
 	
 	public MongoHistoriedFileService(
 		ObjectMapper objectMapper,
@@ -64,12 +58,11 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoriedObjectService<T, S> fileMetadataService,
-		CodecRegistry codecRegistry
+		MongoHistoriedObjectService<T, S> fileMetadataService
 	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection, codecRegistry);
+		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.fileMetadataService = fileMetadataService;
+		this.fileObjectService = fileMetadataService;
 	}
 	
 	protected MongoHistoriedFileService(
@@ -77,18 +70,16 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 		MongoClient mongoClient,
 		String database,
 		Class<T> metadataClazz,
-		boolean allowNullEntityForCreate,
-		CodecRegistry codecRegistry
+		boolean allowNullEntityForCreate
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
-			metadataClazz,
-			codecRegistry
+			metadataClazz
 		);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.fileMetadataService =
+		this.fileObjectService =
 			new FileMetadataService(
 				objectMapper,
 				mongoClient,
@@ -99,6 +90,7 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 	
 	
 	private class FileMetadataService extends MongoHistoriedObjectService<T, S> {
+		
 		FileMetadataService() {//required for DI
 			super(null, null, null, null, null, null, false, null);
 		}
@@ -121,26 +113,14 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 	}
 	
 	
-	protected Document metadataToDocument(FileMetadata object){
-		BsonDocument outDoc = new BsonDocument();
-		BsonWriter writer = new BsonDocumentWriter(outDoc);
-		
-		this.getCodecRegistry().get(FileMetadata.class).encode(
-			writer,
-			object,
-			EncoderContext.builder().build()
-		);
-		
-		return new Document(outDoc);
-	}
 	
 	
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		
-		try(
-			InputStream is = new FileInputStream(file);
-			){
+		try (
+			InputStream is = new FileInputStream(file)
+		) {
 			return this.add(
 				clientSession,
 				fileObject,
@@ -151,35 +131,34 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 		}
 	}
 	
-	protected ObjectId add(ClientSession clientSession, T fileObject, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity){
+	public ObjectId add(T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+		return this.add(null, fileObject, file, interactingEntity);
+	}
+	
+	protected ObjectId add(ClientSession clientSession, T fileObject, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
 		ObjectId newId = null;
 		GridFSBucket bucket = this.getGridFSBucket();
 		
 		boolean sessionGiven = clientSession == null;
-		try(
+		try (
 			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
-		){
-			if(!sessionGiven){
+		) {
+			if (!sessionGiven) {
 				clientSession = session;
 			}
 			
-			newId = this.getFileMetadataService().add(clientSession, fileObject, interactingEntity);
+			newId = this.getFileObjectService().add(clientSession, fileObject, interactingEntity);
 			
-			GridFSUploadOptions ops = new GridFSUploadOptions()
-										  .chunkSizeBytes(1048576)
-										  .metadata(
-											  this.metadataToDocument(metadata)
-										  );
-			
+			GridFSUploadOptions ops = this.getUploadOps(metadata);
 			String filename = newId.toHexString() + FilenameUtils.getExtension(metadata.getOrigName());
 			
-			if(clientSession == null) {
+			if (clientSession == null) {
 				bucket.uploadFromStream(filename, is, ops);
 			} else {
 				bucket.uploadFromStream(clientSession, filename, is, ops);
 			}
 			
-			if(!sessionGiven){
+			if (!sessionGiven) {
 				clientSession.commitTransaction();
 			}
 		}
@@ -187,34 +166,34 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 		return newId;
 	}
 	
-//	public T getData(ClientSession clientSession, ObjectId id, OutputStream os){
-//		GridFSBucket bucket = this.getGridFSBucket();
-//
-//		this.getGridFSBucket();
-//
-//		this.getGridFSBucket().downloadToStream(id, os);
-//
-////		gridFSBucket.downloadToStream("myProject.zip", streamToDownloadTo, downloadOptions);
-////		streamToDownloadTo.flush();
-//
-//
-//
-//
-//
-//
-//		GridFSUploadOptions ops = new GridFSUploadOptions()
-//									  .chunkSizeBytes(1048576)
-//									  .metadata(this.objectToDocument(attachmentData));
-//
-//		ObjectId newId;
-//
-//		if(clientSession == null) {
-//			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
-//		} else {
-//			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
-//		}
-//
-//		return newId;
-//	}
+	//	public T getData(ClientSession clientSession, ObjectId id, OutputStream os){
+	//		GridFSBucket bucket = this.getGridFSBucket();
+	//
+	//		this.getGridFSBucket();
+	//
+	//		this.getGridFSBucket().downloadToStream(id, os);
+	//
+	////		gridFSBucket.downloadToStream("myProject.zip", streamToDownloadTo, downloadOptions);
+	////		streamToDownloadTo.flush();
+	//
+	//
+	//
+	//
+	//
+	//
+	//		GridFSUploadOptions ops = new GridFSUploadOptions()
+	//									  .chunkSizeBytes(1048576)
+	//									  .metadata(this.objectToDocument(attachmentData));
+	//
+	//		ObjectId newId;
+	//
+	//		if(clientSession == null) {
+	//			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
+	//		} else {
+	//			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
+	//		}
+	//
+	//		return newId;
+	//	}
 	
 }
