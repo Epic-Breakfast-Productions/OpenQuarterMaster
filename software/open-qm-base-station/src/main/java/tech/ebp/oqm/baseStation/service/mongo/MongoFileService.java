@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
@@ -15,12 +16,13 @@ import org.bson.BsonWriter;
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.EncoderContext;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
 @Slf4j
-public abstract class MongoFileService<T extends MainObject, S extends SearchObject<T>> extends MongoService<T, S> {
+public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
 	
 	GridFSBucket gridFSBucket = null;
 	@Getter(AccessLevel.PRIVATE)
@@ -79,4 +81,39 @@ public abstract class MongoFileService<T extends MainObject, S extends SearchObj
 					   this.metadataToDocument(metadata)
 				   );
 	}
+	
+	public abstract MongoObjectService<T, S> getFileObjectService();
+	
+	public long count(ClientSession clientSession){
+		return this.getFileObjectService().count(clientSession);
+	}
+	
+	public long count(){
+		return this.count(null);
+	}
+	
+	public T get(ClientSession clientSession, ObjectId id){
+		return this.getFileObjectService().get(clientSession, id);
+	}
+	
+	public T get(ObjectId id){
+		return this.get(null, id);
+	}
+	
+	public FileMetadata getMetadata(ClientSession clientSession, ObjectId id){
+		//TODO:: clientSession
+		
+		this.getGridFSBucket();
+		
+		
+		return null;
+	}
+	
+	public FileMetadata getMetadata(ObjectId id){
+		return this.getMetadata(null, id);
+	}
+	
+	
+	
+	
 }

@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainObject, TestMainObjectSearch> {
+public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainFileObject, TestMainFileObjectSearch> {
 	
 	TestMongoHistoriedFileService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -26,7 +26,7 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 			objectMapper,
 			mongoClient,
 			database,
-			TestMainObject.class,
+			TestMainFileObject.class,
 			false
 		);
 	}

@@ -12,7 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
@@ -28,7 +28,7 @@ import java.io.InputStream;
  */
 @Slf4j
 @Traced
-public abstract class MongoHistoriedFileService<T extends MainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
+public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -150,7 +150,10 @@ public abstract class MongoHistoriedFileService<T extends MainObject, S extends 
 			newId = this.getFileObjectService().add(clientSession, fileObject, interactingEntity);
 			
 			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			String filename = newId.toHexString() + FilenameUtils.getExtension(metadata.getOrigName());
+			String filename = newId.toHexString() + "." + FilenameUtils.getExtension(metadata.getOrigName());
+			
+			fileObject.setFileName(filename);
+			this.getFileObjectService().update(clientSession, fileObject);
 			
 			if (clientSession == null) {
 				bucket.uploadFromStream(filename, is, ops);

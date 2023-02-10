@@ -3,9 +3,11 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.baseStation.testResources.data.TestMainObject;
+import tech.ebp.oqm.baseStation.testResources.data.TestMainFileObject;
 import tech.ebp.oqm.baseStation.testResources.data.TestMongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -15,6 +17,9 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @QuarkusTest
@@ -27,18 +32,46 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	@Inject
 	TestUserService testUserService;
 	
+	File testFile = new File(getClass().getResource("/testFiles/shakespeare.txt").getFile());
+	
+	
 	@Test
 	public void testAddFile() throws IOException {
 		User testUser = testUserService.getTestUser(true, true);
 		
-		File testFile = new File(getClass().getResource("/testFiles/shakespeare.txt").getFile());
+		assertEquals(0, this.testMongoService.count());
 		
+		TestMainFileObject testMainObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
 		ObjectId objectId = this.testMongoService.add(
-			new TestMainObject(FAKER.lorem().paragraph()),
+			testMainObject,
 			testFile,
 			testUser
 		);
+		
+		assertEquals(1, this.testMongoService.count());
+		assertNotNull(testMainObject.getId());
+		assertEquals(objectId, testMainObject.getId());
+		assertEquals(objectId + "." + FileNameUtils.getExtension(testFile.getName()), testMainObject.getFileName());
+		
+		String fileNameWoExt = FilenameUtils.removeExtension( testMainObject.getFileName());
+		assertEquals(objectId, new ObjectId(fileNameWoExt));
+		
+		log.info("Successfully saved file as {}: {}", testMainObject.getFileName(), testMainObject);
+	}
+	
+	@Test
+	public void testGetFile() throws IOException {
+		User testUser = testUserService.getTestUser(true, true);
+		
+		ObjectId objectId = this.testMongoService.add(
+			new TestMainFileObject(FAKER.lorem().paragraph()),
+			testFile,
+			testUser
+		);
+		
+		assertEquals(1, this.testMongoService.count());
+		//TODO:: this
 	}
 	
 }
