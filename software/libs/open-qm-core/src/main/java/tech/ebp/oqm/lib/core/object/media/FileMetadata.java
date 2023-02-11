@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Data
 @AllArgsConstructor
@@ -24,7 +27,8 @@ public class FileMetadata {
 			file.getName(),
 			file.length(),
 			FileHashes.fromFile(file),
-			TIKA.detect(file)
+			TIKA.detect(file),
+			ZonedDateTime.now()
 		);
 	}
 	
@@ -45,4 +49,9 @@ public class FileMetadata {
 	@NonNull
 	@NotBlank
 	private String mimeType;
+	
+	@NotNull
+	@NonNull
+	@NotBlank
+	private ZonedDateTime uploadDateTime;
 }
