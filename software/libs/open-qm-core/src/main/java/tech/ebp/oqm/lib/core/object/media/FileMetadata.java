@@ -4,22 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.apache.tika.Tika;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.File;
+import java.io.IOException;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileMetadata {
 	
-	public FileMetadata(File file) {
+	private static final Tika TIKA = new Tika();
+	
+	public FileMetadata(File file) throws IOException {
 		this(
 			file.getName(),
 			file.length(),
-			FileHashes.fromFile(file)
+			FileHashes.fromFile(file),
+			TIKA.detect(file)
 		);
 	}
 	
@@ -35,4 +40,9 @@ public class FileMetadata {
 	@NonNull
 	@NotNull
 	private FileHashes hashes;
+	
+	@NotNull
+	@NonNull
+	@NotBlank
+	private String mimeType;
 }

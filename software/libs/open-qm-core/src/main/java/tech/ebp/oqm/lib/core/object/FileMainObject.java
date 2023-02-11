@@ -29,14 +29,8 @@ public abstract class FileMainObject
 		super(id, attributes, keywords);
 	}
 	
-	
 	@NotNull
 	@NonNull
 	@NotBlank
 	private String fileName;
-	
-	@NotNull
-	@NonNull
-	@NotBlank
-	private String mimeType;
 }
