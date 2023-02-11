@@ -6,16 +6,23 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSFindIterable;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.mongodb.client.model.Filters;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
+import org.bson.BsonDocumentReader;
 import org.bson.BsonDocumentWriter;
+import org.bson.BsonReader;
 import org.bson.BsonWriter;
 import org.bson.Document;
 import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
@@ -74,6 +81,15 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return new Document(outDoc);
 	}
 	
+	protected FileMetadata documentToMetadata(Document doc) {
+		BsonReader reader = new BsonDocumentReader(doc.toBsonDocument());
+		
+		return this.getFileMetadataCodec().decode(
+			reader,
+			DecoderContext.builder().build()
+		);
+	}
+	
 	protected GridFSUploadOptions getUploadOps(FileMetadata metadata){
 		return new GridFSUploadOptions()
 				   .chunkSizeBytes(1048576)
@@ -92,25 +108,33 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.count(null);
 	}
 	
-	public T get(ClientSession clientSession, ObjectId id){
+	public T getObject(ClientSession clientSession, ObjectId id){
 		return this.getFileObjectService().get(clientSession, id);
 	}
 	
-	public T get(ObjectId id){
-		return this.get(null, id);
+	public T getObject(ObjectId id){
+		return this.getObject(null, id);
 	}
 	
-	public FileMetadata getMetadata(ClientSession clientSession, ObjectId id){
-		//TODO:: clientSession
+	public FileMetadata getLatestMetadata(ClientSession clientSession, ObjectId id){
+		T object = this.getObject(clientSession, id);
 		
-		this.getGridFSBucket();
+		Bson query = Filters.eq("filename", object.getFileName());
+		GridFSFindIterable iterable;
 		
+		if(clientSession == null) {
+			iterable = this.getGridFSBucket().find(query);
+		} else {
+			iterable = this.getGridFSBucket().find(clientSession, query);
+		}
 		
-		return null;
+		GridFSFile file = iterable.limit(1).first();
+		
+		return this.documentToMetadata(file.getMetadata());
 	}
 	
-	public FileMetadata getMetadata(ObjectId id){
-		return this.getMetadata(null, id);
+	public FileMetadata getLatestMetadata(ObjectId id){
+		return this.getLatestMetadata(null, id);
 	}
 	
 	
