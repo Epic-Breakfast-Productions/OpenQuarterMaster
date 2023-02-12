@@ -24,8 +24,12 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
@@ -208,6 +212,73 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		FileContentsGet fileGet = this.testMongoService.getLatestFile(mainFileObject.getId());
 		
 		assertTrue(FileUtils.contentEquals(testFileTwo, fileGet.getContents()), "File contents were not identical");
+	}
+	
+	@Test
+	public void testGetRevisionsOneRev() throws IOException {
+		User testUser = testUserService.getTestUser(true, true);
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		FileMetadata expected = new FileMetadata(this.testFileOne);
+		
+		this.testMongoService.add(
+			mainFileObject,
+			testFileOne,
+			testUser
+		);
+		
+		List<FileMetadata> gotten = this.testMongoService.getRevisions(mainFileObject.getId());
+		
+		assertEquals(1, gotten.size());
+		
+		FileMetadata gottenMd = gotten.get(0);
+		
+		Comparator<ZonedDateTime> comparator = Comparator.comparing(
+			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
+		);
+		assertEquals(0, comparator.compare(expected.getUploadDateTime(), gottenMd.getUploadDateTime()), "Unexpected upload datetime");
+		
+		gottenMd.setUploadDateTime(expected.getUploadDateTime());
+		assertEquals(expected, gottenMd);
+	}
+	
+	@Test
+	public void testGetRevisionsTwoRev() throws IOException {
+		User testUser = testUserService.getTestUser(true, true);
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		FileMetadata expectedOne = new FileMetadata(this.testFileOne);
+		
+		this.testMongoService.add(
+			mainFileObject,
+			testFileOne,
+			testUser
+		);
+		
+		FileMetadata expectedTwo = new FileMetadata(this.testFileTwo);
+		this.testMongoService.updateFile(
+			mainFileObject.getId(),
+			testFileTwo,
+			testUser
+		);
+		
+		List<FileMetadata> gotten = this.testMongoService.getRevisions(mainFileObject.getId());
+		
+		assertEquals(2, gotten.size());
+		
+		FileMetadata gottenMdOne = gotten.get(0);
+		FileMetadata gottenMdTwo = gotten.get(1);
+		
+		Comparator<ZonedDateTime> comparator = Comparator.comparing(
+			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
+		);
+		assertEquals(0, comparator.compare(expectedOne.getUploadDateTime(), gottenMdOne.getUploadDateTime()), "Unexpected upload datetime");
+		assertEquals(0, comparator.compare(expectedTwo.getUploadDateTime(), gottenMdTwo.getUploadDateTime()), "Unexpected upload datetime");
+		
+		gottenMdOne.setUploadDateTime(expectedOne.getUploadDateTime());
+		gottenMdTwo.setUploadDateTime(expectedTwo.getUploadDateTime());
+		assertEquals(expectedOne, gottenMdOne);
+		assertEquals(expectedTwo, gottenMdTwo);
 	}
 	
 }

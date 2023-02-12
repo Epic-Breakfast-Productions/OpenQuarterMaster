@@ -36,7 +36,6 @@ import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		);
 	}
 	
-	protected GridFSUploadOptions getUploadOps(FileMetadata metadata){
+	protected GridFSUploadOptions getUploadOps(FileMetadata metadata) {
 		return new GridFSUploadOptions()
 				   .chunkSizeBytes(1048576)
 				   .metadata(
@@ -118,35 +117,36 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public abstract MongoObjectService<T, S> getFileObjectService();
 	
-	public long count(ClientSession clientSession){
+	public long count(ClientSession clientSession) {
 		return this.getFileObjectService().count(clientSession);
 	}
 	
-	public long count(){
+	public long count() {
 		return this.count(null);
 	}
 	
-	public T getObject(ClientSession clientSession, ObjectId id){
+	public T getObject(ClientSession clientSession, ObjectId id) {
 		return this.getFileObjectService().get(clientSession, id);
 	}
 	
-	public T getObject(ObjectId id){
+	public T getObject(ObjectId id) {
 		return this.getObject(null, id);
 	}
 	
-	protected String getFileName(ClientSession clientSession, ObjectId id){
+	protected String getFileName(ClientSession clientSession, ObjectId id) {
 		return this.getObject(clientSession, id).getFileName();
 	}
-	protected Bson getFileNameQuery(ClientSession clientSession, ObjectId id){
+	
+	protected Bson getFileNameQuery(ClientSession clientSession, ObjectId id) {
 		return Filters.eq("filename", this.getFileName(clientSession, id));
 	}
 	
-	public List<FileMetadata> getRevisions(ClientSession clientSession, ObjectId id){
+	public List<FileMetadata> getRevisions(ClientSession clientSession, ObjectId id) {
 		Bson query = this.getFileNameQuery(clientSession, id);
 		
 		GridFSFindIterable iterable;
 		
-		if(clientSession == null) {
+		if (clientSession == null) {
 			iterable = this.getGridFSBucket().find(query);
 		} else {
 			iterable = this.getGridFSBucket().find(clientSession, query);
@@ -161,12 +161,16 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return output;
 	}
 	
-	public FileMetadata getLatestMetadata(ClientSession clientSession, ObjectId id){
+	public List<FileMetadata> getRevisions(ObjectId id) {
+		return this.getRevisions(null, id);
+	}
+	
+	public FileMetadata getLatestMetadata(ClientSession clientSession, ObjectId id) {
 		Bson query = this.getFileNameQuery(clientSession, id);
 		
 		GridFSFindIterable iterable;
 		
-		if(clientSession == null) {
+		if (clientSession == null) {
 			iterable = this.getGridFSBucket().find(query);
 		} else {
 			iterable = this.getGridFSBucket().find(clientSession, query);
@@ -177,14 +181,14 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.documentToMetadata(file.getMetadata());
 	}
 	
-	public FileMetadata getLatestMetadata(ObjectId id){
+	public FileMetadata getLatestMetadata(ObjectId id) {
 		return this.getLatestMetadata(null, id);
 	}
 	
 	protected File downloadGridfsFile(ClientSession clientSession, String filename, String tempFilename, GridFSDownloadOptions options) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(tempFilename, this.getCollectionName());
 		
-		if(!tempFile.exists()) {
+		if (!tempFile.exists()) {
 			log.info("File needs added to cache: {}", tempFile);
 			try (FileOutputStream os = new FileOutputStream(tempFile)) {
 				if (clientSession == null) {
@@ -204,14 +208,16 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return tempFile;
 	}
 	
-	private String getTempFileName(String fileName, int revision){
+	private String getTempFileName(String fileName, int revision) {
 		return FilenameUtils.removeExtension(fileName) + "-" + revision + FilenameUtils.getExtension(fileName);
 	}
 	
 	/**
 	 * TODO::
+	 *
 	 * @param clientSession
 	 * @param id
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -236,8 +242,6 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public FileContentsGet getLatestFile(ObjectId id) throws IOException {
 		return this.getLatestFile(null, id);
 	}
-	
-	
 	
 	
 }
