@@ -13,6 +13,7 @@ import com.mongodb.client.model.Filters;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.bson.BsonDocument;
 import org.bson.BsonDocumentReader;
 import org.bson.BsonDocumentWriter;
@@ -25,8 +26,14 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
+import tech.ebp.oqm.baseStation.utils.TempFileService;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Slf4j
 public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
@@ -34,6 +41,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	GridFSBucket gridFSBucket = null;
 	@Getter(AccessLevel.PRIVATE)
 	Codec<FileMetadata> fileMetadataCodec;
+	@Getter(AccessLevel.PROTECTED)
+	private TempFileService tempFileService;
 	
 	public MongoFileService(
 		ObjectMapper objectMapper,
@@ -116,10 +125,16 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getObject(null, id);
 	}
 	
+	protected String getFileName(ClientSession clientSession, ObjectId id){
+		return this.getObject(clientSession, id).getFileName();
+	}
+	protected Bson getFileNameQuery(ClientSession clientSession, ObjectId id){
+		return Filters.eq("filename", this.getFileName(clientSession, id));
+	}
+	
 	public FileMetadata getLatestMetadata(ClientSession clientSession, ObjectId id){
-		T object = this.getObject(clientSession, id);
+		Bson query = this.getFileNameQuery(clientSession, id);
 		
-		Bson query = Filters.eq("filename", object.getFileName());
 		GridFSFindIterable iterable;
 		
 		if(clientSession == null) {
@@ -135,6 +150,32 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public FileMetadata getLatestMetadata(ObjectId id){
 		return this.getLatestMetadata(null, id);
+	}
+	
+	public FileContentsGet getLatestFile(ClientSession clientSession, ObjectId id) throws IOException {
+		T fileObj = this.getObject(clientSession, id);
+		
+		FileContentsGet.FileContentsGetBuilder<?, ?> outputBuilder = FileContentsGet.builder();
+		FileMetadata metadata = this.getLatestMetadata(clientSession, id);
+		outputBuilder.metadata(metadata);
+		
+		File tempFile = this.getTempFileService().getTempFile(id.toHexString(), FilenameUtils.getExtension(metadata.getOrigName()), this.getCollectionName());
+		outputBuilder.contents(tempFile);
+		
+		try(FileOutputStream os = new FileOutputStream(tempFile)){
+			if(clientSession == null) {
+				this.getGridFSBucket().downloadToStream(fileObj.getFileName(), os);
+			} else {
+				this.getGridFSBucket().downloadToStream(clientSession, fileObj.getFileName(), os);
+			}
+			os.flush();
+		}
+		
+		return outputBuilder.build();
+	}
+	
+	public FileContentsGet getLatestFile(ObjectId id) throws IOException {
+		return this.getLatestFile(null, id);
 	}
 	
 	
