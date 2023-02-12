@@ -41,18 +41,27 @@ public class TempFileService {
 		log.info("Done setting up temp directory.");
 	}
 	
-	
-	public File getTempFile(String prefix, String extension, String tempFolder) {
+	public File getTempFile(String filename, String tempFolder){
 		File directory = this.tempDir;
 		if (tempFolder != null && !tempFolder.isBlank()) {
 			directory = new File(directory, tempFolder);
-			if (!directory.mkdirs()) {
+			
+			if (!directory.exists() && !directory.mkdirs()) {
 				throw new IllegalStateException("Failed to create temp folder under main temp: " + directory);
 			}
 		}
 		
 		File output = new File(
 			directory,
+			filename
+		);
+		output.deleteOnExit();
+		return output;
+	}
+	
+	
+	public File getTempFile(String prefix, String extension, String tempFolder) {
+		return this.getTempFile(
 			String.format(
 				TEMP_FILE_FORMAT,
 				prefix,
@@ -61,13 +70,8 @@ public class TempFileService {
 					.mapToObj(String::valueOf)
 					.collect(Collectors.joining()),
 				extension
-			)
+			),
+			tempFolder
 		);
-		output.deleteOnExit();
-		return output;
-	}
-	
-	public File getTempFile(String prefix, String extension) {
-		return this.getTempFile(prefix, extension, null);
 	}
 }

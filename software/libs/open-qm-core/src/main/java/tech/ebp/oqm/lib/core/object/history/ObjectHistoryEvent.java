@@ -12,6 +12,7 @@ import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAuthEvent;
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
+import tech.ebp.oqm.lib.core.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
@@ -63,6 +64,8 @@ import java.time.ZonedDateTime;
 	
 	@JsonSubTypes.Type(value = ExtServiceSetupEvent.class, name = "EXT_SERVICE_SETUP"),
 	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),
+	
+	@JsonSubTypes.Type(value = NewFileVersionEvent.class, name = "FILE_NEW_VERSION"),
 })
 @BsonDiscriminator
 public abstract class ObjectHistoryEvent extends AttKeywordMainObject {

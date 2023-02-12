@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.service.mongo;
+package tech.ebp.oqm.baseStation.service.mongo.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
+import tech.ebp.oqm.baseStation.utils.TempFileService;
 import tech.ebp.oqm.lib.core.object.media.file.FileAttachment;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,14 +30,16 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		TempFileService tempFileService
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			FileAttachment.class,
-			false
+			false,
+			tempFileService
 		);
 	}
 	

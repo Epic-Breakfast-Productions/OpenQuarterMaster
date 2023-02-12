@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.service.mongo;
+package tech.ebp.oqm.baseStation.service.mongo.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
@@ -7,9 +7,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSFindIterable;
+import com.mongodb.client.gridfs.model.GridFSDownloadOptions;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +28,19 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.baseStation.utils.TempFileService;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
@@ -59,10 +66,12 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		Class<T> clazz
+		Class<T> clazz,
+		TempFileService tempFileService
 	) {
 		super(objectMapper, mongoClient, database, clazz);
 		this.fileMetadataCodec = this.getDatabase().getCodecRegistry().get(FileMetadata.class);
+		this.tempFileService = tempFileService;
 	}
 	
 	@Override
@@ -132,6 +141,26 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return Filters.eq("filename", this.getFileName(clientSession, id));
 	}
 	
+	public List<FileMetadata> getRevisions(ClientSession clientSession, ObjectId id){
+		Bson query = this.getFileNameQuery(clientSession, id);
+		
+		GridFSFindIterable iterable;
+		
+		if(clientSession == null) {
+			iterable = this.getGridFSBucket().find(query);
+		} else {
+			iterable = this.getGridFSBucket().find(clientSession, query);
+		}
+		
+		List<FileMetadata> output = new ArrayList<>();
+		
+		iterable.forEach((GridFSFile file)->{
+			output.add(this.documentToMetadata(file.getMetadata()));
+		});
+		
+		return output;
+	}
+	
 	public FileMetadata getLatestMetadata(ClientSession clientSession, ObjectId id){
 		Bson query = this.getFileNameQuery(clientSession, id);
 		
@@ -143,7 +172,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 			iterable = this.getGridFSBucket().find(clientSession, query);
 		}
 		
-		GridFSFile file = iterable.limit(1).first();
+		GridFSFile file = iterable.sort(Sorts.descending("uploadDate")).limit(1).first();
 		
 		return this.documentToMetadata(file.getMetadata());
 	}
@@ -152,24 +181,54 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getLatestMetadata(null, id);
 	}
 	
+	protected File downloadGridfsFile(ClientSession clientSession, String filename, String tempFilename, GridFSDownloadOptions options) throws IOException {
+		File tempFile = this.getTempFileService().getTempFile(tempFilename, this.getCollectionName());
+		
+		if(!tempFile.exists()) {
+			log.info("File needs added to cache: {}", tempFile);
+			try (FileOutputStream os = new FileOutputStream(tempFile)) {
+				if (clientSession == null) {
+					this.getGridFSBucket().downloadToStream(filename, os, options);
+				} else {
+					this.getGridFSBucket().downloadToStream(clientSession, filename, os, options);
+				}
+				
+				os.flush();
+			} catch(Throwable e) {
+				tempFile.delete();
+				throw e;
+			}
+		} else {
+			log.info("File already exists in fs cache: {}", tempFile);
+		}
+		return tempFile;
+	}
+	
+	private String getTempFileName(String fileName, int revision){
+		return FilenameUtils.removeExtension(fileName) + "-" + revision + FilenameUtils.getExtension(fileName);
+	}
+	
+	/**
+	 * TODO::
+	 * @param clientSession
+	 * @param id
+	 * @return
+	 * @throws IOException
+	 */
 	public FileContentsGet getLatestFile(ClientSession clientSession, ObjectId id) throws IOException {
 		T fileObj = this.getObject(clientSession, id);
 		
 		FileContentsGet.FileContentsGetBuilder<?, ?> outputBuilder = FileContentsGet.builder();
-		FileMetadata metadata = this.getLatestMetadata(clientSession, id);
+		
+		List<FileMetadata> revisions = this.getRevisions(clientSession, id);
+		int latestRev = revisions.size() - 1;
+		
+		FileMetadata metadata = revisions.get(latestRev);
 		outputBuilder.metadata(metadata);
 		
-		File tempFile = this.getTempFileService().getTempFile(id.toHexString(), FilenameUtils.getExtension(metadata.getOrigName()), this.getCollectionName());
-		outputBuilder.contents(tempFile);
+		GridFSDownloadOptions ops = new GridFSDownloadOptions().revision(latestRev);
 		
-		try(FileOutputStream os = new FileOutputStream(tempFile)){
-			if(clientSession == null) {
-				this.getGridFSBucket().downloadToStream(fileObj.getFileName(), os);
-			} else {
-				this.getGridFSBucket().downloadToStream(clientSession, fileObj.getFileName(), os);
-			}
-			os.flush();
-		}
+		outputBuilder.contents(this.downloadGridfsFile(clientSession, fileObj.getFileName(), this.getTempFileName(fileObj.getFileName(), latestRev), ops));
 		
 		return outputBuilder.build();
 	}

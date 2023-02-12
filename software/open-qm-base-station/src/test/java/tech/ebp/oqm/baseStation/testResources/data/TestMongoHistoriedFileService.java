@@ -3,7 +3,8 @@ package tech.ebp.oqm.baseStation.testResources.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedFileService;
+import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
+import tech.ebp.oqm.baseStation.utils.TempFileService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,14 +21,16 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		TempFileService tempFileService
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			TestMainFileObject.class,
-			false
+			false,
+			tempFileService
 		);
 	}
 }

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.service.mongo;
+package tech.ebp.oqm.baseStation.service.mongo.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
@@ -12,7 +12,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.baseStation.utils.TempFileService;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
+import tech.ebp.oqm.lib.core.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
@@ -70,13 +73,15 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		MongoClient mongoClient,
 		String database,
 		Class<T> metadataClazz,
-		boolean allowNullEntityForCreate
+		boolean allowNullEntityForCreate,
+		TempFileService tempFileService
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
-			metadataClazz
+			metadataClazz,
+			tempFileService
 		);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.fileObjectService =
@@ -111,8 +116,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			//        this.validator = validator;
 		}
 	}
-	
-	
 	
 	
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
@@ -169,34 +172,63 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		return newId;
 	}
 	
-	//	public T getData(ClientSession clientSession, ObjectId id, OutputStream os){
-	//		GridFSBucket bucket = this.getGridFSBucket();
-	//
-	//		this.getGridFSBucket();
-	//
-	//		this.getGridFSBucket().downloadToStream(id, os);
-	//
-	////		gridFSBucket.downloadToStream("myProject.zip", streamToDownloadTo, downloadOptions);
-	////		streamToDownloadTo.flush();
-	//
-	//
-	//
-	//
-	//
-	//
-	//		GridFSUploadOptions ops = new GridFSUploadOptions()
-	//									  .chunkSizeBytes(1048576)
-	//									  .metadata(this.objectToDocument(attachmentData));
-	//
-	//		ObjectId newId;
-	//
-	//		if(clientSession == null) {
-	//			newId = bucket.uploadFromStream(attachmentData.getFileName(), is, ops);
-	//		} else {
-	//			newId = bucket.uploadFromStream(clientSession, attachmentData.getFileName(), is, ops);
-	//		}
-	//
-	//		return newId;
-	//	}
+	/**
+	 * @param clientSession
+	 * @param id
+	 * @param metadata
+	 * @param is
+	 * @param interactingEntity
+	 *
+	 * @return
+	 */
+	protected int updateFile(ClientSession clientSession, ObjectId id, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
+		T object = this.getFileObjectService().get(id);
+		GridFSBucket bucket = this.getGridFSBucket();
+		
+		boolean sessionGiven = clientSession == null;
+		try (
+			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
+		) {
+			if (!sessionGiven) {
+				clientSession = session;
+			}
+			
+			GridFSUploadOptions ops = this.getUploadOps(metadata);
+			String filename = object.getFileName();
+			
+			if (clientSession == null) {
+				bucket.uploadFromStream(filename, is, ops);
+			} else {
+				bucket.uploadFromStream(clientSession, filename, is, ops);
+			}
+			
+			this.getFileObjectService().addHistoryFor(object, interactingEntity, new NewFileVersionEvent());
+			
+			if (!sessionGiven) {
+				clientSession.commitTransaction();
+			}
+		}
+		
+		return this.getRevisions(clientSession, id).size() - 1;
+	}
 	
+	public int updateFile(ClientSession clientSession, ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
+		FileMetadata fileMetadata = new FileMetadata(file);
+		
+		try (
+			InputStream is = new FileInputStream(file)
+		) {
+			return this.updateFile(
+				clientSession,
+				id,
+				fileMetadata,
+				is,
+				interactingEntity
+			);
+		}
+	}
+	
+	public int updateFile(ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
+		return this.updateFile(null, id, file, interactingEntity);
+	}
 }

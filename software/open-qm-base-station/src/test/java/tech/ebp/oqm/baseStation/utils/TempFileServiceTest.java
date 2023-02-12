@@ -29,7 +29,7 @@ class TempFileServiceTest extends RunningServerTest {
 		String ext = "txt";
 		String prefix = "testFile";
 		
-		File tempFile = this.tempFileService.getTempFile(prefix, ext);
+		File tempFile = this.tempFileService.getTempFile(prefix, ext, null);
 		
 		log.info("Temp file gotten: {}", tempFile);
 		
@@ -46,8 +46,8 @@ class TempFileServiceTest extends RunningServerTest {
 		String ext = "txt";
 		String prefix = "testFile";
 		
-		File tempFileOne = this.tempFileService.getTempFile(prefix, ext);
-		File tempFileTwo = this.tempFileService.getTempFile(prefix, ext);
+		File tempFileOne = this.tempFileService.getTempFile(prefix, ext, null);
+		File tempFileTwo = this.tempFileService.getTempFile(prefix, ext, null);
 		
 		assertNotEquals(tempFileOne, tempFileTwo);
 	}
