@@ -44,6 +44,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	File testFileOne = new File(getClass().getResource("/testFiles/shakespeare.txt").getFile());
 	File testFileTwo = new File(getClass().getResource("/testFiles/originOfSpecies.txt").getFile());
+	File testFileNoExt = new File(getClass().getResource("/testFiles/genericFile").getFile());
 	
 	
 	@Test
@@ -281,4 +282,20 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		assertEquals(expectedTwo, gottenMdTwo);
 	}
 	
+	@Test
+	public void testFileWithNoExt() throws IOException {
+		User testUser = testUserService.getTestUser(true, true);
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		
+		this.testMongoService.add(
+			mainFileObject,
+			testFileNoExt,
+			testUser
+		);
+		
+		FileContentsGet fileGet = this.testMongoService.getLatestFile(mainFileObject.getId());
+		
+		assertTrue(FileUtils.contentEquals(testFileNoExt, fileGet.getContents()), "File contents were not identical");
+	}
 }
