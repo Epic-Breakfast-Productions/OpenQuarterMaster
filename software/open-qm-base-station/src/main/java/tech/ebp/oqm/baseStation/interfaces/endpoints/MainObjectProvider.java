@@ -40,7 +40,7 @@ import java.util.List;
 @Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends EndpointProvider {
+public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
 	
 	@Getter
 	private Class<T> objectClass;
@@ -131,13 +131,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntityFromJwt());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
-	}
-	
-	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult) {
-		return Response.status(Response.Status.OK)
-					   .entity(searchResult.getResults())
-					   .header("num-elements", searchResult.getResults().size())
-					   .header("query-num-results", searchResult.getNumResultsForEntireQuery());
 	}
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
