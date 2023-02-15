@@ -15,5 +15,18 @@ import java.util.List;
 @ToString(callSuper = true)
 public class FileAttachmentGet extends FileAttachment {
 	
+	public static FileAttachmentGet fromFileAttachment(
+		FileAttachment a,
+		List<FileMetadata> revisions
+	) {
+		return (FileAttachmentGet) new FileAttachmentGet()
+									   .setRevisions(revisions)
+									   .setFileName(a.getFileName())
+									   .setAttributes(a.getAttributes())
+									   .setKeywords(a.getKeywords())
+									   .setId(a.getId());
+	}
+	
 	private List<FileMetadata> revisions;
+	
 }
