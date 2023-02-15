@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
 import io.quarkus.qute.Template;
+import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +41,7 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, F extends FileUploadBody> extends ObjectProvider {
 	
 	@Getter
-	private MongoHistoriedFileService<T, S> objectService;
+	private MongoHistoriedFileService<T, S> fileService;
 	@Getter
 	private InteractingEntityService interactingEntityService;
 	@Getter
@@ -50,12 +51,12 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	private Template historyRowsTemplate;
 	
 	protected MainFileObjectProvider(
-		MongoHistoriedFileService<T, S> objectService,
+		MongoHistoriedFileService<T, S> fileService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		Template historyRowsTemplate
 	) {
-		this.objectService = objectService;
+		this.fileService = fileService;
 		this.interactingEntityService = interactingEntityService;
 		this.jwt = jwt;
 		this.historyRowsTemplate = historyRowsTemplate;
@@ -67,6 +68,22 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		}
 		return this.interactingEntityFromJwt;
 	}
+	
+	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
+		@Context SecurityContext securityContext,
+		@BeanParam S searchObject
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		
+		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, false);
+		
+		return Tuple2.of(
+			this.getSearchResultResponseBuilder(searchResult),
+			searchResult
+		);
+	}
+	
+	
 	
 	//<editor-fold desc="CRUD operations">
 	
@@ -140,11 +157,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		@HeaderParam("searchFormId") String searchFormId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectService().getClazz().getSimpleName(), id);
+		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
 		
-		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().getFileObjectService().searchHistory(searchObject, false);
+		SearchResult<ObjectHistoryEvent> searchResult = this.getFileService().getFileObjectService().searchHistory(searchObject, false);
 		
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
@@ -201,7 +218,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getObjectService().getFileObjectService().searchHistory(searchObject, false);
+		return this.getFileService().getFileObjectService().searchHistory(searchObject, false);
 	}
 	//</editor-fold>
 }

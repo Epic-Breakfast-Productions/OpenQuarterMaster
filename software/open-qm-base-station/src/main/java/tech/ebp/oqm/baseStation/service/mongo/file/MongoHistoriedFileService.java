@@ -94,6 +94,25 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 				metadataClazz
 			);
 	}
+	protected MongoHistoriedFileService(
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		String database,
+		Class<T> metadataClazz,
+		boolean allowNullEntityForCreate,
+		TempFileService tempFileService,
+		MongoHistoriedObjectService<T, S> historiedObjectService
+	) {
+		this(
+			objectMapper,
+			mongoClient,
+			database,
+			metadataClazz,
+			allowNullEntityForCreate,
+			tempFileService
+		);
+		this.fileObjectService = historiedObjectService;
+	}
 	
 	
 	private class FileMetadataService extends MongoHistoriedObjectService<T, S> {
