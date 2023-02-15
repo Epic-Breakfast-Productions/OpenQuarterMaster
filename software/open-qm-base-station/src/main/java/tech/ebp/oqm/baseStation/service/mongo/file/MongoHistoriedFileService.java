@@ -141,7 +141,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
-		fileMetadata.setOrigName(fileName);
+		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
 		
 		try (
 			InputStream is = new FileInputStream(file)

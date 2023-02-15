@@ -21,6 +21,7 @@ import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
+import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.lib.core.object.media.file.FileAttachment;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.media.file.FileAttachmentGet;
@@ -233,11 +234,55 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		@PathParam("id")
 		String id
 	) throws IOException {
+		logRequestContext(this.getJwt(), securityContext);
 		return Response.ok(
 			FileAttachmentGet.fromFileAttachment(
 				this.getFileService().getFileObjectService().get(id),
 				this.getFileService().getRevisions(new ObjectId(id))
 			)
 		).build();
+	}
+	
+	@GET
+	@Path("{id}/data")
+	@Operation(
+		summary = "Gets the data for the latest revision of a file."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "File information retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				implementation = FileAttachmentGet.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	//	@Override
+	public Response getLatestData(
+		@Context SecurityContext securityContext,
+		@PathParam("id")
+		String id
+	) throws IOException {
+		logRequestContext(this.getJwt(), securityContext);
+		
+		FileContentsGet fileContentsGet = this.getFileService().getLatestFile(id);
+		Response.ResponseBuilder response = Response.ok(
+			fileContentsGet.getContents()
+		);
+		response.header("Content-Disposition", "attachment;filename="+fileContentsGet.getMetadata().getOrigName());
+		response.header("hash-md5", fileContentsGet.getMetadata().getHashes().getMd5());
+		response.header("hash-sha1", fileContentsGet.getMetadata().getHashes().getSha1());
+		response.header("hash-sha256", fileContentsGet.getMetadata().getHashes().getSha256());
+		response.header("upload-datetime", fileContentsGet.getMetadata().getUploadDateTime());
+		return response.build();
 	}
 }

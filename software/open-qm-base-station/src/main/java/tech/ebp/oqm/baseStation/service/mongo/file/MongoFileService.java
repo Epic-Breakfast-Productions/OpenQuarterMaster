@@ -243,5 +243,9 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getLatestFile(null, id);
 	}
 	
+	public FileContentsGet getLatestFile(String id) throws IOException {
+		return this.getLatestFile(null, new ObjectId(id));
+	}
+	
 	
 }
