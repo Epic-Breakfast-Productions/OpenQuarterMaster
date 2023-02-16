@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
@@ -123,6 +124,10 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public long count() {
 		return this.count(null);
+	}
+	
+	public Iterator<T> iterator() {
+		return this.getFileObjectService().iterator();
 	}
 	
 	public T getObject(ClientSession clientSession, ObjectId id) {

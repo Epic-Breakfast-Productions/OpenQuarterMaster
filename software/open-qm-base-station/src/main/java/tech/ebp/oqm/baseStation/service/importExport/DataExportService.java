@@ -18,6 +18,9 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.baseStation.service.mongo.file.MongoFileService;
+import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
+import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
@@ -34,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.Deflater;
@@ -43,10 +45,6 @@ import java.util.zip.Deflater;
 @Slf4j
 @ApplicationScoped
 public class DataExportService {
-	
-	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
-	private static final String EXPORT_TEMP_DIR_PREFIX = "oqm-data-export";
-	
 	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
@@ -110,6 +108,77 @@ public class DataExportService {
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
 	
+	private static <T extends FileMainObject, S extends SearchObject<T>> void recordRecords(
+		File tempDir,
+		MongoFileService<T, S> service,
+		boolean includeHistory
+	) {
+		String dataTypeName = service.getCollectionName();
+		log.info("Writing {} data to archive folder.", dataTypeName);
+		
+		StopWatch sw = StopWatch.createStarted();
+		File objectDataDir = new File(tempDir, dataTypeName);
+		
+		try {
+			//TODO:: adjust to:
+			//  - Create folder for objects and their files
+			//  - in each folder, write object json and one folder for each file, named 0-however many revisions. write file with original name in folders.
+			
+			
+			
+			
+			
+			if (!objectDataDir.mkdir()) {
+				log.error("Failed to create export of data. Failed to create directory: {}", objectDataDir);
+				throw new IOException("Failed to create directory for collection " + service.getCollectionName());
+			}
+			
+			Iterator<T> it = service.iterator();
+			while (it.hasNext()) {
+				T curObj = it.next();
+				ObjectId curId = curObj.getId();
+				File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
+				
+				if (!curObjectFile.createNewFile()) {
+					log.error("Failed to create data file for object.");
+					throw new IOException("Failed to create data file for object.");
+				}
+				
+				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+			}
+			
+			//TODO:: refactor
+			if (service instanceof MongoHistoriedFileService<T,S> && includeHistory) {
+				File objectHistoryDataDir = new File(objectDataDir, DataImportExportUtils.OBJECT_HISTORY_DIR_NAME);
+				
+				if (!objectHistoryDataDir.mkdir()) {
+					log.error("Failed to create export of data. Failed to create directory for object history.");
+					throw new IOException("Failed to create directory for object history.");
+				}
+				
+				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedFileService<T, S>) service).getFileObjectService().historyIterator();
+				while (hIt.hasNext()) {
+					ObjectHistoryEvent curObj = hIt.next();
+					ObjectId curId = curObj.getId();
+					File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
+					
+					if (!curObjectFile.createNewFile()) {
+						log.error("Failed to create data file for object history.");
+						throw new IOException("Failed to create data file for object history.");
+					}
+					
+					ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+				}
+			}
+		} catch(Throwable e){
+			throw new DataExportException("Failed to export data for " + service.getClazz().getName() + ": " + e.getMessage(), e);
+		}
+		
+		sw.stop();
+		log.info("Took {} to write all data for {}", sw, dataTypeName);
+	}
+	
+	
 	@Inject
 	TempFileService tempFileService;
 	
@@ -146,7 +215,7 @@ public class DataExportService {
 			
 			CompletableFuture<Void> future = CompletableFuture.allOf(
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.customUnitService, !excludeHistory); return null;}),
-//				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;})
