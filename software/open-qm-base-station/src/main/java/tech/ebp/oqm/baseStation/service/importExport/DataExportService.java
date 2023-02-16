@@ -46,6 +46,11 @@ import java.util.zip.Deflater;
 @ApplicationScoped
 public class DataExportService {
 	
+	public static final String OQM_EXPORT_PREFIX = "oqm_export";
+	public static final String TEMP_FOLDER = "export";
+	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
+	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
+	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
 		MongoObjectService<T, S> service,
@@ -201,7 +206,7 @@ public class DataExportService {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();
 		
-		File dirToArchive = this.tempFileService.getTempDir("oqm_export", "export");
+		File dirToArchive = this.tempFileService.getTempDir(OQM_EXPORT_PREFIX, TEMP_FOLDER);
 		Path dirToArchiveAsPath = dirToArchive.toPath();
 		File outputFile = new File(dirToArchive.getParentFile(), dirToArchive.getName() + ".tar.gz");
 		outputFile.deleteOnExit();
@@ -237,8 +242,8 @@ public class DataExportService {
 		}
 		{
 			GzipParameters parameters = new GzipParameters();
-			parameters.setComment("Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.");
-			parameters.setCompressionLevel(Deflater.BEST_COMPRESSION);
+			parameters.setComment(GZIP_COMMENT);
+			parameters.setCompressionLevel(GZIP_COMPRESSION_LEVEL);
 			
 			StopWatch sw = StopWatch.createStarted();
 			
@@ -251,16 +256,15 @@ public class DataExportService {
 				Files.walkFileTree(dirToArchiveAsPath, new SimpleFileVisitor<>() {
 					@Override
 					public FileVisitResult visitFile(
-						java.nio.file.Path file,
+						Path file,
 						BasicFileAttributes attributes
 					) {
 						// only copy files, no symbolic links
 						if (attributes.isSymbolicLink()) {
 							return FileVisitResult.CONTINUE;
 						}
-						
 						// get filename
-						java.nio.file.Path targetFile = dirToArchiveAsPath.relativize(file);
+						Path targetFile = dirToArchiveAsPath.relativize(file);
 						
 						try {
 							TarArchiveEntry tarEntry = new TarArchiveEntry(
@@ -269,17 +273,18 @@ public class DataExportService {
 							tOut.putArchiveEntry(tarEntry);
 							Files.copy(file, tOut);
 							tOut.closeArchiveEntry();
-							System.out.printf("file : %s%n", file);
+							log.trace("File added to export bundle: {}", file);
 						} catch(IOException e) {
-							System.err.printf("Unable to tar.gz : %s%n%s%n", file, e);
+							log.error("Unable to process file: {}", file, e);
+							throw new DataExportException("Unable to process file: " + file + " - " + e.getMessage(), e);
 						}
 						return FileVisitResult.CONTINUE;
 					}
 					
 					@Override
-					public FileVisitResult visitFileFailed(java.nio.file.Path file, IOException exc) {
-						System.err.printf("Unable to tar.gz : %s%n%s%n", file, exc);
-						return FileVisitResult.CONTINUE;
+					public FileVisitResult visitFileFailed(Path file, IOException exc) {
+						log.error("Unable to process file: {}", file, exc);
+						return FileVisitResult.TERMINATE;
 					}
 				});
 				tOut.finish();
