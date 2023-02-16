@@ -14,7 +14,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
@@ -40,12 +40,12 @@ import java.util.List;
 @Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends EndpointProvider {
+public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
 	
 	@Getter
 	private Class<T> objectClass;
 	@Getter
-	private MongoHistoriedService<T, S> objectService;
+	private MongoHistoriedObjectService<T, S> objectService;
 	@Getter
 	private InteractingEntityService interactingEntityService;
 	@Getter
@@ -56,7 +56,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	protected MainObjectProvider(
 		Class<T> objectClass,
-		MongoHistoriedService<T, S> objectService,
+		MongoHistoriedObjectService<T, S> objectService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		Template historyRowsTemplate
@@ -131,13 +131,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntityFromJwt());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
-	}
-	
-	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult) {
-		return Response.status(Response.Status.OK)
-					   .entity(searchResult.getResults())
-					   .header("num-elements", searchResult.getResults().size())
-					   .header("query-num-results", searchResult.getNumResultsForEntireQuery());
 	}
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(

@@ -35,7 +35,7 @@ import static com.mongodb.client.model.Filters.eq;
  */
 @Slf4j
 @Traced
-public class MongoHistoryService<T extends MainObject> extends MongoService<ObjectHistoryEvent, HistorySearch> {
+public class MongoHistoryService<T extends MainObject> extends MongoObjectService<ObjectHistoryEvent, HistorySearch> {
 	
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	

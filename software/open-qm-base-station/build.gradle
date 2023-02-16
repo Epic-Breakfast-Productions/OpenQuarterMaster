@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "6.6.1"
+	id "io.freefair.lombok" version "6.6.2"
 }
 
 group 'com.ebp.openQuarterMaster'
@@ -11,7 +11,7 @@ repositories {
 	mavenCentral()
 	mavenLocal()
 	//for getting OQM Library snapshot versions
-	maven({ url = "https://s01.oss.sonatype.org/content/repositories/snapshots/" })
+	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
 }
 
 dependencies {
@@ -53,7 +53,7 @@ dependencies {
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.58-4-28-1-SNAPSHOT'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.58-6-51-6-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.2-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -84,7 +84,7 @@ dependencies {
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.0'
 	testImplementation 'org.testcontainers:selenium:1.17.6'
 	testImplementation 'com.deque:axe-selenium:3.0'
-	testImplementation 'net.datafaker:datafaker:1.7.0'
+	testImplementation 'net.datafaker:datafaker:1.8.0'
 }
 
 java {
@@ -103,10 +103,6 @@ compileJava {
 compileTestJava {
 	options.encoding = 'UTF-8'
 }
-
-//task runApp(type: JavaExec) {
-//	jvmArgs ('--add-opens java.base/jdk.lang=ALL-UNNAMED')
-//}
 
 test {
 	minHeapSize = "128m" // initial heap size

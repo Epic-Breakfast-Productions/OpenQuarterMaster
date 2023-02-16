@@ -38,6 +38,7 @@ service:
   item:
     expiryCheck:
       cron: 0 0 * ? * * # Every Hour
+  tempDir: "/tmp/oqm/baseStation"
     
 productLookup:
   providers:

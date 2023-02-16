@@ -3,13 +3,13 @@ package tech.ebp.oqm.baseStation.testResources.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TestMongoHistoriedService extends MongoHistoriedService<TestMainObject, TestMainObjectSearch> {
+public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestMainObject, TestMainObjectSearch> {
 	
 	TestMongoHistoriedService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
