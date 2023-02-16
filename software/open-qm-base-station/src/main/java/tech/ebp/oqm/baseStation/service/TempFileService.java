@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class TempFileService {
 	
-	private static final String TEMP_FILE_FORMAT = "%s_%s_%s.%s";
+	private static final String TEMP_DIR_FORMAT = "%s_%s_%s";
+	private static final String TEMP_FILE_FORMAT = TEMP_DIR_FORMAT + ".%s";
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
-	private static final Random rand = new SecureRandom();
+	private static final Random RANDOM = new SecureRandom();
 	
 	private static void checkDir(Path dir){
 		if (!Files.exists(dir)) {
@@ -42,6 +43,12 @@ public class TempFileService {
 		}
 	}
 	
+	private static String getRandFileInts(){
+		return RANDOM.ints(3, 0, 10)
+			.mapToObj(String::valueOf)
+			.collect(Collectors.joining());
+	}
+	
 	@ConfigProperty(name = "service.tempDir")
 	Path tempDir;
 	
@@ -54,14 +61,17 @@ public class TempFileService {
 		log.info("Done setting up temp directory.");
 	}
 	
-	public File getTempFile(String filename, String tempFolder){
+	private Path getDir(String tempFolder){
 		Path directory = this.tempDir;
 		if (tempFolder != null && !tempFolder.isBlank()) {
 			directory = directory.resolve(tempFolder);
-			
 			checkDir(directory);
-			
 		}
+		return directory;
+	}
+	
+	public File getTempFile(String filename, String tempFolder){
+		Path directory = this.getDir(tempFolder);
 		
 		File output = new File(
 			directory.toFile(),
@@ -78,12 +88,30 @@ public class TempFileService {
 				TEMP_FILE_FORMAT,
 				prefix,
 				ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT),
-				rand.ints(3, 0, 10)
-					.mapToObj(String::valueOf)
-					.collect(Collectors.joining()),
+				getRandFileInts(),
 				extension
 			),
 			tempFolder
 		);
+	}
+	
+	
+	public File getTempDir(String prefix, String tempFolder) {
+		Path directory = this.getDir(tempFolder);
+		
+		directory = directory.resolve(
+			String.format(
+				TEMP_DIR_FORMAT,
+				prefix,
+				ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT),
+				getRandFileInts()
+			)
+		);
+		
+		checkDir(directory);
+		File output = directory.toFile();
+		output.deleteOnExit();
+		
+		return output;
 	}
 }

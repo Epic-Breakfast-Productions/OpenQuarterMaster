@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
@@ -30,12 +31,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.zip.Deflater;
 
 @Traced
 @Slf4j
@@ -130,26 +132,13 @@ public class DataExportService {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();
 		
-		//create temp folder to do all work in
-		//TODO:: move to use tempFileService. need to make makeTempDir method?
-		//		this.tempFileService.getTempFile("oqm_export", "tar.gz", "export");
+		File dirToArchive = this.tempFileService.getTempDir("oqm_export", "export");
+		Path dirToArchiveAsPath = dirToArchive.toPath();
+		File outputFile = new File(dirToArchive.getParentFile(), dirToArchive.getName() + ".tar.gz");
+		outputFile.deleteOnExit();
 		
-		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
-		
-		File tempDir = tempDirPath.toFile();
-		tempDir.deleteOnExit();
-		String exportFileName = "oqm_export_" + ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT) + ".tar.gz";
-		File outputFile = new File(tempDir, exportFileName);
-		File dirToArchive = new File(tempDir, "oqm-export");
-		java.nio.file.Path dirToArchiveAsPath = dirToArchive.toPath();
-		
-		log.info("Temp dir: {}", tempDir);
+		log.info("Directory used to hold files: {}", dirToArchive);
 		log.info("Output file: {}", outputFile);
-		
-		if (!dirToArchive.mkdir()) {
-			log.error("Failed to create export of data. Failed to create directory.");
-			throw new IOException("Failed to create export of data. Failed to create directory.");
-		}
 		
 		log.info("Writing service data to files.");
 		{
@@ -178,12 +167,16 @@ public class DataExportService {
 			throw new IOException("Failed to create export of data. Failed to create archive file.");
 		}
 		{
+			GzipParameters parameters = new GzipParameters();
+			parameters.setComment("Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.");
+			parameters.setCompressionLevel(Deflater.BEST_COMPRESSION);
+			
 			StopWatch sw = StopWatch.createStarted();
 			
 			try (
 				OutputStream fOut = new FileOutputStream(outputFile);
 				BufferedOutputStream buffOut = new BufferedOutputStream(fOut);
-				GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut);
+				GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut, parameters);
 				TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)
 			) {
 				Files.walkFileTree(dirToArchiveAsPath, new SimpleFileVisitor<>() {

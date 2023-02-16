@@ -185,6 +185,9 @@ class DataImportServiceTest extends RunningServerTest {
 			storageIds.add(this.inventoryItemService.add(item, testUser));
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
+		
+		
+		
 		List<InventoryItem> oldItems = this.inventoryItemService.list(null, Sorts.ascending("name"), null);
 		this.inventoryItemService.removeAll(testUser);
 		this.inventoryItemService.getHistoryService().removeAll();
@@ -198,6 +201,8 @@ class DataImportServiceTest extends RunningServerTest {
 		this.customUnitService.removeAll(testUser);
 		this.customUnitService.getHistoryService().removeAll();
 		UnitUtils.reInitUnitCollections();
+		
+		log.info("Size of file bundle: {}", bundle.length());
 		
 		try(InputStream is = new FileInputStream(bundle)) {
 			this.dataImportService.importBundle(is, "test.tar.gz", testUser);
