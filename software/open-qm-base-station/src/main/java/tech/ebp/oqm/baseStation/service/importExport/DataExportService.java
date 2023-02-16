@@ -7,13 +7,16 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.exception.DataExportException;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
@@ -32,11 +35,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
 @Traced
 @Slf4j
 @ApplicationScoped
 public class DataExportService {
+	
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
 	private static final String EXPORT_TEMP_DIR_PREFIX = "oqm-data-export";
 	
@@ -45,52 +50,58 @@ public class DataExportService {
 		File tempDir,
 		MongoObjectService<T, S> service,
 		boolean includeHistory
-	) throws IOException {
+	) {
 		String dataTypeName = service.getCollectionName();
 		log.info("Writing {} data to archive folder.", dataTypeName);
+		
 		StopWatch sw = StopWatch.createStarted();
 		File objectDataDir = new File(tempDir, dataTypeName);
 		
-		if (!objectDataDir.mkdir()) {
-			log.error("Failed to create export of data. Failed to create directory.");
-			throw new IOException("Failed to create directory.");
-		}
-		
-		Iterator<T> it = service.iterator();
-		while (it.hasNext()) {
-			T curObj = it.next();
-			ObjectId curId = curObj.getId();
-			File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
+		try {
 			
-			if (!curObjectFile.createNewFile()) {
-				log.error("Failed to create data file for object.");
-				throw new IOException("Failed to create data file for object.");
+			if (!objectDataDir.mkdir()) {
+				log.error("Failed to create export of data. Failed to create directory.");
+				throw new IOException("Failed to create directory.");
 			}
 			
-			ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-		}
-		
-		if (service instanceof MongoHistoriedObjectService && includeHistory) {
-			File objectHistoryDataDir = new File(objectDataDir, DataImportExportUtils.OBJECT_HISTORY_DIR_NAME);
-			
-			if (!objectHistoryDataDir.mkdir()) {
-				log.error("Failed to create export of data. Failed to create directory for object history.");
-				throw new IOException("Failed to create directory for object history.");
-			}
-			
-			Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S>) service).historyIterator();
-			while (hIt.hasNext()) {
-				ObjectHistoryEvent curObj = hIt.next();
+			Iterator<T> it = service.iterator();
+			while (it.hasNext()) {
+				T curObj = it.next();
 				ObjectId curId = curObj.getId();
-				File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
+				File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
 				
 				if (!curObjectFile.createNewFile()) {
-					log.error("Failed to create data file for object history.");
-					throw new IOException("Failed to create data file for object history.");
+					log.error("Failed to create data file for object.");
+					throw new IOException("Failed to create data file for object.");
 				}
 				
 				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
 			}
+			
+			if (service instanceof MongoHistoriedObjectService && includeHistory) {
+				File objectHistoryDataDir = new File(objectDataDir, DataImportExportUtils.OBJECT_HISTORY_DIR_NAME);
+				
+				if (!objectHistoryDataDir.mkdir()) {
+					log.error("Failed to create export of data. Failed to create directory for object history.");
+					throw new IOException("Failed to create directory for object history.");
+				}
+				
+				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S>) service).historyIterator();
+				while (hIt.hasNext()) {
+					ObjectHistoryEvent curObj = hIt.next();
+					ObjectId curId = curObj.getId();
+					File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
+					
+					if (!curObjectFile.createNewFile()) {
+						log.error("Failed to create data file for object history.");
+						throw new IOException("Failed to create data file for object history.");
+					}
+					
+					ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+				}
+			}
+		} catch(Throwable e){
+			throw new DataExportException("Failed to export data for " + service.getClazz().getName() + ": " + e.getMessage(), e);
 		}
 		
 		sw.stop();
@@ -98,8 +109,13 @@ public class DataExportService {
 	}
 	
 	@Inject
+	TempFileService tempFileService;
+	
+	@Inject
 	CustomUnitService customUnitService;
 	
+	@Inject
+	FileAttachmentService fileAttachmentService;
 	@Inject
 	ImageService imageService;
 	
@@ -110,12 +126,14 @@ public class DataExportService {
 	InventoryItemService inventoryItemService;
 	
 	
-	
 	public File exportDataToBundle(boolean excludeHistory) throws IOException {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();
 		
 		//create temp folder to do all work in
+		//TODO:: move to use tempFileService. need to make makeTempDir method?
+		//		this.tempFileService.getTempFile("oqm_export", "tar.gz", "export");
+		
 		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
 		
 		File tempDir = tempDirPath.toFile();
@@ -136,11 +154,20 @@ public class DataExportService {
 		log.info("Writing service data to files.");
 		{
 			StopWatch sw = StopWatch.createStarted();
-			//TODO:: parallelize
-			recordRecords(dirToArchive, this.customUnitService, !excludeHistory);
-			recordRecords(dirToArchive, this.imageService, !excludeHistory);
-			recordRecords(dirToArchive, this.storageBlockService, !excludeHistory);
-			recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory);
+			
+			CompletableFuture<Void> future = CompletableFuture.allOf(
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.customUnitService, !excludeHistory); return null;}),
+//				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;})
+			);
+			try {
+				future.get();
+			} catch(Throwable e) {
+				throw new DataExportException("Failed to export service(s) data.", e);
+			}
+			
 			sw.stop();
 			log.info("Took {} to generate files.", sw);
 		}
