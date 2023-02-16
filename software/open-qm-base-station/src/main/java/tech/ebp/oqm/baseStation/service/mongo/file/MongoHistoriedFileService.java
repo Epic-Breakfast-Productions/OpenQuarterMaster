@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -94,6 +95,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 				metadataClazz
 			);
 	}
+	
 	protected MongoHistoriedFileService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
@@ -171,7 +173,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		
 		ObjectId id = this.add(clientSession, fileObject, tempFile, uploadBody.fileName, interactingEntity);
 		
-		if(!tempFile.delete()){
+		if (!tempFile.delete()) {
 			log.warn("Failed to delete temporary upload file: {}", tempFile);
 		}
 		
@@ -190,7 +192,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		ObjectId newId = null;
 		GridFSBucket bucket = this.getGridFSBucket();
 		
-		boolean sessionGiven = clientSession == null;
+		boolean sessionGiven = clientSession != null;
 		try (
 			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
 		) {
@@ -205,12 +207,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			
 			fileObject.setFileName(filename);
 			this.getFileObjectService().update(clientSession, fileObject);
-			
-			if (clientSession == null) {
-				bucket.uploadFromStream(filename, is, ops);
-			} else {
-				bucket.uploadFromStream(clientSession, filename, is, ops);
-			}
+			//TODO:: this breaks: https://jira.mongodb.org/browse/JAVA-4887  #51 once this is done, cleanup other modifying session logic
+			bucket.uploadFromStream(clientSession, filename, is, ops);
 			
 			if (!sessionGiven) {
 				clientSession.commitTransaction();
@@ -233,7 +231,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		T object = this.getFileObjectService().get(id);
 		GridFSBucket bucket = this.getGridFSBucket();
 		
-		boolean sessionGiven = clientSession == null;
+		boolean sessionGiven = clientSession != null;
 		try (
 			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
 		) {
@@ -278,5 +276,33 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	
 	public int updateFile(ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.updateFile(null, id, file, interactingEntity);
+	}
+	
+	public long removeAll(ClientSession clientSession, InteractingEntity entity) {
+		AtomicLong numRemoved = new AtomicLong();
+		boolean sessionGiven = clientSession != null;
+		try (
+			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
+		) {
+			if (!sessionGiven) {
+				clientSession = session;
+			}
+			ClientSession finalClientSession = clientSession;
+			this.fileObjectService.listIterator(null, null, null).forEach((T object)->{
+				this.getFileObjectService().remove(finalClientSession, object.getId(), entity);
+				numRemoved.getAndIncrement();
+			});
+			if (finalClientSession != null) {
+				this.getGridFSBucket().drop(clientSession);
+			} else {
+				this.getGridFSBucket().drop();
+			}
+			
+			if (!sessionGiven) {
+				clientSession.commitTransaction();
+			}
+		}
+		
+		return numRemoved.get();
 	}
 }

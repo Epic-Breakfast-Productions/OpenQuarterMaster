@@ -323,7 +323,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	
 	public T update(ClientSession clientSession, @Valid T object) throws DbNotFoundException {
 		//TODO:: review this
-		this.get(object.getId());
+		this.get(clientSession, object.getId());
 		if (clientSession != null) {
 			return this.getCollection().findOneAndReplace(clientSession, eq("_id", object.getId()), object);
 		} else {
@@ -394,11 +394,17 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The object that was removed
 	 */
-	public T remove(ObjectId objectId) {
+	public T remove(ClientSession clientSession, ObjectId objectId) {
 		//TODO:: client session
 		T toRemove = this.get(objectId);
 		
-		DeleteResult result = this.getCollection().deleteOne(eq("_id", objectId));
+		DeleteResult result;
+		
+		if (clientSession == null) {
+			result = this.getCollection().deleteOne(eq("_id", objectId));
+		} else {
+			result = this.getCollection().deleteOne(clientSession, eq("_id", objectId));
+		}
 		
 		{//TODO: ignore this in coverage
 			if (!result.wasAcknowledged()) {
@@ -410,6 +416,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		}
 		
 		return toRemove;
+	}
+	
+	public T remove(ObjectId objectId) {
+		return this.remove(null, objectId);
 	}
 	
 	/**
@@ -481,7 +491,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public boolean fieldValueExists(
 		String field,
 		String value
-	){
+	) {
 		return this.getCollection()
 				   .find(
 					   eq(field, value)

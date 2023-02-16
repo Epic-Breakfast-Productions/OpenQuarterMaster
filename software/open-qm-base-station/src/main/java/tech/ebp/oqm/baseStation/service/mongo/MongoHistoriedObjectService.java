@@ -212,17 +212,21 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return The object that was removed
 	 */
-	public T remove(ObjectId objectId, InteractingEntity entity) {
-		//TODO:: client session
+	public T remove(ClientSession session, ObjectId objectId, InteractingEntity entity) {
 		assertNotNullEntity(entity);
-		T removed = super.remove(objectId);
+		T removed = super.remove(session, objectId);
 		
 		this.getHistoryService().objectDeleted(
+			session,
 			removed,
 			entity
 		);
 		
 		return removed;
+	}
+	
+	public T remove(ObjectId objectId, InteractingEntity entity) {
+		return this.remove(null, objectId, entity);
 	}
 	
 	public T remove(String objectId, InteractingEntity entity) {

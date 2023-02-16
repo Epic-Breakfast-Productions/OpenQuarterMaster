@@ -6,10 +6,12 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
@@ -61,11 +63,15 @@ class DataImportServiceTest extends RunningServerTest {
 	@Inject
 	CustomUnitService customUnitService;
 	@Inject
+	FileAttachmentService fileAttachmentService;
+	@Inject
 	ImageService imageService;
 	@Inject
 	StorageBlockService storageBlockService;
 	@Inject
 	InventoryItemService inventoryItemService;
+	@Inject
+	TempFileService tempFileService;
 	
 	@Test
 	public void testImportService() throws IOException {
@@ -106,6 +112,25 @@ class DataImportServiceTest extends RunningServerTest {
 		customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
 		
+		//TODO:: once we have shit figured out for files
+//		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
+//		for (int i = 0; i < 5; i++) {
+//			FileAttachment attachment = new FileAttachment();
+//			attachment.setDescription(FAKER.lorem().paragraph());
+//
+//			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
+//
+//			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+//
+//
+//			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
+//
+//			for(int j = 1; j <= 3; j++){
+//				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
+//				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+//				this.fileAttachmentService.updateFile(id, curFile, testUser);
+//			}
+//		}
 		
 		for (int i = 0; i < 5; i++) {
 			Image curImage = new Image();
@@ -197,6 +222,17 @@ class DataImportServiceTest extends RunningServerTest {
 		List<Image> oldImages = this.imageService.list(null, Sorts.ascending("title"), null);
 		this.imageService.removeAll(testUser);
 		this.imageService.getHistoryService().removeAll();
+		//TODO:: once we have shit figured out for files
+//		List<FileAttachmentGet> fileAttachments =
+//			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+//				.stream()
+//				.map((FileAttachment a)->{
+//					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+//				})
+//				.toList();
+//		this.fileAttachmentService.removeAll(null, testUser);
+//		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
+		
 		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
 		this.customUnitService.removeAll(testUser);
 		this.customUnitService.getHistoryService().removeAll();
@@ -220,6 +256,7 @@ class DataImportServiceTest extends RunningServerTest {
 		assertEquals(oldImages.size(), this.imageService.list().size());
 		assertEquals(oldImages, this.imageService.list(null, Sorts.ascending("title"), null));
 		
+		//TODO:: verify file attachments once we got that going
 	}
 	
 	//TODO:: test failed import doesn't break things
