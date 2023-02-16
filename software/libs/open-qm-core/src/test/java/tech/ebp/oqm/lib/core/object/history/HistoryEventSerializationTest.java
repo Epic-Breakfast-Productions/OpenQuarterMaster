@@ -1,9 +1,9 @@
 package tech.ebp.oqm.lib.core.object.history;
 
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
@@ -106,7 +106,10 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistor
 							 .setStorageBlockFromId(ObjectId.get())
 							 .setQuantity(testQuantity)
 							 .setDescription(FAKER.lorem().paragraph())
-			)
+			),
+			
+			//File Update
+			Arguments.of(new NewFileVersionEvent())
 		);
 	}
 	

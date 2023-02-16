@@ -39,7 +39,7 @@ import static tech.ebp.oqm.baseStation.service.JwtService.JWT_USER_TITLE_CLAIM;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class UserService extends MongoHistoriedService<User, UserSearch> {
+public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 	
 	private Validator validator;
 	private AuthMode authMode;
