@@ -4,7 +4,7 @@ import com.mongodb.client.ClientSession;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class ObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoHistoriedService<T, S>> {
+public abstract class ObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoHistoriedObjectService<T, S>> {
 	
 	protected static List<File> getObjectFiles(Path directory) throws IOException {
 		try (

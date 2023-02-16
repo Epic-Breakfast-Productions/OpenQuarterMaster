@@ -27,7 +27,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class StorageBlockService extends MongoHistoriedService<StorageBlock, StorageBlockSearch> {
+public class StorageBlockService extends MongoHistoriedObjectService<StorageBlock, StorageBlockSearch> {
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);

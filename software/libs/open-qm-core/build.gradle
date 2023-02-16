@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.58-4-28-1-SNAPSHOT'
+version '1.0.58-6-51-6-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -62,6 +62,7 @@ dependencies {
 	implementation 'org.passay:passay:1.6.2'
 	implementation 'commons-io:commons-io:2.11.0'
 	implementation 'commons-codec:commons-codec:1.15'
+	implementation 'org.apache.tika:tika-core:2.7.0'
 //	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'//https://search.maven.org/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
 
 	testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
