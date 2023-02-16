@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.utils;
+package tech.ebp.oqm.baseStation.service;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;

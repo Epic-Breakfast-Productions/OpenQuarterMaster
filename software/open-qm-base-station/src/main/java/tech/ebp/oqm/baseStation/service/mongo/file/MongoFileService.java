@@ -28,10 +28,10 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
-import tech.ebp.oqm.baseStation.utils.TempFileService;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 

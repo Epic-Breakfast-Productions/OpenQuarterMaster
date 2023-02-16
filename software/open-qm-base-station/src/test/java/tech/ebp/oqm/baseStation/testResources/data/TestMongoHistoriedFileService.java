@@ -3,8 +3,8 @@ package tech.ebp.oqm.baseStation.testResources.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
-import tech.ebp.oqm.baseStation.utils.TempFileService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

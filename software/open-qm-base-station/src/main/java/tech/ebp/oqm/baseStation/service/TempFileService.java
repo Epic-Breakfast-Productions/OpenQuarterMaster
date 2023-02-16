@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.utils;
+package tech.ebp.oqm.baseStation.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -7,6 +7,9 @@ import tech.ebp.oqm.baseStation.exception.InvalidConfigException;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,38 +24,47 @@ public class TempFileService {
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
 	private static final Random rand = new SecureRandom();
 	
-	@ConfigProperty(name = "service.tempDir")
-	String tempLocation;
+	private static void checkDir(Path dir){
+		if (!Files.exists(dir)) {
+			try{
+				dir = Files.createDirectories(dir);
+			} catch(IOException e) {
+				throw new InvalidConfigException("Temp directory could not be created. Dir: " + dir);
+			}
+		}
+		
+		if(!Files.isDirectory(dir)){
+			throw new InvalidConfigException("Temp directory must be directory. \"Dir\": " + dir);
+		}
+		
+		if(!Files.isWritable(dir)){
+			throw new InvalidConfigException("Temp directory cannot be written to. Dir: " + dir);
+		}
+	}
 	
-	File tempDir;
+	@ConfigProperty(name = "service.tempDir")
+	Path tempDir;
 	
 	@PostConstruct
 	public void setup() {
-		log.info("Setting up temp directory.");
+		log.info("Setting up temp directory: {}", this.tempDir);
 		
-		this.tempDir = new File(tempLocation);
-		
-		if (!this.tempDir.exists() && !this.tempDir.mkdirs()) {
-			throw new InvalidConfigException("Temp directory could not be created. Dir: " + this.tempLocation);
-		}
-		
-		//TODO:: test can write to the temp dir?
+		checkDir(this.tempDir);
 		
 		log.info("Done setting up temp directory.");
 	}
 	
 	public File getTempFile(String filename, String tempFolder){
-		File directory = this.tempDir;
+		Path directory = this.tempDir;
 		if (tempFolder != null && !tempFolder.isBlank()) {
-			directory = new File(directory, tempFolder);
+			directory = directory.resolve(tempFolder);
 			
-			if (!directory.exists() && !directory.mkdirs()) {
-				throw new IllegalStateException("Failed to create temp folder under main temp: " + directory);
-			}
+			checkDir(directory);
+			
 		}
 		
 		File output = new File(
-			directory,
+			directory.toFile(),
 			filename
 		);
 		output.deleteOnExit();
