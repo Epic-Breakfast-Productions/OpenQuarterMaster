@@ -352,3 +352,14 @@ These configs must specifically be set when deployed for the messages to reach t
 | `password`
 | The password used to connect to the Artemis instance.
 |===
+
+==== Other
+
+|===
+| Config | Default | Examples | Explain
+
+| service.tempDir
+| /tmp/oqm/baseStation
+|
+| The place the service uses for temporary files
+|===

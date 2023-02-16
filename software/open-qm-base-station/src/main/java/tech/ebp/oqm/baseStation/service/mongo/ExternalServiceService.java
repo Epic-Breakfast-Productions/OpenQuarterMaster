@@ -34,7 +34,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class ExternalServiceService extends MongoHistoriedService<ExternalService, ExternalServiceSearch> {
+public class ExternalServiceService extends MongoHistoriedObjectService<ExternalService, ExternalServiceSearch> {
 	
 	//    private Validator validator;
 	private AuthMode authMode;
