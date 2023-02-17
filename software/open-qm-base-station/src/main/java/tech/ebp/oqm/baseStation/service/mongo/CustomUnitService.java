@@ -20,7 +20,7 @@ import java.util.List;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends MongoHistoriedService<CustomUnitEntry, CustomUnitSearch> {
+public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch> {
 	
 	CustomUnitService() {//required for DI
 		super(null, null, null, null, null, null, false, null);

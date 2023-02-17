@@ -2,7 +2,7 @@ package tech.ebp.oqm.baseStation.testResources.testClasses;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedService<T, ?>> extends RunningServerTest {
+public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedObjectService<T, ?>> extends RunningServerTest {
 	
 	protected TestUserService testUserService;
 	
