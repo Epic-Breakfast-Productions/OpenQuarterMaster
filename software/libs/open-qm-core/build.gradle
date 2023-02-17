@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.58-6-51-6-SNAPSHOT'
+version '1.0.58-7-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -80,7 +80,7 @@ dependencies {
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
-	testImplementation 'net.datafaker:datafaker:1.7.0'
+	testImplementation 'net.datafaker:datafaker:1.8.0'
 	testImplementation 'ch.qos.logback:logback-classic:1.4.0'
 	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
