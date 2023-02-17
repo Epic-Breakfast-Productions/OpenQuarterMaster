@@ -11,6 +11,7 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
 	
 	<dependencyManagement>
@@ -85,14 +86,31 @@
 				<version>3.10.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.8</source>
-					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M9</version>
+			</plugin>
+			<plugin>
+				<!-- https://github.com/trivago/cluecumber/tree/main/maven -->
+				<groupId>com.trivago.rta</groupId>
+				<artifactId>cluecumber-maven</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>report</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>reporting</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sourceJsonReportDirectory>${project.build.directory}/test-reports</sourceJsonReportDirectory>
+					<generatedHtmlReportDirectory>${project.build.directory}/test-reports/cluecumber/</generatedHtmlReportDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

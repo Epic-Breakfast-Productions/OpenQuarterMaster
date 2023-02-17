@@ -1,12 +1,27 @@
 package stationCaptainTest.stepDefinitions.shared;
 
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
+import stationCaptainTest.testResources.BaseStepDefinitions;
+import stationCaptainTest.testResources.TestContext;
 
-public class ShellCommandDefinitions {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ShellCommandDefinitions extends BaseStepDefinitions {
+	
+	public ShellCommandDefinitions(TestContext context) {
+		super(context);
+	}
+	
+	@Override
+	@Before
+	public void setup(Scenario scenario) {
+		this.setScenario(scenario);
+	}
 	
 	@Then("command returns successfully")
 	public void command_returns_successfully() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new io.cucumber.java.PendingException();
+		assertEquals(0, this.getContext().getShellProcessResults().getExitCode());
 	}
 }

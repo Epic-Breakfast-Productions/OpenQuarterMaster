@@ -1,3 +1,4 @@
+@feature
 @feature-1
 @feature-1.1
 Feature: 1.1 - Installers
@@ -7,3 +8,4 @@ Feature: 1.1 - Installers
     Then command returns successfully
     And the following installers were created:
       | deb |
+#      | rpm |
