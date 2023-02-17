@@ -1,5 +1,7 @@
 package stationCaptainTest.stepDefinitions;
 
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.*;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
@@ -10,6 +12,12 @@ public class ExampleStepDefinitions extends BaseStepDefinitions {
 	
 	public ExampleStepDefinitions(TestContext context) {
 		super(context);
+	}
+	
+	@Override
+	@Before
+	public void setup(Scenario scenario) {
+		this.setScenario(scenario);
 	}
 	
 	@Given("an example scenario")

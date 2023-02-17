@@ -15,6 +15,9 @@
 #   - jq
 #
 
+echo "Script location: ${BASH_SOURCE}"
+cd "$(dirname "$0")" || exit
+
 configFile="properties.json"
 buildDir="installerBuild"
 
