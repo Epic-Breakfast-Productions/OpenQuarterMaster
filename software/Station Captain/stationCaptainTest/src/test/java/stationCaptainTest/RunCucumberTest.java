@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_P
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("stationCaptainTest")
+@SelectClasspathResource("features")
 @ConfigurationParameter(key=ANSI_COLORS_DISABLED_PROPERTY_NAME, value = "false")
 @ConfigurationParameter(
 	key = PLUGIN_PROPERTY_NAME,

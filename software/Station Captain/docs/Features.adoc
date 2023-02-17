@@ -1,0 +1,43 @@
+= OQM Station Captain Features
+:toc:
+:toclevels: 5
+:sectnumlevels:5
+:sectanchors:
+
+link:README.md[Back]
+
+== Current
+:sectnums:
+
+=== Installing
+
+==== Installers
+
+Installers will be provided for the following operating systems:
+
+ - Debian/ Debian-based via `.deb`
+
+=== Installation Management
+
+=== Misc
+
+
+
+:sectnums!:
+== Planned
+:sectnums:
+
+=== Installing
+
+==== Installers
+
+Installers will be provided for the following operating systems:
+
+- Fedora/ RHEL via `.rpm`
+
+
+
+:sectnums!:
+== Proposed
+:sectnums:
+:sectnums!:
