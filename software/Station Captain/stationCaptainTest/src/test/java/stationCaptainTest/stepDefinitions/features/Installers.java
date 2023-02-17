@@ -46,14 +46,16 @@ public class Installers extends BaseStepDefinitions {
 	
 	@Then("the following installers were created:")
 	public void the_following_installers_were_created(List<String> typesToFind) throws IOException {
-		for(String curType : typesToFind) {
-			Stream<Path> found = Files.find(
-				INSTALLER_OUTPUT_DIR,
-				Integer.MAX_VALUE,
-				(path, basicFileAttributes)->path.toFile().getName().matches(".*." + curType)
-			);
-			
-			assertTrue(found.findAny().isPresent(), "Installer not found for ." + curType);
+		for (String curType : typesToFind) {
+			try (
+				Stream<Path> found = Files.find(
+					INSTALLER_OUTPUT_DIR,
+					Integer.MAX_VALUE,
+					(path, basicFileAttributes)->path.toFile().getName().matches(".*." + curType)
+				);
+			) {
+				assertTrue(found.findAny().isPresent(), "Installer not found for ." + curType);
+			}
 		}
 	}
 }
