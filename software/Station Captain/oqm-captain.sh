@@ -95,6 +95,19 @@ function exitProg() {
 	fi
 }
 
+while getopts 'h' opt; do
+	case "$opt" in
+		h)
+			echo "Usage: $(basename $0)"
+			exit 0;
+		;;
+	esac
+done
+
+
+
+
+
 function updateSelection() {
 	SELECTION=""
 	SELECTION=$(cat $USER_SELECT_FILE)

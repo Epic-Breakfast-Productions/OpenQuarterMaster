@@ -24,4 +24,5 @@ public class ShellCommandDefinitions extends BaseStepDefinitions {
 	public void command_returns_successfully() {
 		assertEquals(0, this.getContext().getShellProcessResults().getExitCode());
 	}
+	
 }

@@ -31,4 +31,5 @@ public class ShellProcessResults {
 	public static ShellProcessResults.ShellProcessResultsBuilder builderFromProcessBuilder(ProcessBuilder builder) throws IOException, InterruptedException {
 		return builderFomProcess(builder.start());
 	}
+	
 }

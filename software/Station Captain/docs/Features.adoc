@@ -1,7 +1,7 @@
 = OQM Station Captain Features
 :toc:
-:toclevels: 5
-:sectnumlevels:5
+:toclevels: 6
+:sectnumlevels: 6
 :sectanchors:
 
 link:README.md[Back]
@@ -13,9 +13,15 @@ link:README.md[Back]
 
 ==== Installers
 
+===== Creation
+
 Installers will be provided for the following operating systems:
 
  - Debian/ Debian-based via `.deb`
+
+===== Usage
+
+These installers can be used to install the `oqm-captain` management script.
 
 === Installation Management
 

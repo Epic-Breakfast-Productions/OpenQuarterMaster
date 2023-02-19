@@ -27,7 +27,7 @@ public class ExampleStepDefinitions extends BaseStepDefinitions {
 	
 	@When("all step definitions are implemented")
 	public void allStepDefinitionsAreImplemented() throws InterruptedException {
-		Thread.sleep(5_000);
+//		Thread.sleep(5_000);
 	}
 	
 	@Then("the scenario passes")
