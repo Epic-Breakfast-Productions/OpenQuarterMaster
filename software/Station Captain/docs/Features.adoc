@@ -33,9 +33,19 @@ If no, continue to the menu.
 
 If so, the Base Station and any supporting infra components will be installed.
 
+==== The Install
+
+
+
+==== Uninstallation
+
+=== Configuration Management
+
 === Misc
 
+==== Only runs as root
 
+The script needs to run as root to do the administrative tasks it performs. The script will stop execution at the beginning if not root.
 
 :sectnums!:
 == Planned
