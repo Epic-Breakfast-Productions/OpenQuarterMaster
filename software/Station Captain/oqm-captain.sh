@@ -104,10 +104,6 @@ while getopts 'h' opt; do
 	esac
 done
 
-
-
-
-
 function updateSelection() {
 	SELECTION=""
 	SELECTION=$(cat $USER_SELECT_FILE)

@@ -25,6 +25,14 @@ These installers can be used to install the `oqm-captain` management script.
 
 === Installation Management
 
+==== First time run
+
+If the Open Quarter Base station package is not installed, the script will prompt the user if they want it installed.
+
+If no, continue to the menu.
+
+If so, the Base Station and any supporting infra components will be installed.
+
 === Misc
 
 
