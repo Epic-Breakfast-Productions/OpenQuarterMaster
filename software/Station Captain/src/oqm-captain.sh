@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script manages an installation of Open QuarterMaster
+# This script manages an installation of Open QuarterMaster on a single host
 #
 # Author: Greg Stewart
 # https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
@@ -11,7 +11,7 @@
 #  - sponge (from moreutils)
 #  - curl
 #  - jq
-SCRIPT_VERSION="1.0.9-DEV"
+SCRIPT_VERSION='SCRIPT_VERSION'
 SCRIPT_PACKAGE_NAME="open+quarter+master-manager-station+captain"
 SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
@@ -47,7 +47,7 @@ SUPER_TALL_HEIGHT=60
 # How the user is interacting with this script. Either "ui" or "direct"
 INTERACT_MODE_UI="ui"
 INTERACT_MODE_DIRECT="direct"
-INTERACT_MODE="$INTERACT_MODE_UI"
+INTERACT_MODE="$INTERACT_MODE_DIRECT"
 
 #test -n "$DISPLAY" && DIALOG=xdialog
 
@@ -62,6 +62,14 @@ VERSION_FLAG_PRIORITY=("NIGHTLY" "DEV" "" "FINAL")
 
 VERSION_FLAG_CAP="DEV"
 
+LIB_DIR="lib"
+
+source "$LIB_DIR/prog-flow.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib prog-flow"; fi;
+source "$LIB_DIR/user-interaction.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib user-interaction"; fi;
+
+
 ##################################################
 # Functions
 ######################################
@@ -73,41 +81,7 @@ VERSION_FLAG_CAP="DEV"
 #####
 ###
 #
-function showDialog() {
-	dialog --backtitle "$SCRIPT_TITLE" --hfile "oqm-station-captain-help.txt" "$@"
-}
 
-# TODO:: take arg to return
-function exitProg() {
-	if [ -f "$USER_SELECT_FILE" ]; then
-		rm "$USER_SELECT_FILE"
-	fi
-
-	if [ "$1" = "" ]; then
-		echo "Exiting."
-		clear -x
-		exit
-	else
-		echo "ERROR:: $2"
-		showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
-		clear -x
-		exit $1
-	fi
-}
-
-while getopts 'h' opt; do
-	case "$opt" in
-		h)
-			echo "Usage: $(basename $0)"
-			exit 0;
-		;;
-	esac
-done
-
-function updateSelection() {
-	SELECTION=""
-	SELECTION=$(cat $USER_SELECT_FILE)
-}
 
 function determineSystemPackMan() {
 	local return="$1"
@@ -990,6 +964,17 @@ mkdir -p "$DOWNLOAD_DIR"
 #
 # TODO:: add captain settings file, prepopulate
 #
+
+while getopts 'h' opt; do
+	case "$opt" in
+		h)
+			echo "Usage: $(basename $0)"
+			exitProg;
+		;;
+	esac
+done
+
+INTERACT_MODE="$INTERACT_MODE_UI"
 
 # Update release list. Only call here
 refreshReleaseList

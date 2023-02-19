@@ -39,6 +39,7 @@ public final class ContainerUtils {
 		container.withCommand("tail -f /dev/null");
 		container.withEnv("TZ", "UTC");
 		container.withEnv("DEBIAN_FRONTEND", "noninteractive");
+//		container.withEnv("TERM", "xterm");
 //		container.setExposedPorts();
 		container.withStartupTimeout(ContainerConstants.STARTUP_WAIT);
 		
