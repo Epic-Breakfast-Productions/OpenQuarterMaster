@@ -39,7 +39,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-scheduler'
 	implementation 'io.opentracing.contrib:opentracing-mongo-common'
 
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.4'
 
 	implementation 'com.itextpdf:html2pdf:4.0.5'
 
