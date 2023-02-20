@@ -28,7 +28,16 @@ updates:
     directory: "/software/open-qm-base-station"
     target-branch: "dev"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "area-dependencies"
       - "project-baseStation"
+  # Station Captain
+  - package-ecosystem: "maven"
+    directory: "/software/Station Captain/stationCaptainTest"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+    labels:
+      - "area-dependencies"
+      - "project-stationCaptain"

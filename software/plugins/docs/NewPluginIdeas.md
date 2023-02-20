@@ -8,3 +8,13 @@ TODO:: where to go to vote for the next one
 
 ## Storage Interaction
 
+https://github.com/LAION-AI/Open-Assistant
+
+https://cmusphinx.github.io/wiki/tutorial/
+
+## Fridge Integration
+
+## Workflow manager
+
+Users create a custom workflow for items to come into and work through, and finish in
+
