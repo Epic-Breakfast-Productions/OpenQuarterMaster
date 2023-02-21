@@ -17,6 +17,7 @@ SCRIPT_TITLE="Open QuarterMaster Station Captain V${SCRIPT_VERSION}"
 
 # urls
 HOME_GIT="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
+STATION_CAPT_GIT="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain"
 HOME_PLUGIN_REPO="https://raw.githubusercontent.com/Epic-Breakfast-Productions/OpenQuarterMaster/main/software/plugins/plugin-repo.json"
 GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster"
 GIT_RELEASES="$GIT_API_BASE/releases"
@@ -61,6 +62,23 @@ SW_TYPE_PLUGIN="Plugin"
 VERSION_FLAG_PRIORITY=("NIGHTLY" "DEV" "" "FINAL")
 
 VERSION_FLAG_CAP="DEV"
+
+HELPTEXT="$SCRIPT_TITLE
+
+Usage:
+	$(basename $0) [-h]
+
+	No arguments assumes an interface is desired, and runs with an interactive console-based ui.
+
+	-h
+		Displays this help text
+
+Notes:
+	- Due to the nature of what the script manages/does, root access is required. Run as either the 'root' user or with 'sudo'
+	- Further documentation available here: $STATION_CAPT_GIT
+"
+
+
 
 
 ##################################################
@@ -126,7 +144,7 @@ mkdir -p "$DOWNLOAD_DIR"
 while getopts 'h' opt; do
 	case "$opt" in
 		h)
-			echo "Usage: $(basename $0)"
+			echo "$HELPTEXT";
 			exitProg;
 		;;
 	esac
