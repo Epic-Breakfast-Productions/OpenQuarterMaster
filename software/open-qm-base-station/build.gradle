@@ -81,7 +81,7 @@ dependencies {
 	testImplementation 'org.keycloak:keycloak-admin-client:20.0.4'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.0'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.1'
 	testImplementation 'org.testcontainers:selenium:1.17.6'
 	testImplementation 'com.deque:axe-selenium:3.0'
 	testImplementation 'net.datafaker:datafaker:1.8.0'
