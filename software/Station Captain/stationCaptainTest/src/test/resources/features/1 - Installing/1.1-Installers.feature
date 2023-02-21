@@ -8,7 +8,7 @@ Feature: 1.1 - Installers
 	@feature-1.1.1
 	Scenario: Installers are made
 
-	This tests that the
+	This tests that the installers can be built
 
 		When the command to make the installers are made
 		Then command returns successfully
@@ -16,7 +16,7 @@ Feature: 1.1 - Installers
 			| deb |
 #      | rpm |
 
-	@feature-1.1.1
+	@feature-1.1.2
 	Scenario Outline: Installers used
 
 	This tests that the installers can be used to install the `oqm-captain` manager script.
