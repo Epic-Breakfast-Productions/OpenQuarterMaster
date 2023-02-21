@@ -1,6 +1,7 @@
 package stationCaptainTest.stepDefinitions;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.*;
 import stationCaptainTest.testResources.BaseStepDefinitions;
@@ -32,6 +33,7 @@ public class ExampleStepDefinitions extends BaseStepDefinitions {
 	
 	@Then("the scenario passes")
 	public void theScenarioPasses() {
+//		throw new IllegalStateException();
 	}
 	
 }

@@ -1,7 +1,6 @@
 package stationCaptainTest.stepDefinitions.features;
 
 import io.cucumber.java.Before;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
