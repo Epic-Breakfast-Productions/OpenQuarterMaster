@@ -195,21 +195,55 @@ mkdir -p "$DOWNLOAD_DIR"
 # TODO:: add captain settings file, prepopulate
 #
 
-# TODO:: figure out how getopts works with long form commands
-while getopts 'hv' opt; do
-	case "$opt" in
-		v)
+if [ "$#" -eq 0 ]; then
+	INTERACT_MODE="$INTERACT_MODE_UI"
+	ui.doInteraction
+fi
+
+
+ARGS_SHORT="v,h"
+ARGS_LONG="version,help"
+
+OPTS=$(getopt -a -n oqm-captain --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
+
+VALID_ARGUMENTS=$# # Returns the count of arguments that are in short or long options
+if [ "$VALID_ARGUMENTS" -eq 0 ]; then
+	echo "$HELPTEXT";
+	exitProg 1 "Bad inputs given.";
+fi
+
+eval set -- "$OPTS"
+while :
+do
+	case "$1" in
+		-v | --version )
 			echo "$SCRIPT_TITLE";
 			exitProg;
 		;;
-		h|*)
+		-h | --help)
 			echo "$HELPTEXT";
 			exitProg;
+		;;
+		--)
+			shift;
+			break
 		;;
 	esac
 done
 
-INTERACT_MODE="$INTERACT_MODE_UI"
+#while getopts 'hv' opt; do
+#	case "$opt" in
+#		v)
+#			echo "$SCRIPT_TITLE";
+#			exitProg;
+#		;;
+#		h|*)
+#			echo "$HELPTEXT";
+#			exitProg;
+#		;;
+#	esac
+#done
+
 
 # Update release list. Only call here
 
@@ -217,92 +251,3 @@ INTERACT_MODE="$INTERACT_MODE_UI"
 # Debug section. Nothing should be here
 #
 
-#
-# Check updatedness of this script
-#
-curInstalledCapVersion=""
-getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
-echo "Station captain installed version: $curInstalledCapVersion"
-latestStatCapRelease="$(needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
-echo "DEBUG:: has new release return: $latestStatCapRelease"
-
-if [ "$latestStatCapRelease" = "" ]; then
-	echo "Station Captain up to date."
-else
-	statCapUpdateInfo=($latestStatCapRelease)
-	echo "Station Captain has a new release!"
-	echo "DEBUG:: release info: $latestStatCapRelease"
-	showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out:\\n${statCapUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
-	case $? in
-	0)
-		echo "Updating Station captain."
-		installFromUrl "${statCapUpdateInfo[1]}"
-		echo "Update installed! Please rerun the script."
-		exitProg
-		;;
-	*)
-		echo "Not updating Station Captain."
-		;;
-	esac
-	# TODO:: update
-fi
-
-#
-# Check if we need to setup
-#
-curInstalledBaseStationVersion=""
-getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
-echo "Current installed base station version: $curInstalledBaseStationVersion"
-
-if [ "$curInstalledBaseStationVersion" = "" ]; then
-	showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
-	case $? in
-	0)
-		initialSetup
-		;;
-	*)
-		echo "Not performing initial setup."
-		;;
-	esac
-fi
-
-#
-# Get major version of base station
-#
-getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
-baseStationMajorVersion="$(getMajorVersion "$curInstalledBaseStationVersion")"
-echo "Current installed base station major version: $baseStationMajorVersion"
-
-baseStationHasUpdates="$(needsUpdated "open+quarter+master-core-base+station-$curInstalledBaseStationVersion" "$baseStationMajorVersion")"
-
-if [ "$baseStationHasUpdates" = "" ]; then
-	echo "Base Station up to date."
-else
-	baseStationUpdateInfo=($baseStationHasUpdates)
-	echo "Base Station has a new release!"
-	echo "DEBUG:: release info: $baseStationHasUpdates"
-	showDialog --title "Base Station new Release" --yesno "Base Station has a new release out:\\n${baseStationUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
-	case $? in
-	0)
-		echo "Updating Base Station."
-		installFromUrl "${baseStationUpdateInfo[1]}"
-		echo "Update installed!"
-		showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
-		;;
-	*)
-		echo "Not updating base Station."
-		;;
-	esac
-fi
-
-#echo "$(compareVersions "Manager-Station_Captain-1.2.4" "Manager-Station_Captain-1.2.4-DEV")"
-
-#
-# Interact with User
-#
-# TODO:: if get inputs, go to direct mode.
-if [ "$INTERACT_MODE" == "$INTERACT_MODE_UI" ]; then
-	mainUi
-fi
-
-exitProg
