@@ -70,8 +70,62 @@ Usage:
 
 	No arguments assumes an interface is desired, and runs with an interactive console-based ui.
 
-	-h
-		Displays this help text
+	General:
+
+		-h
+		--help
+			Displays this help text
+
+		--sys-info
+			TODO
+			Gets the system's information collected in one place.
+
+		--install-info
+			TODO
+			Gets installation information such as the major version of base station used, and what is installed.
+
+		-v
+		--version
+			Displays this script's version
+
+	Installation management:
+
+		--install
+			TODO
+			Installs the core components; Infrastructure components and the base station.
+
+		--install -p <plugin>
+			TODO
+			installs a plugin by name
+
+		--update -a
+			TODO
+			Finds and installs all available updates
+
+		--uninstall -a [-c]
+			TODO
+			Uninstalls everything this script manages. -c for removing configuration as well.
+
+		--uninstall <plugin>
+			TODO
+			Uninstalls a particular plugin.
+
+	Data Management:
+
+		--reset-data
+			TODO
+			Purges ALL data stored by the system. Do so with care, recommend backing up data first.
+
+	System Management:
+
+		--image-clean
+			TODO
+			Cleans container images. Recommend doing after updates.
+
+		--os-auto-update [-e|-d]
+			TODO
+			Enables or disables OS automated updates. -e to endable, -d to disable
+
 
 Notes:
 	- Due to the nature of what the script manages/does, root access is required. Run as either the 'root' user or with 'sudo'
@@ -141,9 +195,14 @@ mkdir -p "$DOWNLOAD_DIR"
 # TODO:: add captain settings file, prepopulate
 #
 
-while getopts 'h' opt; do
+# TODO:: figure out how getopts works with long form commands
+while getopts 'hv' opt; do
 	case "$opt" in
-		h)
+		v)
+			echo "$SCRIPT_TITLE";
+			exitProg;
+		;;
+		h|*)
 			echo "$HELPTEXT";
 			exitProg;
 		;;
@@ -153,7 +212,6 @@ done
 INTERACT_MODE="$INTERACT_MODE_UI"
 
 # Update release list. Only call here
-refreshReleaseList
 
 #
 # Debug section. Nothing should be here
