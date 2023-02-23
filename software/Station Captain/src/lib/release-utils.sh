@@ -5,19 +5,19 @@
 #
 #
 
-function processReleaseList() {
-	echo "Processing release list."
+#function relUtil_processReleaseList() {
+#	echo "Processing release list."
+#
+#	rm -rf "${RELEASE_VERSIONS_DIR}/*"
+#
+#	for releaseBase64 in $(jq -r '.[] | @base64' "$RELEASE_LIST_FILE"); do
+#		processRelease "$(echo "$releaseBase64" | base64 --decode)"
+#	done
+#
+#	echo "DONE processing release list."
+#}
 
-	rm -rf "${RELEASE_VERSIONS_DIR}/*"
-
-	for releaseBase64 in $(jq -r '.[] | @base64' "$RELEASE_LIST_FILE"); do
-		processRelease "$(echo "$releaseBase64" | base64 --decode)"
-	done
-
-	echo "DONE processing release list."
-}
-
-function refreshReleaseList() {
+function relUtil_refreshReleaseList() {
 	echo "Refreshing release list."
 
 	cat <<EOT >>"$RELEASE_LIST_FILE_WORKING"
@@ -93,7 +93,7 @@ EOT
 # Gets the latest release version for the given software.
 # Usage: getReleasesFor <software prefix>
 #
-function getGitReleasesFor() {
+function relUtil_getGitReleasesFor() {
 	local softwareReleaseToFind="$1"
 	local baseStationMajorVersion="$2"
 
@@ -112,14 +112,14 @@ function getGitReleasesFor() {
 
 #
 # Gets the latest release version for the given software.
-# Usage: getLatestGitReleaseFor <return var> <software prefix>
+# Usage: relUtil_getLatestGitReleaseFor <return var> <software prefix>
 # Returns Tag json of the latest release
 #
-function getLatestGitReleaseFor() {
+function relUtil_getLatestGitReleaseFor() {
 	local softwareReleaseToFind="$1"
 	local baseStationMajorVersion="$2"
 
-	releasesFor="$(getGitReleasesFor "$softwareReleaseToFind" "$baseStationMajorVersion")"
+	releasesFor="$(relUtil_getGitReleasesFor "$softwareReleaseToFind" "$baseStationMajorVersion")"
 
 	#echo "DEBUG:: releases: $releasesFor"
 	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
@@ -130,10 +130,10 @@ function getLatestGitReleaseFor() {
 #
 # Determines if the software tag needs an update
 #  TODO:: update to new interface
-# Usage: needsUpdated "open+quarter+master-type-name-version[-tag] [base station major version to stick to]"
+# Usage: relUtil_needsUpdated "open+quarter+master-type-name-version[-tag] [base station major version to stick to]"
 # Returns "" if not needed, "<tag> <download link>" of version to update to.
 #
-function needsUpdated() {
+function relUtil_needsUpdated() {
 	local inputTagVersion="$1"
 	local baseStationMajorVersion="$2"
 
@@ -148,7 +148,7 @@ function needsUpdated() {
 	output=""
 	case "${curTagArr[1]}" in
 	"manager" | "infra" | "core") # Prefixes we get from Git
-		local latestRelease="$(getLatestGitReleaseFor "$curTag" "$baseStationMajorVersion")"
+		local latestRelease="$(relUtil_getLatestGitReleaseFor "$curTag" "$baseStationMajorVersion")"
 
 		#echo "DEBUG:: Latest release: $latestRelease"
 
@@ -161,7 +161,7 @@ function needsUpdated() {
 			local compareResult="$(compareVersions "$curTagVersion" "$latestReleaseTag")"
 			#echo "DEBUG:: compare result: \"$compareResult\""
 			if [[ "$compareResult" == \<* ]]; then
-				output="$latestReleaseTag $(getAssetUrlToInstallFromGitRelease "$latestRelease")"
+				output="$latestReleaseTag $(relUtil_getAssetUrlToInstallFromGitRelease "$latestRelease")"
 			fi
 		fi
 		;;
@@ -175,7 +175,7 @@ function needsUpdated() {
 # Usage: selectAssetToInstall "<release json>"
 # Returns the json of the asset to install, or empty string if none applicable
 #
-function getAssetToInstallFromGitRelease() {
+function relUtil_getAssetToInstallFromGitRelease() {
 	local releaseJson="$1"
 	installerFormat=""
 	packMan-determineSystemPackFileFormat installerFormat
@@ -188,12 +188,12 @@ function getAssetToInstallFromGitRelease() {
 	echo "$matchingAssets" | jq -c '.[0]'
 }
 
-function getAssetUrlToInstallFromGitRelease() {
+function relUtil_getAssetUrlToInstallFromGitRelease() {
 	local releaseJson="$1"
-	echo "$(getAssetToInstallFromGitRelease "$releaseJson" | jq -cr '.browser_download_url')"
+	echo "$(relUtil_getAssetToInstallFromGitRelease "$releaseJson" | jq -cr '.browser_download_url')"
 }
 
-function installFromUrl() {
+function relUtil_installFromUrl() {
 	local downloadUrl="$1"
 	echo "DEBUG:: download url given: $downloadUrl"
 	local filename="$(basename "$downloadUrl")"
@@ -228,7 +228,7 @@ function installFromUrl() {
 #function installFromGit(){
 #	local releaseJson="$1"
 #
-#	local assetToInstall="$(getAssetToInstallFromGitRelease "$releaseJson")"
+#	local assetToInstall="$(relUtil_getAssetToInstallFromGitRelease "$releaseJson")"
 #	echo "DEBUG:: Installing asset $assetToInstall"
 #	# TODO:: download, install
 #	local downloadUrl="$(echo "$assetToInstall" | jq -cr '.browser_download_url')"
@@ -256,9 +256,9 @@ function installFromUrl() {
 #	fi
 #}
 
-function getGitPackagesForType() {
+function relUtil_getGitPackagesForType() {
 	local releaseType="$1"
-	local releasesOfType="$(getGitReleasesFor "$1-")"
+	local releasesOfType="$(relUtil_getGitReleasesFor "$1-")"
 
 	#echo "DEBUG:: Getting individual packages of type $releaseType: $releasesOfType"
 	local infraList=()
@@ -276,32 +276,32 @@ function getGitPackagesForType() {
 	echo "${infraList[*]}"
 }
 
-function updateInstallPackagesForType() {
+function relUtil_updateInstallPackagesForType() {
 	local releaseType="$1"
-	local packages=($(getGitPackagesForType "$1"))
+	local packages=($(relUtil_getGitPackagesForType "$1"))
 	echo "Packages to install: ${packages[*]}"
 	for curPackage in "${packages[@]}"; do
 		echo "Installing $curPackage"
-		local curRelease="$(getLatestGitReleaseFor $curPackage)"
-		local assetUrl="$(getAssetUrlToInstallFromGitRelease "$curRelease")"
+		local curRelease="$(relUtil_getLatestGitReleaseFor $curPackage)"
+		local assetUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$curRelease")"
 		echo "DEBUG:: url gotten for $curPackage: $assetUrl"
-		installFromUrl "$assetUrl"
+		relUtil_installFromUrl "$assetUrl"
 		echo "DONE installing $curPackage"
 	done
 }
 
-function installUpdateInfra() {
+function relUtil_installUpdateInfra() {
 	echo "Installing/Updating latest infrastructure pieces."
-	updateInstallPackagesForType "infra"
+	relUtil_updateInstallPackagesForType "infra"
 	echo "DONE Installing/Updating latest infrastructure pieces."
 }
-function installUpdateBaseStation() {
+function relUtil_installUpdateBaseStation() {
 	echo "Installing/Updating latest infrastructure pieces."
-	updateInstallPackagesForType "core"
+	relUtil_updateInstallPackagesForType "core"
 	echo "DONE Installing/Updating latest infrastructure pieces."
 }
 
-function installUpdateInfraBaseStation() {
-	installUpdateInfra
-	installUpdateBaseStation
+function relUtil_installUpdateInfraBaseStation() {
+	relUtil_installUpdateInfra
+	relUtil_installUpdateBaseStation
 }

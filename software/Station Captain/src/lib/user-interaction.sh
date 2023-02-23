@@ -1,13 +1,12 @@
 
-function showDialog() {
+function ui_showDialog() {
 	dialog --backtitle "$SCRIPT_TITLE" --hfile "oqm-station-captain-help.txt" "$@"
 }
 
-function updateSelection() {
+function ui_updateSelection() {
 	SELECTION=""
 	SELECTION=$(cat $USER_SELECT_FILE)
 }
-
 
 #
 # User Interaction Functions
@@ -15,12 +14,12 @@ function updateSelection() {
 #
 #
 
-function displayBaseOsInfo() {
+function ui_displayBaseOsInfo() {
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 
-	showDialog --infobox "Retrieving system information..." $TINY_HEIGHT $DEFAULT_WIDTH
+	ui_showDialog --infobox "Retrieving system information..." $TINY_HEIGHT $DEFAULT_WIDTH
 
-	showDialog --infobox "Retrieving system information...\nGetting general system info" $TINY_HEIGHT $DEFAULT_WIDTH
+	ui_showDialog --infobox "Retrieving system information...\nGetting general system info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local ipAddrs="$(hostname -I)"
 	ipAddrs="$(echo "$ipAddrs" | sed -e 's/^/    /')"
 	ipAddrs="${ipAddrs//$'\n'/\\n}"
@@ -31,7 +30,7 @@ function displayBaseOsInfo() {
 	uname="$(echo "$uname" | sed -e 's/^/    /')"
 	uname="${uname//$'\n'/\\n}"
 
-	showDialog --infobox "Retrieving system information...\nGetting hardware info" $TINY_HEIGHT $DEFAULT_WIDTH
+	ui_showDialog --infobox "Retrieving system information...\nGetting hardware info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local hwInfo="$(hwinfo --short)"
 	hwInfo="$(echo "$hwInfo" | sed -e 's/^/    /')"
 	hwInfo="${hwInfo//$'\n'/\\n}"
@@ -39,7 +38,7 @@ function displayBaseOsInfo() {
 	usbDevs="$(echo "$usbDevs" | sed -e 's/^/    /')"
 	usbDevs="${usbDevs//$'\n'/\\n}"
 
-	showDialog --infobox "Retrieving system information...\nGetting disk usage info" $TINY_HEIGHT $DEFAULT_WIDTH
+	ui_showDialog --infobox "Retrieving system information...\nGetting disk usage info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local diskUsage="$(df -H)"
 	diskUsage="$(echo "$diskUsage" | sed -e 's/^/    /')"
 	diskUsage="${diskUsage//$'\n'/\\n}"
@@ -47,11 +46,11 @@ function displayBaseOsInfo() {
 	local sysInfo="Ip Address(es):\n$ipAddrs\n\nOS Info:\n$release\n\n$uname\n\nHardware Info:\n$hwInfo\n\nUSB devices:\n$usbDevs\n\nDisk usage:\n$diskUsage"
 	echo "Done retrieving system info."
 
-	showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
+	ui_showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
-function displayOqmInstallStatusInfo() {
-	showDialog --infobox "Retrieving installation information..." $TINY_HEIGHT $DEFAULT_WIDTH
+function ui_displayOqmInstallStatusInfo() {
+	ui_showDialog --infobox "Retrieving installation information..." $TINY_HEIGHT $DEFAULT_WIDTH
 
 	local text=""
 
@@ -92,26 +91,26 @@ function displayOqmInstallStatusInfo() {
 
 	# TODO:: use dpkg to sort out what's installed, versions, etc
 
-	showDialog --title "Installation Status" \
+	ui_showDialog --title "Installation Status" \
 		--msgbox "$text" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
 }
 
-function getInfo() {
+function ui_getInfo() {
 	while true; do
-		showDialog --title "Info" \
+		ui_showDialog --title "Info" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "OQM Installation Status" \
 			2 "Host/Base OS" \
 			2>$USER_SELECT_FILE
 
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			displayOqmInstallStatusInfo
+			ui_displayOqmInstallStatusInfo
 			;;
 		2)
-			displayBaseOsInfo
+			ui_displayBaseOsInfo
 			;;
 		*)
 			return
@@ -120,8 +119,8 @@ function getInfo() {
 	done
 }
 
-function updateBaseSystem() {
-	showDialog --infobox "Updating Base OS. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
+function ui_updateBaseSystem() {
+	ui_showDialog --infobox "Updating Base OS. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
 	# update base system, based on what distro we are on
 	result=""
 	resultReturn=0
@@ -134,16 +133,16 @@ function updateBaseSystem() {
 		result="$(bash -c 'apt update && apt dist-upgrade -y' 2>&1)"
 		resultReturn=$?
 	else
-		showDialog --title "ERROR: could not update" \
+		ui_showDialog --title "ERROR: could not update" \
 			--msgbox "No recognized command to update with found. Please submit an issue to cover this OS." $TALL_HEIGHT $DEFAULT_WIDTH
 	fi
 
 	if [ $resultReturn -ne 0 ]; then
-		showDialog --title "ERROR: Failed to update" \
+		ui_showDialog --title "ERROR: Failed to update" \
 			--msgbox "Error updating. Output from command:\n\n${result}" $TALL_HEIGHT $WIDE_WIDTH
 	fi
 
-	showDialog --title "OS Updates Complete" --yesno "Restart?" 6 $DEFAULT_WIDTH
+	ui_showDialog --title "OS Updates Complete" --yesno "Restart?" 6 $DEFAULT_WIDTH
 
 	case $? in
 	# TODO:: reboot not always available?
@@ -152,54 +151,54 @@ function updateBaseSystem() {
 		exitProg
 		;;
 	*)
-		showDialog --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
+		ui_showDialog --title "Updates Complete." --msgbox "" 0 $DEFAULT_WIDTH
 		;;
 	esac
 }
 
 # https://www.cyberciti.biz/faq/how-to-set-up-automatic-updates-for-ubuntu-linux-18-04/
 # https://fedoraproject.org/wiki/AutoUpdates
-function enableAutoUpdate() {
+function ui_enableAutoUpdate() {
 	echo "TODO"
 }
-function disableAutoUpdate() {
+function ui_disableAutoUpdate() {
 	echo "TODO"
 }
 
-function enableAutomaticOsUpdates() {
-	showDialog --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
+function ui_enableAutomaticOsUpdates() {
+	ui_showDialog --infobox "Enabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	#TODO:: this
 
-	showDialog --title "Enabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
+	ui_showDialog --title "Enabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
-function disableAutomaticOsUpdates() {
-	showDialog --infobox "Disabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
+function ui_disableAutomaticOsUpdates() {
+	ui_showDialog --infobox "Disabling auto OS updates. Please wait." 3 $DEFAULT_WIDTH
 	# TODO:: doublecheck
 	#crontab -r "$AUTO_UPDATE_HOST_CRONTAB_FILE"
-	showDialog --title "Disabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
+	ui_showDialog --title "Disabled auto OS updates." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
-function baseOsUpdatesDialog() {
+function ui_baseOsUpdatesDialog() {
 	while true; do
-		showDialog --title "Base OS" \
+		ui_showDialog --title "Base OS" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Update" \
 			2 "Enable Automatic OS Updates" \
 			3 "Disable Automatic OS Updates" \
 			2>$USER_SELECT_FILE
 
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			updateBaseSystem
+			ui_updateBaseSystem
 			;;
 		2)
-			enableAutomaticOsUpdates
+			ui_enableAutomaticOsUpdates
 			;;
 		3)
-			disableAutomaticOsUpdates
+			ui_disableAutomaticOsUpdates
 			;;
 		*)
 			return
@@ -208,19 +207,19 @@ function baseOsUpdatesDialog() {
 	done
 }
 
-function updatesDialog() {
+function ui_updatesDialog() {
 	while true; do
-		showDialog --title "Updates" \
+		ui_showDialog --title "Updates" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Host OS Updates" \
 			2 "OQM Installation Updates" \
 			2>$USER_SELECT_FILE
 
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			baseOsUpdatesDialog
+			ui_baseOsUpdatesDialog
 			;;
 		2) # TODO
 			;;
@@ -231,37 +230,37 @@ function updatesDialog() {
 	done
 }
 
-function cleanupDialog() {
+function ui_cleanupDialog() {
 	while true; do
-		showDialog --title "Cleanup" \
+		ui_showDialog --title "Cleanup" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Cleanup docker images and resources" \
 			2 "RESET data" \
 			2>$USER_SELECT_FILE
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+			ui_showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
 
 			# TODO::: check for any other steps?
 			docker system prune --volumes
 			docker image prune -a
 
-			showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
+			ui_showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		2)
-			showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to backup your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			ui_showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to backup your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 			case $? in
 			0)
-				showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
+				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
 				systemctl stop open\\x2bquarter\\x2bmaster*
 
 				rm -rf /data/oqm/db/*
 
 				systemctl start open\\x2bquarter\\x2bmaster* --all
 
-				showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
+				ui_showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;
 			*)
 				echo "Not resetting data."
@@ -275,20 +274,20 @@ function cleanupDialog() {
 	done
 }
 
-function manageInstallDialog() {
+function ui_manageInstallDialog() {
 	while true; do
-		showDialog --title "Manage Install" \
+		ui_showDialog --title "Manage Install" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Select OQM Major Version TODO" \
 			2 "Plugins TODO" \
 			3 "Cleanup" \
 			2>$USER_SELECT_FILE
 
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		3)
-			cleanupDialog
+			ui_cleanupDialog
 			;;
 		*)
 			return
@@ -297,9 +296,9 @@ function manageInstallDialog() {
 	done
 }
 
-function mainUi() {
+function ui_mainUi() {
 	while true; do
-		showDialog --title "Main Menu" \
+		ui_showDialog --title "Main Menu" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT 1 "Info / Status" \
 			2 "Manage Installation" \
 			3 "Backups" \
@@ -307,19 +306,19 @@ function mainUi() {
 			5 "Captain Settings" \
 			2>$USER_SELECT_FILE
 
-		updateSelection
+		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			getInfo
+			ui_getInfo
 			;;
 		2)
-			manageInstallDialog
+			ui_manageInstallDialog
 			;;
 		3) # TODO:manage backups
 			;;
 		4)
-			updatesDialog
+			ui_updatesDialog
 			;;
 		5) # TODO: OQM Captain settings
 			;;
@@ -330,26 +329,28 @@ function mainUi() {
 	done
 }
 
-function initialSetup() {
+function ui_initialSetup() {
 	echo "Performing initial setup."
-	showDialog --infobox "Performing initial setup. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
+	ui_showDialog --infobox "Performing initial setup. Please wait." $TINY_HEIGHT $DEFAULT_WIDTH
 
-	installUpdateInfra
+	relUtil_installUpdateInfra
 
-	installUpdateBaseStation
+	relUtil_installUpdateBaseStation
 
 	echo "Initial Setup complete!"
 }
 
 
 function ui.doInteraction(){
+	relUtil_refreshReleaseList
+
 	#
 	# Check updatedness of this script
 	#
 	curInstalledCapVersion=""
 	packMan_getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
 	echo "Station captain installed version: $curInstalledCapVersion"
-	latestStatCapRelease="$(needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
+	latestStatCapRelease="$(relUtil_needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
 	echo "DEBUG:: has new release return: $latestStatCapRelease"
 
 	if [ "$latestStatCapRelease" = "" ]; then
@@ -358,11 +359,11 @@ function ui.doInteraction(){
 		statCapUpdateInfo=($latestStatCapRelease)
 		echo "Station Captain has a new release!"
 		echo "DEBUG:: release info: $latestStatCapRelease"
-		showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out:\\n${statCapUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+		ui_showDialog --title "Station Captain new Release" --yesno "Station captain has a new release out:\\n${statCapUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 		case $? in
 		0)
 			echo "Updating Station captain."
-			installFromUrl "${statCapUpdateInfo[1]}"
+			relUtil_installFromUrl "${statCapUpdateInfo[1]}"
 			echo "Update installed! Please rerun the script."
 			exitProg
 			;;
@@ -381,10 +382,10 @@ function ui.doInteraction(){
 	echo "Current installed base station version: $curInstalledBaseStationVersion"
 
 	if [ "$curInstalledBaseStationVersion" = "" ]; then
-		showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+		ui_showDialog --title "Initial Setup" --yesno "It appears that there is no base station installed. Do initial setup with most recent Base Station?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 		case $? in
 		0)
-			initialSetup
+			ui_initialSetup
 			;;
 		*)
 			echo "Not performing initial setup."
@@ -399,7 +400,7 @@ function ui.doInteraction(){
 	baseStationMajorVersion="$(getMajorVersion "$curInstalledBaseStationVersion")"
 	echo "Current installed base station major version: $baseStationMajorVersion"
 
-	baseStationHasUpdates="$(needsUpdated "open+quarter+master-core-base+station-$curInstalledBaseStationVersion" "$baseStationMajorVersion")"
+	baseStationHasUpdates="$(relUtil_needsUpdated "open+quarter+master-core-base+station-$curInstalledBaseStationVersion" "$baseStationMajorVersion")"
 
 	if [ "$baseStationHasUpdates" = "" ]; then
 		echo "Base Station up to date."
@@ -407,13 +408,13 @@ function ui.doInteraction(){
 		baseStationUpdateInfo=($baseStationHasUpdates)
 		echo "Base Station has a new release!"
 		echo "DEBUG:: release info: $baseStationHasUpdates"
-		showDialog --title "Base Station new Release" --yesno "Base Station has a new release out:\\n${baseStationUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+		ui_showDialog --title "Base Station new Release" --yesno "Base Station has a new release out:\\n${baseStationUpdateInfo[0]}\n\nInstall it?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 		case $? in
 		0)
 			echo "Updating Base Station."
-			installFromUrl "${baseStationUpdateInfo[1]}"
+			relUtil_installFromUrl "${baseStationUpdateInfo[1]}"
 			echo "Update installed!"
-			showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
+			ui_showDialog --title "Finished" --msgbox "Base Station Update Complete." $TINY_HEIGHT $DEFAULT_WIDTH
 			;;
 		*)
 			echo "Not updating base Station."
@@ -428,7 +429,7 @@ function ui.doInteraction(){
 	#
 	# TODO:: if get inputs, go to direct mode.
 	if [ "$INTERACT_MODE" == "$INTERACT_MODE_UI" ]; then
-		mainUi
+		ui_mainUi
 	fi
 
 	exitProg

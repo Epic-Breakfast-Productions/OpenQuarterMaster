@@ -1,8 +1,8 @@
 #
 # Gets the index of an item in an array
-# Usage: getIndexInArr "item" "${array[@]}"
+# Usage: utils_getIndexInArr "item" "${array[@]}"
 #
-function getIndexInArr() {
+function utils_getIndexInArr() {
 	local needle="$1"
 	shift
 	local haystack=("$@")

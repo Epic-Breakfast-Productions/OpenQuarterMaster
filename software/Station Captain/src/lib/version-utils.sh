@@ -64,8 +64,8 @@ function compareVersionFlags() {
 	local flag1="$1"
 	local flag2="$2"
 
-	local flagVal1="$(getIndexInArr "$flag1" "${VERSION_FLAG_PRIORITY[@]}")"
-	local flagVal2="$(getIndexInArr "$flag2" "${VERSION_FLAG_PRIORITY[@]}")"
+	local flagVal1="$(utils_getIndexInArr "$flag1" "${VERSION_FLAG_PRIORITY[@]}")"
+	local flagVal2="$(utils_getIndexInArr "$flag2" "${VERSION_FLAG_PRIORITY[@]}")"
 
 	if [ "$flagVal1" -eq "$flagVal2" ]; then
 		echo "="

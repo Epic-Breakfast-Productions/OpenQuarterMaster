@@ -14,12 +14,11 @@ function exitProg() {
 		fi
 		exit
 	else
-		echo "ERROR:: $2"
-
 		if [ "$INTERACT_MODE" = "$INTERACT_MODE_UI" ]; then
-			showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
+			ui_showDialog --title "Unrecoverable Error" --msgbox "$2" $TALL_HEIGHT $WIDE_WIDTH
 			clear -x
 		fi
+		echo "ERROR:: $2"
 		exit $1
 	fi
 }
