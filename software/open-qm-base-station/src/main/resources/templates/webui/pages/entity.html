@@ -1,0 +1,30 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title=(entity.getName()) page='entityView'}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+    <dl class="row">
+    <dt class="col-sm-3 col-md-2">Email:</dt>
+    <dd class="col-sm-9 col-md-10 user-select-all">{entity.getEmail()}</dd>
+    
+    <dt class="col-sm-3 col-md-2">Roles:</dt>
+    <dd class="col-sm-9 col-md-10">
+    {#for curRole in entity.getRoles()}
+        <span class="user-select-all badge bg-secondary">{curRole}</span>
+    {/for}
+    </dd>
+    </dl>
+	
+	{! TODO:: user's activity history !}
+
+{/pageContent}
+{#scripts}
+<script src="/res/js/search.js"></script>
+<script src="/res/js/historySearch.js"></script>
+{/scripts}
+{#pageScript}
+    <script>
+        //$("#userHistoryForm").submit();
+    </script>
+{/pageScript}
+{/include}

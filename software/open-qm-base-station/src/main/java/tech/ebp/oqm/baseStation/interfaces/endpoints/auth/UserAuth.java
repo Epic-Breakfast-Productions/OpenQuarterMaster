@@ -46,6 +46,7 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
@@ -87,6 +88,10 @@ public class UserAuth extends EndpointProvider {
 	
 	@Inject
 	JsonWebToken jwt;
+	
+	@Context
+	UriInfo uri;
+	
 	@Inject
 	SecurityIdentity identity;
 	//    @Context
@@ -155,7 +160,9 @@ public class UserAuth extends EndpointProvider {
 		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());
 		
 		this.userService.addHistoryFor(
-			user, UserLoginEvent.builder().entityId(user.getId()).entityType(user.getInteractingEntityType()).build()
+			user,
+			user,
+			new UserLoginEvent(user, user)
 		);
 		
 		return Response.status(Response.Status.ACCEPTED)
@@ -225,7 +232,10 @@ public class UserAuth extends EndpointProvider {
 		}
 		log.info("Performed call to get JWT from issuer.");
 		
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(returned);
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(
+			this.uri,
+			returned
+		);
 		
 		Response.ResponseBuilder responseBuilder = Response.seeOther(
 			UriBuilder.fromUri(
@@ -263,7 +273,7 @@ public class UserAuth extends EndpointProvider {
 		return Response.seeOther(
 						   UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")
 									 .build()
-					   ).cookie(UiUtils.getAuthRemovalCookie())
+					   ).cookie(UiUtils.getAuthRemovalCookie(this.uri))
 					   .build();
 	}
 }

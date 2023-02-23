@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
@@ -64,7 +64,7 @@ public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBl
 		try {
 			this.readInObject(
 				clientSession,
-				Utils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz()),
+				ObjectUtils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz()),
 				importingEntity,
 				needParentMap,
 				addedList

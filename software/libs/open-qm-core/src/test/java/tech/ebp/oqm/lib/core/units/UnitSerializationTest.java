@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.uom.lib.jackson.UnitJacksonModule;
 
@@ -28,7 +28,7 @@ public class UnitSerializationTest extends BasicTest {
 	@MethodSource("unitsAsArgs")
 	public void playground(Unit<?> unit) throws JsonProcessingException {
 		
-		ObjectMapper mapper = Utils.OBJECT_MAPPER;// new ObjectMapper();
+		ObjectMapper mapper = ObjectUtils.OBJECT_MAPPER;// new ObjectMapper();
 		
 		mapper = mapper.registerModules(
 			new UnitJacksonModule()

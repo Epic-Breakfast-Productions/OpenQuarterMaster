@@ -77,14 +77,14 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
 		List<ItemExpiryEvent> output = new ArrayList<>();
 		for (int i = 0; i < this.size(); i++) {
-			Optional<ItemExpiryEvent.Builder<?, ?>> result = this.updateExpiredStateForStored(
+			Optional<ItemExpiryEvent> result = updateExpiredStateForStored(
 				this.get(i),
 				blockKey,
 				expiredWarningThreshold
 			);
 			
 			if (result.isPresent()) {
-				output.add(result.get().index(i).build());
+				output.add((ItemExpiryEvent) result.get().setIndex(i));
 			}
 		}
 		return output;

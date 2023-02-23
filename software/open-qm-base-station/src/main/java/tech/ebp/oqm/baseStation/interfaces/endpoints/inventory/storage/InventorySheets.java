@@ -75,7 +75,7 @@ public class InventorySheets extends EndpointProvider {
 		
 		Response.ResponseBuilder response = Response.ok(
 			this.storageSheetService.getPdfInventorySheet(
-				this.interactingEntityService.getFromJwt(this.jwt),
+				this.interactingEntityService.getEntity(this.jwt),
 				new ObjectId(this.id),
 				options
 			)

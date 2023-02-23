@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
@@ -79,7 +80,7 @@ public class InventoryAdminUi extends UiProvider {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
 				.data("unitDerivisionTypes", NewDerivedCustomUnitRequest.DeriveType.values())
@@ -87,6 +88,7 @@ public class InventoryAdminUi extends UiProvider {
 				.data("unitCategories", UnitCategory.values())
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("customUnits", this.customUnitService.list())
+				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

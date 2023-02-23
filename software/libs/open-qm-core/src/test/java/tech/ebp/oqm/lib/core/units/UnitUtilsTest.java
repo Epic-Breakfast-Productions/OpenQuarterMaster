@@ -1,7 +1,7 @@
 package tech.ebp.oqm.lib.core.units;
 
 import org.apache.commons.lang3.time.StopWatch;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.ebp.oqm.lib.core.validation.validators.UnitValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -96,9 +96,9 @@ class UnitUtilsTest extends BasicTest {
 			unit.getDimension()
 		);
 		
-		String serialized = Utils.OBJECT_MAPPER.writeValueAsString(unit);
+		String serialized = ObjectUtils.OBJECT_MAPPER.writeValueAsString(unit);
 		log.info("Serialized unit: \"{}\"", serialized);
-		Unit<?> deserialized = Utils.OBJECT_MAPPER.readValue(serialized, Unit.class);
+		Unit<?> deserialized = ObjectUtils.OBJECT_MAPPER.readValue(serialized, Unit.class);
 		
 		log.info(
 			"Deserialized unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"",

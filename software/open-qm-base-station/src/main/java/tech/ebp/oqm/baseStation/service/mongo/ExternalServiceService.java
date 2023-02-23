@@ -34,7 +34,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Traced
 @Slf4j
 @ApplicationScoped
-public class ExternalServiceService extends MongoHistoriedService<ExternalService, ExternalServiceSearch> {
+public class ExternalServiceService extends MongoHistoriedObjectService<ExternalService, ExternalServiceSearch> {
 	
 	//    private Validator validator;
 	private AuthMode authMode;
@@ -172,11 +172,9 @@ public class ExternalServiceService extends MongoHistoriedService<ExternalServic
 		
 		this.update(
 			existentExtService,
-			UpdateEvent.builder()
-					   .entityId(existentExtService.getId())
-					   .entityType(existentExtService.getInteractingEntityType())
-					   .description("Update from Setup Request.")
-					   .build()
+			existentExtService,
+			new UpdateEvent(existentExtService, existentExtService)
+				.setDescription("Update from Setup Request.")
 		);
 		return existentExtService;
 	}

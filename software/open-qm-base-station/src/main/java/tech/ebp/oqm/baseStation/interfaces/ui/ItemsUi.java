@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
@@ -74,7 +75,7 @@ public class ItemsUi extends UiProvider {
 	) {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
 		SearchResult<InventoryItem> searchResults = this.inventoryItemService.search(itemSearch, true);
 		
@@ -86,7 +87,9 @@ public class ItemsUi extends UiProvider {
 					searchResults
 				)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
-				.data("searchObject", itemSearch),
+				.data("searchObject", itemSearch)
+				.data("historySearchObject", new HistorySearch())
+			,
 			MediaType.TEXT_HTML_TYPE
 		);
 		

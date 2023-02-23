@@ -87,7 +87,7 @@ public class CustomUnit extends EndpointProvider {
 		
 		ObjectId id = this.customUnitService.add(
 			newUnit,
-			this.interactingEntityService.getFromJwt(this.getJwt())
+			this.interactingEntityService.getEntity(this.getJwt())
 		);
 		
 		return id;

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.object.interactingEntity.externalService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
 import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.plugin.PluginService;
 import tech.ebp.oqm.lib.core.testUtils.ObjectSerializationTest;
@@ -21,6 +22,7 @@ class PluginServiceSerializationTest extends ObjectSerializationTest<PluginServi
 					.setName(FAKER.name().name())
 					.setDeveloperName(FAKER.name().name())
 					.setDeveloperEmail(FAKER.internet().emailAddress())
+					.setId(ObjectId.get())
 			)
 		);
 	}

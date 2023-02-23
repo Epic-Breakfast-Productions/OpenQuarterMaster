@@ -1,6 +1,6 @@
 package tech.ebp.oqm.lib.core.rest.media;
 
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import tech.ebp.oqm.lib.core.testUtils.ObjectValidationTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,7 +55,7 @@ class ImageCreateRequestValidationTest extends ObjectValidationTest<ImageCreateR
 				}}
 			),
 			Arguments.of(
-				Utils.OBJECT_MAPPER.readValue(
+				ObjectUtils.OBJECT_MAPPER.readValue(
 					"{" +
 					"   \"title\": \"\"," +
 					"   \"description\": \"" +
@@ -74,7 +74,7 @@ class ImageCreateRequestValidationTest extends ObjectValidationTest<ImageCreateR
 				}}
 			),
 			Arguments.of(
-				Utils.OBJECT_MAPPER.readValue(
+				ObjectUtils.OBJECT_MAPPER.readValue(
 					"{" +
 					"   \"title\": \" \"," +
 					"   \"description\": \"" + BasicTest.FAKER.lorem().sentence() + "\"," +

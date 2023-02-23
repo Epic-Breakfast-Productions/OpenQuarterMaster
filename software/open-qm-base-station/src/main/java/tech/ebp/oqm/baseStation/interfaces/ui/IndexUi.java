@@ -27,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -53,6 +54,9 @@ public class IndexUi extends UiProvider {
 	
 	@Inject
 	JsonWebToken jwt;
+	
+	@Context
+	UriInfo uri;
 	
 	@Inject
 	Tracer tracer;
@@ -108,7 +112,12 @@ public class IndexUi extends UiProvider {
 				this.setupPageTemplate(index, tracer)
 					.data("signInLink", signInLinkBuilder.build())
 			).cookie(
-				UiUtils.getNewCookie("externState", state, "For verification or return.", UiUtils.DEFAULT_COOKIE_AGE)
+				UiUtils.getNewCookie(
+					this.getUri(),
+					"externState",
+					state,
+					"For verification or return.", UiUtils.DEFAULT_COOKIE_AGE
+				)
 			);
 		} else {
 			responseBuilder.entity(this.setupPageTemplate(index, tracer));

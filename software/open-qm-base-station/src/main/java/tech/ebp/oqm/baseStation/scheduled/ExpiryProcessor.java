@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import io.quarkus.scheduler.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
+import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
@@ -24,6 +25,9 @@ public class ExpiryProcessor {
 	
 	@Inject
 	ItemEventNotificationDispatchService iends;
+	
+	@Inject
+	BaseStationInteractingEntity baseStationInteractingEntity;
 	
 	@Inject
 	InventoryItemService inventoryItemService;
@@ -54,7 +58,8 @@ public class ExpiryProcessor {
 			if (!expiryEvents.isEmpty()) {
 				inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
-					inventoryItemService.addHistoryFor(cur, curEvent);
+					curEvent.setEntity(this.baseStationInteractingEntity.getReference());
+					inventoryItemService.addHistoryFor(cur, null, curEvent);
 					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}
 			}

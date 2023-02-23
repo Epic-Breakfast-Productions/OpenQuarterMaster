@@ -149,7 +149,7 @@
                     <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
                     <div class="col-sm-10">
                         <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
-                            <option value="AMOUNT_SIMPLE" selected>Amount</option>
+                            <option value="AMOUNT_SIMPLE" title="hello world" selected>Amount</option>
                             <option value="AMOUNT_LIST">Amount List</option>
                             <option value="TRACKED">Tracked</option>
                         </select>
@@ -329,7 +329,7 @@
 </div>
 <div class="row">
     <div class="col">
-        {#objView/objHistoryView containerId='itemHistory'}{/objView/objHistoryView}
+        {#objView/history/objHistoryView containerId='itemHistory' objectUrl='/api/v1/inventory/item/'}{/objView/history/objHistoryView}
     </div>
 </div>
 {/modal}
@@ -363,6 +363,7 @@
     <script src="/res/js/obj/media/imageAdd.js"></script>
     <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
 <script src="/res/js/search.js"></script>
+    <script src="/res/js/historySearch.js"></script>
 <script src="/res/js/obj/objEdit.js"></script>
 <script src="/res/js/obj/objView.js"></script>
 <script src="/res/js/obj/media/imageSearchSelect.js"></script>
@@ -1253,8 +1254,9 @@ var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
 
 var viewKeywordsSection = $("#viewKeywordsSection");
 var viewAttsSection = $("#viewAttsSection");
-var itemHistory = $("#itemHistory");
 var itemViewId = $("#itemViewId");
+
+var itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
 
 function resetView(){
     itemViewStoredContainer.text("");
@@ -1276,7 +1278,8 @@ function resetView(){
     itemViewTotalLowStockThreshold.text("");
     itemViewTotalLowStockThresholdContainer.hide();
     
-    itemHistory.text('');
+    resetHistorySearch(itemHistoryAccordionCollapse);
+    
     clearCarousel(itemViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
@@ -1454,7 +1457,6 @@ function setupView(itemId){
             let promises = [];
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
-            displayObjHistory(itemHistory, "inventory/item/" + data.id);
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
@@ -1548,6 +1550,8 @@ function setupView(itemId){
         },
         failMessagesDiv: itemViewMessages
     });
+    
+    setupHistorySearch(itemHistoryAccordionCollapse, itemId);
 }
 
 var viewModal = new bootstrap.Modal(itemViewModal, { });

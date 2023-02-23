@@ -5,8 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.lib.core.object.history.events.EventType;
-import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.EventType;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 /**
  * Event for the login action of a user.
@@ -15,8 +18,16 @@ import tech.ebp.oqm.lib.core.object.history.events.HistoryEvent;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
-public class UserDisabledEvent extends HistoryEvent {
+//@SuperBuilder
+public class UserDisabledEvent extends ObjectHistoryEvent {
+	
+	public UserDisabledEvent(ObjectId objectId, InteractingEntity entity) {
+		super(objectId, entity);
+	}
+	
+	public UserDisabledEvent(MainObject object, InteractingEntity entity) {
+		super(object, entity);
+	}
 	
 	@Override
 	public EventType getType() {

@@ -13,6 +13,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
@@ -78,7 +79,7 @@ public class StorageUi extends UiProvider {
 	) {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
 		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
 		
@@ -89,7 +90,8 @@ public class StorageUi extends UiProvider {
 				.data("storageService", storageBlockService)
 				.data("searchObject", storageBlockSearch)
 				.data("pageOrientationOptions", PageOrientation.values())
-				.data("pageSizeOptions", PageSizeOption.values()),
+				.data("pageSizeOptions", PageSizeOption.values())
+				.data("historySearchObject", new HistorySearch()),
 			MediaType.TEXT_HTML_TYPE
 		);
 		if (newCookies != null && !newCookies.isEmpty()) {

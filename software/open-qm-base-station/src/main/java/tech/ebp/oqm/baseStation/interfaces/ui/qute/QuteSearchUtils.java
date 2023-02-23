@@ -6,6 +6,8 @@ import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 
 @TemplateData
 public class QuteSearchUtils {
@@ -24,4 +26,9 @@ public class QuteSearchUtils {
 	public static UserSearch newUserSearchInstance(){
 		return new UserSearch();
 	}
+	
+	public static boolean historyEntityIsBaseStation(InteractingEntityReference ref){
+		return ref.getEntityType().equals(InteractingEntityType.BASE_STATION);
+	}
+	
 }

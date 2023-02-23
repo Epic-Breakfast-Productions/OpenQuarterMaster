@@ -23,12 +23,12 @@ import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
@@ -85,7 +85,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		ImageService imageService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
-		@Location("tags/objView/objHistoryViewRows.html")
+		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		StorageBlockService storageBlockService,
 		InventoryItemService itemService,
@@ -346,7 +346,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular Image's history."
+		summary = "Gets a particular object's history."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -354,7 +354,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = {
 			@Content(
 				mediaType = "application/json",
-				schema = @Schema(implementation = ObjectHistory.class)
+				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
 			),
 			@Content(
 				mediaType = "text/html",
@@ -377,9 +377,11 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
-		@HeaderParam("accept") String acceptHeaderVal
+		@BeanParam HistorySearch searchObject,
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, acceptHeaderVal);
+		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -395,7 +397,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 				mediaType = "application/json",
 				schema = @Schema(
 					type = SchemaType.ARRAY,
-					implementation = ObjectHistory.class
+					implementation = ObjectHistoryEvent.class
 				)
 			)
 		},
@@ -406,14 +408,11 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public SearchResult<ObjectHistory> searchHistory(
+	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Searching for objects with: {}", searchObject);
-		
-		return this.getObjectService().searchHistory(searchObject, false);
+		return super.searchHistory(securityContext, searchObject);
 	}
 	
 	
@@ -450,7 +449,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					   .build();
 	}
 	
-	private Response getImageFromObject(MongoService<? extends ImagedMainObject, ?> service, String id) {
+	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
 		

@@ -10,11 +10,11 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
@@ -55,6 +55,7 @@ public class UserUi extends UiProvider {
 	
 	@Inject
 	JsonWebToken jwt;
+	
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;
@@ -72,17 +73,19 @@ public class UserUi extends UiProvider {
 	) {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
-		ObjectHistory userHistory = userService.getHistoryFor(user);
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(refreshAuthToken(ksc, refreshToken));
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(
+			this.getUri(),
+			refreshAuthToken(ksc, refreshToken)
+		);
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, tracer, ugr)
 				.data("user", ugr)
 				.data("userService", userService)
 				.data("interactingEntityService", interactingEntityService)
-				.data("userHistory", userHistory)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
+				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

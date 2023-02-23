@@ -6,6 +6,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.UriInfo;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class UiUtils {
 	}
 	
 	public static NewCookie getNewCookie(
+		UriInfo uriInfo,
 		String cookieName,
 		String value,
 		String comment,
@@ -34,7 +36,7 @@ public class UiUtils {
 				cookieName,
 				value,
 				"/",
-				ConfigProvider.getConfig().getValue("runningInfo.hostname", String.class)
+				uriInfo.getBaseUri().getHost()
 			),
 			comment,
 			maxAgeSecs,
@@ -42,8 +44,9 @@ public class UiUtils {
 		);
 	}
 	
-	public static NewCookie getRemovalCookie(String cookieName) {
+	public static NewCookie getRemovalCookie(UriInfo uriInfo, String cookieName) {
 		return getNewCookie(
+			uriInfo,
 			cookieName,
 			"",
 			"To remove \"" + cookieName + "\" cookie.",
@@ -51,12 +54,20 @@ public class UiUtils {
 		);
 	}
 	
-	public static NewCookie getAuthRemovalCookie() {
-		return getRemovalCookie(ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class));
+	public static NewCookie getAuthRemovalCookie(UriInfo uriInfo) {
+		return getRemovalCookie(
+			uriInfo,
+			ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class)
+		);
 	}
 	
-	public static NewCookie getAuthCookie(String jwt, int ageMaxSecs) {
+	public static NewCookie getAuthCookie(
+		UriInfo uriInfo,
+		String jwt,
+		int ageMaxSecs
+	) {
 		return getNewCookie(
+			uriInfo,
 			ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
 			jwt,
 			"JWT from externl auth.",
@@ -64,7 +75,10 @@ public class UiUtils {
 		);
 	}
 	
-	public static List<NewCookie> getExternalAuthCookies(JsonNode keycloakResponse) {
+	public static List<NewCookie> getExternalAuthCookies(
+		UriInfo uriInfo,
+		JsonNode keycloakResponse
+	) {
 		if (keycloakResponse == null) {
 			return Collections.emptyList();
 		}
@@ -97,6 +111,7 @@ public class UiUtils {
 		
 		newCookies.add(
 			UiUtils.getNewCookie(
+				uriInfo,
 				ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class),
 				jwt,
 				"JWT from external auth",
@@ -106,6 +121,7 @@ public class UiUtils {
 		if (refresh_token != null) {
 			newCookies.add(
 				UiUtils.getNewCookie(
+					uriInfo,
 					ConfigProvider.getConfig().getValue("mp.jwt.token.cookie", String.class) + "_refresh",
 					refresh_token,
 					"JWT refresh token.",

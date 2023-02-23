@@ -2,7 +2,7 @@ package tech.ebp.oqm.baseStation.rest.search;
 
 import lombok.Getter;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.media.FileAttachment;
+import tech.ebp.oqm.lib.core.object.media.file.FileAttachment;
 
 import javax.ws.rs.HeaderParam;
 

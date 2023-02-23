@@ -34,8 +34,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import javax.measure.Quantity;
 
 /**
- * Configures Jackson to (de)serialize JSR 385 Unit objects using their UCUM representation, since the actual objects don't translate well
- * into JSON.
+ * Configures Jackson to (de)serialize JSR 385 Unit objects using their UCUM representation, since the actual objects don't translate well into JSON.
+ * <p>
+ * TODO:: remember why this and QuantityJsonDeserializer is deprecated
  *
  * @version 2.1
  */

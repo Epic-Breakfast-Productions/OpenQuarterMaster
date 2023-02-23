@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
-import tech.ebp.oqm.lib.core.Utils;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import java.io.File;
@@ -16,10 +16,10 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Slf4j
-public class GenericImporter<T extends MainObject, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedService<T, S>> {
+public class GenericImporter<T extends MainObject, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S>> {
 	
 	
-	public GenericImporter(MongoHistoriedService<T, S> mongoService) {
+	public GenericImporter(MongoHistoriedObjectService<T, S> mongoService) {
 		super(mongoService);
 	}
 	
@@ -29,7 +29,7 @@ public class GenericImporter<T extends MainObject, S extends SearchObject<T>> ex
 		InteractingEntity importingEntity
 	) throws IOException {
 		try {
-			T curObj = Utils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz());
+			T curObj = ObjectUtils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz());
 			
 			ObjectId oldId = curObj.getId();
 			ObjectId newId;

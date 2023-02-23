@@ -75,7 +75,7 @@ public abstract class MapStoredWrapper<S extends Stored>
 	public List<ItemExpiryEvent> updateExpiredStates(ObjectId blockKey, Duration expiredWarningThreshold) {
 		List<ItemExpiryEvent> events = new ArrayList<>();
 		for (Map.Entry<String, S> curStored : this.entrySet()) {
-			Optional<ItemExpiryEvent.Builder<?, ?>> result = this.updateExpiredStateForStored(
+			Optional<ItemExpiryEvent> result = updateExpiredStateForStored(
 				curStored.getValue(),
 				blockKey,
 				expiredWarningThreshold
@@ -83,7 +83,7 @@ public abstract class MapStoredWrapper<S extends Stored>
 			
 			if (result.isPresent()) {
 				events.add(
-					result.get().identifier(curStored.getKey()).build()
+					(ItemExpiryEvent) result.get().setIdentifier(curStored.getKey())
 				);
 			}
 		}

@@ -53,14 +53,19 @@
 <hr />
 <div class="row">
     <div class="col">
-        {#objView/objHistoryView containerId='historyViewContainer' objectHistory=userHistory}{/objView/objHistoryView}
+        {#objView/history/objHistoryView containerId='userHistory' objectUrl='/api/v1/user/' objectId=user.getId()}{/objView/history/objHistoryView}
+
     </div>
 </div>
 
 {/pageContent}
+{#scripts}
+<script src="/res/js/search.js"></script>
+<script src="/res/js/historySearch.js"></script>
+{/scripts}
 {#pageScript}
     <script>
-    
+        $("#userHistoryForm").submit();
     </script>
 {/pageScript}
 {/include}

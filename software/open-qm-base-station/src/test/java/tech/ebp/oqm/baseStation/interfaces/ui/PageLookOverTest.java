@@ -31,6 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 	},
 	restrictToAnnotatedClass = true
 )
+/**
+ * TODO:: fill database with info
+ */
 public class PageLookOverTest extends WebUiTest {
 	
 	public static Stream<Arguments> getPages(){
@@ -45,7 +48,9 @@ public class PageLookOverTest extends WebUiTest {
 			Arguments.of(true,  "/userAdmin", "User Administration"),
 			Arguments.of(true,  "/images", "Images"),
 			Arguments.of(true,  "/storage", "Storage"),
-			Arguments.of(true,  "/items", "Items")
+			Arguments.of(true,  "/items", "Items"),
+			Arguments.of(true,  "/entityView/baseStation", "Base Station")
+//			Arguments.of(true,  "/entityView/type/id", "Entity") //TODO
 		);
 	}
 	

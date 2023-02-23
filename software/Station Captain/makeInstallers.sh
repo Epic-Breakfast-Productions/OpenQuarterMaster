@@ -15,6 +15,9 @@
 #   - jq
 #
 
+echo "Script location: ${BASH_SOURCE}"
+cd "$(dirname "$0")" || exit
+
 configFile="properties.json"
 buildDir="installerBuild"
 
@@ -42,10 +45,15 @@ mkdir "$outputDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir "$buildDir/$debDir/bin"
+mkdir -p "$buildDir/$debDir/lib/oqm/station-captain"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
 
-cp oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
-cp oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
+cp src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
+cp src/oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
+cp -r src/lib/* "$buildDir/$debDir/lib/oqm/station-captain/"
+
+sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
+sed -i 's|LIB_DIR="lib"|LIB_DIR="/lib/oqm/station-captain"|' "$buildDir/$debDir/bin/oqm-captain"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles

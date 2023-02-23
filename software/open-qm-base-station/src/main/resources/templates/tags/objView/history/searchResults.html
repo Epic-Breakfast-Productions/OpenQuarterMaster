@@ -1,0 +1,67 @@
+<thead>
+<tr>
+	<td colspan="4" class="text-center searchResultsContainer">
+		{#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+	</td>
+</tr>
+<tr>
+	<th>Time</th>
+	<th>User</th>
+	<th>Type</th>
+	<th>Description</th>
+</tr>
+</thead>
+<tbody>
+{#if searchResults.getResults().isEmpty()}
+<tr>
+	<td colspan="6" class="text-center">
+		<h2>
+			No History
+		</h2>
+	</td>
+</tr>
+{#else}
+{#for event in searchResults.getResults()}
+<tr class="itemResultRow align-middle">
+	<td>
+		{event.getTimestamp()}
+	</td>
+	<td>
+		{#if event.getEntity() != null && event.getEntity().getEntityType() != null}
+			{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(event.getEntity())}
+				<a href="/entityView/baseStation" class="text-decoration-none" target="_blank">
+					Base Station {#icons/newTab}{/icons/newTab}
+				</a>
+			{#else}
+				{#let entity=interactingEntityService.getEntity(event)}
+					<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none" target="_blank">
+						{#switch entity.getInteractingEntityType()}
+							{#case EXTERNAL_SERVICE}
+								{#icons/extService}{/icons/extService}
+							{#case USER}
+								{#icons/user}{/icons/user}
+						{/switch}
+						{#if entity.getName() != null}{entity.getName()}{/if}
+						{#icons/newTab}{/icons/newTab}
+					</a>
+				{/let}
+			{/if}
+		{/if}
+	</td>
+	<td>
+	{event.getType()}
+	</td>
+	<td>
+		{! TODO:: other infos !}
+	</td>
+</tr>
+{/for}
+{/if}
+</tbody>
+<tfoot>
+<tr>
+	<td colspan="4" class="text-center searchResultsContainer">
+		{#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+	</td>
+</tr>
+</tfoot>

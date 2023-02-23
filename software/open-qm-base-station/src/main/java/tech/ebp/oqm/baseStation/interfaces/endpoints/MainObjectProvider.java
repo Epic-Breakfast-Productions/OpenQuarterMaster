@@ -14,10 +14,11 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedService;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistory;
+import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import javax.validation.Valid;
@@ -39,12 +40,12 @@ import java.util.List;
 @Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends EndpointProvider {
+public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
 	
 	@Getter
 	private Class<T> objectClass;
 	@Getter
-	private MongoHistoriedService<T, S> objectService;
+	private MongoHistoriedObjectService<T, S> objectService;
 	@Getter
 	private InteractingEntityService interactingEntityService;
 	@Getter
@@ -55,7 +56,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	protected MainObjectProvider(
 		Class<T> objectClass,
-		MongoHistoriedService<T, S> objectService,
+		MongoHistoriedObjectService<T, S> objectService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		Template historyRowsTemplate
@@ -69,7 +70,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	protected InteractingEntity getInteractingEntityFromJwt() {
 		if (this.interactingEntityFromJwt == null) {
-			this.interactingEntityFromJwt = this.getInteractingEntityService().getFromJwt(this.getJwt());
+			this.interactingEntityFromJwt = this.getInteractingEntityService().getEntity(this.getJwt());
 		}
 		return this.interactingEntityFromJwt;
 	}
@@ -130,13 +131,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntityFromJwt());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
-	}
-	
-	protected Response.ResponseBuilder getSearchResultResponseBuilder(SearchResult<?> searchResult) {
-		return Response.status(Response.Status.OK)
-					   .entity(searchResult.getResults())
-					   .header("num-elements", searchResult.getResults().size())
-					   .header("query-num-results", searchResult.getNumResultsForEntireQuery());
 	}
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
@@ -326,6 +320,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//</editor-fold>
 	
 	//<editor-fold desc="History">
+	
 //	@GET
 //	@Path("{id}/history")
 //	@Operation(
@@ -337,7 +332,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //		content = {
 //			@Content(
 //				mediaType = "application/json",
-//				schema = @Schema(implementation = ObjectHistory.class)
+//				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
 //			),
 //			@Content(
 //				mediaType = "text/html",
@@ -356,37 +351,41 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //		content = @Content(mediaType = "text/plain")
 //	)
 //	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
-		@HeaderParam("accept") String acceptHeaderVal
+		@BeanParam HistorySearch searchObject,
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
-		log.info("Retrieving object with id {}", id);
-		ObjectHistory output = this.getObjectService().getHistoryFor(id);
+		searchObject.setObjectId(new ObjectId(id));
 		
-		log.info("History found with id {} for {} of id {}", output.getId(), this.getObjectClass().getSimpleName(), id);
+		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(searchObject, false);
 		
-		Response.ResponseBuilder rb = Response.ok();
+		
+		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
+		
+		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
 		log.debug("Accept header value: \"{}\"", acceptHeaderVal);
 		switch (acceptHeaderVal) {
 			case MediaType.TEXT_HTML:
 				log.debug("Requestor wanted html.");
 				rb = rb.entity(
 						   this.getHistoryRowsTemplate()
-							   .data("objectHistory", output)
+							   .data("searchFormId", searchFormId)
+							   .data("searchResults", searchResult)
 							   .data("interactingEntityService", this.getInteractingEntityService())
+							   .data("pagingCalculations", new PagingCalculations(searchResult))
 					   )
 					   .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:
 				log.debug("Requestor wanted json, or any other form");
-				rb = rb.entity(output)
-					   .type(MediaType.APPLICATION_JSON_TYPE);
 		}
 		return rb.build();
 	}
@@ -404,7 +403,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//				mediaType = "application/json",
 	//				schema = @Schema(
 	//					type = SchemaType.ARRAY,
-	//					implementation = ObjectHistory.class
+	//					implementation = ObjectHistoryEvent.class
 	//				)
 	//			)
 	//		},
@@ -415,7 +414,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	public SearchResult<ObjectHistory> searchHistory(
+	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
