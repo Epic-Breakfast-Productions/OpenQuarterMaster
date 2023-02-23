@@ -200,7 +200,6 @@ if [ "$#" -eq 0 ]; then
 	ui.doInteraction
 fi
 
-
 ARGS_SHORT="v,h"
 ARGS_LONG="version,help"
 
@@ -230,24 +229,3 @@ do
 		;;
 	esac
 done
-
-#while getopts 'hv' opt; do
-#	case "$opt" in
-#		v)
-#			echo "$SCRIPT_TITLE";
-#			exitProg;
-#		;;
-#		h|*)
-#			echo "$HELPTEXT";
-#			exitProg;
-#		;;
-#	esac
-#done
-
-
-# Update release list. Only call here
-
-#
-# Debug section. Nothing should be here
-#
-

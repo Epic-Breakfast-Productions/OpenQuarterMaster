@@ -178,7 +178,7 @@ function needsUpdated() {
 function getAssetToInstallFromGitRelease() {
 	local releaseJson="$1"
 	installerFormat=""
-	determineSystemPackFileFormat installerFormat
+	packMan-determineSystemPackFileFormat installerFormat
 
 	local matchingAssets="$(echo "$releaseJson" | jq -c ".assets" | jq -c "map(select(.browser_download_url | endswith(\"$installerFormat\")))")"
 

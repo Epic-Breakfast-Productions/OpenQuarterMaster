@@ -55,11 +55,11 @@ function displayOqmInstallStatusInfo() {
 
 	local text=""
 
-	local installedPackages=($(getInstalledPackages))
+	local installedPackages=($(packMan_getInstalledPackages))
 	installedPackages=($(echo "${installedPackages[@]}" | xargs -n1 | sort | xargs))
 
 	pacMan=""
-	determineSystemPackMan pacMan
+	packMan_determineSystemPackMan pacMan
 
 	local curPackageInfo=""
 	for curPackage in "${installedPackages[@]}"; do
@@ -347,7 +347,7 @@ function ui.doInteraction(){
 	# Check updatedness of this script
 	#
 	curInstalledCapVersion=""
-	getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
+	packMan_getInstalledVersion curInstalledCapVersion "$SCRIPT_PACKAGE_NAME"
 	echo "Station captain installed version: $curInstalledCapVersion"
 	latestStatCapRelease="$(needsUpdated "$SCRIPT_PACKAGE_NAME-$curInstalledCapVersion")"
 	echo "DEBUG:: has new release return: $latestStatCapRelease"
@@ -377,7 +377,7 @@ function ui.doInteraction(){
 	# Check if we need to setup
 	#
 	curInstalledBaseStationVersion=""
-	getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
+	packMan_getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
 	echo "Current installed base station version: $curInstalledBaseStationVersion"
 
 	if [ "$curInstalledBaseStationVersion" = "" ]; then
@@ -395,7 +395,7 @@ function ui.doInteraction(){
 	#
 	# Get major version of base station
 	#
-	getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
+	packMan_getInstalledVersion curInstalledBaseStationVersion "open+quarter+master-core-base+station"
 	baseStationMajorVersion="$(getMajorVersion "$curInstalledBaseStationVersion")"
 	echo "Current installed base station major version: $baseStationMajorVersion"
 

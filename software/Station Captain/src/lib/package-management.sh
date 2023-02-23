@@ -1,7 +1,7 @@
 
 
 
-function determineSystemPackMan() {
+function packMan_determineSystemPackMan() {
 	local return="$1"
 	local result=""
 	if [ -n "$(command -v yum)" ]; then
@@ -13,11 +13,11 @@ function determineSystemPackMan() {
 	fi
 	eval $return="$result"
 }
-function determineSystemPackFileFormat() {
+function packMan_determineSystemPackFileFormat() {
 	local return="$1"
 
 	pacMan=""
-	determineSystemPackMan pacMan
+	packMan_determineSystemPackMan pacMan
 
 	local result=""
 
@@ -39,14 +39,14 @@ function determineSystemPackFileFormat() {
 # Usage: getInstalledVersion returnVar "infra-jaeger"
 # Returns: full name/version string, empty string if not installed.
 #
-function getInstalledVersion() {
+function packMan_getInstalledVersion() {
 	local returnVar=$1
 	local packageName="$2"
 	echo "Determining installed version of $packageName"
 
 	local version
 	local packageType
-	determineSystemPackMan packageType
+	packMan_determineSystemPackMan packageType
 	if [ "$packageType" == "apt" ]; then
 		version="$(apt-cache show "$packageName" | grep "Version:")"
 		#echo "DEBUG:: raw version: $version"
@@ -61,11 +61,11 @@ function getInstalledVersion() {
 	eval $returnVar="$version"
 }
 
-function getInstalledPackages() {
+function packMan_getInstalledPackages() {
 	local installed=""
 
 	local packageType
-	determineSystemPackMan packageType
+	packMan_determineSystemPackMan packageType
 	if [ "$packageType" == "apt" ]; then
 		installed="$(apt-cache pkgnames open+quarter+master-)"
 	elif [ "$packageType" == "yum" ]; then
