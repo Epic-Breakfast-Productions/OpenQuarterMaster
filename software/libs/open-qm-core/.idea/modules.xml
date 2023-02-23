@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/open-qm-lib-core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/open-qm-lib-core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tech.epic-breakfast-productions.openQuarterMaster.lib.open-qm-lib-core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/tech.epic-breakfast-productions.openQuarterMaster.lib.open-qm-lib-core.main.iml" />
     </modules>
   </component>
 </project>
