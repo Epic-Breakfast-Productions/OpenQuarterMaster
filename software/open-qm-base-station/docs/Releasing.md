@@ -7,10 +7,13 @@
 1. Docker, with buildkit enabled
    - https://www.howtogeek.com/devops/what-is-dockers-buildkit-and-why-does-it-matter/
    - https://docs.docker.com/build/buildx/install/
-   - https://github.com/docker/buildx/issues/132
+   - https://github.com/docker/buildx/issues/132#issuecomment-847136842
    - Steps:
      1. Setup buildx
-        1. TODO::
+        1. Add/set `{"experimental": true,"features": {"buildkit": true}}` to `vim /etc/docker/daemon.json`
+        2. `sudo systemctl daemon-reload`
+        2. `sudo systemctl reload docker`
+        1. `docker buildx --create --platform linux/amd64,linux/arm64`
      2. Make a builder `docker buildx create --name mybuilder --use`
 
 ## Release Steps
