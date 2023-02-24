@@ -45,7 +45,7 @@ dependencies {
 //	implementation 'org.mongodb:bson:4.4.0'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.26'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 
 
 	implementation 'com.fazecast:jSerialComm:2.9.3'
