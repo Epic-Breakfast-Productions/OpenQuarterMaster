@@ -49,6 +49,7 @@ public class KeycloakServerManager implements QuarkusTestResourceLifecycleManage
 			//			HostConfig config = new HostConfig().withPortBindings(new PortBinding(Ports.Binding.bindPort(80), new ExposedPort(8085)));
 			KEYCLOAK_CONTAINER = new KeycloakContainer()
 									 //				.withCreateContainerCmdModifier(cmd)
+//									 .withFeaturesEnabled("upload_scripts")
 									 .withRealmImportFile("keycloak-realm.json");
 			log.info("Starting keycloak container with image name: {}", KEYCLOAK_CONTAINER.getDockerImageName());
 			KEYCLOAK_CONTAINER.start();

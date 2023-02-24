@@ -1,6 +1,7 @@
 {
   "id": "apps",
   "realm": "apps",
+  "adminTheme": "keycloak",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
