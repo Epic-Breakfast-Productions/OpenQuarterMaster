@@ -41,3 +41,15 @@ updates:
     labels:
       - "area-dependencies"
       - "project-stationCaptain"
+#
+# Plugins
+#
+  # Demo
+  - package-ecosystem: "gradle"
+    directory: "/software/plugins/open-qm-plugin-demo"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "area-dependencies"
+      - "project-plugins"

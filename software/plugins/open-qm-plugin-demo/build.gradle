@@ -7,6 +7,8 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    //for getting OQM Library snapshot versions
+    maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
 }
 
 dependencies {
@@ -27,20 +29,24 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'io.opentracing.contrib:opentracing-mongo-common'
 
+    implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.59'
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
-    implementation group: 'com.ebp.openQuarterMaster.lib', name: 'open-qm-lib-core', version: '1.+'
 
-    testImplementation 'net.datafaker:datafaker:1.3.0'
+    testImplementation 'net.datafaker:datafaker:1.8.0'
 }
 
 group 'com.ebp.openQuarterMaster'
 version '0.0.1'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
 }
 
 compileJava {
@@ -50,4 +56,15 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
 }
