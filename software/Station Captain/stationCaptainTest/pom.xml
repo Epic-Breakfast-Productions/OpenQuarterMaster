@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>tech.epic-breakfast-productions.openQuarterMaster.lib</groupId>
 			<artifactId>open-qm-lib-core</artifactId>
-			<version>1.0.45-DEV</version>
+			<version>1.0.59</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
