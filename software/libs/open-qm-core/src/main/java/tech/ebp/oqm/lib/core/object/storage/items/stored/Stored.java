@@ -38,6 +38,13 @@ public abstract class Stored {
 	public abstract StoredType getStoredType();
 	
 	/**
+	 * The barcode for this particular stored object.
+	 * <p>
+	 * TODO:: validate?
+	 */
+	private String barcode = null;
+	
+	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	private LocalDateTime expires = null;
