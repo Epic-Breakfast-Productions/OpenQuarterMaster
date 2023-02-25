@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin;
+package com.ebp.openQuarterMaster.plugin.demo.quarkus;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;

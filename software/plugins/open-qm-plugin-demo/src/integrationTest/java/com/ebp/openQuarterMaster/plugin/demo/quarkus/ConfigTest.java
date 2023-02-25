@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin;
+package com.ebp.openQuarterMaster.plugin.demo.quarkus;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import lombok.extern.slf4j.Slf4j;

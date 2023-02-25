@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.testResources;
+package com.ebp.openQuarterMaster.plugin.demo.quarkus.testResources;
 
 import io.quarkus.test.junit.QuarkusTestProfile;
 

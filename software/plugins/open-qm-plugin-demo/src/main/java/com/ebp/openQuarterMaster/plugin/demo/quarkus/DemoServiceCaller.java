@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin;
+package com.ebp.openQuarterMaster.plugin.demo.quarkus;
 
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;

@@ -1,7 +1,7 @@
-package com.ebp.openQuarterMaster.plugin;
+package com.ebp.openQuarterMaster.plugin.demo.quarkus;
 
-import com.ebp.openQuarterMaster.plugin.testResources.ProfileTwoTestProfile;
-import com.ebp.openQuarterMaster.plugin.testResources.TestResourceLifecycleManager;
+import com.ebp.openQuarterMaster.plugin.demo.quarkus.testResources.ProfileTwoTestProfile;
+import com.ebp.openQuarterMaster.plugin.demo.quarkus.testResources.TestResourceLifecycleManager;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusTest;
