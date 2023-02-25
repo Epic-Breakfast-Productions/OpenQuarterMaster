@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage.items.stored;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = AmountStored.class, name = "AMOUNT"),
 	@JsonSubTypes.Type(value = TrackedStored.class, name = "TRACKED")
 })
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public abstract class Stored {
 	
 	public abstract StoredType getStoredType();

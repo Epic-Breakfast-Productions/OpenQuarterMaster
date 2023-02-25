@@ -604,6 +604,7 @@ function setStoredItemVales(storedDivJq, storedData){
             }
     );
     
+    storedDivJq.find("[name=barcode]")[0].value = storedData.barcode;
     storedDivJq.find("[name=condition]")[0].value = storedData.condition;
     storedDivJq.find("[name=conditionDetails]")[0].value = storedData.conditionNotes;
     storedDivJq.find("[name=expires]")[0].value = storedData.expires;
@@ -781,6 +782,12 @@ function removeStored(toRemoveId){
 
 function getCommonStoredFormElements(headerId, toRemoveId) {
     return  '<div class="mb-3 ">\n'+
+            '    <label class="form-label">Barcode</label>\n' +
+            '    <div class="input-group">\n'+
+            '        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n'+
+            '    </div>\n'+
+            '</div>\n' +
+            '<div class="mb-3 ">\n'+
             '    <label class="form-label">Condition Percentage</label>\n' +
             '    <div class="input-group">\n'+
             '        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
@@ -1102,6 +1109,13 @@ function buildStoredObj(storedContainer, type){
     }
     
     {
+        let input = storedContainer.find("[name=barcode]");
+        if (input.length) {
+            output["barcode"] = input.get(0).value;
+        }
+    }
+    
+    {
         let input = storedContainer.find("[name=condition]");
         if (input.length) {
             parseFloat(output["condition"] = input.get(0).value);
@@ -1366,6 +1380,13 @@ function getStorageBlockAmountHeldView(stored, storedType){
     }
     return "";
 }
+function getStorageBlockBarcodeView(stored){
+    if(stored.barcode) {
+        return getBlockViewCell("Barcode", stored.barcode);
+    }
+    return "";
+}
+
 function getStorageBlockIdentifyingDetailsView(stored, storedType){
     if(storedType.includes("TRACKED") && stored.identifyingDetails) {
         return getBlockViewCell("Identifying Details", stored.identifyingDetails);
@@ -1395,6 +1416,7 @@ function getStorageBlockExpiresView(stored){
 function getStoredViewContent(stored, storedType){
     return '<div class="row">' +
             getStorageBlockAmountHeldView(stored, storedType)+
+            getStorageBlockBarcodeView(stored) +
             getStorageBlockIdentifyingDetailsView(stored, storedType)+
             getStorageBlockConditionView(stored)+
             getStorageBlockConditionNotesView(stored)+
