@@ -146,6 +146,12 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="addEditBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditBarcodeInput" placeholder="UPC, ISBN...">
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
                     <div class="col-sm-10">
                         <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
@@ -263,9 +269,16 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-body">
+            <div class="card-body"> <!-- TODO:: make container to hide -->
                 <h5 class="card-title">Description:</h5>
                 <div id="itemViewDescription">
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body"><!-- TODO:: make container to hide -->
+                <h5 class="card-title">Barcode:</h5>
+                <div id="itemViewBarcode">
                 </div>
             </div>
         </div>
@@ -458,7 +471,6 @@ function showAddEditProductSearchPane(){
     addEditProductSearchPane.show();
 }
 
-
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
@@ -473,6 +485,7 @@ var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
 var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 var addEditNameInput = $('#addEditNameInput');
 var addEditDescriptionInput = $('#addEditDescriptionInput');
+var addEditBarcodeInput = $('#addEditBarcodeInput');
 var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
 var addEditExpiryWarningThresholdInput = $('#addEditExpiryWarningThresholdInput');
 var addEditExpiryWarningThresholdUnitInput = $('#addEditExpiryWarningThresholdUnitInput');
@@ -488,6 +501,14 @@ var trackedItemIdentifierNameRow = $('#trackedItemIdentifierNameRow');
 var unitNameRow = $('#unitNameRow');
 var pricePerUnitNameRow = $('#pricePerUnitNameRow');
 var compatibleUnitOptions = "";
+
+//prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
+addEditBarcodeInput.on('keypress', function(e) {
+    // Ignore keypress if all fields are not populated.
+    if (e.which === 13) {
+        return false;
+    }
+});
 
 
 function foreachStoredType(
@@ -543,6 +564,7 @@ function resetAddEditForm(){
     hideAddEditProductSearchPane();
     addEditNameInput.val("");
     addEditDescriptionInput.val("");
+    addEditBarcodeInput.val("");
     addEditModalLabel.text("Item");
     addEditPricePerUnitInput.val("0.00");
     addEditExpiryWarningThresholdInput.val(0);
@@ -1131,6 +1153,7 @@ addEditItemForm.submit(async function (event) {
     let addEditData = {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
+        barcode: addEditBarcodeInput.val(),
         storageType: addEditStorageTypeInput.val(),
         expiryWarningThreshold: addEditExpiryWarningThresholdInput.val() * addEditExpiryWarningThresholdUnitInput.val(),
         lowStockThreshold: (addEditTotalLowStockThresholdInput.val() ? getQuantityObj(
@@ -1246,6 +1269,7 @@ var itemViewValPerUnit = $("#itemViewValPerUnit");
 var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
 var itemViewDescription = $("#itemViewDescription");
+var itemViewBarcode = $("#itemViewBarcode");
 var itemViewTotal = $("#itemViewTotal");
 var itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
 var itemViewTotalLowStockThreshold = $("#itemViewTotalLowStockThreshold");
@@ -1274,6 +1298,7 @@ function resetView(){
     
     itemViewStorageType.text("");
     itemViewDescription.text("");
+    itemViewBarcode.text("");
     itemViewTotal.text("");
     itemViewTotalLowStockThreshold.text("");
     itemViewTotalLowStockThresholdContainer.hide();
@@ -1460,6 +1485,7 @@ function setupView(itemId){
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
+            itemViewBarcode.text(data.barcode);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
             
