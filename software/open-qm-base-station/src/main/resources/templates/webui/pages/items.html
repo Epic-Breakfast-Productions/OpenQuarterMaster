@@ -1095,7 +1095,7 @@ function buildStoredObj(storedContainer, type){
     
     //TODO:: check this func for completeness of diff types
     if( type == "TRACKED"){
-        output['identifier'] = storedContainer.find("[name=identifier").val()
+        output['identifier'] = storedContainer.find("[name=identifier]").val()
     }
     
     {
@@ -1214,7 +1214,7 @@ addEditItemForm.submit(async function (event) {
                     storedVal = {};
                     storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement) {
                         let elementJq = $(storedElement);
-                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq, "TRACKED");
+                        storedVal[elementJq.find("[name=identifier]").val()] = buildStoredObj(elementJq, "TRACKED");
                     });
                 }
         );
