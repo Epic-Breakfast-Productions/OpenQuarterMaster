@@ -146,6 +146,12 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="addEditBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditBarcodeInput" placeholder="UPC, ISBN...">
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
                     <div class="col-sm-10">
                         <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
@@ -263,9 +269,17 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-body">
+            <div class="card-body"> <!-- TODO:: make container to hide -->
                 <h5 class="card-title">Description:</h5>
                 <div id="itemViewDescription">
+                </div>
+            </div>
+        </div>
+        <div class="card" id="itemViewBarcodeContainer">
+            <div class="card-body">
+                <h5 class="card-title">Barcode:</h5>
+                <div >
+                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
                 </div>
             </div>
         </div>
@@ -458,7 +472,6 @@ function showAddEditProductSearchPane(){
     addEditProductSearchPane.show();
 }
 
-
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
 var imageInputTemplate = $('#imageInputTemplate');
@@ -473,6 +486,7 @@ var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
 var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 var addEditNameInput = $('#addEditNameInput');
 var addEditDescriptionInput = $('#addEditDescriptionInput');
+var addEditBarcodeInput = $('#addEditBarcodeInput');
 var addEditPricePerUnitInput = $('#addEditPricePerUnitInput');
 var addEditExpiryWarningThresholdInput = $('#addEditExpiryWarningThresholdInput');
 var addEditExpiryWarningThresholdUnitInput = $('#addEditExpiryWarningThresholdUnitInput');
@@ -489,6 +503,13 @@ var unitNameRow = $('#unitNameRow');
 var pricePerUnitNameRow = $('#pricePerUnitNameRow');
 var compatibleUnitOptions = "";
 
+//prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
+addEditBarcodeInput.on('keypress', function(e) {
+    // Ignore enter keypress
+    if (e.which === 13) {
+        return false;
+    }
+});
 
 function foreachStoredType(
         storedType,
@@ -543,6 +564,7 @@ function resetAddEditForm(){
     hideAddEditProductSearchPane();
     addEditNameInput.val("");
     addEditDescriptionInput.val("");
+    addEditBarcodeInput.val("");
     addEditModalLabel.text("Item");
     addEditPricePerUnitInput.val("0.00");
     addEditExpiryWarningThresholdInput.val(0);
@@ -582,6 +604,7 @@ function setStoredItemVales(storedDivJq, storedData){
             }
     );
     
+    storedDivJq.find("[name=barcode]")[0].value = storedData.barcode;
     storedDivJq.find("[name=condition]")[0].value = storedData.condition;
     storedDivJq.find("[name=conditionDetails]")[0].value = storedData.conditionNotes;
     storedDivJq.find("[name=expires]")[0].value = storedData.expires;
@@ -759,6 +782,12 @@ function removeStored(toRemoveId){
 
 function getCommonStoredFormElements(headerId, toRemoveId) {
     return  '<div class="mb-3 ">\n'+
+            '    <label class="form-label">Barcode</label>\n' +
+            '    <div class="input-group">\n'+
+            '        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n'+
+            '    </div>\n'+
+            '</div>\n' +
+            '<div class="mb-3 ">\n'+
             '    <label class="form-label">Condition Percentage</label>\n' +
             '    <div class="input-group">\n'+
             '        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
@@ -1066,7 +1095,7 @@ function buildStoredObj(storedContainer, type){
     
     //TODO:: check this func for completeness of diff types
     if( type == "TRACKED"){
-        output['identifier'] = storedContainer.find("[name=identifier").val()
+        output['identifier'] = storedContainer.find("[name=identifier]").val()
     }
     
     {
@@ -1076,6 +1105,13 @@ function buildStoredObj(storedContainer, type){
                     parseFloat(amountInput.get(0).value),
                     storedContainer.find("[name=amountStoredUnit]").get(0).value
             );
+        }
+    }
+    
+    {
+        let input = storedContainer.find("[name=barcode]");
+        if (input.length) {
+            output["barcode"] = input.get(0).value;
         }
     }
     
@@ -1131,6 +1167,7 @@ addEditItemForm.submit(async function (event) {
     let addEditData = {
         name: addEditNameInput.val(),
         description: addEditDescriptionInput.val(),
+        barcode: addEditBarcodeInput.val(),
         storageType: addEditStorageTypeInput.val(),
         expiryWarningThreshold: addEditExpiryWarningThresholdInput.val() * addEditExpiryWarningThresholdUnitInput.val(),
         lowStockThreshold: (addEditTotalLowStockThresholdInput.val() ? getQuantityObj(
@@ -1177,7 +1214,7 @@ addEditItemForm.submit(async function (event) {
                     storedVal = {};
                     storageBlockElementJq.find(".storage-list-entry").each(function (j, storedElement) {
                         let elementJq = $(storedElement);
-                        storedVal[elementJq.find("[name=identifier").val()] = buildStoredObj(elementJq, "TRACKED");
+                        storedVal[elementJq.find("[name=identifier]").val()] = buildStoredObj(elementJq, "TRACKED");
                     });
                 }
         );
@@ -1246,6 +1283,8 @@ var itemViewValPerUnit = $("#itemViewValPerUnit");
 var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
 var itemViewDescription = $("#itemViewDescription");
+var itemViewBarcodeContainer = $('#itemViewBarcodeContainer');
+var itemViewBarcode = $("#itemViewBarcode");
 var itemViewTotal = $("#itemViewTotal");
 var itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
 var itemViewTotalLowStockThreshold = $("#itemViewTotalLowStockThreshold");
@@ -1274,6 +1313,8 @@ function resetView(){
     
     itemViewStorageType.text("");
     itemViewDescription.text("");
+    itemViewBarcodeContainer.hide();
+    itemViewBarcode.attr("src", "");
     itemViewTotal.text("");
     itemViewTotalLowStockThreshold.text("");
     itemViewTotalLowStockThresholdContainer.hide();
@@ -1341,6 +1382,19 @@ function getStorageBlockAmountHeldView(stored, storedType){
     }
     return "";
 }
+function getStorageBlockBarcodeView(stored, itemId, storageBlockId, index = false){
+    if(stored.barcode) {
+        let url = "/api/v1/media/code/item/"+itemId+"/barcode/stored/"+storageBlockId;
+        
+        if(index !== false){
+            url += "/"+index;
+        }
+        
+        return '<div class="col"><h5>Barcode:</h5><img src="'+url+'" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg"></div>';
+    }
+    return "";
+}
+
 function getStorageBlockIdentifyingDetailsView(stored, storedType){
     if(storedType.includes("TRACKED") && stored.identifyingDetails) {
         return getBlockViewCell("Identifying Details", stored.identifyingDetails);
@@ -1367,9 +1421,10 @@ function getStorageBlockExpiresView(stored){
     return "";
 }
 
-function getStoredViewContent(stored, storedType){
+function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false){
     return '<div class="row">' +
             getStorageBlockAmountHeldView(stored, storedType)+
+            getStorageBlockBarcodeView(stored, itemId, storageBlockId, index) +
             getStorageBlockIdentifyingDetailsView(stored, storedType)+
             getStorageBlockConditionView(stored)+
             getStorageBlockConditionNotesView(stored)+
@@ -1378,12 +1433,12 @@ function getStoredViewContent(stored, storedType){
     //TODO:: images, keywords, atts
 }
 
-function getAmountStoredContent(stored){
+function getAmountStoredContent(stored, itemId, storageBlockId){
     console.log("Getting view content for simple amount stored.");
-    return getStoredViewContent(stored, "AMOUNT_SIMPLE");
+    return getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId);
 }
 
-function getAmountListStoredContent(blockId, storedList){
+function getAmountListStoredContent(itemId, blockId, storedList){
     console.log("Getting view content for list amount stored.");
     
     
@@ -1395,7 +1450,7 @@ function getAmountListStoredContent(blockId, storedList){
         storedList.forEach(function (curStored) {
             accordContent += addViewAccordionItem(
                     accordId + i,
-                    getStoredViewContent(curStored, "AMOUNT_LIST"),
+                    getStoredViewContent(curStored, "AMOUNT_LIST", itemId, blockId, i),
                     curStored,
                     "AMOUNT_LIST"
             );
@@ -1414,7 +1469,7 @@ function getAmountListStoredContent(blockId, storedList){
     '</div>';
 }
 
-function getTrackedStoredContent(blockId, trackedMap){
+function getTrackedStoredContent(itemId, blockId, trackedMap){
     console.log("Getting view content for tracked stored.");
     
     let accordContent = "";
@@ -1425,7 +1480,7 @@ function getTrackedStoredContent(blockId, trackedMap){
         storageIds.forEach(key => {
             accordContent += addViewAccordionItem(
                     accordId + key,
-                    getStoredViewContent(trackedMap[key], "TRACKED"),
+                    getStoredViewContent(trackedMap[key], "TRACKED",itemId, blockId, key),
                     key
             );
         });
@@ -1462,6 +1517,11 @@ function setupView(itemId){
             itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
+            
+            if(data.barcode){
+                itemViewBarcode.attr("src", "/api/v1/media/code/item/"+data.id+"/barcode")
+                itemViewBarcodeContainer.show();
+            }
             
             if(data.lowStockThreshold){
                 itemViewTotalLowStockThreshold.text(data.lowStockThreshold.value + "" + data.lowStockThreshold.unit.symbol);
@@ -1525,21 +1585,21 @@ function setupView(itemId){
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getAmountStoredContent(data.storageMap[key].stored),
+                                        getAmountStoredContent(data.storageMap[key].stored, data.id, key),
                                         curBlockName
                                 );
                             },
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getAmountListStoredContent(key, data.storageMap[key].stored),
+                                        getAmountListStoredContent(data.id, key, data.storageMap[key].stored),
                                         curBlockName
                                 );
                             },
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getTrackedStoredContent(key, data.storageMap[key].stored),
+                                        getTrackedStoredContent(data.id, key, data.storageMap[key].stored),
                                         curBlockName
                                 );
                             }
