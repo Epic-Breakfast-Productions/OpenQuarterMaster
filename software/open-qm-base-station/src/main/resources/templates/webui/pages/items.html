@@ -275,10 +275,11 @@
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body"><!-- TODO:: make container to hide -->
+        <div class="card" id="itemViewBarcodeContainer">
+            <div class="card-body">
                 <h5 class="card-title">Barcode:</h5>
-                <div id="itemViewBarcode">
+                <div >
+                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
                 </div>
             </div>
         </div>
@@ -1283,6 +1284,7 @@ var itemViewValPerUnit = $("#itemViewValPerUnit");
 var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
 var itemViewDescription = $("#itemViewDescription");
+var itemViewBarcodeContainer = $('#itemViewBarcodeContainer');
 var itemViewBarcode = $("#itemViewBarcode");
 var itemViewTotal = $("#itemViewTotal");
 var itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
@@ -1312,7 +1314,8 @@ function resetView(){
     
     itemViewStorageType.text("");
     itemViewDescription.text("");
-    itemViewBarcode.text("");
+    itemViewBarcodeContainer.hide();
+    itemViewBarcode.attr("src", "");
     itemViewTotal.text("");
     itemViewTotalLowStockThreshold.text("");
     itemViewTotalLowStockThresholdContainer.hide();
@@ -1380,9 +1383,15 @@ function getStorageBlockAmountHeldView(stored, storedType){
     }
     return "";
 }
-function getStorageBlockBarcodeView(stored){
+function getStorageBlockBarcodeView(stored, itemId, storageBlockId, index = false){
     if(stored.barcode) {
-        return getBlockViewCell("Barcode", stored.barcode);
+        let url = "/api/v1/media/code/item/"+itemId+"/barcode/stored/"+storageBlockId;
+        
+        if(index !== false){
+            url += "/"+index;
+        }
+        
+        return '<div class="col"><h5>Barcode:</h5><img src="'+url+'" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg"></div>';
     }
     return "";
 }
@@ -1413,10 +1422,10 @@ function getStorageBlockExpiresView(stored){
     return "";
 }
 
-function getStoredViewContent(stored, storedType){
+function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false){
     return '<div class="row">' +
             getStorageBlockAmountHeldView(stored, storedType)+
-            getStorageBlockBarcodeView(stored) +
+            getStorageBlockBarcodeView(stored, itemId, storageBlockId, index) +
             getStorageBlockIdentifyingDetailsView(stored, storedType)+
             getStorageBlockConditionView(stored)+
             getStorageBlockConditionNotesView(stored)+
@@ -1425,12 +1434,12 @@ function getStoredViewContent(stored, storedType){
     //TODO:: images, keywords, atts
 }
 
-function getAmountStoredContent(stored){
+function getAmountStoredContent(stored, itemId, storageBlockId){
     console.log("Getting view content for simple amount stored.");
-    return getStoredViewContent(stored, "AMOUNT_SIMPLE");
+    return getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId);
 }
 
-function getAmountListStoredContent(blockId, storedList){
+function getAmountListStoredContent(itemId, blockId, storedList){
     console.log("Getting view content for list amount stored.");
     
     
@@ -1442,7 +1451,7 @@ function getAmountListStoredContent(blockId, storedList){
         storedList.forEach(function (curStored) {
             accordContent += addViewAccordionItem(
                     accordId + i,
-                    getStoredViewContent(curStored, "AMOUNT_LIST"),
+                    getStoredViewContent(curStored, "AMOUNT_LIST", itemId, blockId, i),
                     curStored,
                     "AMOUNT_LIST"
             );
@@ -1461,7 +1470,7 @@ function getAmountListStoredContent(blockId, storedList){
     '</div>';
 }
 
-function getTrackedStoredContent(blockId, trackedMap){
+function getTrackedStoredContent(itemId, blockId, trackedMap){
     console.log("Getting view content for tracked stored.");
     
     let accordContent = "";
@@ -1472,7 +1481,7 @@ function getTrackedStoredContent(blockId, trackedMap){
         storageIds.forEach(key => {
             accordContent += addViewAccordionItem(
                     accordId + key,
-                    getStoredViewContent(trackedMap[key], "TRACKED"),
+                    getStoredViewContent(trackedMap[key], "TRACKED",itemId, blockId, key),
                     key
             );
         });
@@ -1507,9 +1516,13 @@ function setupView(itemId){
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storageType);
             itemViewDescription.text(data.description);
-            itemViewBarcode.text(data.barcode);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
+            
+            if(data.barcode){
+                itemViewBarcode.attr("src", "/api/v1/media/code/item/"+data.id+"/barcode")
+                itemViewBarcodeContainer.show();
+            }
             
             if(data.lowStockThreshold){
                 itemViewTotalLowStockThreshold.text(data.lowStockThreshold.value + "" + data.lowStockThreshold.unit.symbol);
@@ -1573,21 +1586,21 @@ function setupView(itemId){
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getAmountStoredContent(data.storageMap[key].stored),
+                                        getAmountStoredContent(data.storageMap[key].stored, data.id, key),
                                         curBlockName
                                 );
                             },
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getAmountListStoredContent(key, data.storageMap[key].stored),
+                                        getAmountListStoredContent(data.id, key, data.storageMap[key].stored),
                                         curBlockName
                                 );
                             },
                             function () {
                                 addViewStorageBlocksAccordionItem(
                                         key,
-                                        getTrackedStoredContent(key, data.storageMap[key].stored),
+                                        getTrackedStoredContent(data.id, key, data.storageMap[key].stored),
                                         curBlockName
                                 );
                             }

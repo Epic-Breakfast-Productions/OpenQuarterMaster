@@ -165,7 +165,7 @@ public class BarcodeCreation extends EndpointProvider {
 	}
 	
 	@GET
-	@Path("object/item/{id}/barcode")
+	@Path("item/{id}/barcode")
 	@Operation(
 		summary = "Gets a bar or QR code related to the object."
 	)
@@ -195,7 +195,7 @@ public class BarcodeCreation extends EndpointProvider {
 	}
 	
 	@GET
-	@Path("object/item/{id}/barcode/stored/{storageBlockId}")
+	@Path("item/{id}/barcode/stored/{storageBlockId}")
 	@Operation(
 		summary = "Gets a bar or QR code related to the object."
 	)
@@ -239,7 +239,7 @@ public class BarcodeCreation extends EndpointProvider {
 	}
 	
 	@GET
-	@Path("object/item/{id}/barcode/stored/{storageBlockId}/{index}")
+	@Path("item/{id}/barcode/stored/{storageBlockId}/{index}")
 	@Operation(
 		summary = "Gets a bar or QR code related to the object."
 	)
