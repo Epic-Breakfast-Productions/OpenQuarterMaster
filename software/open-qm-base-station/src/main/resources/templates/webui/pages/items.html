@@ -505,12 +505,11 @@ var compatibleUnitOptions = "";
 
 //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
 addEditBarcodeInput.on('keypress', function(e) {
-    // Ignore keypress if all fields are not populated.
+    // Ignore enter keypress
     if (e.which === 13) {
         return false;
     }
 });
-
 
 function foreachStoredType(
         storedType,
