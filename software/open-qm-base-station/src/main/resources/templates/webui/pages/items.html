@@ -248,75 +248,77 @@
 {/modal}
 {#modal id='itemView' large=true title='Item View'}
     <div class="row">
-        <div class="col" id="itemViewMessages">
-			
-		</div>
+        <div class="col" id="itemViewMessages"></div>
     </div>
 <div class="row">
     {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
     <div class="col">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title" style="display: inline">Id:</h5>
-                <p class="card-text" style="display: inline"><span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}</p>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Storage Type:</h5>
-                <div id="itemViewStorageType">
+        <div class="row">
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Storage Type:</h5>
+                    <p id="itemViewStorageType" class="d-inline">
+                    </p>
                 </div>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-body"> <!-- TODO:: make container to hide -->
-                <h5 class="card-title">Description:</h5>
-                <div id="itemViewDescription">
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Id:</h5>
+                    <p class="card-text d-inline">
+                        <small>
+                            <span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}
+                        </small>
+                    </p>
                 </div>
             </div>
-        </div>
-        <div class="card" id="itemViewBarcodeContainer">
-            <div class="card-body">
-                <h5 class="card-title">Barcode:</h5>
-                <div >
+            <div class="card col-12">
+                <div class="card-body"> <!-- TODO:: make container to hide -->
+                    <h5 class="card-title">Description:</h5>
+                    <div id="itemViewDescription">
+                    </div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Held:</h5>
+                    <p id="itemViewTotal" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewTotalLowStockThresholdContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Low Stock Threshold:</h5>
+                    <p id="itemViewTotalLowStockThreshold" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Value:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Identifying Attribute:</h5>
+                    <p id="itemViewIdentifyingAtt" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewBarcodeContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Barcode:</h5>
                     <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Total Held:</h5>
-                <div id="itemViewTotal">
-                </div>
-            </div>
-        </div>
-        <div class="card" id="itemViewTotalLowStockThresholdContainer">
-            <div class="card-body">
-                <h5 class="card-title">Total Low Stock Threshold:</h5>
-                <div id="itemViewTotalLowStockThreshold">
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
-                <div>
-                    {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Total Value:</h5>
-                <div>
-                    {currency.getSymbol()}<span id="itemViewTotalVal"></span>
-                </div>
-            </div>
-        </div>
-        <div class="card" id="itemViewIdentifyingAttContainer">
-            <div class="card-body">
-                <h5 class="card-title">Identifying Attribute:</h5>
-                <div id="itemViewIdentifyingAtt">
                 </div>
             </div>
         </div>
