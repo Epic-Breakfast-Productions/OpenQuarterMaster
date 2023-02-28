@@ -271,8 +271,8 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-12">
-                <div class="card-body"> <!-- TODO:: make container to hide -->
+            <div class="card col-12" id="itemViewDescriptionContainer">
+                <div class="card-body">
                     <h5 class="card-title">Description:</h5>
                     <div id="itemViewDescription">
                     </div>
@@ -1284,6 +1284,7 @@ var itemViewValPerUnit = $("#itemViewValPerUnit");
 
 var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
+var itemViewDescriptionContainer = $("#itemViewDescriptionContainer");
 var itemViewDescription = $("#itemViewDescription");
 var itemViewBarcodeContainer = $('#itemViewBarcodeContainer');
 var itemViewBarcode = $("#itemViewBarcode");
@@ -1314,6 +1315,7 @@ function resetView(){
     itemViewIdentifyingAtt.text("");
     
     itemViewStorageType.text("");
+    itemViewDescriptionContainer.hide();
     itemViewDescription.text("");
     itemViewBarcodeContainer.hide();
     itemViewBarcode.attr("src", "");
@@ -1516,9 +1518,13 @@ function setupView(itemId){
             processAttDisplay(viewAttsSection, data.attributes);
             itemViewModalLabel.text(data.name);
             itemViewStorageType.text(data.storageType);
-            itemViewDescription.text(data.description);
             itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
             itemViewTotalVal.text(data.valueOfStored);
+            
+            if(data.description){
+                itemViewDescription.text(data.description);
+                itemViewDescriptionContainer.show();
+            }
             
             if(data.barcode){
                 itemViewBarcode.attr("src", "/api/v1/media/code/item/"+data.id+"/barcode")
