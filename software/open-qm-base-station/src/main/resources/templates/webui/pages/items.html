@@ -376,20 +376,20 @@
     <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
     <script src="/res/js/obj/media/imageAdd.js"></script>
     <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
-<script src="/res/js/search.js"></script>
+    <script src="/res/js/search.js"></script>
     <script src="/res/js/historySearch.js"></script>
-<script src="/res/js/obj/objEdit.js"></script>
-<script src="/res/js/obj/objView.js"></script>
-<script src="/res/js/obj/media/imageSearchSelect.js"></script>
-<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-<script src="/res/js/obj/units.js"></script>
-<script src="/res/js/obj/getters.js"></script>
-<script src="/res/js/obj/storageBlock/capacities.js"></script>
-<script src="/res/js/carousel.js"></script>
-
-<script src="/res/js/item/ItemEditing.js"></script>
-<script src="/res/js/item/ItemAddSubTrans.js"></script>
-<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="/res/js/obj/objEdit.js"></script>
+    <script src="/res/js/obj/objView.js"></script>
+    <script src="/res/js/storedTypeUtils.js"></script>
+    <script src="/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="/res/js/obj/units.js"></script>
+    <script src="/res/js/obj/getters.js"></script>
+    <script src="/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="/res/js/carousel.js"></script>
+    <script src="/res/js/item/ItemEditing.js"></script>
+    <script src="/res/js/item/ItemAddSubTrans.js"></script>
+    <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
     <script src="/res/js/textCopy.js"></script>
 {/scripts}
 {#pageScript}
@@ -511,33 +511,13 @@ addEditBarcodeInput.on('keypress', function(e) {
     }
 });
 
-function foreachStoredType(
-        storedType,
-        whenAmountSimple,
-        whenAmountList,
-        whenTracked
-){
-    if(storedType === "AMOUNT_SIMPLE"){
-        if(whenAmountSimple !== null) {
-            whenAmountSimple();
-        }
-    } else if(storedType === "AMOUNT_LIST"){
-        if(whenAmountList !== null) {
-            whenAmountList();
-        }
-    } else if(storedType === "TRACKED"){
-        if(whenTracked !== null) {
-            whenTracked();
-        }
-    }
-}
 
 function foreachStoredTypeFromAddEditInput(
         whenAmountSimple,
         whenAmountList,
         whenTracked
 ){
-    foreachStoredType(
+    StoredTypeUtils.foreachStoredType(
             addEditStorageTypeInput[0].value,
             whenAmountSimple,
             whenAmountList,
@@ -1337,7 +1317,7 @@ function addViewAccordionItem(id, content, headerContent, trackedType){
         let funcForAmount = function (){
             headerContent += stored.amount.value + stored.amount.unit.symbol;
         };
-        foreachStoredType(
+        StoredTypeUtils.foreachStoredType(
                 trackedType,
                 funcForAmount,
                 funcForAmount,
@@ -1553,7 +1533,7 @@ function setupView(itemId){
             let showAmountStoredPricePerUnit = function () {
                 itemViewValPerUnit.text(data.valuePerUnit);
             }
-            foreachStoredType(
+            StoredTypeUtils.foreachStoredType(
                     data.storageType,
                     showAmountStoredPricePerUnit,
                     showAmountStoredPricePerUnit,
@@ -1580,7 +1560,7 @@ function setupView(itemId){
                         }
                     });
         
-                    foreachStoredType(
+                    StoredTypeUtils.foreachStoredType(
                             data.storageType,
                             function () {
                                 addViewStorageBlocksAccordionItem(
