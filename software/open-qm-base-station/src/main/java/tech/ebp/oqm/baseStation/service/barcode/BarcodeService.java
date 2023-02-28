@@ -21,9 +21,9 @@ import java.io.IOException;
 @Traced
 @ApplicationScoped
 public class BarcodeService {
-	public static String DATA_MEDIA_TYPE = "image/svg+xml";
+	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
 	
-	private String toImageData(Symbol code){
+	private static String toImageData(Symbol code){
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		SvgRenderer renderer = new SvgRenderer(os, 1, Color.WHITE, Color.BLACK, true);
 		try {
