@@ -1,9 +1,9 @@
-package tech.ebp.oqm.baseStation.interfaces.ui;
+package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import com.mongodb.client.model.Filters;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -12,14 +12,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
+import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
-import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.CookieParam;
@@ -40,21 +39,15 @@ import java.util.List;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class OverviewUi extends UiProvider {
+public class HelpUi extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/overview")
+	@Location("webui/pages/help")
 	Template overview;
 	
 	@Inject
-	UserService userService;
-	@Inject
-	InventoryItemService inventoryItemService;
-	@Inject
-	StorageBlockService storageBlockService;
-	
-	@Inject
 	JsonWebToken jwt;
+	
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;
@@ -62,29 +55,41 @@ public class OverviewUi extends UiProvider {
 	@Inject
 	Tracer tracer;
 	
+	@Inject
+	UserService userService;
+	
+	@Inject
+	ProductLookupService productLookupService;
+	
 	@GET
-	@Path("overview")
-	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@Path("help")
+	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,
 		@CookieParam("jwt_refresh") String refreshToken
 	) {
 		logRequestContext(jwt, securityContext);
-		User user = userService.getFromJwt(this.jwt);
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
+		User user = userService.getFromJwt(this.jwt);
+		TemplateInstance template;
+		if (user == null) {
+			template = this.setupPageTemplate(overview, tracer)
+						   .data("navbar", "toLogin");
+		} else {
+			template = this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
+						   .data("navbar", "full");
+		}
+		template = template
+					   .data("unitCategoryMap", UnitUtils.UNIT_CATEGORY_MAP)
+					   .data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
+					   .data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
+					   .data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo())
+		;
+		
+		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
-				.data("numItems", inventoryItemService.count())
-				.data("totalExpired", inventoryItemService.getNumStoredExpired())
-				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
-				.data("totalExpiryWarn", inventoryItemService.getNumStoredExpiryWarn())
-				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
-				.data("totalLowStock", inventoryItemService.getNumLowStock())
-				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
-				.data("numStorageBlocks", storageBlockService.count())
-				.data("storageBlockService", storageBlockService),
+			template,
 			MediaType.TEXT_HTML_TYPE
 		);
 		

@@ -312,7 +312,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
 		keywordInputTemplate.html() +
 		attInputTemplate.html() +
 		'<div class="mb-3 ">\n'+
-		'    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');"><i class="bi bi-trash-fill"></i> Remove Stored</button> '+
+		'    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');">'+Icons.remove+' Remove Stored</button> '+
 		'</div>\n'
 		;
 }
@@ -559,10 +559,10 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 
 			accordBodyButtonWrapper.append($(
 				'<button type="button" class="btn btn-sm btn-success mt-2 addAmountStoredButton" onclick="createNewAmountStored(\''+accordFormContentId+'\', \''+accordFormContentId+'\');">\n'+
-				'    <i class="bi bi-plus-circle"></i> Add\n'+
+				'    '+Icons.add+' Add\n'+
 				'</button>\n'+
 				'<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-				'    <i class="bi bi-trash-fill"></i> Remove Associated Storage\n'+
+				'    '+Icons.remove+' Remove Associated Storage\n'+
 				'</button>'
 			));
 		},
@@ -572,11 +572,11 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 				'<div class="input-group mt-2">\n'+
 				'    <input type="text" class="form-control identifierValueInput" placeholder="Identifier Value">\n'+
 				'    <button class="btn btn-outline-success addTrackedItemButton" type="button"  onclick="createNewTrackedStored(\''+accordFormContentId+'\', this);">' +
-				'        <i class="bi bi-plus-circle"></i> Add\n'+
+				'        '+Icons.add+' Add\n'+
 				'    </button>\n'+
 				'</div>'+
 				'<button type="button" class="btn btn-sm btn-danger mt-2" onclick="if(confirm(\'Are you sure? This cannot be undone.\')){ $(\'#'+accordId+'\').remove();}">\n'+
-				'    <i class="bi bi-trash-fill"></i> Remove Associated Storage\n'+
+				'    '+Icons.remove+' Remove Associated Storage\n'+
 				'</button>'
 			));
 		}

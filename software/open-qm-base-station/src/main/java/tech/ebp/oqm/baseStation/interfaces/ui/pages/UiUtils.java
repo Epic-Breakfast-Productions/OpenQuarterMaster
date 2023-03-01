@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.interfaces.ui;
+package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
