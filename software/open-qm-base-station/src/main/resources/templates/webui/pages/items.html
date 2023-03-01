@@ -6,7 +6,7 @@
 {#pageContent}
 <div class="row">
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal"
                 onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
         </button>
     </div>
@@ -77,9 +77,9 @@
         </div>
     </div>
 {/modal}
-{#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
+{#search/storage/StorageSearchSelectModal otherModalId="addEditItemModal"}
 {/search/storage/StorageSearchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditModal"}
+{#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
 {/search/image/imageSearchSelectModal}
     {#inputs/item/itemAddSubTransModal otherModalId=""}
     {/inputs/item/itemAddSubTransModal}

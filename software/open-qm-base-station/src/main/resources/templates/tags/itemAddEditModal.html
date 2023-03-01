@@ -1,5 +1,10 @@
-{#modal id='addEdit' large=true title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
+{!TODO:: change id to itemAddEdit!}
+{#modal id='addEditItem' large=true title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
     
+    <div class="row">
+        <div class="col" id="addEditItemFormMessages">
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
@@ -70,69 +75,68 @@
             </div>
         </div>
         <div class="col">
-            <div id="addEditFormMessages"></div>
             <form id="addEditItemForm">
-                <input type="hidden" id="addEditFormMode" value="">
-                <input type="hidden" id="addEditFormId" value="">
+                <input type="hidden" id="addEditItemFormMode" value="">
+                <input type="hidden" id="addEditItemIdInput" value="">
                 <div class="mb-3 row">
-                    <label for="addEditNameInput" class="col-sm-2 col-form-label">Name</label>
+                    <label for="addEditItemNameInput" class="col-sm-2 col-form-label">Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="addEditNameInput" placeholder="Name" required>
+                        <input type="text" class="form-control" id="addEditItemNameInput" placeholder="Name" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                        <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
+                    <label for="addEditItemBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="addEditBarcodeInput" placeholder="UPC, ISBN...">
+                        <input type="text" class="form-control" id="addEditItemBarcodeInput" placeholder="UPC, ISBN...">
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
                     <div class="col-sm-10">
-                        <select class="form-select" id="addEditStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
+                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
                             <option value="AMOUNT_SIMPLE" title="hello world" selected>Amount</option>
                             <option value="AMOUNT_LIST">Amount List</option>
                             <option value="TRACKED">Tracked</option>
                         </select>
                     </div>
                 </div>
-                <div class="mb-3 row" id="trackedItemIdentifierNameRow" style="display: none;">
-                    <label for="addEditIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
+                <div class="mb-3 row" id="addEditItemTrackedItemIdentifierNameRow" style="display: none;">
+                    <label for="addEditItemIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="addEditIdentifyingAttInput" placeholder="Identifying Attribute" required>
+                        <input type="text" class="form-control" id="addEditItemIdentifyingAttInput" placeholder="Identifying Attribute" required>
                     </div>
                 </div>
                 <!-- TODO:: default value -->
-                <div class="mb-3 row" id="unitNameRow">
-                    <label for="addEditUnitInput" class="col-sm-2 col-form-label">Unit</label>
+                <div class="mb-3 row" id="addEditItemUnitNameRow">
+                    <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
                     <div class="col-sm-10">
-                        <select class="form-select" id="addEditUnitInput" onchange="handleItemUnitChange();">
+                        <select class="form-select" id="addEditItemUnitInput" onchange="handleItemUnitChange();">
                             {#inputs/units/unitOptionsGroups}
                             {/inputs/units/unitOptionsGroups}
                         </select>
                     </div>
                 </div>
-                <div class="mb-3 row" id="pricePerUnitNameRow">
-                    <label for="addEditPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
+                <div class="mb-3 row" id="addEditItemPricePerUnitNameRow">
+                    <label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
                     <div class="col-sm-10">
                         <div class="input-group">
                             <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
-                            <input type="number" min="0.00" step="any" class="form-control" id="addEditPricePerUnitInput" placeholder="Price Per Unit" required>
+                            <input type="number" min="0.00" step="any" class="form-control" id="addEditItemPricePerUnitInput" placeholder="Price Per Unit" required>
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 row" id="pricePerUnitNameRow">
-                    <label for="addEditExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
+                <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
+                    <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
                     <div class="col-sm-10">
                         <div class="input-group">
-                            <input type="number" min="0" class="form-control" id="addEditExpiryWarningThresholdInput" placeholder="Expiry Warning Threshold" required value="0" aria-describedby="addEditExpiryWarningThresholdHelp">
-                            <select class="form-select" style="max-width: 10em;" id="addEditExpiryWarningThresholdUnitInput">
+                            <input type="number" min="0" class="form-control" id="addEditItemExpiryWarningThresholdInput" placeholder="Expiry Warning Threshold" required value="0" aria-describedby="addEditExpiryWarningThresholdHelp">
+                            <select class="form-select" style="max-width: 10em;" id="addEditItemExpiryWarningThresholdUnitInput">
                                 <!-- The values here represent the multiplier to make the equivalent number of seconds for each -->
                                 <option value="1">Seconds*</option>
                                 <option value="60">Minutes*</option>
@@ -148,11 +152,11 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditTotalLowStockThresholdInput" class="col-sm-2 col-form-label">Total Low Stock Threshold</label>
+                    <label for="addEditItemTotalLowStockThresholdInput" class="col-sm-2 col-form-label">Total Low Stock Threshold</label>
                     <div class="col-sm-10">
                         <div class="input-group mt-2 mb-3">
-                            <input type="number" class="form-control amountStoredValueInput" id="addEditTotalLowStockThresholdInput" placeholder="Value" min="0.00" step="any">
-                            <select class="form-select amountStoredUnitInput unitInput" id="addEditTotalLowStockThresholdUnitInput">
+                            <input type="number" class="form-control amountStoredValueInput" id="addEditItemTotalLowStockThresholdInput" placeholder="Value" min="0.00" step="any">
+                            <select class="form-select amountStoredUnitInput unitInput" id="addEditItemTotalLowStockThresholdUnitInput">
                             </select>
                         </div>
                         <div id="addEditTotalLowStockThresholdHelp" class="form-text">
@@ -165,7 +169,7 @@
                 <div class="mb-3 row">
                     <div class="col-sm-2 col-form-label">Stored</div>
                     <div class="col-sm-10">
-                        <div class="accordion mt-2" id="storedContainer">
+                        <div class="accordion mt-2" id="addEditItemStoredContainer">
                 
                         </div>
                         <div class="col d-grid gap-2 mt-3">
