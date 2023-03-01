@@ -28,7 +28,7 @@ function addAttInput(container, key, val){
     var newInputDiv = $('<div class="input-group mb-1"> \
   <input type="text" class="form-control attInputKey" placeholder="key" name="attributeKey" required> \
   <input type="text" class="form-control attInputValue" placeholder="value" name="attributeValue"> \
-  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);">'+Icons.remove+'</i></button> \
+  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);">'+Icons.remove+'</button> \
 </div>');
     container.append(
         newInputDiv
