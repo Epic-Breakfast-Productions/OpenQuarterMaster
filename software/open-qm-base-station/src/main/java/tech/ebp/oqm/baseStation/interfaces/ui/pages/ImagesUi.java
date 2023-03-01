@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.interfaces.ui;
+package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
