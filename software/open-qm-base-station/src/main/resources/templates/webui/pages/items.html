@@ -61,7 +61,7 @@
     
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-primary mb-1" onclick="toggleAddEditProductSearchPane();" title="Search for Products">
+            <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
                 {#icons/search}{/icons/search} Search for Products
             </button>
         </div>
@@ -393,86 +393,14 @@
     <script src="/res/js/item/ItemAddSubTrans.js"></script>
     <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
     <script src="/res/js/textCopy.js"></script>
+    <script src="/res/js/item/extItemSearch.js"></script>
 {/scripts}
 {#pageScript}
 <script>
 const STORAGE_CLASS = "storageBlock";
 
 
-var extSearchResults=$("#extSearchResults");
-function handleExtItemSearchResults(results){
-    console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length)
-    
-    if(results.results.length === 0){
-        extSearchResults.html("<p>No Results!</p>");
-    }
-    results.results.forEach(function(result){
-        //TODO:: better formatting, handle many results well
-        let resultCard = $('<div class="card col-6 p-0"></div>');
-        
-        resultCard.append($('<div class="card-header">'+result.source+'</div>'));
-        resultCard.append($('<div class="card-body">Name: '+result.unifiedName+'</div>'));
-    
-        if(result.brand){
-            '<div class="card-body">Brand: '+result.brand+'</div>'
-        }
-        if(result.description){
-            '<div class="card-body">Description: '+result.description+'</div>'
-        }
-        
-        extSearchResults.append(resultCard);
-    });
-}
 
-var prodBarcodeSearchBarcodeInput = $("#prodBarcodeSearchBarcodeInput");
-$("#prodBarcodeSearchForm").submit(function(event){
-    event.preventDefault();
-    let barcodeText = prodBarcodeSearchBarcodeInput.val();
-    console.log("Searching for a barcode: " + barcodeText);
-    extSearchResults.html("");
-    
-    doRestCall({
-        url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
-        done: handleExtItemSearchResults
-    });
-});
-
-var legoPartNumSearchInput = $("#legoPartNumSearchInput");
-$("#legoPartNumSearchForm").submit(function(event){
-    event.preventDefault();
-    let partNumber = legoPartNumSearchInput.val();
-    console.log("Searching for a lego part: " + partNumber);
-    extSearchResults.html("");
-    
-    doRestCall({
-        url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
-        done: handleExtItemSearchResults
-    });
-});
-
-var websiteScanSearchInput = $("#websiteScanSearchInput");
-$("#websiteScanSearchForm").submit(function(event){
-    event.preventDefault();
-    let webpage = websiteScanSearchInput.val();
-    console.log("Scanning a web page: " + webpage);
-    extSearchResults.html("");
-    
-    doRestCall({
-        url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-        done: handleExtItemSearchResults
-    });
-});
-
-var addEditProductSearchPane = $("#addEditProductSearchPane");
-function toggleAddEditProductSearchPane(){
-    addEditProductSearchPane.toggle();
-}
-function hideAddEditProductSearchPane(){
-    addEditProductSearchPane.hide();
-}
-function showAddEditProductSearchPane(){
-    addEditProductSearchPane.show();
-}
 
 var keywordInputTemplate = $('#keywordInputTemplate');
 var attInputTemplate = $('#attInputTemplate');
@@ -543,7 +471,7 @@ function handleItemUnitChange(){
 }
 
 function resetAddEditForm(){
-    hideAddEditProductSearchPane();
+    ExtItemSearch.hideAddEditProductSearchPane();
     addEditNameInput.val("");
     addEditDescriptionInput.val("");
     addEditBarcodeInput.val("");
