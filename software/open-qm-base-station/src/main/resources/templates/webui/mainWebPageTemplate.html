@@ -71,13 +71,29 @@ Ingests:
 				{/if}
 			</a>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'items'}active{/if}" href="/items">
+		
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+					aria-haspopup="true" aria-expanded="false">
 				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
-				{#if page is 'items'}
-					<span class="visually-hidden">(current)</span>
-				{/if}
 			</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item {#if page is 'items'}active{/if}" href="/items">
+					{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+					{#if page is 'items'}
+					<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
+				<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
+					{#icons/pageIcon page='itemLists'}{/icons/pageIcon} Item Lists
+					{#if page is 'itemLists'}
+					<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
+				<a class="dropdown-item" href="/itemLists#add">
+					{#icons/add}{/icons/add} New Item List
+				</a>
+			</div>
 		</li>
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
