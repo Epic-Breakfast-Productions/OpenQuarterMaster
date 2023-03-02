@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.externalService;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -8,7 +9,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.config.ExtServicesConfig;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.JwtService;
@@ -40,7 +40,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/externalService")
 @Tags({@Tag(name = "External Service", description = "Endpoints for external services to manage their interactions with this server.")})
@@ -63,6 +62,7 @@ public class ExternalServiceEp extends EndpointProvider {
 	@Inject
 	JwtService jwtService;
 	
+	@WithSpan
 	@POST
 	@Path("setup/self")
 	@Operation(
@@ -133,6 +133,7 @@ public class ExternalServiceEp extends EndpointProvider {
 		return Response.ok(builder.build()).build();
 	}
 	
+	@WithSpan
 	@POST
 	@Path("setup/external")
 	@Operation(
@@ -173,7 +174,7 @@ public class ExternalServiceEp extends EndpointProvider {
 		return Response.ok().build();
 	}
 	
-	
+	@WithSpan
 	@POST
 	@Path("auth")
 	@Operation(

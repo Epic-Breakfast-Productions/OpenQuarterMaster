@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
@@ -40,7 +40,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -66,8 +65,9 @@ public class StorageUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
+	@WithSpan
 	@GET
 	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -84,7 +84,7 @@ public class StorageUi extends UiProvider {
 		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(storage, tracer, UserGetResponse.builder(user).build(), searchResults)
+			this.setupPageTemplate(storage, span, UserGetResponse.builder(user).build(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService)

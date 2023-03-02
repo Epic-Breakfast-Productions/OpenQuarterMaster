@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
 import javax.annotation.security.PermitAll;
@@ -28,7 +28,6 @@ import java.io.FileNotFoundException;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/media/runBy")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
@@ -43,7 +42,7 @@ public class RunByUtils extends EndpointProvider {
 	@ConfigProperty(name = "service.runBy.banner", defaultValue = "/")
 	File runByBanner;
 	
-	
+	@WithSpan
 	private static Response getImage(File image) throws FileNotFoundException {
 		
 		if (!image.exists() || !image.isFile()) {
@@ -60,7 +59,7 @@ public class RunByUtils extends EndpointProvider {
 					   .build();
 	}
 	
-	
+	@WithSpan
 	@GET
 	@Path("{image}")
 	@Operation(

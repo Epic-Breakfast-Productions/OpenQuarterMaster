@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.interfaces.messaging;
 
 import io.smallrye.reactive.messaging.annotations.Blocking;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
@@ -11,7 +10,6 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Random;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class TestMessager {

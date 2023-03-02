@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -15,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -58,7 +58,6 @@ import java.util.Base64;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/media/image")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
@@ -103,6 +102,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	
 	//<editor-fold desc="CRUD operations">
 	
+	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new image."
@@ -136,6 +136,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	}
 	
 	
+	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of objects, using search parameters."
@@ -223,6 +224,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	}
 	
 	
+	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -262,6 +264,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.get(securityContext, id);
 	}
 	
+	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -304,6 +307,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.update(securityContext, id, updates);
 	}
 	
+	@WithSpan
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -343,6 +347,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.delete(securityContext, id);
 	}
 	
+	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -384,6 +389,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
+	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(
@@ -416,6 +422,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	}
 	
 	
+	@WithSpan
 	@GET
 	@Path("{id}/data")
 	@Operation(
@@ -449,6 +456,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					   .build();
 	}
 	
+	@WithSpan
 	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
@@ -480,6 +488,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("for/{object}/{id}")
 	@Operation(

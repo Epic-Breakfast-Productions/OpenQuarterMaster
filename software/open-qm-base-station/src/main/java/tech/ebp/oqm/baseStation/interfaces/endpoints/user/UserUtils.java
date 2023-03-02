@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.mailer.MailTemplate;
 import io.quarkus.qute.Location;
 import io.smallrye.mutiny.Uni;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.EmailUtils;
@@ -37,7 +37,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/user/utils")
 @Tags({@Tag(name = "Users")})
@@ -57,6 +56,7 @@ public class UserUtils extends EndpointProvider {
 	@Inject
 	JsonWebToken jwt;
 	
+	@WithSpan
 	@GET
 	@Path("emailTest/self")
 	@Operation(summary = "Tests that an email can be sent.")
@@ -76,6 +76,7 @@ public class UserUtils extends EndpointProvider {
 				   .send();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("emailTest/{userId}")
 	@Operation(summary = "Tests that an email can be sent.")
@@ -100,6 +101,7 @@ public class UserUtils extends EndpointProvider {
 				   .send();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("availability/username/{username}")
 	@Operation(summary = "Tests to see if a new username is available or not.")
@@ -119,6 +121,7 @@ public class UserUtils extends EndpointProvider {
 										   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("availability/email/{email}")
 	@Operation(summary = "Tests to see if a new email is available or not.")

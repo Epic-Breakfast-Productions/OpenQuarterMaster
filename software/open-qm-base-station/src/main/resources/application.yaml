@@ -98,6 +98,8 @@ externalService:
     # Service entries here
   
 quarkus:
+  application:
+    name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
@@ -152,7 +154,7 @@ quarkus:
     footer: With <3, EBP
   # https://quarkus.io/guides/opentracing
   jaeger:
-    enabled: true
+    enabled: false
     service-name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
     sampler-type: const
     sampler-param: 1
@@ -201,13 +203,18 @@ smallrye:
 
 "%dev":
   quarkus:
+    application:
+      name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
       level: DEBUG
+    opentelemetry:
+      enabled: true
+      tracer:
+        exporter:
+          otlp:
+            endpoint: http://localhost:4317
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
-    jaeger:
-      endpoint: http://localhost:8091/api/traces
-      service-name: ${service.nameShort} - V${service.apiVersion} - DEV
     mongodb:
       connection-string: mongodb://localhost:27017
   service:

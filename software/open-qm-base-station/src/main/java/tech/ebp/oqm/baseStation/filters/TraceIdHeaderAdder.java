@@ -1,6 +1,6 @@
 package tech.ebp.oqm.baseStation.filters;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -16,9 +16,9 @@ import java.io.IOException;
 public class TraceIdHeaderAdder implements ContainerResponseFilter {
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
-	@ConfigProperty(name = "quarkus.jaeger.service-name")
+	@ConfigProperty(name = "quarkus.application.name")
 	String serviceId;
 	
 	@Override
@@ -26,11 +26,8 @@ public class TraceIdHeaderAdder implements ContainerResponseFilter {
 		responseContext.getHeaders().add("serviceId", this.serviceId);
 		
 		String traceId = "";
-		if(this.tracer.activeSpan() != null) {
-			traceId = this.tracer
-				.activeSpan()
-				.context()
-				.toTraceId();
+		if(this.span.getSpanContext().getTraceId() != null) {
+			traceId = this.span.getSpanContext().getTraceId();
 		}
 		
 		responseContext.getHeaders().add("traceId", traceId);

@@ -1,8 +1,8 @@
 package tech.ebp.oqm.baseStation.service;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
@@ -14,7 +14,6 @@ import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-@Traced
 @ApplicationScoped
 public class InteractingEntityService {
 	
@@ -25,6 +24,7 @@ public class InteractingEntityService {
 	ExternalServiceService externalServiceService;
 	
 	
+	@WithSpan
 	public InteractingEntity getEntity(JsonWebToken jwt) {
 		if(jwt.getGroups().contains(Roles.USER)){
 			return this.userService.getFromJwt(jwt);
@@ -36,6 +36,7 @@ public class InteractingEntityService {
 	}
 	
 	
+	@WithSpan
 	public InteractingEntity getEntity(InteractingEntityType entityType, ObjectId id){
 		switch (entityType){
 			case USER:
@@ -48,10 +49,12 @@ public class InteractingEntityService {
 		
 	}
 	
+	@WithSpan
 	public InteractingEntity getEntity(InteractingEntityReference ref){
 		return this.getEntity(ref.getEntityType(), ref.getEntityId());
 	}
 	
+	@WithSpan
 	public InteractingEntity getEntity(ObjectHistoryEvent e){
 		return this.getEntity(e.getEntity());
 	}

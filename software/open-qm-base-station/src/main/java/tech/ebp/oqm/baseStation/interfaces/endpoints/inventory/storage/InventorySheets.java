@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
@@ -29,7 +29,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block/{id}/storageSheet")
 @Tags({@Tag(name = "Storage Blocks")})
@@ -48,6 +47,7 @@ public class InventorySheets extends EndpointProvider {
 	@Inject
 	InteractingEntityService interactingEntityService;
 	
+	@WithSpan
 	@Blocking
 	@GET
 	@Operation(

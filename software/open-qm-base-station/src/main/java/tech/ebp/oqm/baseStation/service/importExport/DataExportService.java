@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -7,7 +8,6 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.Deflater;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class DataExportService {
@@ -51,6 +50,7 @@ public class DataExportService {
 	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
 	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
 	
+	@WithSpan
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
 		MongoObjectService<T, S> service,
@@ -114,6 +114,7 @@ public class DataExportService {
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
 	
+	@WithSpan
 	private static <T extends FileMainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
 		MongoFileService<T, S> service,
@@ -198,7 +199,7 @@ public class DataExportService {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	
+	@WithSpan
 	public File exportDataToBundle(boolean excludeHistory) throws IOException {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();

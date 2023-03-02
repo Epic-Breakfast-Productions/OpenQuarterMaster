@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -8,7 +10,6 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
@@ -37,13 +38,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class InteractingEntityView extends UiProvider {
+public class InteractingEntityViewUi extends UiProvider {
 	
 	@Inject
 	@Location("webui/pages/entity")
@@ -69,8 +69,9 @@ public class InteractingEntityView extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
+	@WithSpan
 	@GET
 	@Path("entityView/{type}/{id}")
 	@RolesAllowed("user")
@@ -93,7 +94,7 @@ public class InteractingEntityView extends UiProvider {
 		
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, ugr)
+			this.setupPageTemplate(overview, span, ugr)
 				.data("entity", entity)
 				.data("user", ugr)
 				.data("userService", userService)
@@ -112,6 +113,7 @@ public class InteractingEntityView extends UiProvider {
 		return responseBuilder.build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("entityView/baseStation")
 	@RolesAllowed("user")
@@ -129,7 +131,7 @@ public class InteractingEntityView extends UiProvider {
 		);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, ugr)
+			this.setupPageTemplate(overview, span, ugr)
 				.data("entity", this.baseStationInteractingEntity)
 				.data("user", ugr)
 				.data("userService", userService)

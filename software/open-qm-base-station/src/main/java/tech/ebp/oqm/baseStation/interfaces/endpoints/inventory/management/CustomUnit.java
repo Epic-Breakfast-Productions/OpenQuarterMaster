@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.management;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -10,7 +11,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
@@ -36,7 +36,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 /**
  * TODO:: make this main object provider?
  */
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/manage/customUnit")
 @Tags({@Tag(name = "Inventory Management", description = "Endpoints for inventory management.")})
@@ -53,6 +52,7 @@ public class CustomUnit extends EndpointProvider {
 	@Getter
 	JsonWebToken jwt;
 	
+	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new custom unit."

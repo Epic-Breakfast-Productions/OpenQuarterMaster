@@ -1,6 +1,8 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import com.mongodb.client.model.Filters;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -9,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -34,7 +35,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -60,8 +60,9 @@ public class OverviewUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
+	@WithSpan
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -75,7 +76,7 @@ public class OverviewUi extends UiProvider {
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build())
+			this.setupPageTemplate(overview, span, UserGetResponse.builder(user).build())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())
 				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))

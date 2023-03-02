@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -39,7 +39,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -67,8 +66,9 @@ public class InventoryAdminUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
+	@WithSpan
 	@GET
 	@Path("inventoryAdmin")
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
@@ -82,7 +82,7 @@ public class InventoryAdminUi extends UiProvider {
 		UserGetResponse ugr = UserGetResponse.builder(user).build();
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(inventoryAdminTemplate, tracer, ugr)
+			this.setupPageTemplate(inventoryAdminTemplate, span, ugr)
 				.data("unitDerivisionTypes", NewDerivedCustomUnitRequest.DeriveType.values())
 				.data("unitDimensions", ValidUnitDimension.values())
 				.data("unitCategories", UnitCategory.values())

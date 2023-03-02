@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentracing.Tracer;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -8,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
@@ -30,7 +31,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -43,17 +43,18 @@ public class CodesUi extends UiProvider {
 	Template overview;
 	
 	@Inject
+	Span span;
+	
+	@Inject
 	JsonWebToken jwt;
 	@Inject
 	@RestClient
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
-	
-	@Inject
 	UserService userService;
 	
+	@WithSpan
 	@GET
 	@Path("codes")
 	@RolesAllowed("user")
@@ -68,7 +69,7 @@ public class CodesUi extends UiProvider {
 		
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, UserGetResponse.builder(user).build()),
+			this.setupPageTemplate(overview, span, UserGetResponse.builder(user).build()),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

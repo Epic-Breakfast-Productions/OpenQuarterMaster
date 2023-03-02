@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -9,13 +10,11 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.barcode.BarcodeService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
@@ -44,7 +43,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 /**
  * TODO:: review produces
  */
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/media/code")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
@@ -62,6 +60,7 @@ public class BarcodeCreation extends EndpointProvider {
 	@ConfigProperty(name="runningInfo.baseUrl")
 	String selfBaseUrl;
 	
+	@WithSpan
 	@GET
 	@Path("{codeType}/{code}")
 	@Operation(
@@ -87,6 +86,7 @@ public class BarcodeCreation extends EndpointProvider {
 					   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("object/{object}/{id}/{codeType}/{codeContentType}")
 	@Operation(
@@ -164,6 +164,7 @@ public class BarcodeCreation extends EndpointProvider {
 					   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("item/{id}/barcode")
 	@Operation(
@@ -194,6 +195,7 @@ public class BarcodeCreation extends EndpointProvider {
 				   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("item/{id}/barcode/stored/{storageBlockId}")
 	@Operation(
@@ -238,6 +240,7 @@ public class BarcodeCreation extends EndpointProvider {
 				   .build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("item/{id}/barcode/stored/{storageBlockId}/{index}")
 	@Operation(

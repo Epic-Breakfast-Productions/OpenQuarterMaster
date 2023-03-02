@@ -1,8 +1,8 @@
 package tech.ebp.oqm.baseStation.service.productLookup;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.ItemSearchService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego.LegoLookupService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego.RebrickableService;
@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 
 @ApplicationScoped
 @Slf4j
-@Traced
 @NoArgsConstructor
 public class ProductLookupService {
 	
@@ -71,6 +70,7 @@ public class ProductLookupService {
 		this.legoSearchServices.add(rebrickableService);
 	}
 	
+	@WithSpan
 	private ExtItemLookupResults processRequestsList(Map<String, CompletableFuture<List<ExtItemLookupResult>>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
 		Map<String, Throwable> errList = new HashMap<>();
@@ -99,6 +99,7 @@ public class ProductLookupService {
 								   .build();
 	}
 	
+	@WithSpan
 	private ExtItemLookupResults processRequestsSingle(Map<String, CompletableFuture<ExtItemLookupResult>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
 		Map<String, Throwable> errList = new HashMap<>();
@@ -126,6 +127,7 @@ public class ProductLookupService {
 								   .build();
 	}
 	
+	@WithSpan
 	public ExtItemLookupResults searchBarcode(String barcode) {
 		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
 		
@@ -149,6 +151,7 @@ public class ProductLookupService {
 		return servicesToInfoList(this.productSearchServices);
 	}
 	
+	@WithSpan
 	public ExtItemLookupResults searchLegoPart(String legoPartNum) {
 		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
 		
@@ -174,6 +177,7 @@ public class ProductLookupService {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
+	@WithSpan
 	public ExtItemLookupResults scanPage(URL page) throws ExecutionException, InterruptedException {
 		Map<String, CompletableFuture<ExtItemLookupResult>> resultMap = new HashMap<>();
 		

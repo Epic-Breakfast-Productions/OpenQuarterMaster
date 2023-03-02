@@ -4,13 +4,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.SecurityContext;
 
-@Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class EndpointProvider {

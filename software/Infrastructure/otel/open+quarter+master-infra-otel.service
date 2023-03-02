@@ -2,12 +2,12 @@
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Prometheus tags: https://hub.docker.com/r/prom/prometheus/tags
+#  Otel tags: https://hub.docker.com/r/otel/opentelemetry-collector/tags
 #
 
 [Unit]
-Description=Prometheus server for Open Quartermaster. Version ${version}, using Prometheus tagged to "v2.39.1".
-Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus
+Description=Prometheus server for Open Quartermaster. Version ${version}, using opentelemetry-collector tagged to 0.72.0.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel
 After=docker.service
 Wants=network-online.target docker.socket
 Requires=docker.socket
@@ -19,7 +19,19 @@ Restart=always
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_otel || echo 'Could not stop otel container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_otel || echo 'Could not remove otel container'"
 
-ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null || /usr/bin/docker run --name oqm_otel -p 8092:9090 -v /etc/oqm/infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml --add-host host.docker.internal:host-gateway prom/prometheus:v2.39.1"
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null ||\
+                       /usr/bin/docker run \
+                           --name oqm_otel \
+                           -p 1888:1888 \
+                           -p 8888:8888 \
+                           -p 8889:8889 \
+                           -p 13133:13133 \
+                           -p 4317:4317 \
+                           -p 4318:4318 \
+                           -p 55679:55679 \
+                           -v /etc/oqm/infra/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml \
+                           --add-host host.docker.internal:host-gateway \
+                           otel/opentelemetry-collector:0.72.0"
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_otel || echo 'Could not stop otel container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_otel || echo 'Could not remove otel container'"

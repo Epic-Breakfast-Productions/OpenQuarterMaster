@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -16,7 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
@@ -43,7 +43,6 @@ import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
@@ -67,6 +66,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
 	
+	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new Storage Block."
@@ -97,6 +97,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.create(securityContext, storageBlock);
 	}
 	
+	@WithSpan
 	@POST
 	@Path("bulk")
 	@Operation(
@@ -129,6 +130,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.createBulk(securityContext, storageBlocks);
 	}
 	
+	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -213,6 +215,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return rb.build();
 	}
 	
+	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -253,6 +256,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.get(securityContext, id);
 	}
 	
+	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -295,6 +299,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.update(securityContext, id, updates);
 	}
 	
+	@WithSpan
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -335,6 +340,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.delete(securityContext, id);
 	}
 	
+	@WithSpan
 	@GET
 	@Path("tree")
 	@Operation(
@@ -370,6 +376,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	
 	//<editor-fold desc="History">
+	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -411,6 +418,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
+	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(
@@ -445,6 +453,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	//</editor-fold>
 	
 	
+	@WithSpan
 	@GET
 	@Path("{id}/children")
 	@Operation(

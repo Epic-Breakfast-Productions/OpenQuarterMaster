@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -11,7 +12,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.validation.validators.PasswordConstraintValidator;
@@ -37,7 +37,6 @@ import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
 import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -59,7 +58,7 @@ public class IndexUi extends UiProvider {
 	UriInfo uri;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
 	@Inject
 	UserService userService;
@@ -74,6 +73,7 @@ public class IndexUi extends UiProvider {
 	@ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
 	String externInteractionCallbackUrl;
 	
+	@WithSpan
 	@GET
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
@@ -109,7 +109,7 @@ public class IndexUi extends UiProvider {
 			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 			
 			responseBuilder.entity(
-				this.setupPageTemplate(index, tracer)
+				this.setupPageTemplate(index, span)
 					.data("signInLink", signInLinkBuilder.build())
 			).cookie(
 				UiUtils.getNewCookie(
@@ -120,12 +120,13 @@ public class IndexUi extends UiProvider {
 				)
 			);
 		} else {
-			responseBuilder.entity(this.setupPageTemplate(index, tracer));
+			responseBuilder.entity(this.setupPageTemplate(index, span));
 		}
 		
 		return responseBuilder.build();
 	}
 	
+	@WithSpan
 	@GET
 	@Path("/accountCreate")
 	@PermitAll
@@ -139,7 +140,7 @@ public class IndexUi extends UiProvider {
 			//TODO:: redirect to login, message about
 		}
 		
-		return this.setupPageTemplate(accountCreate, tracer)
+		return this.setupPageTemplate(accountCreate, span)
 				   .data("firstUser", this.userService.collectionEmpty())
 				   .data("passwordHelpText", PasswordConstraintValidator.getPasswordRulesDescriptionHtml());
 	}
