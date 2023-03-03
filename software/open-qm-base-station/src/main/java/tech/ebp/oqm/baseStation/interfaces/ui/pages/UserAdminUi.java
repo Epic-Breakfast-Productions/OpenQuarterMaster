@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -40,7 +40,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -66,7 +65,7 @@ public class UserAdminUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
@@ -94,7 +93,7 @@ public class UserAdminUi extends UiProvider {
 		PagingCalculations pagingCalculations = new PagingCalculations(userResults);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(userAdminTemplate, tracer, ugr)
+			this.setupPageTemplate(userAdminTemplate, span, ugr)
 				.data("showSearch", false)
 				.data("searchResults", userResults)
 				.data("pagingCalculations", pagingCalculations)

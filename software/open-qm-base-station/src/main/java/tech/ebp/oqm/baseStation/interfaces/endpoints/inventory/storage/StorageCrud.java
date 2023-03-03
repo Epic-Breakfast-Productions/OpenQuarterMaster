@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -16,7 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
@@ -43,7 +43,6 @@ import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
@@ -443,7 +442,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	}
 	
 	//</editor-fold>
-	
 	
 	@GET
 	@Path("{id}/children")

@@ -1,13 +1,13 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -32,7 +32,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -61,7 +60,7 @@ public class UserUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
 	@GET
 	@Path("you")
@@ -79,7 +78,7 @@ public class UserUi extends UiProvider {
 			refreshAuthToken(ksc, refreshToken)
 		);
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, tracer, ugr)
+			this.setupPageTemplate(overview, span, ugr)
 				.data("user", ugr)
 				.data("userService", userService)
 				.data("interactingEntityService", interactingEntityService)

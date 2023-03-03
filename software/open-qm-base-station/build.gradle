@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.20-DEV'
+version '1.0.20-1-168-5-DEV'
 
 repositories {
 	mavenCentral()
@@ -23,8 +23,9 @@ dependencies {
 	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
 	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-	implementation 'io.quarkus:quarkus-smallrye-opentracing'
+//	implementation 'io.quarkus:quarkus-smallrye-opentracing'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
+	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-arc'

@@ -2,12 +2,12 @@ package tech.ebp.oqm.baseStation.service.importExport;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Sorts;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.time.StopWatch;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class DataImportService {
@@ -114,6 +113,7 @@ public class DataImportService {
 		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
 	}
 	
+	@WithSpan
 	public DataImportResult importBundle(
 		InputStream bundleInputStream,
 		String fileName,
@@ -202,6 +202,7 @@ public class DataImportService {
 		return resultBuilder.build();
 	}
 	
+	@WithSpan
 	public DataImportResult importBundle(
 		ImportBundleFileBody body,
 		InteractingEntity importingEntity

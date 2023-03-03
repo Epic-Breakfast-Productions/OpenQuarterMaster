@@ -19,6 +19,30 @@ For more information: https://quarkus.io/guides/config-reference
 
 ==== Service Info
 
+
+
+
+
+
+===== General
+
+
+|===
+| Config | Default | Examples | Explain
+
+| quarkus.application.name
+| ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
+|
+| The more programmatic name given to other services for metrics, etc. Shouldn't need to touch this.
+
+|===
+
+
+
+
+
+
+
 ===== Self-url
 
 These configs are used to configure how the service should build links to reference itself.
