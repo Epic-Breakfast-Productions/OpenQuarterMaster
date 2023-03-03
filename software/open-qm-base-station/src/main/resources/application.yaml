@@ -212,7 +212,7 @@ smallrye:
       tracer:
         exporter:
           otlp:
-            endpoint: http://localhost:4317
+            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
