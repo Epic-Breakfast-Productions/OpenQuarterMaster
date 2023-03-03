@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jaeger/properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/jaeger/properties.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
