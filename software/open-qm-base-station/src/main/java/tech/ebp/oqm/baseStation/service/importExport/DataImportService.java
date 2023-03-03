@@ -12,15 +12,18 @@ import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.StorageBlockImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.itemList.ItemList;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
@@ -100,10 +103,14 @@ public class DataImportService {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
+	@Inject
+	ItemListService itemListService;
+	
 	private UnitImporter unitImporter;
 	private GenericImporter<Image, ImageSearch> imageImporter;
 	private StorageBlockImporter storageBlockImporter;
 	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
+	private GenericImporter<ItemList, ItemListSearch> itemListImporter;
 	
 	@PostConstruct
 	public void setup(){
@@ -111,6 +118,7 @@ public class DataImportService {
 		this.storageBlockImporter = new StorageBlockImporter(this.storageBlockService);
 		this.imageImporter = new GenericImporter<>(this.imageService);
 		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
+		this.itemListImporter = new GenericImporter<>(this.itemListService);
 	}
 	
 	@WithSpan
@@ -176,6 +184,7 @@ public class DataImportService {
 					resultBuilder.numImages(this.imageImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numInventoryItems(this.itemImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numInventoryItems(this.itemListImporter.readInObjects(session, tempDirPath, importingEntity));
 					//TODO:: history
 				} catch(Throwable e){
 					session.abortTransaction();
