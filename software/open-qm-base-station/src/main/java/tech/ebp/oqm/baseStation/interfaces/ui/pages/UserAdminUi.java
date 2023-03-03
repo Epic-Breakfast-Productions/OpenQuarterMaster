@@ -70,7 +70,6 @@ public class UserAdminUi extends UiProvider {
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
 	
-	@WithSpan
 	@GET
 	@Path("userAdmin")
 	@RolesAllowed(Roles.USER_ADMIN)

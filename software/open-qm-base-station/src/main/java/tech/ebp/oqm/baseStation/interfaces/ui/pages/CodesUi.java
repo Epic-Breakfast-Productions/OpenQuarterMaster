@@ -54,7 +54,6 @@ public class CodesUi extends UiProvider {
 	@Inject
 	UserService userService;
 	
-	@WithSpan
 	@GET
 	@Path("codes")
 	@RolesAllowed("user")

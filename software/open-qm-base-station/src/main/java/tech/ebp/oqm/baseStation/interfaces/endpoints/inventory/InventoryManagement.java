@@ -66,7 +66,6 @@ public class InventoryManagement extends EndpointProvider {
 	@Inject
 	ExpiryProcessor expiryProcessor;
 	
-	@WithSpan
 	@Blocking
 	@GET
 	@Path("export")
@@ -100,7 +99,6 @@ public class InventoryManagement extends EndpointProvider {
 		return response.build();
 	}
 	
-	@WithSpan
 	@Blocking
 	@POST
 	@Path("import/file/bundle")
@@ -133,7 +131,6 @@ public class InventoryManagement extends EndpointProvider {
 		return Response.ok(result).build();
 	}
 	
-	@WithSpan
 	@Blocking
 	@GET
 	@Path("processExpiry")

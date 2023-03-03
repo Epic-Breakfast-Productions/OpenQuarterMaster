@@ -71,7 +71,6 @@ public class InteractingEntityViewUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("entityView/{type}/{id}")
 	@RolesAllowed("user")
@@ -113,7 +112,6 @@ public class InteractingEntityViewUi extends UiProvider {
 		return responseBuilder.build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("entityView/baseStation")
 	@RolesAllowed("user")

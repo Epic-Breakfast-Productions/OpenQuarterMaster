@@ -60,7 +60,6 @@ public class HelpUi extends UiProvider {
 	@Inject
 	ProductLookupService productLookupService;
 	
-	@WithSpan
 	@GET
 	@Path("help")
 	@PermitAll

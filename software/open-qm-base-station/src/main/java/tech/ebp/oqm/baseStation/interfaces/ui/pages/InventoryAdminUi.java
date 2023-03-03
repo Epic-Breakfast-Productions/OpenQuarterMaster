@@ -68,7 +68,6 @@ public class InventoryAdminUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("inventoryAdmin")
 	@RolesAllowed(Roles.INVENTORY_ADMIN)

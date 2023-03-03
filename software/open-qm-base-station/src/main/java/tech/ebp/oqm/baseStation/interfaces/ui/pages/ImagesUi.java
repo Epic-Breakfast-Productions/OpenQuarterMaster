@@ -64,8 +64,6 @@ public class ImagesUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	
-	@WithSpan
 	@GET
 	@Path("/images")
 	@RolesAllowed(Roles.INVENTORY_VIEW)

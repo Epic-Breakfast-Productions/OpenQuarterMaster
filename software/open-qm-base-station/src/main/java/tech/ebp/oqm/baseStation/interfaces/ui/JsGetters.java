@@ -29,7 +29,6 @@ public class JsGetters {
 	@Location("webui/icons.js")
 	Template icons;
 	
-	@WithSpan
 	@GET
 	@Path("icons.js")
 	@PermitAll

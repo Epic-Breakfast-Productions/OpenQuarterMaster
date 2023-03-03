@@ -49,7 +49,6 @@ public class GeneralInfo extends EndpointProvider {
 	@ConfigProperty(name = "service.ops.currency")
 	Currency currency;
 	
-	@WithSpan
 	@GET
 	@Path("currency")
 	@Operation(
@@ -66,7 +65,6 @@ public class GeneralInfo extends EndpointProvider {
 		return this.currency;
 	}
 	
-	@WithSpan
 	@GET
 	@Path("units")
 	@Operation(
@@ -90,7 +88,6 @@ public class GeneralInfo extends EndpointProvider {
 		return UnitUtils.UNIT_CATEGORY_MAP;
 	}
 	
-	@WithSpan
 	@GET
 	@Path("unitCompatibility")
 	@Operation(
@@ -114,7 +111,6 @@ public class GeneralInfo extends EndpointProvider {
 		return UnitUtils.UNIT_COMPATIBILITY_MAP;
 	}
 	
-	@WithSpan
 	@GET
 	@Path("unitCompatibility/{unit}")
 	@Operation(

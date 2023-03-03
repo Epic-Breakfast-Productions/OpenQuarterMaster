@@ -30,7 +30,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @ApplicationScoped
 public class Test extends EndpointProvider {
 	
-	@WithSpan
 	@GET
 	@Path("illegalArgException")
 	@Operation(
@@ -46,7 +45,6 @@ public class Test extends EndpointProvider {
 		throw new IllegalArgumentException("bad");
 	}
 	
-	@WithSpan
 	@GET
 	@Path("illegalStateException")
 	@Operation(
@@ -68,7 +66,6 @@ public class Test extends EndpointProvider {
 		public String field;
 	}
 	
-	@WithSpan
 	@POST
 	@Path("validationException")
 	@Operation(

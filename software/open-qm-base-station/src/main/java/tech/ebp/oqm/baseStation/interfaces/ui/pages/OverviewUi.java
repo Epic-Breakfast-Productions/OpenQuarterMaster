@@ -62,7 +62,6 @@ public class OverviewUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)

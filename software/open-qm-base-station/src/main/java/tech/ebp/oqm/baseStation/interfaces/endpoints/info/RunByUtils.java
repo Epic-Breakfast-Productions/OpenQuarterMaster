@@ -59,7 +59,6 @@ public class RunByUtils extends EndpointProvider {
 					   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("{image}")
 	@Operation(

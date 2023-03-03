@@ -52,7 +52,6 @@ public class CustomUnit extends EndpointProvider {
 	@Getter
 	JsonWebToken jwt;
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new custom unit."

@@ -89,7 +89,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		this.objectMapper = objectMapper;
 	}
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new inventory item."
@@ -197,7 +196,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(results).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of objects, using search parameters."
@@ -282,7 +280,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return rb.build();
 	}
 	
-	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -322,7 +319,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.get(securityContext, id);
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -364,7 +360,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.update(securityContext, id, updates);
 	}
 	
-	@WithSpan
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -404,7 +399,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.delete(securityContext, id);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -446,7 +440,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(
@@ -478,7 +471,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.searchHistory(securityContext, searchObject);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("{itemId}/{storageBlockId}")
 	@Operation(
@@ -511,7 +503,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.serverError().entity("Not implemented yet.").build();
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{itemId}/{storageBlockId}")
 	@Operation(
@@ -557,7 +548,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
-	@WithSpan
 	@DELETE
 	@Path("{itemId}/{storageBlockId}")
 	@Operation(
@@ -603,7 +593,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{itemId}/{storageBlockIdFrom}/{storageBlockIdTo}")
 	@Operation(
@@ -651,7 +640,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("inStorageBlock/{storageBlockId}")
 	@Operation(

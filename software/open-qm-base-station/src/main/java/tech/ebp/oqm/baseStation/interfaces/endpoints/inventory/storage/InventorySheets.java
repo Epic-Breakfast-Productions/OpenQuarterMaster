@@ -47,7 +47,6 @@ public class InventorySheets extends EndpointProvider {
 	@Inject
 	InteractingEntityService interactingEntityService;
 	
-	@WithSpan
 	@Blocking
 	@GET
 	@Operation(

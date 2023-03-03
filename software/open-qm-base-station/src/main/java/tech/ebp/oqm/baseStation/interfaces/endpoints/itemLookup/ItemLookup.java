@@ -48,7 +48,6 @@ public class ItemLookup extends EndpointProvider {
 	@Inject
 	ProductLookupService productLookupService;
 	
-	@WithSpan
 	@GET
 	@Path("/product/providers")
 	@Operation(
@@ -75,7 +74,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/product/providers/enabled")
 	@Operation(
@@ -104,7 +102,6 @@ public class ItemLookup extends EndpointProvider {
 		).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("product/barcode/{barcode}")
 	@Operation(
@@ -131,7 +128,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.searchBarcode(barcode)).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("webpage/scrape/{webpage}")
 	@Operation(
@@ -158,7 +154,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/webpage/providers")
 	@Operation(
@@ -185,7 +180,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.getSupportedPageScanInfo()).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/webpage/providers/enabled")
 	@Operation(
@@ -214,7 +208,6 @@ public class ItemLookup extends EndpointProvider {
 		).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("lego/part/{partNo}")
 	@Operation(
@@ -241,7 +234,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/lego/providers")
 	@Operation(
@@ -268,7 +260,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.getLegoProviderInfo()).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/lego/providers/enabled")
 	@Operation(

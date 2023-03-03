@@ -73,7 +73,6 @@ public class IndexUi extends UiProvider {
 	@ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
 	String externInteractionCallbackUrl;
 	
-	@WithSpan
 	@GET
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
@@ -126,7 +125,6 @@ public class IndexUi extends UiProvider {
 		return responseBuilder.build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("/accountCreate")
 	@PermitAll

@@ -81,7 +81,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		this.authMode = authMode;
 	}
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new user. Only for use when AuthMode set to SELF"
@@ -147,7 +146,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return super.create(securityContext, newUser);
 	}
 	
-	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of users, using search parameters."
@@ -197,7 +195,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return this.getSearchResultResponseBuilder(output).build();
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -240,7 +237,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return super.update(securityContext, id, updates);
 	}
 	
-	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -280,7 +276,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return UserGetResponse.builder(this.get(securityContext, id)).build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("self")
 	@Operation(
@@ -318,7 +313,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 				   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -360,7 +354,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(

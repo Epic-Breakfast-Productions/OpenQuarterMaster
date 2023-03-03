@@ -60,7 +60,6 @@ public class BarcodeCreation extends EndpointProvider {
 	@ConfigProperty(name="runningInfo.baseUrl")
 	String selfBaseUrl;
 	
-	@WithSpan
 	@GET
 	@Path("{codeType}/{code}")
 	@Operation(
@@ -86,7 +85,6 @@ public class BarcodeCreation extends EndpointProvider {
 					   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("object/{object}/{id}/{codeType}/{codeContentType}")
 	@Operation(
@@ -164,7 +162,6 @@ public class BarcodeCreation extends EndpointProvider {
 					   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("item/{id}/barcode")
 	@Operation(
@@ -195,7 +192,6 @@ public class BarcodeCreation extends EndpointProvider {
 				   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("item/{id}/barcode/stored/{storageBlockId}")
 	@Operation(
@@ -240,7 +236,6 @@ public class BarcodeCreation extends EndpointProvider {
 				   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("item/{id}/barcode/stored/{storageBlockId}/{index}")
 	@Operation(

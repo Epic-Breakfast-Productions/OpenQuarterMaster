@@ -102,7 +102,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	
 	//<editor-fold desc="CRUD operations">
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new image."
@@ -135,8 +134,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.create(securityContext, image);
 	}
 	
-	
-	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of objects, using search parameters."
@@ -223,8 +220,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return rb.build();
 	}
 	
-	
-	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -264,7 +259,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.get(securityContext, id);
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -307,7 +301,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.update(securityContext, id, updates);
 	}
 	
-	@WithSpan
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -347,7 +340,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.delete(securityContext, id);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -389,7 +381,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(
@@ -421,8 +412,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.searchHistory(securityContext, searchObject);
 	}
 	
-	
-	@WithSpan
 	@GET
 	@Path("{id}/data")
 	@Operation(
@@ -488,7 +477,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("for/{object}/{id}")
 	@Operation(

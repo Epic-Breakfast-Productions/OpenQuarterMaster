@@ -67,7 +67,6 @@ public class StorageUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)

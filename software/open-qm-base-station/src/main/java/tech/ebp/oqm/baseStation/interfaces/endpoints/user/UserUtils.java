@@ -56,7 +56,6 @@ public class UserUtils extends EndpointProvider {
 	@Inject
 	JsonWebToken jwt;
 	
-	@WithSpan
 	@GET
 	@Path("emailTest/self")
 	@Operation(summary = "Tests that an email can be sent.")
@@ -76,7 +75,6 @@ public class UserUtils extends EndpointProvider {
 				   .send();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("emailTest/{userId}")
 	@Operation(summary = "Tests that an email can be sent.")
@@ -101,7 +99,6 @@ public class UserUtils extends EndpointProvider {
 				   .send();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("availability/username/{username}")
 	@Operation(summary = "Tests to see if a new username is available or not.")
@@ -121,7 +118,6 @@ public class UserUtils extends EndpointProvider {
 										   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("availability/email/{email}")
 	@Operation(summary = "Tests to see if a new email is available or not.")

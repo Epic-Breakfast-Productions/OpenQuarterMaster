@@ -66,7 +66,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Adds a new Storage Block."
@@ -97,7 +96,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.create(securityContext, storageBlock);
 	}
 	
-	@WithSpan
 	@POST
 	@Path("bulk")
 	@Operation(
@@ -130,7 +128,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.createBulk(securityContext, storageBlocks);
 	}
 	
-	@WithSpan
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -215,7 +212,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return rb.build();
 	}
 	
-	@WithSpan
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -256,7 +252,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.get(securityContext, id);
 	}
 	
-	@WithSpan
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -299,7 +294,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.update(securityContext, id, updates);
 	}
 	
-	@WithSpan
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -340,7 +334,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.delete(securityContext, id);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("tree")
 	@Operation(
@@ -376,7 +369,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	
 	//<editor-fold desc="History">
-	@WithSpan
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -418,7 +410,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
-	@WithSpan
 	@GET
 	@Path("history")
 	@Operation(
@@ -452,8 +443,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	//</editor-fold>
 	
-	
-	@WithSpan
 	@GET
 	@Path("{id}/children")
 	@Operation(

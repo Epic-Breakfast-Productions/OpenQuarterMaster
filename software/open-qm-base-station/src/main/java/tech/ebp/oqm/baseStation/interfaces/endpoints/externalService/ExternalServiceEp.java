@@ -62,7 +62,6 @@ public class ExternalServiceEp extends EndpointProvider {
 	@Inject
 	JwtService jwtService;
 	
-	@WithSpan
 	@POST
 	@Path("setup/self")
 	@Operation(
@@ -133,7 +132,6 @@ public class ExternalServiceEp extends EndpointProvider {
 		return Response.ok(builder.build()).build();
 	}
 	
-	@WithSpan
 	@POST
 	@Path("setup/external")
 	@Operation(
@@ -174,7 +172,6 @@ public class ExternalServiceEp extends EndpointProvider {
 		return Response.ok().build();
 	}
 	
-	@WithSpan
 	@POST
 	@Path("auth")
 	@Operation(

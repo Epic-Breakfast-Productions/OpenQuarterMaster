@@ -63,7 +63,6 @@ public class ItemsUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("items")
 	@RolesAllowed(Roles.INVENTORY_VIEW)

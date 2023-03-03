@@ -41,7 +41,6 @@ public class GeneralAuth extends EndpointProvider {
 	@Inject
 	SecurityIdentity identity;
 	
-	@WithSpan
 	@GET
 	@Path("tokenCheck")
 	@Operation(

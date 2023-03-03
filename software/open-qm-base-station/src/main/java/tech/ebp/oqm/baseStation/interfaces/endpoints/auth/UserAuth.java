@@ -96,7 +96,6 @@ public class UserAuth extends EndpointProvider {
 	//    @Context
 	//    UriInfo crc;
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Authenticates a user"
@@ -170,7 +169,6 @@ public class UserAuth extends EndpointProvider {
 					   .build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("callback")
 	@Operation(
@@ -251,7 +249,6 @@ public class UserAuth extends EndpointProvider {
 		return responseBuilder.build();
 	}
 	
-	@WithSpan
 	@GET
 	@Path("logout")
 	@Operation(

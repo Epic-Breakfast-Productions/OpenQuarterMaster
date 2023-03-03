@@ -62,7 +62,6 @@ public class UserUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@WithSpan
 	@GET
 	@Path("you")
 	@RolesAllowed("user")
