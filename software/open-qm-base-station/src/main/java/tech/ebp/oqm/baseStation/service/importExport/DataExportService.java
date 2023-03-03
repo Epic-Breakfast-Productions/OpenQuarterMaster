@@ -50,7 +50,6 @@ public class DataExportService {
 	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
 	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
 	
-	@WithSpan
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
 		MongoObjectService<T, S> service,
@@ -114,7 +113,6 @@ public class DataExportService {
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
 	
-	@WithSpan
 	private static <T extends FileMainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
 		MongoFileService<T, S> service,

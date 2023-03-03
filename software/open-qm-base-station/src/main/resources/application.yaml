@@ -99,7 +99,7 @@ externalService:
   
 quarkus:
   application:
-    name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
+    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
@@ -152,12 +152,6 @@ quarkus:
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With <3, EBP
-  # https://quarkus.io/guides/opentracing
-  jaeger:
-    enabled: false
-    service-name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
-    sampler-type: const
-    sampler-param: 1
   #    metrics:
   #      enabled: true
   http:

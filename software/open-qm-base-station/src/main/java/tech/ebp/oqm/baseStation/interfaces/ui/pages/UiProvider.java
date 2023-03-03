@@ -50,7 +50,6 @@ public abstract class UiProvider {
 		return jwt != null && jwt.getClaimNames() != null;
 	}
 	
-	@WithSpan
 	protected static JsonNode refreshAuthToken(KeycloakServiceCaller ksc, String refreshCode) {
 		if (!EXTERNAL.equals(ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class))) {
 			return null;

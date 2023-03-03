@@ -118,7 +118,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.create(securityContext, item);
 	}
 	
-	@WithSpan
 	@POST
 	@Operation(
 		summary = "Imports items from a file uploaded by a user."

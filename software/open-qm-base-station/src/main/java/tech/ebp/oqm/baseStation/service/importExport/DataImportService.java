@@ -61,7 +61,7 @@ public class DataImportService {
 		return normalizePath;
 	}
 	
-	@WithSpan
+	
 	private static List<File> getObjectFiles(Path directory) throws IOException {
 		try (
 			Stream<Path> paths = Files.walk(
@@ -79,7 +79,6 @@ public class DataImportService {
 		}
 	}
 	
-	@WithSpan
 	private static List<File> getObjectHistoryFiles(Path directory) throws IOException {
 		Path historyDir = directory.resolve(DataImportExportUtils.OBJECT_HISTORY_DIR_NAME);
 		if (historyDir.toFile().exists()) {

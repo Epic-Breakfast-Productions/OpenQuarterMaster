@@ -42,7 +42,6 @@ public class RunByUtils extends EndpointProvider {
 	@ConfigProperty(name = "service.runBy.banner", defaultValue = "/")
 	File runByBanner;
 	
-	@WithSpan
 	private static Response getImage(File image) throws FileNotFoundException {
 		
 		if (!image.exists() || !image.isFile()) {
