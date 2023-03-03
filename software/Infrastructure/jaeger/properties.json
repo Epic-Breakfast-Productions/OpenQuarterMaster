@@ -5,6 +5,7 @@
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger",
 	"configs": [
 		"# Jaeger Config:",
+		"quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces",
 		"quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://host.docker.internal:8096"
 	],
 	"dependencies": {
