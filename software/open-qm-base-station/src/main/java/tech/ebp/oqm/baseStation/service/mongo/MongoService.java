@@ -9,11 +9,11 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.lib.core.object.MainObject;
 
@@ -29,7 +29,6 @@ import javax.validation.ValidatorFactory;
  */
 @AllArgsConstructor
 @Slf4j
-@Traced
 public abstract class MongoService<T extends MainObject, S extends SearchObject<T>> {
 	
 	public static String getCollectionNameFromClass(Class<?> clazz) {
@@ -116,6 +115,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 								 .build();
 	}
 	
+	@WithSpan
 	public ClientSession getNewClientSession(boolean startTransaction) {
 		ClientSession clientSession = this.getMongoClient().startSession();
 		

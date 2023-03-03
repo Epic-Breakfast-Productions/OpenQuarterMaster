@@ -4,13 +4,106 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="700efae0-909f-49d4-b5aa-08c73fc9ec01" name="Changes" comment="" />
+    <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/docs/Releasing.md" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/docs/Releasing.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/info/RunByUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/info/RunByUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/inventory/items/InventoryItemsCrud.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/inventory/items/InventoryItemsCrud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/ui/pages/UiProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/ui/pages/UiProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/barcode/BarcodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/barcode/BarcodeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataExportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataExportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataImportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataImportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="dev.167-fr-implement-lists-feature" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2MSqaWFcpdVAABOdb1TT12v05t8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Git.Branch.Popup.ShowAllRemotes&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/gstewart/gitRepos/OpenQuarterMaster/software/Infrastructure&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="" />
+      <created>1677771394365</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1677771394365</updated>
+      <workItem from="1677771395497" duration="10576000" />
+      <workItem from="1677808246858" duration="6345000" />
+      <workItem from="1677852436311" duration="5450000" />
+    </task>
+    <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
+      <created>1677814977881</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1677814977881</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Updated to new otel endpoint">
+      <created>1677863877667</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1677863877667</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Infra - Jaeger version bump">
+      <created>1677864107145</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1677864107145</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Infra - added back original config alongside new">
+      <created>1677864252169</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1677864252169</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fruitless attempts at getting otel to work" />
+    <MESSAGE value="Updated to new otel endpoint" />
+    <MESSAGE value="Infra - Jaeger version bump" />
+    <MESSAGE value="Infra - added back original config alongside new" />
+    <option name="LAST_COMMIT_MESSAGE" value="Infra - added back original config alongside new" />
   </component>
 </project>

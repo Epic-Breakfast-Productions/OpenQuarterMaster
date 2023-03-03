@@ -1,14 +1,14 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -24,7 +24,6 @@ import java.util.Currency;
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
 
 
-@Traced
 @Slf4j
 public abstract class UiProvider {
 	
@@ -84,25 +83,25 @@ public abstract class UiProvider {
 	@Context
 	protected UriInfo uri;
 	
-	protected TemplateInstance setupPageTemplate(Template template, Tracer tracer) {
+	protected TemplateInstance setupPageTemplate(Template template, Span span) {
 		return template
-				   .data("traceId", tracer.activeSpan().context().toTraceId())
+				   .data("traceId", span.getSpanContext().getTraceId())
 				   .data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
 				   .data("generateDatetime", ZonedDateTime.now())
 				   .data("dateTimeFormatter", UiUtils.DATE_TIME_FORMATTER);
 	}
 	
-	protected TemplateInstance setupPageTemplate(Template template, Tracer tracer, UserGetResponse userInfo) {
-		return this.setupPageTemplate(template, tracer).data(USER_INFO_DATA_KEY, userInfo);
+	protected TemplateInstance setupPageTemplate(Template template, Span span, UserGetResponse userInfo) {
+		return this.setupPageTemplate(template, span).data(USER_INFO_DATA_KEY, userInfo);
 	}
 	
 	protected TemplateInstance setupPageTemplate(
 		Template template,
-		Tracer tracer,
+		Span span,
 		UserGetResponse userInfo,
 		SearchResult<?> searchResults
 	) {
-		return this.setupPageTemplate(template, tracer, userInfo)
+		return this.setupPageTemplate(template, span, userInfo)
 				   .data("showSearch", searchResults.isHadSearchQuery())
 				   .data("searchResult", searchResults)
 				   .data("pagingCalculations", new PagingCalculations(searchResults));

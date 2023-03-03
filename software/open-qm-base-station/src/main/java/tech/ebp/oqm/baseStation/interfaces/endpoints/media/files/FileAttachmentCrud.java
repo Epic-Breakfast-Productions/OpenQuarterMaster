@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.media.files;
 
 // TODO:: reenable once working #51
 
-//@Traced
 //@Slf4j
 //@Path(ROOT_API_ENDPOINT_V1 + "/media/fileAttachments")
 //@Tags({@Tag(name = "File Attachments", description = "Endpoints for File Attachments.")})

@@ -1,12 +1,12 @@
 package tech.ebp.oqm.baseStation.service;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import io.smallrye.jwt.util.KeyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;
@@ -24,7 +24,6 @@ import java.util.UUID;
  */
 @Slf4j
 @ApplicationScoped
-@Traced
 public class JwtService {
 	
 	public static final String JWT_USER_ID_CLAIM = "userId";
@@ -71,6 +70,7 @@ public class JwtService {
 	 *
 	 * @return The response to give back to the user.
 	 */
+	@WithSpan
 	public UserLoginResponse getUserJwt(User user, boolean extendedTimeout) {
 		Instant expiration = Instant.now().plusSeconds((
 														   extendedTimeout
@@ -81,6 +81,7 @@ public class JwtService {
 		return new UserLoginResponse(this.generateTokenString(user, expiration), expiration);
 	}
 	
+	@WithSpan
 	public ExternalServiceLoginResponse getExtServiceJwt(ExternalService service) {
 		Instant expiration = Instant.now().plusSeconds(this.serviceExpiration);
 		
@@ -98,6 +99,7 @@ public class JwtService {
 	 *
 	 * @return The jwt for the user
 	 */
+	@WithSpan
 	public String generateTokenString(
 		User user,
 		Instant expires
@@ -112,6 +114,7 @@ public class JwtService {
 		return claims.jws().keyId(this.sigKeyId).sign(this.privateKey);
 	}
 	
+	@WithSpan
 	public String generateTokenString(
 		ExternalService service,
 		Instant expires

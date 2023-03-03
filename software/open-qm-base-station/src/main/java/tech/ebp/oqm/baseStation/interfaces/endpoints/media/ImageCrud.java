@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -15,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -58,7 +58,6 @@ import java.util.Base64;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/media/image")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
@@ -134,7 +133,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		this.validator.validate(image);
 		return super.create(securityContext, image);
 	}
-	
 	
 	@GET
 	@Operation(
@@ -221,7 +219,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		
 		return rb.build();
 	}
-	
 	
 	@Path("{id}")
 	@GET
@@ -415,7 +412,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.searchHistory(securityContext, searchObject);
 	}
 	
-	
 	@GET
 	@Path("{id}/data")
 	@Operation(
@@ -449,6 +445,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					   .build();
 	}
 	
+	@WithSpan
 	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);

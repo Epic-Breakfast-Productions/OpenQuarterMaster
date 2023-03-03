@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.service;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.wildfly.common.codec.DecodeException;
 import org.wildfly.security.password.PasswordFactory;
 import org.wildfly.security.password.WildFlyElytronPasswordProvider;
@@ -27,7 +27,6 @@ import java.util.Random;
  */
 @ApplicationScoped
 @Slf4j
-@Traced
 public class PasswordService {
 	
 	private static SecureRandom SECURE_RANDOM = null;
@@ -67,6 +66,7 @@ public class PasswordService {
 	 *
 	 * @return The hash for the password
 	 */
+	@WithSpan
 	public String createPasswordHash(String password, int iterations) {
 		IteratedSaltedPasswordAlgorithmSpec iteratedAlgorithmSpec = new IteratedSaltedPasswordAlgorithmSpec(
 			iterations,
@@ -107,6 +107,7 @@ public class PasswordService {
 	 *
 	 * @return If the password given matched the hashed password
 	 */
+	@WithSpan
 	public boolean passwordMatchesHash(String encodedPass, String pass) {
 		BCryptPassword original = null;
 		try {
