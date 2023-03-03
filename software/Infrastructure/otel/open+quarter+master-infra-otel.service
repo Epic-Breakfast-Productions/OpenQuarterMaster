@@ -4,6 +4,7 @@
 #
 #  Otel tags: https://hub.docker.com/r/otel/opentelemetry-collector/tags
 #
+# https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml#L630
 
 [Unit]
 Description=Prometheus server for Open Quartermaster. Version ${version}, using opentelemetry-collector tagged to 0.72.0.
