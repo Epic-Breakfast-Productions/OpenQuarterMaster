@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" beforeDir="false" afterPath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" beforeDir="false" afterPath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/otel/properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/otel/properties.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,11 +53,24 @@
       <option name="presentableId" value="Default" />
       <updated>1677771394365</updated>
       <workItem from="1677771395497" duration="10576000" />
-      <workItem from="1677808246858" duration="5999000" />
+      <workItem from="1677808246858" duration="6345000" />
+      <workItem from="1677852436311" duration="5450000" />
     </task>
+    <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
+      <created>1677814977881</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1677814977881</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fruitless attempts at getting otel to work" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fruitless attempts at getting otel to work" />
   </component>
 </project>
