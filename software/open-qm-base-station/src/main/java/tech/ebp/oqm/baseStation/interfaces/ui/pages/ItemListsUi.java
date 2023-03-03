@@ -1,6 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentracing.Tracer;
+import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -20,7 +19,6 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -39,7 +37,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Blocking
-@Traced
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -67,7 +64,7 @@ public class ItemListsUi extends UiProvider {
 	KeycloakServiceCaller ksc;
 	
 	@Inject
-	Tracer tracer;
+	Span span;
 	
 	//TODO:: rework for item lists
 	@GET
@@ -88,7 +85,7 @@ public class ItemListsUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					this.itemLists,
-					tracer,
+					span,
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
@@ -125,7 +122,7 @@ public class ItemListsUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					this.itemList,
-					tracer,
+					span,
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
