@@ -77,7 +77,7 @@ function reloadPageWithMessage(message, type, heading){
 }
 
 function gotoPageWithMessage(page, message, type, heading){
-	let url = page + '&' + getMessageQuery(message, type, heading);
+	let url = page + '?' + getMessageQuery(message, type, heading);
 	window.location.replace(url);
 }
 

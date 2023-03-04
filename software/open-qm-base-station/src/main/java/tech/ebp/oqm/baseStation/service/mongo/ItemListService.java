@@ -40,6 +40,7 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 	@Override
 	public void ensureObjectValid(boolean newObject, ItemList list, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, list, clientSession);
+		//TODO:: no duplicate names?
 		
 	}
 	

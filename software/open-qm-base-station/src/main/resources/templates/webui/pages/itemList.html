@@ -1,11 +1,12 @@
-{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}
-{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}
-{@java.util.List<tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}
-{#include webui/mainWebPageTemplate showTitle=true title="Item List" page='itemLists' navbar="full"}
+{#include webui/mainWebPageTemplate showTitle=true title=itemList.getName() page='itemLists' navbar="full"}
 	{#pageStyle}
 	
 	{/pageStyle}
+	{#additionalTitleContent}
+		<a href="/itemLists">Back to List Search</a>
+	{/additionalTitleContent}
 	{#pageContent}
+	
 	
 	{/pageContent}
 	{#pageScript}

@@ -645,26 +645,6 @@ function buildStoredObj(addEditItemStoredContainer, type){
 	return output;
 }
 
-function removeItem(itemId){
-	if(!confirm("Are you sure you want to delete this item? This cannot be undone.")){
-		return;
-	}
-	console.log("Removing item " + itemId);
-
-	doRestCall({
-		url: "/api/v1/inventory/item/" + itemId,
-		method: "DELETE",
-		done: function(data) {
-			console.log("Response from remove request: " + JSON.stringify(data));
-			reloadPageWithMessage("Removed item successfully!", "success", "Success!");
-		},
-		fail: function(data) {
-			console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-			addMessageToDiv(addEditItemFormMessages, "danger", "Failed to remove item.", "Failed", null);
-		}
-	});
-}
-
 addEditItemForm.submit(async function (event) {
 	event.preventDefault();
 	console.log("Submitting add/edit form.");

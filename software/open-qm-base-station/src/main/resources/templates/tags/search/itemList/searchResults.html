@@ -58,9 +58,6 @@
       <a href="/itemList/{result.getId()}" class="btn btn-sm btn-warning" title="Edit">
         {#icons/edit}{/icons/edit}
       </a>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemAddSubtractTransferModal" onclick="setupAddSubTransForm('{result.getId()}');">
-        {#icons/addSubTrans}{/icons/addSubTrans}
-      </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemList('{result.getId()}');">
         {#icons/remove}{/icons/remove}
       </button>
