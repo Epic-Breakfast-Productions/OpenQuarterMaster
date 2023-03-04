@@ -52,23 +52,33 @@ function addMessage(type, message, heading, id, infoContent){
 	addMessageToDiv(messageDiv, type, message, heading, id, infoContent);
 }
 
+function getMessageQuery(message, type, heading){
+	let messageQuery = "message=" + message;
+
+	if(type){
+		messageQuery += "&messageType=" + type;
+	}
+	if(heading){
+		messageQuery += "&messageHeading=" + heading;
+	}
+	return messageQuery;
+}
+
 function reloadPageWithMessage(message, type, heading){
-    var messageQuery = "message=" + message;
+	let messageQuery = getMessageQuery(message, type, heading);
+	let url = window.location.href;
 
-    if(type){
-        messageQuery += "&messageType=" + type;
-    }
-    if(heading){
-        messageQuery += "&messageHeading=" + heading;
-    }
+	if (url.indexOf('?') > -1){
+		url += '&' + messageQuery;
+	}else{
+		url += '?' + messageQuery;
+	}
+	window.location.replace(url);
+}
 
-    var url = window.location.href;
-    if (url.indexOf('?') > -1){
-        url += '&' + messageQuery;
-    }else{
-        url += '?' + messageQuery;
-    }
-    window.location.replace(url);
+function gotoPageWithMessage(page, message, type, heading){
+	let url = page + '&' + getMessageQuery(message, type, heading);
+	window.location.replace(url);
 }
 
 

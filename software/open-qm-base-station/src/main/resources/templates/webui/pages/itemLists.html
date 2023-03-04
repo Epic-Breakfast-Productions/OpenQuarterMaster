@@ -9,12 +9,122 @@
 		
 		
 		{!TODO:: search/display lists, list add form. Enter add form if #add!}
-		
+	<div class="row">
+		<div class="col d-grid gap-2">
+			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemListAddModal" >{#icons/add}{/icons/add} Add Item List
+			</button>
+		</div>
+	</div>
+<br/>
+	<div class="row">
+		<div class="col accordion" id="searchAccordion">
+			<div class="accordion-item">
+				<h2 class="accordion-header" id="searchHeader">
+					<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+							data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+							aria-controls="searchCollapse">
+						Search Fields
+					</button>
+				</h2>
+				<div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+						aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+					<div class="accordion-body">
+						{#search/itemList/searchForm id='mainItemListSearch'}
+						{/search/itemList/searchForm}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col table-responsive">
+			<table class=" table table-bordered table-striped table-hover table-sm">
+				{#search/itemList/searchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
+				{/search/itemList/searchResults}
+			</table>
+		</div>
+	</div>
+{#inputs/attInputHidden}
+	{/inputs/attInputHidden}
+{#inputs/keywordInputHidden}
+	{/inputs/keywordInputHidden}
+	
 	
 	{/pageContent}
+	{#modals}
+	
+	{#modal id='itemListAdd' large=true title='New Item List' submitForm='itemListAddForm' submitDismiss=false}
+		<div class="row">
+			<div class="col" id="itemListAddFormMessages">
+			
+			</div>
+		</div>
+		<form id="itemListAddForm">
+			<div class="mb-3 row">
+				<label for="itemListAddNameInput" class="col-sm-2 col-form-label">Name</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="itemListAddNameInput" placeholder="Name" required>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="itemListAddDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+				<div class="col-sm-10">
+					<textarea class="form-control" id="itemListAddDescriptionInput" placeholder="Description"></textarea>
+				</div>
+			</div>
+		</form>
+	{/modal}
+	
+	{/modals}
+	
+	{#scripts}
+		<script src="/res/js/search.js"></script>
+		<script src="/res/js/historySearch.js"></script>
+		<script src="/res/js/obj/objEdit.js"></script>
+		<script src="/res/js/obj/objView.js"></script>
+		<script src="/res/js/storedTypeUtils.js"></script>
+		<script src="/res/js/obj/media/imageSearchSelect.js"></script>
+		<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+		<script src="/res/js/obj/units.js"></script>
+		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/storageBlock/capacities.js"></script>
+		<script src="/res/js/carousel.js"></script>
+		<script src="/res/js/item/ItemEditing.js"></script>
+		<script src="/res/js/item/ItemAddSubTrans.js"></script>
+		<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+		<script src="/res/js/textCopy.js"></script>
+	{/scripts}
 	{#pageScript}
 		<script>
-		
+			var itemListAddFormMessages = $("#itemListAddFormMessages");
+			var itemListAddForm = $("#itemListAddForm");
+			var itemListAddNameInput = $("#itemListAddNameInput");
+			
+			itemListAddForm.submit(async function (event) {
+				event.preventDefault();
+				
+				let addData = {
+					name: itemListAddNameInput.val(),
+					description: itemListAddNameInput.val(),
+				};
+				
+				await doRestCall({
+					url: "/api/v1/inventory/item-list",
+					method: "POST",
+					data: addData,
+					async: false,
+					done: function (data) {
+						console.log("Response from create request: " + data);
+						
+						gotoPageWithMessage("/list/"+data,
+							"List created successfully!",
+							"success",
+							"Success!"
+						);
+					},
+					failMessagesDiv: itemListAddFormMessages
+				});
+			});
 		</script>
 	{/pageScript}
 {/include}

@@ -12,10 +12,12 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
+import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
+import tech.ebp.oqm.lib.core.object.itemList.ItemList;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
@@ -49,13 +51,13 @@ public class ItemListsUi extends UiProvider {
 	Template itemLists;
 	
 	@Inject
-	@Location("webui/pages/itemLists")
+	@Location("webui/pages/itemList")
 	Template itemList;
 	
 	@Inject
 	UserService userService;
 	@Inject
-	InventoryItemService inventoryItemService;
+	ItemListService itemListService;
 	
 	@Inject
 	JsonWebToken jwt;
@@ -66,21 +68,20 @@ public class ItemListsUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	//TODO:: rework for item lists
 	@GET
 	@Path("itemLists")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response itemLists(
 		@Context SecurityContext securityContext,
-		@BeanParam InventoryItemSearch itemSearch,
+		@BeanParam ItemListSearch itemListSearch,
 		@CookieParam("jwt_refresh") String refreshToken
 	) {
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
-		SearchResult<InventoryItem> searchResults = this.inventoryItemService.search(itemSearch, true);
+		SearchResult<ItemList> searchResults = this.itemListService.search(itemListSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
@@ -89,7 +90,7 @@ public class ItemListsUi extends UiProvider {
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
-				.data("searchObject", itemSearch)
+				.data("searchObject", itemListSearch)
 				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
@@ -108,26 +109,22 @@ public class ItemListsUi extends UiProvider {
 	@Produces(MediaType.TEXT_HTML)
 	public Response itemList(
 		@Context SecurityContext securityContext,
-		@BeanParam InventoryItemSearch itemSearch,
 		@CookieParam("jwt_refresh") String refreshToken,
 		@PathParam("id") String listId
 	) {
-		//TODO:: adjust. Find list and return template.
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
-		SearchResult<InventoryItem> searchResults = this.inventoryItemService.search(itemSearch, true);
+		ItemList list = this.itemListService.get(listId);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					this.itemList,
 					span,
-					UserGetResponse.builder(user).build(),
-					searchResults
+					UserGetResponse.builder(user).build()
 				)
-				.data("searchObject", itemSearch)
-				.data("historySearchObject", new HistorySearch())
+				.data("itemList", list)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

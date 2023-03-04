@@ -1,4 +1,4 @@
-{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.itemList.ItemList> searchResults}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {!
   Template to show storage search results. Gives the contents of a table, but not the main table tag
@@ -20,11 +20,10 @@
     </td>
   </tr>
   <tr>
-    <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Name</th>
-    <th scope="col">Stored Type</th>
-    <th scope="col">Total</th>
-    <th scope="col"># Blocks used</th>
+    <th scope="col"># Items</th>
+    <th scope="col">Created</th>
+    <th scope="col">Created By</th>
     <th scope="col" width="150px">Actions</th>
   </tr>
   </thead>
@@ -33,13 +32,12 @@
   <tr>
     <td colspan="6" class="text-center">
       <h2>
-        No Items
+        No Item Lists
       </h2>
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                data-bs-target="#addEditItemModal" onclick="setupAddEditForAdd();">
-          {#icons/add}{/icons/add} Add Item
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#itemListAddModal">
+          {#icons/add}{/icons/add} Add Item List
         </button>
       </div>
       {/if}
@@ -47,34 +45,28 @@
   </tr>
   {#else}
   {#for result in searchResults.getResults()}
-  <tr class="itemResultRow align-middle">
-    <td>
-      {#if !result.getImageIds().isEmpty()}
-      <img src="/api/v1/media/image/for/item/{result.getId()}" class="searchResultImage">
-      {/if}
-    </td>
+  <tr class="itemListResultRow align-middle">
     <td>{result.getName()}</td>
-    <td>{result.getStorageType()}</td>
-    <td>{result.getTotal()}</td>
-    <td>{result.getStorageMap().size()}</td>
+    <td>{result.getItems().size()}</td>
+    <td>{! TODO:: get list create datetime !}  </td>
+    <td>{! TODO:: get list entity created by !}  </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemListViewModal" onclick="setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
+      <a href="/itemList/{result.getId()}" class="btn btn-sm btn-warning" title="Edit">
         {#icons/edit}{/icons/edit}
-      </button>
+      </a>
       <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemAddSubtractTransferModal" onclick="setupAddSubTransForm('{result.getId()}');">
         {#icons/addSubTrans}{/icons/addSubTrans}
       </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeItem('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
+      <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemList('{result.getId()}');">
+        {#icons/remove}{/icons/remove}
+      </button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
-              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
-              onclick="selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
+      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}" data-bs-toggle="modal" data-bs-target="#{otherModalId}" onclick="selectItemList('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}
