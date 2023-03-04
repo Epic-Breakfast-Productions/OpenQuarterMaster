@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.NonNull;
@@ -19,9 +20,12 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.EventType;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
 import javax.validation.Valid;
@@ -298,7 +302,27 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public ObjectId addHistoryFor(T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.addHistoryFor(null, object, entity, event);
 	}
+	
+	
+	
+	@WithSpan
+	public CreateEvent getCreateEvent(ObjectId objectId){
+		CreateEvent output = (CreateEvent) this.getHistoryService().listIterator(
+			Filters.and(
+				Filters.eq("type", EventType.CREATE),
+				Filters.eq("objectId", objectId)
+			),
+			null,
+			null
+		)
+								 .limit(1)
+								 .first();
 		
+		//TODO:: validate; if null, exception
+		InteractingEntityReference reference = output.getEntity();
+		return output;
+	}
+	
 		//TODO:: more aggregate history functions (counts updated since, etc)?
 	
 }

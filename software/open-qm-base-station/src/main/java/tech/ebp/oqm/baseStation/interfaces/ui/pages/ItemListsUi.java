@@ -13,6 +13,7 @@ import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
+import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -58,6 +59,8 @@ public class ItemListsUi extends UiProvider {
 	UserService userService;
 	@Inject
 	ItemListService itemListService;
+	@Inject
+	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	JsonWebToken jwt;
@@ -125,6 +128,8 @@ public class ItemListsUi extends UiProvider {
 					UserGetResponse.builder(user).build()
 				)
 				.data("itemList", list)
+				.data("listCreateEvent", this.itemListService.getCreateEvent(list.getId()))
+				.data("interactingEntityService", this.interactingEntityService)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

@@ -4,6 +4,10 @@
 	{/pageStyle}
 	{#additionalTitleContent}
 		<a href="/itemLists">Back to List Search</a>
+		<p>
+			Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
+			On: {listCreateEvent.getTimestamp()}
+		</p>
 	{/additionalTitleContent}
 	{#pageContent}
 	
