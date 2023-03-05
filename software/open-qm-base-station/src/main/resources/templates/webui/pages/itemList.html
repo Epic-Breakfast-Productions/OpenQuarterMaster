@@ -10,12 +10,42 @@
 		</p>
 	{/additionalTitleContent}
 	{#pageContent}
-	
+	<div class="row">
+		<div class="col">
+			<div class="btn-group" role="group" aria-label="Apply Item List Button">
+				<button type="button" class="btn btn-success" id="applyLockButton"  onclick="toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
+				<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+			</div>
+		</div>
+	</div>
 	
 	{/pageContent}
 	{#pageScript}
 		<script>
+			var applyButton = $("#applyButton");
+			var applyLockButton = $("#applyLockButton");
+			function toggleApplyLock(){
+				console.log("Toggling apply lock. Current state: " + applyLockButton.data("locked"));
+				if(!applyLockButton.data("locked") || applyLockButton.data("locked") === "true"){
+					console.log("Unlocking apply button.");
+					applyLockButton.data("locked", "false");
+					applyLockButton.html(Icons.unlocked);
+					applyButton.removeClass("disabled");
+				} else {
+					console.log("Locking apply button.");
+					applyLockButton.data("locked", "true");
+					applyLockButton.html(Icons.locked);
+					applyButton.addClass("disabled");
+				}
+			}
 		
+			function applyList(){
+				if(!confirm("Are you sure?\nThis cannot be undone.")){
+					console.log("User chose to not apply.")
+					return false;
+				}
+					console.log("User chose to apply.");
+			}
 		</script>
 	{/pageScript}
 {/include}
