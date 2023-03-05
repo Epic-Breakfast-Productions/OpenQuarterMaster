@@ -23,4 +23,6 @@ public class DataImportResult {
 	private long numStorageBlocks = 0;
 	@Builder.Default
 	private long numInventoryItems = 0;
+	@Builder.Default
+	private long numItemLists = 0;
 }

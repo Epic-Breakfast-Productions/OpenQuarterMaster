@@ -184,7 +184,7 @@ public class DataImportService {
 					resultBuilder.numImages(this.imageImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numInventoryItems(this.itemImporter.readInObjects(session, tempDirPath, importingEntity));
-					resultBuilder.numInventoryItems(this.itemListImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numItemLists(this.itemListImporter.readInObjects(session, tempDirPath, importingEntity));
 					//TODO:: history
 				} catch(Throwable e){
 					session.abortTransaction();
