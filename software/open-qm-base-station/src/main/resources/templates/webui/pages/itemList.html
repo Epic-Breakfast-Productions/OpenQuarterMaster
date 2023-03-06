@@ -4,22 +4,58 @@
 	{/pageStyle}
 	{#additionalTitleContent}
 		<a href="/itemLists">Back to List Search</a>
-		<p>
-			Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
-			On: {listCreateEvent.getTimestamp()}
-		</p>
-	{/additionalTitleContent}
-	{#pageContent}
-	<div class="row">
-		<div class="col">
-			<div class="btn-group" role="group" aria-label="Apply Item List Button">
-				<button type="button" class="btn btn-success" id="applyLockButton"  onclick="toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
-				<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+		<div class="row">
+			<div class="col">
+				<p>
+					Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
+					On: {listCreateEvent.getTimestamp()}<br />
+					<small>Id: <span id="itemListId">{itemList.getId()}</span>{#copyTextButton textContainerId='itemListId'}{/copyTextButton}</small>
+					
+				</p>
+			</div>
+			<div class="col text-end">
+				<div class="btn-group btn-group-lg" role="group" aria-label="Apply Item List Button">
+					<button type="button" class="btn btn-success" id="applyLockButton"  onclick="toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
+					<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+				</div>
 			</div>
 		</div>
-	</div>
-	
+	{/additionalTitleContent}
+	{#pageContent}
+		<h2>
+			Settings
+		</h2>
+		<div class="row">
+			<div class="col">
+			
+			</div>
+		</div>
+		<hr />
+		<h2>
+			Item Find
+		</h2>
+		<div class="row">
+			<div class="col-5">
+				<div class="input-group">
+					<span class="input-group-text" id="quickSearchBarcodeInputHelp">{#icons/barcode}{/icons/barcode}</span>
+					<input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" id="quickSearchBarcodeInput" aria-describedby="quickSearchBarcodeInputHelp">
+				</div>
+			</div>
+			<div class="col-2 text-center">
+				or
+			</div>
+			<div class="col-5">
+				<button class="btn btn-primary">{#icons/search}{/icons/search} Item Search</button>
+			</div>
+		</div>
+		<hr />
+		<h2>
+			List:
+		</h2>
+		
+		...
 	{/pageContent}
+	
 	{#pageScript}
 		<script>
 			var applyButton = $("#applyButton");
@@ -44,8 +80,16 @@
 					console.log("User chose to not apply.")
 					return false;
 				}
-					console.log("User chose to apply.");
+				console.log("User chose to apply.");
+				//TODO:: call endpoint to apply
 			}
+			
+			
+			
+			
+			
+			
+			
 		</script>
 	{/pageScript}
 {/include}
