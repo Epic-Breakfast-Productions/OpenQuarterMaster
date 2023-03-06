@@ -32,4 +32,6 @@ public class ItemList extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private List<@NonNull ItemListItem> items = new ArrayList<>();
+	
+	private boolean applied = false;
 }
