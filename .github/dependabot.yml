@@ -32,6 +32,14 @@ updates:
     labels:
       - "area-dependencies"
       - "project-baseStation"
+  - package-ecosystem: "docker"
+    directory: "/software/open-qm-base-station/src/main/docker"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
   # Station Captain
   - package-ecosystem: "maven"
     directory: "/software/Station Captain/stationCaptainTest"
