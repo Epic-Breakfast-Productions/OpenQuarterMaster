@@ -6,16 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/docs/Releasing.md" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/docs/Releasing.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/info/RunByUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/info/RunByUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/inventory/items/InventoryItemsCrud.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/endpoints/inventory/items/InventoryItemsCrud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/ui/pages/UiProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/interfaces/ui/pages/UiProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/barcode/BarcodeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/barcode/BarcodeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataExportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataExportService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataImportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/java/tech/ebp/oqm/baseStation/service/importExport/DataImportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" beforeDir="false" afterPath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/otel/properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/otel/properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +59,7 @@
       <workItem from="1677771395497" duration="10576000" />
       <workItem from="1677808246858" duration="6345000" />
       <workItem from="1677852436311" duration="5450000" />
+      <workItem from="1678198645149" duration="4730000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>
