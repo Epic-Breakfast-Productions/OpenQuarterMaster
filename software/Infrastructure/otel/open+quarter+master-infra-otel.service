@@ -1,4 +1,4 @@
-# Service file for running an instance of MongoDB.
+# Service file for running an instance of OpenTelemetry.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
@@ -7,7 +7,7 @@
 # https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml#L630
 
 [Unit]
-Description=Prometheus server for Open Quartermaster. Version ${version}, using opentelemetry-collector tagged to 0.72.0.
+Description=Otel server for Open Quartermaster. Version ${version}, using opentelemetry-collector tagged to 0.72.0.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel
 After=docker.service
 Wants=network-online.target docker.socket
@@ -20,7 +20,7 @@ Restart=always
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_otel || echo 'Could not stop otel container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_otel || echo 'Could not remove otel container'"
 
-ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null ||\
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null || \
                        /usr/bin/docker run \
                            --name oqm_otel \
                            -p 1888:1888 \
@@ -30,7 +30,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null 
                            -p 4317:4317 \
                            -p 4318:4318 \
                            -p 55679:55679 \
-                           -v /etc/oqm/infra/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml \
+                           -v /etc/oqm/infra/otel/otel-collector-config.yaml:/etc/otelcol/config.yaml \
                            --add-host host.docker.internal:host-gateway \
                            otel/opentelemetry-collector:0.72.0"
 
