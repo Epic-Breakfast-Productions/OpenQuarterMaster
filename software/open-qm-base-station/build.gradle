@@ -1,11 +1,11 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "6.6.2"
+	id "io.freefair.lombok" version "6.6.3"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.20-DEV'
+version '1.0.20-1-168-5-DEV'
 
 repositories {
 	mavenCentral()
@@ -23,8 +23,9 @@ dependencies {
 	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
 	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-	implementation 'io.quarkus:quarkus-smallrye-opentracing'
+//	implementation 'io.quarkus:quarkus-smallrye-opentracing'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
+	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-arc'
@@ -78,7 +79,7 @@ dependencies {
 	testImplementation 'org.testcontainers:mongodb:1.17.6'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:21.0.0'
+	testImplementation 'org.keycloak:keycloak-admin-client:21.0.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.1'

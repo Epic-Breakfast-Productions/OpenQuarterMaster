@@ -6,12 +6,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
@@ -33,7 +33,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-@Traced
 public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
@@ -140,7 +139,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		}
 	}
 	
-	
+	@WithSpan
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
@@ -162,6 +161,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		return this.add(clientSession, fileObject, file, file.getName(), interactingEntity);
 	}
 	
+	@WithSpan
 	public ObjectId add(ClientSession clientSession, T fileObject, FileUploadBody uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
 			FilenameUtils.removeExtension(fileObject.getFileName()),
@@ -188,6 +188,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		return this.add(null, fileObject, file, interactingEntity);
 	}
 	
+	@WithSpan
 	protected ObjectId add(ClientSession clientSession, T fileObject, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
 		ObjectId newId = null;
 		GridFSBucket bucket = this.getGridFSBucket();
@@ -227,6 +228,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	 *
 	 * @return
 	 */
+	@WithSpan
 	protected int updateFile(ClientSession clientSession, ObjectId id, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
 		T object = this.getFileObjectService().get(id);
 		GridFSBucket bucket = this.getGridFSBucket();
@@ -258,6 +260,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		return this.getRevisions(clientSession, id).size() - 1;
 	}
 	
+	@WithSpan
 	public int updateFile(ClientSession clientSession, ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		
@@ -278,6 +281,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		return this.updateFile(null, id, file, interactingEntity);
 	}
 	
+	@WithSpan
 	public long removeAll(ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;

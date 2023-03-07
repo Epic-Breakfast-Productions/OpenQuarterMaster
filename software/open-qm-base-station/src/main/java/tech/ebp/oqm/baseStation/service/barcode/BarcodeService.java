@@ -1,6 +1,6 @@
 package tech.ebp.oqm.baseStation.service.barcode;
 
-import org.eclipse.microprofile.opentracing.Traced;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import tech.ebp.oqm.lib.core.rest.media.CodeImageType;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
@@ -18,7 +18,6 @@ import java.io.IOException;
  *
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
-@Traced
 @ApplicationScoped
 public class BarcodeService {
 	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
@@ -34,6 +33,7 @@ public class BarcodeService {
 		return os.toString();
 	}
 	
+	@WithSpan
 	public String getBarcodeData(String data){
 		Code128 barcode = new Code128();
 		barcode.setFontName("Monospaced");
@@ -46,6 +46,7 @@ public class BarcodeService {
 		return toImageData(barcode);
 	}
 	
+	@WithSpan
 	public String getQrCodeData(String data){
 		QrCode qrCode = new QrCode();
 		qrCode.setContent(data);
@@ -53,6 +54,7 @@ public class BarcodeService {
 		return toImageData(qrCode);
 	}
 	
+	@WithSpan
 	public String getCodeData(CodeImageType type, String data){
 		switch (type){
 			case qrcode:

@@ -4,7 +4,7 @@ import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.exception.mappers.AwareExceptionMapper;
-import tech.ebp.oqm.baseStation.interfaces.ui.UiUtils;
+import tech.ebp.oqm.baseStation.interfaces.ui.pages.UiUtils;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;

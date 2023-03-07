@@ -6,10 +6,10 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Sorts;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
@@ -34,7 +34,6 @@ import static com.mongodb.client.model.Filters.eq;
  * @param <T> The type of object stored.
  */
 @Slf4j
-@Traced
 public class MongoHistoryService<T extends MainObject> extends MongoObjectService<ObjectHistoryEvent, HistorySearch> {
 	
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
@@ -58,6 +57,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		this.clazzForObjectHistoryIsFor = clazz;
 	}
 	
+	@WithSpan
 	public DeleteEvent isDeleted(ClientSession clientSession, ObjectId id) {
 		DeleteEvent found;
 		
@@ -89,7 +89,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.isDeleted(null, id);
 	}
 	
-	
+	@WithSpan
 	public ObjectHistoryEvent getLatestHistoryEventFor(ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
 		if (clientSession != null) {
@@ -115,6 +115,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.getLatestHistoryEventFor(null, id);
 	}
 	
+	@WithSpan
 	public boolean hasHistoryFor(ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
 		if (clientSession != null) {
@@ -135,6 +136,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.hasHistoryFor(null, id);
 	}
 	
+	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(ClientSession clientSession, ObjectId id) {
 		List<ObjectHistoryEvent> output = this.list(
 			clientSession,
@@ -161,6 +163,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.getHistoryFor(null, object);
 	}
 	
+	@WithSpan
 	public ObjectId addHistoryFor(ClientSession session, T created, InteractingEntity entity, ObjectHistoryEvent history){
 		history.setObjectId(created.getId());
 		if(entity != null) {
@@ -173,7 +176,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.addHistoryFor(null, created, entity, history);
 	}
 	
-	
+	@WithSpan
 	public ObjectId objectCreated(ClientSession session, T created, InteractingEntity entity) {
 		try {
 			this.getHistoryFor(session, created);
@@ -193,6 +196,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.objectCreated(null, created, interactingEntity);
 	}
 	
+	@WithSpan
 	public ObjectId objectUpdated(
 		ClientSession clientSession,
 		T updated,
@@ -231,6 +235,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.objectUpdated(null, updated, entity, updateJson);
 	}
 	
+	@WithSpan
 	public ObjectId objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity, String description) {
 		DeleteEvent event = new DeleteEvent(updated, entity);
 		

@@ -36,7 +36,7 @@ Ingests:
 		{/}
 	</style>
 </head>
-<body>
+<body class="min-vh-100 vstack">
 <span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
 
 <!-- nav here -->
@@ -173,7 +173,7 @@ Ingests:
 	</div>
 </nav>
 {/if}
-<div id="mainContainer" class="container">
+<div id="mainContainer" class="container flex-grow-1">
 	{#if showTitle}
 		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon}{title}</h1>
 		<hr/>
@@ -181,12 +181,13 @@ Ingests:
 	<div id="messageDiv">
 	</div>
 	
-	<main role="main">
+	<main class="" role="main">
 		{#insert pageContent}<h1>No body!</h1>{/}
 	</main>
-	
+</div>
+<footer id="footer" class="container mb-3" role="contentinfo">
 	<hr/>
-	<footer id="footer" class="row mb-3" role="contentinfo">
+	<div class="row">
 		<div class="col-sm-4">
 			<span class="h4">Open QuarterMaster Server</span><br/>
 			&copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
@@ -206,9 +207,9 @@ Ingests:
 				<div class="collapse" id="pageLoadInfoCollapse">
 					<div class="card card-body">
 						Service id: <code class="user-select-all"
-								id="traceServiceName">{config:['quarkus.jaeger.service-name']}</code><br/>
+								id="traceServiceName">{config:['quarkus.application.name']}</code><br/>
 						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
-						<!-- TODO:: link to Jaeger -->
+						<!-- TODO:: link to Jaeger? -->
 					</div>
 				</div>
 			</small>
@@ -235,8 +236,10 @@ Ingests:
 		<div class="col-sm-4">
 			{config:['service.runBy.motd']}
 		</div>
-	</footer>
-</div>
+	</div>
+</footer>
+
+
 <!-- Modals -->
 {#insert modals}{/}
 
@@ -251,6 +254,7 @@ Ingests:
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
 <script src="/res/js/main.js"></script>
+<script src="/res/js/icons.js"></script>
 <script>
 	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
 	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.AccessLevel;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
@@ -37,7 +37,6 @@ import java.util.List;
  * @param <T>
  * @param <S>
  */
-@Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
@@ -99,6 +98,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
+	@WithSpan
 	public ObjectId create(
 		@Context SecurityContext securityContext,
 		@Valid T object
@@ -121,6 +121,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
+	@WithSpan
 	public List<ObjectId> createBulk(
 		@Context SecurityContext securityContext,
 		@Valid List<T> objects
@@ -174,6 +175,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
 	public Response search(
 		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
@@ -213,6 +215,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
 	public T get(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -260,6 +263,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
+	@WithSpan
 	public T update(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -306,6 +310,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
+	@WithSpan
 	public T delete(
 		@Context SecurityContext securityContext,
 		@PathParam String id
@@ -352,6 +357,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //	)
 //	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -414,6 +420,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
