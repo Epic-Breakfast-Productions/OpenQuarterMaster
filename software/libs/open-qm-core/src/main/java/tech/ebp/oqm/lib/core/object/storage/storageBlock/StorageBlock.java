@@ -55,7 +55,6 @@ public class StorageBlock extends ImagedMainObject {
 	@NotNull
 	private String location = "";
 	
-	
 	/**
 	 * The parent of this storage block, if any
 	 */
@@ -67,6 +66,13 @@ public class StorageBlock extends ImagedMainObject {
 	@NonNull
 	@NotNull
 	private List<@NotNull Quantity<?>> capacityMeasures = new ArrayList<>();
+	
+	/**
+	 * Categories this storage block holds.
+	 */
+	@NonNull
+	@NotNull
+	private List<@NotNull ObjectId> storedCategories = new ArrayList<>();
 	
 	public boolean hasParent() {
 		return this.getParent() != null;

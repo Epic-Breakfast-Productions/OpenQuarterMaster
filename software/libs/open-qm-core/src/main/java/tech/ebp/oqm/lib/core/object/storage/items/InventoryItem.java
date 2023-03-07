@@ -98,6 +98,13 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	private String barcode = null;
 	
 	/**
+	 * Categories this item belongs to.
+	 */
+	@NonNull
+	@NotNull
+	private List<@NotNull ObjectId> categories = new ArrayList<>();
+	
+	/**
 	 * The map of where the items are stored.
 	 * <p>
 	 * The key is the id of the storage block being stored in, the value the storage wrapper actually holding stored item information.

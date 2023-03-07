@@ -31,7 +31,8 @@ class StorageBlockTest extends BasicTest {
 					null,
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
-					}}
+					}},
+					new ArrayList<>()
 				)
 			),
 			Arguments.of(
@@ -43,7 +44,8 @@ class StorageBlockTest extends BasicTest {
 					null,
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, Units.KILOGRAM));
-					}}
+					}},
+					new ArrayList<>()
 				)
 			)
 		);
