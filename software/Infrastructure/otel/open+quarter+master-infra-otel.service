@@ -1,4 +1,4 @@
-# Service file for running an instance of MongoDB.
+# Service file for running an instance of OpenTelemetry.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
