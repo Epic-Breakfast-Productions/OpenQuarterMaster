@@ -70,8 +70,9 @@ public abstract class UiNotAuthorizedExceptionMapper<E extends Throwable> extend
 						   UiUtils.getAuthRemovalCookie(this.getUriInfo())
 					   )
 					   .build();
+		} else {
+			log.debug("Erring exception for url that wasn't in ui.");
 		}
-		log.info("Erring exception for url that wasn't in ui.");
 		return Response.status(Response.Status.UNAUTHORIZED).entity(errorMessage).build();
 	}
 }

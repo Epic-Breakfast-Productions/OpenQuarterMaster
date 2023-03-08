@@ -8,6 +8,9 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
 
+/**
+ *
+ */
 @RegisterRestClient(configKey = "keycloak")
 public interface KeycloakServiceCaller {
 	
