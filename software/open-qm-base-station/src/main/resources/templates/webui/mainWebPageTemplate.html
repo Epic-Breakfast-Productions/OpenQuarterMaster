@@ -79,6 +79,14 @@ Ingests:
 				{/if}
 			</a>
 		</li>
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'categories'}active{/if}" href="/categories">
+				{#icons/categories}{/icons/categories} Categories
+				{#if page is 'categories'}
+				<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
+		</li>
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
 					aria-haspopup="true" aria-expanded="false">
