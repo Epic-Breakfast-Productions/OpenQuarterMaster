@@ -15,7 +15,7 @@ service:
     clientId: quartermaster
     clientSecret: secret
     scope: openid
-    realmBasePath: /auth/realms/${service.externalAuth.realm:}
+    realmBasePath: /realms/${service.externalAuth.realm:}
     realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
     interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}

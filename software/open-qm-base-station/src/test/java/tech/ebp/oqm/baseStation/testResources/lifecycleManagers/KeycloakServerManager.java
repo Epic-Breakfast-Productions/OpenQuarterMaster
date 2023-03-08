@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.testResources.lifecycleManagers;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -126,6 +127,7 @@ public class KeycloakServerManager implements QuarkusTestResourceLifecycleManage
 		authServerUrl = Utils.replaceLocalWithTCInternalIf(uiTest, authServerUrl);
 		
 		String keycloakUrl = authServerUrl.replace("/auth", "");
+		keycloakUrl = StringUtils.removeEnd(keycloakUrl, "/");
 		
 		return Map.of(
 			"test.keycloak.port",
