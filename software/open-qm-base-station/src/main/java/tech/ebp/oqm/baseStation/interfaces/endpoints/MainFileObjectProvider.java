@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.AccessLevel;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -35,7 +35,6 @@ import javax.ws.rs.core.SecurityContext;
  * @param <T>
  * @param <S>
  */
-@Traced
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, F extends FileUploadBody> extends ObjectProvider {
@@ -69,6 +68,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		return this.interactingEntityFromJwt;
 	}
 	
+	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
 		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
@@ -149,6 +149,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //	)
 //	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam String id,
@@ -211,6 +212,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	//	)
 	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject

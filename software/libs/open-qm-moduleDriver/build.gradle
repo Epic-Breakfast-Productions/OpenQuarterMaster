@@ -1,6 +1,6 @@
 plugins {
 	id 'java-library'
-	id "io.freefair.lombok" version "6.6.2"
+	id "io.freefair.lombok" version "6.6.3"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -43,10 +43,6 @@ dependencies {
 
 	//if need ObjectIds, BsonIgnore
 //	implementation 'org.mongodb:bson:4.4.0'
-
-	testCompileOnly 'org.projectlombok:lombok:1.18.26'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
-
 
 	implementation 'com.fazecast:jSerialComm:2.9.3'
 

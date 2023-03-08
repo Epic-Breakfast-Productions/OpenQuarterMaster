@@ -5,13 +5,13 @@ import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
@@ -39,7 +39,6 @@ import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 
 @Slf4j
-@Traced
 @ApplicationScoped
 public class StorageBlockInventorySheetService extends PrintoutDataService {
 	
@@ -68,6 +67,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	@Location("printouts/storageBlockInvSheet/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
+	@WithSpan
 	private File getTempPdfFile(String name) throws IOException {
 		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
 		File tempDir = tempDirPath.toFile();
@@ -77,7 +77,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		return new File(tempDir, exportFileName);
 	}
 	
-	
+	@WithSpan
 	private TemplateInstance getHtmlInventorySheet(
 		StorageBlock storageBlock,
 		StorageBlockSearch storageBlockSearch,
@@ -125,6 +125,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	 * @return
 	 * @throws IOException
 	 */
+	@WithSpan
 	public File getPdfInventorySheet(
 		InteractingEntity entity,
 		ObjectId storageBlockId,

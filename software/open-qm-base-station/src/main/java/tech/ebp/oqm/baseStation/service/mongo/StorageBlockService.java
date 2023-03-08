@@ -5,11 +5,12 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
@@ -24,7 +25,6 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class StorageBlockService extends MongoHistoriedObjectService<StorageBlock, StorageBlockSearch> {
@@ -49,6 +49,7 @@ public class StorageBlockService extends MongoHistoriedObjectService<StorageBloc
 		);
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, storageBlock, clientSession);
@@ -103,18 +104,22 @@ public class StorageBlockService extends MongoHistoriedObjectService<StorageBloc
 		}
 	}
 	
+	@WithSpan
 	public List<StorageBlock> getTopParents(){
 		return this.list(Filters.exists("parent", false), null, null);
 	}
 	
+	@WithSpan
 	public List<StorageBlock> getChildrenIn(ObjectId parentId){
 		return this.list(Filters.eq("parent", parentId), null, null);
 	}
 	
+	@WithSpan
 	public List<StorageBlock> getChildrenIn(String parentId){
 		return this.getChildrenIn(new ObjectId(parentId));
 	}
 	
+	@WithSpan
 	public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude) {
 		StorageBlockTree output = new StorageBlockTree();
 		

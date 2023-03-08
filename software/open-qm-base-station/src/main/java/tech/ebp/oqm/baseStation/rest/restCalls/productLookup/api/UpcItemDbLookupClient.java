@@ -1,12 +1,12 @@
 package tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.validation.constraints.NotNull;
@@ -19,11 +19,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.CompletionStage;
 
-@Traced
 @Path("/prod/")
 @RegisterRestClient(configKey = "upc-upcitemdb")
 public interface UpcItemDbLookupClient {
-	@Traced
+	
+	@WithSpan
 	@POST
 	@Path("v1/lookup")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -33,7 +33,7 @@ public interface UpcItemDbLookupClient {
 		UpcItemDbLookupClient.Request barcode
 	);
 	
-	@Traced
+	@WithSpan
 	@GET
 	@Path("trial/lookup")
 	@Consumes(MediaType.APPLICATION_JSON)

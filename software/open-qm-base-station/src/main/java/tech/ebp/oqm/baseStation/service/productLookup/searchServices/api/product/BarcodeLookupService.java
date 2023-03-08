@@ -3,11 +3,11 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.produc
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.BarcodeLookupClient;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
@@ -25,7 +25,6 @@ import java.util.concurrent.CompletionStage;
 
 @ApplicationScoped
 @Slf4j
-@Traced
 @NoArgsConstructor
 public class BarcodeLookupService extends ApiProductSearchService {
 	
@@ -86,6 +85,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 	 * @param results
 	 * @return
 	 */
+	@WithSpan
 	@Override
 	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
 		log.debug("Data from BarcodeLookup: {}", results.toPrettyString());
@@ -141,6 +141,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 		return resultList;
 	}
 	
+	@WithSpan
 	@Override
 	protected CompletionStage<JsonNode> performBarcodeSearchCall(String barcode) {
 		return this.barcodeLookupClient.getFromUpcCode(this.apiKey, barcode);
