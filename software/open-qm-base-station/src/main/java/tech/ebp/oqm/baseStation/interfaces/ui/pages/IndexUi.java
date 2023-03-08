@@ -1,12 +1,12 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -70,8 +70,8 @@ public class IndexUi extends UiProvider {
 	String externInteractionBase;
 	@ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
 	String externInteractionClientId;
-	@ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
-	String externInteractionCallbackUrl;
+	@ConfigProperty(name = "service.externalAuth.callbackPath", defaultValue = "")
+	String externInteractionCallbackPath;
 	
 	@GET
 	@PermitAll
@@ -86,8 +86,7 @@ public class IndexUi extends UiProvider {
 			return Response.seeOther(new URI("/accountCreate")).build();
 		}
 		
-		
-		String redirectUri = externInteractionCallbackUrl;
+		String redirectUri = StringUtils.removeEnd(this.uri.getBaseUri().toString(), "/") + externInteractionCallbackPath;
 		
 		if (returnPath != null && !returnPath.isBlank()) {
 			redirectUri = new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString();

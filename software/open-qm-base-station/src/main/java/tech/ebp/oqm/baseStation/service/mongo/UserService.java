@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.auth.roles.UserRoles;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -163,12 +164,17 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		}
 		
 		//TODO:: verify has all these fields & throw exception
+		
+		
+		Set<String> userRoles = jwt.getClaim(Claims.groups);
+		userRoles.retainAll(UserRoles.USER_ROLES);
+		
 		User.Builder userBuilder = User.builder()
 									   .firstName(jwt.getClaim(Claims.given_name))
 									   .lastName(jwt.getClaim(Claims.family_name))
 									   .email(jwt.getClaim(Claims.email))
 									   .title(jwt.getClaim(JWT_USER_TITLE_CLAIM))
-									   .roles(jwt.getClaim(Claims.groups));
+									   .roles(userRoles);
 		
 		if (jwt.getClaim(Claims.upn) != null) {
 			userBuilder.username(jwt.getClaim(Claims.upn));

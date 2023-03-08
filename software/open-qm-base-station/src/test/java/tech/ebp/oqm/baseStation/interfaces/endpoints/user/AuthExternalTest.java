@@ -10,6 +10,7 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.GeneralAuth;
@@ -44,6 +45,13 @@ class AuthExternalTest extends RunningServerTest {
 	ObjectMapper objectMapper;
 	@Inject
 	TestUserService testUserService;
+	
+	@ConfigProperty(name = "service.externalAuth.realmBase")
+	String base;
+	@ConfigProperty(name = "service.externalAuth.realmBasePath")
+	String basePath;
+	@ConfigProperty(name = "service.externalAuth.url")
+	String url;
 	
 	@Test
 	@TestHTTPEndpoint(UserAuth.class)

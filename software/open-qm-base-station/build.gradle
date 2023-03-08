@@ -77,7 +77,7 @@ dependencies {
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 
 	testImplementation 'org.testcontainers:mongodb:1.17.6'
-	testImplementation 'com.github.dasniko:testcontainers-keycloak:1.9.0'
+	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
 	testImplementation 'org.keycloak:keycloak-admin-client:21.0.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
