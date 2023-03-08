@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" beforeDir="false" afterPath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" afterDir="false" />
@@ -19,7 +17,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="dev.167-fr-implement-lists-feature" />
+        <entry key="$PROJECT_DIR$/../.." value="dev" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -106,6 +104,7 @@
     <MESSAGE value="Updated to new otel endpoint" />
     <MESSAGE value="Infra - Jaeger version bump" />
     <MESSAGE value="Infra - added back original config alongside new" />
-    <option name="LAST_COMMIT_MESSAGE" value="Infra - added back original config alongside new" />
+    <MESSAGE value="Infra - tweak to comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Infra - tweak to comments" />
   </component>
 </project>
