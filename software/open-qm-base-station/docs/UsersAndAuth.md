@@ -64,8 +64,7 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
       ![img_1.png](img_1.png)
 4. Ensure all roles added from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java under "roles"
 5. Setup mappers (Under Clients -> quartermaster-> clientScopes -> quartermaster-dedicated ): ![img.png](img.png)
-   1. A `client roles` mapper, with token claim name 'group'
-   2. 
+   1. A `client roles` mapper, with token claim name `groups`
 
 ## User Roles
 

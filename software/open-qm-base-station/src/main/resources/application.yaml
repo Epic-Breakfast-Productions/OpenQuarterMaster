@@ -21,7 +21,8 @@ service:
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackUrl: ${runningInfo.baseUrl}/api/v1/auth/user/callback
+    callbackPath: /api/v1/auth/user/callback
+    callbackUrl: ${runningInfo.baseUrl}${service.externalAuth.callbackPath:}
   runBy:
     name: " "
     email: " "

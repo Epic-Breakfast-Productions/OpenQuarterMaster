@@ -129,7 +129,7 @@ public class KeycloakServerManager implements QuarkusTestResourceLifecycleManage
 		String keycloakUrl = authServerUrl.replace("/auth", "");
 		keycloakUrl = StringUtils.removeEnd(keycloakUrl, "/");
 		
-		return Map.of(
+		Map<String, String> output = Map.of(
 			"test.keycloak.port",
 			KEYCLOAK_CONTAINER.getHttpPort() + "",
 			"test.keycloak.url",
@@ -147,6 +147,7 @@ public class KeycloakServerManager implements QuarkusTestResourceLifecycleManage
 			"quarkus.rest-client.keycloak.url",
 			"http://localhost:" + KEYCLOAK_CONTAINER.getHttpPort() + "${service.externalAuth.tokenPath:}"
 		);
+		return output;
 	}
 	
 	@Override
