@@ -1,10 +1,10 @@
-package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
+package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -16,99 +16,61 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
+import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.ImageService;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
-import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.ImagedMainObject;
+import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
-import tech.ebp.oqm.lib.core.rest.storage.IMAGED_OBJ_TYPE_NAME;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Base64;
+import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
 @Slf4j
-@Path(ROOT_API_ENDPOINT_V1 + "/media/image")
-@Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-categories")
+@Tags({@Tag(name = "Item Categories", description = "Endpoints for managing Item Categories.")})
 @RequestScoped
-public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
+@NoArgsConstructor
+public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, CategoriesSearch> {
 	
-	private static final URI EMPTY_IMAGE_URI;
-	
-	static {
-		try {
-			EMPTY_IMAGE_URI = new URI("/media/empty.svg");
-		} catch(URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	StorageBlockService storageBlockService;
-	InventoryItemService itemService;
-	ItemCategoryService itemCategoryService;
-	Template imageSearchResultsTemplate;
-	Validator validator;
+	Template itemCategoriesSearchResultsTemplate;
 	
 	@Inject
-	public ImageCrud(
-		ImageService imageService,
+	public ItemCategoriesCrud(
+		ItemCategoryService itemCategoryService,
 		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
-		StorageBlockService storageBlockService,
-		InventoryItemService itemService,
-		ItemCategoryService itemCategoryService,
-		@Location("tags/search/image/imageSearchResults.html")
-		Template imageSearchResultsTemplate,
-		Validator validator
+		@Location("tags/search/category/searchResults.html")
+		Template itemCategoriesSearchResultsTemplate
 	) {
-		super(Image.class, imageService, interactingEntityService, jwt, historyRowsTemplate);
-		this.storageBlockService = storageBlockService;
-		this.itemService = itemService;
-		this.itemCategoryService = itemCategoryService;
-		this.validator = validator;
-		this.imageSearchResultsTemplate = imageSearchResultsTemplate;
+		super(ItemCategory.class, itemCategoryService, interactingEntityService, jwt, historyRowsTemplate);
+		this.itemCategoriesSearchResultsTemplate = itemCategoriesSearchResultsTemplate;
 	}
-	
-	
-	//<editor-fold desc="CRUD operations">
 	
 	@POST
 	@Operation(
-		summary = "Adds a new image."
+		summary = "Adds a new Item Category."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -128,19 +90,49 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public ObjectId create(
 		@Context SecurityContext securityContext,
-		@Valid ImageCreateRequest icr
+		@Valid ItemCategory itemCategory
 	) {
-		Image image = new Image(icr);
-		
-		this.validator.validate(image);
-		return super.create(securityContext, image);
+		return super.create(securityContext, itemCategory);
+	}
+	
+	@POST
+	@Path("bulk")
+	@Operation(
+		summary = "Adds new Item Categories."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Objects added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ObjectId.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Override
+	public List<ObjectId> createBulk(
+		@Context SecurityContext securityContext,
+		@Valid List<ItemCategory> itemCategories
+	) {
+		return super.createBulk(securityContext, itemCategories);
 	}
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of objects, using search parameters."
+		summary = "Gets a list of storage blocks, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -150,7 +142,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 				mediaType = "application/json",
 				schema = @Schema(
 					type = SchemaType.ARRAY,
-					implementation = Image.class
+					implementation = ItemCategory.class
 				)
 			),
 			@Content(
@@ -165,56 +157,54 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	)
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@Override
 	public Response search(
 		@Context SecurityContext securityContext,
-		@BeanParam ImageSearch searchObject
+		@BeanParam CategoriesSearch categoriesSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(securityContext, searchObject);
+		Tuple2<Response.ResponseBuilder, SearchResult<ItemCategory>> tuple = super.getSearchResponseBuilder(securityContext, categoriesSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
-		log.debug("Accept header value: \"{}\"", searchObject.getAcceptHeaderVal());
-		switch (searchObject.getAcceptHeaderVal()) {
+		log.debug("Accept header value: \"{}\"", categoriesSearch.getAcceptHeaderVal());
+		switch (categoriesSearch.getAcceptHeaderVal()) {
 			case MediaType.TEXT_HTML:
 				log.debug("Requestor wanted html.");
-				SearchResult<Image> output = tuple.getItem2();
+				SearchResult<ItemCategory> output = tuple.getItem2();
 				rb = rb.entity(
-						this.imageSearchResultsTemplate
-							.data("searchResults", output)
-							.data(
-								"actionType",
-								(
-									searchObject.getActionTypeHeaderVal() == null || searchObject.getAcceptHeaderVal().isBlank() ?
-										"full" :
-										searchObject.getActionTypeHeaderVal()
-								)
-							)
-							.data(
-								"searchFormId",
-								(
-									searchObject.getSearchFormIdHeaderVal() == null || searchObject.getSearchFormIdHeaderVal().isBlank() ? "" :
-										searchObject.getSearchFormIdHeaderVal()
-								)
-							)
-							.data(
-								"inputIdPrepend",
-								(
-									searchObject.getInputIdPrependHeaderVal() == null || searchObject.getInputIdPrependHeaderVal().isBlank() ?
-										"" :
-										searchObject.getInputIdPrependHeaderVal()
-								)
-							)
-							.data(
-								"otherModalId",
-								(
-									searchObject.getOtherModalIdHeaderVal() == null || searchObject.getOtherModalIdHeaderVal().isBlank() ?
-										"" :
-										searchObject.getOtherModalIdHeaderVal()
-								)
-							)
-							.data("pagingCalculations", new PagingCalculations(output))
-						//                                        .data("storageService", this.storageBlockService)
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
+						   this.itemCategoriesSearchResultsTemplate
+							   .data("searchResults", output)
+							   .data("actionType", (
+								   categoriesSearch.getActionTypeHeaderVal() == null || categoriesSearch.getActionTypeHeaderVal().isBlank() ? "full" :
+									   categoriesSearch.getActionTypeHeaderVal()
+							   ))
+							   .data(
+								   "searchFormId",
+								   (
+									   categoriesSearch.getSearchFormIdHeaderVal() == null || categoriesSearch.getSearchFormIdHeaderVal().isBlank() ?
+										   "" :
+										   categoriesSearch.getSearchFormIdHeaderVal()
+								   )
+							   )
+							   .data(
+								   "inputIdPrepend",
+								   (
+									   categoriesSearch.getInputIdPrependHeaderVal() == null || categoriesSearch.getInputIdPrependHeaderVal().isBlank() ?
+										   "" :
+										   categoriesSearch.getInputIdPrependHeaderVal()
+								   )
+							   )
+							   .data(
+								   "otherModalId",
+								   (
+									   categoriesSearch.getOtherModalIdHeaderVal() == null || categoriesSearch.getOtherModalIdHeaderVal().isBlank() ?
+										   "" :
+										   categoriesSearch.getOtherModalIdHeaderVal()
+								   )
+							   )
+							   .data("pagingCalculations", new PagingCalculations(output))
+							   .data("storageService", this.getObjectService())
+					   )
+					   .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:
@@ -227,7 +217,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Path("{id}")
 	@GET
 	@Operation(
-		summary = "Gets a particular object."
+		summary = "Gets a particular Storage Block."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -235,7 +225,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = Image.class
+				implementation = ItemCategory.class
 			)
 		)
 	)
@@ -256,9 +246,10 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Image get(
+	@Override
+	public ItemCategory get(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.get(securityContext, id);
 	}
@@ -266,16 +257,16 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a particular Image.",
-		description = "Partial update to an image. Do not need to supply all fields, just the one(s) you wish to update."
+		summary = "Updates a storage block.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Image updated.",
+		description = "Storage block updated.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = Image.class
+				implementation = ItemCategory.class
 			)
 		)
 	)
@@ -296,19 +287,19 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Image update(
+	@Override
+	public ItemCategory update(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		//TODO:: handle updates, json given is icr
 		return super.update(securityContext, id, updates);
 	}
 	
 	@DELETE
 	@Path("{id}")
 	@Operation(
-		summary = "Deletes a particular object."
+		summary = "Deletes a particular category."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -316,7 +307,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = Image.class
+				implementation = ItemCategory.class
 			)
 		)
 	)
@@ -337,13 +328,50 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Image delete(
+	@Override
+	public ItemCategory delete(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.delete(securityContext, id);
 	}
 	
+	//TODO:: this
+//	@GET
+//	@Path("tree")
+//	@Operation(
+//		summary = "Gets a tree of the item categories."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Tree retrieved.",
+//		content = {
+//			@Content(
+//				mediaType = "application/json",
+//				schema = @Schema(
+//					implementation = StorageBlockTree.class
+//				)
+//			)
+//		}
+//	)
+//	@APIResponse(
+//		responseCode = "204",
+//		description = "No items found from query given.",
+//		content = @Content(mediaType = "text/plain")
+//	)
+//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
+//	public StorageBlockTree tree(
+//		@Context SecurityContext securityContext,
+//		//for actual queries
+//		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
+//	) {
+//		logRequestContext(this.getJwt(), securityContext);
+//		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
+//	}
+	
+	
+	//<editor-fold desc="History">
 	@GET
 	@Path("{id}/history")
 	@Operation(
@@ -377,7 +405,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@org.jboss.resteasy.annotations.jaxrs.PathParam String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
@@ -388,7 +416,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@GET
 	@Path("history")
 	@Operation(
-		summary = "Searches the history for the images."
+		summary = "Searches the history for the categories."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -416,111 +444,39 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		return super.searchHistory(securityContext, searchObject);
 	}
 	
-	@GET
-	@Path("{id}/data")
-	@Operation(
-		summary = "Gets a particular image's data string for use in html images."
-	)
-	//    @APIResponse(
-	//            responseCode = "200",
-	//            description = "Image retrieved."
-	////            content = @Content( //TODO
-	//            )
-	//    )
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	//    @Produces(MediaType.)//TODO
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getImageData(
-		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
-	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving image with id \"{}\"'s data", id);
-		Image output = this.getObjectService().get(id);
-		
-		log.info("Image found.");
-		return Response.status(Response.Status.OK)
-				   .entity(Base64.getDecoder().decode(output.getData()))
-				   .type("image/" + output.getType())
-				   .build();
-	}
+	//</editor-fold>
 	
-	@WithSpan
-	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
-		String objTypeName = service.getClazz().getSimpleName();
-		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
-		
-		ImagedMainObject object = service.get(id);
-		
-		if (object == null) {
-			log.info("{} not found.", objTypeName);
-			return Response.status(Response.Status.NOT_FOUND)
-					   .type(MediaType.TEXT_PLAIN_TYPE)
-					   .entity(objTypeName + " not found.").build();
-		}
-		
-		if (object.getImageIds().isEmpty()) {
-			log.info("Storage block has no images. Returning blank placeholder image.");
-			return Response
-					   .seeOther(EMPTY_IMAGE_URI)
-					   .build();
-		}
-		
-		ObjectId imageId = object.getImageIds().get(0);
-		
-		Image output = this.getObjectService().get(imageId);
-		
-		log.info("Image found ({}) {}", output.getType(), output.getId());
-		return Response.status(Response.Status.OK)
-				   .entity(Base64.getDecoder().decode(output.getData()))
-				   .type(output.getMimeType())
-				   .build();
-	}
-	
-	@GET
-	@Path("for/{object}/{id}")
-	@Operation(
-		summary = "Gets the image data for the first image held of an imaged object."
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces({
-		"image/png",
-		"text/plain"
-	})
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getImageDataForObject(
-		@Context SecurityContext securityContext,
-		@PathParam IMAGED_OBJ_TYPE_NAME object,
-		@PathParam String id
-	) {
-		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving image for {} of id \"{}\"", object, id);
-		
-		switch (object) {
-			case storageBlock -> {
-				return this.getImageFromObject(this.storageBlockService, id);
-			}
-			case item -> {
-				return this.getImageFromObject(this.itemService, id);
-			}
-			case item_category -> {
-				return this.getImageFromObject(this.itemCategoryService, id);
-			}
-			default -> {
-				log.error("Should not have gotten to this point... server error.");
-				return Response.status(Response.Status.NOT_FOUND)
-						   .type(MediaType.TEXT_PLAIN_TYPE)
-						   .entity("No imaged object of type \"" + object + "\"")
-						   .build();
-			}
-		}
-	}
+	//TODO:: this
+//	@GET
+//	@Path("{id}/children")
+//	@Operation(
+//		summary = "Gets children of a particular item category."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Blocks retrieved.",
+//		content = {
+//			@Content(
+//				mediaType = "application/json",
+//				schema = @Schema(
+//					type = SchemaType.ARRAY,
+//					implementation = StorageBlock.class
+//				)
+//			)
+//		},
+//		headers = {
+//			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+//		}
+//	)
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
+//	public Response getChildrenOfBlock(
+//		@Context SecurityContext securityContext,
+//		@PathParam("id") String storageBlockId
+//	) {
+//		logRequestContext(this.getJwt(), securityContext);
+//		log.info("Getting children of \"{}\"", storageBlockId);
+//		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
+//	}
 }

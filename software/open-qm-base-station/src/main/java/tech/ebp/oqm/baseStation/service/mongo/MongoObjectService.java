@@ -97,6 +97,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.listIterator(null, filter, sort, pageOptions);
 	}
 	
+	public FindIterable<T> listIterator() {
+		return this.listIterator(null, null, null, null);
+	}
+	
 	/**
 	 * Gets a list of entries based on the options given.
 	 *

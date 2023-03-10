@@ -2,9 +2,7 @@ package tech.ebp.oqm.baseStation.rest.search;
 
 import lombok.Getter;
 import lombok.ToString;
-import tech.ebp.oqm.baseStation.service.mongo.CategoriesService;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;

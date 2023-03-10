@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.StorageBlockImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
-import tech.ebp.oqm.baseStation.service.mongo.CategoriesService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -96,6 +96,8 @@ public class DataImportService {
 	
 	@Inject
 	ImageService imageService;
+	@Inject
+	ItemCategoryService itemItemCategoryService;
 	
 	@Inject
 	StorageBlockService storageBlockService;
@@ -112,6 +114,7 @@ public class DataImportService {
 	@PostConstruct
 	public void setup(){
 		this.unitImporter = new UnitImporter(this.customUnitService);
+		this.itemCategoryImporter = new GenericImporter<>(this.itemItemCategoryService);
 		this.storageBlockImporter = new StorageBlockImporter(this.storageBlockService);
 		this.imageImporter = new GenericImporter<>(this.imageService);
 		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
@@ -178,7 +181,7 @@ public class DataImportService {
 				try {
 					resultBuilder.numUnits(this.unitImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numImages(this.imageImporter.readInObjects(session, tempDirPath, importingEntity));
-					resultBuilder.numCategories(this.itemCategoryImporter.readInObjects(session, tempDirPath, importingEntity));
+//					resultBuilder.numCategories(this.itemCategoryImporter.readInObjects(session, tempDirPath, importingEntity)); TODO:: enable
 					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numInventoryItems(this.itemImporter.readInObjects(session, tempDirPath, importingEntity));
 					//TODO:: history

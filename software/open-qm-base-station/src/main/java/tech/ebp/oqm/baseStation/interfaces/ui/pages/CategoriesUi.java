@@ -12,13 +12,13 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
@@ -54,7 +54,7 @@ public class CategoriesUi extends UiProvider {
 	UserService userService;
 	
 	@Inject
-	StorageBlockService storageBlockService;
+	ItemCategoryService itemItemCategoryService;
 	
 	@Inject
 	JsonWebToken jwt;
@@ -73,21 +73,21 @@ public class CategoriesUi extends UiProvider {
 	public Response categories(
 		@Context SecurityContext securityContext,
 		@CookieParam("jwt_refresh") String refreshToken,
-		@BeanParam StorageBlockSearch storageBlockSearch
+		@BeanParam CategoriesSearch categoriesSearch
 	) {
 		//TODO:: rework for categories
 		logRequestContext(jwt, securityContext);
 		User user = userService.getFromJwt(this.jwt);
 		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
 		
-		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
-		
+		SearchResult<ItemCategory> searchResults = this.itemItemCategoryService.search(categoriesSearch, true);
+		this.itemItemCategoryService.listIterator();
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(categories, span, UserGetResponse.builder(user).build(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
-				.data("numStorageBlocks", storageBlockService.count())
-				.data("storageService", storageBlockService)
-				.data("searchObject", storageBlockSearch)
+				.data("numCategories", itemItemCategoryService.count())
+				.data("itemCatService", itemItemCategoryService)
+				.data("searchObject", categoriesSearch)
 				.data("pageOrientationOptions", PageOrientation.values())
 				.data("pageSizeOptions", PageSizeOption.values())
 				.data("historySearchObject", new HistorySearch()),

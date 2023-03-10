@@ -11,7 +11,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
-import tech.ebp.oqm.baseStation.service.mongo.CategoriesService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -187,7 +187,7 @@ public class DataExportService {
 	@Inject
 	CustomUnitService customUnitService;
 	@Inject
-	CategoriesService itemCategoriesService;
+	ItemCategoryService itemItemCategoryService;
 	
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -222,7 +222,7 @@ public class DataExportService {
 				//TODO:: once we figure out file nonsense #51
 //				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemCategoriesService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemItemCategoryService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;})
 			);
