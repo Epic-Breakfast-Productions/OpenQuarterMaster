@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.object.storage.storageBlock;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.object.HasParent;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
-public class StorageBlock extends ImagedMainObject {
+public class StorageBlock extends ImagedMainObject implements HasParent {
 	
 	/**
 	 * The label for this storage block

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.HasParent;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 
 import javax.validation.constraints.NotBlank;
@@ -18,7 +19,7 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
-public class ItemCategory extends ImagedMainObject {
+public class ItemCategory extends ImagedMainObject implements HasParent {
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -29,5 +30,5 @@ public class ItemCategory extends ImagedMainObject {
 	@NotNull
 	private String description = "";
 	
-	private ObjectId parentCategory = null;
+	private ObjectId parent = null;
 }
