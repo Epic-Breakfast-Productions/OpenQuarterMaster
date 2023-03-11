@@ -51,7 +51,9 @@
       <img src="/api/v1/media/image/for/item_category/{result.getId()}" class="searchResultImage">
       {/if}
     </td>
-    <td class="categoryText" {#if result.getColor()??}style="background-color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getColor())}"{/if}>{result.getName()}</td>
+    <td {#if result.getColor()??}style="background-color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getColor())}; color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getTextColor())}"{/if}>
+      {result.getName()}
+    </td>
     <td>{#if result.getParent()??}{itemCatService.get(result.getParent()).getName()}{/if}</td>
     {#if actionType == 'full'}
     <td>

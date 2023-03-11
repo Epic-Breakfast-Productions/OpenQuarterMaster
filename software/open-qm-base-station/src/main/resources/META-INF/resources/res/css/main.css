@@ -90,9 +90,10 @@
 }
 
 .categoryText {
-	text-shadow:
-			0.05em 0 white,
-			0 0.05em white,
-			-0.05em 0 white,
-			0 -0.05em white;
+	/*text-shadow:*/
+	/*		0.05em 0 white,*/
+	/*		0 0.05em white,*/
+	/*		-0.05em 0 white,*/
+	/*		0 -0.05em white;*/
+	/*filter: saturate(0) grayscale(1) brightness(.7) contrast(1000%) invert(1);*/
 }
