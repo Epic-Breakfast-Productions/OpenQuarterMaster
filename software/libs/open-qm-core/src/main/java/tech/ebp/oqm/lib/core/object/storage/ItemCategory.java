@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.object.storage;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ import java.awt.*;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class ItemCategory extends ImagedMainObject implements HasParent {
+	
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -38,4 +40,19 @@ public class ItemCategory extends ImagedMainObject implements HasParent {
 	private Color color = null;
 	
 	private ObjectId parent = null;
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public Color getTextColor(){
+		// https://stackoverflow.com/a/35970186/3015723
+		Color c = this.getColor();
+		if(c == null){
+			return Color.BLACK;
+		}
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+				   ? Color.BLACK
+				   : Color.WHITE;
+	}
 }
