@@ -15,7 +15,12 @@ public class ItemCategorySerializationTest extends ObjectSerializationTest<ItemC
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
 			Arguments.of(new ItemCategory().setName(FAKER.name().name())),
-			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.BLUE))
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.BLUE)),
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.RED)),
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.GREEN)),
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.YELLOW)),
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.BLACK)),
+			Arguments.of(new ItemCategory().setName(FAKER.name().name()).setColor(Color.getHSBColor(24, 32, 16)))
 		);
 	}
 }

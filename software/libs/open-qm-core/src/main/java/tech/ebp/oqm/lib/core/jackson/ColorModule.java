@@ -16,6 +16,18 @@ import java.io.IOException;
  */
 public class ColorModule extends TestableModule<Color> {
 	
+	public static String toHexString(Color c){
+		int R = c.getRed();
+		int G = c.getGreen();
+		int B = c.getBlue();
+		
+		String rgb = String.format("#%02X%02X%02X", R, G, B);
+		return rgb;
+	}
+	public static Color toColor(String c){
+		return Color.decode(c);
+	}
+	
 	public ColorModule() {
 		super(
 			Color.class,
@@ -27,20 +39,14 @@ public class ColorModule extends TestableModule<Color> {
 	public static class ColorSerializer extends JsonSerializer<Color> {
 		@Override
 		public void serialize(Color c, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-			int R = c.getRed();
-			int G = c.getGreen();
-			int B = c.getBlue();
-			
-			String rgb =  "#" + Integer.toHexString(R) + Integer.toHexString(G) + Integer.toHexString(B);
-			gen.writeString(rgb);
+			gen.writeString(toHexString(c));
 		}
 	}
 	
 	public static class ColorDeserializer extends JsonDeserializer<Color> {
-		
 		@Override
 		public Color deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-			return Color.decode(p.getValueAsString());
+			return toColor(p.getValueAsString());
 		}
 	}
 	
