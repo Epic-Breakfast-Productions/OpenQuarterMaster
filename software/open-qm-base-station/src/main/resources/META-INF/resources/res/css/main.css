@@ -88,3 +88,11 @@
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
+
+.categoryText {
+	text-shadow:
+			0.05em 0 white,
+			0 0.05em white,
+			-0.05em 0 white,
+			0 -0.05em white;
+}

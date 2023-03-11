@@ -63,6 +63,17 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
+                            <label for="addEditItemCategoryColorInput" class="col-sm-2 col-form-label">Color</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Enable/disable custom color." onchange="Category.colorCheckboxChanged()" id="addEditItemCategoryColorCheckInput">
+                                    </div>
+                                    <input type="color" class="form-control" id="addEditItemCategoryColorInput" value="#FFFFFF" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
                             <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
                             <div class="col-sm-10">
                                 <select class="form-select dselect-select" id="addEditItemCategoryParentInput" name="itemCategoryParent">
@@ -120,16 +131,28 @@
                 idInput: $("#addEditItemCategoryForm").find('input[name="id"]'),
                 nameInput: $("#addEditItemCategoryForm").find('input[name="name"]'),
                 descInput: $("#addEditItemCategoryForm").find('textarea[name="description"]'),
+                colorInput: $("#addEditItemCategoryColorInput"),
+                colorCheckInput: $("#addEditItemCategoryColorCheckInput"),
                 parentInput: $("#addEditItemCategoryParentInput"),
                 imagesInputDiv: $("#addEditItemCategoryForm").find('.imagesSelected'),
                 keywordInputs: $("#addEditItemCategoryForm").find('.keywordInputDiv'),
                 attInputs: $("#addEditItemCategoryForm").find('.attInputDiv'),
                 
+                colorCheckboxChanged(){
+                    if(Category.colorCheckInput.is(':checked')){
+                        Category.colorInput.prop("disabled", false);
+                    } else {
+                        Category.colorInput.prop("disabled", true);
+                    }
+                },
                 resetAddEditItemCategoryForm(){
                     Category.addEditForm[0].reset();
                     Category.idInput.val("");
                     Category.nameInput.val("");
                     Category.descInput.val("");
+                    Category.colorCheckInput.prop('checked', false);
+                    Category.colorInput.val("#FFFFFF");
+                    Category.colorCheckboxChanged();
                     Category.parentInput.val($("#addEditItemCategoryParentInput option:first").val());
                     Dselect.setupDselect(Category.parentInput[0]);
                     Category.imagesInputDiv.html("");
@@ -158,6 +181,11 @@
                                 Category.parentInput.val(data.parent);
                                 Dselect.setupDselect(Category.parentInput[0]);
                             }
+                            if(data.color){
+                                Category.colorCheckInput.prop('checked', true);
+                                Category.colorCheckboxChanged();
+                                Category.colorInput.val(data.color);
+                            }
                             addSelectedImages(Category.imagesInputDiv, data.imageIds);
                             addKeywordInputs(Category.keywordInputs, data.keywords);
                             addAttInputs(Category.attInputs, data.attributes);
@@ -176,7 +204,8 @@
                 let data = {
                     name: Category.nameInput.val(),
                     description: Category.descInput.val(),
-                    parent: (Category.parentInput.val()? Category.parentInput.val():null)
+                    parent: (Category.parentInput.val()? Category.parentInput.val():null),
+					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
                 };
                 addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
                 addImagesToData(data, Category.imagesInputDiv);
