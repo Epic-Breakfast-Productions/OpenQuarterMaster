@@ -23,6 +23,7 @@ import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
@@ -76,6 +77,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	
 	StorageBlockService storageBlockService;
 	InventoryItemService itemService;
+	ItemCategoryService itemCategoryService;
 	Template imageSearchResultsTemplate;
 	Validator validator;
 	
@@ -88,6 +90,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		Template historyRowsTemplate,
 		StorageBlockService storageBlockService,
 		InventoryItemService itemService,
+		ItemCategoryService itemCategoryService,
 		@Location("tags/search/image/imageSearchResults.html")
 		Template imageSearchResultsTemplate,
 		Validator validator
@@ -95,6 +98,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		super(Image.class, imageService, interactingEntityService, jwt, historyRowsTemplate);
 		this.storageBlockService = storageBlockService;
 		this.itemService = itemService;
+		this.itemCategoryService = itemCategoryService;
 		this.validator = validator;
 		this.imageSearchResultsTemplate = imageSearchResultsTemplate;
 	}
@@ -174,43 +178,43 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 				log.debug("Requestor wanted html.");
 				SearchResult<Image> output = tuple.getItem2();
 				rb = rb.entity(
-						   this.imageSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data(
-								   "actionType",
-								   (
-									   searchObject.getActionTypeHeaderVal() == null || searchObject.getAcceptHeaderVal().isBlank() ?
-										   "full" :
-										   searchObject.getActionTypeHeaderVal()
-								   )
-							   )
-							   .data(
-								   "searchFormId",
-								   (
-									   searchObject.getSearchFormIdHeaderVal() == null || searchObject.getSearchFormIdHeaderVal().isBlank() ? "" :
-										   searchObject.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   searchObject.getInputIdPrependHeaderVal() == null || searchObject.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   searchObject.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   searchObject.getOtherModalIdHeaderVal() == null || searchObject.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   searchObject.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("pagingCalculations", new PagingCalculations(output))
-						   //                                        .data("storageService", this.storageBlockService)
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
+						this.imageSearchResultsTemplate
+							.data("searchResults", output)
+							.data(
+								"actionType",
+								(
+									searchObject.getActionTypeHeaderVal() == null || searchObject.getAcceptHeaderVal().isBlank() ?
+										"full" :
+										searchObject.getActionTypeHeaderVal()
+								)
+							)
+							.data(
+								"searchFormId",
+								(
+									searchObject.getSearchFormIdHeaderVal() == null || searchObject.getSearchFormIdHeaderVal().isBlank() ? "" :
+										searchObject.getSearchFormIdHeaderVal()
+								)
+							)
+							.data(
+								"inputIdPrepend",
+								(
+									searchObject.getInputIdPrependHeaderVal() == null || searchObject.getInputIdPrependHeaderVal().isBlank() ?
+										"" :
+										searchObject.getInputIdPrependHeaderVal()
+								)
+							)
+							.data(
+								"otherModalId",
+								(
+									searchObject.getOtherModalIdHeaderVal() == null || searchObject.getOtherModalIdHeaderVal().isBlank() ?
+										"" :
+										searchObject.getOtherModalIdHeaderVal()
+								)
+							)
+							.data("pagingCalculations", new PagingCalculations(output))
+						//                                        .data("storageService", this.storageBlockService)
+					)
+						 .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:
@@ -440,9 +444,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		
 		log.info("Image found.");
 		return Response.status(Response.Status.OK)
-					   .entity(Base64.getDecoder().decode(output.getData()))
-					   .type("image/" + output.getType())
-					   .build();
+				   .entity(Base64.getDecoder().decode(output.getData()))
+				   .type("image/" + output.getType())
+				   .build();
 	}
 	
 	@WithSpan
@@ -455,8 +459,8 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		if (object == null) {
 			log.info("{} not found.", objTypeName);
 			return Response.status(Response.Status.NOT_FOUND)
-						   .type(MediaType.TEXT_PLAIN_TYPE)
-						   .entity(objTypeName + " not found.").build();
+					   .type(MediaType.TEXT_PLAIN_TYPE)
+					   .entity(objTypeName + " not found.").build();
 		}
 		
 		if (object.getImageIds().isEmpty()) {
@@ -472,9 +476,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		
 		log.info("Image found ({}) {}", output.getType(), output.getId());
 		return Response.status(Response.Status.OK)
-					   .entity(Base64.getDecoder().decode(output.getData()))
-					   .type(output.getMimeType())
-					   .build();
+				   .entity(Base64.getDecoder().decode(output.getData()))
+				   .type(output.getMimeType())
+				   .build();
 	}
 	
 	@GET
@@ -494,22 +498,29 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam IMAGED_OBJ_TYPE_NAME object,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
+		@PathParam IMAGED_OBJ_TYPE_NAME object,
+		@PathParam String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
-		log.info("Retrieving image for storage block of id \"{}\"", id);
+		log.info("Retrieving image for {} of id \"{}\"", object, id);
 		
 		switch (object) {
-			case storageBlock:
+			case storageBlock -> {
 				return this.getImageFromObject(this.storageBlockService, id);
-			case item:
+			}
+			case item -> {
 				return this.getImageFromObject(this.itemService, id);
+			}
+			case item_category -> {
+				return this.getImageFromObject(this.itemCategoryService, id);
+			}
+			default -> {
+				log.error("Should not have gotten to this point... server error.");
+				return Response.status(Response.Status.NOT_FOUND)
+						   .type(MediaType.TEXT_PLAIN_TYPE)
+						   .entity("No imaged object of type \"" + object + "\"")
+						   .build();
+			}
 		}
-		log.error("Should not have gotten to this point... server error.");
-		return Response.status(Response.Status.NOT_FOUND)
-					   .type(MediaType.TEXT_PLAIN_TYPE)
-					   .entity("No imaged object of type \"" + object + "\"")
-					   .build();
 	}
 }

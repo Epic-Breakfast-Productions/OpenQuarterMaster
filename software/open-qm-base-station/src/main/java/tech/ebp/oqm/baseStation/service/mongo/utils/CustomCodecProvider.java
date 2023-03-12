@@ -5,6 +5,7 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.MapCodec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.ColorCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.DurationCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.QuantityCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.UUIDCodec;
@@ -22,6 +23,7 @@ public class CustomCodecProvider implements CodecProvider {
 		new UUIDCodec(),
 		new QuantityCodec(),
 		new UnitCodec(),
+		new ColorCodec(),
 		new ZonedDateTimeCodec(),
 		new DurationCodec(),
 		new MapCodec()//deprecated

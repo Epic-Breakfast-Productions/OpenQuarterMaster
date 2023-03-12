@@ -11,7 +11,7 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
 
 @TemplateData
-public class QuteSearchUtils {
+class QuteSearchUtils {
 	public static HistorySearch newHistorySearchInstance(){
 		return new HistorySearch();
 	}

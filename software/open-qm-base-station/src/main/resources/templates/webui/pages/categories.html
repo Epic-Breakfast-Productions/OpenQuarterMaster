@@ -1,0 +1,290 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Categories" page='categories'}
+    {#pageStyle}
+    
+    {/pageStyle}
+    {#pageContent}
+    <div class="row mb-2">
+        <div class="col d-grid gap-2">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemCategoryModal"
+                    onclick="Category.setupAddEditItemCategoryForAdd();">{#icons/add}{/icons/add} Add Category
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col accordion" id="searchAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="searchHeader">
+                    <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                            aria-controls="searchCollapse">
+                        {#icons/search}{/icons/search} Search Fields
+                    </button>
+                </h2>
+                <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                        aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                    <div class="accordion-body">
+                        {#search/category/searchForm id='mainCategorySearch'}
+                        {/search/category/searchForm}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col table-responsive">
+            <table class=" table table-bordered table-striped table-hover table-sm">
+                {#search/category/searchResults searchResults=searchResult actionType='full' searchFormId='mainCategorySearch' pagingCalculations=pagingCalculations}
+                {/search/category/searchResults}
+            </table>
+        </div>
+    </div>
+    {/pageContent}
+    {#modals}
+        {#modal id='addEditItemCategory' large=true title='Category Add/Edit' submitForm='addEditItemCategoryForm' submitDismiss=false}
+            <div class="row">
+                <div class="col" id="addEditItemCategoryFormMessages">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form id="addEditItemCategoryForm">
+                        <input type="hidden" id="addEditItemCategoryFormMode" name="mode" value="">
+                        <input type="hidden" id="addEditItemCategoryIdInput" name="id" value="">
+                        <div class="mb-3 row">
+                            <label for="addEditItemCategoryNameInput" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="addEditItemCategoryNameInput" placeholder="Name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="addEditItemCategoryDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="addEditItemCategoryDescriptionInput" placeholder="Description" name="description"></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="addEditItemCategoryColorInput" class="col-sm-2 col-form-label">Color</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Enable/disable custom color." onchange="Category.colorCheckboxChanged()" id="addEditItemCategoryColorCheckInput">
+                                    </div>
+                                    <input type="color" class="form-control" id="addEditItemCategoryColorInput" value="#FFFFFF" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
+                            <div class="col-sm-10">
+                                <select class="form-select dselect-select" id="addEditItemCategoryParentInput" name="itemCategoryParent">
+                                    <option value="" selected>No Parent</option>
+                                {#for curItemCat in itemCatService.listIterator()}
+                                    <option value="{curItemCat.getId()}">{curItemCat.getName()}</option>
+                                {/for}
+                                </select>
+                            </div>
+                        </div>
+                        {#search/image/imageSelectFormInput}
+                        {/search/image/imageSelectFormInput}
+                        {#inputs/keywordInput}
+                        {/inputs/keywordInput}
+                        {#inputs/attInput}
+                        {/inputs/attInput}
+                    </form>
+                </div>
+            </div>
+        {/modal}
+        {#modal id='itemCategoryView' large=true title='Item Category View'}
+            <div class="row">
+                <div class="col">
+                {!TODO:: display !}
+                </div>
+            </div>
+        {/modal}
+        {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal"}
+        {/search/image/imageSearchSelectModal}
+    {/modals}
+    {#scripts}
+        <script src="/res/js/search.js"></script>
+        <script src="/res/js/historySearch.js"></script>
+        <script src="/res/js/obj/objEdit.js"></script>
+        <script src="/res/js/obj/objView.js"></script>
+        <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+        <script src="/res/js/obj/media/imageSearchSelect.js"></script>
+        <script src="/res/js/obj/units.js"></script>
+        <script src="/res/js/obj/getters.js"></script>
+        <script src="/res/js/obj/storageBlock/capacities.js"></script>
+        <script src="/res/js/carousel.js"></script>
+        <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+        <script src="/res/js/obj/media/imageAdd.js"></script>
+        <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
+        <script src="/res/js/textCopy.js"></script>
+    {/scripts}
+    
+    {#pageScript}
+        <script>
+            const Category = {
+                addEditForm: $("#addEditItemCategoryForm"),
+                addEditModalLabel: $("#addEditItemCategoryModalLabel"),
+                addEditFormMessages: $("#addEditItemCategoryFormMessages"),
+                modeInput: $("#addEditItemCategoryForm").find('input[name="mode"]'),
+                idInput: $("#addEditItemCategoryForm").find('input[name="id"]'),
+                nameInput: $("#addEditItemCategoryForm").find('input[name="name"]'),
+                descInput: $("#addEditItemCategoryForm").find('textarea[name="description"]'),
+                colorInput: $("#addEditItemCategoryColorInput"),
+                colorCheckInput: $("#addEditItemCategoryColorCheckInput"),
+                parentInput: $("#addEditItemCategoryParentInput"),
+                imagesInputDiv: $("#addEditItemCategoryForm").find('.imagesSelected'),
+                keywordInputs: $("#addEditItemCategoryForm").find('.keywordInputDiv'),
+                attInputs: $("#addEditItemCategoryForm").find('.attInputDiv'),
+                
+                colorCheckboxChanged(){
+                    if(Category.colorCheckInput.is(':checked')){
+                        Category.colorInput.prop("disabled", false);
+                    } else {
+                        Category.colorInput.prop("disabled", true);
+                    }
+                },
+                resetAddEditItemCategoryForm(){
+                    Category.addEditForm[0].reset();
+                    Category.idInput.val("");
+                    Category.nameInput.val("");
+                    Category.descInput.val("");
+                    Category.colorCheckInput.prop('checked', false);
+                    Category.colorInput.val("#FFFFFF");
+                    Category.colorCheckboxChanged();
+                    Dselect.resetDselect(Category.parentInput);
+                    Category.imagesInputDiv.html("");
+                    Category.keywordInputs.text("");
+                    Category.attInputs.text("");
+                },
+                setupAddEditItemCategoryForAdd(){
+                    Category.resetAddEditItemCategoryForm();
+                    Category.addEditModalLabel.text("Add Item Category");
+                    Category.modeInput.val("add");
+                },
+                async setupAddEditItemCategoryForEdit(categoryId){
+                    Category.resetAddEditItemCategoryForm();
+                    Category.addEditModalLabel.text("Edit Item Category");
+                    Category.modeInput.val("edit");
+                    Category.idInput.val(categoryId);
+    
+                    await doRestCall({
+                        url: "/api/v1/inventory/item-categories/" + categoryId,
+                        method: "GET",
+                        async: false,
+                        done: function (data) {
+                            Category.nameInput.val(data.name);
+                            Category.descInput.val(data.description);
+                            if(data.parent) {
+                                Dselect.setValues(Category.parentInput, data.parent);
+                            }
+                            if(data.color){
+                                Category.colorCheckInput.prop('checked', true);
+                                Category.colorCheckboxChanged();
+                                Category.colorInput.val(data.color);
+                            }
+                            addSelectedImages(Category.imagesInputDiv, data.imageIds);
+                            addKeywordInputs(Category.keywordInputs, data.keywords);
+                            addAttInputs(Category.attInputs, data.attributes);
+                        },
+                        fail: function (data) {
+                            console.warn("Bad response from get item category attempt: " + JSON.stringify(data));
+                        },
+                        failMessagesDiv: Category.addEditFormMessages
+                    });
+                }
+            };
+            Category.addEditForm.on("submit", async function (e) {
+                e.preventDefault();
+                console.log("Submitting Item Category Add Edit form");
+    
+                let data = {
+                    name: Category.nameInput.val(),
+                    description: Category.descInput.val(),
+                    parent: (Category.parentInput.val()? Category.parentInput.val():null),
+					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
+                };
+                addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
+                addImagesToData(data, Category.imagesInputDiv);
+                
+                var result = false;
+                var verb = "";
+                if (Category.modeInput.val() === "add") {
+                    verb = "Created";
+        
+                    console.log("Adding new item category.");
+                    await doRestCall({
+                        url: "/api/v1/inventory/item-categories",
+                        method: "POST",
+                        data: data,
+                        async: false,
+                        done: function (data) {
+                            console.log("Response from create request: " + JSON.stringify(data));
+                            result = true;
+                        },
+                        fail: function (data) {
+                            console.warn("Bad response from block add attempt: " + JSON.stringify(data));
+                        },
+                        failMessagesDiv: Category.addEditFormMessages
+                    });
+                } else if (Category.modeInput.val() === "edit") {
+                    verb = "Edited";
+                    let id = Category.idInput.val();
+                    console.log("Editing item category " + id);
+        
+                    await doRestCall({
+                        url: "/api/v1/inventory/item-categories/" + id,
+                        method: "PUT",
+                        data: data,
+                        async: false,
+                        done: function (data) {
+                            console.log("Response from edit request: " + JSON.stringify(data));
+                            result = true;
+                        },
+                        failMessagesDiv: Category.addEditFormMessages
+                    });
+                }
+    
+                if (result) {
+                    reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
+                }
+            });
+            
+            async function removeItemCategory(id, name){
+                if(!confirm("Are you sure to delete item category " + name + "?\nThis cannot be undone.")){
+                    console.log("User decided to not delete item category.");
+                    return;
+                }
+    
+                await doRestCall({
+                    url: "/api/v1/inventory/item-categories/" + id,
+                    method: "DELETE",
+                    async: false,
+                    done: function (data) {
+                        reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
+                    },
+                    failMessagesDiv: messageDiv
+                });
+            }
+
+            const ItemCategoryView = {
+                viewModal: $("#itemCategoryView"),
+                async setupItemCategoryView(categoryId){
+                    await doRestCall({
+                        url: "/api/v1/inventory/item-categories/" + categoryId,
+                        method: "GET",
+                        async: false,
+                        done: function (data) {
+                            //TODO:: fill out view, history
+                        },
+                        fail: function (data) {
+                            console.warn("Bad response from block add attempt: " + JSON.stringify(data));
+                        },
+                        failMessagesDiv: Category.addEditFormMessages
+                    });
+                }
+            }
+        </script>
+    {/pageScript}
+{/include}

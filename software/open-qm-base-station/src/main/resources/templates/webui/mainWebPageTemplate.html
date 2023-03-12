@@ -29,6 +29,7 @@ Ingests:
 	<link href="/lib/bootstrap/5.2.3/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.3/bootstrap-icons.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="/res/css/main.css">
 	{#insert styleSheets}{/}
 	<style>
@@ -94,6 +95,14 @@ Ingests:
 					{#icons/add}{/icons/add} New Item List
 				</a>
 			</div>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'categories'}active{/if}" href="/categories">
+				{#icons/categories}{/icons/categories} Categories
+				{#if page is 'categories'}
+				<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
 		</li>
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
@@ -265,18 +274,21 @@ Ingests:
 <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
+<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="/res/js/spinnerHelpers.js"></script>
 <script src="/res/js/getParamUtils.js"></script>
 <script src="/res/js/pageMessages.js"></script>
+<script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>
 <script>
-	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
 	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 		return new bootstrap.Popover(popoverTriggerEl)
-	})
+	});
+	Dselect.setupPageDselects();
 </script>
 {#insert scripts}{/}
 {!

@@ -6,6 +6,7 @@ var addEditItemModal = $("#addEditItemModal");
 var addEditItemFormMessages = $("#addEditItemFormMessages");
 var addEditItemModalLabel = $('#addEditItemModalLabel');
 var addEditItemFormMode = $('#addEditItemFormMode');
+var addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
 var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
 var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 var addEditItemIdInput = $("#addEditItemIdInput");
@@ -79,6 +80,7 @@ function resetAddEditForm(){
 	addEditItemStorageTypeInput.prop( "disabled", false );
 	addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
 	addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	Dselect.resetDselect(addEditItemCategoriesInput);
 
 	setIdAttField();
 	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
@@ -140,6 +142,7 @@ function setupAddEditForEdit(itemId){
 			addEditItemDescriptionInput.val(data.description);
 			addEditItemStorageTypeInput.val(data.storageType);
 			addEditStoredTypeInputChanged();
+			Dselect.setValues(addEditItemCategoriesInput, data.categories);
 
 			if(data.lowStockThreshold) {
 				addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
@@ -659,6 +662,7 @@ addEditItemForm.submit(async function (event) {
 			addEditItemTotalLowStockThresholdInput.val(),
 			addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
+		categories: addEditItemCategoriesInput.val(),
 		storageMap: { }
 	};
 

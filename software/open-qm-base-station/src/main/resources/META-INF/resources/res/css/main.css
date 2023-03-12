@@ -88,3 +88,12 @@
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
+
+.itemCatBadge {
+
+}
+
+.itemCatBadgeImage {
+	max-height: 50px;
+	margin-right: 3px;
+}

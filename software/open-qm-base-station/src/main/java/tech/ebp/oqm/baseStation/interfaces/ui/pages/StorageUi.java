@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -58,6 +59,9 @@ public class StorageUi extends UiProvider {
 	StorageBlockService storageBlockService;
 	
 	@Inject
+	ItemCategoryService itemCategoryService;
+	
+	@Inject
 	JsonWebToken jwt;
 	
 	@Inject
@@ -87,6 +91,7 @@ public class StorageUi extends UiProvider {
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService)
+				.data("itemCatsService", itemCategoryService)
 				.data("searchObject", storageBlockSearch)
 				.data("pageOrientationOptions", PageOrientation.values())
 				.data("pageSizeOptions", PageSizeOption.values())
