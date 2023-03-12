@@ -313,6 +313,13 @@ Accepts:
                     </div>
                 </div>
             </div>
+            <div class="card" id="storageBlockViewStoredItemCategoriesContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Stored Item Categories:</h5>
+                    <div id="storageBlockViewStoredItemCategories">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <hr />
@@ -367,6 +374,7 @@ Accepts:
 <script src="/res/js/obj/media/imageSearchSelect.js"></script>
 <script src="/res/js/obj/units.js"></script>
 <script src="/res/js/obj/getters.js"></script>
+<script src="/res/js/obj/itemCategoryView.js"></script>
 <script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
     <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
@@ -610,6 +618,7 @@ var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
+var storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 
 function resetView(){
     storageBlockViewMessages.text("");
@@ -624,6 +633,7 @@ function resetView(){
     
     storageBlockViewCapacity.text('');
     storageBlockViewCapacityContainer.hide();
+    storageBlockViewStoredItemCategories.text('');
     
     resetHistorySearch(storageBlockHistoryAccordionCollapse);
 
@@ -632,6 +642,7 @@ function resetView(){
     clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
+    
 }
 
 function setupView(blockId){
@@ -652,6 +663,7 @@ function setupView(blockId){
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
+            promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
             
             if(data.nickname){
                 storageBlockViewModalLabel.text(data.label + " / " + data.nickname);
