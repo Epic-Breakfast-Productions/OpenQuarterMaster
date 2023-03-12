@@ -153,8 +153,7 @@
                     Category.colorCheckInput.prop('checked', false);
                     Category.colorInput.val("#FFFFFF");
                     Category.colorCheckboxChanged();
-                    Category.parentInput.val($("#addEditItemCategoryParentInput option:first").val());
-                    Dselect.setupDselect(Category.parentInput[0]);
+                    Dselect.resetDselect(Category.parentInput);
                     Category.imagesInputDiv.html("");
                     Category.keywordInputs.text("");
                     Category.attInputs.text("");
@@ -178,8 +177,7 @@
                             Category.nameInput.val(data.name);
                             Category.descInput.val(data.description);
                             if(data.parent) {
-                                Category.parentInput.val(data.parent);
-                                Dselect.setupDselect(Category.parentInput[0]);
+                                Dselect.setValues(Category.parentInput, data.parent);
                             }
                             if(data.color){
                                 Category.colorCheckInput.prop('checked', true);
