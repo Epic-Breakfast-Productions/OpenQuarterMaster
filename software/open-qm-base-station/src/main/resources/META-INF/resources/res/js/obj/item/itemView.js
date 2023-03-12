@@ -11,6 +11,8 @@ var itemViewStoredAccordion = $("#itemViewStoredAccordion");
 var itemViewTotalVal = $("#itemViewTotalVal");
 var itemViewValPerUnitDefault = $("#itemViewValPerUnitDefault");
 var itemViewValPerUnit = $("#itemViewValPerUnit");
+var itemViewCategoriesContainer = $("#itemViewCategoriesContainer");
+var itemViewCategories = $("#itemViewCategories");
 
 var itemViewCarousel = $("#itemViewCarousel");
 var itemViewStorageType = $("#itemViewStorageType");
@@ -41,6 +43,9 @@ function resetView(){
 	itemViewValPerUnit.text("");
 	itemViewIdentifyingAttContainer.hide();
 	itemViewTotalVal.text("");
+
+	itemViewCategoriesContainer.hide();
+	itemViewCategories.text("");
 
 	itemViewIdentifyingAtt.text("");
 
@@ -244,6 +249,12 @@ function setupView(itemId){
 		url: "/api/v1/inventory/item/" + itemId,
 		done: async function (data) {
 			let promises = [];
+
+			if(data.categories.length){
+				itemViewCategoriesContainer.show();
+				promises.push(ItemCategoryView.setupItemCategoryView(itemViewCategories, data.categories));
+			}
+
 			processKeywordDisplay(viewKeywordsSection, data.keywords);
 			processAttDisplay(viewAttsSection, data.attributes);
 			itemViewModalLabel.text(data.name);

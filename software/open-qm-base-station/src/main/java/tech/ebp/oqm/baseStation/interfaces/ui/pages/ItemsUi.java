@@ -14,6 +14,7 @@ import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
@@ -53,6 +54,8 @@ public class ItemsUi extends UiProvider {
 	UserService userService;
 	@Inject
 	InventoryItemService inventoryItemService;
+	@Inject
+	ItemCategoryService itemCategoryService;
 	
 	@Inject
 	JsonWebToken jwt;
@@ -85,6 +88,7 @@ public class ItemsUi extends UiProvider {
 					UserGetResponse.builder(user).build(),
 					searchResults
 				)
+				.data("itemCatsService", this.itemCategoryService)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("searchObject", itemSearch)
 				.data("historySearchObject", new HistorySearch())
