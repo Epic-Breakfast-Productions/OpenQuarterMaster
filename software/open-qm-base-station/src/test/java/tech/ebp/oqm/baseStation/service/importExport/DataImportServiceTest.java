@@ -10,6 +10,7 @@ import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -17,6 +18,7 @@ import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLife
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
@@ -66,6 +68,8 @@ class DataImportServiceTest extends RunningServerTest {
 	FileAttachmentService fileAttachmentService;
 	@Inject
 	ImageService imageService;
+	@Inject
+	ItemCategoryService itemCategoryService;
 	@Inject
 	StorageBlockService storageBlockService;
 	@Inject
@@ -141,6 +145,22 @@ class DataImportServiceTest extends RunningServerTest {
 			curImage.getKeywords().add("hello world");
 			this.imageService.add(curImage, testUser);
 		}
+		
+		List<ObjectId> itemCategoryIds = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			ItemCategory curCategory = new ItemCategory();
+			curCategory.setName(FAKER.name().name());
+			curCategory.setDescription(FAKER.lorem().paragraph());
+			curCategory.getAttributes().put("key", "val");
+			curCategory.getKeywords().add("hello world");
+			
+			if (!itemCategoryIds.isEmpty() && rand.nextBoolean()) {
+				curCategory.setParent(itemCategoryIds.get(rand.nextInt(itemCategoryIds.size())));
+			}
+			
+			itemCategoryIds.add(this.itemCategoryService.add(curCategory, testUser));
+		}
+		
 		List<ObjectId> storageIds = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			StorageBlock storageBlock = new StorageBlock();
@@ -222,6 +242,9 @@ class DataImportServiceTest extends RunningServerTest {
 		List<Image> oldImages = this.imageService.list(null, Sorts.ascending("title"), null);
 		this.imageService.removeAll(testUser);
 		this.imageService.getHistoryService().removeAll();
+		List<ItemCategory> oldItemCategories = this.itemCategoryService.list(null, Sorts.ascending("name"), null);
+		this.itemCategoryService.removeAll(testUser);
+		this.itemCategoryService.getHistoryService().removeAll();
 		//TODO:: once we have shit figured out for files
 //		List<FileAttachmentGet> fileAttachments =
 //			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
@@ -255,6 +278,9 @@ class DataImportServiceTest extends RunningServerTest {
 		
 		assertEquals(oldImages.size(), this.imageService.list().size());
 		assertEquals(oldImages, this.imageService.list(null, Sorts.ascending("title"), null));
+		
+		assertEquals(oldItemCategories.size(), this.itemCategoryService.list().size());
+		assertEquals(oldItemCategories, this.itemCategoryService.list(null, Sorts.ascending("name"), null));
 		
 		//TODO:: verify file attachments once we got that going
 	}
