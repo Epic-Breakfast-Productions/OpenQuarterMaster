@@ -4,9 +4,13 @@ import com.mongodb.client.ClientSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
+import tech.ebp.oqm.lib.core.object.HasParent;
+import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
@@ -19,19 +23,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TODO:: changeover to generic 'parentImporter' to operate on the HasParent interface
+ */
 @Slf4j
-public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBlockSearch, StorageBlockService>{
+public class HasParentImporter<T extends MainObject & HasParent, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S>>{
 	
 	
-	public StorageBlockImporter(StorageBlockService mongoService) {
+	public HasParentImporter(MongoHistoriedObjectService<T, S> mongoService) {
 		super(mongoService);
 	}
 	
 	private void readInObject(
 		ClientSession clientSession,
-		StorageBlock curObj,
+		T curObj,
 		InteractingEntity importingEntity,
-		Map<ObjectId, List<StorageBlock>> needParentMap,
+		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) {
 		ObjectId oldId = curObj.getId();
@@ -58,7 +65,7 @@ public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBl
 		ClientSession clientSession,
 		File curFile,
 		InteractingEntity importingEntity,
-		Map<ObjectId, List<StorageBlock>> needParentMap,
+		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) throws IOException {
 		try {
@@ -83,7 +90,7 @@ public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBl
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);
 		StopWatch sw = StopWatch.createStarted();
-		Map<ObjectId, List<StorageBlock>> needParentMap = new HashMap<>();
+		Map<ObjectId, List<T>> needParentMap = new HashMap<>();
 		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
 			this.readInObject(clientSession, curObjFile, importingEntity, needParentMap, addedList);
@@ -100,13 +107,13 @@ public class StorageBlockImporter extends ObjectImporter<StorageBlock, StorageBl
 				while (!addedList.isEmpty()){
 					ObjectId curParent = addedList.remove(0);
 					
-					List<StorageBlock> toAdd = needParentMap.remove(curParent);
+					List<T> toAdd = needParentMap.remove(curParent);
 					
 					if(toAdd == null){
 						continue;
 					}
 					
-					for(StorageBlock curObj : toAdd){
+					for(T curObj : toAdd){
 						this.readInObject(
 							clientSession,
 							curObj,

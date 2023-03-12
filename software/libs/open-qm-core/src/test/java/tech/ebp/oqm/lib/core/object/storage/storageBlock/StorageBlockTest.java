@@ -31,7 +31,8 @@ class StorageBlockTest extends BasicTest {
 					null,
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
-					}}
+					}},
+					new ArrayList<>()
 				)
 			),
 			Arguments.of(
@@ -43,12 +44,18 @@ class StorageBlockTest extends BasicTest {
 					null,
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, Units.KILOGRAM));
-					}}
+					}},
+					new ArrayList<>()
 				)
 			)
 		);
 	}
 	
+	/**
+	 * TODO:: move to serialization test
+	 * @param testStored
+	 * @throws JsonProcessingException
+	 */
 	@ParameterizedTest(name = "jsonTest[{index}]")
 	@MethodSource("jsonTestArgs")
 	public void jsonTest(StorageBlock testStored) throws JsonProcessingException {
