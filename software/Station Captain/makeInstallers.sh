@@ -47,9 +47,12 @@ mkdir "$buildDir/$debDir/DEBIAN"
 mkdir "$buildDir/$debDir/bin"
 mkdir -p "$buildDir/$debDir/lib/oqm/station-captain"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
+mkdir -p "$buildDir/$debDir/usr/share/applications"
 
 cp src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
 cp src/oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
+cp src/oqm-icon.svg "$buildDir/$debDir/etc/oqm/static/"
+cp src/oqm-captain.desktop "$buildDir/$debDir/usr/share/applications/"
 cp -r src/lib/* "$buildDir/$debDir/lib/oqm/station-captain/"
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
