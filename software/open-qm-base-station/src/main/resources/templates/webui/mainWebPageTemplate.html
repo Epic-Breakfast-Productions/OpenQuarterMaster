@@ -74,7 +74,7 @@ Ingests:
 		</li>
 		
 		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+			<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
 					aria-haspopup="true" aria-expanded="false">
 				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
 			</a>
@@ -94,18 +94,16 @@ Ingests:
 				<a class="dropdown-item" href="/itemLists#add">
 					{#icons/add}{/icons/add} New Item List
 				</a>
+				<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/categories">
+					{#icons/categories}{/icons/categories} Categories
+					{#if page is 'categories'}
+					<span class="visually-hidden">(current)</span>
+					{/if}
+				</a>
 			</div>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'categories'}active{/if}" href="/categories">
-				{#icons/categories}{/icons/categories} Categories
-				{#if page is 'categories'}
-				<span class="visually-hidden">(current)</span>
-				{/if}
-			</a>
-		</li>
 		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+			<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
 					aria-haspopup="true" aria-expanded="false">
 				{#icons/icon icon='infinity'}{/icons/icon} Other</a>
 			<div class="dropdown-menu">
