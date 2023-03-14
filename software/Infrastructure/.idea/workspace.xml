@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/items/InventoryItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/../libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/object/storage/storageBlock/StorageBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" beforeDir="false" afterPath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mongo/properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/mongo/properties.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +17,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/../.." value="dev" />
+        <entry key="$PROJECT_DIR$/../.." value="180-fr-move-to-using-docker-compose-rather-than-straight-docker-commands-for-deployment" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
@@ -57,6 +57,8 @@
       <workItem from="1677808246858" duration="6345000" />
       <workItem from="1677852436311" duration="5450000" />
       <workItem from="1678198645149" duration="5092000" />
+      <workItem from="1678745652528" duration="1893000" />
+      <workItem from="1678804475593" duration="5513000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>

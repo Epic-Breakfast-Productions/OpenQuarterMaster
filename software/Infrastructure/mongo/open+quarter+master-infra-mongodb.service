@@ -6,6 +6,9 @@
 #
 #  TODO:: figure out better username/password situation
 #    - https://lzone.de/blog/Using-Linux-keyring-secrets-from-your-scripts
+#
+# TODO:: rework for docker compose?
+#   - do init in dontainer, to avoid mongo tools requirement: https://stackoverflow.com/a/64153124/3015723
 
 [Unit]
 Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "4".
@@ -24,7 +27,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_mongo || echo 'Could not remov
 
 ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/oqm/db/mongo/:/data/db  mongo:4 mongod --replSet rs0"
 ExecStartPost=/bin/bash -c "sleep 3s"
-ExecStartPost=/bin/bash -c "mongo --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
+ExecStartPost=/bin/bash -c "/usr/bin/docker exec oqm_mongo --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_mongo || echo 'Could not stop mongo container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_mongo || echo 'Could not remove mongo container'"
