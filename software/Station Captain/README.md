@@ -8,6 +8,10 @@ The quickstart guide is available [here](docs/Quickstart%20Guide.md).
 
 Additional Documentation available [here](docs/)
 
+## TODO::
+
+ - make python ui to interact with script
+
 ## dev Notes
 
 https://www.redhat.com/sysadmin/create-rpm-package
