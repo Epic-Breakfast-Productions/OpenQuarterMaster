@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" beforeDir="false" afterPath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +56,7 @@
       <workItem from="1677852436311" duration="5450000" />
       <workItem from="1678198645149" duration="5092000" />
       <workItem from="1678745652528" duration="1893000" />
-      <workItem from="1678804475593" duration="6145000" />
+      <workItem from="1678804475593" duration="9715000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>
@@ -101,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678811950296</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Infra - small fix to mongo exec">
+      <created>1678812487560</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1678812487560</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,6 +120,7 @@
     <MESSAGE value="Infra - added back original config alongside new" />
     <MESSAGE value="Infra - tweak to comments" />
     <MESSAGE value="Infra - removed need for host to have mongo client utils" />
-    <option name="LAST_COMMIT_MESSAGE" value="Infra - removed need for host to have mongo client utils" />
+    <MESSAGE value="Infra - small fix to mongo exec" />
+    <option name="LAST_COMMIT_MESSAGE" value="Infra - small fix to mongo exec" />
   </component>
 </project>
