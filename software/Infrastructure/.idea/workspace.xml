@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" beforeDir="false" afterPath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +59,7 @@
       <workItem from="1678745652528" duration="1893000" />
       <workItem from="1678804475593" duration="9715000" />
       <workItem from="1678840088100" duration="1721000" />
-      <workItem from="1678882183180" duration="343000" />
+      <workItem from="1678882183180" duration="1516000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>
@@ -110,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678812487560</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Infra - formatting and renaming of jaeger container">
+      <created>1678882551528</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1678882551528</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +131,7 @@
     <MESSAGE value="Infra - tweak to comments" />
     <MESSAGE value="Infra - removed need for host to have mongo client utils" />
     <MESSAGE value="Infra - small fix to mongo exec" />
-    <option name="LAST_COMMIT_MESSAGE" value="Infra - small fix to mongo exec" />
+    <MESSAGE value="Infra - formatting and renaming of jaeger container" />
+    <option name="LAST_COMMIT_MESSAGE" value="Infra - formatting and renaming of jaeger container" />
   </component>
 </project>

@@ -9,21 +9,22 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
 Wants=network-online.target docker.socket
-Requires=docker.socket
+Requires=docker.socket open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dmongodb.service
 
 [Service]
 Type=simple
 Restart=always
 # TODO:: rework?
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_base_station 2> /dev/null || /usr/bin/docker run --name oqm_base_station \
-                                                                                                              -p 80:8080 \
-                                                                                                               --env-file /etc/oqm/serviceConfig/core-base+station/config.list \
-                                                                                                               --env-file /etc/oqm/serviceConfig/infraConfig.list \
-                                                                                                               --add-host host.docker.internal:host-gateway \
-                                                                                                               -d ebprod/open-qm-base-station:${version}"
-ExecStart=/usr/bin/docker start -a oqm_base_station
-ExecStop=/usr/bin/docker stop -t 10 oqm_base_station
-ExecStopPost=/usr/bin/docker rm oqm_base_station
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_core_base_station || echo 'Could not stop base station container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_core_base_station || echo 'Could not remove base station container'"
+ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
+                                        -p 80:8080 \
+                                        --env-file /etc/oqm/serviceConfig/core-base+station/config.list \
+                                        --env-file /etc/oqm/serviceConfig/infraConfig.list \
+                                        --add-host host.docker.internal:host-gateway \
+                                        ebprod/open-qm-base-station:${version}"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_core_base_station || echo 'Could not stop base station container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_core_base_station || echo 'Could not remove base station container'"
 
 [Install]
 WantedBy=multi-user.target
