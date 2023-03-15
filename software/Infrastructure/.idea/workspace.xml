@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" beforeDir="false" afterPath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +58,8 @@
       <workItem from="1678198645149" duration="5092000" />
       <workItem from="1678745652528" duration="1893000" />
       <workItem from="1678804475593" duration="9715000" />
-      <workItem from="1678840088100" duration="1551000" />
+      <workItem from="1678840088100" duration="1721000" />
+      <workItem from="1678882183180" duration="343000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>
