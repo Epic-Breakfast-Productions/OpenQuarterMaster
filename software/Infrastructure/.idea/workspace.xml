@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="">
+    <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="Infra - renaming infra service containers">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/artemis/open+quarter+master-infra-artemis.service" beforeDir="false" afterPath="$PROJECT_DIR$/artemis/open+quarter+master-infra-artemis.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" beforeDir="false" afterPath="$PROJECT_DIR$/jaeger/open+quarter+master-infra-jaeger.service" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" beforeDir="false" afterPath="$PROJECT_DIR$/mongo/open+quarter+master-infra-mongodb.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" beforeDir="false" afterPath="$PROJECT_DIR$/otel/open+quarter+master-infra-otel.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prometheus/open+quarter+master-infra-prometheus.service" beforeDir="false" afterPath="$PROJECT_DIR$/prometheus/open+quarter+master-infra-prometheus.service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/open+quarter+master-core-base+station.service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/makeInstallers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/makeInstallers.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +60,7 @@
       <workItem from="1678745652528" duration="1893000" />
       <workItem from="1678804475593" duration="9715000" />
       <workItem from="1678840088100" duration="1721000" />
-      <workItem from="1678882183180" duration="3505000" />
+      <workItem from="1678882183180" duration="6064000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>
@@ -122,7 +118,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678882551528</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Infra - renaming infra service containers">
+      <created>1678886214177</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1678886214177</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,6 +140,7 @@
     <MESSAGE value="Infra - removed need for host to have mongo client utils" />
     <MESSAGE value="Infra - small fix to mongo exec" />
     <MESSAGE value="Infra - formatting and renaming of jaeger container" />
-    <option name="LAST_COMMIT_MESSAGE" value="Infra - formatting and renaming of jaeger container" />
+    <MESSAGE value="Infra - renaming infra service containers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Infra - renaming infra service containers" />
   </component>
 </project>
