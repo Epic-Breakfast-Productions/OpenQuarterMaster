@@ -14,7 +14,13 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_base_station 2> /dev/null || /usr/bin/docker run --name oqm_base_station -p 80:8080 --env-file /etc/oqm/serviceConfig/core-base+station/config.list --env-file /etc/oqm/serviceConfig/infraConfig.list --add-host host.docker.internal:host-gateway -d ebprod/open-qm-base-station:${version}"
+# TODO:: rework?
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_base_station 2> /dev/null || /usr/bin/docker run --name oqm_base_station \
+                                                                                                              -p 80:8080 \
+                                                                                                               --env-file /etc/oqm/serviceConfig/core-base+station/config.list \
+                                                                                                               --env-file /etc/oqm/serviceConfig/infraConfig.list \
+                                                                                                               --add-host host.docker.internal:host-gateway \
+                                                                                                               -d ebprod/open-qm-base-station:${version}"
 ExecStart=/usr/bin/docker start -a oqm_base_station
 ExecStop=/usr/bin/docker stop -t 10 oqm_base_station
 ExecStopPost=/usr/bin/docker rm oqm_base_station
