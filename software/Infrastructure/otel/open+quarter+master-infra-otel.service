@@ -17,10 +17,10 @@ Requires=docker.socket
 Type=simple
 Restart=always
 
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_otel || echo 'Could not stop otel container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_otel || echo 'Could not remove otel container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_otel || echo 'Could not stop otel container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_otel || echo 'Could not remove otel container'"
 
-ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null || \
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_otel 2> /dev/null || \
                        /usr/bin/docker run \
                            --name oqm_otel \
                            -p 1888:1888 \
@@ -34,8 +34,8 @@ ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_otel 2> /dev/null 
                            --add-host host.docker.internal:host-gateway \
                            otel/opentelemetry-collector:0.72.0"
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_otel || echo 'Could not stop otel container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_otel || echo 'Could not remove otel container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_otel || echo 'Could not stop otel container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_infra_otel || echo 'Could not remove otel container'"
 
 [Install]
 WantedBy=multi-user.target

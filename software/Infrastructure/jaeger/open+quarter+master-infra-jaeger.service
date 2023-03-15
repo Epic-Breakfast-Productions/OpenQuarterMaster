@@ -18,6 +18,8 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_jaeger || echo 'Could not stop jaeger container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_jaeger || echo 'Could not remove jaeger container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run \
                                                                                                  --name oqm_infra_jaeger \
                                                                                                  -p 8090:16686 \
