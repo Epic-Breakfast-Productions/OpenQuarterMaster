@@ -15,6 +15,7 @@
 #   - jq
 #   - pandoc
 #
+# TODO:: move src to build folder, do replacements there
 
 echo "Script location: ${BASH_SOURCE}"
 cd "$(dirname "$0")" || exit
@@ -26,10 +27,13 @@ debDir="StationCaptainDeb"
 rpmDir="StationCaptainRpm"
 outputDir="bin/"
 
+sourcesDir="oqm-captain-$(cat "$configFile" | jq -r '.version')"
+
 #
 # Clean
 #
 
+rm -rf "$sourcesDir"
 rm -rf "$buildDir"
 rm -rf "$outputDir"
 
@@ -104,11 +108,16 @@ mkdir "$buildDir/$rpmDir/SPECS"
 mkdir "$buildDir/$rpmDir/SRPMS"
 
 # make tar gz
-sourcesDir="oqm-captain-$(cat "$configFile" | jq -r '.version')"
+
 cp -r "src" "$sourcesDir"
+
+sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
+sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
+
 sourcesBundle="$sourcesDir.tar.gz"
 tar cvzf "$sourcesBundle" "$sourcesDir"
 mv "$sourcesBundle" "$buildDir/$rpmDir/SOURCES"
+
 
 
 cat <<EOT >> "$buildDir/$rpmDir/SPECS/oqm-captain.spec"
@@ -136,7 +145,7 @@ mkdir -p %{buildroot}%{_libdir}/oqm/station-captain
 mkdir -p %{buildroot}/etc/oqm/static
 mkdir -p %{buildroot}/usr/share/applications
 
-install -m 755 -D src/oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
+install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
 
 %clean
 rm -rf ${buildroot}
@@ -154,4 +163,4 @@ rpmlint "$buildDir/$rpmDir/SPECS/oqm-captain.spec"
 
 rpmbuild --define "_topdir `pwd`/$buildDir/$rpmDir/" -bb "$buildDir/$rpmDir/SPECS/oqm-captain.spec"
 
-cp "$buildDir/$rpmDir/SRPMS/*.rpm" "$outputDir"
+cp -a "$buildDir/$rpmDir/RPMS/noarch/." "$outputDir"

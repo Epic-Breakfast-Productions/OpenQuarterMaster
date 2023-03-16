@@ -5,152 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="Infra - reformat of mongodb command">
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.idea/Station-Captain.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/docs/Features.adoc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/docs/Quickstart Guide.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/docs/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/docs/User Guide.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/makeInstallers.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/integration/oqm-captain-user-guide.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/integration/oqm-captain.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/integration/oqm-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/integration/oqm-sc-guide-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/integration/oqm-sc-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/package-management.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/prog-flow.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/release-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/user-interaction.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/lib/version-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-captain.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-station-captain-help.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain-user-guide.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-guide-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/package-management.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/prog-flow.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/release-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/user-interaction.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/version-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-captain.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-station-captain-help.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/properties.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/integration/oqm-captain-user-guide.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/integration/oqm-captain.desktop" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/integration/oqm-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/integration/oqm-sc-guide-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/integration/oqm-sc-icon.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/package-management.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/prog-flow.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/release-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/user-interaction.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/lib/version-utils.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/oqm-captain.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/src/oqm-station-captain-help.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/docs/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/docs/tags.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/RunCucumberTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/ContainerConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/FileLocationConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/lifecycle/LifecycleEvents.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/scenarioUtils/AttachUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/ExampleStepDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/features/InstallerSteps.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ContainerDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ScInstallDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ShellCommandDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/BaseStepDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/TestContext.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/containerUtils/ContainerUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/shellUtils/ShellProcessResults.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/cucumber.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/features/1 - Installing/1.1-Installers.feature" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/features/example.feature" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/junit-platform.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/log4j2.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.idea/Station Captain.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/docs/Features.adoc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/docs/Quickstart Guide.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/docs/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/docs/User Guide.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/makeInstallers.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/properties.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-captain-user-guide.desktop" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-captain.desktop" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-sc-guide-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-sc-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/package-management.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/prog-flow.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/release-utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/user-interaction.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/lib/version-utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/oqm-captain.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/src/oqm-station-captain-help.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/docs/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/docs/tags.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/RunCucumberTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/ContainerConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/FileLocationConstants.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/lifecycle/LifecycleEvents.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/scenarioUtils/AttachUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/ExampleStepDefinitions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/features/InstallerSteps.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ContainerDefinitions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ScInstallDefinitions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/stepDefinitions/shared/ShellCommandDefinitions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/BaseStepDefinitions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/TestContext.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/containerUtils/ContainerUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/shellUtils/ShellProcessResults.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/resources/cucumber.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/resources/features/1 - Installing/1.1-Installers.feature" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/resources/features/example.feature" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/resources/junit-platform.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station Captain/stationCaptainTest/src/test/resources/log4j2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/makeInstallers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/makeInstallers.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-captain.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-captain.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain-user-guide.desktop" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain.desktop" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-guide-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/package-management.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/prog-flow.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/release-utils.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/user-interaction.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/utils.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/version-utils.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-captain.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-station-captain-help.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,7 +74,7 @@
       <workItem from="1678804475593" duration="9715000" />
       <workItem from="1678840088100" duration="1721000" />
       <workItem from="1678882183180" duration="7423000" />
-      <workItem from="1678997738794" duration="668000" />
+      <workItem from="1678997738794" duration="1267000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>

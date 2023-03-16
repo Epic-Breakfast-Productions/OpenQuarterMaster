@@ -1,7 +1,0 @@
-Help text for OQM Station Captain
-
-For full documentation, bug reports, or anything else go to our Git Hub:
-
-https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-
-Run 'oqm-captain -h' for help running the utility.
