@@ -12,7 +12,7 @@
 
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
-**For a quick start running on your own computer, check out [Station Captain](software/Station%20Captain)**
+**For a quick start running on your own computer, check out [Station Captain](software/Station-Captain)**
 
 See the [software](software) folder for more information!
 

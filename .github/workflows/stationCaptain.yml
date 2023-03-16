@@ -8,19 +8,19 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/Station Captain/**"
+      - "software/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/Station Captain/**"
+      - "software/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/Station Captain"
+    working-directory: "software/Station-Captain"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -40,7 +40,7 @@ jobs:
         run: sudo apt-get install -y dpkg-dev jq
       - name: Build with Maven
         run: ./mvnw verify
-        working-directory: software/Station Captain/stationCaptainTest
+        working-directory: software/Station-Captain/stationCaptainTest
     
           # Runs a single command using the runners shell
       - name: Make Installers
@@ -49,14 +49,14 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Installers Produced
-          path: "software/Station Captain/bin"
+          path: "software/Station-Captain/bin"
       - name: Archive Cucumber Reports
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports
-          path: "software/Station Captain/stationCaptainTest/target/test-reports/*"
+          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
       - name: Cucumber Test Results to Annotation
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station Captain/stationCaptainTest/target/test-reports/report.json"
+          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
