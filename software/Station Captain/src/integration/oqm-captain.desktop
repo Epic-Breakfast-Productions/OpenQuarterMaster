@@ -22,5 +22,3 @@ Type=Application
  
 ## States the categories in which this entry should be shown menu ##
 Categories=System;
- 
-#X-Ubuntu-Gettext-Domain=usbcreator
