@@ -1,5 +1,7 @@
 # Open Quarter Master Station Captain Guide
 
+## Running
+
 ## Menu System
 
 This is an explanation of the menus.

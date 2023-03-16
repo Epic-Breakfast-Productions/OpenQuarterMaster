@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="Infra - reformat of mongodb command">
+      <change afterPath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-captain-user-guide.desktop" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-sc-guide-icon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-sc-icon.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station Captain/docs/User Guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Station Captain/docs/User Guide.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station Captain/makeInstallers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../Station Captain/makeInstallers.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station Captain/src/oqm-captain.desktop" beforeDir="false" afterPath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-captain.desktop" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station Captain/src/oqm-icon.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../Station Captain/src/integration/oqm-icon.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/META-INF/resources/res/css/bootstrap-adjust.css" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/META-INF/resources/res/css/bootstrap-adjust.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" beforeDir="false" afterPath="$PROJECT_DIR$/../open-qm-base-station/src/main/resources/templates/webui/mainWebPageTemplate.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +66,7 @@
       <workItem from="1678745652528" duration="1893000" />
       <workItem from="1678804475593" duration="9715000" />
       <workItem from="1678840088100" duration="1721000" />
-      <workItem from="1678882183180" duration="6818000" />
+      <workItem from="1678882183180" duration="7423000" />
     </task>
     <task id="LOCAL-00001" summary="Fruitless attempts at getting otel to work">
       <created>1677814977881</created>

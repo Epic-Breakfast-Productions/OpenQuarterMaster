@@ -1,26 +1,26 @@
 [Desktop Entry]
 ##  The name of the application ##
-Name=Open QuarterMaster Station Captain
-GenericName=Open QuarterMaster Station Captain
+Name=Station Captain User Guide - Open QuarterMaster
+GenericName=Station Captain User Guide - Open QuarterMaster
  
 ## A comment which act as a tooltip ##
-Comment=Management utility to manage an installation of Open QuarterMaster
+Comment=User guide for Open QuarterMaster station captain.
  
 ## The executable of the application with optional args ##
 ## You can state full path too ##
-Exec=sudo oqm-captain
+Exec=browse /etc/oqm/static/stationCaptainUserGuide.html
  
 ## State the name of the icon that will be used to display this entry ##
-Icon=/etc/oqm/static/oqm-icon.svg
+Icon=/etc/oqm/static/oqm-sc-guide-icon.svg
  
 ## Is it a terminal app? For example htop will be set as Terminal=True ##
 ## Then default terminal app will be used to open the 'htop' ##
-Terminal=true
+Terminal=false
  
 ##  The type as listed  ##
 Type=Application
  
 ## States the categories in which this entry should be shown menu ##
-Categories=System;
+Categories=System;Documentation
  
 #X-Ubuntu-Gettext-Domain=usbcreator
