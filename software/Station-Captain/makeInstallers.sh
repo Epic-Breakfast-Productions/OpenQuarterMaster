@@ -95,7 +95,9 @@ License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
 dpkg-deb --build "$buildDir/$debDir" "$outputDir"
-
+if [ $? -ne 0 ]; then
+	exit 1;
+fi
 
 #
 # RPM build
@@ -112,7 +114,8 @@ mkdir "$buildDir/$rpmDir/SRPMS"
 cp -r "src" "$sourcesDir"
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
-sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
+sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
+pandoc -f gfm docs/User\ Guide.md > "$sourcesDir/integration/stationCaptainUserGuide.html"
 
 sourcesBundle="$sourcesDir.tar.gz"
 tar cvzf "$sourcesBundle" "$sourcesDir"
@@ -130,7 +133,7 @@ BuildArch:      noarch
 License:        GPL
 Source0:        $sourcesBundle
 
-Requires:       bash, docker
+Requires:       $(cat "$configFile" | jq -r '.dependencies.rpm')
 
 %description
 A demo RPM build
@@ -146,12 +149,30 @@ mkdir -p %{buildroot}/etc/oqm/static
 mkdir -p %{buildroot}/usr/share/applications
 
 install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
+install -m 755 -D lib/* %{buildroot}%{_libdir}/oqm/station-captain/
+
+install -m 755 -D oqm-station-captain-help.txt %{buildroot}/etc/oqm/static/
+install -m 755 -D integration/stationCaptainUserGuide.html %{buildroot}/etc/oqm/static/
+install -m 755 -D integration/oqm-icon.svg %{buildroot}/etc/oqm/static/
+install -m 755 -D integration/oqm-sc-icon.svg %{buildroot}/etc/oqm/static/
+install -m 755 -D integration/oqm-sc-guide-icon.svg %{buildroot}/etc/oqm/static/
+
+install -m 755 -D integration/oqm-captain.desktop %{buildroot}/usr/share/applications/
+install -m 755 -D integration/oqm-captain-user-guide.desktop %{buildroot}/usr/share/applications/
 
 %clean
 rm -rf ${buildroot}
 
 %files
 %{_bindir}/oqm-captain
+%{_libdir}/oqm/station-captain/*
+/etc/oqm/static/oqm-station-captain-help.txt
+/etc/oqm/static/stationCaptainUserGuide.html
+/etc/oqm/static/oqm-icon.svg
+/etc/oqm/static/oqm-sc-icon.svg
+/etc/oqm/static/oqm-sc-guide-icon.svg
+/usr/share/applications/oqm-captain.desktop
+/usr/share/applications/oqm-captain-user-guide.desktop
 
 %changelog
 
@@ -164,3 +185,6 @@ rpmlint "$buildDir/$rpmDir/SPECS/oqm-captain.spec"
 rpmbuild --define "_topdir `pwd`/$buildDir/$rpmDir/" -bb "$buildDir/$rpmDir/SPECS/oqm-captain.spec"
 
 cp -a "$buildDir/$rpmDir/RPMS/noarch/." "$outputDir"
+if [ $? -ne 0 ]; then
+	exit 1;
+fi

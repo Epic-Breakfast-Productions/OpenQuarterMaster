@@ -8,7 +8,7 @@ Comment=User guide for Open QuarterMaster station captain.
  
 ## The executable of the application with optional args ##
 ## You can state full path too ##
-Exec=browse /etc/oqm/static/stationCaptainUserGuide.html
+Exec=xdg-open /etc/oqm/static/stationCaptainUserGuide.html
  
 ## State the name of the icon that will be used to display this entry ##
 Icon=/etc/oqm/static/oqm-sc-guide-icon.svg
@@ -21,4 +21,4 @@ Terminal=false
 Type=Application
  
 ## States the categories in which this entry should be shown menu ##
-Categories=System;Documentation
+Categories=System, Documentation

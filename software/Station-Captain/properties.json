@@ -9,7 +9,7 @@
 	"dependencies": {
 		"deb":"bash, curl, jq, hwinfo, moreutils, dialog, docker, docker.io",
 		"deb-maybe":"unattended-upgrades, apt-listchanges, bsd-mailx",
-		"rpm":"bash, hwinfo"
+		"rpm":"bash, curl, jq, hwinfo, moreutils, dialog, docker"
 	},
 	"copyright": {
 		"contact":"Greg Stewart <contact@gjstewart.net>",

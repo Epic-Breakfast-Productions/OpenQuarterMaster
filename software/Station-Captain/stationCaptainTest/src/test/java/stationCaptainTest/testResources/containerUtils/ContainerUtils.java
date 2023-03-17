@@ -17,12 +17,21 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static stationCaptainTest.constants.ContainerConstants.UBUNTU_20_04_IMAGE;
 
 @Slf4j
 public final class ContainerUtils {
 	
 	public static Container.ExecResult installStationCaptain(TestContext context, GenericContainer<?> container, boolean check) throws IOException, InterruptedException {
-		Container.ExecResult result = container.execInContainer("apt-get", "install", "-y", (String)context.getData().get(ContainerConstants.CONFIG_KEY_INSTALLER_LOCATION));
+		Container.ExecResult result;
+		
+		if(container.getDockerImageName().startsWith("ubuntu")){
+			result = container.execInContainer("apt-get", "install", "-y", (String)context.getData().get(ContainerConstants.CONFIG_KEY_INSTALLER_LOCATION));
+		} else if(container.getDockerImageName().startsWith("fedora")){
+			result = container.execInContainer("yum", "install", "-y", (String)context.getData().get(ContainerConstants.CONFIG_KEY_INSTALLER_LOCATION));
+		} else {
+			throw new IllegalStateException("Unexpected value: " + container.getDockerImageName());
+		}
 		
 		if(check){
 			assertEquals(0, result.getExitCode());
@@ -88,7 +97,7 @@ public final class ContainerUtils {
 		}
 		
 		DockerImageName dockerImageName = switch (os){
-			case "ubuntu", "ubuntu 20.04" -> ContainerConstants.UBUNTU_20_04_IMAGE;
+			case "ubuntu", "ubuntu 20.04" -> UBUNTU_20_04_IMAGE;
 			case "fedora", "fedora 37" -> ContainerConstants.FEDORA_37_IMAGE;
 			default -> throw new IllegalArgumentException("Unsupported OS given: " + os);
 		};

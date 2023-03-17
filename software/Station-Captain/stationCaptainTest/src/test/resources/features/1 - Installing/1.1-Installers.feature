@@ -14,7 +14,7 @@ Feature: 1.1 - Installers
 		Then command returns successfully
 		And the following installers were created:
 			| deb |
-#      | rpm |
+			| rpm |
 
 	@feature-1.1.2
 	Scenario Outline: Installers used
@@ -30,4 +30,4 @@ Feature: 1.1 - Installers
 		Examples:
 			| installerType | os     |
 			| deb           | ubuntu |
-#			| rpm           | fedora |
+			| rpm           | fedora |

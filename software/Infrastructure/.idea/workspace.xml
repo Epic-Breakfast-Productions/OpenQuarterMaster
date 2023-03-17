@@ -7,20 +7,11 @@
     <list default="true" id="23bf8f65-3106-4e05-bdc6-7173cc69a0dd" name="Changes" comment="Infra - reformat of mongodb command">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Station-Captain/makeInstallers.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/makeInstallers.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-captain.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/oqm-captain.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain-user-guide.desktop" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-captain.desktop" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-guide-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/integration/oqm-sc-icon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/package-management.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/prog-flow.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/release-utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/user-interaction.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/lib/version-utils.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-captain.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Station-Captain/oqm-captain-1.0.11/src/oqm-station-captain-help.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/ContainerConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/constants/ContainerConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/containerUtils/ContainerUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/java/stationCaptainTest/testResources/containerUtils/ContainerUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/features/1 - Installing/1.1-Installers.feature" beforeDir="false" afterPath="$PROJECT_DIR$/../Station-Captain/stationCaptainTest/src/test/resources/features/1 - Installing/1.1-Installers.feature" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
