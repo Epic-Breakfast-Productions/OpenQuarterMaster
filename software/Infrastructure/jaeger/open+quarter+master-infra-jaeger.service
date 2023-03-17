@@ -18,9 +18,17 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run --name oqm_jaeger -p 8090:16686 -p 8091:14268 -p 8096:4317 -e COLLECTOR_OTLP_ENABLED=true -d jaegertracing/all-in-one:1.42"
-ExecStart=/usr/bin/docker start -a oqm_jaeger
-ExecStop=/usr/bin/docker stop -t 10 oqm_jaeger
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_jaeger || echo 'Could not stop jaeger container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_jaeger || echo 'Could not remove jaeger container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run \
+                                                                                                 --name oqm_infra_jaeger \
+                                                                                                 -p 8090:16686 \
+                                                                                                 -p 8091:14268 \
+                                                                                                 -p 8096:4317 \
+                                                                                                 -e COLLECTOR_OTLP_ENABLED=true \
+                                                                                                 -d jaegertracing/all-in-one:1.42"
+ExecStart=/usr/bin/docker start -a oqm_infra_jaeger
+ExecStop=/usr/bin/docker stop -t 10 oqm_infra_jaeger
 
 [Install]
 WantedBy=multi-user.target

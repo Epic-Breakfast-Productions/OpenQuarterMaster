@@ -16,9 +16,9 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_artemis 2> /dev/null || /usr/bin/docker run --name oqm_artemis -p 8095:8161 -p 61616:61616 -p 5672:5672 -e AMQ_USER=quarkus -e AMQ_PASSWORD=quarkus quay.io/artemiscloud/activemq-artemis-broker:1.0.11"
-ExecStart=/usr/bin/docker start -a oqm_artemis
-ExecStop=/usr/bin/docker stop -t 10 oqm_artemis
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_artemis 2> /dev/null || /usr/bin/docker run --name oqm_infra_artemis -p 8095:8161 -p 61616:61616 -p 5672:5672 -e AMQ_USER=quarkus -e AMQ_PASSWORD=quarkus quay.io/artemiscloud/activemq-artemis-broker:1.0.11"
+ExecStart=/usr/bin/docker start -a oqm_infra_artemis
+ExecStop=/usr/bin/docker stop -t 10 oqm_infra_artemis
 
 [Install]
 WantedBy=multi-user.target
