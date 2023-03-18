@@ -35,17 +35,26 @@
 			Item Find
 		</h2>
 		<div class="row">
-			<div class="col-5">
-				<div class="input-group">
-					<span class="input-group-text" id="quickSearchBarcodeInputHelp">{#icons/barcode}{/icons/barcode}</span>
-					<input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" id="quickSearchBarcodeInput" aria-describedby="quickSearchBarcodeInputHelp">
-				</div>
+			<div class="col-3">
+				<form id="findItemByBarcodeForm">
+					<div class="input-group">
+						<span class="input-group-text" id="quickSearchBarcodeInputHelp">{#icons/barcode}{/icons/barcode}</span>
+						<input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" id="quickSearchBarcodeInput" aria-describedby="quickSearchBarcodeInputHelp" name="barcode" required>
+						<button type="submit" class="btn btn-success">{#icons/search}{/icons/search}</button>
+					</div>
+				</form>
 			</div>
-			<div class="col-2 text-center">
+			<div class="col text-center">
 				or
 			</div>
-			<div class="col-5">
-				<button class="btn btn-primary">{#icons/search}{/icons/search} Item Search</button>
+			<div class="col-3 d-grid gap-2">
+				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal" onclick="ItemSearchSelect.itemSearchSelectForm.submit();">{#icons/search}{/icons/search} Item Search</button>
+			</div>
+			<div class="col text-center">
+				or
+			</div>
+			<div class="col-3 d-grid gap-2">
+				<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item</button>
 			</div>
 		</div>
 		<hr />
@@ -54,7 +63,46 @@
 		</h2>
 		
 		...
+		
+		{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
+		{/inputs/units/unitOptionsHidden}
+		{#inputs/attInputHidden}
+		{/inputs/attInputHidden}
+		{#inputs/keywordInputHidden}
+		{/inputs/keywordInputHidden}
+		{#search/image/imageSelectFormInputHidden}
+		{/search/image/imageSelectFormInputHidden}
 	{/pageContent}
+	{#modals}
+		{#itemAddEditModal}{/itemAddEditModal}
+		{#search/item/itemSearchSelectModal otherModalId=""}
+		{/search/item/itemSearchSelectModal}
+	{/modals}
+	{#scripts}
+		<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+		<script src="/res/js/obj/media/imageAdd.js"></script>
+		<script src="/res/js/obj/media/imageAddFromSelect.js"></script>
+		<script src="/res/js/search.js"></script>
+		<script src="/res/js/obj/item/itemSearchSelect.js"></script>
+		<script src="/res/js/historySearch.js"></script>
+		<script src="/res/js/obj/objEdit.js"></script>
+		<script src="/res/js/obj/objView.js"></script>
+		<script src="/res/js/storedTypeUtils.js"></script>
+		<script src="/res/js/obj/media/imageSearchSelect.js"></script>
+		<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+		<script src="/res/js/obj/units.js"></script>
+		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/storageBlock/capacities.js"></script>
+		<script src="/res/js/carousel.js"></script>
+		<script src="/res/js/item/ItemEditing.js"></script>
+		<script src="/res/js/item/ItemAddSubTrans.js"></script>
+		<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+		<script src="/res/js/obj/itemCategoryView.js"></script>
+		<script src="/res/js/textCopy.js"></script>
+		<script src="/res/js/item/extItemSearch.js"></script>
+		<script src="/res/js/obj/item/itemAddEdit.js"></script>
+		<script src="/res/js/obj/item/itemView.js"></script>
+	{/scripts}
 	
 	{#pageScript}
 		<script>
@@ -84,12 +132,38 @@
 				//TODO:: call endpoint to apply
 			}
 			
+			function itemSelected(itemName, itemId){
+				console.log("Got item: " + itemId);
+				
+			}
+			ItemSearchSelect.selectItem = itemSelected;
+			ItemAddEdit.itemAdded = itemSelected;
 			
-			
-			
-			
-			
-			
+			var findItemByBarcodeForm = $("#findItemByBarcodeForm");
+			var findItemBarcodeInput = findItemByBarcodeForm.find("input[name=barcode]");
+			findItemByBarcodeForm.on("submit", function (e){
+				e.preventDefault();
+				let barcode = findItemBarcodeInput.val();
+				console.log("Searching for item by barcode: " + barcode);
+				
+				let searchParams = new URLSearchParams();
+				searchParams.set("itemBarcode", barcode);
+				
+				doRestCall({
+					url: "/api/v1/inventory/item?"+searchParams.toString(),
+					done: async function (data) {
+						if(!data.length){
+							console.log("No item with barcode found.");
+							alert("No item with barcode found.");
+							//TODO:: tell user nothing found
+							//  data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="Not Found" data-bs-content=""
+							
+							return;
+						}
+						itemSelected(data[0].name, data[0].id);
+					}
+				});
+			});
 		</script>
 	{/pageScript}
 {/include}

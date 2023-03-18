@@ -10,10 +10,15 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
+
 @ToString(callSuper = true)
 @Getter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
+	@QueryParam("itemBarcode") String itemBarcode;
+	
+	
 	//TODO:: object specific fields, add to bson filter list
 	
 	@HeaderParam("accept") String acceptHeaderVal;
@@ -27,9 +32,14 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.getName() != null && !this.getName().isBlank()) {
+		if (this.hasValue(this.getName())) {
 			filters.add(
 				SearchUtils.getBasicSearchFilter("name", this.getName())
+			);
+		}
+		if (this.hasValue(this.getItemBarcode())) {
+			filters.add(
+				eq("barcode", this.getItemBarcode())
 			);
 		}
 		

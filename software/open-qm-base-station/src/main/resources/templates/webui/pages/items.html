@@ -157,7 +157,7 @@ function removeItem(itemId){
         },
         fail: function(data) {
             console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-            addMessageToDiv(addEditItemFormMessages, "danger", "Failed to remove item.", "Failed", null);
+            addMessageToDiv(messageDiv, "danger", "Failed to remove item.", "Failed", null);
         }
     });
 }
