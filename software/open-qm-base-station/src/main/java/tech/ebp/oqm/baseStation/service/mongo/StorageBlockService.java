@@ -15,7 +15,7 @@ import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
+import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -128,7 +128,7 @@ public class StorageBlockService extends MongoHistoriedObjectService<StorageBloc
 		output.add(results.iterator());
 		
 		if (!onlyInclude.isEmpty()) {
-			output.cleanupStorageBlockTreeNode(onlyInclude);
+			output.cleanupTreeNodes(onlyInclude);
 		}
 		
 		return output;
