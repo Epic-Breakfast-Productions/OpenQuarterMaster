@@ -356,7 +356,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No items found from query given.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.APPLICATION_JSON})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public StorageBlockTree tree(
 		@Context SecurityContext securityContext,
