@@ -39,7 +39,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-annotations'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.6'
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
 
 	//if need ObjectIds, BsonIgnore
 //	implementation 'org.mongodb:bson:4.4.0'
