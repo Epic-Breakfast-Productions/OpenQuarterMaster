@@ -364,7 +364,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
 		logRequestContext(this.getJwt(), securityContext);
-		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
+		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(onlyInclude);
 	}
 	
 	

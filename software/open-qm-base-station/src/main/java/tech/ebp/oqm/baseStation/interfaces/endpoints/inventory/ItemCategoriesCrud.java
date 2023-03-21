@@ -26,6 +26,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -332,38 +333,38 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	}
 	
 	//TODO:: this
-//	@GET
-//	@Path("tree")
-//	@Operation(
-//		summary = "Gets a tree of the item categories."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Tree retrieved.",
-//		content = {
-//			@Content(
-//				mediaType = "application/json",
-//				schema = @Schema(
-//					implementation = StorageBlockTree.class
-//				)
-//			)
-//		}
-//	)
-//	@APIResponse(
-//		responseCode = "204",
-//		description = "No items found from query given.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-//	@RolesAllowed(Roles.INVENTORY_VIEW)
-//	public StorageBlockTree tree(
-//		@Context SecurityContext securityContext,
-//		//for actual queries
-//		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
-//	) {
-//		logRequestContext(this.getJwt(), securityContext);
-//		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
-//	}
+	@GET
+	@Path("tree")
+	@Operation(
+		summary = "Gets a tree of the item categories."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Tree retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					implementation = ItemCategoryTree.class
+				)
+			)
+		}
+	)
+	@APIResponse(
+		responseCode = "204",
+		description = "No items found from query given.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public ItemCategoryTree tree(
+		@Context SecurityContext securityContext,
+		//for actual queries
+		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		return (ItemCategoryTree) ((ItemCategoryService)this.getObjectService()).getTree(onlyInclude);
+	}
 	
 	
 	//<editor-fold desc="History">
@@ -442,36 +443,36 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	//</editor-fold>
 	
 	//TODO:: this
-//	@GET
-//	@Path("{id}/children")
-//	@Operation(
-//		summary = "Gets children of a particular item category."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Blocks retrieved.",
-//		content = {
-//			@Content(
-//				mediaType = "application/json",
-//				schema = @Schema(
-//					type = SchemaType.ARRAY,
-//					implementation = StorageBlock.class
-//				)
-//			)
-//		},
-//		headers = {
-//			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-//		}
-//	)
-//	@Produces({MediaType.APPLICATION_JSON})
-//	@RolesAllowed(Roles.INVENTORY_VIEW)
-//	public Response getChildrenOfBlock(
-//		@Context SecurityContext securityContext,
-//		@PathParam("id") String storageBlockId
-//	) {
-//		logRequestContext(this.getJwt(), securityContext);
-//		log.info("Getting children of \"{}\"", storageBlockId);
-//		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
-//	}
+	@GET
+	@Path("{id}/children")
+	@Operation(
+		summary = "Gets children of a particular item category."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = ItemCategory.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON})
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public Response getChildrenOfCategory(
+		@Context SecurityContext securityContext,
+		@PathParam("id") String storageBlockId
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		log.info("Getting children of \"{}\"", storageBlockId);
+		return Response.ok(((ItemCategoryService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
+	}
 }
