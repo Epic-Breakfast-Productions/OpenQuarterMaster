@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.storage.storageBlock.tree;
+package tech.ebp.oqm.lib.core.rest.tree;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

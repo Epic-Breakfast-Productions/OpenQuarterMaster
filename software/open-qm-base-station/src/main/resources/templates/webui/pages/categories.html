@@ -96,8 +96,59 @@
         {/modal}
         {#modal id='itemCategoryView' large=true title='Item Category View'}
             <div class="row">
+                {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
-                {!TODO:: display !}
+                    <div class="row">
+                        <div class="card col-sm-12 col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title d-inline">Id:</h5>
+                                <p class="card-text d-inline">
+                                    <small>
+                                        <span id="itemCategoryViewId"></span>{#copyTextButton textContainerId='itemCategoryViewId'}{/copyTextButton}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card col-sm-12 col-md-6">
+                            <div class="card-body" id="itemCategoryColorContainer">
+                                <h5 class="card-title d-inline">Color:</h5>
+                                <p class="card-text d-inline">
+                                    <small>
+                                        <span id="itemCategoryColorVal"></span>
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card col-12">
+                            <div class="card-body">
+                                <h5 class="card-title">Location in Category Tree:</h5>
+                                <div id="itemCategoryViewBreadcrumbContainer">
+                                </div>
+                                <h5 class="card-title">Children:</h5>
+                                <ul class="list-inline">
+                                </ul>
+                                <div id="itemCategoryViewChildrenContainer">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card col-12" id="itemCategoryViewDescriptionContainer">
+                            <div class="card-body">
+                                <h5 class="card-title">Description:</h5>
+                                <div id="itemCategoryViewDescription">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+                {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+            </div>
+            <div class="row">
+                <div class="col">
+                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl='/api/v1/inventory/item-categories/'}{/objView/history/objHistoryView}
                 </div>
             </div>
         {/modal}
@@ -119,6 +170,11 @@
         <script src="/res/js/obj/media/imageAdd.js"></script>
         <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
         <script src="/res/js/textCopy.js"></script>
+        <script src="/lib/treant-js/vendor/raphael.js"></script>
+        <script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+        <script src="/lib/treant-js/vendor/jquery.easing.js"></script>
+        <script src="/lib/treant-js/Treant.js"></script>
+        <script src="/res/js/obj/itemCategory/itemCategoryTree.js"></script>
     {/scripts}
     
     {#pageScript}
@@ -269,21 +325,106 @@
             }
 
             const ItemCategoryView = {
-                viewModal: $("#itemCategoryView"),
+                viewModal: $("#itemCategoryViewModal"),
+                historyView: $("#itemCategoryHistorySearchAccordionCollapse"),
+                modalLabel: $("#itemCategoryViewModalLabel"),
+                catId: $("#itemCategoryViewId"),
+                colorContainer: $("#itemCategoryColorContainer"),
+                color: $("#itemCategoryColorVal"),
+                desc: $("#itemCategoryViewDescription"),
+                descContainer: $("#itemCategoryViewDescriptionContainer"),
+                keywordView: $("#viewKeywordsSection"),
+                attsView: $("#viewAttsSection"),
+                carousel: $("#itemCategoryViewCarousel"),
+                breadcrumbContainer: $("#itemCategoryViewBreadcrumbContainer"),
+                childrenContainer: $("#itemCategoryViewChildrenContainer"),
+                
+                
+                resetView(){
+                    ItemCategoryView.modalLabel.text("Item Category View");
+                    ItemCategoryView.catId.text("");
+                    ItemCategoryView.desc.text("");
+                    ItemCategoryView.descContainer.hide();
+                    ItemCategoryView.color.text("");
+                    ItemCategoryView.colorContainer.removeAttr("style");
+                    ItemCategoryView.breadcrumbContainer.text('');
+                    ItemCategoryView.childrenContainer.text('');
+                    
+                    clearCarousel(ItemCategoryView.carousel);
+                    clearHideKeywordDisplay(ItemCategoryView.keywordView);
+                    clearHideAttDisplay(ItemCategoryView.attsView);
+                    resetHistorySearch(ItemCategoryView.historyView);
+                },
                 async setupItemCategoryView(categoryId){
+                    console.log("Setting up view for item category " + categoryId);
+                    ItemCategoryView.resetView();
+                    addOrReplaceParams("view", categoryId);
+                    ItemCategoryView.catId.text(categoryId);
+                    
                     await doRestCall({
                         url: "/api/v1/inventory/item-categories/" + categoryId,
                         method: "GET",
                         async: false,
-                        done: function (data) {
-                            //TODO:: fill out view, history
+                        done: async function (data) {
+                            let promises = [];
+                            let children = getItemCategoryChildrenData(categoryId);
+                            promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
+                            ItemCategoryView.modalLabel.text(data.name);
+                            promises.push(processImagedObjectImages(data, ItemCategoryView.carousel));
+    
+                            if(data.color) {
+                                ItemCategoryView.color.text(data.color);
+                                ItemCategoryView.colorContainer.css("background-color", data.color);
+                                ItemCategoryView.colorContainer.css("color", data.textColor);
+                            } else {
+                                ItemCategoryView.color.text("None");
+                            }
+                            
+                            if(data.description){
+                                ItemCategoryView.desc.text(data.description);
+                                ItemCategoryView.descContainer.show();
+                            }
+                            
+                            //TODO:: parent (similar to storage)
+                            
+                            processKeywordDisplay(ItemCategoryView.keywordView, data.keywords);
+                            processAttDisplay(ItemCategoryView.attsView, data.attributes);
+    
+                            children = await children;
+                            if(!children.length){
+                                ItemCategoryView.childrenContainer.text("No children!")
+                            } else {
+                                console.log("Processing category children.");
+                                children.forEach(function (child) {
+                                    let newGetParams = new URLSearchParams(window.location.search);
+                                    newGetParams.set("view", child.id)
+            
+                                    let newChildLink = $('<li class="list-inline-item"><a href="/categories?'+newGetParams.toString()+'"></li></a>');
+                                    newChildLink.find("a").text(child.name);
+                                    ItemCategoryView.childrenContainer.append(newChildLink);
+                                });
+                            }
+                            
+                            await Promise.all(promises);
                         },
                         fail: function (data) {
                             console.warn("Bad response from block add attempt: " + JSON.stringify(data));
                         },
                         failMessagesDiv: Category.addEditFormMessages
                     });
+                    setupHistorySearch(ItemCategoryView.historyView, categoryId);
                 }
+            }
+
+            var viewModal = new bootstrap.Modal(ItemCategoryView.viewModal, { });
+
+            ItemCategoryView.viewModal[0].addEventListener("hidden.bs.modal", function (){
+                removeParam("view");
+            });
+
+            if(getParams.has("view")){
+                ItemCategoryView.setupItemCategoryView(getParams.get("view"));
+                viewModal.show();
             }
         </script>
     {/pageScript}

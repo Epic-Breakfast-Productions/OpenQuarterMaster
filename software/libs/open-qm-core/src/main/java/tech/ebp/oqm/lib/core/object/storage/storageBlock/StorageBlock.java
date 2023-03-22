@@ -75,10 +75,6 @@ public class StorageBlock extends ImagedMainObject implements HasParent {
 	@NotNull
 	private List<@NotNull ObjectId> storedCategories = new ArrayList<>();
 	
-	public boolean hasParent() {
-		return this.getParent() != null;
-	}
-	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public String getLabelText() {
 		if (this.getNickname().isBlank()) {

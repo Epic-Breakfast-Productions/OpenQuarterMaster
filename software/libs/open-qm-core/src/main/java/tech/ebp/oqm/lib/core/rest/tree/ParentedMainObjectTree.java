@@ -1,6 +1,7 @@
-package tech.ebp.oqm.lib.core.object.storage.storageBlock.tree;
+package tech.ebp.oqm.lib.core.rest.tree;
 
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.HasParent;
+import tech.ebp.oqm.lib.core.object.MainObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-public class StorageBlockTree {
+public abstract class ParentedMainObjectTree<T extends MainObject & HasParent, N extends ParentedMainObjectTreeNode<T>> {
 	
 	/**
 	 * @param curParent The node we are operating on
@@ -21,29 +22,30 @@ public class StorageBlockTree {
 	 *
 	 * @return If the node given should be removed as well
 	 */
-	private static boolean cleanupTree(StorageBlockTreeNode curParent, Collection<ObjectId> onlyInclude) {
-		if (onlyInclude.contains(curParent.getBlockId())) {
+	private boolean cleanupTree(N curParent, Collection<ObjectId> onlyInclude) {
+		if (onlyInclude.contains(curParent.getObjectId())) {
 			return false;
 		}
 		
-		curParent.getChildren().removeIf(curNode->cleanupTree(curNode, onlyInclude));
+		curParent.getChildren().removeIf(curNode->cleanupTree((N) curNode, onlyInclude));
 		
 		return curParent.getChildren().isEmpty();
 	}
 	
 	@Getter
-	private final Collection<StorageBlockTreeNode> rootNodes = new ArrayList<>();
+	private final Collection<N> rootNodes = new ArrayList<>();
 	@Getter
-	private final Map<ObjectId, StorageBlockTreeNode> nodeMap = new HashMap<>();
-	private final Collection<StorageBlockTreeNode> orphans = new ArrayList<>();
+	private final Map<ObjectId, N> nodeMap = new HashMap<>();
+	private final Collection<N> orphans = new ArrayList<>();
 	
+	protected abstract N newNode(T object);
 	
-	public StorageBlockTree add(StorageBlock block) {
+	public ParentedMainObjectTree<T, N> add(T block) {
 		if (nodeMap.containsKey(block.getId())) {
 			return this;
 		}
 		
-		StorageBlockTreeNode newNode = new StorageBlockTreeNode(block);
+		N newNode = this.newNode(block);
 		
 		this.nodeMap.put(block.getId(), newNode);
 		
@@ -58,9 +60,9 @@ public class StorageBlockTree {
 		}
 		
 		if (this.hasOrphans()) {
-			Iterator<StorageBlockTreeNode> it = this.orphans.iterator();
+			Iterator<N> it = this.orphans.iterator();
 			while (it.hasNext()) {
-				StorageBlockTreeNode cur = it.next();
+				N cur = it.next();
 				
 				if (nodeMap.containsKey(cur.getParentId())) {
 					it.remove();
@@ -72,21 +74,21 @@ public class StorageBlockTree {
 		return this;
 	}
 	
-	public StorageBlockTree add(Collection<StorageBlock> blocks) {
-		for (StorageBlock curBlock : blocks) {
+	public ParentedMainObjectTree<T, N> add(Collection<T> blocks) {
+		for (T curBlock : blocks) {
 			this.add(curBlock);
 		}
 		return this;
 	}
 	
-	public StorageBlockTree add(StorageBlock... blocks) {
+	public ParentedMainObjectTree<T, N> add(T... blocks) {
 		this.add(List.of(blocks));
 		return this;
 	}
 	
-	public StorageBlockTree add(Iterator<StorageBlock> blocks) {
+	public ParentedMainObjectTree<T, N> add(Iterator<T> blocks) {
 		while (blocks.hasNext()) {
-			StorageBlock cur = blocks.next();
+			T cur = blocks.next();
 			this.add(cur);
 		}
 		return this;
@@ -96,16 +98,7 @@ public class StorageBlockTree {
 		return !orphans.isEmpty();
 	}
 	
-	public void cleanupStorageBlockTreeNode(Collection<ObjectId> onlyInclude) {
+	public void cleanupTreeNodes(Collection<ObjectId> onlyInclude) {
 		this.getRootNodes().removeIf(curNode->cleanupTree(curNode, onlyInclude));
 	}
-	
-	//    public Object generateImage(){
-	//        TreeLayout<TextInBox>
-	//
-	//
-	//        return null;
-	//    }
-	
-	
 }

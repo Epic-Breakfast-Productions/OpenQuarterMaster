@@ -47,7 +47,7 @@ function processAttDisplay(container, attributes){
     clearHideAttDisplay(container);
     if(Object.keys(attributes).length > 0){
         console.log("had attributes");
-        viewAttsSection.show();
+        container.show();
         displayAttsIn(container.find('.attsViewContainer'), attributes)
     } else {
         console.log("did not have attributes.");
