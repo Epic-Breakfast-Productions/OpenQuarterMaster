@@ -45,7 +45,7 @@ updates:
     directory: "/software/Station Captain/stationCaptainTest"
     target-branch: "dev"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "area-dependencies"
       - "project-stationCaptain"
