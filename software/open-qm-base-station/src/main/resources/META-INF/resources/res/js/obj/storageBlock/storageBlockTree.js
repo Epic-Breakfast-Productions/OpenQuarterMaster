@@ -65,11 +65,11 @@ function showTree(containerSelector){
 }
 
 function addCrumbs(cur, crumbList, toKeepId){
-    if(cur.blockId != toKeepId){
+    if(cur.objectId != toKeepId){
         let curCrumb = $('<li class="breadcrumb-item"><a href="#"></a></li>');
         curCrumb.find("a").text(cur.blockLabel);
         let newGetParams = new URLSearchParams(window.location.search);
-        newGetParams.set("view", cur.blockId)
+        newGetParams.set("view", cur.objectId)
         curCrumb.find("a").attr("href", "/storage?" + newGetParams.toString());
 
         crumbList.append(curCrumb);

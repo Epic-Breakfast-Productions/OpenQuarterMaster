@@ -126,6 +126,13 @@ Accepts:
                             </div>
                         </div>
                     </div>
+                    <div class="mb-3 row">
+                        <label for="addEditCategoryInput" class="col-form-label col-sm-2">Stored Categories:</label>
+                        <div class="col-sm-10">
+                            {#inputs/categoryInput id="addEditCategoriesInput"}
+                            {/inputs/categoryInput}
+                        </div>
+                    </div>
 
                     {#search/image/imageSelectFormInput}
                     {/search/image/imageSelectFormInput}
@@ -306,6 +313,13 @@ Accepts:
                     </div>
                 </div>
             </div>
+            <div class="card" id="storageBlockViewStoredItemCategoriesContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Stored Item Categories:</h5>
+                    <div id="storageBlockViewStoredItemCategories">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <hr />
@@ -360,18 +374,19 @@ Accepts:
 <script src="/res/js/obj/media/imageSearchSelect.js"></script>
 <script src="/res/js/obj/units.js"></script>
 <script src="/res/js/obj/getters.js"></script>
+<script src="/res/js/obj/itemCategoryView.js"></script>
 <script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
     <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
     <script src="/res/js/obj/media/imageAdd.js"></script>
     <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="/res/js/textCopy.js"></script>
 
 <script src="/lib/treant-js/vendor/raphael.js"></script>
 <script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="/lib/treant-js/vendor/jquery.easing.js"></script>
 <script src="/lib/treant-js/Treant.js"></script>
 <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
-<script src="/res/js/textCopy.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -417,6 +432,7 @@ var addEditDescriptionInput = $("#addEditDescriptionInput");
 var addEditLocationInput = $("#addEditLocationInput");
 var addEditParentInputId = $("#addEditParentInputId");
 var addEditParentInputName = $("#addEditParentInputName");
+var addEditCategoriesInput = $("#addEditCategoriesInput");
 var imagesSelected = $(".imagesSelected");
 var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
 
@@ -438,6 +454,7 @@ function resetAddEdit(){
     keywordInputDiv.text("");
     attInputDiv.text("");
     capacityInputDiv.text("");
+    Dselect.resetDselect(addEditCategoriesInput);
     
     addBulkEnabledInput.prop("checked", false);
     addBulkNumberInput.val(1);
@@ -472,7 +489,7 @@ function setupAddEditForEdit(blockId){
             addEditNicknameInput.text(data.nickname)
             addEditDescriptionInput.text(data.description)
             addEditLocationInput.val(data.location);
-
+            Dselect.setValues(addEditCategoriesInput, data.storedCategories);
             if(data.parent){
                 addEditParentInputId.val(data.parent);
                 getStorageBlockLabel(data.parent, function(parentLabel){
@@ -495,6 +512,7 @@ addEditStorageForm.submit(async function (event) {
         nickname: addEditNicknameInput.val(),
         description: addEditDescriptionInput.val(),
         location: addEditLocationInput.val(),
+        storedCategories: addEditCategoriesInput.val(),
         capacityMeasures: []
     };
     
@@ -600,6 +618,7 @@ var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
+var storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 
 function resetView(){
     storageBlockViewMessages.text("");
@@ -614,6 +633,7 @@ function resetView(){
     
     storageBlockViewCapacity.text('');
     storageBlockViewCapacityContainer.hide();
+    storageBlockViewStoredItemCategories.text('');
     
     resetHistorySearch(storageBlockHistoryAccordionCollapse);
 
@@ -622,6 +642,7 @@ function resetView(){
     clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
+    
 }
 
 function setupView(blockId){
@@ -642,6 +663,7 @@ function setupView(blockId){
             let storageBlockItems = getStorageBlockItemData(blockId);
             processKeywordDisplay(viewKeywordsSection, data.keywords);
             processAttDisplay(viewAttsSection, data.attributes);
+            promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
             
             if(data.nickname){
                 storageBlockViewModalLabel.text(data.label + " / " + data.nickname);

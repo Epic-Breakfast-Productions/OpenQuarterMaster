@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
@@ -44,7 +44,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
  *
  * https://mkyong.com/java/how-to-create-tar-gz-in-java/
  */
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/manage")
 @Tags({@Tag(name = "Inventory Management", description = "Endpoints for inventory management.")})

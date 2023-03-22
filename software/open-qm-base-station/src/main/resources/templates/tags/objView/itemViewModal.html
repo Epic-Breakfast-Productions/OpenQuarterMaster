@@ -1,0 +1,110 @@
+{#modal id='itemView' large=true title='Item View'}
+    <div class="row">
+        <div class="col" id="itemViewMessages"></div>
+    </div>
+<div class="row">
+    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
+    <div class="col">
+        <div class="row">
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Storage Type:</h5>
+                    <p id="itemViewStorageType" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Id:</h5>
+                    <p class="card-text d-inline">
+                        <small>
+                            <span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}
+                        </small>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-12" id="itemViewDescriptionContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Description:</h5>
+                    <div id="itemViewDescription">
+                    </div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewCategoriesContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Categories:</h5>
+                    <p id="itemViewCategories">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Held:</h5>
+                    <p id="itemViewTotal" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewTotalLowStockThresholdContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Low Stock Threshold:</h5>
+                    <p id="itemViewTotalLowStockThreshold" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Value:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Identifying Attribute:</h5>
+                    <p id="itemViewIdentifyingAtt" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewBarcodeContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Barcode:</h5>
+                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
+                </div>
+            </div>
+        </div>
+        <!-- TODO:: add expiry warning duration -->
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col">
+        <div id="itemViewStoredNonePresentContainer">
+            <h4>Nothing Stored</h4>
+        </div>
+        <div id="itemViewStored">
+            <h4>Using <span id="itemViewStoredNum"></span> storage blocks:</h4>
+            <div class="col accordion" id="itemViewStoredAccordion">
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+</div>
+<div class="row">
+    <div class="col">
+        {#objView/history/objHistoryView containerId='itemHistory' objectUrl='/api/v1/inventory/item/'}{/objView/history/objHistoryView}
+    </div>
+</div>
+{/modal}

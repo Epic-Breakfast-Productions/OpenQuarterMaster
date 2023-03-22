@@ -25,10 +25,11 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
 	<link href="/lib/bootstrap/5.2.3/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.3/bootstrap-icons.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
+	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
 	<link rel="stylesheet" href="/res/css/main.css">
 	{#insert styleSheets}{/}
 	<style>
@@ -36,7 +37,7 @@ Ingests:
 		{/}
 	</style>
 </head>
-<body>
+<body class="min-vh-100 vstack">
 <span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
 
 <!-- nav here -->
@@ -76,6 +77,14 @@ Ingests:
 				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
 				{#if page is 'items'}
 					<span class="visually-hidden">(current)</span>
+				{/if}
+			</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link {#if page is 'categories'}active{/if}" href="/categories">
+				{#icons/categories}{/icons/categories} Categories
+				{#if page is 'categories'}
+				<span class="visually-hidden">(current)</span>
 				{/if}
 			</a>
 		</li>
@@ -173,7 +182,7 @@ Ingests:
 	</div>
 </nav>
 {/if}
-<div id="mainContainer" class="container">
+<div id="mainContainer" class="container flex-grow-1">
 	{#if showTitle}
 		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon}{title}</h1>
 		<hr/>
@@ -181,12 +190,13 @@ Ingests:
 	<div id="messageDiv">
 	</div>
 	
-	<main role="main">
+	<main class="" role="main">
 		{#insert pageContent}<h1>No body!</h1>{/}
 	</main>
-	
+</div>
+<footer id="footer" class="container mb-3" role="contentinfo">
 	<hr/>
-	<footer id="footer" class="row mb-3" role="contentinfo">
+	<div class="row">
 		<div class="col-sm-4">
 			<span class="h4">Open QuarterMaster Server</span><br/>
 			&copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
@@ -206,9 +216,9 @@ Ingests:
 				<div class="collapse" id="pageLoadInfoCollapse">
 					<div class="card card-body">
 						Service id: <code class="user-select-all"
-								id="traceServiceName">{config:['quarkus.jaeger.service-name']}</code><br/>
+								id="traceServiceName">{config:['quarkus.application.name']}</code><br/>
 						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
-						<!-- TODO:: link to Jaeger -->
+						<!-- TODO:: link to Jaeger? -->
 					</div>
 				</div>
 			</small>
@@ -235,27 +245,33 @@ Ingests:
 		<div class="col-sm-4">
 			{config:['service.runBy.motd']}
 		</div>
-	</footer>
-</div>
+	</div>
+</footer>
+
+
 <!-- Modals -->
 {#insert modals}{/}
 
 <!-- scripts -->
-<script src="/webjars/jquery/3.6.3/jquery.min.js"></script>
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
+<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="/res/js/spinnerHelpers.js"></script>
 <script src="/res/js/getParamUtils.js"></script>
 <script src="/res/js/pageMessages.js"></script>
+<script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
 <script src="/res/js/main.js"></script>
+<script src="/res/js/icons.js"></script>
 <script>
-	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
 	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 		return new bootstrap.Popover(popoverTriggerEl)
-	})
+	});
+	Dselect.setupPageDselects();
 </script>
 {#insert scripts}{/}
 {!

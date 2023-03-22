@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
@@ -33,7 +33,6 @@ import static com.mongodb.client.model.Filters.exists;
  * TODO::
  *    - Figure out how to handle expired state when adding, updating
  */
-@Traced
 @Slf4j
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch> {
@@ -65,6 +64,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		this.ilsens = ilsens;
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
 		newOrChangedObject.recalculateDerived();
@@ -72,7 +72,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
-	
+	@WithSpan
 	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
 		if(!lowStockEvents.isEmpty()) {
 			for(ItemLowStockEvent event : lowStockEvents) {
@@ -111,6 +111,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
+	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
@@ -138,6 +139,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		ObjectId itemId,
 		ObjectId storageBlockId,
@@ -148,6 +150,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.add(this.get(itemId), storageBlockId, toAdd, entity);
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		String itemId,
 		String storageBlockId,
@@ -158,6 +161,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
+	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
@@ -183,6 +187,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		ObjectId itemId,
 		ObjectId storageBlockId,
@@ -193,6 +198,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.subtract(this.get(itemId), storageBlockId, toAdd, entity);
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		String itemId,
 		String storageBlockId,
@@ -203,6 +209,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
+	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
@@ -231,6 +238,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		ObjectId itemId,
 		ObjectId storageBlockIdFrom,
@@ -248,6 +256,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 	}
 	
+	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		String itemId,
 		String storageBlockIdFrom,
@@ -265,6 +274,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 	}
 	
+	@WithSpan
 	public List<InventoryItem> getItemsInBlock(ObjectId storageBlockId) {
 		return this.list(
 			exists("storageMap." + storageBlockId.toHexString()),
@@ -273,18 +283,22 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 	}
 	
+	@WithSpan
 	public List<InventoryItem> getItemsInBlock(String storageBlockId) {
 		return this.getItemsInBlock(new ObjectId(storageBlockId));
 	}
 	
+	@WithSpan
 	public long getNumStoredExpired() {
 		return this.getSumOfIntField("numExpired");
 	}
 	
+	@WithSpan
 	public long getNumStoredExpiryWarn() {
 		return this.getSumOfIntField("numExpiryWarn");
 	}
 	
+	@WithSpan
 	public long getNumLowStock() {
 		return this.getSumOfIntField("numLowStock");
 	}

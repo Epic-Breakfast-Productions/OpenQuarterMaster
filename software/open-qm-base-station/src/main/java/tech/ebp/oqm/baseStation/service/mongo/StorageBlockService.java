@@ -4,17 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
+import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
+import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTreeNode;
+import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
+import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,10 +26,9 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-@Traced
 @Slf4j
 @ApplicationScoped
-public class StorageBlockService extends MongoHistoriedObjectService<StorageBlock, StorageBlockSearch> {
+public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -49,6 +50,7 @@ public class StorageBlockService extends MongoHistoriedObjectService<StorageBloc
 		);
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, storageBlock, clientSession);
@@ -103,29 +105,8 @@ public class StorageBlockService extends MongoHistoriedObjectService<StorageBloc
 		}
 	}
 	
-	public List<StorageBlock> getTopParents(){
-		return this.list(Filters.exists("parent", false), null, null);
-	}
-	
-	public List<StorageBlock> getChildrenIn(ObjectId parentId){
-		return this.list(Filters.eq("parent", parentId), null, null);
-	}
-	
-	public List<StorageBlock> getChildrenIn(String parentId){
-		return this.getChildrenIn(new ObjectId(parentId));
-	}
-	
-	public StorageBlockTree getStorageBlockTree(Collection<ObjectId> onlyInclude) {
-		StorageBlockTree output = new StorageBlockTree();
-		
-		
-		FindIterable<StorageBlock> results = getCollection().find();
-		output.add(results.iterator());
-		
-		if (!onlyInclude.isEmpty()) {
-			output.cleanupStorageBlockTreeNode(onlyInclude);
-		}
-		
-		return output;
+	@Override
+	protected ParentedMainObjectTree<StorageBlock, StorageBlockTreeNode> getNewTree() {
+		return new StorageBlockTree();
 	}
 }

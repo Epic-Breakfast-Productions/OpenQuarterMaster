@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -7,10 +8,10 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -41,7 +42,6 @@ import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.Deflater;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class DataExportService {
@@ -186,6 +186,8 @@ public class DataExportService {
 	
 	@Inject
 	CustomUnitService customUnitService;
+	@Inject
+	ItemCategoryService itemItemCategoryService;
 	
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -198,7 +200,7 @@ public class DataExportService {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	
+	@WithSpan
 	public File exportDataToBundle(boolean excludeHistory) throws IOException {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();
@@ -220,6 +222,7 @@ public class DataExportService {
 				//TODO:: once we figure out file nonsense #51
 //				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemItemCategoryService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;})
 			);

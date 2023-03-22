@@ -15,13 +15,14 @@ service:
     clientId: quartermaster
     clientSecret: secret
     scope: openid
-    realmBasePath: /auth/realms/${service.externalAuth.realm:}
+    realmBasePath: /realms/${service.externalAuth.realm:}
     realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
     interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackUrl: ${runningInfo.baseUrl}/api/v1/auth/user/callback
+    callbackPath: /api/v1/auth/user/callback
+    callbackUrl: ${runningInfo.baseUrl}${service.externalAuth.callbackPath:}
   runBy:
     name: " "
     email: " "
@@ -98,6 +99,8 @@ externalService:
     # Service entries here
   
 quarkus:
+  application:
+    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
@@ -150,12 +153,6 @@ quarkus:
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With <3, EBP
-  # https://quarkus.io/guides/opentracing
-  jaeger:
-    enabled: true
-    service-name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
-    sampler-type: const
-    sampler-param: 1
   #    metrics:
   #      enabled: true
   http:
@@ -201,13 +198,18 @@ smallrye:
 
 "%dev":
   quarkus:
+    application:
+      name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
       level: DEBUG
+    opentelemetry:
+      enabled: true
+      tracer:
+        exporter:
+          otlp:
+            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
-    jaeger:
-      endpoint: http://localhost:8091/api/traces
-      service-name: ${service.nameShort} - V${service.apiVersion} - DEV
     mongodb:
       connection-string: mongodb://localhost:27017
   service:

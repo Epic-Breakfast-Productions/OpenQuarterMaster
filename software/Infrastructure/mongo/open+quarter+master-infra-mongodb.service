@@ -6,6 +6,8 @@
 #
 #  TODO:: figure out better username/password situation
 #    - https://lzone.de/blog/Using-Linux-keyring-secrets-from-your-scripts
+#
+# TODO:: Figure out what's wrong on first run to cause issues with base station complaining about not being primary or secondary
 
 [Unit]
 Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "4".
@@ -19,15 +21,19 @@ Type=simple
 Restart=always
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_mongo || echo 'Could not stop mongo container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_mongo || echo 'Could not remove mongo container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_mongo || echo 'Could not remove mongo container'"
 
-ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_mongo -p=27017:27017 -v /data/oqm/db/mongo/:/data/db  mongo:4 mongod --replSet rs0"
-ExecStartPost=/bin/bash -c "sleep 3s"
-ExecStartPost=/bin/bash -c "mongo --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --name oqm_infra_mongo \
+                                 -p=27017:27017 \
+                                 -v /data/oqm/db/mongo/:/data/db  \
+                                 mongo:4 mongod --replSet rs0"
+ExecStartPost=/bin/bash -c "sleep 6s"
+ExecStartPost=/bin/bash -c "/usr/bin/docker exec oqm_infra_mongo mongo --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_mongo || echo 'Could not stop mongo container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_mongo || echo 'Could not remove mongo container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_infra_mongo || echo 'Could not remove mongo container'"
 
 [Install]
 WantedBy=multi-user.target

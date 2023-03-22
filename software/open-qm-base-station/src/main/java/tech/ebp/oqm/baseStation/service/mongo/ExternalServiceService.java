@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.config.ExtServicesConfig;
 import tech.ebp.oqm.baseStation.rest.search.ExternalServiceSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
@@ -31,7 +31,6 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class ExternalServiceService extends MongoHistoriedObjectService<ExternalService, ExternalServiceSearch> {
@@ -70,12 +69,14 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		//        this.validator = validator;
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, ExternalService newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant
 	}
 	
+	@WithSpan
 	private ExternalService getExternalService(String externalSource, String externalId) {
 		if (externalId == null) {
 			return null;
@@ -83,6 +84,7 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		return this.getCollection().find(eq("externIds." + externalSource, externalId)).limit(1).first();
 	}
 	
+	@WithSpan
 	private ExternalService getExternalService(JsonWebToken jwt) {
 		String externalSource = jwt.getIssuer();
 		String externalId = jwt.getClaim(Claims.sub);
@@ -96,7 +98,7 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		throw new DbNotFoundException("Make sure the calling service hit the setup endpoint first.", ExternalService.class, null);
 	}
 	
-	
+	@WithSpan
 	public ExternalService getFromJwt(JsonWebToken jwt) {
 		//TODO:: check is user?
 		switch (this.authMode) {
@@ -118,6 +120,7 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		return null;
 	}
 	
+	@WithSpan
 	public ExternalService getFromServiceName(String name) {
 		ExternalService service = this.getCollection().find(Filters.eq("name", name)).limit(1).first();
 		
@@ -128,6 +131,7 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		return service;
 	}
 	
+	@WithSpan
 	private ExternalService updateExtServiceFromSetupRequest(ExternalService existentExtService, ExternalServiceSetupRequest setupRequest) {
 		if (!existentExtService.getServiceType().equals(setupRequest.getServiceType())) {
 			log.debug("Updated external service was a different type than previously.");
@@ -179,7 +183,7 @@ public class ExternalServiceService extends MongoHistoriedObjectService<External
 		return existentExtService;
 	}
 	
-	
+	@WithSpan
 	public ExternalService getFromSetupRequest(ExternalServiceSetupRequest setupRequest) {
 		ExternalService existentExtService;
 		try {

@@ -38,6 +38,9 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
+mkdir -p "$buildDir/$debDir/usr/share/applications"
+
+cp oqm-base-station.desktop "$buildDir/$debDir/usr/share/applications/"
 
 serviceFile="open+quarter+master-core-base+station.service"
 serviceFileEscaped="$(systemd-escape "$serviceFile")"

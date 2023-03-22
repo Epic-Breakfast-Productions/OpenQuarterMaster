@@ -3,16 +3,15 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.lib.core.object.media.Image;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch> {
@@ -40,6 +39,7 @@ public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch
 		//        this.validator = validator;
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);

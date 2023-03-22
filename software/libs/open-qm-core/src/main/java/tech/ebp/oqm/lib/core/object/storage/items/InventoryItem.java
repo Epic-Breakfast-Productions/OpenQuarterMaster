@@ -91,6 +91,20 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	private String description = null;
 	
 	/**
+	 * The barcode for this item.
+	 * <p>
+	 * TODO:: validate?
+	 */
+	private String barcode = null;
+	
+	/**
+	 * Categories this item belongs to.
+	 */
+	@NonNull
+	@NotNull
+	private List<@NotNull ObjectId> categories = new ArrayList<>();
+	
+	/**
 	 * The map of where the items are stored.
 	 * <p>
 	 * The key is the id of the storage block being stored in, the value the storage wrapper actually holding stored item information.
@@ -245,8 +259,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
-	 * First calls {@link #recalcTotal()}, then calculates the total value of all items stored according to how it should for the type of
-	 * inventory item, and finishes by setting {@link #valueOfStored}.
+	 * First calls {@link #recalcTotal()}, then calculates the total value of all items stored according to how it should for the type of inventory item, and finishes by setting
+	 * {@link #valueOfStored}.
 	 *
 	 * @return The total that was calculated.
 	 */
