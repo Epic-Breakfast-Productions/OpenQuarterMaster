@@ -119,6 +119,18 @@
                                 </p>
                             </div>
                         </div>
+                        <div class="card col-12">
+                            <div class="card-body">
+                                <h5 class="card-title">Location in Category Tree:</h5>
+                                <div id="itemCategoryViewBreadcrumbContainer">
+                                </div>
+                                <h5 class="card-title">Children:</h5>
+                                <ul class="list-inline">
+                                </ul>
+                                <div id="itemCategoryViewChildrenContainer">
+                                </div>
+                            </div>
+                        </div>
                         <div class="card col-12" id="itemCategoryViewDescriptionContainer">
                             <div class="card-body">
                                 <h5 class="card-title">Description:</h5>
@@ -158,6 +170,11 @@
         <script src="/res/js/obj/media/imageAdd.js"></script>
         <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
         <script src="/res/js/textCopy.js"></script>
+        <script src="/lib/treant-js/vendor/raphael.js"></script>
+        <script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+        <script src="/lib/treant-js/vendor/jquery.easing.js"></script>
+        <script src="/lib/treant-js/Treant.js"></script>
+        <script src="/res/js/obj/itemCategory/itemCategoryTree.js"></script>
     {/scripts}
     
     {#pageScript}
@@ -319,6 +336,8 @@
                 keywordView: $("#viewKeywordsSection"),
                 attsView: $("#viewAttsSection"),
                 carousel: $("#itemCategoryViewCarousel"),
+                breadcrumbContainer: $("#itemCategoryViewBreadcrumbContainer"),
+                childrenContainer: $("#itemCategoryViewChildrenContainer"),
                 
                 
                 resetView(){
@@ -328,6 +347,9 @@
                     ItemCategoryView.descContainer.hide();
                     ItemCategoryView.color.text("");
                     ItemCategoryView.colorContainer.removeAttr("style");
+                    ItemCategoryView.breadcrumbContainer.text('');
+                    ItemCategoryView.childrenContainer.text('');
+                    
                     clearCarousel(ItemCategoryView.carousel);
                     clearHideKeywordDisplay(ItemCategoryView.keywordView);
                     clearHideAttDisplay(ItemCategoryView.attsView);
@@ -345,6 +367,8 @@
                         async: false,
                         done: async function (data) {
                             let promises = [];
+                            let children = getItemCategoryChildrenData(categoryId);
+                            promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
                             promises.push(processImagedObjectImages(data, ItemCategoryView.carousel));
     
@@ -365,6 +389,22 @@
                             
                             processKeywordDisplay(ItemCategoryView.keywordView, data.keywords);
                             processAttDisplay(ItemCategoryView.attsView, data.attributes);
+    
+                            children = await children;
+                            if(!children.length){
+                                ItemCategoryView.childrenContainer.text("No children!")
+                            } else {
+                                console.log("Processing category children.");
+                                children.forEach(function (child) {
+                                    let newGetParams = new URLSearchParams(window.location.search);
+                                    newGetParams.set("view", child.id)
+            
+                                    let newChildLink = $('<li class="list-inline-item"><a href="/categories?'+newGetParams.toString()+'"></li></a>');
+                                    newChildLink.find("a").text(child.name);
+                                    ItemCategoryView.childrenContainer.append(newChildLink);
+                                });
+                            }
+                            
                             await Promise.all(promises);
                         },
                         fail: function (data) {
