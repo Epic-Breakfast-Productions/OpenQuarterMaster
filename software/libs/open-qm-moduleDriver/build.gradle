@@ -39,7 +39,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-annotations'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
-	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.6'
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
 
 	//if need ObjectIds, BsonIgnore
 //	implementation 'org.mongodb:bson:4.4.0'
@@ -77,7 +77,7 @@ dependencies {
 //	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
 	testImplementation 'com.github.javafaker:javafaker:1.0.2'
-	testImplementation 'ch.qos.logback:logback-classic:1.4.5'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.6'
 }
 
 test {
