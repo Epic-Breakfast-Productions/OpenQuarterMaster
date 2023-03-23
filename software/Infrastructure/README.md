@@ -26,6 +26,24 @@ sudo systemctl daemon-reload
 | 8096  | Jaeger           | OTLP gRPC port                    |
 | 5672  | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    |
 | 61616 | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
+| 8110  | Grafana          | Grafana UI port                   |
+
+## NEW, proposed Host Ports used by the various infra pieces
+
+TODO:: move to these
+
+| Port  | Infra Service    | Purpose                           |
+|-------|------------------|-----------------------------------|
+| 27017 | Mongo            | Mongodb connection port           |
+| 8090  | Jaeger           | Jaeger UI                         |
+| 8091  | Jaeger           | Jaeger collector                  |
+| 8092  | Jaeger           | OTLP gRPC port                    |
+| 8095  | Prometheus       | Prometheus UI                     |
+| 8100  | OpenTelemetry    | OpenTelemetry?                    |
+| 8105  | ActiveMQ Artemis | Artemis UI                        |
+| 8106  | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    |
+| 8107  | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
+| 8110  | Grafana          | Grafana UI port                   |
 
 ## TODO's
 
