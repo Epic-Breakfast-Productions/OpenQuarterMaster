@@ -20,6 +20,7 @@ Restart=always
 ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_grafana 2> /dev/null || /usr/bin/docker run \
                                                                                               --name oqm_infra_grafana \
                                                                                               -p 8110:3000 \
+                                                                                              --add-host host.docker.internal:host-gateway \
                                                                                               grafana/grafana-oss:latest"
 ExecStart=/usr/bin/docker start -a oqm_infra_grafana
 ExecStop=/usr/bin/docker stop -t 10 oqm_infra_grafana
