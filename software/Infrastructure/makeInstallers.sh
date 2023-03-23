@@ -171,9 +171,17 @@ EOT
 	done;
 
 
+	fileKeys=($(jq -r '.files | keys[]'  "$packageConfigFile"))
 
+	for fileKey in ${fileKeys[@]}; do
+		curFile="$packageDebDir$fileKey"
 
-
+		mkdir -p "$(dirname "$curFile")"
+		fileInSrc="$(jq -r ".files.\"$fileKey\""  "$packageConfigFile")"
+#		echo "Config file content: $curConfigFileContent"
+		echo "Adding file: $fileInSrc to directory $fileKey";
+		cp "$curPackage/$fileInSrc" "$curFile"
+	done;
 
 	dpkg-deb --build "$packageDebDir" "$buildDir"
 	

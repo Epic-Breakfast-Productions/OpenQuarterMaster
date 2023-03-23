@@ -11,5 +11,7 @@
 	"configFiles":{
 		"/etc/oqm/infra/otel/otel-collector-config.yaml":
 			"# Configuration for OpenTelemetry Collector within the OQM system.\nreceivers:\n  otlp:\n    protocols:\n      grpc:\n\nexporters:\n  logging:\n    loglevel: debug\n  otlp:\n    endpoint: host.docker.internal:8096\n    tls:\n      insecure: true\n\nprocessors:\n  batch:\n\nextensions:\n  health_check:\n\nservice:\n  extensions: [health_check]\n  pipelines:\n    traces:\n      receivers: [otlp]\n      processors: [batch]\n      exporters: [otlp]\n"
+	},
+	"files":{
 	}
 }
