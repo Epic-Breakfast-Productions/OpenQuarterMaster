@@ -165,9 +165,9 @@ EOT
 
 		mkdir -p "$(dirname "$curConfigFile")"
 
-		curConfigFileContent="$(jq -r ".configFiles.\"$configFileKey\""  "$packageConfigFile")"
-#		echo "Config file content: $curConfigFileContent"
-		echo "$curConfigFileContent" > "$curConfigFile"
+		curConfigFileInSrc="$(jq -r ".configFiles.\"$configFileKey\""  "$packageConfigFile")"
+		echo "Adding config file: $curConfigFileInSrc to directory $configFileKey";
+		cp "$curPackage/$curConfigFileInSrc" "$curConfigFile"
 	done;
 
 
