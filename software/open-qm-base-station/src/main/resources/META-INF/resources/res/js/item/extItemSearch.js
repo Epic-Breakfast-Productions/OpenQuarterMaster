@@ -1,13 +1,20 @@
 const ExtItemSearch = {
 	extSearchResults: $("#extSearchResults"),
 
+	prodBarcodeSearchForm: $("#prodBarcodeSearchForm"),
+	prodBarcodeSearchFormMessages: $("#prodBarcodeSearchFormMessages"),
+	legoPartNumSearchForm: $("#legoPartNumSearchForm"),
+	legoPartNumSearchFormMessages: $("#legoPartNumSearchFormMessages"),
+	websiteScanSearchForm: $("#websiteScanSearchForm"),
+	websiteScanSearchFormMessages: $("#websiteScanSearchFormMessages"),
+
 	prodBarcodeSearchBarcodeInput: $("#prodBarcodeSearchBarcodeInput"),
 	legoPartNumSearchInput: $("#legoPartNumSearchInput"),
 	websiteScanSearchInput: $("#websiteScanSearchInput"),
 
 	addEditProductSearchPane: $("#addEditProductSearchPane"),
 
-	handleExtItemSearchResults(results) {
+	handleExtItemSearchResults(results, messagesDiv) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length)
 
 		if (results.results.length === 0) {
@@ -29,6 +36,10 @@ const ExtItemSearch = {
 
 			ExtItemSearch.extSearchResults.append(resultCard);
 		});
+
+		for (const [service, error] of Object.entries(results.serviceErrs)) {
+			addMessageToDiv(messagesDiv, "danger", error, "Failed calling " + service);
+		}
 	},
 
 
@@ -46,8 +57,7 @@ const ExtItemSearch = {
 	}
 }
 
-
-$("#websiteScanSearchForm").submit(function (event) {
+ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 	event.preventDefault();
 	let webpage = ExtItemSearch.websiteScanSearchInput.val();
 	console.log("Scanning a web page: " + webpage);
@@ -55,11 +65,12 @@ $("#websiteScanSearchForm").submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-		done: ExtItemSearch.handleExtItemSearchResults
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.websiteScanSearchFormMessages)},
+		failMessagesDiv: ExtItemSearch.websiteScanSearchFormMessages
 	});
 });
 
-$("#prodBarcodeSearchForm").submit(function (event) {
+ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	event.preventDefault();
 	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
 	console.log("Searching for a barcode: " + barcodeText);
@@ -67,11 +78,12 @@ $("#prodBarcodeSearchForm").submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
-		done: ExtItemSearch.handleExtItemSearchResults
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.prodBarcodeSearchFormMessages)},
+		failMessagesDiv: ExtItemSearch.prodBarcodeSearchFormMessages
 	});
 });
 
-$("#legoPartNumSearchForm").submit(function (event) {
+ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 	event.preventDefault();
 	let partNumber = ExtItemSearch.legoPartNumSearchInput.val();
 	console.log("Searching for a lego part: " + partNumber);
@@ -79,6 +91,7 @@ $("#legoPartNumSearchForm").submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
-		done: ExtItemSearch.handleExtItemSearchResults
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.legoPartNumSearchFormMessages)},
+		failMessagesDiv: ExtItemSearch.legoPartNumSearchFormMessages
 	});
 });

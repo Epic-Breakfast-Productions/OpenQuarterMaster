@@ -73,7 +73,7 @@ public class ProductLookupService {
 	@WithSpan
 	private ExtItemLookupResults processRequestsList(Map<String, CompletableFuture<List<ExtItemLookupResult>>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
-		Map<String, Throwable> errList = new HashMap<>();
+		Map<String, String> errList = new HashMap<>();
 		
 		for (Map.Entry<String, CompletableFuture<List<ExtItemLookupResult>>> curRequest : requests.entrySet()) {
 			String curService = curRequest.getKey();
@@ -84,7 +84,7 @@ public class ProductLookupService {
 				results = curFuture.join();
 			} catch(CompletionException e) {
 				log.error("FAILED to call {} service- ", curService, e);
-				errList.put(curService, e);
+				errList.put(curService, e.getCause().getMessage());
 				continue;
 			}
 			
@@ -102,7 +102,7 @@ public class ProductLookupService {
 	@WithSpan
 	private ExtItemLookupResults processRequestsSingle(Map<String, CompletableFuture<ExtItemLookupResult>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
-		Map<String, Throwable> errList = new HashMap<>();
+		Map<String, String> errList = new HashMap<>();
 		
 		for (Map.Entry<String, CompletableFuture<ExtItemLookupResult>> curRequest : requests.entrySet()) {
 			String curService = curRequest.getKey();
@@ -113,7 +113,7 @@ public class ProductLookupService {
 				results = curFuture.join();
 			} catch(CompletionException e) {
 				log.error("FAILED to call {} service- ", curService, e);
-				errList.put(curService, e);
+				errList.put(curService, e.getCause().getMessage());
 				continue;
 			}
 			

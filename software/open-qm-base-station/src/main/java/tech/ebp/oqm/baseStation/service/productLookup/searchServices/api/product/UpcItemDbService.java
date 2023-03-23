@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.produc
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.UpcItemDbLookupClient;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
@@ -77,6 +79,57 @@ public class UpcItemDbService extends ApiProductSearchService {
 		return this.apiKey != null && !this.apiKey.isBlank();
 	}
 	
+	private ExtItemLookupResult jsonToResult(ObjectNode json){
+		String brandName = "";
+		String name = "";
+		Map<String, String> attributes = new HashMap<>();
+		ExtItemLookupResult.Builder<?,?> resultBuilder = ExtItemLookupResult.builder();
+		
+		
+		for (Iterator<Map.Entry<String, JsonNode>> iter = json.fields(); iter.hasNext(); ) {
+			Map.Entry<String, JsonNode> curField = iter.next();
+			String curFieldName = curField.getKey();
+			JsonNode curFieldVal = curField.getValue();
+			
+			
+			if (curField.getValue().isNull() || curFieldVal == null) {
+				continue;
+			}
+			
+			switch (curFieldName) {
+				case "ean":
+					resultBuilder.barcode(curFieldVal.asText());
+					break;
+				case "brand":
+					brandName = curFieldVal.asText();
+					break;
+				case "title":
+					name = curFieldVal.asText();
+					break;
+				case "description":
+					resultBuilder.description(curFieldVal.asText());
+					break;
+				case "images":
+					ArrayList<String> images = new ArrayList<>(curFieldVal.size());
+					for(JsonNode curImg : (ArrayNode)curFieldVal){
+						images.add(curImg.asText());
+					}
+					resultBuilder.images(images);
+					break;
+				default:
+					attributes.put(curFieldName, curFieldVal.asText());
+			}
+		}
+		
+		return resultBuilder
+			.source(this.getProviderInfo().getDisplayName())
+			.name(name)
+			.brand(brandName)
+			.unifiedName(name)
+			.attributes(attributes)
+			.build();
+	}
+	
 	/**
 	 * https://www.upcitemdb.com/wp/docs/main/development/responses/
 	 *
@@ -93,47 +146,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : resultsAsArr) {
-			ObjectNode curResultJson = (ObjectNode) result;
-			String brandName = "";
-			String name = "";
-			Map<String, String> attributes = new HashMap<>();
-			ExtItemLookupResult.Builder<?,?> resultBuilder = ExtItemLookupResult.builder();
-			
-			for (Iterator<Map.Entry<String, JsonNode>> iter = curResultJson.fields(); iter.hasNext(); ) {
-				Map.Entry<String, JsonNode> curField = iter.next();
-				String curFieldName = curField.getKey();
-				String curFieldVal = curField.getValue().asText();
-				
-				//TODO:: handle images
-				
-				if (curField.getValue().isNull() || curFieldVal == null || curFieldVal.isBlank()) {
-					continue;
-				}
-				
-				switch (curFieldName) {
-					case "brand":
-						brandName = curFieldVal;
-						break;
-					case "title":
-						name = curFieldVal;
-						break;
-					case "description":
-						resultBuilder.description(curFieldVal);
-						break;
-					default:
-						attributes.put(curFieldName, curFieldVal);
-				}
-			}
-			
-			resultList.add(
-				resultBuilder
-					.source(this.getProviderInfo().getDisplayName())
-					.name(name)
-					.brand(brandName)
-					.unifiedName(name)
-					.attributes(attributes)
-					.build()
-			);
+			resultList.add(this.jsonToResult((ObjectNode) result));
 		}
 		
 		return resultList;

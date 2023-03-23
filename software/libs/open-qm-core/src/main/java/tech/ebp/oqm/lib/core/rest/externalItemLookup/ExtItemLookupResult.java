@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,10 @@ public class ExtItemLookupResult {
 	@NotNull
 	@lombok.Builder.Default
 	private String description = "";
+	
+	private BigDecimal price;
+	
+	private String barcode;
 	
 	@NonNull
 	@NotNull
