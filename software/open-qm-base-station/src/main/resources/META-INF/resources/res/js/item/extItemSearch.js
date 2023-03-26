@@ -70,7 +70,46 @@ const ExtItemSearch = {
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
 
-			//TODO:: images
+			if(result.images.length){
+				//TODO:: add minimum height/width, set unique car id
+				let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
+
+				let carousel = $('<div id="carouselExample" class="carousel slide">\n' +
+					'  <div class="carousel-inner">\n' +
+
+					'  </div>\n' +
+					'  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">\n' +
+					'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
+					'    <span class="visually-hidden">Previous</span>\n' +
+					'  </button>\n' +
+					'  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">\n' +
+					'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
+					'    <span class="visually-hidden">Next</span>\n' +
+					'  </button>\n' +
+					'</div>');
+				let carouselInner = carousel.find(".carousel-inner");
+
+				result.images.forEach(function (curImageLoc, i){
+					let newCarImage = $(
+						'    <div class="carousel-item '+(i === 0? 'active':'')+'">\n' +
+						'      <img src="" class="d-block w-100" alt="...">\n' +
+						'      <div class="carousel-caption d-none d-md-block">' +
+						'          <h5>First slide label</h5>' +
+						'          <p>Some representative placeholder content for the first slide.</p>'+
+						'      </div>' +
+						'    </div>\n'
+					);
+					newCarImage.find("img").prop("src", curImageLoc);
+
+					carouselInner.append(newCarImage)
+				});
+
+
+
+
+				imagesSection.append(carousel);
+				resultMainBody.append(imagesSection);
+			}
 
 			if(result.attributes){
 				let attsSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Attributes:</h6></li>');

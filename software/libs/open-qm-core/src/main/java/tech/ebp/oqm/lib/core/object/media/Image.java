@@ -150,6 +150,12 @@ public class Image extends AttKeywordMainObject {
 	@Pattern(regexp = "^(png|jpg|jpeg|gif)$")
 	private String type;
 	
+	@NonNull
+	@NotNull
+	@NotBlank
+	@lombok.Builder.Default
+	private String source = "user";
+	
 	/**
 	 * The base-64 encoded data that makes up the image.
 	 * <p>
@@ -161,11 +167,11 @@ public class Image extends AttKeywordMainObject {
 	private String data;
 	
 	public Image(String title, BufferedImage image) {
-		this(title, null, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
+		this(title, null, CONVERTED_IMAGE_FORMAT, "user", resizeGetBytes(image));
 	}
 	
 	public Image(String title, String description, BufferedImage image) {
-		this(title, description, CONVERTED_IMAGE_FORMAT, resizeGetBytes(image));
+		this(title, description, CONVERTED_IMAGE_FORMAT, "user", resizeGetBytes(image));
 	}
 	
 	/**
@@ -187,6 +193,7 @@ public class Image extends AttKeywordMainObject {
 			icr.getDescription(),
 			icr.getImageData()
 		);
+		this.setSource(icr.getSource());
 		if (icr.getAttributes() != null) {
 			this.setAttributes(icr.getAttributes());
 		}

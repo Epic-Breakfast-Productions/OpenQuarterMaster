@@ -18,6 +18,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 				BasicTest.FAKER.job().title(),
 				BasicTest.FAKER.lorem().paragraph(),
 				"png",
+				"test",
 				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 			))
 		);
@@ -31,6 +32,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					BasicTest.FAKER.job().title(),
 					BasicTest.FAKER.lorem().paragraph(),
 					"",
+					"test",
 					new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 				),
 				null
@@ -40,6 +42,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					BasicTest.FAKER.job().title(),
 					BasicTest.FAKER.lorem().paragraph(),
 					BasicTest.FAKER.random().hex(),
+					"test",
 					new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 				),
 				null
@@ -49,6 +52,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					"",
 					BasicTest.FAKER.lorem().paragraph(),
 					"png",
+					"test",
 					new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 				),
 				null
@@ -58,6 +62,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					" ",
 					BasicTest.FAKER.lorem().paragraph(),
 					"png",
+					"test",
 					new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 				),
 				null
@@ -67,6 +72,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					BasicTest.FAKER.job().title(),
 					BasicTest.FAKER.lorem().characters(501),
 					"png",
+					"test",
 					new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 				),
 				null
@@ -76,6 +82,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					BasicTest.FAKER.job().title(),
 					BasicTest.FAKER.lorem().paragraph(),
 					"png",
+					"test",
 					""
 				),
 				null
@@ -85,6 +92,7 @@ class ImageValidationTest extends ObjectValidationTest<Image> {
 					BasicTest.FAKER.job().title(),
 					BasicTest.FAKER.lorem().paragraph(),
 					"png",
+					"test",
 					BasicTest.FAKER.lorem().paragraph()
 				),
 				null
