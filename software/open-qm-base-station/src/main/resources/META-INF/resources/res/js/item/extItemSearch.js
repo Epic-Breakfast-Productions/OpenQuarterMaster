@@ -140,6 +140,7 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	event.preventDefault();
 	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
 	console.log("Searching for a barcode: " + barcodeText);
+	addEditItemBarcodeInput.val(barcodeText);
 	ExtItemSearch.extSearchResults.html("");
 
 	doRestCall({

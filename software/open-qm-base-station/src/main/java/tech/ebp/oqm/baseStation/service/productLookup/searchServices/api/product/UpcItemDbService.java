@@ -75,15 +75,15 @@ public class UpcItemDbService extends ApiProductSearchService {
 		return this.getProviderInfo().isEnabled();
 	}
 	
-	public boolean hasKey(){
+	public boolean hasKey() {
 		return this.apiKey != null && !this.apiKey.isBlank();
 	}
 	
-	private ExtItemLookupResult jsonToResult(ObjectNode json){
+	private ExtItemLookupResult jsonToResult(ObjectNode json) {
 		String brandName = "";
 		String name = "";
 		Map<String, String> attributes = new HashMap<>();
-		ExtItemLookupResult.Builder<?,?> resultBuilder = ExtItemLookupResult.builder();
+		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder();
 		
 		
 		for (Iterator<Map.Entry<String, JsonNode>> iter = json.fields(); iter.hasNext(); ) {
@@ -111,23 +111,28 @@ public class UpcItemDbService extends ApiProductSearchService {
 					break;
 				case "images":
 					ArrayList<String> images = new ArrayList<>(curFieldVal.size());
-					for(JsonNode curImg : (ArrayNode)curFieldVal){
+					for (JsonNode curImg : (ArrayNode) curFieldVal) {
 						images.add(curImg.asText());
 					}
 					resultBuilder.images(images);
 					break;
-				default:
-					attributes.put(curFieldName, curFieldVal.asText());
+				default: {
+					String text = curFieldVal.asText();
+					if (!text.isBlank()) {
+						attributes.put(curFieldName, text);
+					}
+					break;
+				}
 			}
 		}
 		
 		return resultBuilder
-			.source(this.getProviderInfo().getDisplayName())
-			.name(name)
-			.brand(brandName)
-			.unifiedName((brandName != null && !brandName.isBlank()? brandName + " " + name : name))
-			.attributes(attributes)
-			.build();
+				   .source(this.getProviderInfo().getDisplayName())
+				   .name(name)
+				   .brand(brandName)
+				   .unifiedName((brandName != null && !brandName.isBlank() ? brandName + " " + name : name))
+				   .attributes(attributes)
+				   .build();
 	}
 	
 	/**
@@ -155,7 +160,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 	@WithSpan
 	@Override
 	protected CompletionStage<JsonNode> performBarcodeSearchCall(String barcode) {
-		if(this.hasKey()){
+		if (this.hasKey()) {
 			return this.upcItemDbLookupClient.getFromUpcCode(
 				this.apiKey,
 				"3scale",

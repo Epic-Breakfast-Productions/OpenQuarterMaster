@@ -54,4 +54,13 @@ public class ExtItemLookupResult {
 	@lombok.Builder.Default
 	private List<@NotNull @NonNull @NotBlank String> images = new ArrayList<>();
 	
+	public ExtItemLookupResult addAttIfNotBlank(String key, String val){
+		if(
+			key != null && !key.isBlank() &&
+			val != null && !val.isBlank()
+		){
+			this.getAttributes().put(key, val);
+		}
+		return this;
+	}
 }
