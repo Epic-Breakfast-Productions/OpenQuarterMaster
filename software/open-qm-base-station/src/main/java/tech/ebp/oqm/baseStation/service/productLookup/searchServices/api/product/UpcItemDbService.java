@@ -125,7 +125,7 @@ public class UpcItemDbService extends ApiProductSearchService {
 			.source(this.getProviderInfo().getDisplayName())
 			.name(name)
 			.brand(brandName)
-			.unifiedName(name)
+			.unifiedName((brandName != null && !brandName.isBlank()? brandName + " " + name : name))
 			.attributes(attributes)
 			.build();
 	}
