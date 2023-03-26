@@ -17,7 +17,9 @@ const ExtItemSearch = {
 	getUseButton(text){
 		let newButton = $('<button type="button" class="btn btn-link mb-0 p-0" title="Use this value"></button>');
 
-		newButton.text(text + ": ");
+		if(text) {
+			newButton.text(text + ": ");
+		}
 		newButton.append(Icons.useDatapoint);
 
 		return newButton;
@@ -77,9 +79,18 @@ const ExtItemSearch = {
 				Object.keys(result.attributes).forEach(key => {
 					let val = result.attributes[key];
 
-					let curAtt = $('<span></span>');
-					curAtt.text(key + " / " + val);
-					curAtt.append($("<br />"));
+					let curAtt = getAttDisplay(key, val);
+					let useButt = ExtItemSearch.getUseButton();
+
+					useButt.on("click", function (e){
+						addAttInput(
+							addEditAttDiv,
+							key,
+							val
+						);
+					});
+
+					curAtt.append(useButt);
 
 					attsList.append(curAtt);
 				});
