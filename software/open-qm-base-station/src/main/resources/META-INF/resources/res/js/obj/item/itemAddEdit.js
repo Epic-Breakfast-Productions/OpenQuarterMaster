@@ -21,7 +21,7 @@ var addEditItemTotalLowStockThresholdUnitInput = $("#addEditItemTotalLowStockThr
 var addEditItemStorageTypeInput = $('#addEditItemStorageTypeInput');
 var addEditItemUnitInput = $('#addEditItemUnitInput');
 var addEditItemIdentifyingAttInput = $('#addEditItemIdentifyingAttInput');
-var addEditImagesSelected = addEditItemForm.find(".imagesSelected");
+var addEditItemImagesSelected = addEditItemForm.find(".imagesSelected");
 
 var addEditItemStoredContainer = $('#addEditItemStoredContainer');
 var addEditItemTrackedItemIdentifierNameRow = $('#addEditItemTrackedItemIdentifierNameRow');
@@ -85,7 +85,7 @@ function resetAddEditForm(){
 	setIdAttField();
 	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
 
-	addEditImagesSelected.text("");
+	addEditItemImagesSelected.text("");
 	addEditKeywordDiv.text("");
 	addEditAttDiv.text("");
 }
@@ -133,7 +133,7 @@ function setupAddEditForEdit(itemId){
 		url: "/api/v1/inventory/item/" + itemId,
 		failMessagesDiv: addEditItemFormMessages,
 		done: async function(data){
-			addSelectedImages(addEditImagesSelected, data.imageIds);
+			addSelectedImages(addEditItemImagesSelected, data.imageIds);
 			addKeywordInputs(addEditKeywordDiv, data.keywords);
 			addAttInputs(addEditAttDiv, data.attributes);
 
@@ -702,7 +702,7 @@ addEditItemForm.submit(async function (event) {
 	);
 
 	addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
-	addImagesToData(addEditData, addEditImagesSelected);
+	addImagesToData(addEditData, addEditItemImagesSelected);
 
 	addEditItemStoredContainer.find(".storageBlock").each(function (i, storageBlockElement) {
 		let storageBlockElementJq = $(storageBlockElement);

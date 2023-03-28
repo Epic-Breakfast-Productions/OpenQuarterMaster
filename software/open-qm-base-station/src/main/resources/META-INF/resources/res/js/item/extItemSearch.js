@@ -1,12 +1,31 @@
+function toDataURL(src, callback, outputFormat) {
+	let image = new Image();
+	image.crossOrigin = 'Anonymous';
+	image.onload = function () {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+		let dataURL;
+		canvas.height = this.naturalHeight;
+		canvas.width = this.naturalWidth;
+		ctx.drawImage(this, 0, 0);
+		dataURL = canvas.toDataURL(outputFormat);
+		callback(dataURL);
+	};
+	image.src = src;
+	if (image.complete || image.complete === undefined) {
+		image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+		image.src = src;
+	}
+}
+
+
 const ExtItemSearch = {
 	extSearchResults: $("#extSearchResults"),
 
 	prodBarcodeSearchForm: $("#prodBarcodeSearchForm"),
-	prodBarcodeSearchFormMessages: $("#prodBarcodeSearchFormMessages"),
 	legoPartNumSearchForm: $("#legoPartNumSearchForm"),
-	legoPartNumSearchFormMessages: $("#legoPartNumSearchFormMessages"),
 	websiteScanSearchForm: $("#websiteScanSearchForm"),
-	websiteScanSearchFormMessages: $("#websiteScanSearchFormMessages"),
+	extItemSearchSearchFormMessages: $("#extItemSearchSearchFormMessages"),
 
 	prodBarcodeSearchBarcodeInput: $("#prodBarcodeSearchBarcodeInput"),
 	legoPartNumSearchInput: $("#legoPartNumSearchInput"),
@@ -51,8 +70,150 @@ const ExtItemSearch = {
 		return section;
 	},
 
+	addOrGetAndSelectImage(imageUrl, resultUnifiedName){
+		console.log("Setting image for item. Image source: " + imageUrl);
 
-	handleExtItemSearchResults(results, messagesDiv) {
+		doRestCall({
+			url: "/api/v1/media/image?" + new URLSearchParams([["source", imageUrl]]).toString(),
+			method: "GET",
+			failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
+			done: async function (data){
+				let imageId;
+				let imageName = resultUnifiedName;
+				if(!data.length){
+					console.log("No results for given source. Adding.")
+					//TODO:: use image add form to add image, come back to this?
+					let saveImageFail = false;
+
+					await doRestCall({
+						async: false,
+						url: imageUrl,
+						method: "GET",
+						failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
+						done: async function (imageData, status, xhr){
+							//TODO:: handle cases where already have proper formatted string?
+							//TODO:: refactor base64 test
+							let base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+							if(!base64regex.test(imageData)){
+								console.log("Image data from url was not base 64");
+								console.log(typeof imageData);
+
+								// var binary = "";
+								// imageData = xhr.responseText;
+								// var responseTextLen = imageData.length;
+								//
+								// for (let i = 0; i < responseTextLen; i++ ) {
+								// 	binary += String.fromCharCode(imageData.charCodeAt(i) & 255)
+								// }
+								// imageData = btoa(binary);
+
+								// imageData = new Blob([imageData], {
+								// 	type:  xhr.getResponseHeader("content-type")
+								// });
+								//
+								// function readAsDataURL(file) {
+								// 	return new Promise((resolve, reject) => {
+								// 		const fr = new FileReader();
+								// 		fr.onerror = reject;
+								// 		fr.onload = () => {
+								// 			resolve(fr.result);
+								// 		}
+								// 		fr.readAsDataURL(file);
+								// 	});
+								// }
+								// imageData = await readAsDataURL(imageData);
+
+								// let reader = new FileReader();
+								// reader.onloadend = function () {
+								// 	imageData = reader.result;
+								// }
+								//
+								// let base64Data = new Promise((resolve, reject) => {
+								// 	reader.onerror = reject;
+								// 	reader.onload = () => {
+								// 		resolve(reader.result);
+								// 	}
+								// 	reader.readAsDataURL(imageData);
+								// });
+								// imageData = base64Data;
+
+
+								// let image = new Image();
+								// image.crossOrigin = 'Anonymous';
+								// image.onload = function () {
+								// 	let canvas = document.createElement('canvas');
+								// 	let ctx = canvas.getContext('2d');
+								// 	let dataURL;
+								// 	canvas.height = this.naturalHeight;
+								// 	canvas.width = this.naturalWidth;
+								// 	ctx.drawImage(this, 0, 0);
+								// 	dataURL = canvas.toDataURL(outputFormat);
+								// 	callback(dataURL);
+								// };
+								// image.src = src;
+								// if (image.complete || image.complete === undefined) {
+								// 	image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+								// 	image.src = src;
+								// }
+
+								// imageData = btoa(
+								// 	encodeURIComponent(imageData).replace(/%([a-f0-9]{2})/gi, (m, $1) => String.fromCharCode(parseInt($1, 16)))
+								// );
+
+								// imageData = btoa(imageData.reduce((data, val)=> {
+								// 	return data + String.fromCharCode(val);
+								// }, ''));
+
+								// imageData = btoa(unescape(encodeURIComponent(imageData)));
+
+								// let reader = new FileReader();
+								// reader.onload = function() {
+								// 	imageData = reader.result;
+								// 	console.log("Finished converting to base 64");
+								// }
+								// reader.readAsDataURL(imageData);
+
+								console.log("Image data converted to base 64.");
+							}
+							imageData = "data:" + xhr.getResponseHeader("content-type") + ";base64," + imageData;
+							console.log("Got image data string.");
+
+							doRestCall({
+								url: "/api/v1/media/image",
+								method: "POST",
+								data: {
+									title: resultUnifiedName,
+									source: imageUrl,
+									imageData: imageData
+								},
+								failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
+								fail: function (){
+									saveImageFail = true;
+								},
+								done: function (data){
+									console.log("Added image from url! " + data);
+									imageId = data;
+								}
+							});
+						}
+					});
+
+					if(saveImageFail){
+						return;
+					}
+					// return;
+				} else {
+					imageId = data[0].id;
+					imageName = data[0].title;
+				}
+
+				curImagesSelectedDiv = addEditItemImagesSelected;
+				selectImage(imageName, imageId);
+			}
+		});
+		return true;
+	},
+	handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
 		if (results.results.length === 0) {
@@ -94,18 +255,20 @@ const ExtItemSearch = {
 						'    <div class="carousel-item '+(i === 0? 'active':'')+'">\n' +
 						'      <img src="" class="d-block w-100" alt="...">\n' +
 						'      <div class="carousel-caption d-none d-md-block">' +
-						'          <h5>First slide label</h5>' +
-						'          <p>Some representative placeholder content for the first slide.</p>'+
+						'          ' +
 						'      </div>' +
 						'    </div>\n'
 					);
 					newCarImage.find("img").prop("src", curImageLoc);
 
+					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image '+Icons.useDatapoint+'</button>');
+					useButton.on("click", function(){
+						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName);
+					});
+					newCarImage.find(".carousel-caption").append(useButton);
+
 					carouselInner.append(newCarImage)
 				});
-
-
-
 
 				imagesSection.append(carousel);
 				resultMainBody.append(imagesSection);
@@ -143,7 +306,7 @@ const ExtItemSearch = {
 		});
 
 		for (const [service, error] of Object.entries(results.serviceErrs)) {
-			addMessageToDiv(messagesDiv, "danger", error, "Failed calling " + service);
+			addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
 		}
 	},
 
@@ -170,8 +333,8 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.websiteScanSearchFormMessages)},
-		failMessagesDiv: ExtItemSearch.websiteScanSearchFormMessages
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });
 
@@ -184,8 +347,8 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.prodBarcodeSearchFormMessages)},
-		failMessagesDiv: ExtItemSearch.prodBarcodeSearchFormMessages
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });
 
@@ -197,7 +360,7 @@ ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data, ExtItemSearch.legoPartNumSearchFormMessages)},
-		failMessagesDiv: ExtItemSearch.legoPartNumSearchFormMessages
+		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });

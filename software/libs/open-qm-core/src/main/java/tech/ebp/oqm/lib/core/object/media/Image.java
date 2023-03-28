@@ -127,7 +127,7 @@ public class Image extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@NotBlank
-	@Size(max = 50)
+	@Size(max = 100)
 	private String title;
 	
 	@lombok.Builder.Default
