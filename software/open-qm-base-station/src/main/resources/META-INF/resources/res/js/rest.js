@@ -110,7 +110,7 @@ async function doRestCall(
 		ajaxOps
 	).done(function (data, status, xhr) {
 		console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
-		done(data);
+		done(data, status, xhr);
 	}).fail(function (data, status, statusStr) {
 		console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
 
