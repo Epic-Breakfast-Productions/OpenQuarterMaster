@@ -2,23 +2,29 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.produc
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
+import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
+import javax.json.Json;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+@Slf4j
 public abstract class ApiProductSearchService extends ItemApiSearchService {
 	
 	@WithSpan
 	protected abstract CompletionStage<JsonNode> performBarcodeSearchCall(String barcode);
 	
 	@WithSpan
-	public  Optional<CompletableFuture<List<ExtItemLookupResult>>> searchBarcode(String barcode){
-		if(!this.isEnabled()){
+	public Optional<CompletableFuture<List<ExtItemLookupResult>>> searchBarcode(String barcode) {
+		if (!this.isEnabled()) {
 			return Optional.empty();
 		}
 		CompletionStage<JsonNode> stage = this.performBarcodeSearchCall(barcode);
