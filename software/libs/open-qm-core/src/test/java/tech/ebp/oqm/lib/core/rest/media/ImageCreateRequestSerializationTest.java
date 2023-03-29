@@ -28,6 +28,7 @@ class ImageCreateRequestSerializationTest extends ObjectSerializationTest<ImageC
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
+				"test",
 				new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
@@ -35,6 +36,7 @@ class ImageCreateRequestSerializationTest extends ObjectSerializationTest<ImageC
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
+				"test",
 				"data:image/png;base64," + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()

@@ -54,7 +54,7 @@ dependencies {
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.60'
+	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.60-1-54-6-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.2-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -65,7 +65,7 @@ dependencies {
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
-	implementation 'org.apache.commons:commons-compress:1.21'
+	implementation 'org.apache.commons:commons-compress:1.23.0'
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.3.3'
 
@@ -82,7 +82,7 @@ dependencies {
 	testImplementation 'org.keycloak:keycloak-admin-client:21.0.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.1'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.3'
 	testImplementation 'org.testcontainers:selenium:1.17.6'
 	testImplementation 'com.deque:axe-selenium:3.0'
 	testImplementation 'net.datafaker:datafaker:1.8.1'

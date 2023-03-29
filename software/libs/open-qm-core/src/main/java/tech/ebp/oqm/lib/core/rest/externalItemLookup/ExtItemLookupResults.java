@@ -25,5 +25,5 @@ public class ExtItemLookupResults {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private Map<@NonNull @NotNull @NotBlank String, Throwable> serviceErrs = new HashMap<>();
+	private Map<@NonNull @NotNull @NotBlank String, String> serviceErrs = new HashMap<>();
 }
