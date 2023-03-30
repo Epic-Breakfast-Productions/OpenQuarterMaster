@@ -7,4 +7,5 @@ const Icons = {
 	locked: '{#icons/locked}{/icons/locked}',
 	remove: '{#icons/remove}{/icons/remove}',
 	unlocked: '{#icons/unlocked}{/icons/unlocked}',
+	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}'
 }

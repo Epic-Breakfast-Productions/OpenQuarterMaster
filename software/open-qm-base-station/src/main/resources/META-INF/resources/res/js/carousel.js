@@ -66,3 +66,14 @@ async function setCarouselImagesFromIds(imageIds, carousel) {
 		setCarouselImages(carousel, carouselData);
 	});
 }
+
+async function processImagedObjectImages(objectData, carousel){
+	if (objectData.imageIds.length) {
+		console.log("Object had images to show.");
+		carousel.show();
+		return setCarouselImagesFromIds(objectData.imageIds, carousel);
+	}
+	console.log("Object had no images to show.");
+	carousel.hide();
+	return [];
+}

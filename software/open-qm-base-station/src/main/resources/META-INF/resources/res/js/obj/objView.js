@@ -25,16 +25,21 @@ function processKeywordDisplay(container, keywords){
     }
 }
 
+function getAttDisplay(key, val){
+    let output = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span>');
+
+    output.find(".attKey").text(key);
+    output.find(".attVal").text(val);
+
+    return output;
+}
+
 function displayAttsIn(container, attributes){
     Object.entries(attributes).forEach(entry => {
         const [key, val] = entry;
         console.log("Att: " + key + "/" + val);
-        let newAtt = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span>');
 
-        newAtt.find(".attKey").text(key);
-        newAtt.find(".attVal").text(val);
-
-        container.append(newAtt);
+        container.append(getAttDisplay(key, val));
     });
 }
 
@@ -47,7 +52,7 @@ function processAttDisplay(container, attributes){
     clearHideAttDisplay(container);
     if(Object.keys(attributes).length > 0){
         console.log("had attributes");
-        viewAttsSection.show();
+        container.show();
         displayAttsIn(container.find('.attsViewContainer'), attributes)
     } else {
         console.log("did not have attributes.");

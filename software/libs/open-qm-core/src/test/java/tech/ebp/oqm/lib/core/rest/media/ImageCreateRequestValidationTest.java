@@ -26,6 +26,7 @@ class ImageCreateRequestValidationTest extends ObjectValidationTest<ImageCreateR
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
+				"test",
 				new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
@@ -33,6 +34,7 @@ class ImageCreateRequestValidationTest extends ObjectValidationTest<ImageCreateR
 			Arguments.of(new ImageCreateRequest(
 				BasicTest.FAKER.animal().name(),
 				BasicTest.FAKER.lorem().sentence(),
+				"test",
 				"data:image/png;base64," + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 				new ArrayList<>(),
 				new HashMap<>()
@@ -46,6 +48,7 @@ class ImageCreateRequestValidationTest extends ObjectValidationTest<ImageCreateR
 				new ImageCreateRequest(
 					BasicTest.FAKER.animal().name(),
 					BasicTest.FAKER.lorem().sentence(),
+					"test",
 					"foo\\bard" + new String(ENCODER.encode(BasicTest.FAKER.lorem().sentence().getBytes(StandardCharsets.UTF_8))),
 					new ArrayList<>(),
 					new HashMap<>()

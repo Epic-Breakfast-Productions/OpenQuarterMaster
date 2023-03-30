@@ -1,6 +1,8 @@
-package tech.ebp.oqm.lib.core.object.storage.storageBlock.tree;
+package tech.ebp.oqm.lib.core.rest.tree.storageBlock;
 
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
+import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTreeNode;
 import tech.ebp.oqm.lib.core.testUtils.BasicTest;
 import org.assertj.core.api.Fail;
 import org.bson.types.ObjectId;
@@ -70,13 +72,13 @@ class StorageBlockTreeTest extends BasicTest {
 		assertEquals(2, tree.getRootNodes().size());
 		
 		for (StorageBlockTreeNode tn : tree.getRootNodes()) {
-			if (tn.getBlockId().equals(id1)) {
+			if (tn.getObjectId().equals(id1)) {
 				assertEquals(2, tn.getChildren().size());
-				for (StorageBlockTreeNode tn2 : tn.getChildren()) {
-					assertTrue(tn2.getBlockId().equals(id3) || tn2.getBlockId().equals(id4), "Child id of block 1 not what was expected");
+				for (ParentedMainObjectTreeNode<StorageBlock> tn2 : tn.getChildren()) {
+					assertTrue(tn2.getObjectId().equals(id3) || tn2.getObjectId().equals(id4), "Child id of block 1 not what was expected");
 					assertFalse(tn2.hasChildren());
 				}
-			} else if (tn.getBlockId().equals(id2)) {
+			} else if (tn.getObjectId().equals(id2)) {
 				assertEquals(1, tn.getChildren().size());
 				
 				StorageBlockTreeNode tn2 = (StorageBlockTreeNode) tn.getChildren().toArray()[0];
@@ -106,22 +108,22 @@ class StorageBlockTreeTest extends BasicTest {
 		StorageBlockTree tree = new StorageBlockTree();
 		tree.add(block1, block2, block3, block4, block5, block6);
 		
-		tree.cleanupStorageBlockTreeNode(List.of(id5));
+		tree.cleanupTreeNodes(List.of(id5));
 		
 		assertEquals(1, tree.getRootNodes().size());
 		
 		StorageBlockTreeNode cur = tree.getRootNodes().stream().findFirst().get();
-		assertEquals(id2, cur.getBlockId());
+		assertEquals(id2, cur.getObjectId());
 		
 		assertEquals(1, cur.getChildren().size());
-		cur = cur.getChildren().stream().findFirst().get();
+		cur = (StorageBlockTreeNode) cur.getChildren().stream().findFirst().get();
 		
-		assertEquals(id5, cur.getBlockId());
+		assertEquals(id5, cur.getObjectId());
 		
 		assertEquals(1, cur.getChildren().size());
-		cur = cur.getChildren().stream().findFirst().get();
+		cur = (StorageBlockTreeNode) cur.getChildren().stream().findFirst().get();
 		
-		assertEquals(id6, cur.getBlockId());
+		assertEquals(id6, cur.getObjectId());
 		
 		assertEquals(0, cur.getChildren().size());
 	}

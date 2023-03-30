@@ -27,8 +27,8 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.tree.StorageBlockTree;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -356,7 +356,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No items found from query given.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces({MediaType.APPLICATION_JSON})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public StorageBlockTree tree(
 		@Context SecurityContext securityContext,
@@ -364,7 +364,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
 		logRequestContext(this.getJwt(), securityContext);
-		return ((StorageBlockService) this.getObjectService()).getStorageBlockTree(onlyInclude);
+		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(onlyInclude);
 	}
 	
 	
