@@ -9,6 +9,8 @@
 		"deb": ""
 	},
 	"configFiles":{
-		"/etc/oqm/infra/prometheus/prometheus.yaml": "# Prometheus configuration to point prometheus to OQM instance managed by OQM Station Captain\n#  https://prometheus.io/docs/prometheus/latest/getting_started/\nglobal:\n  scrape_interval: 60s # By default\n  \n  # Attach these labels to any time series or alerts when communicating with\n  # external systems (federation, remote storage, Alertmanager).\n  external_labels:\n    monitor: 'OQM-monitor'\n\n# A scrape configuration containing exactly one endpoint to scrape:\n# Here it's Prometheus itself.\nscrape_configs:\n  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.\n  - job_name: 'OQM-Core'\n    # Override the global default and scrape targets from this job every 5 seconds.\n#    scrape_interval: 60s\n    metrics_path: /q/metrics\n    static_configs:\n      - targets: [ 'host.docker.internal:80' ]"
+		"/etc/oqm/infra/prometheus/prometheus.yaml": "config.yaml"
+	},
+	"files":{
 	}
 }

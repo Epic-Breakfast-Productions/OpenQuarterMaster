@@ -1,6 +1,6 @@
 {
 	"packageName":"open+quarter+master-infra-jaeger",
-	"version":"1.0.5",
+	"version":"1.0.6",
 	"description":"Jaeger instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger",
 	"configs": [
@@ -12,5 +12,9 @@
 		"deb": ""
 	},
 	"configFiles":{
+	},
+	"files":{
+		"/etc/oqm/static/jaeger-icon.svg": "jaeger-icon.svg",
+		"/usr/share/applications/oqm-jaeger.desktop": "oqm-jaeger.desktop"
 	}
 }
