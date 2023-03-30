@@ -101,7 +101,7 @@ const ExtItemSearch = {
 				// downloadedImg.readAsDataURL(imageData);
 			});
 			console.log("Data from img: " + output);
-		} catch (e){
+		} catch (e) {
 			console.log("FAILED to get image data: " + e);
 		}
 
@@ -158,127 +158,134 @@ const ExtItemSearch = {
 		return true;
 	},
 	carouselNum: 0,
-	handleExtItemSearchResults(results) {
+	async handleExtItemSearchResult(result){
+		//TODO:: better formatting, method for filling out values
+		let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
+		{
+			let header = $('<div class="card-header"></div>');
+			header.text(result.source);
+			resultCard.append(header);
+		}
+		let resultMainBody = $('<ul class="list-group list-group-flush"></ul>');
+		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
+		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
+
+		/* TODO:: */
+		if (result.images.length) {
+			//TODO:: add minimum height/width, set unique car id
+			let carouselId = "extSearchResultImgCarousel-" + ExtItemSearch.carouselNum++;
+			let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
+
+			let carousel = $('<div id="' + carouselId + '" class="carousel slide border border-1 extProductResultCarousel">\n' +
+				'  <div class="carousel-inner">\n' +
+
+				'  </div>\n' +
+				'  <button class="carousel-control-prev" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="prev">\n' +
+				'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
+				'    <span class="visually-hidden">Previous</span>\n' +
+				'  </button>\n' +
+				'  <button class="carousel-control-next" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="next">\n' +
+				'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
+				'    <span class="visually-hidden">Next</span>\n' +
+				'  </button>\n' +
+				'</div>');
+			let carouselInner = carousel.find(".carousel-inner");
+
+			let imgPromises = [];
+			result.images.forEach(function (curImageLoc, i) {
+				let curPromise = async function () {
+					console.log("Getting image " + i);
+
+					let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
+
+					if (!imageData) {
+						console.error("FAILED to get image data for " + i + " - " + curImageLoc);
+						return;
+					}
+					let newCarImageDir = $(
+						'    <div class="carousel-item">\n' +
+						'      <img src="" class="d-block w-100" alt="...">\n' +
+						'      <div class="carousel-caption d-none d-md-block">' +
+						'          ' +
+						'      </div>' +
+						'    </div>\n'
+					);
+					let newCarImage = newCarImageDir.find("img");
+					newCarImage.prop("src", imageData);
+
+					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
+					useButton.on("click", function () {
+						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
+					});
+					newCarImageDir.find(".carousel-caption").append(useButton);
+
+					carouselInner.append(newCarImageDir);
+					console.log("Finished getting image " + i);
+				}
+
+				imgPromises.push(curPromise());
+			});
+			await Promise.all(imgPromises);
+
+			$(carouselInner.children()[0]).addClass('active');
+
+
+			//TODO:: if no images, don't append
+
+			console.log("Finished getting " + carouselInner.children().length + " images");
+			if (carouselInner.children().length) {
+				imagesSection.append(carousel);
+				resultMainBody.append(imagesSection);
+			}
+		}/* */
+
+		if (result.attributes) {
+			let attsSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Attributes:</h6></li>');
+
+			let attsList = $('<span></span>');
+			Object.keys(result.attributes).forEach(key => {
+				let val = result.attributes[key];
+
+				let curAtt = getAttDisplay(key, val);
+				let useButt = ExtItemSearch.getUseButton();
+
+				useButt.on("click", function (e) {
+					addAttInput(
+						addEditAttDiv,
+						key,
+						val
+					);
+				});
+
+				curAtt.append(useButt);
+
+				attsList.append(curAtt);
+			});
+			attsSection.append(attsList);
+
+			resultMainBody.append(attsSection);
+		}
+
+		resultCard.append(resultMainBody);
+		ExtItemSearch.extSearchResults.append(resultCard);
+	},
+	async handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
 		if (results.results.length === 0) {
 			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
 		}
-		results.results.forEach(async function (result) {
-			//TODO:: better formatting, method for filling out values
-			let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
-			{
-				let header = $('<div class="card-header"></div>');
-				header.text(result.source);
-				resultCard.append(header);
+		let resultPromises = [];
+		results.results.forEach(function (result) {
+				resultPromises.push(ExtItemSearch.handleExtItemSearchResult(result));
 			}
-			let resultMainBody = $('<ul class="list-group list-group-flush"></ul>');
-			resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
-			resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
-
-			/* TODO:: */
-			if (result.images.length) {
-				//TODO:: add minimum height/width, set unique car id
-				let carouselId = "extSearchResultImgCarousel-"+ ExtItemSearch.carouselNum++;
-				let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
-
-				let carousel = $('<div id="'+carouselId+'" class="carousel slide border border-1 extProductResultCarousel">\n' +
-					'  <div class="carousel-inner">\n' +
-
-					'  </div>\n' +
-					'  <button class="carousel-control-prev" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="prev">\n' +
-					'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
-					'    <span class="visually-hidden">Previous</span>\n' +
-					'  </button>\n' +
-					'  <button class="carousel-control-next" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="next">\n' +
-					'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
-					'    <span class="visually-hidden">Next</span>\n' +
-					'  </button>\n' +
-					'</div>');
-				let carouselInner = carousel.find(".carousel-inner");
-
-				let imgPromises = [];
-				result.images.forEach(function (curImageLoc, i) {
-					let curPromise = async function() {
-						console.log("Getting image " + i);
-
-						let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
-
-						if (!imageData) {
-							console.error("FAILED to get image data for " + i + " - " + curImageLoc);
-							return;
-						}
-						let newCarImageDir = $(
-							'    <div class="carousel-item">\n' +
-							'      <img src="" class="d-block w-100" alt="...">\n' +
-							'      <div class="carousel-caption d-none d-md-block">' +
-							'          ' +
-							'      </div>' +
-							'    </div>\n'
-						);
-						let newCarImage = newCarImageDir.find("img");
-						newCarImage.prop("src", imageData);
-
-						let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
-						useButton.on("click", function () {
-							ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
-						});
-						newCarImageDir.find(".carousel-caption").append(useButton);
-
-						carouselInner.append(newCarImageDir);
-						console.log("Finished getting image " + i);
-					}
-
-					imgPromises.push(curPromise());
-				});
-				await Promise.all(imgPromises);
-
-				$(carouselInner.children()[0]).addClass('active');
-
-
-				//TODO:: if no images, don't append
-
-				console.log("Finished getting "+carouselInner.children().length+" images");
-				if(carouselInner.children().length) {
-					imagesSection.append(carousel);
-					resultMainBody.append(imagesSection);
-				}
-			}/* */
-
-			if (result.attributes) {
-				let attsSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Attributes:</h6></li>');
-
-				let attsList = $('<span></span>');
-				Object.keys(result.attributes).forEach(key => {
-					let val = result.attributes[key];
-
-					let curAtt = getAttDisplay(key, val);
-					let useButt = ExtItemSearch.getUseButton();
-
-					useButt.on("click", function (e) {
-						addAttInput(
-							addEditAttDiv,
-							key,
-							val
-						);
-					});
-
-					curAtt.append(useButt);
-
-					attsList.append(curAtt);
-				});
-				attsSection.append(attsList);
-
-				resultMainBody.append(attsSection);
-			}
-
-			resultCard.append(resultMainBody);
-			ExtItemSearch.extSearchResults.append(resultCard);
-		});
+		);
 
 		for (const [service, error] of Object.entries(results.serviceErrs)) {
 			addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
 		}
+		await Promise.all(resultPromises);
+		console.log("Finished processing ext item search results.");
 	},
 
 
@@ -304,8 +311,8 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-		done: function (data) {
-			ExtItemSearch.handleExtItemSearchResults(data)
+		done: async function (data) {
+			await ExtItemSearch.handleExtItemSearchResults(data);
 		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
@@ -320,8 +327,8 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
-		done: function (data) {
-			ExtItemSearch.handleExtItemSearchResults(data)
+		done: async function (data) {
+			await ExtItemSearch.handleExtItemSearchResults(data);
 		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
@@ -335,8 +342,8 @@ ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
-		done: function (data) {
-			ExtItemSearch.handleExtItemSearchResults(data)
+		done: async function (data) {
+			await ExtItemSearch.handleExtItemSearchResults(data)
 		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
