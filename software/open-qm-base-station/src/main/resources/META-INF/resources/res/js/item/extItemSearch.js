@@ -107,7 +107,7 @@ const ExtItemSearch = {
 
 		return output;
 	},
-	addOrGetAndSelectImage(imageUrl, resultUnifiedName, newCarImage) {
+	addOrGetAndSelectImage(imageUrl, resultUnifiedName, imageData) {
 		console.log("Setting image for item. Image source: " + imageUrl);
 
 		doRestCall({
@@ -120,12 +120,6 @@ const ExtItemSearch = {
 				if (!data.length) {
 					console.log("No results for given source. Adding.")
 					//TODO:: use image add form to add image, come back to this?
-
-					let imageData = await ExtItemSearch.getImageBase64FromUrl(imageUrl);
-
-					if (!imageData) {
-						return;
-					}
 
 					let saveImageFail = false;
 
@@ -230,7 +224,7 @@ const ExtItemSearch = {
 
 						let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
 						useButton.on("click", function () {
-							ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, newCarImage);
+							ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
 						});
 						newCarImageDir.find(".carousel-caption").append(useButton);
 
