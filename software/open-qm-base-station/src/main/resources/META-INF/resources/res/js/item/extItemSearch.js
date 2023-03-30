@@ -157,7 +157,7 @@ const ExtItemSearch = {
 		});
 		return true;
 	},
-
+	carouselNum: 0,
 	handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
@@ -179,17 +179,18 @@ const ExtItemSearch = {
 			/* TODO:: */
 			if (result.images.length) {
 				//TODO:: add minimum height/width, set unique car id
+				let carouselId = "extSearchResultImgCarousel-"+ ExtItemSearch.carouselNum++;
 				let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
 
-				let carousel = $('<div id="carouselExample" class="carousel slide border border-1">\n' +
+				let carousel = $('<div id="'+carouselId+'" class="carousel slide border border-1 extProductResultCarousel">\n' +
 					'  <div class="carousel-inner">\n' +
 
 					'  </div>\n' +
-					'  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">\n' +
+					'  <button class="carousel-control-prev" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="prev">\n' +
 					'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
 					'    <span class="visually-hidden">Previous</span>\n' +
 					'  </button>\n' +
-					'  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">\n' +
+					'  <button class="carousel-control-next" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="next">\n' +
 					'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
 					'    <span class="visually-hidden">Next</span>\n' +
 					'  </button>\n' +
@@ -217,10 +218,6 @@ const ExtItemSearch = {
 						);
 						let newCarImage = newCarImageDir.find("img");
 						newCarImage.prop("src", imageData);
-						// newCarImage.on("error", function () {
-						// 	console.log("Failed to load external image " + curImageLoc);
-						// 	newCarImageDir.remove();
-						// })
 
 						let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
 						useButton.on("click", function () {
