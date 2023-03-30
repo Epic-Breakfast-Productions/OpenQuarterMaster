@@ -69,7 +69,132 @@ const ExtItemSearch = {
 
 		return section;
 	},
+	async getImageBase64FromUrl(imageUrl){
+		let output = false;
+		await doRestCall({
+			async: false,
+			url: imageUrl,
+			method: "GET",
+			crossDomain: true,
+			failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
+			done: async function (imageData, status, xhr){
+				//TODO:: handle cases where already have proper formatted string?
+				//TODO:: refactor base64 test
+				let base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+				if(!base64regex.test(imageData)){
+					console.log("Image data from url was not base 64");
+					console.log(typeof imageData);
 
+					// var binary = "";
+					// imageData = xhr.responseText;
+					// var responseTextLen = imageData.length;
+					//
+					// for (let i = 0; i < responseTextLen; i++ ) {
+					// 	binary += String.fromCharCode(imageData.charCodeAt(i) & 255)
+					// }
+					// imageData = btoa(binary);
+
+					imageData = new Blob([imageData], {
+						type:  xhr.getResponseHeader("content-type")
+					});
+					function readAsDataURL(file) {
+						return new Promise((resolve, reject) => {
+							const fr = new FileReader();
+							fr.onerror = reject;
+							fr.onload = () => {
+								resolve(fr.result);
+							}
+							fr.readAsDataURL(file);
+						});
+					}
+					let readProm =  readAsDataURL(imageData);
+					let tempImageData = await readProm;
+					imageData = tempImageData;
+
+					// let reader = new FileReader();
+					// reader.onloadend = function () {
+					// 	imageData = reader.result;
+					// }
+					//
+					// let base64Data = new Promise((resolve, reject) => {
+					// 	reader.onerror = reject;
+					// 	reader.onload = () => {
+					// 		resolve(reader.result);
+					// 	}
+					// 	reader.readAsDataURL(imageData);
+					// });
+					// imageData = base64Data;
+
+
+					// let image = new Image();
+					// image.crossOrigin = 'Anonymous';
+					// image.onload = function () {
+					// 	let canvas = document.createElement('canvas');
+					// 	let ctx = canvas.getContext('2d');
+					// 	let dataURL;
+					// 	canvas.height = this.naturalHeight;
+					// 	canvas.width = this.naturalWidth;
+					// 	ctx.drawImage(this, 0, 0);
+					// 	dataURL = canvas.toDataURL(outputFormat);
+					// 	callback(dataURL);
+					// };
+					// image.src = src;
+					// if (image.complete || image.complete === undefined) {
+					// 	image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+					// 	image.src = src;
+					// }
+
+					// let imageData = null;
+					// let downloadedImg = new Image();
+					// downloadedImg.crossOrigin = "Anonymous";
+					// downloadedImg.addEventListener("load", ()=> {
+					// 	try {
+					// 		const canvas = document.createElement("canvas");
+					// 		const context = canvas.getContext("2d");
+					//
+					// 		canvas.width = downloadedImg.width;
+					// 		canvas.height = downloadedImg.height;
+					// 		canvas.innerText = downloadedImg.alt;
+					//
+					// 		context.drawImage(downloadedImg, 0, 0);
+					// 		imageData = canvas.toDataURL("image/png");
+					// 	} catch (err) {
+					// 		imageData = `Error: ${err}`;
+					// 	}
+					// }, false);
+					// downloadedImg.src = imageUrl;
+					//
+					// while(!imageData){}
+					//
+					// console.log("Data from img: " + imageData);
+
+					// imageData = btoa(
+					// 	encodeURIComponent(imageData).replace(/%([a-f0-9]{2})/gi, (m, $1) => String.fromCharCode(parseInt($1, 16)))
+					// );
+
+					// imageData = btoa(imageData.reduce((data, val)=> {
+					// 	return data + String.fromCharCode(val);
+					// }, ''));
+
+					// imageData = btoa(unescape(encodeURIComponent(imageData)));
+
+					// let reader = new FileReader();
+					// reader.onload = function() {
+					// 	imageData = reader.result;
+					// 	console.log("Finished converting to base 64");
+					// }
+					// reader.readAsDataURL(imageData);
+
+					console.log("Image data converted to base 64.");
+				}
+				// imageData = "data:" + xhr.getResponseHeader("content-type") + ";base64," + imageData;
+
+				output = imageData;
+			}
+		});
+		console.log("Got image data string: " + output);
+		return output;
+	},
 	addOrGetAndSelectImage(imageUrl, resultUnifiedName, newCarImage){
 		console.log("Setting image for item. Image source: " + imageUrl);
 
@@ -83,127 +208,31 @@ const ExtItemSearch = {
 				if(!data.length){
 					console.log("No results for given source. Adding.")
 					//TODO:: use image add form to add image, come back to this?
+
+					let imageData = await ExtItemSearch.getImageBase64FromUrl(imageUrl);
+
+					if(!imageData){
+						return;
+					}
+
 					let saveImageFail = false;
-
-					let canvas = document.createElement('canvas');
-					let context = canvas.getContext('2d');
-					let img = newCarImage[0];
-					context.drawImage(img, 0, 0 );
-					let theData = context.getImageData(0, 0, img.width, img.height);
-
-					console.log("Data from img: " + theData);
 
 					await doRestCall({
 						async: false,
-						url: imageUrl,
-						method: "GET",
+						url: "/api/v1/media/image",
+						method: "POST",
+						data: {
+							title: resultUnifiedName,
+							source: imageUrl,
+							imageData: imageData
+						},
 						failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
-						done: async function (imageData, status, xhr){
-							//TODO:: handle cases where already have proper formatted string?
-							//TODO:: refactor base64 test
-							let base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-							if(!base64regex.test(imageData)){
-								console.log("Image data from url was not base 64");
-								console.log(typeof imageData);
-
-								// var binary = "";
-								// imageData = xhr.responseText;
-								// var responseTextLen = imageData.length;
-								//
-								// for (let i = 0; i < responseTextLen; i++ ) {
-								// 	binary += String.fromCharCode(imageData.charCodeAt(i) & 255)
-								// }
-								// imageData = btoa(binary);
-
-								imageData = new Blob([imageData], {
-									type:  xhr.getResponseHeader("content-type")
-								});
-
-								function readAsDataURL(file) {
-									return new Promise((resolve, reject) => {
-										const fr = new FileReader();
-										fr.onerror = reject;
-										fr.onload = () => {
-											resolve(fr.result);
-										}
-										fr.readAsDataURL(file);
-									});
-								}
-								imageData = await readAsDataURL(imageData);
-
-								// let reader = new FileReader();
-								// reader.onloadend = function () {
-								// 	imageData = reader.result;
-								// }
-								//
-								// let base64Data = new Promise((resolve, reject) => {
-								// 	reader.onerror = reject;
-								// 	reader.onload = () => {
-								// 		resolve(reader.result);
-								// 	}
-								// 	reader.readAsDataURL(imageData);
-								// });
-								// imageData = base64Data;
-
-
-								// let image = new Image();
-								// image.crossOrigin = 'Anonymous';
-								// image.onload = function () {
-								// 	let canvas = document.createElement('canvas');
-								// 	let ctx = canvas.getContext('2d');
-								// 	let dataURL;
-								// 	canvas.height = this.naturalHeight;
-								// 	canvas.width = this.naturalWidth;
-								// 	ctx.drawImage(this, 0, 0);
-								// 	dataURL = canvas.toDataURL(outputFormat);
-								// 	callback(dataURL);
-								// };
-								// image.src = src;
-								// if (image.complete || image.complete === undefined) {
-								// 	image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-								// 	image.src = src;
-								// }
-
-								// imageData = btoa(
-								// 	encodeURIComponent(imageData).replace(/%([a-f0-9]{2})/gi, (m, $1) => String.fromCharCode(parseInt($1, 16)))
-								// );
-
-								// imageData = btoa(imageData.reduce((data, val)=> {
-								// 	return data + String.fromCharCode(val);
-								// }, ''));
-
-								// imageData = btoa(unescape(encodeURIComponent(imageData)));
-
-								// let reader = new FileReader();
-								// reader.onload = function() {
-								// 	imageData = reader.result;
-								// 	console.log("Finished converting to base 64");
-								// }
-								// reader.readAsDataURL(imageData);
-
-								console.log("Image data converted to base 64.");
-							}
-							// imageData = "data:" + xhr.getResponseHeader("content-type") + ";base64," + imageData;
-							console.log("Got image data string.");
-
-							doRestCall({
-								async: false,
-								url: "/api/v1/media/image",
-								method: "POST",
-								data: {
-									title: resultUnifiedName,
-									source: imageUrl,
-									imageData: imageData
-								},
-								failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
-								fail: function (){
-									saveImageFail = true;
-								},
-								done: function (data){
-									console.log("Added image from url! " + data);
-									imageId = data;
-								}
-							});
+						fail: function (){
+							saveImageFail = true;
+						},
+						done: function (data){
+							console.log("Added image from url! " + data);
+							imageId = data;
 						}
 					});
 
@@ -222,6 +251,7 @@ const ExtItemSearch = {
 		});
 		return true;
 	},
+
 	handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
@@ -240,7 +270,7 @@ const ExtItemSearch = {
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
 
-			/* TODO::
+			/* TODO:: */
 			if(result.images.length){
 				//TODO:: add minimum height/width, set unique car id
 				let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');

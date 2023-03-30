@@ -66,14 +66,13 @@ async function doRestCall(
 		failNoResponseCheckStatus = true,
 	} = {}
 ) {
-	console.log("Making rest call to " + url);
-	var spinner = (spinnerContainer === null ? null : new Spin.Spinner(spinnerOpts).spin(spinnerContainer));
+	console.log("Making "+ method +" rest call to " + url);
+	let spinner = (spinnerContainer === null ? null : new Spin.Spinner(spinnerOpts).spin(spinnerContainer));
 
-	var ajaxOps = {
+	let ajaxOps = {
 		url: url,
 		method: method,
 		timeout: timeout,
-		crossDomain: crossDomain
 	};
 
 	if (data != null) {
@@ -98,61 +97,66 @@ async function doRestCall(
 		}
 	}
 	if (crossDomain) {
+		ajaxOps = {
+			...ajaxOps,
+			...{CORS: true}
+		}
 		extraHeaders = {
 			...extraHeaders,
-			...{"Access-Control-Allow-Origin": "*"}
+			...{'Access-Control-Allow-Origin': "*"},
+			...{'some': "thing"},
 		}
 	}
 
 	ajaxOps.headers = extraHeaders;
 
-	let ajaxPromise = $.ajax(
-		ajaxOps
-	).done(function (data, status, xhr) {
-		console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
-		done(data, status, xhr);
-	}).fail(function (data, status, statusStr) {
-		console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
+	console.log("Calling with headers: " + JSON.stringify(ajaxOps.headers));
+	console.debug("Full request object: " + JSON.stringify(ajaxOps));
 
-		if(failMessagesDiv != null){
-			if(String(failMessagesDiv) === failMessagesDiv){
-				failMessagesDiv = $(failMessagesDiv);
-			}
-			addMessageToDiv(
-				failMessagesDiv,
-				"danger",
-				buildErrorMessageFromResponse(data, statusStr),
-				"Action Failed",
-				null,
-				JSON.stringify(data)
-			);
-		}
+	let ajaxPromise = $.ajax(ajaxOps)
+		.done(function (data, status, xhr) {
+			console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
+			done(data, status, xhr);
+		}).fail(function (data, status, statusStr) {
+			console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
 
-
-
-		var response = data.responseJSON;
-		if (data.status == 0) { // no response from server
-			if (failNoResponseCheckStatus) {
-				//getServerStatus();
-			}
-			console.info("Failed due to lack of connection to server.");
-			if (failNoResponse != null) {
-				failNoResponse(data);
-			} else {
-				addMessage(
+			if(failMessagesDiv != null){
+				if(String(failMessagesDiv) === failMessagesDiv){
+					failMessagesDiv = $(failMessagesDiv);
+				}
+				addMessageToDiv(
+					failMessagesDiv,
 					"danger",
-					"Try refreshing the page, or wait until later. Contact the server operators for help and details.",
-					"Failed to connect to server."
+					buildErrorMessageFromResponse(data, statusStr),
+					"Action Failed",
+					null,
+					JSON.stringify(data)
 				);
 			}
-		} else {
-			fail(data);
-		}
-	}).always(function () {
-		if (spinner != null) {
-			spinner.stop();
-		}
-	});
+
+			var response = data.responseJSON;
+			if (data.status == 0) { // no response from server
+				if (failNoResponseCheckStatus) {
+					//getServerStatus();
+				}
+				console.info("Failed due to lack of connection to server.");
+				if (failNoResponse != null) {
+					failNoResponse(data);
+				} else {
+					addMessage(
+						"danger",
+						"Try refreshing the page, or wait until later. Contact the server operators for help and details.",
+						"Failed to connect to server."
+					);
+				}
+			} else {
+				fail(data);
+			}
+		}).always(function () {
+			if (spinner != null) {
+				spinner.stop();
+			}
+		});
 
 	if (!async) {
 		await ajaxPromise;
