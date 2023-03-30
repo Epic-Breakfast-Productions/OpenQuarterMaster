@@ -33,10 +33,10 @@ const ExtItemSearch = {
 
 	addEditProductSearchPane: $("#addEditProductSearchPane"),
 
-	getUseButton(text){
+	getUseButton(text) {
 		let newButton = $('<button type="button" class="btn btn-link mb-0 p-0" title="Use this value"></button>');
 
-		if(text) {
+		if (text) {
 			newButton.text(text + ": ");
 		}
 		newButton.append(Icons.useDatapoint);
@@ -44,14 +44,14 @@ const ExtItemSearch = {
 		return newButton;
 	},
 
-	createSearchResultSection(name, value, targetInput){
+	createSearchResultSection(name, value, targetInput) {
 		let section = $('<li class="list-group-item extProdResultSection"><h6 class="card-title"></h6></li>');
 
-		if(targetInput) {
+		if (targetInput) {
 			let useButton = ExtItemSearch.getUseButton(name);
 			useButton.on("click", function (e) {
 				let valElement;
-				if(e.target.tagName === "I"){
+				if (e.target.tagName === "I") {
 					valElement = $(e.target.parentElement.parentElement.nextElementSibling);
 				} else {
 					valElement = $(e.target.parentElement.nextElementSibling)
@@ -69,145 +69,80 @@ const ExtItemSearch = {
 
 		return section;
 	},
+	async getImageBase64FromUrl(imageUrl) {
+		let output = false;
 
-	addOrGetAndSelectImage(imageUrl, resultUnifiedName, newCarImage){
+		try {
+			let imageData = null;
+			let downloadedImg = new Image();
+			downloadedImg.crossOrigin = "";
+			downloadedImg.addEventListener("load", () => {
+				try {
+					const canvas = document.createElement("canvas");
+					const context = canvas.getContext("2d");
+
+					canvas.width = downloadedImg.width;
+					canvas.height = downloadedImg.height;
+					canvas.innerText = downloadedImg.alt;
+
+					context.drawImage(downloadedImg, 0, 0);
+					imageData = canvas.toDataURL("image/png");
+				} catch (err) {
+					imageData = `Error: ${err}`;
+				}
+			}, false);
+			downloadedImg.src = imageUrl;
+
+			output = await new Promise((resolve, reject) => {
+				downloadedImg.onerror = reject;
+				downloadedImg.onload = () => {
+					resolve(imageData);
+				}
+				// downloadedImg.readAsDataURL(imageData);
+			});
+			console.log("Data from img: " + output);
+		} catch (e){
+			console.log("FAILED to get image data: " + e);
+		}
+
+		return output;
+	},
+	addOrGetAndSelectImage(imageUrl, resultUnifiedName, imageData) {
 		console.log("Setting image for item. Image source: " + imageUrl);
 
 		doRestCall({
 			url: "/api/v1/media/image?" + new URLSearchParams([["source", imageUrl]]).toString(),
 			method: "GET",
 			failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
-			done: async function (data){
+			done: async function (data) {
 				let imageId;
 				let imageName = resultUnifiedName;
-				if(!data.length){
+				if (!data.length) {
 					console.log("No results for given source. Adding.")
 					//TODO:: use image add form to add image, come back to this?
+
 					let saveImageFail = false;
-
-					let canvas = document.createElement('canvas');
-					let context = canvas.getContext('2d');
-					let img = newCarImage[0];
-					context.drawImage(img, 0, 0 );
-					let theData = context.getImageData(0, 0, img.width, img.height);
-
-					console.log("Data from img: " + theData);
 
 					await doRestCall({
 						async: false,
-						url: imageUrl,
-						method: "GET",
+						url: "/api/v1/media/image",
+						method: "POST",
+						data: {
+							title: resultUnifiedName,
+							source: imageUrl,
+							imageData: imageData
+						},
 						failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
-						done: async function (imageData, status, xhr){
-							//TODO:: handle cases where already have proper formatted string?
-							//TODO:: refactor base64 test
-							let base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-							if(!base64regex.test(imageData)){
-								console.log("Image data from url was not base 64");
-								console.log(typeof imageData);
-
-								// var binary = "";
-								// imageData = xhr.responseText;
-								// var responseTextLen = imageData.length;
-								//
-								// for (let i = 0; i < responseTextLen; i++ ) {
-								// 	binary += String.fromCharCode(imageData.charCodeAt(i) & 255)
-								// }
-								// imageData = btoa(binary);
-
-								imageData = new Blob([imageData], {
-									type:  xhr.getResponseHeader("content-type")
-								});
-
-								function readAsDataURL(file) {
-									return new Promise((resolve, reject) => {
-										const fr = new FileReader();
-										fr.onerror = reject;
-										fr.onload = () => {
-											resolve(fr.result);
-										}
-										fr.readAsDataURL(file);
-									});
-								}
-								imageData = await readAsDataURL(imageData);
-
-								// let reader = new FileReader();
-								// reader.onloadend = function () {
-								// 	imageData = reader.result;
-								// }
-								//
-								// let base64Data = new Promise((resolve, reject) => {
-								// 	reader.onerror = reject;
-								// 	reader.onload = () => {
-								// 		resolve(reader.result);
-								// 	}
-								// 	reader.readAsDataURL(imageData);
-								// });
-								// imageData = base64Data;
-
-
-								// let image = new Image();
-								// image.crossOrigin = 'Anonymous';
-								// image.onload = function () {
-								// 	let canvas = document.createElement('canvas');
-								// 	let ctx = canvas.getContext('2d');
-								// 	let dataURL;
-								// 	canvas.height = this.naturalHeight;
-								// 	canvas.width = this.naturalWidth;
-								// 	ctx.drawImage(this, 0, 0);
-								// 	dataURL = canvas.toDataURL(outputFormat);
-								// 	callback(dataURL);
-								// };
-								// image.src = src;
-								// if (image.complete || image.complete === undefined) {
-								// 	image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-								// 	image.src = src;
-								// }
-
-								// imageData = btoa(
-								// 	encodeURIComponent(imageData).replace(/%([a-f0-9]{2})/gi, (m, $1) => String.fromCharCode(parseInt($1, 16)))
-								// );
-
-								// imageData = btoa(imageData.reduce((data, val)=> {
-								// 	return data + String.fromCharCode(val);
-								// }, ''));
-
-								// imageData = btoa(unescape(encodeURIComponent(imageData)));
-
-								// let reader = new FileReader();
-								// reader.onload = function() {
-								// 	imageData = reader.result;
-								// 	console.log("Finished converting to base 64");
-								// }
-								// reader.readAsDataURL(imageData);
-
-								console.log("Image data converted to base 64.");
-							}
-							// imageData = "data:" + xhr.getResponseHeader("content-type") + ";base64," + imageData;
-							console.log("Got image data string.");
-
-							doRestCall({
-								async: false,
-								url: "/api/v1/media/image",
-								method: "POST",
-								data: {
-									title: resultUnifiedName,
-									source: imageUrl,
-									imageData: imageData
-								},
-								failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
-								fail: function (){
-									saveImageFail = true;
-								},
-								done: function (data){
-									console.log("Added image from url! " + data);
-									imageId = data;
-								}
-							});
+						fail: function () {
+							saveImageFail = true;
+						},
+						done: function (data) {
+							console.log("Added image from url! " + data);
+							imageId = data;
 						}
 					});
 
-					if(saveImageFail){
+					if (saveImageFail) {
 						return;
 					}
 					// return;
@@ -222,13 +157,14 @@ const ExtItemSearch = {
 		});
 		return true;
 	},
+	carouselNum: 0,
 	handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
 		if (results.results.length === 0) {
 			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
 		}
-		results.results.forEach(function (result) {
+		results.results.forEach(async function (result) {
 			//TODO:: better formatting, method for filling out values
 			let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
 			{
@@ -240,56 +176,76 @@ const ExtItemSearch = {
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
 			resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
 
-			/* TODO::
-			if(result.images.length){
+			/* TODO:: */
+			if (result.images.length) {
 				//TODO:: add minimum height/width, set unique car id
+				let carouselId = "extSearchResultImgCarousel-"+ ExtItemSearch.carouselNum++;
 				let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
 
-				let carousel = $('<div id="carouselExample" class="carousel slide border border-1">\n' +
+				let carousel = $('<div id="'+carouselId+'" class="carousel slide border border-1 extProductResultCarousel">\n' +
 					'  <div class="carousel-inner">\n' +
 
 					'  </div>\n' +
-					'  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">\n' +
+					'  <button class="carousel-control-prev" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="prev">\n' +
 					'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
 					'    <span class="visually-hidden">Previous</span>\n' +
 					'  </button>\n' +
-					'  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">\n' +
+					'  <button class="carousel-control-next" type="button" data-bs-target="#'+carouselId+'" data-bs-slide="next">\n' +
 					'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
 					'    <span class="visually-hidden">Next</span>\n' +
 					'  </button>\n' +
 					'</div>');
 				let carouselInner = carousel.find(".carousel-inner");
 
-				result.images.forEach(function (curImageLoc, i){
-					let newCarImageDir = $(
-						'    <div class="carousel-item '+(i === 0? 'active':'')+'">\n' +
-						'      <img src="" class="d-block w-100" alt="...">\n' +
-						'      <div class="carousel-caption d-none d-md-block">' +
-						'          ' +
-						'      </div>' +
-						'    </div>\n'
-					);
-					let newCarImage = newCarImageDir.find("img");
-					newCarImage.prop("src", curImageLoc);
-					newCarImage.on("error", function (){
-						console.log("Failed to load external image " + curImageLoc);
-						newCarImageDir.remove();
-					})
+				let imgPromises = [];
+				result.images.forEach(function (curImageLoc, i) {
+					let curPromise = async function() {
+						console.log("Getting image " + i);
 
-					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image '+Icons.useDatapoint+'</button>');
-					useButton.on("click", function(){
-						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, newCarImage);
-					});
-					newCarImageDir.find(".carousel-caption").append(useButton);
+						let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
 
-					carouselInner.append(newCarImageDir)
+						if (!imageData) {
+							console.error("FAILED to get image data for " + i + " - " + curImageLoc);
+							return;
+						}
+						let newCarImageDir = $(
+							'    <div class="carousel-item">\n' +
+							'      <img src="" class="d-block w-100" alt="...">\n' +
+							'      <div class="carousel-caption d-none d-md-block">' +
+							'          ' +
+							'      </div>' +
+							'    </div>\n'
+						);
+						let newCarImage = newCarImageDir.find("img");
+						newCarImage.prop("src", imageData);
+
+						let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
+						useButton.on("click", function () {
+							ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
+						});
+						newCarImageDir.find(".carousel-caption").append(useButton);
+
+						carouselInner.append(newCarImageDir);
+						console.log("Finished getting image " + i);
+					}
+
+					imgPromises.push(curPromise());
 				});
+				await Promise.all(imgPromises);
 
-				imagesSection.append(carousel);
-				resultMainBody.append(imagesSection);
+				$(carouselInner.children()[0]).addClass('active');
+
+
+				//TODO:: if no images, don't append
+
+				console.log("Finished getting "+carouselInner.children().length+" images");
+				if(carouselInner.children().length) {
+					imagesSection.append(carousel);
+					resultMainBody.append(imagesSection);
+				}
 			}/* */
 
-			if(result.attributes){
+			if (result.attributes) {
 				let attsSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Attributes:</h6></li>');
 
 				let attsList = $('<span></span>');
@@ -299,7 +255,7 @@ const ExtItemSearch = {
 					let curAtt = getAttDisplay(key, val);
 					let useButt = ExtItemSearch.getUseButton();
 
-					useButt.on("click", function (e){
+					useButt.on("click", function (e) {
 						addAttInput(
 							addEditAttDiv,
 							key,
@@ -348,7 +304,9 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		done: function (data) {
+			ExtItemSearch.handleExtItemSearchResults(data)
+		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });
@@ -362,7 +320,9 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		done: function (data) {
+			ExtItemSearch.handleExtItemSearchResults(data)
+		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });
@@ -375,7 +335,9 @@ ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 
 	doRestCall({
 		url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
-		done: function(data){ExtItemSearch.handleExtItemSearchResults(data)},
+		done: function (data) {
+			ExtItemSearch.handleExtItemSearchResults(data)
+		},
 		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
 	});
 });

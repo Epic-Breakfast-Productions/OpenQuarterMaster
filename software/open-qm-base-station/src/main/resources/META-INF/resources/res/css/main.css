@@ -97,3 +97,13 @@
 	max-height: 50px;
 	margin-right: 3px;
 }
+
+.extProductResultCarousel{
+	aspect-ratio: 1 / 1;
+}
+
+/* TODO:: figure out how to make controls actually visible */
+.carousel-control-prev .carousel-control-prev {
+	/*color: #1b1b1b !important;*/
+	/*background-color: #1b1b1b;*/
+}
