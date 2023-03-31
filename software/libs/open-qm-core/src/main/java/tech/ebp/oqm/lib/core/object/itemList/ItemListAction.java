@@ -15,19 +15,28 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemListItem {
+public class ItemListAction {
 	
-	@NonNull
-	@NotNull
-	private ObjectId item;
-	
+	/**
+	 * The action this action will take.
+	 */
 	@NonNull
 	@NotNull
 	private ListItemAction action;
 	
+	/**
+	 * The storage block this action goes to.
+	 */
 	private ObjectId targetStorageTo;
+	
+	/**
+	 * The storage block this action comes from.
+	 */
 	private ObjectId targetStorageFrom;
 	
+	/**
+	 * What to apply the action with.
+	 */
 	@NonNull
 	@NotNull
 	private Stored stored;
