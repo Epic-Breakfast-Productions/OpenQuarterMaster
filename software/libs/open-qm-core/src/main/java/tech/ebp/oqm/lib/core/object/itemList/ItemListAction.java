@@ -22,7 +22,7 @@ public class ItemListAction {
 	 */
 	@NonNull
 	@NotNull
-	private ListItemAction action;
+	private ItemListActionMode mode;
 	
 	/**
 	 * The storage block this action goes to.

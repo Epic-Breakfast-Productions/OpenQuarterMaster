@@ -6,11 +6,14 @@
 		<a href="/itemLists">Back to List Search</a>
 		<div class="row">
 			<div class="col">
-				<p>
+				<p class="mb-0">
 					Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
 					On: {listCreateEvent.getTimestamp()}<br />
 					<small>Id: <span id="itemListId">{itemList.getId()}</span>{#copyTextButton textContainerId='itemListId'}{/copyTextButton}</small>
-					
+					{#if !itemList.getDescription().isBlank()}
+					<br />{itemList.getDescription()}
+					{/if}
+					{! TODO:: allow updating description, name !}
 				</p>
 			</div>
 			<div class="col text-end">
@@ -23,11 +26,11 @@
 	{/additionalTitleContent}
 	{#pageContent}
 		<h2>
-			Settings
+			Default Settings
 		</h2>
 		<div class="row">
 			<div class="col">
-			
+				{#inputs/itemList/ItemListActionModeInput id="itemListActionDefaultModeInput" noDefault=true}{/inputs/itemList/ItemListActionModeInput}
 			</div>
 		</div>
 		<hr />
@@ -64,7 +67,11 @@
 		{! TODO:: filter/search. Pagination? !}
 		
 		{! TODO:: generate list content here !}
-		...
+		<p>
+		{#for actionIt in itemList.getItemActions()}
+			{actionIt.key()} - {actionIt.val()}<br />
+		{/for}
+		</p>
 		
 		{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
 		{/inputs/units/unitOptionsHidden}
@@ -79,6 +86,9 @@
 		{#itemAddEditModal}{/itemAddEditModal}
 		{#search/item/itemSearchSelectModal otherModalId=""}
 		{/search/item/itemSearchSelectModal}
+		{#modal id='itemListSetupAction' large=true title='Setup Action'}
+			TODO
+		{/modal}
 	{/modals}
 	{#scripts}
 		<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
@@ -112,17 +122,17 @@
 			applyButton: $("#applyButton"),
 			applyLockButton: $("#applyLockButton"),
 			toggleApplyLock(){
-				console.log("Toggling apply lock. Current state: " + applyLockButton.data("locked"));
-				if(!applyLockButton.data("locked") || applyLockButton.data("locked") === "true"){
+				console.log("Toggling apply lock. Current state: " + ItemListView.applyLockButton.data("locked"));
+				if(!ItemListView.applyLockButton.data("locked") || ItemListView.applyLockButton.data("locked") === "true"){
 					console.log("Unlocking apply button.");
-					applyLockButton.data("locked", "false");
-					applyLockButton.html(Icons.unlocked);
-					applyButton.removeClass("disabled");
+					ItemListView.applyLockButton.data("locked", "false");
+					ItemListView.applyLockButton.html(Icons.unlocked);
+					ItemListView.applyButton.removeClass("disabled");
 				} else {
 					console.log("Locking apply button.");
-					applyLockButton.data("locked", "true");
-					applyLockButton.html(Icons.locked);
-					applyButton.addClass("disabled");
+					ItemListView.applyLockButton.data("locked", "true");
+					ItemListView.applyLockButton.html(Icons.locked);
+					ItemListView.applyButton.addClass("disabled");
 				}
 			},
 			applyList(){
@@ -141,6 +151,11 @@
 			
 			itemSelected(itemName, itemId){
 				console.log("Got item: " + itemId);
+				
+				
+				
+				
+				
 				
 			}
 		};

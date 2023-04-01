@@ -48,7 +48,7 @@ public class ItemList extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private Map<ObjectId, List<@NonNull ItemListAction>> items = new HashMap<>();
+	private Map<ObjectId, List<@NonNull ItemListAction>> itemActions = new HashMap<>();
 	
 	/**
 	 * If this list was applied or not.
@@ -61,9 +61,9 @@ public class ItemList extends AttKeywordMainObject {
 	 * @return action list for the item given
 	 */
 	public List<ItemListAction> getItemActions(ObjectId itemId){
-		if(!this.getItems().containsKey(itemId)){
-			this.getItems().put(itemId, new ArrayList<>());
+		if(!this.getItemActions().containsKey(itemId)){
+			this.getItemActions().put(itemId, new ArrayList<>());
 		}
-		return this.getItems().get(itemId);
+		return this.getItemActions().get(itemId);
 	}
 }
