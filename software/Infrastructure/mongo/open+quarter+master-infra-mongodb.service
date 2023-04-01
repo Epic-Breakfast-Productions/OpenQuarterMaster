@@ -29,7 +29,16 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -p=27017:27017 \
                                  -v /data/oqm/db/mongo/:/data/db  \
                                  mongo:4 mongod --replSet rs0"
-ExecStartPost=/bin/bash -c "sleep 6s"
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                sleep 1s; \
+                                /usr/bin/docker exec oqm_infra_mongo mongo --eval \"\"; \
+                                if [ \"$?\" = \"0\" ]; then \
+                                    echo \"Mongo container running and available!\"; \
+                                    running=\"true\"; \
+                                fi \
+                            done \
+                            "
 ExecStartPost=/bin/bash -c "/usr/bin/docker exec oqm_infra_mongo mongo --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"

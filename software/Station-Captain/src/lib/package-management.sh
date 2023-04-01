@@ -48,10 +48,20 @@ function packMan_getInstalledVersion() {
 	local packageType
 	packMan_determineSystemPackMan packageType
 	if [ "$packageType" == "apt" ]; then
-		version="$(apt-cache show "$packageName" | grep "Version:")"
-		#echo "DEBUG:: raw version: $version"
-		version=($version)
-		version="${version[1]}"
+		cacheOutput="$(apt-cache show "$packageName")"
+
+		status="$(echo "$cacheOutput" | grep "Status")"
+		status=($status)
+		status="${status[1]}"
+
+		if [ "$status" == "deinstall" ]; then
+			version=""
+		else
+			version="$(echo "$cacheOutput" | grep "Version:")"
+			#echo "DEBUG:: raw version: $version"
+			version=($version)
+			version="${version[1]}"
+		fi
 	elif [ "$packageType" == "yum" ]; then
 		# TODO
 		exitProg 2 "yum currently not supported"
