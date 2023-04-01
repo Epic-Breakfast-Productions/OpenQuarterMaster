@@ -34,7 +34,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 sleep 1s; \
                                 /usr/bin/docker exec oqm_infra_mongo mongo --eval \"\"; \
                                 if [ \"$?\" = \"0\" ]; then \
-                                    echo \"Mongo container running and available!\" \
+                                    echo \"Mongo container running and available!\"; \
                                     running=\"true\"; \
                                 fi \
                             done \
