@@ -23,6 +23,8 @@ public class ItemListActionUpdateEvent extends UpdateEvent {
 	public ItemListActionUpdateEvent(MainObject object, InteractingEntity entity) {
 		super(object, entity);
 	}
+	private ObjectId itemId;
+	private int actionIndex;
 	
 	@Override
 	public EventType getType() {

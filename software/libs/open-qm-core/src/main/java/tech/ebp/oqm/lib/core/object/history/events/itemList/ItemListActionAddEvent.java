@@ -23,6 +23,8 @@ public class ItemListActionAddEvent extends CreateEvent {
 		super(object, entity);
 	}
 	
+	private ObjectId itemId;
+	
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_LIST_ACTION_ADD;

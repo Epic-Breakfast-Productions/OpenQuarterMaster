@@ -23,6 +23,9 @@ public class ItemListActionDeleteEvent extends DeleteEvent {
 		super(object, entity);
 	}
 	
+	private ObjectId itemId;
+	private int actionIndex;
+	
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_LIST_ACTION_DELETE;

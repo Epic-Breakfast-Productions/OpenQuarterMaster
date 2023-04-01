@@ -55,7 +55,11 @@ public class ItemList extends AttKeywordMainObject {
 	 */
 	private boolean applied = false;
 	
-	
+	/**
+	 * Gets the list of item actions for the item id given. Adds a new list if one was not present.
+	 * @param itemId The id of the item to get the action list for
+	 * @return action list for the item given
+	 */
 	public List<ItemListAction> getItemActions(ObjectId itemId){
 		if(!this.getItems().containsKey(itemId)){
 			this.getItems().put(itemId, new ArrayList<>());
