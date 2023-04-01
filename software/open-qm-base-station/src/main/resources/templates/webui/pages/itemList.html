@@ -15,8 +15,8 @@
 			</div>
 			<div class="col text-end">
 				<div class="btn-group btn-group-lg" role="group" aria-label="Apply Item List Button">
-					<button type="button" class="btn btn-success" id="applyLockButton"  onclick="toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
-					<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+					<button type="button" class="btn btn-success" id="applyLockButton"  onclick="ItemListView.toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
+					<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="ItemListView.applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
 				</div>
 			</div>
 		</div>
@@ -61,7 +61,9 @@
 		<h2>
 			List:
 		</h2>
+		{! TODO:: filter/search. Pagination? !}
 		
+		{! TODO:: generate list content here !}
 		...
 		
 		{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
@@ -106,9 +108,10 @@
 	
 	{#pageScript}
 		<script>
-			var applyButton = $("#applyButton");
-			var applyLockButton = $("#applyLockButton");
-			function toggleApplyLock(){
+		const ItemListView = {
+			applyButton: $("#applyButton"),
+			applyLockButton: $("#applyLockButton"),
+			toggleApplyLock(){
 				console.log("Toggling apply lock. Current state: " + applyLockButton.data("locked"));
 				if(!applyLockButton.data("locked") || applyLockButton.data("locked") === "true"){
 					console.log("Unlocking apply button.");
@@ -121,9 +124,8 @@
 					applyLockButton.html(Icons.locked);
 					applyButton.addClass("disabled");
 				}
-			}
-		
-			function applyList(){
+			},
+			applyList(){
 				if(!confirm("Are you sure?\nThis cannot be undone.")){
 					console.log("User chose to not apply.")
 					return false;
@@ -131,19 +133,23 @@
 				console.log("User chose to apply.");
 				//TODO:: call endpoint to apply
 			}
+		};
+		
+		const ItemList = {
+			findItemByBarcodeForm: $("#findItemByBarcodeForm"),
+			findItemBarcodeInput: $("#findItemByBarcodeForm").find("input[name=barcode]"),
 			
-			function itemSelected(itemName, itemId){
+			itemSelected(itemName, itemId){
 				console.log("Got item: " + itemId);
 				
 			}
-			ItemSearchSelect.selectItem = itemSelected;
-			ItemAddEdit.itemAdded = itemSelected;
-			
-			var findItemByBarcodeForm = $("#findItemByBarcodeForm");
-			var findItemBarcodeInput = findItemByBarcodeForm.find("input[name=barcode]");
-			findItemByBarcodeForm.on("submit", function (e){
+		};
+		ItemSearchSelect.selectItem = ItemList.itemSelected;
+		ItemAddEdit.itemAdded = ItemList.itemSelected;
+		
+		ItemList.findItemByBarcodeForm.on("submit", function (e){
 				e.preventDefault();
-				let barcode = findItemBarcodeInput.val();
+				let barcode = ItemList.findItemBarcodeInput.val();
 				console.log("Searching for item by barcode: " + barcode);
 				
 				let searchParams = new URLSearchParams();
@@ -160,7 +166,7 @@
 							
 							return;
 						}
-						itemSelected(data[0].name, data[0].id);
+						ItemList.itemSelected(data[0].name, data[0].id);
 					}
 				});
 			});

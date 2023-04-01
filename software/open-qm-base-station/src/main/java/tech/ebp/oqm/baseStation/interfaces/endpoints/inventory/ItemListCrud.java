@@ -27,6 +27,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.itemList.ItemList;
+import tech.ebp.oqm.lib.core.object.itemList.ItemListAction;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
@@ -409,4 +410,45 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	
 	//</editor-fold>
 	
+	@Path("{listId}/{itemId}")
+	@PUT
+	@Operation(
+		summary = "Adds an action to a particular Item List."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = ItemList.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public ItemList addAction(
+		@Context SecurityContext securityContext,
+		@PathParam("listId") String listId,
+		@PathParam("itemId") String itemId,
+		ItemListAction action
+	) {
+		logRequestContext(this.getJwt(), securityContext);
+		return ((ItemListService)this.getObjectService()).addAction(listId, itemId, action, this.getInteractingEntityFromJwt());
+	}
 }
