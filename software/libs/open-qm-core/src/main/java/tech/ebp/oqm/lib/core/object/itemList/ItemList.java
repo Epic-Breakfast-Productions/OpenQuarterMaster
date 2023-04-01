@@ -11,6 +11,7 @@ import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,4 +54,12 @@ public class ItemList extends AttKeywordMainObject {
 	 * If this list was applied or not.
 	 */
 	private boolean applied = false;
+	
+	
+	public List<ItemListAction> getItemActions(ObjectId itemId){
+		if(!this.getItems().containsKey(itemId)){
+			this.getItems().put(itemId, new ArrayList<>());
+		}
+		return this.getItems().get(itemId);
+	}
 }
