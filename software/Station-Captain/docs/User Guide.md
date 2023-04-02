@@ -26,6 +26,8 @@ This is a quick explanation of the menus.
     - disable plugin
   - Cleanup
     - Docker
+      - Run cleanup
+      - Set to do automatically TODO 
     - Reset data
 - Backups TODO
   - Choose backup location
