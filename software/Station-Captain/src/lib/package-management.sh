@@ -13,6 +13,7 @@ function packMan_determineSystemPackMan() {
 	fi
 	eval $return="$result"
 }
+
 function packMan_determineSystemPackFileFormat() {
 	local return="$1"
 
@@ -37,7 +38,7 @@ function packMan_determineSystemPackFileFormat() {
 
 # Gets the version of an installed package.
 # Usage: getInstalledVersion returnVar "infra-jaeger"
-# Returns: full name/version string, empty string if not installed.
+# Returns: version number string, empty string if not installed.
 #
 function packMan_getInstalledVersion() {
 	local returnVar=$1
