@@ -371,7 +371,6 @@ function ui.doInteraction(){
 			echo "Not updating Station Captain."
 			;;
 		esac
-		# TODO:: update
 	fi
 
 	#
@@ -392,6 +391,57 @@ function ui.doInteraction(){
 			;;
 		esac
 	fi
+
+	#
+	# Determine if need to update/install infra
+	#
+	local infraAvailable=($(relUtil_getGitPackagesForType "infra"));
+	echo "Infra components available: ${infraAvailable[*]}"
+
+	for curInfra in "${infraAvailable[@]}"; do
+		local curInfraFullName="open+quarter+master-$curInfra";
+		echo "Checking for install status of $curInfra";
+
+		local curInstalledInfraVersion=""
+		packMan_getInstalledVersion curInstalledInfraVersion "$curInfraFullName"
+
+		if [ -z "$curInstalledInfraVersion" ]; then
+			echo "$curInfra needs installed";
+			ui_showDialog --title "Install $curInfra" --yesno "It appears that $curInfra is not installed. Do install?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			case $? in
+			0)
+				local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
+				#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
+				local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
+				relUtil_installFromUrl "$releaseUrl"
+				;;
+			*)
+				echo "Not installing $curInfra."
+				;;
+			esac
+		else
+			echo "Cur installed version of $curInfra - $curInstalledInfraVersion"
+			local curInfraNeedsUpdates="$(relUtil_needsUpdated "$curInfraFullName-$curInstalledInfraVersion")"
+			echo "Need update result: '$curInfraNeedsUpdates'";
+			if [ -n "$curInfraNeedsUpdates" ]; then
+				echo "$curInfra needs updated.";
+				ui_showDialog --title "Update $curInfra" --yesno "It appears that $curInfra has an update out. Do install?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+				case $? in
+				0)
+					local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
+					#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
+					local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
+					relUtil_installFromUrl "$releaseUrl"
+					;;
+				*)
+					echo "Not updating $curInfra."
+					;;
+				esac
+			else
+				echo "$curInfra up to date.";
+			fi
+		fi
+	done
 
 	#
 	# Get major version of base station

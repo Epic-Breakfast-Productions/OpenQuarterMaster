@@ -112,7 +112,7 @@ function relUtil_getGitReleasesFor() {
 
 #
 # Gets the latest release version for the given software.
-# Usage: relUtil_getLatestGitReleaseFor <return var> <software prefix>
+# Usage: relUtil_getLatestGitReleaseFor <release> <base station major version>
 # Returns Tag json of the latest release
 #
 function relUtil_getLatestGitReleaseFor() {
@@ -123,6 +123,10 @@ function relUtil_getLatestGitReleaseFor() {
 
 	#echo "DEBUG:: releases: $releasesFor"
 	#echo "DEBUG:: number of releases: $(echo "$releasesFor" | jq '. | length')"
+
+#	if [ "$softwareReleaseToFind" == "core-base+station" ] && [ "$baseStationMajorVersion" != "" ]; then
+#		releases="$(echo "$releases" | jq -c "map(select(.name | contains(\"${softwareReleaseToFind}-$baseStationMajorVersion\")))")"
+#	fi
 
 	echo "$releasesFor" | jq -c '.[0]'
 }
@@ -178,12 +182,13 @@ function relUtil_needsUpdated() {
 function relUtil_getAssetToInstallFromGitRelease() {
 	local releaseJson="$1"
 	installerFormat=""
-	packMan-determineSystemPackFileFormat installerFormat
+	packMan_determineSystemPackFileFormat installerFormat
 
 	local matchingAssets="$(echo "$releaseJson" | jq -c ".assets" | jq -c "map(select(.browser_download_url | endswith(\"$installerFormat\")))")"
 
 	local matchingAssetsLen=$(echo "$matchingAssets" | jq ". | length")
 	# todo:: check len?
+#	echo "Matching assets: $matchingAssets";
 
 	echo "$matchingAssets" | jq -c '.[0]'
 }
@@ -256,6 +261,11 @@ function relUtil_installFromUrl() {
 #	fi
 #}
 
+#
+# Gets the releases available for the given type.
+# Usage: relUtil_getGitPackagesForType "<type (infra, core)>"
+# Returns
+#
 function relUtil_getGitPackagesForType() {
 	local releaseType="$1"
 	local releasesOfType="$(relUtil_getGitReleasesFor "$1-")"
