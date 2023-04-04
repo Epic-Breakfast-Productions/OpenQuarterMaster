@@ -254,11 +254,12 @@ function ui_cleanupDialog() {
 			case $? in
 			0)
 				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
-				systemctl stop open\\x2bquarter\\x2bmaster*
 
-				rm -rf /data/oqm/db/*
+				services-stop
 
-				systemctl start open\\x2bquarter\\x2bmaster* --all
+				files-clearData
+
+				services-start
 
 				ui_showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;
@@ -266,6 +267,32 @@ function ui_cleanupDialog() {
 				echo "Not resetting data."
 				;;
 			esac
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+function ui_uninstallDialog() {
+	while true; do
+		# TODO:: rework to get input on uninstall options
+		ui_showDialog --title "Uninstall" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Cleanup docker images and resources" \
+			2 "RESET data" \
+			2>$USER_SELECT_FILE
+		ui_updateSelection
+
+		case $SELECTION in
+		1)
+			ui_showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+
+			# TODO::: check for any other steps?
+			docker system prune --volumes
+			docker image prune -a
+
+			ui_showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		*)
 			return
