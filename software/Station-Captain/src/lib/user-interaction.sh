@@ -412,9 +412,7 @@ function ui.doInteraction(){
 			0)
 				local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
 				#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
-				echo "release info: $releaseInfo"
 				local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
-				echo "Release url: $releaseUrl";
 				relUtil_installFromUrl "$releaseUrl"
 				;;
 			*)
@@ -423,13 +421,27 @@ function ui.doInteraction(){
 			esac
 		else
 			echo "Cur installed version of $curInfra - $curInstalledInfraVersion"
-			local curInfraNeedsUpdates="$(relUtil_needsUpdated "$curInfraFullName-$curInstalledBaseStationVersion")"
-			echo "Result of determining if $curInfra needs updated: $curInfraNeedsUpdates"
+			local curInfraNeedsUpdates="$(relUtil_needsUpdated "$curInfraFullName-$curInstalledInfraVersion")"
+			echo "Need update result: '$curInfraNeedsUpdates'";
+			if [ -n "$curInfraNeedsUpdates" ]; then
+				echo "$curInfra needs updated.";
+				ui_showDialog --title "Update $curInfra" --yesno "It appears that $curInfra has an update out. Do install?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+				case $? in
+				0)
+					local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
+					#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
+					local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
+					relUtil_installFromUrl "$releaseUrl"
+					;;
+				*)
+					echo "Not updating $curInfra."
+					;;
+				esac
+			else
+				echo "$curInfra up to date.";
+			fi
 		fi
 	done
-
-
-
 
 	#
 	# Get major version of base station
