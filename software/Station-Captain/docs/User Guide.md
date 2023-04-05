@@ -1,10 +1,16 @@
 # Open Quarter Master Station Captain Guide
 
-## Running
+[toc]
 
-## Menu System
+## Modes
 
-This is an explanation of the menus.
+### Interactive
+
+This is the default mode, run when no arguments are passed.
+
+#### Menu System
+
+This is a quick explanation of the menus.
 
 (main menu)
 - Info / Status
@@ -20,7 +26,10 @@ This is an explanation of the menus.
     - disable plugin
   - Cleanup
     - Docker
+      - Run cleanup
+      - Set to do automatically TODO 
     - Reset data
+  - Uninstall All
 - Backups TODO
   - Choose backup location
   - Run backups now
@@ -37,6 +46,17 @@ This is an explanation of the menus.
 - Captain Settings
   - allow pre-release versions
 
+### Python UI (Planned/TODO)
+
+A more user-friendly interface than the standard menu system. Follows the same menu system and layout.
+
+This is a planned feature, so stay tuned.
+
+### Command
+
+A command line interface is available for performing operations with a single action.
+
+Use `oqm-captain -h` for information in the available options.
 
 ## Other
 

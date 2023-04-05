@@ -25,6 +25,7 @@ GIT_RELEASES="$GIT_API_BASE/releases"
 # files
 TMP_DIR="/tmp/oqm"
 DOWNLOAD_DIR="$TMP_DIR/download"
+DATA_DIR="/data/oqm"
 SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
@@ -161,6 +162,10 @@ source "$LIB_DIR/release-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib release-utils"; fi;
 source "$LIB_DIR/user-interaction.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib user-interaction"; fi;
+source "$LIB_DIR/file-utils.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib file-utils"; fi;
+source "$LIB_DIR/service-utils.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
 
 
 
