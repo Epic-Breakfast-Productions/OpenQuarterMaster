@@ -315,3 +315,4 @@ function relUtil_installUpdateInfraBaseStation() {
 	relUtil_installUpdateInfra
 	relUtil_installUpdateBaseStation
 }
+

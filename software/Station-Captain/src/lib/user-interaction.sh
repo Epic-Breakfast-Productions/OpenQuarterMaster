@@ -254,11 +254,12 @@ function ui_cleanupDialog() {
 			case $? in
 			0)
 				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
-				systemctl stop open\\x2bquarter\\x2bmaster*
 
-				rm -rf /data/oqm/db/*
+				services-stop
 
-				systemctl start open\\x2bquarter\\x2bmaster* --all
+				files-clearData
+
+				services-start
 
 				ui_showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;
@@ -273,6 +274,52 @@ function ui_cleanupDialog() {
 		esac
 	done
 }
+function ui_uninstallDialog() {
+	while true; do
+		local options=( \
+		);
+		dialog --title "Uninstall" \
+			--separate-output \
+			--ok-label "Uninstall" \
+			--checklist "Select options:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			0 "Clear App Data" 'off' \
+			1 "Clear configuration" 'off' \
+			2 "Uninstall Station Captain" 'off' \
+			2>$USER_SELECT_FILE
+		case $? in
+		0)
+			ui_updateSelection
+			local choices="$SELECTION"
+			echo "Choices made: $choices"
+
+			ui_showDialog --infobox "Uninstalling. Please wait." 3 $DEFAULT_WIDTH
+
+			local clearData="false"
+			local clearConfig="false"
+			local uninstallThis="false"
+
+			if [[ "${choices,,}" == *"0"* ]]; then
+				clearData="true"
+			fi
+			if [[ "${choices,,}" == *"1"* ]]; then
+				clearConfig="true"
+			fi
+			if [[ "${choices,,}" == *"2"* ]]; then
+				uninstallThis="true"
+			fi
+
+			packMan_uninstallAll $clearData $clearConfig $uninstallThis
+
+			ui_showDialog --title "Finished uninstalling." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		*)
+			echo "Not uninstalling."
+			ui_showDialog --title "Uninstall Canceled." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		esac
+		return;
+	done
+}
 
 function ui_manageInstallDialog() {
 	while true; do
@@ -281,6 +328,7 @@ function ui_manageInstallDialog() {
 			1 "Select OQM Major Version TODO" \
 			2 "Plugins TODO" \
 			3 "Cleanup" \
+			4 "Uninstall All" \
 			2>$USER_SELECT_FILE
 
 		ui_updateSelection
@@ -288,6 +336,9 @@ function ui_manageInstallDialog() {
 		case $SELECTION in
 		3)
 			ui_cleanupDialog
+			;;
+		4)
+			ui_uninstallDialog
 			;;
 		*)
 			return

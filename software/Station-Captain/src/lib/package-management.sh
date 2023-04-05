@@ -88,3 +88,49 @@ function packMan_getInstalledPackages() {
 
 	echo "$installed"
 }
+
+
+#
+# Uninstalls all packages that this script manages
+#
+#
+#
+# Usage: packMan_uninstallAll "true|false" "true|false" "true|false"
+# Returns
+#
+function packMan_uninstallAll() {
+	local clearData="$1"
+	local clearConfigs="$2"
+	local includeThis="$3"
+
+	pacMan=""
+	packMan_determineSystemPackMan pacMan
+
+	case "$pacMan" in
+	"apt")
+		apt remove -y --purge open+quarter+master-core-* open+quarter+master-infra-*
+		;;
+	"yum")
+		exitProg 2 "yum not supported"
+		;;
+	esac
+
+	if [ "$includeThis" = "true" ]; then
+		case "$pacMan" in
+		"apt")
+			apt remove -y --purge open+quarter+master-manager-*
+			;;
+		"yum")
+			exitProg 2 "yum not supported"
+			;;
+		esac
+	fi
+
+	if [ "$clearData" = "true" ]; then
+		files_clearData
+	fi
+
+	if [ "$clearConfigs" = "true" ]; then
+		files_clearConfig
+	fi
+}
