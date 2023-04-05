@@ -29,6 +29,7 @@ This is a quick explanation of the menus.
       - Run cleanup
       - Set to do automatically TODO 
     - Reset data
+  - Uninstall All
 - Backups TODO
   - Choose backup location
   - Run backups now
