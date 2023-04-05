@@ -17,10 +17,9 @@
 				</p>
 			</div>
 			<div class="col text-end">
-				<div class="btn-group btn-group-lg" role="group" aria-label="Apply Item List Button">
-					<button type="button" class="btn btn-success" id="applyLockButton"  onclick="ItemListView.toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
-					<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="ItemListView.applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
-				</div>
+				<button type="button" class="btn btn-success btn-lg" onclick="ItemListView.setupReview('{itemList.getId()}', false)" data-bs-toggle="modal" data-bs-target="#itemListReviewModal">
+					{#icons/review}{/icons/review} Review
+				</button>
 			</div>
 		</div>
 	{/additionalTitleContent}
@@ -87,8 +86,10 @@
 		{#search/item/itemSearchSelectModal otherModalId=""}
 		{/search/item/itemSearchSelectModal}
 		{#modal id='itemListSetupAction' large=true title='Setup Action'}
-			TODO
+		TODO
 		{/modal}
+		{#itemList/itemListReviewModal}
+		{/itemList/itemListReviewModal}
 	{/modals}
 	{#scripts}
 		<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
@@ -114,36 +115,12 @@
 		<script src="/res/js/item/extItemSearch.js"></script>
 		<script src="/res/js/obj/item/itemAddEdit.js"></script>
 		<script src="/res/js/obj/item/itemView.js"></script>
+		<script src="/res/js/obj/itemList/itemListView.js"></script>
 	{/scripts}
 	
 	{#pageScript}
 		<script>
-		const ItemListView = {
-			applyButton: $("#applyButton"),
-			applyLockButton: $("#applyLockButton"),
-			toggleApplyLock(){
-				console.log("Toggling apply lock. Current state: " + ItemListView.applyLockButton.data("locked"));
-				if(!ItemListView.applyLockButton.data("locked") || ItemListView.applyLockButton.data("locked") === "true"){
-					console.log("Unlocking apply button.");
-					ItemListView.applyLockButton.data("locked", "false");
-					ItemListView.applyLockButton.html(Icons.unlocked);
-					ItemListView.applyButton.removeClass("disabled");
-				} else {
-					console.log("Locking apply button.");
-					ItemListView.applyLockButton.data("locked", "true");
-					ItemListView.applyLockButton.html(Icons.locked);
-					ItemListView.applyButton.addClass("disabled");
-				}
-			},
-			applyList(){
-				if(!confirm("Are you sure?\nThis cannot be undone.")){
-					console.log("User chose to not apply.")
-					return false;
-				}
-				console.log("User chose to apply.");
-				//TODO:: call endpoint to apply
-			}
-		};
+		
 		
 		const ItemList = {
 			findItemByBarcodeForm: $("#findItemByBarcodeForm"),

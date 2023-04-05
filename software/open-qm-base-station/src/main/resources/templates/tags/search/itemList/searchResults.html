@@ -52,8 +52,8 @@
     <td>{! TODO:: get list entity created by !}  </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemListViewModal" onclick="setupView('{result.getId()}');">
-        {#icons/view}{/icons/view}
+      <button type="button" class="btn btn-sm btn-info" title="View" onclick="ItemListView.setupReview('{result.getId()}')" data-bs-toggle="modal" data-bs-target="#itemListReviewModal">
+        {#icons/review}{/icons/review}
       </button>
       <a href="/itemList/{result.getId()}" class="btn btn-sm btn-warning" title="Edit">
         {#icons/edit}{/icons/edit}
