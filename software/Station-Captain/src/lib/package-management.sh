@@ -95,7 +95,7 @@ function packMan_getInstalledPackages() {
 #
 #
 #
-# Usage: relUtil_getGitPackagesForType "true|false" "true|false" "true|false"
+# Usage: packMan_uninstallAll "true|false" "true|false" "true|false"
 # Returns
 #
 function packMan_uninstallAll() {
@@ -127,10 +127,10 @@ function packMan_uninstallAll() {
 	fi
 
 	if [ "$clearData" = "true" ]; then
-		files-clearData
+		files_clearData
 	fi
 
 	if [ "$clearConfigs" = "true" ]; then
-		files-clearData
+		files_clearConfig
 	fi
 }

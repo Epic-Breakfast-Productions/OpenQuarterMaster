@@ -276,28 +276,48 @@ function ui_cleanupDialog() {
 }
 function ui_uninstallDialog() {
 	while true; do
-		# TODO:: rework to get input on uninstall options
-		ui_showDialog --title "Uninstall" \
-			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
-			1 "Cleanup docker images and resources" \
-			2 "RESET data" \
+		local options=( \
+		);
+		dialog --title "Uninstall" \
+			--separate-output \
+			--ok-label "Uninstall" \
+			--checklist "Select options:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			0 "Clear App Data" 'off' \
+			1 "Clear configuration" 'off' \
+			2 "Uninstall Station Captain" 'off' \
 			2>$USER_SELECT_FILE
-		ui_updateSelection
+		case $? in
+		0)
+			ui_updateSelection
+			local choices="$SELECTION"
+			echo "Choices made: $choices"
 
-		case $SELECTION in
-		1)
-			ui_showDialog --infobox "Cleaning up docker resources. Please wait." 3 $DEFAULT_WIDTH
+			ui_showDialog --infobox "Uninstalling. Please wait." 3 $DEFAULT_WIDTH
 
-			# TODO::: check for any other steps?
-			docker system prune --volumes
-			docker image prune -a
+			local clearData="false"
+			local clearConfig="false"
+			local uninstallThis="false"
 
-			ui_showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
+			if [[ "${choices,,}" == *"0"* ]]; then
+				clearData="true"
+			fi
+			if [[ "${choices,,}" == *"1"* ]]; then
+				clearConfig="true"
+			fi
+			if [[ "${choices,,}" == *"2"* ]]; then
+				uninstallThis="true"
+			fi
+
+			packMan_uninstallAll $clearData $clearConfig $uninstallThis
+
+			ui_showDialog --title "Finished uninstalling." --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		*)
-			return
+			echo "Not uninstalling."
+			ui_showDialog --title "Uninstall Canceled." --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		esac
+		return;
 	done
 }
 
@@ -308,6 +328,7 @@ function ui_manageInstallDialog() {
 			1 "Select OQM Major Version TODO" \
 			2 "Plugins TODO" \
 			3 "Cleanup" \
+			4 "Uninstall All" \
 			2>$USER_SELECT_FILE
 
 		ui_updateSelection
@@ -315,6 +336,9 @@ function ui_manageInstallDialog() {
 		case $SELECTION in
 		3)
 			ui_cleanupDialog
+			;;
+		4)
+			ui_uninstallDialog
 			;;
 		*)
 			return
