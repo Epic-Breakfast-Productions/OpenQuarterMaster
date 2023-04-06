@@ -13,7 +13,7 @@
 #   - rpm
 #   - rpmlint
 #   - jq
-#   - pandoc
+#   - asciidoctor
 #
 # TODO:: move src to build folder, do replacements there
 
@@ -26,6 +26,7 @@ buildDir="installerBuild"
 debDir="StationCaptainDeb"
 rpmDir="StationCaptainRpm"
 outputDir="bin/"
+userGuideFile="$buildDir/stationCaptainUserGuide.html"
 
 sourcesDir="oqm-captain-$(cat "$configFile" | jq -r '.version')"
 
@@ -42,21 +43,7 @@ rm -rf "$outputDir"
 #
 
 mkdir "$buildDir"
-pandoc -f gfm docs/User\ Guide.md > "$buildDir/stationCaptainUserGuideTemp.html"
-cat <<EOT >> "$buildDir/stationCaptainUserGuide.html"
-<html>
-	<head>
-	<style>
-		body {
-			font-family: sans-serif;
-		}
-	</style>
-	</head>
-	<body>
-$(cat "$buildDir/stationCaptainUserGuideTemp.html")
-</body>
-</html>
-EOT
+asciidoctor docs/User\ Guide.adoc -o "$userGuideFile"
 #
 # Debian build
 #
@@ -77,7 +64,7 @@ install -m 755 -D src/integration/oqm-sc-guide-icon.svg "$buildDir/$debDir/etc/o
 install -m 755 -D src/integration/oqm-captain.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D src/integration/oqm-captain-user-guide.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
-install -m 755 -D "$buildDir/stationCaptainUserGuide.html" "$buildDir/$debDir/etc/oqm/static/stationCaptainUserGuide.html"
+install -m 755 -D "$userGuideFile" "$buildDir/$debDir/etc/oqm/static/stationCaptainUserGuide.html"
 
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
@@ -129,7 +116,7 @@ cp -r "src" "$sourcesDir"
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
 sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
-cp "$buildDir/stationCaptainUserGuide.html" "$sourcesDir/integration/stationCaptainUserGuide.html"
+cp "$userGuideFile" "$sourcesDir/integration/stationCaptainUserGuide.html"
 
 sourcesBundle="$sourcesDir.tar.gz"
 tar cvzf "$sourcesBundle" "$sourcesDir"

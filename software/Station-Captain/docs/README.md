@@ -5,7 +5,7 @@
 Documentation pages:
 
  - [Quickstart Guide](Quickstart%20Guide.md)
- - [User Guide](User%20Guide.md)
+ - [User Guide](User%20Guide.adoc)
 
 See also:
 
