@@ -19,10 +19,12 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
+TimeoutSec=5m
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_mongo || echo 'Could not remove mongo container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull mongo:4"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name oqm_infra_mongo \
