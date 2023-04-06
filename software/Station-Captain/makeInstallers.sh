@@ -43,7 +43,9 @@ rm -rf "$outputDir"
 #
 
 mkdir "$buildDir"
-asciidoctor docs/User\ Guide.adoc -o "$userGuideFile"
+cp docs/User\ Guide.adoc "$userGuideFile.temp"
+sed -i '/link:README.md\[Back\]/d' "$userGuideFile.temp"
+asciidoctor "$userGuideFile.temp" -o "$userGuideFile"
 #
 # Debian build
 #

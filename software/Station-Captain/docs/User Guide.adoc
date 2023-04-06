@@ -9,11 +9,23 @@ link:README.md[Back]
 
 More information available on link:https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station-Captain[GitHub]
 
+== Introduction
+
+This script exists to manage your instance of Open QuarterMaster.
+
+Due to the administrative tasks this script performs, it must be run as root, or with `sudo`.
+
 == Modes
 
 === Interactive
 
-This is the default mode, run when no arguments are passed.
+This is the default mode, run when no arguments are passed. This provides a simple, console-based interface. When running from the system app icon, this is the mode that is run.
+
+To navigate, use `arrow keys`.
+
+To confirm an action, hit `enter`.
+
+To select/deselect an option, press `space`.
 
 ==== Menu System
 
