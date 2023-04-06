@@ -1,5 +1,7 @@
 # Open Quarter Master Station Captain Guide
 
+More information available on [GitHub](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station-Captain)
+
 [toc]
 
 ## Modes
@@ -10,7 +12,7 @@ This is the default mode, run when no arguments are passed.
 
 #### Menu System
 
-This is a quick explanation of the menus.
+This is a quick explanation of the menus in interactive mode.
 
 (main menu)
 - Info / Status
