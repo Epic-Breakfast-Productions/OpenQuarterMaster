@@ -60,7 +60,7 @@ updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
 
 function handleItemUnitChange(){
 	if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
-		//TODO:: handle changing back to old value
+		//TODO:: handle changing back to old value;
 	} else {
 		updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
 	}
@@ -80,6 +80,7 @@ function resetAddEditForm(){
 	addEditItemStorageTypeInput.prop( "disabled", false );
 	addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
 	addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	Dselect.resetDselect(addEditItemUnitInput);
 	Dselect.resetDselect(addEditItemCategoriesInput);
 
 	setIdAttField();
