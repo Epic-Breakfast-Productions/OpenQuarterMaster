@@ -2,7 +2,7 @@ const ItemListView = {
 	itemListReviewMessages: $("#itemListReviewMessages"),
 	applyButton: $("#applyButton"),
 	applyLockButton: $("#applyLockButton"),
-	itemListReviewModalTitle: $("#itemListReviewModalTitle"),
+	itemListReviewModalTitle: $("#itemListReviewModalLabel"),
 	itemListReviewModalBody: $("#itemListReviewModalBody"),
 	itemListReviewCreatorRef: $("#itemListReviewCreatorRef"),
 	itemListReviewCreatedTime: $("#itemListReviewCreatedTime"),
@@ -11,6 +11,7 @@ const ItemListView = {
 	itemListReviewId: $("#itemListReviewId"),
 	itemListReviewDescContainer: $("#itemListReviewDescContainer"),
 	itemListReviewDesc: $("#itemListReviewDesc"),
+	itemListReviewActionsContent: $("#itemListReviewActionsContent"),
 
 	setupReview(itemListId, showEdit= true) {
 		console.log("Setting up item list review for list " + itemListId);
@@ -27,6 +28,7 @@ const ItemListView = {
 		ItemListView.itemListReviewCreatedTime.text("");
 		ItemListView.itemListReviewDescContainer.hide();
 		ItemListView.itemListReviewDesc.text("");
+		ItemListView.itemListReviewActionsContent.text("");
 
 		doRestCall({
 			url: "/api/v1/inventory/item-list/" + itemListId,
