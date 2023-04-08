@@ -13,6 +13,7 @@ function packMan_determineSystemPackMan() {
 	fi
 	eval $return="$result"
 }
+
 function packMan_determineSystemPackFileFormat() {
 	local return="$1"
 
@@ -37,7 +38,7 @@ function packMan_determineSystemPackFileFormat() {
 
 # Gets the version of an installed package.
 # Usage: getInstalledVersion returnVar "infra-jaeger"
-# Returns: full name/version string, empty string if not installed.
+# Returns: version number string, empty string if not installed.
 #
 function packMan_getInstalledVersion() {
 	local returnVar=$1
@@ -86,4 +87,50 @@ function packMan_getInstalledPackages() {
 	# TODO:: packages from other repos
 
 	echo "$installed"
+}
+
+
+#
+# Uninstalls all packages that this script manages
+#
+#
+#
+# Usage: packMan_uninstallAll "true|false" "true|false" "true|false"
+# Returns
+#
+function packMan_uninstallAll() {
+	local clearData="$1"
+	local clearConfigs="$2"
+	local includeThis="$3"
+
+	pacMan=""
+	packMan_determineSystemPackMan pacMan
+
+	case "$pacMan" in
+	"apt")
+		apt remove -y --purge open+quarter+master-core-* open+quarter+master-infra-*
+		;;
+	"yum")
+		exitProg 2 "yum not supported"
+		;;
+	esac
+
+	if [ "$includeThis" = "true" ]; then
+		case "$pacMan" in
+		"apt")
+			apt remove -y --purge open+quarter+master-manager-*
+			;;
+		"yum")
+			exitProg 2 "yum not supported"
+			;;
+		esac
+	fi
+
+	if [ "$clearData" = "true" ]; then
+		files_clearData
+	fi
+
+	if [ "$clearConfigs" = "true" ]; then
+		files_clearConfig
+	fi
 }

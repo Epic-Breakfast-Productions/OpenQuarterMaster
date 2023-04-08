@@ -141,6 +141,7 @@ function setupAddEditForEdit(itemId){
 			addEditItemNameInput.val(data.name);
 			addEditItemDescriptionInput.val(data.description);
 			addEditItemStorageTypeInput.val(data.storageType);
+			addEditItemBarcodeInput.val(data.barcode);
 			addEditStoredTypeInputChanged();
 			Dselect.setValues(addEditItemCategoriesInput, data.categories);
 

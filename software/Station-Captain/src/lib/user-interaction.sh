@@ -254,11 +254,12 @@ function ui_cleanupDialog() {
 			case $? in
 			0)
 				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
-				systemctl stop open\\x2bquarter\\x2bmaster*
 
-				rm -rf /data/oqm/db/*
+				services-stop
 
-				systemctl start open\\x2bquarter\\x2bmaster* --all
+				files-clearData
+
+				services-start
 
 				ui_showDialog --title "Data reset." --msgbox "" 0 $DEFAULT_WIDTH
 				;;
@@ -273,6 +274,52 @@ function ui_cleanupDialog() {
 		esac
 	done
 }
+function ui_uninstallDialog() {
+	while true; do
+		local options=( \
+		);
+		dialog --title "Uninstall" \
+			--separate-output \
+			--ok-label "Uninstall" \
+			--checklist "Select options:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			0 "Clear App Data" 'off' \
+			1 "Clear configuration" 'off' \
+			2 "Uninstall Station Captain" 'off' \
+			2>$USER_SELECT_FILE
+		case $? in
+		0)
+			ui_updateSelection
+			local choices="$SELECTION"
+			echo "Choices made: $choices"
+
+			ui_showDialog --infobox "Uninstalling. Please wait." 3 $DEFAULT_WIDTH
+
+			local clearData="false"
+			local clearConfig="false"
+			local uninstallThis="false"
+
+			if [[ "${choices,,}" == *"0"* ]]; then
+				clearData="true"
+			fi
+			if [[ "${choices,,}" == *"1"* ]]; then
+				clearConfig="true"
+			fi
+			if [[ "${choices,,}" == *"2"* ]]; then
+				uninstallThis="true"
+			fi
+
+			packMan_uninstallAll $clearData $clearConfig $uninstallThis
+
+			ui_showDialog --title "Finished uninstalling." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		*)
+			echo "Not uninstalling."
+			ui_showDialog --title "Uninstall Canceled." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		esac
+		return;
+	done
+}
 
 function ui_manageInstallDialog() {
 	while true; do
@@ -281,6 +328,7 @@ function ui_manageInstallDialog() {
 			1 "Select OQM Major Version TODO" \
 			2 "Plugins TODO" \
 			3 "Cleanup" \
+			4 "Uninstall All" \
 			2>$USER_SELECT_FILE
 
 		ui_updateSelection
@@ -288,6 +336,9 @@ function ui_manageInstallDialog() {
 		case $SELECTION in
 		3)
 			ui_cleanupDialog
+			;;
+		4)
+			ui_uninstallDialog
 			;;
 		*)
 			return
@@ -371,7 +422,6 @@ function ui.doInteraction(){
 			echo "Not updating Station Captain."
 			;;
 		esac
-		# TODO:: update
 	fi
 
 	#
@@ -392,6 +442,57 @@ function ui.doInteraction(){
 			;;
 		esac
 	fi
+
+	#
+	# Determine if need to update/install infra
+	#
+	local infraAvailable=($(relUtil_getGitPackagesForType "infra"));
+	echo "Infra components available: ${infraAvailable[*]}"
+
+	for curInfra in "${infraAvailable[@]}"; do
+		local curInfraFullName="open+quarter+master-$curInfra";
+		echo "Checking for install status of $curInfra";
+
+		local curInstalledInfraVersion=""
+		packMan_getInstalledVersion curInstalledInfraVersion "$curInfraFullName"
+
+		if [ -z "$curInstalledInfraVersion" ]; then
+			echo "$curInfra needs installed";
+			ui_showDialog --title "Install $curInfra" --yesno "It appears that $curInfra is not installed. Do install?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			case $? in
+			0)
+				local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
+				#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
+				local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
+				relUtil_installFromUrl "$releaseUrl"
+				;;
+			*)
+				echo "Not installing $curInfra."
+				;;
+			esac
+		else
+			echo "Cur installed version of $curInfra - $curInstalledInfraVersion"
+			local curInfraNeedsUpdates="$(relUtil_needsUpdated "$curInfraFullName-$curInstalledInfraVersion")"
+			echo "Need update result: '$curInfraNeedsUpdates'";
+			if [ -n "$curInfraNeedsUpdates" ]; then
+				echo "$curInfra needs updated.";
+				ui_showDialog --title "Update $curInfra" --yesno "It appears that $curInfra has an update out. Do install?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+				case $? in
+				0)
+					local releaseInfo="$(relUtil_getLatestGitReleaseFor "$curInfra")"
+					#local releaseInfo="$(relUtil_needsUpdated "$curInfraFullName")"
+					local releaseUrl="$(relUtil_getAssetUrlToInstallFromGitRelease "$releaseInfo")"
+					relUtil_installFromUrl "$releaseUrl"
+					;;
+				*)
+					echo "Not updating $curInfra."
+					;;
+				esac
+			else
+				echo "$curInfra up to date.";
+			fi
+		fi
+	done
 
 	#
 	# Get major version of base station
