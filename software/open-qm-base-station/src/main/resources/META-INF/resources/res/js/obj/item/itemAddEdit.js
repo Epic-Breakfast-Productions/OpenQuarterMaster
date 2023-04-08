@@ -60,7 +60,7 @@ updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
 
 function handleItemUnitChange(){
 	if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
-		//TODO:: handle changing back to old value;
+		//TODO:: handle changing back to old value;  [Bug]: On Item addEdit, canceling changing item unit fails to set back to old value #229
 	} else {
 		updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
 	}
