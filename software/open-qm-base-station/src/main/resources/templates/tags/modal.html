@@ -8,7 +8,7 @@ Ingests:
 - large - if to make the modal large format
 !}
 <div class="modal fade" id="{id}Modal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="{id}ModalLabel" tabindex="-1" data-bs-inputIdPrepend="" data-bs-otherModalId="{#if otherModalId??}{otherModalId}{/if}">
-    <div class="modal-dialog {#if large??}modal-xl{/if}">
+    <div class="modal-dialog {#if size??}modal-{size}{/if}">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="{id}ModalLabel">
