@@ -40,7 +40,7 @@
     </div>
     {/pageContent}
     {#modals}
-        {#modal id='addEditItemCategory' large=true title='Category Add/Edit' submitForm='addEditItemCategoryForm' submitDismiss=false}
+        {#modal id='addEditItemCategory' size='xl' title='Category Add/Edit' submitForm='addEditItemCategoryForm' submitDismiss=false}
             <div class="row">
                 <div class="col" id="addEditItemCategoryFormMessages">
                 </div>
@@ -94,7 +94,7 @@
                 </div>
             </div>
         {/modal}
-        {#modal id='itemCategoryView' large=true title='Item Category View'}
+        {#modal id='itemCategoryView' size='xl' title='Item Category View'}
             <div class="row">
                 {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">

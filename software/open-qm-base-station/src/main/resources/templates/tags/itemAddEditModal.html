@@ -1,4 +1,4 @@
-{#modal id='addEditItem' large=true title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
+{#modal id='addEditItem' size='xl' title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
     
     <div class="row">
         <div class="col" id="addEditItemFormMessages">
@@ -121,7 +121,7 @@
                 <div class="mb-3 row" id="addEditItemUnitNameRow">
                     <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
                     <div class="col-sm-10">
-                        <select class="form-select" id="addEditItemUnitInput" onchange="handleItemUnitChange();">
+                        <select class="form-select dselect-select" id="addEditItemUnitInput" onchange="handleItemUnitChange();">
                             {#inputs/units/unitOptionsGroups}
                             {/inputs/units/unitOptionsGroups}
                         </select>
