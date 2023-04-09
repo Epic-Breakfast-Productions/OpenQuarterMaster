@@ -112,6 +112,7 @@ function addViewStorageBlocksAccordionItem(blockId, content, stored){
 }
 
 function getBlockViewCell(name, value){
+	//TODO:: rework to not be bad (set values with jquery)
 	return '<div class="col"><h5>'+name+':</h5><p>'+ value +'</p></div>';
 }
 
@@ -161,7 +162,10 @@ function getStorageBlockExpiresView(stored){
 }
 
 function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false){
-	return '<div class="row">' +
+	let newContent = '<div class="row">' +
+		'<div class="col-1 storageViewContainer">' +
+		Links.getStorageViewButton(storageBlockId, 'View in Storage').prop('outerHTML') +
+		'</div>' +
 		getStorageBlockAmountHeldView(stored, storedType)+
 		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index) +
 		getStorageBlockIdentifyingDetailsView(stored, storedType)+
@@ -170,6 +174,12 @@ function getStoredViewContent(stored, storedType, itemId, storageBlockId, index 
 		getStorageBlockExpiresView(stored)+
 		'</div>';
 	//TODO:: images, keywords, atts
+
+
+
+
+
+	return newContent;
 }
 
 function getAmountStoredContent(stored, itemId, storageBlockId){

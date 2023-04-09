@@ -5,5 +5,6 @@ const Icons = {
 	copyChecked: '{#icons/copyChecked}{/icons/copyChecked}',
 	info: '{#icons/info}{/icons/info}',
 	remove: '{#icons/remove}{/icons/remove}',
+	storage: '{#icons/storage}{/icons/storage}',
 	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}'
 }

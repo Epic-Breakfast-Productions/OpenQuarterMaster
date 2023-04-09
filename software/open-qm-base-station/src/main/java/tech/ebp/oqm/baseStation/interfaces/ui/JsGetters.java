@@ -29,11 +29,23 @@ public class JsGetters {
 	@Location("webui/icons.js")
 	Template icons;
 	
+	@Inject
+	@Location("webui/links.js")
+	Template links;
+	
 	@GET
 	@Path("icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public TemplateInstance icons() {
 		return icons.instance();
+	}
+	
+	@GET
+	@Path("links.js")
+	@PermitAll
+	@Produces("text/javascript")
+	public TemplateInstance links() {
+		return links.instance();
 	}
 }
