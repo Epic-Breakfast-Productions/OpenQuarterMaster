@@ -93,7 +93,7 @@ function addViewAccordionItem(id, content, headerContent, trackedType){
 		}
 	}
 
-	return '<div class="accordion-item">'+
+	let newAccordItem = $('<div class="accordion-item">'+
 		'<h2 class="accordion-header" id="'+accordId+'Header">'+
 		'<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordId+'Collapse" aria-expanded="false" aria-controls="'+accordId+'Collapse">'+
 		headerContent+
@@ -101,10 +101,14 @@ function addViewAccordionItem(id, content, headerContent, trackedType){
 		'</h2>'+
 		'<div id="'+accordId+'Collapse" class="accordion-collapse collapse" aria-labelledby="'+accordId+'Header" data-bs-parent="#'+accordId+'Header">'+
 		'<div class="accordion-body">'+
-		content +
 		'</div>'+
 		'</div>'+
-		'</div>';
+		'</div>');
+
+	newAccordItem.find('.accordion-button').text(headerContent);
+	newAccordItem.find('.accordion-body').append(content);
+
+	return newAccordItem;
 }
 
 function addViewStorageBlocksAccordionItem(blockId, content, stored){
@@ -112,8 +116,11 @@ function addViewStorageBlocksAccordionItem(blockId, content, stored){
 }
 
 function getBlockViewCell(name, value){
-	//TODO:: rework to not be bad (set values with jquery)
-	return '<div class="col"><h5>'+name+':</h5><p>'+ value +'</p></div>';
+	let output = $('<div class="col"><h5></h5><p></p></div>');
+
+	output.find("h5").text(name);
+	output.find("p").text(value);
+	return output;
 }
 
 function getStorageBlockAmountHeldView(stored, storedType){
@@ -162,22 +169,20 @@ function getStorageBlockExpiresView(stored){
 }
 
 function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false){
-	let newContent = '<div class="row">' +
-		'<div class="col-1 storageViewContainer">' +
-		Links.getStorageViewButton(storageBlockId, 'View in Storage').prop('outerHTML') +
-		'</div>' +
-		getStorageBlockAmountHeldView(stored, storedType)+
-		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index) +
-		getStorageBlockIdentifyingDetailsView(stored, storedType)+
-		getStorageBlockConditionView(stored)+
-		getStorageBlockConditionNotesView(stored)+
-		getStorageBlockExpiresView(stored)+
-		'</div>';
+	let newContent = $('<div class="row"></div>');
+
+	newContent.append(
+		$('<div class="col-1"></div>').html(Links.getStorageViewButton(storageBlockId, 'View in Storage'))
+	);
+	newContent.append(
+		getStorageBlockAmountHeldView(stored, storedType),
+		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
+		getStorageBlockIdentifyingDetailsView(stored, storedType),
+		getStorageBlockConditionView(stored),
+		getStorageBlockConditionNotesView(stored),
+		getStorageBlockExpiresView(stored),
+	);
 	//TODO:: images, keywords, atts
-
-
-
-
 
 	return newContent;
 }
