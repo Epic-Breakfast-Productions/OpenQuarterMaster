@@ -1,5 +1,6 @@
-<select class="form-select dselect-select" id="{id}" name="itemCategoryParent" multiple>
+<select class="form-select dselect-select" id="{id}" name="itemCategoryParent" aria-describedby="itemCatInput{id}-help" multiple>
 	{#for curItemCat in itemCatsService.listIterator()}
 		<option value="{curItemCat.getId()}">{curItemCat.getName()}</option>
 	{/for}
 </select>
+{!<div id="itemCatInput{id}-help" class="form-text">Help Text</div>!}

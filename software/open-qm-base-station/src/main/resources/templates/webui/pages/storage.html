@@ -93,7 +93,10 @@ Accepts:
             <div class="mb-3 row">
                 <label for="addEditNicknameInput" class="col-sm-2 col-form-label">Nickname</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="addEditNicknameInput" placeholder="Nickname">
+                    <input type="text" class="form-control" id="addEditNicknameInput" aria-describedby="addEditNicknameInput-help" placeholder="Nickname">
+                    <div id="addEditNicknameInput-help" class="form-text">
+                        Optional. A more recognizable name to call this storage block.
+                    </div>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -105,7 +108,10 @@ Accepts:
             <div class="mb-3 row">
                 <label for="addEditLocationInput" class="col-sm-2 col-form-label">Location</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="addEditLocationInput" placeholder="Location">
+                    <input type="text" class="form-control" id="addEditLocationInput" aria-describedby="addEditLocationInput-help" placeholder="Location">
+                    <div id="addEditLocationInput-help" class="form-text">
+                        Optional. Where this storage block is generally located.
+                    </div>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -114,9 +120,10 @@ Accepts:
                     <div class="input-group">
                         <input type="hidden" id="addEditParentInputId" name="parentId">
                         <button class="btn btn-outline-dark" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="setupStorageSearchModal('addEditParentInput');storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
-                        <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" disabled>
+                        <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" aria-describedby="addEditParentInputName-help" disabled>
                         <button class="btn btn-outline-dark" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
                     </div>
+                    <div id="addEditParentInputName-help" class="form-text">Optional. The storage block this block is to be located within.</div>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -124,6 +131,7 @@ Accepts:
                 <div class="col-sm-10">
                     {#inputs/categoryInput id="addEditCategoriesInput"}
                     {/inputs/categoryInput}
+                    <div id="itemCatInputaddEditCategoriesInput-help" class="form-text">The categories of item this storage block holds. {#links/itemCategory}{/links/itemCategory}</div>
                 </div>
             </div>
             
