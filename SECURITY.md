@@ -17,10 +17,6 @@ currently being supported with security updates.
 
 ### Libs
 
-
-
-| 5.0.x   | :x:                |
-
 ## Reporting a Vulnerability
 
 Please check for existing issue. If none created, create one:
