@@ -85,6 +85,7 @@ public class UserUi extends UiProvider {
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("historySearchObject", new HistorySearch())
+				.data("jwt", this.jwt.getRawToken())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
