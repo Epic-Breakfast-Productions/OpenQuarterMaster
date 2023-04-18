@@ -1,6 +1,6 @@
 
 const Links = {
-	storage: '<a href="/storage">{#icons/storage}{/icons/storage} Storage</a>',
+	storage: '<a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a>',
 
 	getStorageViewLink: function (id, text=""){
 		let newLink = $(Links.storage);
@@ -8,7 +8,7 @@ const Links = {
 		newLink.prop("href", newLink.prop("href") + "?view=" + id);
 
 		if(text){
-			newLink.html(Icons.storage);
+			newLink.html(Icons.storageBlock);
 
 			newLink.append($("<span></span>").text(text));
 		}

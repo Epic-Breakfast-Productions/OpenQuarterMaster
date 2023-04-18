@@ -212,6 +212,7 @@ Accepts:
 {/search/image/imageSearchSelectModal}
 
 {#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
+	{#titleIcon}{#icons/print}{/icons/print}{/titleIcon}
     <div class="row">
         <form class="col" id="storageBlockInventorySheetPrintoutForm" method="get" action="">
             <div class="mb-3 row">
@@ -266,9 +267,9 @@ Accepts:
 {/modal}
 
 {#modal id='storageBlockView' size='xl' title='Storage Block View'}
+    {#titleIcon}{#icons/storageBlock}{/icons/storageBlock}{/titleIcon}
     <div class="row">
         <div class="col" id="storageBlockViewMessages">
-        
         </div>
     </div>
     <div class="row">
@@ -422,6 +423,7 @@ function removeStorageBlock(blockId) {
 
 var addEditStorageForm = $("#addEditStorageForm");
 var addEditModalTitleText = $("#addEditModalLabel");
+var addEditModalTitleIcon = $("#addEditModalLabelIcon");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
 //inputs
@@ -470,12 +472,14 @@ function setupAddEditForAdd(){
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add Storage Block");
     addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Storage Block');
+    addEditModalTitleIcon.html(Icons.add);
 }
 
 function setupAddEditForEdit(blockId){
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
+    addEditModalTitleIcon.html(Icons.edit);
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit Storage Block");
     addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Storage Block');

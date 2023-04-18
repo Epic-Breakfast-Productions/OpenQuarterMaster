@@ -21,7 +21,8 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    {#icons/search}{/icons/search} Search Fields
+                    {#icons/search}{/icons/search}
+                    Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
@@ -80,6 +81,7 @@
 {/modal}
 
 {#modal id='view' title='View' size='xl'}
+{#titleIcon}{#icons/image}{/icons/image}{/titleIcon}
 <div class="row">
     <div class="col-lg-7 text-center">
         <img class="imageViewImage img-thumbnail" src="">
@@ -136,6 +138,7 @@ fillInQueryForm($("#mainImageSearch"));
 
 var addEditImageForm = $("#addEditImageForm");
 var addEditModalLabel = $("#addEditModalLabel");
+var addEditModalLabelIcon = $("#addEditModalLabelIcon");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
 
@@ -161,6 +164,7 @@ function resetAddEdit(){
 function setupAddEditForAdd(){
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
+    addEditModalLabelIcon.html(Icons.add);
     addEditFormMode.val("add");
     addEditModalLabel.text("Add Image");
     addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Image');
@@ -168,6 +172,7 @@ function setupAddEditForAdd(){
 function setupAddEditForEdit(id){
     console.log("Setting up add/edit form for edit.");
     resetAddEdit();
+    addEditModalLabelIcon.html(Icons.edit);
     addEditFormMode.val("edit");
     addEditModalLabel.text("Edit Image");
     addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Image');

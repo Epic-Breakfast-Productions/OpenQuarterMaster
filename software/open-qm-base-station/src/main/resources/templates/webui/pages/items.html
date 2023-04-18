@@ -26,6 +26,7 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
+                    {#icons/search}{/icons/search}
                     Search Fields
                 </button>
             </h2>
@@ -57,10 +58,10 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-
     {#objView/itemViewModal}{/objView/itemViewModal}
     {#itemAddEditModal}{/itemAddEditModal}
 {#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+    {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
     <div class="row">
         <div class="col" id="addItemFromFileFormMessages">
         </div>
