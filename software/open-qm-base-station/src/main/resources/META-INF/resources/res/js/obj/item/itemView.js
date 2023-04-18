@@ -166,11 +166,29 @@ function getStorageBlockExpiresView(stored){
 	return "";
 }
 
-function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false){
+function getStoredBlockLink(storageBlockId, small=false){
+	let output = $('<div class=""></div>');
+	output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
+
+	if(small){
+		output.addClass("col-1");
+	} else {
+		output.addClass("col");
+	}
+
+	return output;
+}
+
+function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false, includeStoredLink=false){
 	let newContent = $('<div class="row"></div>');
 
+	if(includeStoredLink){
+		newContent.append(
+			getStoredBlockLink(storageBlockId, true)
+		);
+	}
+
 	newContent.append(
-		$('<div class="col-1"></div>').html(Links.getStorageViewButton(storageBlockId, 'View in Storage')),
 		getStorageBlockAmountHeldView(stored, storedType),
 		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
 		getStorageBlockIdentifyingDetailsView(stored, storedType),
@@ -185,12 +203,11 @@ function getStoredViewContent(stored, storedType, itemId, storageBlockId, index 
 
 function getAmountStoredContent(stored, itemId, storageBlockId){
 	console.log("Getting view content for simple amount stored.");
-	return getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId);
+	return getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId, false, true);
 }
 
 function getAmountListStoredContent(itemId, blockId, storedList){
 	console.log("Getting view content for list amount stored.");
-
 
 	let accordContent = $('<div class="col accordion"></div>');
 
@@ -214,7 +231,10 @@ function getAmountListStoredContent(itemId, blockId, storedList){
 		accordContent.append($('<h4>Nothing currently stored.</h4>'));
 	}
 
-	return '<div class="row"> ' +
+	return '<div class="row mb-1"> ' +
+		getStoredBlockLink(blockId).prop("outerHTML") +
+		'</div>' +
+		'<div class="row"> ' +
 		accordContent.prop("outerHTML") +
 		'</div>';
 }
@@ -241,7 +261,10 @@ function getTrackedStoredContent(itemId, blockId, trackedMap){
 		accordContent.html('<h4>Nothing currently stored.</h4>');
 	}
 
-	return '<div class="row"> ' +
+	return '<div class="row mb-1"> ' +
+		getStoredBlockLink(blockId).prop("outerHTML") +
+		'</div>' +
+		'<div class="row"> ' +
 		accordContent.prop("outerHTML") +
 		'</div>';
 }
