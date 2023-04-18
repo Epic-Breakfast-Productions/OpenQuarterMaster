@@ -289,9 +289,7 @@ Accepts:
                     <h5 class="card-title">Location in storage:</h5>
                     <div id="storageBlockViewBreadcrumbContainer">
                     </div>
-                    <h5 class="card-title">Children:</h5>
-                    <ul class="list-inline">
-                    </ul>
+                    <h5 class="card-title" id="storageBlockViewChildrenContainerTitle">Children:</h5>
                     <div id="storageBlockViewChildrenContainer">
                     </div>
                 </div>
@@ -622,6 +620,7 @@ var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
+var storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 var storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 
@@ -632,6 +631,7 @@ function resetView(){
     storageBlockViewLocation.text('');
     storageBlockViewBreadcrumbContainer.text('');
     storageBlockViewChildrenContainer.text('');
+    storageBlockViewChildrenContainerTitle.text("Children:");
     
     storageBlockViewDescriptionContainer.hide();
     storageBlockViewDescription.text("");
@@ -725,7 +725,7 @@ function setupView(blockId){
             
             children = await children;
             if(!children.length){
-                storageBlockViewChildrenContainer.text("No children!")
+                storageBlockViewChildrenContainerTitle.text("No children!")
             } else {
                 children.forEach(function (child) {
                     let newGetParams = new URLSearchParams(window.location.search);
