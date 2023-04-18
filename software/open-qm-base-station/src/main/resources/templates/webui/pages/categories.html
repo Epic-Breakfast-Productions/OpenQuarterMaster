@@ -95,6 +95,7 @@
             </div>
         {/modal}
         {#modal id='itemCategoryView' size='xl' title='Item Category View'}
+            {#titleIcon}{#icons/categories}{/icons/categories}{/titleIcon}
             <div class="row">
                 {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
@@ -109,7 +110,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="card col-sm-12 col-md-6">
+                        <div class="card col-sm-12 col-md-6 ps-0 pe-0">
                             <div class="card-body" id="itemCategoryColorContainer">
                                 <h5 class="card-title d-inline">Color:</h5>
                                 <p class="card-text d-inline">
@@ -182,6 +183,7 @@
             const Category = {
                 addEditForm: $("#addEditItemCategoryForm"),
                 addEditModalLabel: $("#addEditItemCategoryModalLabel"),
+                addEditModalLabelIcon: $("#addEditItemCategoryModalLabelIcon"),
                 addEditFormMessages: $("#addEditItemCategoryFormMessages"),
                 modeInput: $("#addEditItemCategoryForm").find('input[name="mode"]'),
                 idInput: $("#addEditItemCategoryForm").find('input[name="id"]'),
@@ -216,12 +218,14 @@
                 },
                 setupAddEditItemCategoryForAdd(){
                     Category.resetAddEditItemCategoryForm();
+                    Category.addEditModalLabelIcon.html(Icons.add);
                     Category.addEditModalLabel.text("Add Item Category");
                     Category.modeInput.val("add");
                 },
                 async setupAddEditItemCategoryForEdit(categoryId){
                     Category.resetAddEditItemCategoryForm();
                     Category.addEditModalLabel.text("Edit Item Category");
+                    Category.addEditModalLabelIcon.html(Icons.edit);
                     Category.modeInput.val("edit");
                     Category.idInput.val(categoryId);
     

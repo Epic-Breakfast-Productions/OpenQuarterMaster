@@ -212,6 +212,7 @@ Accepts:
 {/search/image/imageSearchSelectModal}
 
 {#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
+	{#titleIcon}{#icons/print}{/icons/print}{/titleIcon}
     <div class="row">
         <form class="col" id="storageBlockInventorySheetPrintoutForm" method="get" action="">
             <div class="mb-3 row">
@@ -266,9 +267,9 @@ Accepts:
 {/modal}
 
 {#modal id='storageBlockView' size='xl' title='Storage Block View'}
+    {#titleIcon}{#icons/storageBlock}{/icons/storageBlock}{/titleIcon}
     <div class="row">
         <div class="col" id="storageBlockViewMessages">
-        
         </div>
     </div>
     <div class="row">
@@ -288,9 +289,7 @@ Accepts:
                     <h5 class="card-title">Location in storage:</h5>
                     <div id="storageBlockViewBreadcrumbContainer">
                     </div>
-                    <h5 class="card-title">Children:</h5>
-                    <ul class="list-inline">
-                    </ul>
+                    <h5 class="card-title" id="storageBlockViewChildrenContainerTitle">Children:</h5>
                     <div id="storageBlockViewChildrenContainer">
                     </div>
                 </div>
@@ -422,6 +421,7 @@ function removeStorageBlock(blockId) {
 
 var addEditStorageForm = $("#addEditStorageForm");
 var addEditModalTitleText = $("#addEditModalLabel");
+var addEditModalTitleIcon = $("#addEditModalLabelIcon");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
 //inputs
@@ -470,12 +470,14 @@ function setupAddEditForAdd(){
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add Storage Block");
     addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Storage Block');
+    addEditModalTitleIcon.html(Icons.add);
 }
 
 function setupAddEditForEdit(blockId){
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
+    addEditModalTitleIcon.html(Icons.edit);
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit Storage Block");
     addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Storage Block');
@@ -618,6 +620,7 @@ var viewKeywordsSection = $('#viewKeywordsSection');
 var viewAttsSection = $('#viewAttsSection');
 var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
+var storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
 var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 var storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 
@@ -628,6 +631,7 @@ function resetView(){
     storageBlockViewLocation.text('');
     storageBlockViewBreadcrumbContainer.text('');
     storageBlockViewChildrenContainer.text('');
+    storageBlockViewChildrenContainerTitle.text("Children:");
     
     storageBlockViewDescriptionContainer.hide();
     storageBlockViewDescription.text("");
@@ -721,7 +725,7 @@ function setupView(blockId){
             
             children = await children;
             if(!children.length){
-                storageBlockViewChildrenContainer.text("No children!")
+                storageBlockViewChildrenContainerTitle.text("No children!")
             } else {
                 children.forEach(function (child) {
                     let newGetParams = new URLSearchParams(window.location.search);

@@ -5,6 +5,7 @@ var addEditItemForm = $('#addEditItemForm');
 var addEditItemModal = $("#addEditItemModal");
 var addEditItemFormMessages = $("#addEditItemFormMessages");
 var addEditItemModalLabel = $('#addEditItemModalLabel');
+var addEditItemModalLabelIcon = $('#addEditItemModalLabelIcon');
 var addEditItemFormMode = $('#addEditItemFormMode');
 var addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
 var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
@@ -94,6 +95,7 @@ function resetAddEditForm(){
 function setupAddEditForAdd(){
 	console.log("Setting up add/edit form for add.");
 	resetAddEditForm();
+	addEditItemModalLabelIcon.html(Icons.add);
 	addEditItemModalLabel.text("Item Add");
 	addEditItemFormMode.val("add");
 }
@@ -125,6 +127,7 @@ function setStoredItemVales(storedDivJq, storedData){
 function setupAddEditForEdit(itemId){
 	console.log("Setting up add/edit form for editing item " + itemId);
 	resetAddEditForm();
+	addEditItemModalLabelIcon.html(Icons.edit);
 	addEditItemModalLabel.text("Item Edit");
 	addEditItemFormMode.val("edit");
 	addEditItemStorageTypeInput.prop( "disabled", true );
