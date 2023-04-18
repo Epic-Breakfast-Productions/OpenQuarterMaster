@@ -3,7 +3,6 @@
 var itemViewModal = $("#itemViewModal");
 var itemViewMessages = $("#itemViewMessages");
 var itemViewModalLabel = $("#itemViewModalLabel");
-var itemViewStoredContainer = $("#itemViewStoredContainer");
 var itemViewStored = $("#itemViewStored");
 var itemViewStoredNonePresentContainer = $("#itemViewStoredNonePresentContainer");
 var itemViewStoredNum = $("#itemViewStoredNum");
@@ -33,7 +32,6 @@ var itemViewId = $("#itemViewId");
 var itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
 
 function resetView(){
-	itemViewStoredContainer.text("");
 	itemViewModalLabel.text("");
 	itemViewStoredNum.text("");
 	itemViewStored.hide();
@@ -172,9 +170,7 @@ function getStoredViewContent(stored, storedType, itemId, storageBlockId, index 
 	let newContent = $('<div class="row"></div>');
 
 	newContent.append(
-		$('<div class="col-1"></div>').html(Links.getStorageViewButton(storageBlockId, 'View in Storage'))
-	);
-	newContent.append(
+		$('<div class="col-1"></div>').html(Links.getStorageViewButton(storageBlockId, 'View in Storage')),
 		getStorageBlockAmountHeldView(stored, storedType),
 		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
 		getStorageBlockIdentifyingDetailsView(stored, storedType),
@@ -196,58 +192,57 @@ function getAmountListStoredContent(itemId, blockId, storedList){
 	console.log("Getting view content for list amount stored.");
 
 
-	let accordContent = "";
+	let accordContent = $('<div class="col accordion"></div>');
 
 	if(storedList.length > 0) {
 		let accordId = "itemViewStored"+blockId+"Accordion";
+		accordContent.prop("id", accordId);
 		let i = 0;
 		storedList.forEach(function (curStored) {
-			accordContent += addViewAccordionItem(
-				accordId + i,
-				getStoredViewContent(curStored, "AMOUNT_LIST", itemId, blockId, i),
-				curStored,
-				"AMOUNT_LIST"
+			accordContent.append(
+				addViewAccordionItem(
+					accordId + i,
+					getStoredViewContent(curStored, "AMOUNT_LIST", itemId, blockId, i),
+					curStored,
+					"AMOUNT_LIST"
+				)
 			);
 			i++;
 		});
 
-		accordContent = '<div class="col accordion" id="'+accordId+'">'+
-			accordContent +
-			'</div>';
 	} else {
-		accordContent = '<div class="col"><h4>Nothing currently stored.</h4></div>'
+		accordContent.append($('<h4>Nothing currently stored.</h4>'));
 	}
 
 	return '<div class="row"> ' +
-		accordContent +
+		accordContent.prop("outerHTML") +
 		'</div>';
 }
 
 function getTrackedStoredContent(itemId, blockId, trackedMap){
 	console.log("Getting view content for tracked stored.");
 
-	let accordContent = "";
+	let accordContent = $('<div class="col accordion"></div>');
 	let storageIds = Object.keys(trackedMap);
 
 	if(storageIds.length > 0) {
 		let accordId = "itemViewStored"+blockId+"Accordion";
+		accordContent.prop("id", accordId);
 		storageIds.forEach(key => {
-			accordContent += addViewAccordionItem(
+
+			accordContent.append(addViewAccordionItem(
 				accordId + key,
 				getStoredViewContent(trackedMap[key], "TRACKED",itemId, blockId, key),
 				key
-			);
+			));
 		});
 
-		accordContent = '<div class="col accordion" id="'+accordId+'">'+
-			accordContent +
-			'</div>';
 	} else {
-		accordContent = '<div class="col"><h4>Nothing currently stored.</h4></div>'
+		accordContent.html('<h4>Nothing currently stored.</h4>');
 	}
 
 	return '<div class="row"> ' +
-		accordContent +
+		accordContent.prop("outerHTML") +
 		'</div>';
 }
 
