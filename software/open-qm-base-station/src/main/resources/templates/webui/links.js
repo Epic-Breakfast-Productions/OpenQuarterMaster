@@ -10,7 +10,7 @@ const Links = {
 		if(text){
 			newLink.html(Icons.storageBlock);
 
-			newLink.append($("<span></span>").text(text));
+			newLink.append($(" \n<span></span>").text(text));
 		}
 
 		return newLink;
