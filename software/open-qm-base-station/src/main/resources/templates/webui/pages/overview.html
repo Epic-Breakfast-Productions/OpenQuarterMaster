@@ -58,6 +58,7 @@
 										<div class="accordion-item" id="accordItem{parent.getId()}" data-storage-block-id="{parent.getId()}">
 											<h2 class="accordion-header" id="accordHeader{parent.getId()}" onclick="overviewAccordionClicked('{parent.getId()}', $(this).parent())">
 												<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse{parent.getId()}" aria-expanded="false" aria-controls="accordCollapse{parent.getId()}">
+													<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/{parent.getId()}" alt="">
 													{parent.getLabelText()}
 												</button>
 											</h2>
@@ -218,7 +219,6 @@
 					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-storage-block-id="'+invItem.id+'">' +
 						'<h2 class="accordion-header " id="'+accordItemHeaderId+'">' +
 						'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordItemCollapseId+'" aria-expanded="false" aria-controls="'+accordItemCollapseId+'">' +
-						''+invItem.name+''+
 						'</button>'+
 						'</h2>'+
 						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
@@ -227,6 +227,14 @@
 						'</div>'+
 						'</div>'+
 						'</div>');
+
+					let accordButt = curAccord.find(".accordion-button");
+
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/'+invItem.id+'" alt="">'),
+						$('<span></span>').text(invItem.name)
+					);
+					
 					accordion = accordion.append(curAccord);
 				});
 
@@ -254,11 +262,13 @@
 												'</div>'+
 											'</div>'+
 										'</div>');
-					if(storageBlock.nickname){
-						curAccord.find(".accordion-button").text(storageBlock.label + " / " + storageBlock.nickname);
-					} else {
-						curAccord.find(".accordion-button").text(storageBlock.label);
-					}
+					let accordButt = curAccord.find(".accordion-button");
+					
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
+						$('<span></span>').text(storageBlock.labelText)
+					);
+					
 					accordion = accordion.append(curAccord);
 				});
 				
