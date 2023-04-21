@@ -354,7 +354,7 @@
                     ItemCategoryView.breadcrumbContainer.text('');
                     ItemCategoryView.childrenContainer.text('');
                     
-                    clearCarousel(ItemCategoryView.carousel);
+                    Carousel.clearCarousel(ItemCategoryView.carousel);
                     clearHideKeywordDisplay(ItemCategoryView.keywordView);
                     clearHideAttDisplay(ItemCategoryView.attsView);
                     resetHistorySearch(ItemCategoryView.historyView);
@@ -374,7 +374,7 @@
                             let children = getItemCategoryChildrenData(categoryId);
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
-                            promises.push(processImagedObjectImages(data, ItemCategoryView.carousel));
+                            promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
     
                             if(data.color) {
                                 ItemCategoryView.color.text(data.color);

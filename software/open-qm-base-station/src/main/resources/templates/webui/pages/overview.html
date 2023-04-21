@@ -270,20 +270,24 @@
 			function getBlockDetailsSection(storageBlockData){
 				let output = $('<div class="row">' +
 					'<div class="col">' +
-					'<h5>Block details</h5>' +
+					// '<h5>Block details</h5>' + //unnecessary
 					'</div>' +
 					'</div>'
 				);
 				let detailsRow = $(
 					'<div class="row storageBlockDetailsRow">'+
 					'</div>');
-
+				
+				if(storageBlockData.images.length){
+				
+				}
+				
 				if(storageBlockData.description){
 					//TODO:: might need better format
 					let locationData = $('<div class="col">' +
-						'Description: <span class="storageBlockLocation"></span>' +
+						'Description: <span class="storageBlockDescription"></span>' +
 						'</div>');
-					locationData.find(".storageBlockLocation").text(storageBlockData.location);
+					locationData.find(".storageBlockDescription").text(storageBlockData.description);
 
 					detailsRow = detailsRow.append(locationData);
 				}

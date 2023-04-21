@@ -58,7 +58,7 @@ function resetView(){
 
 	resetHistorySearch(itemHistoryAccordionCollapse);
 
-	clearCarousel(itemViewCarousel);
+	Carousel.clearCarousel(itemViewCarousel);
 	clearHideKeywordDisplay(viewKeywordsSection);
 	clearHideAttDisplay(viewAttsSection);
 }
@@ -313,7 +313,7 @@ function setupView(itemId){
 			if (data.imageIds.length) {
 				console.log("Item had images to show.");
 				itemViewCarousel.show();
-				promises.push(setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
+				promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
 			} else {
 				console.log("Storage block had no images to show.");
 				itemViewCarousel.hide();
