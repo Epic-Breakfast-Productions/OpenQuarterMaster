@@ -22,5 +22,6 @@ const Links = {
 		newButton.addClass("btn-primary");
 
 		return newButton;
-	}
+	},
+	getStorageViewButtonAsHtml(id, text=""){ return Links.getStorageViewButton(id, text).prop("outerHTML")}
 }

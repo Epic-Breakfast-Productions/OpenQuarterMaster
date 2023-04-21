@@ -278,9 +278,7 @@
 					'<div class="row storageBlockDetailsRow">'+
 					'</div>');
 				
-				if(storageBlockData.images.length){
-				
-				}
+				detailsRow.append('<div class="col-sm-1">' +Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
 				
 				if(storageBlockData.description){
 					//TODO:: might need better format
@@ -299,8 +297,9 @@
 
 					detailsRow = detailsRow.append(locationData);
 				}
+				//TODO:: barcode
 				
-				//TODO:: images, attr/keywords?, capacities
+				//TODO:: images, attr/keywords?, capacities?
 				
 				output = output.add(detailsRow);
 				return output;

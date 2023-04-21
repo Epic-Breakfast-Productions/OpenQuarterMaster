@@ -2,6 +2,27 @@
 const Carousel = {
 	carouselTemplate: '{carouselLines}\
 	',
+	newCarousel(id, objectData=null, toAppendTo=null){
+		return new Promise(async (done, fail) => {
+			let newCarousel = $(Carousel.carouselTemplate);
+			newCarousel.prop("id", id);
+			newCarousel.find("button").prop("id", id);
+
+			let promises = [];
+
+			if(objectData) {
+				promises.push(Carousel.processImagedObjectImages(objectData, newCarousel));
+			}
+			if(toAppendTo){
+				toAppendTo.append(newCarousel);
+			}
+
+			await Promise.all(promises);
+
+			return newCarousel;
+		});
+	},
+
 	clearCarousel(carousel) {
 		carousel.find(".carousel-indicators").html("");
 		carousel.find(".carousel-inner").html("");
@@ -61,9 +82,7 @@ const Carousel = {
 				);
 			});
 
-			for (let promise of ajaxPromises) {
-				await promise;
-			}
+			await Promise.all(ajaxPromises);
 
 			Carousel.setCarouselImages(carousel, carouselData);
 		});
