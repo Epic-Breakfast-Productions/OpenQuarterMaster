@@ -198,6 +198,7 @@
 	{/pageContent}
 	{#scripts}
 		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/units.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>
@@ -232,7 +233,7 @@
 
 					accordButt.append(
 						$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/'+invItem.id+'" alt="">'),
-						$('<span></span>').text(invItem.name)
+						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
 					);
 					
 					accordion = accordion.append(curAccord);
@@ -316,7 +317,7 @@
 			}
 
 			function getInvItemDetailsSection(itemData, storageBlockId){
-				let output = $("<div></div>");
+				let output = $('<div class="row"></div>');
 				
 				//TODO:: fill with details
 				
@@ -379,7 +380,7 @@
 					method: "GET",
 					done: async function(data) {
 						let newContent = await getInvItemDetailsSection(data, storageBlockId);
-						console.log("Got new content for accordion: " + newContent);
+						console.log("Got new content for accordion.");
 
 						accordionDivJq.find(".accordion-body").html(newContent);
 					},
