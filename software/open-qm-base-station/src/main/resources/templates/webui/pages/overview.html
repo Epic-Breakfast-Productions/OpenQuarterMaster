@@ -104,7 +104,22 @@
 								</tr>
 								</thead>
 								<tbody>
-								{!TODO!}
+								{#for curExpiredItem in expiredList}
+									<tr class="align-middle">
+										<td>
+											{#if !curExpiredItem.getImageIds().isEmpty()}
+												<img src="/api/v1/media/image/for/item/{curExpiredItem.getId()}" class="searchResultImage">
+											{/if}
+										</td>
+										<td>{curExpiredItem.getName()}</td>
+										<td>{curExpiredItem.getNumExpired()}</td>
+										<td>
+											<a href="/items?view={curExpiredItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+												<i class="bi bi-eye"> </i>
+											</a>
+										</td>
+									</tr>
+								{/for}
 								</tbody>
 							</table>
 						{/if}
@@ -116,7 +131,7 @@
 						<h3>
 							Close to expiring:
 						</h3>
-						{#if expiredList.isEmpty()}
+						{#if expiredWarnList.isEmpty()}
 							<p>
 								Nothing close to expiring!
 							</p>
@@ -139,7 +154,22 @@
 								</tr>
 								</thead>
 								<tbody>
-								{!TODO!}
+								{#for curExpiredWarnItem in expiredWarnList}
+									<tr class="align-middle">
+										<td>
+											{#if !curExpiredWarnItem.getImageIds().isEmpty()}
+												<img src="/api/v1/media/image/for/item/{curExpiredWarnItem.getId()}" class="searchResultImage">
+											{/if}
+										</td>
+										<td>{curExpiredWarnItem.getName()}</td>
+										<td>{curExpiredWarnItem.getNumExpiryWarn()}</td>
+										<td>
+											<a href="/items?view={curExpiredWarnItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+												<i class="bi bi-eye"> </i>
+											</a>
+										</td>
+									</tr>
+								{/for}
 								</tbody>
 							</table>
 						{/if}
