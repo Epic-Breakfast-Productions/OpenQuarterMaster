@@ -644,7 +644,7 @@ function resetView(){
 
     storageBlockViewModalLabel.text("");
     storageBlockViewItemsStoredContent.text("");
-    clearCarousel(storageBlockViewCarousel);
+    Carousel.clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
     
@@ -697,7 +697,7 @@ function setupView(blockId){
                 console.log("Storage block had images to show.");
                 storageBlockViewCarousel.show();
                 
-                promises.push(setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
+                promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
             } else {
                 console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();

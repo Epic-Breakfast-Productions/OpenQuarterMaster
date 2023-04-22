@@ -5,6 +5,7 @@ const Icons = {
 	copyChecked: '{#icons/copyChecked}{/icons/copyChecked}',
 	edit: '{#icons/edit}{/icons/edit}',
 	info: '{#icons/info}{/icons/info}',
+	items: '{#icons/item}{/icons/item}',
 	remove: '{#icons/remove}{/icons/remove}',
 	storageBlock: '{#icons/storageBlock}{/icons/storageBlock}',
 	storageBlocks: '{#icons/storageBlocks}{/icons/storageBlocks}',

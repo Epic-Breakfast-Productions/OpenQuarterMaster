@@ -19,14 +19,14 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					{#icons/expiring}{/icons/expiring} Expiring
-					{#if totalExpired > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</span>{/if}
-					{#if totalExpiryWarn > 0}<span class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</span>{/if}
+					{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
+					{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
 					{#icons/lowStock}{/icons/lowStock} Low Stock
-					{#if totalLowStock > 0}<span class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</span>{/if}
+					{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
 				</button>
 			</li>
 		</ul>
@@ -58,6 +58,7 @@
 										<div class="accordion-item" id="accordItem{parent.getId()}" data-storage-block-id="{parent.getId()}">
 											<h2 class="accordion-header" id="accordHeader{parent.getId()}" onclick="overviewAccordionClicked('{parent.getId()}', $(this).parent())">
 												<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse{parent.getId()}" aria-expanded="false" aria-controls="accordCollapse{parent.getId()}">
+													<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/{parent.getId()}" alt="">
 													{parent.getLabelText()}
 												</button>
 											</h2>
@@ -197,6 +198,7 @@
 	{/pageContent}
 	{#scripts}
 		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/units.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>
@@ -215,10 +217,9 @@
 					let accordItemHeaderId = accordItemId + "Header";
 					let accordItemCollapseId = accordItemId + "Collapse";
 					let accordItemContentId = accordItemId + "Content";
-					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-storage-block-id="'+invItem.id+'">' +
-						'<h2 class="accordion-header " id="'+accordItemHeaderId+'">' +
+					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-item-id="'+invItem.id+'">' +
+						'<h2 class="accordion-header " id="'+accordItemHeaderId+'" onclick="overviewItemAccordionClicked(\''+invItem.id+'\',\''+parentId+'\', $(this).parent())">' +
 						'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordItemCollapseId+'" aria-expanded="false" aria-controls="'+accordItemCollapseId+'">' +
-						''+invItem.name+''+
 						'</button>'+
 						'</h2>'+
 						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
@@ -227,6 +228,14 @@
 						'</div>'+
 						'</div>'+
 						'</div>');
+
+					let accordButt = curAccord.find(".accordion-button");
+
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/'+invItem.id+'" alt="">'),
+						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
+					);
+					
 					accordion = accordion.append(curAccord);
 				});
 
@@ -254,11 +263,13 @@
 												'</div>'+
 											'</div>'+
 										'</div>');
-					if(storageBlock.nickname){
-						curAccord.find(".accordion-button").text(storageBlock.label + " / " + storageBlock.nickname);
-					} else {
-						curAccord.find(".accordion-button").text(storageBlock.label);
-					}
+					let accordButt = curAccord.find(".accordion-button");
+					
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
+						$('<span></span>').text(storageBlock.labelText)
+					);
+					
 					accordion = accordion.append(curAccord);
 				});
 				
@@ -270,20 +281,22 @@
 			function getBlockDetailsSection(storageBlockData){
 				let output = $('<div class="row">' +
 					'<div class="col">' +
-					'<h5>Block details</h5>' +
+					// '<h5>Block details</h5>' + //unnecessary
 					'</div>' +
 					'</div>'
 				);
 				let detailsRow = $(
 					'<div class="row storageBlockDetailsRow">'+
 					'</div>');
-
+				
+				detailsRow.append('<div class="col-sm-1">' +Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
+				
 				if(storageBlockData.description){
 					//TODO:: might need better format
 					let locationData = $('<div class="col">' +
-						'Description: <span class="storageBlockLocation"></span>' +
+						'Description: <span class="storageBlockDescription"></span>' +
 						'</div>');
-					locationData.find(".storageBlockLocation").text(storageBlockData.location);
+					locationData.find(".storageBlockDescription").text(storageBlockData.description);
 
 					detailsRow = detailsRow.append(locationData);
 				}
@@ -295,10 +308,24 @@
 
 					detailsRow = detailsRow.append(locationData);
 				}
+				//TODO:: barcode
 				
-				//TODO:: images, attr/keywords?, capacities
+				//TODO:: images, attr/keywords?, capacities?
 				
 				output = output.add(detailsRow);
+				return output;
+			}
+
+			function getInvItemDetailsSection(itemData, storageBlockId){
+				let output = $('<div class="row"></div>');
+				
+				output.append($('<div class="col-1">'+Links.getItemViewButtonAsHtml(itemData.id, "View")+'</div>'));
+				
+				if(itemData.description){
+					//TODO
+				}
+				//TODO:: fill with details
+				
 				return output;
 			}
 			
@@ -327,7 +354,7 @@
 					console.log("Already clicked on this.");
 					return;
 				}
-				created[storageBlockId] = true;
+				created[storageBlockId] = [];
 
 				doRestCall({
 					url: "/api/v1/inventory/storage-block/" + storageBlockId,
@@ -337,10 +364,32 @@
 						console.log("Got new content for accordion.");
 
 						accordionDivJq.find(".accordion-body").html(newContent);
-					
 					},
 					fail: function(data) {
 					
+					}
+				});
+			}
+
+			function overviewItemAccordionClicked(itemId, storageBlockId, accordionDivJq){
+				console.debug("Accordion " + accordionDivJq.attr("id") + " for item "+itemId+" in storage block " + storageBlockId + " clicked.");
+
+				if(created[storageBlockId][itemId]){
+					console.log("Already clicked on this.");
+					return;
+				}
+				created[storageBlockId][itemId] = true;
+
+				doRestCall({
+					url: "/api/v1/inventory/item/" + itemId,
+					method: "GET",
+					done: async function(data) {
+						let newContent = await getInvItemDetailsSection(data, storageBlockId);
+						console.log("Got new content for accordion.");
+
+						accordionDivJq.find(".accordion-body").html(newContent);
+					},
+					fail: function(data) {
 					}
 				});
 			}
