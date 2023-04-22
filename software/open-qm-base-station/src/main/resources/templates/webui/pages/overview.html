@@ -216,8 +216,8 @@
 					let accordItemHeaderId = accordItemId + "Header";
 					let accordItemCollapseId = accordItemId + "Collapse";
 					let accordItemContentId = accordItemId + "Content";
-					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-storage-block-id="'+invItem.id+'">' +
-						'<h2 class="accordion-header " id="'+accordItemHeaderId+'">' +
+					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-item-id="'+invItem.id+'">' +
+						'<h2 class="accordion-header " id="'+accordItemHeaderId+'" onclick="overviewItemAccordionClicked(\''+invItem.id+'\',\''+parentId+'\', $(this).parent())">' +
 						'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordItemCollapseId+'" aria-expanded="false" aria-controls="'+accordItemCollapseId+'">' +
 						'</button>'+
 						'</h2>'+
@@ -314,6 +314,14 @@
 				output = output.add(detailsRow);
 				return output;
 			}
+
+			function getInvItemDetailsSection(itemData, storageBlockId){
+				let output = $("<div></div>");
+				
+				//TODO:: fill with details
+				
+				return output;
+			}
 			
 			async function createNewStorageBlockContent(storageBlockData){
 				let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
@@ -340,7 +348,7 @@
 					console.log("Already clicked on this.");
 					return;
 				}
-				created[storageBlockId] = true;
+				created[storageBlockId] = [];
 
 				doRestCall({
 					url: "/api/v1/inventory/storage-block/" + storageBlockId,
@@ -350,10 +358,32 @@
 						console.log("Got new content for accordion.");
 
 						accordionDivJq.find(".accordion-body").html(newContent);
-					
 					},
 					fail: function(data) {
 					
+					}
+				});
+			}
+
+			function overviewItemAccordionClicked(itemId, storageBlockId, accordionDivJq){
+				console.debug("Accordion " + accordionDivJq.attr("id") + " for item "+itemId+" in storage block " + storageBlockId + " clicked.");
+
+				if(created[storageBlockId][itemId]){
+					console.log("Already clicked on this.");
+					return;
+				}
+				created[storageBlockId][itemId] = true;
+
+				doRestCall({
+					url: "/api/v1/inventory/item/" + itemId,
+					method: "GET",
+					done: async function(data) {
+						let newContent = await getInvItemDetailsSection(data, storageBlockId);
+						console.log("Got new content for accordion: " + newContent);
+
+						accordionDivJq.find(".accordion-body").html(newContent);
+					},
+					fail: function(data) {
 					}
 				});
 			}
