@@ -184,7 +184,11 @@
 									</td>
 									<td>{curLowStockItem.getName()}</td>
 									<td>{curLowStockItem.getNumLowStock()}</td>
-									<td></td>
+									<td>
+										<a href="/items?view={curLowStockItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+											<i class="bi bi-eye"> </i>
+										</a>
+									</td>
 								</tr>
 								
 							{/for}
