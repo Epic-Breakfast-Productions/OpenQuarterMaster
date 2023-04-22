@@ -319,6 +319,11 @@
 			function getInvItemDetailsSection(itemData, storageBlockId){
 				let output = $('<div class="row"></div>');
 				
+				output.append($('<div class="col-1">'+Links.getItemViewButtonAsHtml(itemData.id, "View")+'</div>'));
+				
+				if(itemData.description){
+					//TODO
+				}
 				//TODO:: fill with details
 				
 				return output;
