@@ -31,9 +31,10 @@ function getUnitOptions(selectedVal){
 
 //TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
 function updateCompatibleUnits(unitToCompatWith, containerToSearch){
-    return doRestCall({
+    doRestCall({
         url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
         extraHeaders: { accept:"text/html" },
+        async: false,
         done: function (data){
             ItemAddEdit.compatibleUnitOptions = data;
 

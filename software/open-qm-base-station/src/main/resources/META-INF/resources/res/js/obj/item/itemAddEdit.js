@@ -46,12 +46,12 @@ ItemAddEdit.addEditItemBarcodeInput.on('keypress', function(e) {
 });
 
 
-function foreachStoredTypeFromAddEditInput(
+async function foreachStoredTypeFromAddEditInput(
 	whenAmountSimple,
 	whenAmountList,
 	whenTracked
 ){
-	StoredTypeUtils.foreachStoredType(
+	await StoredTypeUtils.foreachStoredType(
 		ItemAddEdit.addEditItemStorageTypeInput[0].value,
 		whenAmountSimple,
 		whenAmountList,
@@ -89,10 +89,9 @@ function resetAddEditForm(){
 	ItemAddEdit.addEditItemIdentifyingAttInput.val("");
 	ItemAddEdit.addEditItemStorageTypeInput.prop( "disabled", false );
 	ItemAddEdit.addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
-	ItemAddEdit.addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
 	ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 	Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
-	Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
 
 	setIdAttField();
 	updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
@@ -160,24 +159,27 @@ function setupAddEditForEdit(itemId){
 			addEditStoredTypeInputChanged();
 			Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 
-			if(data.lowStockThreshold) {
-				ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
-				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
-			}
-
-			let setAmountStoredVars = async function(){
-				ItemAddEdit.addEditItemUnitInput.val(data.unit.string);
+			let setAmountStoredVars = function(){
+				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
+				ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 				ItemAddEdit.addEditItemPricePerUnitInput.val(data.valuePerUnit);
-				await updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
+				updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 			};
 
-			foreachStoredTypeFromAddEditInput(
-				await setAmountStoredVars,
-				await setAmountStoredVars,
+			await foreachStoredTypeFromAddEditInput(
+				setAmountStoredVars,
+				setAmountStoredVars,
 				function(){
 					ItemAddEdit.addEditItemIdentifyingAttInput.val(data.trackedItemIdentifierName);
 				}
 			);
+
+			if(data.lowStockThreshold) {
+				console.log("Item had low stock threshold.");
+				ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
+				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
+			}
+
 
 			if((data.expiryWarningThreshold / 604800) % 1 == 0){
 				console.log("Determined was weeks.");
