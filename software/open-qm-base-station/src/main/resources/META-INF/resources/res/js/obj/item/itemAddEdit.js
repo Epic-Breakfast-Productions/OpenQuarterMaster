@@ -33,7 +33,7 @@ const ItemAddEdit = {
 	compatibleUnitOptions: "",
 
 	itemAdded(newItemName, newItemId){
-		reloadPageWithMessage("Added \""+newItemName+"\" item successfully!", "success", "Success!");
+		PageMessages.reloadPageWithMessage("Added \""+newItemName+"\" item successfully!", "success", "Success!");
 	}
 }
 
@@ -766,8 +766,8 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	}
 
 	if (!result) {
-		addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
+		PageMessages.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
 	} else {
-		reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+		PageMessages.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
 	}
 });

@@ -137,7 +137,7 @@ $("#addItemFromFileForm").submit(function (e){
         data: formData,
         done: function (data){
             console.log("Successfully added items.");
-            reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
+            PageMessages.reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
         },
         failMessagesDiv: addItemFromFileFormMessages
     });
@@ -154,11 +154,11 @@ function removeItem(itemId){
         method: "DELETE",
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));
-            reloadPageWithMessage("Removed item successfully!", "success", "Success!");
+            PageMessages.reloadPageWithMessage("Removed item successfully!", "success", "Success!");
         },
         fail: function(data) {
             console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-            addMessageToDiv(messageDiv, "danger", "Failed to remove item.", "Failed", null);
+            PageMessages.addMessageToDiv(PageMessages.mainMessageDiv, "danger", "Failed to remove item.", "Failed", null);
         }
     });
 }

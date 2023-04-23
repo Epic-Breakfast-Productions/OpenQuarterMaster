@@ -1,19 +1,20 @@
-var getParams = new URLSearchParams(window.location.search);
 
-function updateParams(){
-	var newQuery = getParams.toString();
-	window.history.replaceState({}, document.title, window.location.href.split('?')[0] + (newQuery? '?' + newQuery : ''));
-}
-
-function addOrReplaceParams(key, value){
-	getParams.set(key, value);
-	updateParams();
-}
-function removeParam(key){
-	getParams.delete(key);
-	updateParams();
-}
-function removeHash(){
-	//TODO:: probably should do this smarter?
-	window.history.replaceState({}, document.title, window.location.href.split('#')[0]);
-}
+const UriUtils = {
+	getParams: new URLSearchParams(window.location.search),
+	updateParams(){
+		let newQuery = UriUtils.getParams.toString();
+		window.history.replaceState({}, document.title, window.location.href.split('?')[0] + (newQuery? '?' + newQuery : ''));
+	},
+	addOrReplaceParams(key, value){
+		UriUtils.getParams.set(key, value);
+		UriUtils.updateParams();
+	},
+	removeParam(key){
+		UriUtils.getParams.delete(key);
+		UriUtils.updateParams();
+	},
+	removeHash(){
+		//TODO:: probably should do this smarter?
+		window.history.replaceState({}, document.title, window.location.href.split('#')[0]);
+	}
+};

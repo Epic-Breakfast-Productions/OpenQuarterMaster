@@ -124,7 +124,7 @@ async function doRestCall(
 				if(String(failMessagesDiv) === failMessagesDiv){
 					failMessagesDiv = $(failMessagesDiv);
 				}
-				addMessageToDiv(
+				PageMessages.addMessageToDiv(
 					failMessagesDiv,
 					"danger",
 					buildErrorMessageFromResponse(data, statusStr),
@@ -143,7 +143,7 @@ async function doRestCall(
 				if (failNoResponse != null) {
 					failNoResponse(data);
 				} else {
-					addMessage(
+					PageMessages.addMessage(
 						"danger",
 						"Try refreshing the page, or wait until later. Contact the server operators for help and details.",
 						"Failed to connect to server."

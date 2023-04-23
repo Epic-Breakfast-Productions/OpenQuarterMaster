@@ -409,11 +409,11 @@ function removeStorageBlock(blockId) {
         method: "DELETE",
         async: false,
         done: function (data) {
-            reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+            PageMessages.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
         },
         fail: function (data) {
             console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
-            addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
         }
     });
 }
@@ -594,9 +594,9 @@ addEditStorageForm.submit(async function (event) {
     }
     
     if (!result) {
-        addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+        PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
     } else {
-        reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
+        PageMessages.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
     }
 });
 
@@ -750,8 +750,8 @@ storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
     removeParam("view");
 });
 
-if(getParams.has("view")){
-    setupView(getParams.get("view"));
+if(UriUtils.getParams.has("view")){
+    setupView(UriUtils.getParams.get("view"));
     viewModal.show();
 }
 

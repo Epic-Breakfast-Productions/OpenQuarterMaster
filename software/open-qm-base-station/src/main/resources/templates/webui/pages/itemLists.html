@@ -107,7 +107,7 @@
 			
 			if(window.location.hash === "#add"){
 				itemListAddModal.show();
-				removeHash();
+				UriUtils.removeHash();
 			}
 			
 			var itemListAddFormMessages = $("#itemListAddFormMessages");
@@ -130,7 +130,7 @@
 					done: function (data) {
 						console.log("Response from create request: " + data);
 						
-						gotoPageWithMessage("/itemList/"+data,
+						PageMessages.gotoPageWithMessage("/itemList/"+data,
 							"List created successfully!",
 							"success",
 							"Success!"
@@ -151,11 +151,11 @@
 					method: "DELETE",
 					done: function(data) {
 						console.log("Response from remove request: " + JSON.stringify(data));
-						reloadPageWithMessage("Removed item list successfully!", "success", "Success!");
+						PageMessages.reloadPageWithMessage("Removed item list successfully!", "success", "Success!");
 					},
 					fail: function(data) {
 						console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-						addMessage("danger", "Failed to remove item.", "Failed", null);
+						PageMessages.addMessage("danger", "Failed to remove item.", "Failed", null);
 					}
 				});
 			}

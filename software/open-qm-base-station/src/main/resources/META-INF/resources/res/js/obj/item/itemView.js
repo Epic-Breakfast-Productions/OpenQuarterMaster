@@ -274,7 +274,7 @@ function setupView(itemId){
 	resetView();
 
 	itemViewId.text(itemId);
-	addOrReplaceParams("view", itemId);
+	UriUtils.addOrReplaceParams("view", itemId);
 	itemViewModalLabel.text(itemId);
 
 	doRestCall({
@@ -399,10 +399,10 @@ function setupView(itemId){
 var viewModal = new bootstrap.Modal(itemViewModal, { });
 
 itemViewModal[0].addEventListener("hidden.bs.modal", function (){
-	removeParam("view");
+	UriUtils.removeParam("view");
 });
 
-if(getParams.has("view")){
-	setupView(getParams.get("view"));
+if(UriUtils.getParams.has("view")){
+	setupView(UriUtils.getParams.get("view"));
 	viewModal.show();
 }
