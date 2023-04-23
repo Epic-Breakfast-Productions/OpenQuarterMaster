@@ -1,15 +1,28 @@
 
-//TODO:: add 'namespace'
+//TODO:: finish adding to 'namespace'
+const ItemAddEdit = {
+	addEditItemForm: $('#addEditItemForm'),
+	addEditItemModal: $("#addEditItemModal"),
+	addEditItemModalBs: new bootstrap.Modal("#addEditItemModal"),
+	addEditItemFormMessages: $("#addEditItemFormMessages"),
+	addEditItemModalLabel: $('#addEditItemModalLabel'),
+	addEditItemModalLabelIcon: $('#addEditItemModalLabelIcon'),
+	addEditItemFormMode: $('#addEditItemFormMode'),
+	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
 
-var addEditItemForm = $('#addEditItemForm');
-var addEditItemModal = $("#addEditItemModal");
-var addEditItemFormMessages = $("#addEditItemFormMessages");
-var addEditItemModalLabel = $('#addEditItemModalLabel');
-var addEditItemModalLabelIcon = $('#addEditItemModalLabelIcon');
-var addEditItemFormMode = $('#addEditItemFormMode');
-var addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
-var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
-var addEditAttDiv = addEditItemForm.find(".attInputDiv");
+
+	itemAdded(newItemName, newItemId){
+		reloadPageWithMessage("Added \""+newItemName+"\" item successfully!", "success", "Success!");
+	}
+}
+
+
+
+
+
+var addEditKeywordDiv = ItemAddEdit.addEditItemForm.find(".keywordInputDiv");
+var addEditAttDiv = ItemAddEdit.addEditItemForm.find(".attInputDiv");
+
 var addEditItemIdInput = $("#addEditItemIdInput");
 var addEditItemNameInput = $('#addEditItemNameInput');
 var addEditItemDescriptionInput = $('#addEditItemDescriptionInput');
@@ -22,7 +35,7 @@ var addEditItemTotalLowStockThresholdUnitInput = $("#addEditItemTotalLowStockThr
 var addEditItemStorageTypeInput = $('#addEditItemStorageTypeInput');
 var addEditItemUnitInput = $('#addEditItemUnitInput');
 var addEditItemIdentifyingAttInput = $('#addEditItemIdentifyingAttInput');
-var addEditItemImagesSelected = addEditItemForm.find(".imagesSelected");
+var addEditItemImagesSelected = ItemAddEdit.addEditItemForm.find(".imagesSelected");
 
 var addEditItemStoredContainer = $('#addEditItemStoredContainer');
 var addEditItemTrackedItemIdentifierNameRow = $('#addEditItemTrackedItemIdentifierNameRow');
@@ -57,13 +70,13 @@ function haveStored(){
 }
 
 
-updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
+updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 
 function handleItemUnitChange(){
 	if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
 		//TODO:: handle changing back to old value;  [Bug]: On Item addEdit, canceling changing item unit fails to set back to old value #229
 	} else {
-		updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemForm);
+		updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 	}
 }
 
@@ -72,7 +85,7 @@ function resetAddEditForm(){
 	addEditItemNameInput.val("");
 	addEditItemDescriptionInput.val("");
 	addEditItemBarcodeInput.val("");
-	addEditItemModalLabel.text("Item");
+	ItemAddEdit.addEditItemModalLabel.text("Item");
 	addEditItemPricePerUnitInput.val("0.00");
 	addEditItemExpiryWarningThresholdInput.val(0);
 	addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex',2);
@@ -81,8 +94,9 @@ function resetAddEditForm(){
 	addEditItemStorageTypeInput.prop( "disabled", false );
 	addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
 	addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	//TODO:: merge check
+	Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 	Dselect.resetDselect(addEditItemUnitInput);
-	Dselect.resetDselect(addEditItemCategoriesInput);
 
 	setIdAttField();
 	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
@@ -95,9 +109,9 @@ function resetAddEditForm(){
 function setupAddEditForAdd(){
 	console.log("Setting up add/edit form for add.");
 	resetAddEditForm();
-	addEditItemModalLabelIcon.html(Icons.add);
-	addEditItemModalLabel.text("Item Add");
-	addEditItemFormMode.val("add");
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.add);
+	ItemAddEdit.addEditItemModalLabel.text("Item Add");
+	ItemAddEdit.addEditItemFormMode.val("add");
 }
 
 function setStoredItemVales(storedDivJq, storedData){
@@ -127,15 +141,17 @@ function setStoredItemVales(storedDivJq, storedData){
 function setupAddEditForEdit(itemId){
 	console.log("Setting up add/edit form for editing item " + itemId);
 	resetAddEditForm();
-	addEditItemModalLabelIcon.html(Icons.edit);
-	addEditItemModalLabel.text("Item Edit");
-	addEditItemFormMode.val("edit");
+	//TODO:: merge fix
+	ItemAddEdit.addEditItemModalLabel.text("Item Edit");
+	ItemAddEdit.addEditItemFormMode.val("edit");
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.edit);
+
 	addEditItemStorageTypeInput.prop( "disabled", true );
 
 	doRestCall({
-		spinnerContainer: addEditItemModal,
+		spinnerContainer: ItemAddEdit.addEditItemModal,
 		url: "/api/v1/inventory/item/" + itemId,
-		failMessagesDiv: addEditItemFormMessages,
+		failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 		done: async function(data){
 			addSelectedImages(addEditItemImagesSelected, data.imageIds);
 			addKeywordInputs(addEditKeywordDiv, data.keywords);
@@ -147,7 +163,7 @@ function setupAddEditForEdit(itemId){
 			addEditItemStorageTypeInput.val(data.storageType);
 			addEditItemBarcodeInput.val(data.barcode);
 			addEditStoredTypeInputChanged();
-			Dselect.setValues(addEditItemCategoriesInput, data.categories);
+			Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 
 			if(data.lowStockThreshold) {
 				addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
@@ -653,27 +669,7 @@ function buildStoredObj(addEditItemStoredContainer, type){
 	return output;
 }
 
-function removeItem(itemId){
-	if(!confirm("Are you sure you want to delete this item? This cannot be undone.")){
-		return;
-	}
-	console.log("Removing item " + itemId);
-
-	doRestCall({
-		url: "/api/v1/inventory/item/" + itemId,
-		method: "DELETE",
-		done: function(data) {
-			console.log("Response from remove request: " + JSON.stringify(data));
-			reloadPageWithMessage("Removed item successfully!", "success", "Success!");
-		},
-		fail: function(data) {
-			console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-			addMessageToDiv(addEditItemFormMessages, "danger", "Failed to remove item.", "Failed", null);
-		}
-	});
-}
-
-addEditItemForm.submit(async function (event) {
+ItemAddEdit.addEditItemForm.submit(async function (event) {
 	event.preventDefault();
 	console.log("Submitting add/edit form.");
 
@@ -687,7 +683,7 @@ addEditItemForm.submit(async function (event) {
 			addEditItemTotalLowStockThresholdInput.val(),
 			addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
-		categories: addEditItemCategoriesInput.val(),
+		categories: ItemAddEdit.addEditItemCategoriesInput.val(),
 		storageMap: { }
 	};
 
@@ -743,7 +739,7 @@ addEditItemForm.submit(async function (event) {
 	console.log("Data being submitted: " + JSON.stringify(addEditData));
 	let verb = "";
 	let result = false;
-	if (addEditItemFormMode.val() === "add") {
+	if (ItemAddEdit.addEditItemFormMode.val() === "add") {
 		verb = "Created";
 		console.log("Adding new item.");
 		await doRestCall({
@@ -755,9 +751,9 @@ addEditItemForm.submit(async function (event) {
 				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
 			},
-			failMessagesDiv: addEditItemFormMessages
+			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
 		});
-	} else if (addEditItemFormMode.val() === "edit") {
+	} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
 		verb = "Edited";
 		let id = addEditItemIdInput.val();
 		console.log("Editing storage block " + id);
@@ -771,12 +767,12 @@ addEditItemForm.submit(async function (event) {
 				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
 			},
-			failMessagesDiv: addEditItemFormMessages
+			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
 		});
 	}
 
 	if (!result) {
-		addMessageToDiv(addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
+		addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
 	} else {
 		reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
 	}
