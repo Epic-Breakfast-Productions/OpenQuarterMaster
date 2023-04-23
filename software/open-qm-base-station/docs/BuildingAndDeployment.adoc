@@ -17,12 +17,9 @@ This is a list of relevant config values for configuring a running instance of O
 
 For more information: https://quarkus.io/guides/config-reference
 
+When deployed using link:../../Station-Captain[Station Captain], Base Station's config file is: `/etc/oqm/serviceConfig/core-base+station/config.list`
+
 ==== Service Info
-
-
-
-
-
 
 ===== General
 
