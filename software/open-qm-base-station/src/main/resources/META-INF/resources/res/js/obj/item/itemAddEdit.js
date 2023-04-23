@@ -547,7 +547,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 			'            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordCollapseId+'" aria-expanded="false" aria-controls="'+accordCollapseId+'">\n'+
 			'                <img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+blockId+'" alt="'+blockName+' image">\n'+
 			'                <span class="storageBlockName">'+blockName+'</span>\n'+
-			'                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
+			// TODO::: this'                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
 			'            </button>\n'+
 			'        </h2>\n'+
 			'        <div id="'+accordCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordHeaderId+'" data-bs-parent="#addEditItemStoredContainer">\n' +
