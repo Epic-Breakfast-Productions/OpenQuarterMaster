@@ -469,18 +469,18 @@ function setupAddEditForAdd(){
     addBulkAccord.show();
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add Storage Block");
-    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Storage Block');
-    addEditModalTitleIcon.html(Icons.add);
+    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
+    addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
 }
 
 function setupAddEditForEdit(blockId){
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
-    addEditModalTitleIcon.html(Icons.edit);
+    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.edit));
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit Storage Block");
-    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Storage Block');
+    addEditFormSubmitButton.html(Icons.edit + ' Edit Storage Block');
 
     doRestCall({
     	spinnerContainer: addEditModal,

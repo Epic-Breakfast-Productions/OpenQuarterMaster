@@ -103,7 +103,7 @@ function resetAddEditForm(){
 function setupAddEditForAdd(){
 	console.log("Setting up add/edit form for add.");
 	resetAddEditForm();
-	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.add);
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.add));
 	ItemAddEdit.addEditItemModalLabel.text("Item Add");
 	ItemAddEdit.addEditItemFormMode.val("add");
 }
@@ -135,10 +135,9 @@ function setStoredItemVales(storedDivJq, storedData){
 function setupAddEditForEdit(itemId){
 	console.log("Setting up add/edit form for editing item " + itemId);
 	resetAddEditForm();
-	//TODO:: merge fix
 	ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 	ItemAddEdit.addEditItemFormMode.val("edit");
-	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.edit);
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.edit));
 
 	ItemAddEdit.addEditItemStorageTypeInput.prop( "disabled", true );
 

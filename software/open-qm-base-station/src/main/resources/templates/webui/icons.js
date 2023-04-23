@@ -12,5 +12,9 @@ const Icons = {
 	unlocked: '{#icons/unlocked}{/icons/unlocked}',
 	storageBlock: '{#icons/storageBlock}{/icons/storageBlock}',
 	storageBlocks: '{#icons/storageBlocks}{/icons/storageBlocks}',
-	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}'
+	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}',
+
+	iconWithSub(icon, subIcon){
+		return icon + '<sup>' + subIcon + '</sup>';
+	}
 }
