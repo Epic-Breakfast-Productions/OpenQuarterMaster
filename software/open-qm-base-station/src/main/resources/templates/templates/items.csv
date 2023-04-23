@@ -1,0 +1,5 @@
+{tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:CSV_COMMENT} This is a template to get your items in a CSV format for easy import.
+{tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:CSV_COMMENT}
+{tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:CSV_COMMENT} Lines starting with {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:CSV_COMMENT} are considered comments and ignored.
+{tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:CSV_COMMENT}
+{tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteConstantUtils:INV_ITEM_CSV_HEADERS}
