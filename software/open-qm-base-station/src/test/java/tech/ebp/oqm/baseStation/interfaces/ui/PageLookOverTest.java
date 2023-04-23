@@ -50,6 +50,7 @@ public class PageLookOverTest extends WebUiTest {
 			Arguments.of(true,  "/storage", "Storage"),
 			Arguments.of(true,  "/items", "Items"),
 			Arguments.of(true,  "/categories", "Categories"),
+			Arguments.of(true,  "/itemLists", "Item Lists"),
 			Arguments.of(true,  "/entityView/baseStation", "Base Station")
 //			Arguments.of(true,  "/entityView/type/id", "Entity") //TODO
 		);

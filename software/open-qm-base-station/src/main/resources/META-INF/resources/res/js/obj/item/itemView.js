@@ -58,7 +58,7 @@ function resetView(){
 
 	resetHistorySearch(itemHistoryAccordionCollapse);
 
-	clearCarousel(itemViewCarousel);
+	Carousel.clearCarousel(itemViewCarousel);
 	clearHideKeywordDisplay(viewKeywordsSection);
 	clearHideAttDisplay(viewAttsSection);
 }
@@ -274,7 +274,7 @@ function setupView(itemId){
 	resetView();
 
 	itemViewId.text(itemId);
-	addOrReplaceParams("view", itemId);
+	UriUtils.addOrReplaceParams("view", itemId);
 	itemViewModalLabel.text(itemId);
 
 	doRestCall({
@@ -313,7 +313,7 @@ function setupView(itemId){
 			if (data.imageIds.length) {
 				console.log("Item had images to show.");
 				itemViewCarousel.show();
-				promises.push(setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
+				promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
 			} else {
 				console.log("Storage block had no images to show.");
 				itemViewCarousel.hide();
@@ -399,10 +399,10 @@ function setupView(itemId){
 var viewModal = new bootstrap.Modal(itemViewModal, { });
 
 itemViewModal[0].addEventListener("hidden.bs.modal", function (){
-	removeParam("view");
+	UriUtils.removeParam("view");
 });
 
-if(getParams.has("view")){
-	setupView(getParams.get("view"));
+if(UriUtils.getParams.has("view")){
+	setupView(UriUtils.getParams.get("view"));
 	viewModal.show();
 }

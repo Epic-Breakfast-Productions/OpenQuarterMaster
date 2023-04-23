@@ -307,7 +307,7 @@
                 }
     
                 if (result) {
-                    reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
+                    PageMessages.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
                 }
             });
             
@@ -322,9 +322,9 @@
                     method: "DELETE",
                     async: false,
                     done: function (data) {
-                        reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
+                        PageMessages.reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
                     },
-                    failMessagesDiv: messageDiv
+                    failMessagesDiv: PageMessages.mainMessageDiv
                 });
             }
 
@@ -354,7 +354,7 @@
                     ItemCategoryView.breadcrumbContainer.text('');
                     ItemCategoryView.childrenContainer.text('');
                     
-                    clearCarousel(ItemCategoryView.carousel);
+                    Carousel.clearCarousel(ItemCategoryView.carousel);
                     clearHideKeywordDisplay(ItemCategoryView.keywordView);
                     clearHideAttDisplay(ItemCategoryView.attsView);
                     resetHistorySearch(ItemCategoryView.historyView);
@@ -374,7 +374,7 @@
                             let children = getItemCategoryChildrenData(categoryId);
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
-                            promises.push(processImagedObjectImages(data, ItemCategoryView.carousel));
+                            promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
     
                             if(data.color) {
                                 ItemCategoryView.color.text(data.color);
@@ -426,8 +426,8 @@
                 removeParam("view");
             });
 
-            if(getParams.has("view")){
-                ItemCategoryView.setupItemCategoryView(getParams.get("view"));
+            if(UriUtils.getParams.has("view")){
+                ItemCategoryView.setupItemCategoryView(UriUtils.getParams.get("view"));
                 viewModal.show();
             }
         </script>

@@ -1,4 +1,17 @@
 
+//TODO:: move others into here
+const UnitUtils = {
+
+    /**
+     * Example input: {"unit":{"string":"units","name":"Units","symbol":"units"},"scale":"ABSOLUTE","value":8}
+     * @param quantityObj
+     */
+    quantityToDisplayStr(quantityObj){
+        return quantityObj.value + quantityObj.unit.symbol;
+    }
+};
+
+
 var unitOptions = $("#unitSelectOptions").children();
 
 function getUnitOptions(selectedVal){
@@ -16,16 +29,18 @@ function getUnitOptions(selectedVal){
     return output;
 }
 
+//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
 function updateCompatibleUnits(unitToCompatWith, containerToSearch){
-    return doRestCall({
+    doRestCall({
         url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
         extraHeaders: { accept:"text/html" },
+        async: false,
         done: function (data){
-            compatibleUnitOptions = data;
+            ItemAddEdit.compatibleUnitOptions = data;
 
             containerToSearch.find(".unitInput").each(function (i, selectInput){
                 var selectInputJq = $(selectInput);
-                selectInputJq.html(compatibleUnitOptions);
+                selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
                 selectInputJq.change();
             });
         }

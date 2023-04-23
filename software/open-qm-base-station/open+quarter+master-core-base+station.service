@@ -24,6 +24,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${ve
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
                                         -p 80:8080 \
+                                        -v /etc/oqm/serviceConfig/core-base+station/files:/etc/oqm/serviceConfig/core-base+station/files \
                                         --env-file /etc/oqm/serviceConfig/core-base+station/config.list \
                                         --env-file /etc/oqm/serviceConfig/infraConfig.list \
                                         --add-host host.docker.internal:host-gateway \

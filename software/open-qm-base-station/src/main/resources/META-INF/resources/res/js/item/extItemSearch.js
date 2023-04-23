@@ -151,7 +151,7 @@ const ExtItemSearch = {
 					imageName = data[0].title;
 				}
 
-				curImagesSelectedDiv = addEditItemImagesSelected;
+				curImagesSelectedDiv = ItemAddEdit.addEditItemImagesSelected;
 				selectImage(imageName, imageId);
 			}
 		});
@@ -167,8 +167,8 @@ const ExtItemSearch = {
 			resultCard.append(header);
 		}
 		let resultMainBody = $('<ul class="list-group list-group-flush"></ul>');
-		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, addEditItemNameInput));
-		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, addEditItemDescriptionInput));
+		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, ItemAddEdit.addEditItemNameInput));
+		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, ItemAddEdit.addEditItemDescriptionInput));
 
 		/* TODO:: */
 		if (result.images.length) {
@@ -251,7 +251,7 @@ const ExtItemSearch = {
 
 				useButt.on("click", function (e) {
 					addAttInput(
-						addEditAttDiv,
+						ItemAddEdit.addEditAttDiv,
 						key,
 						val
 					);
@@ -282,7 +282,7 @@ const ExtItemSearch = {
 		);
 
 		for (const [service, error] of Object.entries(results.serviceErrs)) {
-			addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
+			PageMessages.addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
 		}
 		await Promise.all(resultPromises);
 		console.log("Finished processing ext item search results.");
@@ -322,7 +322,7 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	event.preventDefault();
 	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
 	console.log("Searching for a barcode: " + barcodeText);
-	addEditItemBarcodeInput.val(barcodeText);
+	ItemAddEdit.addEditItemBarcodeInput.val(barcodeText);
 	ExtItemSearch.extSearchResults.html("");
 
 	doRestCall({

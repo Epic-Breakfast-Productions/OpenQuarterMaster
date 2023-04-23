@@ -11,6 +11,8 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -28,6 +30,7 @@ import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
+import tech.ebp.oqm.baseStation.service.importExport.csv.InvItemCsvConverter;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -35,9 +38,14 @@ import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -56,12 +64,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
+import static tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType.AMOUNT_SIMPLE;
 
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/item")
@@ -72,6 +85,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	
 	Template itemSearchResultsTemplate;
 	ObjectMapper objectMapper;
+	InvItemCsvConverter invItemCsvConverter;
 	
 	@Inject
 	public InventoryItemsCrud(
@@ -82,11 +96,13 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		Template historyRowsTemplate,
 		@Location("tags/search/item/itemSearchResults.html")
 		Template itemSearchResultsTemplate,
-		ObjectMapper objectMapper
+		ObjectMapper objectMapper,
+		InvItemCsvConverter invItemCsvConverter
 	) {
 		super(InventoryItem.class, inventoryItemService, interactingEntityService, jwt, historyRowsTemplate);
 		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
 		this.objectMapper = objectMapper;
+		this.invItemCsvConverter = invItemCsvConverter;
 	}
 	
 	@POST
@@ -138,7 +154,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
@@ -155,11 +171,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		List<InventoryItem<?, ?, ?>> items = new ArrayList<>();
 		switch (fileExtension) {
 			case "csv":
-				return Response.status(Response.Status.NOT_IMPLEMENTED).entity(
-					ErrorMessage.builder()
-								.displayMessage("Adding items from CSV not yet implemented.")
-								.build()
-				).build();
+				items.addAll(this.invItemCsvConverter.csvIsToItems(body.file));
+				break;
 			case "json":
 				JsonNode json = this.objectMapper.readTree(body.file);
 				
@@ -236,40 +249,40 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				log.debug("Requestor wanted html.");
 				SearchResult<InventoryItem> output = tuple.getItem2();
 				rb = rb.entity(
-						   this.itemSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data("actionType", (
-								   itemSearch.getActionTypeHeaderVal() == null || itemSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									   itemSearch.getActionTypeHeaderVal()
-							   ))
-							   .data(
-								   "searchFormId",
-								   (
-									   itemSearch.getSearchFormIdHeaderVal() == null || itemSearch.getSearchFormIdHeaderVal().isBlank() ?
-										   "" :
-										   itemSearch.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   itemSearch.getInputIdPrependHeaderVal() == null || itemSearch.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   itemSearch.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   itemSearch.getOtherModalIdHeaderVal() == null || itemSearch.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   itemSearch.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("pagingCalculations", new PagingCalculations(output))
-							   .data("storageService", this.getObjectService())
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
+						this.itemSearchResultsTemplate
+							.data("searchResults", output)
+							.data("actionType", (
+								itemSearch.getActionTypeHeaderVal() == null || itemSearch.getActionTypeHeaderVal().isBlank() ? "full" :
+									itemSearch.getActionTypeHeaderVal()
+							))
+							.data(
+								"searchFormId",
+								(
+									itemSearch.getSearchFormIdHeaderVal() == null || itemSearch.getSearchFormIdHeaderVal().isBlank() ?
+										"" :
+										itemSearch.getSearchFormIdHeaderVal()
+								)
+							)
+							.data(
+								"inputIdPrepend",
+								(
+									itemSearch.getInputIdPrependHeaderVal() == null || itemSearch.getInputIdPrependHeaderVal().isBlank() ?
+										"" :
+										itemSearch.getInputIdPrependHeaderVal()
+								)
+							)
+							.data(
+								"otherModalId",
+								(
+									itemSearch.getOtherModalIdHeaderVal() == null || itemSearch.getOtherModalIdHeaderVal().isBlank() ?
+										"" :
+										itemSearch.getOtherModalIdHeaderVal()
+								)
+							)
+							.data("pagingCalculations", new PagingCalculations(output))
+							.data("storageService", this.getObjectService())
+					)
+						 .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:

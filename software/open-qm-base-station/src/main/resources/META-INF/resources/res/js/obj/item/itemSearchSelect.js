@@ -1,46 +1,44 @@
+const ItemSearchSelect = {
+	itemSearchSelectModal: $("#itemSearchSelectModal"),
+	itemSearchSelectForm: $("#itemSearchSelectForm"),
+	itemSearchSelectResults: $("#itemSearchSelectResults"),
 
-var itemSearchSelectModal = $("#itemSearchSelectModal");
-var itemSearchSelectForm = $("#itemSearchSelectForm");
-var itemSearchSelectResults = $("#itemSearchSelectResults");
+	selectItem(itemName, itemId, inputIdPrepend, otherModalId) {
+		let nameInputId = inputIdPrepend + "Id";
+		let nameInputName = inputIdPrepend + "Name";
 
+		$("#" + nameInputId).val(itemId);
+		$("#" + nameInputName).val(itemName);
+	},
+	setupItemSearchModal(inputIdPrepend) {
+		ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+	}
+};
 
-function setupItemSearchModal(inputIdPrepend){
-	itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
-}
+ItemSearchSelect.itemSearchSelectForm.on("submit", function (event) {
+	event.preventDefault();
+	console.log("Submitting search form.");
 
-function selectItem(blockName, blockId, inputIdPrepend, otherModalId){
-    var nameInputId = inputIdPrepend + "Id";
-    var nameInputName = inputIdPrepend + "Name";
+	var searchParams = new URLSearchParams(new FormData(event.target));
+	console.log("URL search params: " + searchParams);
 
-    $("#"+nameInputId).val(blockId);
-    $("#"+nameInputName).val(blockName);
-}
-
-
-itemSearchSelectForm.on("submit", function(event){
-    event.preventDefault();
-    console.log("Submitting search form.");
-
-    var searchParams = new URLSearchParams(new FormData(event.target));
-    console.log("URL search params: " + searchParams);
-
-    doRestCall({
-    	spinnerContainer: itemSearchSelectModal.get(0),
-    	url: "/api/v1/inventory/item?" + searchParams,
-    	method: 'GET',
-    	failNoResponse: null,
-    	failNoResponseCheckStatus: true,
-    	extraHeaders: {
-    	    "accept": "text/html",
-    	    "actionType": "select",
-    	    "searchFormId": "storageSearchSelectForm",
-    	    "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
-    	    "otherModalId": itemSearchSelectModal.attr("data-bs-otherModalId")
-    	},
-    	async: false,
-    	done: function(data){
-            console.log("Got data!");
-            itemSearchSelectResults.html(data);
-    	}
-    });
+	doRestCall({
+		spinnerContainer: ItemSearchSelect.itemSearchSelectModal.get(0),
+		url: "/api/v1/inventory/item?" + searchParams,
+		method: 'GET',
+		failNoResponse: null,
+		failNoResponseCheckStatus: true,
+		extraHeaders: {
+			"accept": "text/html",
+			"actionType": "select",
+			"searchFormId": "storageSearchSelectForm",
+			"inputIdPrepend": ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
+			"otherModalId": ItemSearchSelect.itemSearchSelectModal.attr("data-bs-otherModalId")
+		},
+		async: false,
+		done: function (data) {
+			console.log("Got data!");
+			ItemSearchSelect.itemSearchSelectResults.html(data);
+		}
+	});
 });

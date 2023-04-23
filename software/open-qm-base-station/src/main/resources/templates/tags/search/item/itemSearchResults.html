@@ -74,7 +74,7 @@
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
               data-bs-toggle="modal" data-bs-target="#{otherModalId}"
-              onclick="selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
+              onclick="ItemSearchSelect.selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}

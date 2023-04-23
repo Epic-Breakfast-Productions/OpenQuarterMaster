@@ -28,9 +28,11 @@ Accepts:
                     onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Storage Block
             </button>
         </div>
+        <!--
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Storage block stats</button>
         </div>
+        -->
 </div>
 <div class="row">
     <div class="col accordion" id="searchAccordion">
@@ -409,11 +411,11 @@ function removeStorageBlock(blockId) {
         method: "DELETE",
         async: false,
         done: function (data) {
-            reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+            PageMessages.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
         },
         fail: function (data) {
             console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
-            addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
         }
     });
 }
@@ -469,18 +471,18 @@ function setupAddEditForAdd(){
     addBulkAccord.show();
     addEditFormMode.val("add");
     addEditModalTitleText.text("Add Storage Block");
-    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Storage Block');
-    addEditModalTitleIcon.html(Icons.add);
+    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
+    addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
 }
 
 function setupAddEditForEdit(blockId){
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
-    addEditModalTitleIcon.html(Icons.edit);
+    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.edit));
     addEditFormMode.val("edit");
     addEditModalTitleText.text("Edit Storage Block");
-    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Storage Block');
+    addEditFormSubmitButton.html(Icons.edit + ' Edit Storage Block');
 
     doRestCall({
     	spinnerContainer: addEditModal,
@@ -594,9 +596,9 @@ addEditStorageForm.submit(async function (event) {
     }
     
     if (!result) {
-        addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+        PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
     } else {
-        reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
+        PageMessages.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
     }
 });
 
@@ -644,7 +646,7 @@ function resetView(){
 
     storageBlockViewModalLabel.text("");
     storageBlockViewItemsStoredContent.text("");
-    clearCarousel(storageBlockViewCarousel);
+    Carousel.clearCarousel(storageBlockViewCarousel);
     clearHideKeywordDisplay(viewKeywordsSection);
     clearHideAttDisplay(viewAttsSection);
     
@@ -697,7 +699,7 @@ function setupView(blockId){
                 console.log("Storage block had images to show.");
                 storageBlockViewCarousel.show();
                 
-                promises.push(setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
+                promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
             } else {
                 console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();
@@ -750,8 +752,8 @@ storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
     removeParam("view");
 });
 
-if(getParams.has("view")){
-    setupView(getParams.get("view"));
+if(UriUtils.getParams.has("view")){
+    setupView(UriUtils.getParams.get("view"));
     viewModal.show();
 }
 

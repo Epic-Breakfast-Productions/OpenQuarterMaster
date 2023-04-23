@@ -159,13 +159,12 @@
 				showGenerated();
 			}
 			
-			
 			var objectContentTypeInput = $("#objectContentTypeInput");
 			function selectStorageBlock(label, id, thing){
 				outputImage.attr("src", "/api/v1/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
-			function selectItem(label, id, thing){
+			ItemSearchSelect.selectItem = function(label, id, thing){
 				outputImage.attr("src", "/api/v1/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}

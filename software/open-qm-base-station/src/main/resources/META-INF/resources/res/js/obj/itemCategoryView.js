@@ -30,7 +30,7 @@ const ItemCategoryView = {
 				fail: function (data) {
 					console.warn("Bad response from get item category attempt: " + JSON.stringify(data));
 				},
-				failMessagesDiv: messageDiv
+				failMessagesDiv: PageMessages.mainMessageDiv
 			}));
 		}
 		return promises;

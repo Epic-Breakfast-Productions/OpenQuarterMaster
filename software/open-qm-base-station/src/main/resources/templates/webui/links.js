@@ -1,7 +1,7 @@
 
 //TODO:: determine if necessary
 const Links = {
-	storage: '<a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a>',
+	storage: '<a href="/storage">'+Icons.storageBlock+' Storage</a>',
 
 	getStorageViewLink: function (id, text=""){
 		let newLink = $(Links.storage);
@@ -22,5 +22,30 @@ const Links = {
 		newButton.addClass("btn-primary");
 
 		return newButton;
-	}
+	},
+	getStorageViewButtonAsHtml(id, text=""){ return Links.getStorageViewButton(id, text).prop("outerHTML")},
+
+
+	items: '<a href="/items">'+Icons.items+' Items</a>',
+	getItemViewLink: function (id, text=""){
+		let newLink = $(Links.items);
+
+		newLink.prop("href", newLink.prop("href") + "?view=" + id);
+
+		if(text){
+			newLink.html(Icons.item);
+
+			newLink.append($(" \n<span></span>").text(text));
+		}
+
+		return newLink;
+	},
+	getItemViewButton: function (id, text=""){
+		let newButton= Links.getItemViewLink(id, text);
+		newButton.addClass("btn");
+		newButton.addClass("btn-primary");
+
+		return newButton;
+	},
+	getItemViewButtonAsHtml(id, text=""){ return Links.getItemViewButton(id, text).prop("outerHTML")},
 }

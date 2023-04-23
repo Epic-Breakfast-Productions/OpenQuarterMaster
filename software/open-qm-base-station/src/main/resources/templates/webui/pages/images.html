@@ -221,11 +221,11 @@ addEditImageForm.submit(function (ev) {
                 data: addEditData,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
-                    reloadPageWithMessage("Created image successfully!", "success", "Success!");
+                    PageMessages.reloadPageWithMessage("Created image successfully!", "success", "Success!");
                 },
                 fail: function (data) {
                     console.warn("Bad response from image add attempt: " + JSON.stringify(data));
-                    addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
+                    PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
                 }
             });
         } else if (addEditFormMode.val() == "edit") {
@@ -238,13 +238,13 @@ addEditImageForm.submit(function (ev) {
                 data: addEditData,
                 done: function (data) {
                     console.log("Response from update request: " + JSON.stringify(data));
-                    reloadPageWithMessage("Updated image successfully!", "success", "Success!");
+                    PageMessages.reloadPageWithMessage("Updated image successfully!", "success", "Success!");
                 },
                 failMessagesDiv: addEditFormMessages
             });
         
         } else {
-            addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
         }
     });
 });
@@ -316,7 +316,7 @@ function setupViewForImage(id){
                     method: "DELETE",
                     done: function(data) {
                         console.log("Response from create request: " + JSON.stringify(data));
-                        reloadPageWithMessage("Delete image successfully!", "success", "Success!");
+                        PageMessages.reloadPageWithMessage("Delete image successfully!", "success", "Success!");
                     },
                     failMessagesDiv: imageViewMessages
                 });

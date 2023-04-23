@@ -4,6 +4,7 @@ import io.quarkus.qute.TemplateData;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
@@ -19,6 +20,9 @@ class QuteSearchUtils {
 	}
 	public static InventoryItemSearch newInventoryItemSearchInstance(){
 		return new InventoryItemSearch();
+	}
+	public static ItemListSearch newItemListSearchInstance(){
+		return new ItemListSearch();
 	}
 	public static StorageBlockSearch newStorageBlockSearchInstance(){
 		return new StorageBlockSearch();
