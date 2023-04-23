@@ -8,43 +8,37 @@ const ItemAddEdit = {
 	addEditItemModalLabel: $('#addEditItemModalLabel'),
 	addEditItemModalLabelIcon: $('#addEditItemModalLabelIcon'),
 	addEditItemFormMode: $('#addEditItemFormMode'),
-	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
 
+	addEditItemIdInput: $("#addEditItemIdInput"),
+	addEditItemNameInput: $('#addEditItemNameInput'),
+	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
+	addEditItemBarcodeInput: $('#addEditItemBarcodeInput'),
+	addEditItemPricePerUnitInput: $('#addEditItemPricePerUnitInput'),
+	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
+	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
+	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
+	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
+	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
+	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
+	addEditItemUnitInput: $('#addEditItemUnitInput'),
+	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
+
+	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
+	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
+	addEditItemImagesSelected: $('#addEditItemForm').find(".imagesSelected"),
+	addEditItemStoredContainer: $('#addEditItemStoredContainer'),
+	addEditItemTrackedItemIdentifierNameRow: $('#addEditItemTrackedItemIdentifierNameRow'),
+	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
+	addEditItemPricePerUnitNameRow: $('#addEditItemPricePerUnitNameRow'),
+	compatibleUnitOptions: "",
 
 	itemAdded(newItemName, newItemId){
 		reloadPageWithMessage("Added \""+newItemName+"\" item successfully!", "success", "Success!");
 	}
 }
 
-
-
-
-
-var addEditKeywordDiv = ItemAddEdit.addEditItemForm.find(".keywordInputDiv");
-var addEditAttDiv = ItemAddEdit.addEditItemForm.find(".attInputDiv");
-
-var addEditItemIdInput = $("#addEditItemIdInput");
-var addEditItemNameInput = $('#addEditItemNameInput');
-var addEditItemDescriptionInput = $('#addEditItemDescriptionInput');
-var addEditItemBarcodeInput = $('#addEditItemBarcodeInput');
-var addEditItemPricePerUnitInput = $('#addEditItemPricePerUnitInput');
-var addEditItemExpiryWarningThresholdInput = $('#addEditItemExpiryWarningThresholdInput');
-var addEditItemExpiryWarningThresholdUnitInput = $('#addEditItemExpiryWarningThresholdUnitInput');
-var addEditItemTotalLowStockThresholdInput = $("#addEditItemTotalLowStockThresholdInput");
-var addEditItemTotalLowStockThresholdUnitInput = $("#addEditItemTotalLowStockThresholdUnitInput");
-var addEditItemStorageTypeInput = $('#addEditItemStorageTypeInput');
-var addEditItemUnitInput = $('#addEditItemUnitInput');
-var addEditItemIdentifyingAttInput = $('#addEditItemIdentifyingAttInput');
-var addEditItemImagesSelected = ItemAddEdit.addEditItemForm.find(".imagesSelected");
-
-var addEditItemStoredContainer = $('#addEditItemStoredContainer');
-var addEditItemTrackedItemIdentifierNameRow = $('#addEditItemTrackedItemIdentifierNameRow');
-var addEditItemUnitNameRow = $('#addEditItemUnitNameRow');
-var addEditItemPricePerUnitNameRow = $('#addEditItemPricePerUnitNameRow');
-var compatibleUnitOptions = "";
-
 //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
-addEditItemBarcodeInput.on('keypress', function(e) {
+ItemAddEdit.addEditItemBarcodeInput.on('keypress', function(e) {
 	// Ignore enter keypress
 	if (e.which === 13) {
 		return false;
@@ -58,7 +52,7 @@ function foreachStoredTypeFromAddEditInput(
 	whenTracked
 ){
 	StoredTypeUtils.foreachStoredType(
-		addEditItemStorageTypeInput[0].value,
+		ItemAddEdit.addEditItemStorageTypeInput[0].value,
 		whenAmountSimple,
 		whenAmountList,
 		whenTracked
@@ -66,44 +60,44 @@ function foreachStoredTypeFromAddEditInput(
 }
 
 function haveStored(){
-	return addEditItemStoredContainer.children().length > 0;
+	return ItemAddEdit.addEditItemStoredContainer.children().length > 0;
 }
 
 
-updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
+updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 
 function handleItemUnitChange(){
 	if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
 		//TODO:: handle changing back to old value;  [Bug]: On Item addEdit, canceling changing item unit fails to set back to old value #229
 	} else {
-		updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
+		updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 	}
 }
 
 function resetAddEditForm(){
 	ExtItemSearch.hideAddEditProductSearchPane();
-	addEditItemNameInput.val("");
-	addEditItemDescriptionInput.val("");
-	addEditItemBarcodeInput.val("");
+	ItemAddEdit.addEditItemNameInput.val("");
+	ItemAddEdit.addEditItemDescriptionInput.val("");
+	ItemAddEdit.addEditItemBarcodeInput.val("");
 	ItemAddEdit.addEditItemModalLabel.text("Item");
-	addEditItemPricePerUnitInput.val("0.00");
-	addEditItemExpiryWarningThresholdInput.val(0);
-	addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex',2);
-	addEditItemTotalLowStockThresholdInput.val("");
-	addEditItemIdentifyingAttInput.val("");
-	addEditItemStorageTypeInput.prop( "disabled", false );
-	addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
-	addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
+	ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
+	ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex',2);
+	ItemAddEdit.addEditItemTotalLowStockThresholdInput.val("");
+	ItemAddEdit.addEditItemIdentifyingAttInput.val("");
+	ItemAddEdit.addEditItemStorageTypeInput.prop( "disabled", false );
+	ItemAddEdit.addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
+	ItemAddEdit.addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
 	//TODO:: merge check
 	Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
-	Dselect.resetDselect(addEditItemUnitInput);
+	Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
 
 	setIdAttField();
-	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
+	updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
 
-	addEditItemImagesSelected.text("");
-	addEditKeywordDiv.text("");
-	addEditAttDiv.text("");
+	ItemAddEdit.addEditItemImagesSelected.text("");
+	ItemAddEdit.addEditKeywordDiv.text("");
+	ItemAddEdit.addEditAttDiv.text("");
 }
 
 function setupAddEditForAdd(){
@@ -146,64 +140,64 @@ function setupAddEditForEdit(itemId){
 	ItemAddEdit.addEditItemFormMode.val("edit");
 	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.edit);
 
-	addEditItemStorageTypeInput.prop( "disabled", true );
+	ItemAddEdit.addEditItemStorageTypeInput.prop( "disabled", true );
 
 	doRestCall({
 		spinnerContainer: ItemAddEdit.addEditItemModal,
 		url: "/api/v1/inventory/item/" + itemId,
 		failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 		done: async function(data){
-			addSelectedImages(addEditItemImagesSelected, data.imageIds);
-			addKeywordInputs(addEditKeywordDiv, data.keywords);
-			addAttInputs(addEditAttDiv, data.attributes);
+			addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
+			addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
+			addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
 
-			addEditItemIdInput.val(data.id);
-			addEditItemNameInput.val(data.name);
-			addEditItemDescriptionInput.val(data.description);
-			addEditItemStorageTypeInput.val(data.storageType);
-			addEditItemBarcodeInput.val(data.barcode);
+			ItemAddEdit.addEditItemIdInput.val(data.id);
+			ItemAddEdit.addEditItemNameInput.val(data.name);
+			ItemAddEdit.addEditItemDescriptionInput.val(data.description);
+			ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
+			ItemAddEdit.addEditItemBarcodeInput.val(data.barcode);
 			addEditStoredTypeInputChanged();
 			Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 
 			if(data.lowStockThreshold) {
-				addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
-				addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
+				ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
+				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
 			}
 
 			let setAmountStoredVars = async function(){
-				addEditItemUnitInput.val(data.unit.string);
-				addEditItemPricePerUnitInput.val(data.valuePerUnit);
-				await updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
+				ItemAddEdit.addEditItemUnitInput.val(data.unit.string);
+				ItemAddEdit.addEditItemPricePerUnitInput.val(data.valuePerUnit);
+				await updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
 			};
 
 			foreachStoredTypeFromAddEditInput(
 				await setAmountStoredVars,
 				await setAmountStoredVars,
 				function(){
-					addEditItemIdentifyingAttInput.val(data.trackedItemIdentifierName);
+					ItemAddEdit.addEditItemIdentifyingAttInput.val(data.trackedItemIdentifierName);
 				}
 			);
 
 			if((data.expiryWarningThreshold / 604800) % 1 == 0){
 				console.log("Determined was weeks.");
-				addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 604800);
-				addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 604800);
+				ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
 			} else if((data.expiryWarningThreshold / 86400) % 1 == 0){
 				console.log("Determined was days.");
-				addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 86400);
-				addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 86400);
+				ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
 			} else if((data.expiryWarningThreshold / 3600) % 1 == 0){
 				console.log("Determined was hours.");
-				addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 3600);
-				addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 3600);
+				ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
 			} else if((data.expiryWarningThreshold / 60) % 1 == 0){
 				console.log("Determined was minutes.");
-				addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 60);
-				addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 60);
+				ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
 			} else {
 				console.log("Determined was seconds.");
-				addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold);
-				addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold);
+				ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
 			}
 
 
@@ -257,44 +251,44 @@ function setupAddEditForEdit(itemId){
 }
 
 function setIdAttField(){
-	addEditItemStoredContainer.html("");
-	let value = addEditItemStorageTypeInput[0].value;
+	ItemAddEdit.addEditItemStoredContainer.html("");
+	let value = ItemAddEdit.addEditItemStorageTypeInput[0].value;
 
-	if(addEditItemStorageTypeInput.attr('data-current') == null){
-		addEditItemStorageTypeInput.attr('data-current', "AMOUNT_SIMPLE");
+	if(ItemAddEdit.addEditItemStorageTypeInput.attr('data-current') == null){
+		ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "AMOUNT_SIMPLE");
 	} else {
-		addEditItemStorageTypeInput.attr('data-current', value);
+		ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', value);
 	}
 
 
 	let whenAmount = function (){
-		addEditItemTrackedItemIdentifierNameRow.hide();
-		addEditItemIdentifyingAttInput.prop('required', false);
-		addEditItemUnitNameRow.show();
-		addEditItemUnitInput.prop('required',true);
-		addEditItemPricePerUnitNameRow.show();
-		addEditItemPricePerUnitInput.prop('required',true);
+		ItemAddEdit.addEditItemTrackedItemIdentifierNameRow.hide();
+		ItemAddEdit.addEditItemIdentifyingAttInput.prop('required', false);
+		ItemAddEdit.addEditItemUnitNameRow.show();
+		ItemAddEdit.addEditItemUnitInput.prop('required',true);
+		ItemAddEdit.addEditItemPricePerUnitNameRow.show();
+		ItemAddEdit.addEditItemPricePerUnitInput.prop('required',true);
 	}
 
 	foreachStoredTypeFromAddEditInput(
 		whenAmount,
 		whenAmount,
 		function(){
-			addEditItemUnitNameRow.hide();
-			addEditItemPricePerUnitNameRow.hide();
-			addEditItemPricePerUnitInput.prop('required',false);
-			addEditItemUnitInput.prop('required',false);
-			addEditItemTrackedItemIdentifierNameRow.show();
-			addEditItemIdentifyingAttInput.prop('required', true);
-			addEditItemStorageTypeInput.attr('data-current', "TRACKED");
+			ItemAddEdit.addEditItemUnitNameRow.hide();
+			ItemAddEdit.addEditItemPricePerUnitNameRow.hide();
+			ItemAddEdit.addEditItemPricePerUnitInput.prop('required',false);
+			ItemAddEdit.addEditItemUnitInput.prop('required',false);
+			ItemAddEdit.addEditItemTrackedItemIdentifierNameRow.show();
+			ItemAddEdit.addEditItemIdentifyingAttInput.prop('required', true);
+			ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "TRACKED");
 		}
 	);
 }
 
 function addEditStoredTypeInputChanged(){
 	if(haveStored() && !confirm("Changing the type of storage will clear all stored entries.\nAre you sure?")){
-		addEditItemStorageTypeInput.val(
-			addEditItemStorageTypeInput.attr('data-current')
+		ItemAddEdit.addEditItemStorageTypeInput.val(
+			ItemAddEdit.addEditItemStorageTypeInput.attr('data-current')
 		);
 		return;
 	}
@@ -350,7 +344,7 @@ function getCommonStoredFormElements(headerId, toRemoveId) {
 function getAmountStoredFormElements(headerId, toRemoveId) {
 	return '<div class="input-group mt-2 mb-3">\n'+
 		'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="addEditUpdateStoredHeader(\''+headerId+'\')">\n'+
-		'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\''+headerId+'\')">'+compatibleUnitOptions+'</select>\n'+ //TODO:: populate
+		'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\''+headerId+'\')">'+ItemAddEdit.compatibleUnitOptions+'</select>\n'+ //TODO:: populate
 		'</div>\n'+
 		getCommonStoredFormElements(headerId, toRemoveId);
 }
@@ -480,7 +474,7 @@ function createNewTrackedStored(formContentId, caller, add = true){
 		return;
 	}
 	let exists = false;
-	addEditItemStoredContainer.find("[name=identifier]").each(function(i){
+	ItemAddEdit.addEditItemStoredContainer.find("[name=identifier]").each(function(i){
 		if(this.value.trim() === trackedId){
 			exists = true;
 		}
@@ -530,12 +524,12 @@ function updateStorageNumHeld(caller){
 }
 
 function addStorageBlockAccord(newBlockAccord){
-	addEditItemStoredContainer.append(newBlockAccord);
+	ItemAddEdit.addEditItemStoredContainer.append(newBlockAccord);
 }
 
 function createStorageBlockAccord(blockName, blockId, add = true){
 	let accordId = "addEditItemStorageAssoc-" + blockId;
-	let existantAccord = addEditItemStoredContainer.find("#" + accordId);
+	let existantAccord = ItemAddEdit.addEditItemStoredContainer.find("#" + accordId);
 	if(existantAccord.length){
 		console.log("Already had association with storage block " + blockId);
 		//TODO:: open block section instead of alerting
@@ -674,14 +668,14 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	console.log("Submitting add/edit form.");
 
 	let addEditData = {
-		name: addEditItemNameInput.val(),
-		description: addEditItemDescriptionInput.val(),
-		barcode: addEditItemBarcodeInput.val(),
-		storageType: addEditItemStorageTypeInput.val(),
-		expiryWarningThreshold: addEditItemExpiryWarningThresholdInput.val() * addEditItemExpiryWarningThresholdUnitInput.val(),
-		lowStockThreshold: (addEditItemTotalLowStockThresholdInput.val() ? getQuantityObj(
-			addEditItemTotalLowStockThresholdInput.val(),
-			addEditItemTotalLowStockThresholdUnitInput.val()
+		name: ItemAddEdit.addEditItemNameInput.val(),
+		description: ItemAddEdit.addEditItemDescriptionInput.val(),
+		barcode: ItemAddEdit.addEditItemBarcodeInput.val(),
+		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
+		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
+		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? getQuantityObj(
+			ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(),
+			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
 		categories: ItemAddEdit.addEditItemCategoriesInput.val(),
 		storageMap: { }
@@ -689,23 +683,23 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 
 	let setAmountStoredVars = function () {
 		addEditData["unit"] = {
-			string: addEditItemUnitInput.val()
+			string: ItemAddEdit.addEditItemUnitInput.val()
 		};
-		addEditData["valuePerUnit"] = addEditItemPricePerUnitInput.val();
+		addEditData["valuePerUnit"] = ItemAddEdit.addEditItemPricePerUnitInput.val();
 	};
 
 	foreachStoredTypeFromAddEditInput(
 		setAmountStoredVars,
 		setAmountStoredVars,
 		function () {
-			addEditData["trackedItemIdentifierName"] = addEditItemIdentifyingAttInput.val();
+			addEditData["trackedItemIdentifierName"] = ItemAddEdit.addEditItemIdentifyingAttInput.val();
 		}
 	);
 
-	addKeywordAttData(addEditData, addEditKeywordDiv, addEditAttDiv);
-	addImagesToData(addEditData, addEditItemImagesSelected);
+	addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
+	addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
-	addEditItemStoredContainer.find(".storageBlock").each(function (i, storageBlockElement) {
+	ItemAddEdit.addEditItemStoredContainer.find(".storageBlock").each(function (i, storageBlockElement) {
 		let storageBlockElementJq = $(storageBlockElement);
 		let curStorageId = storageBlockElementJq.attr('data-storageBlockId');
 		let storedVal;
@@ -755,7 +749,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		});
 	} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
 		verb = "Edited";
-		let id = addEditItemIdInput.val();
+		let id = ItemAddEdit.addEditItemIdInput.val();
 		console.log("Editing storage block " + id);
 
 		await doRestCall({

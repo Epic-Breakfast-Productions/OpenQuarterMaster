@@ -29,16 +29,17 @@ function getUnitOptions(selectedVal){
     return output;
 }
 
+//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
 function updateCompatibleUnits(unitToCompatWith, containerToSearch){
     return doRestCall({
         url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
         extraHeaders: { accept:"text/html" },
         done: function (data){
-            compatibleUnitOptions = data;
+            ItemAddEdit.compatibleUnitOptions = data;
 
             containerToSearch.find(".unitInput").each(function (i, selectInput){
                 var selectInputJq = $(selectInput);
-                selectInputJq.html(compatibleUnitOptions);
+                selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
                 selectInputJq.change();
             });
         }
