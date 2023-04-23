@@ -33,7 +33,7 @@ const Links = {
 		newLink.prop("href", newLink.prop("href") + "?view=" + id);
 
 		if(text){
-			newLink.html(Icons.storageBlock);
+			newLink.html(Icons.item);
 
 			newLink.append($(" \n<span></span>").text(text));
 		}
