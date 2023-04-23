@@ -6,6 +6,7 @@ const ItemAddEdit = {
 	addEditItemModalBs: new bootstrap.Modal("#addEditItemModal"),
 	addEditItemFormMessages: $("#addEditItemFormMessages"),
 	addEditItemModalLabel: $('#addEditItemModalLabel'),
+	addEditItemModalLabelIcon: $('#addEditItemModalLabelIcon'),
 	addEditItemFormMode: $('#addEditItemFormMode'),
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
 
@@ -21,16 +22,6 @@ const ItemAddEdit = {
 
 var addEditKeywordDiv = ItemAddEdit.addEditItemForm.find(".keywordInputDiv");
 var addEditAttDiv = ItemAddEdit.addEditItemForm.find(".attInputDiv");
-//TODO:: merge fix
-var addEditItemForm = $('#addEditItemForm');
-var addEditItemModal = $("#addEditItemModal");
-var addEditItemFormMessages = $("#addEditItemFormMessages");
-var addEditItemModalLabel = $('#addEditItemModalLabel');
-var addEditItemModalLabelIcon = $('#addEditItemModalLabelIcon');
-var addEditItemFormMode = $('#addEditItemFormMode');
-var addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
-var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
-var addEditAttDiv = addEditItemForm.find(".attInputDiv");
 
 var addEditItemIdInput = $("#addEditItemIdInput");
 var addEditItemNameInput = $('#addEditItemNameInput');
@@ -106,7 +97,6 @@ function resetAddEditForm(){
 	//TODO:: merge check
 	Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 	Dselect.resetDselect(addEditItemUnitInput);
-	Dselect.resetDselect(addEditItemCategoriesInput);
 
 	setIdAttField();
 	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
@@ -119,10 +109,7 @@ function resetAddEditForm(){
 function setupAddEditForAdd(){
 	console.log("Setting up add/edit form for add.");
 	resetAddEditForm();
-	//TODO:: merge fix
-	addEditItemModalLabelIcon.html(Icons.add);
-	addEditItemModalLabel.text("Item Add");
-	addEditItemFormMode.val("add");
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.add);
 	ItemAddEdit.addEditItemModalLabel.text("Item Add");
 	ItemAddEdit.addEditItemFormMode.val("add");
 }
@@ -157,16 +144,14 @@ function setupAddEditForEdit(itemId){
 	//TODO:: merge fix
 	ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 	ItemAddEdit.addEditItemFormMode.val("edit");
-	addEditItemModalLabelIcon.html(Icons.edit);
-	addEditItemModalLabel.text("Item Edit");
-	addEditItemFormMode.val("edit");
+	ItemAddEdit.addEditItemModalLabelIcon.html(Icons.edit);
 
 	addEditItemStorageTypeInput.prop( "disabled", true );
 
 	doRestCall({
 		spinnerContainer: ItemAddEdit.addEditItemModal,
 		url: "/api/v1/inventory/item/" + itemId,
-		failMessagesDiv: addEditItemFormMessages,
+		failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 		done: async function(data){
 			addSelectedImages(addEditItemImagesSelected, data.imageIds);
 			addKeywordInputs(addEditKeywordDiv, data.keywords);
@@ -754,7 +739,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	console.log("Data being submitted: " + JSON.stringify(addEditData));
 	let verb = "";
 	let result = false;
-	if (addEditItemFormMode.val() === "add") {
+	if (ItemAddEdit.addEditItemFormMode.val() === "add") {
 		verb = "Created";
 		console.log("Adding new item.");
 		await doRestCall({
@@ -766,9 +751,9 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
 			},
-			failMessagesDiv: addEditItemFormMessages
+			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
 		});
-	} else if (addEditItemFormMode.val() === "edit") {
+	} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
 		verb = "Edited";
 		let id = addEditItemIdInput.val();
 		console.log("Editing storage block " + id);
@@ -782,12 +767,12 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
 			},
-			failMessagesDiv: addEditItemFormMessages
+			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
 		});
 	}
 
 	if (!result) {
-		addMessageToDiv(addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
+		addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
 	} else {
 		reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
 	}
