@@ -5,7 +5,8 @@ Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch emptyStorageBlockSearch}!}
-{#modal id='itemCategorySearchSelect' large=true title='Select an Item Category' otherModalId=otherModalId}
+{#modal id='itemCategorySearchSelect' size='xl' title='Select an Item Category' otherModalId=otherModalId}
+{#titleIcon}{#icons/search}{/icons/search}{/titleIcon}
 {#search/category/searchForm id='itemCategorySelectForm' searchObject=tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:newStorageBlockSearchInstance()}
 {/search/category/searchForm}
 <div class="col table-responsive">

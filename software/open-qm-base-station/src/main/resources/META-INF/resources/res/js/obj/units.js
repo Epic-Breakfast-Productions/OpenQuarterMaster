@@ -1,4 +1,17 @@
 
+//TODO:: move others into here
+const UnitUtils = {
+
+    /**
+     * Example input: {"unit":{"string":"units","name":"Units","symbol":"units"},"scale":"ABSOLUTE","value":8}
+     * @param quantityObj
+     */
+    quantityToDisplayStr(quantityObj){
+        return quantityObj.value + quantityObj.unit.symbol;
+    }
+};
+
+
 var unitOptions = $("#unitSelectOptions").children();
 
 function getUnitOptions(selectedVal){

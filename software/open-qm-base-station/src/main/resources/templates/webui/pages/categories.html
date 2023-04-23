@@ -40,7 +40,7 @@
     </div>
     {/pageContent}
     {#modals}
-        {#modal id='addEditItemCategory' large=true title='Category Add/Edit' submitForm='addEditItemCategoryForm' submitDismiss=false}
+        {#modal id='addEditItemCategory' size='xl' title='Category Add/Edit' submitForm='addEditItemCategoryForm' submitDismiss=false}
             <div class="row">
                 <div class="col" id="addEditItemCategoryFormMessages">
                 </div>
@@ -94,7 +94,8 @@
                 </div>
             </div>
         {/modal}
-        {#modal id='itemCategoryView' large=true title='Item Category View'}
+        {#modal id='itemCategoryView' size='xl' title='Item Category View'}
+            {#titleIcon}{#icons/categories}{/icons/categories}{/titleIcon}
             <div class="row">
                 {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
@@ -109,7 +110,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="card col-sm-12 col-md-6">
+                        <div class="card col-sm-12 col-md-6 ps-0 pe-0">
                             <div class="card-body" id="itemCategoryColorContainer">
                                 <h5 class="card-title d-inline">Color:</h5>
                                 <p class="card-text d-inline">
@@ -182,6 +183,7 @@
             const Category = {
                 addEditForm: $("#addEditItemCategoryForm"),
                 addEditModalLabel: $("#addEditItemCategoryModalLabel"),
+                addEditModalLabelIcon: $("#addEditItemCategoryModalLabelIcon"),
                 addEditFormMessages: $("#addEditItemCategoryFormMessages"),
                 modeInput: $("#addEditItemCategoryForm").find('input[name="mode"]'),
                 idInput: $("#addEditItemCategoryForm").find('input[name="id"]'),
@@ -216,12 +218,14 @@
                 },
                 setupAddEditItemCategoryForAdd(){
                     Category.resetAddEditItemCategoryForm();
+                    Category.addEditModalLabelIcon.html(Icons.add);
                     Category.addEditModalLabel.text("Add Item Category");
                     Category.modeInput.val("add");
                 },
                 async setupAddEditItemCategoryForEdit(categoryId){
                     Category.resetAddEditItemCategoryForm();
                     Category.addEditModalLabel.text("Edit Item Category");
+                    Category.addEditModalLabelIcon.html(Icons.edit);
                     Category.modeInput.val("edit");
                     Category.idInput.val(categoryId);
     
@@ -350,7 +354,7 @@
                     ItemCategoryView.breadcrumbContainer.text('');
                     ItemCategoryView.childrenContainer.text('');
                     
-                    clearCarousel(ItemCategoryView.carousel);
+                    Carousel.clearCarousel(ItemCategoryView.carousel);
                     clearHideKeywordDisplay(ItemCategoryView.keywordView);
                     clearHideAttDisplay(ItemCategoryView.attsView);
                     resetHistorySearch(ItemCategoryView.historyView);
@@ -370,7 +374,7 @@
                             let children = getItemCategoryChildrenData(categoryId);
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
-                            promises.push(processImagedObjectImages(data, ItemCategoryView.carousel));
+                            promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
     
                             if(data.color) {
                                 ItemCategoryView.color.text(data.color);

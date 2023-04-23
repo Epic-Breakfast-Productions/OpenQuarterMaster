@@ -7,12 +7,13 @@ Ingests:
 - title - the title to give the modal
 - large - if to make the modal large format
 !}
-<div class="modal fade" id="{id}Modal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="{id}ModalLabel" tabindex="-1" data-bs-inputIdPrepend="" data-bs-otherModalId="{#if otherModalId??}{otherModalId}{/if}">
-    <div class="modal-dialog {#if large??}modal-xl{/if}">
+<div class="modal fade" id="{id}Modal" data-bs-backdrop="static" aria-hidden="true" aria-labelledby="{id}ModalLabelAll" tabindex="-1" data-bs-inputIdPrepend="" data-bs-otherModalId="{#if otherModalId??}{otherModalId}{/if}">
+    <div class="modal-dialog {#if size??}modal-{size}{/if}">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="{id}ModalLabel">
-                    {#if title??}{title.raw()}{/if}
+                <h5 class="modal-title" id="{id}ModalLabelAll">
+                    <span id="{id}ModalLabelIcon">{#insert titleIcon}{/}</span>
+                    <span id="{id}ModalLabel">{#if title??}{title.raw()}{/if}</span>
                 </h5>
                 <button id="{id}ModalLabelCloseButton" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
             </div>

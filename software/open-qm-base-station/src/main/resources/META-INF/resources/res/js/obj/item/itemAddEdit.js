@@ -21,6 +21,17 @@ const ItemAddEdit = {
 
 var addEditKeywordDiv = ItemAddEdit.addEditItemForm.find(".keywordInputDiv");
 var addEditAttDiv = ItemAddEdit.addEditItemForm.find(".attInputDiv");
+//TODO:: merge fix
+var addEditItemForm = $('#addEditItemForm');
+var addEditItemModal = $("#addEditItemModal");
+var addEditItemFormMessages = $("#addEditItemFormMessages");
+var addEditItemModalLabel = $('#addEditItemModalLabel');
+var addEditItemModalLabelIcon = $('#addEditItemModalLabelIcon');
+var addEditItemFormMode = $('#addEditItemFormMode');
+var addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
+var addEditKeywordDiv = addEditItemForm.find(".keywordInputDiv");
+var addEditAttDiv = addEditItemForm.find(".attInputDiv");
+
 var addEditItemIdInput = $("#addEditItemIdInput");
 var addEditItemNameInput = $('#addEditItemNameInput');
 var addEditItemDescriptionInput = $('#addEditItemDescriptionInput');
@@ -72,7 +83,7 @@ updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 
 function handleItemUnitChange(){
 	if(haveStored() && !confirm("Doing this will reset all held units. Are you sure?")){
-		//TODO:: handle changing back to old value
+		//TODO:: handle changing back to old value;  [Bug]: On Item addEdit, canceling changing item unit fails to set back to old value #229
 	} else {
 		updateCompatibleUnits(addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 	}
@@ -92,7 +103,10 @@ function resetAddEditForm(){
 	addEditItemStorageTypeInput.prop( "disabled", false );
 	addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
 	addEditItemUnitInput.val($("#addEditItemUnitInput option:first").val());
+	//TODO:: merge check
 	Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
+	Dselect.resetDselect(addEditItemUnitInput);
+	Dselect.resetDselect(addEditItemCategoriesInput);
 
 	setIdAttField();
 	updateCompatibleUnits(addEditItemUnitInput.val(), addEditItemStoredContainer);
@@ -105,6 +119,10 @@ function resetAddEditForm(){
 function setupAddEditForAdd(){
 	console.log("Setting up add/edit form for add.");
 	resetAddEditForm();
+	//TODO:: merge fix
+	addEditItemModalLabelIcon.html(Icons.add);
+	addEditItemModalLabel.text("Item Add");
+	addEditItemFormMode.val("add");
 	ItemAddEdit.addEditItemModalLabel.text("Item Add");
 	ItemAddEdit.addEditItemFormMode.val("add");
 }
@@ -136,8 +154,13 @@ function setStoredItemVales(storedDivJq, storedData){
 function setupAddEditForEdit(itemId){
 	console.log("Setting up add/edit form for editing item " + itemId);
 	resetAddEditForm();
+	//TODO:: merge fix
 	ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 	ItemAddEdit.addEditItemFormMode.val("edit");
+	addEditItemModalLabelIcon.html(Icons.edit);
+	addEditItemModalLabel.text("Item Edit");
+	addEditItemFormMode.val("edit");
+
 	addEditItemStorageTypeInput.prop( "disabled", true );
 
 	doRestCall({
@@ -731,7 +754,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	console.log("Data being submitted: " + JSON.stringify(addEditData));
 	let verb = "";
 	let result = false;
-	if (ItemAddEdit.addEditItemFormMode.val() === "add") {
+	if (addEditItemFormMode.val() === "add") {
 		verb = "Created";
 		console.log("Adding new item.");
 		await doRestCall({
@@ -742,12 +765,10 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			done: function (data) {
 				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
-				ItemAddEdit.addEditItemModalBs.hide();
-				ItemAddEdit.itemAdded(addEditData.name, data);
 			},
-			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
+			failMessagesDiv: addEditItemFormMessages
 		});
-	} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
+	} else if (addEditItemFormMode.val() === "edit") {
 		verb = "Edited";
 		let id = addEditItemIdInput.val();
 		console.log("Editing storage block " + id);
@@ -758,15 +779,16 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			data: addEditData,
 			async: false,
 			done: function (data) {
-				console.log("Response from update request: " + JSON.stringify(data));
-				reloadPageWithMessage("Updated item successfully!", "success", "Success!");
+				console.log("Response from create request: " + JSON.stringify(data));
 				result = true;
 			},
-			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
+			failMessagesDiv: addEditItemFormMessages
 		});
 	}
 
 	if (!result) {
-		addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
+		addMessageToDiv(addEditItemFormMessages, "danger", "Failed to do "+verb+" item.", "Failed", null);
+	} else {
+		reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
 	}
 });

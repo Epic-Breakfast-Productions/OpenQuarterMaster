@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,11 +30,50 @@ public class JsGetters {
 	@Location("webui/icons.js")
 	Template icons;
 	
+	@Inject
+	@Location("webui/links.js")
+	Template links;
+	
+	@Inject
+	@Location("tags/carousel.html")
+	Template carouselTemplate;
+	String carouselLines = "";
+	
+	@Inject
+	@Location("webui/carousel.js")
+	Template carouselJs;
+	
+	@PostConstruct
+	public void setup(){
+		this.carouselLines = this.carouselTemplate
+							.data("id", "")
+							.render()
+							.replaceAll("\n", "\\\\\n");
+	}
+	
+	
 	@GET
 	@Path("icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public TemplateInstance icons() {
 		return icons.instance();
+	}
+	
+	@GET
+	@Path("links.js")
+	@PermitAll
+	@Produces("text/javascript")
+	public TemplateInstance links() {
+		return links.instance();
+	}
+	
+	@GET
+	@Path("carousel.js")
+	@PermitAll
+	@Produces("text/javascript")
+	public TemplateInstance carousel() {
+		return this.carouselJs
+				   .data("carouselLines", this.carouselLines);
 	}
 }

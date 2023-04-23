@@ -107,3 +107,7 @@
 	/*color: #1b1b1b !important;*/
 	/*background-color: #1b1b1b;*/
 }
+
+.barcodeViewImg {
+	max-width: 100%;
+}
