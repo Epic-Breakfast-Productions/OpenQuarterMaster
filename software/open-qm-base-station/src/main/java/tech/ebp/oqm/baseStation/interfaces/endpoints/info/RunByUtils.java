@@ -42,6 +42,7 @@ public class RunByUtils extends EndpointProvider {
 	@ConfigProperty(name = "service.runBy.banner", defaultValue = "/")
 	File runByBanner;
 	
+	//TODO:: contemplate caching this?
 	private static Response getImage(File image) throws FileNotFoundException {
 		
 		if (!image.exists() || !image.isFile()) {
@@ -52,9 +53,15 @@ public class RunByUtils extends EndpointProvider {
 		
 		//TODO:: restrict to only image types, throw 500 if not valid
 		
+		String imageExt = FilenameUtils.getExtension(image.getName());
+		
+		if(imageExt.toLowerCase().equals("svg")){
+			imageExt = "svg+xml";
+		}
+		
 		return Response.status(Response.Status.OK)
 					   .entity(new FileInputStream(image))
-					   .type("image/" + FilenameUtils.getExtension(image.getName()))
+					   .type("image/" + imageExt)
 					   .build();
 	}
 	

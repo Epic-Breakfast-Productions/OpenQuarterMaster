@@ -100,8 +100,8 @@ All are optional, and mainly used for display on the web ui.
 
 | service.runBy.logo
 |
-| /some/dir/logo.png
-| A logo to show representing your group.
+| /etc/oqm/serviceConfig/core-base+station/files/logo.png
+| A logo to show representing your group. When deployed using link:../../Station-Captain[Station Captain], location on host system to put files to sync to the server is: `/etc/oqm/serviceConfig/core-base+station/files/`
 
 | service.runBy.banner
 | ${service.runBy.logo}
