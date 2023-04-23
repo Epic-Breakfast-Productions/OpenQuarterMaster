@@ -14,5 +14,6 @@ function removeParam(key){
 	updateParams();
 }
 function removeHash(){
+	//TODO:: probably should do this smarter?
 	window.history.replaceState({}, document.title, window.location.href.split('#')[0]);
 }
