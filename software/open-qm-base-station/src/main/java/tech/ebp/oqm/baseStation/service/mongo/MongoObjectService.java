@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
@@ -146,6 +147,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The search results for the search given
 	 */
+	@WithSpan
 	public SearchResult<T> search(@NonNull S searchObject, boolean defaultPageSizeIfNotSet) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
