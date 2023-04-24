@@ -37,7 +37,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
-	implementation 'io.opentracing.contrib:opentracing-mongo-common'
+	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.4'
 
@@ -79,13 +79,13 @@ dependencies {
 	testImplementation 'org.testcontainers:mongodb:1.18.0'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:21.0.2'
+	testImplementation 'org.keycloak:keycloak-admin-client:21.1.0'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.8.3'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.9.0'
 	testImplementation 'org.testcontainers:selenium:1.18.0'
 	testImplementation 'com.deque:axe-selenium:3.0'
-	testImplementation 'net.datafaker:datafaker:1.8.1'
+	testImplementation 'net.datafaker:datafaker:1.9.0'
 }
 
 java {

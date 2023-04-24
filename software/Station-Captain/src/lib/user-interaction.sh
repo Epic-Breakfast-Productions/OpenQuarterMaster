@@ -21,8 +21,11 @@ function ui_displayBaseOsInfo() {
 
 	ui_showDialog --infobox "Retrieving system information...\nGetting general system info" $TINY_HEIGHT $DEFAULT_WIDTH
 	local ipAddrs="$(hostname -I)"
+	ipAddrs="$(hostname).local $ipAddrs"
+	ipAddrs="$(echo "$ipAddrs" | sed -e 's/ /\n/g')"
 	ipAddrs="$(echo "$ipAddrs" | sed -e 's/^/    /')"
 	ipAddrs="${ipAddrs//$'\n'/\\n}"
+
 	local release="$(cat /etc/os-release)"
 	release="$(echo "$release" | sed -e 's/^/    /')"
 	release="${release//$'\n'/\\n}"
@@ -43,7 +46,7 @@ function ui_displayBaseOsInfo() {
 	diskUsage="$(echo "$diskUsage" | sed -e 's/^/    /')"
 	diskUsage="${diskUsage//$'\n'/\\n}"
 
-	local sysInfo="Ip Address(es):\n$ipAddrs\n\nOS Info:\n$release\n\n$uname\n\nHardware Info:\n$hwInfo\n\nUSB devices:\n$usbDevs\n\nDisk usage:\n$diskUsage"
+	local sysInfo="Hostname and Ip Address(es):\n$ipAddrs\n\nOS Info:\n$release\n\n$uname\n\nHardware Info:\n$hwInfo\n\nUSB devices:\n$usbDevs\n\nDisk usage:\n$diskUsage"
 	echo "Done retrieving system info."
 
 	ui_showDialog --title "Host OS Info" --msgbox "$sysInfo" $SUPER_TALL_HEIGHT $SUPER_WIDE_WIDTH
