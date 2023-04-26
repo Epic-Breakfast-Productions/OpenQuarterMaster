@@ -749,7 +749,7 @@ function setupView(blockId){
 var viewModal = new bootstrap.Modal(storageBlockViewModal, { });
 
 storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
-    removeParam("view");
+    UriUtils.removeParam("view");
 });
 
 if(UriUtils.getParams.has("view")){
