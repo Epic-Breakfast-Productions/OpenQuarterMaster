@@ -362,7 +362,7 @@
                 async setupItemCategoryView(categoryId){
                     console.log("Setting up view for item category " + categoryId);
                     ItemCategoryView.resetView();
-                    addOrReplaceParams("view", categoryId);
+                    UriUtils.addOrReplaceParams("view", categoryId);
                     ItemCategoryView.catId.text(categoryId);
                     
                     await doRestCall({
