@@ -32,4 +32,4 @@ Steps:
  4. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster tool.
     - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
 
-For usage documentation, see the [User Guide](User%20Guide.md)
+For usage documentation, see the [User Guide](User%20Guide.adoc)
