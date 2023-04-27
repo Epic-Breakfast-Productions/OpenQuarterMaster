@@ -61,6 +61,10 @@ In the theme of flexibility, the system is designed to be run in many different 
 
 To get started on your own hardware, please see [Station Captain](software/Station-Captain)
 
+## On Privacy
+
+Being an open initiative, we take great care to ensure you are in control of your own data. None of the software we include here phones home at all, with the brief exception of Station Captain, which looks to this Git repository for installations and updates. If you have a simple setup on your own hardware, you can expect your data to stay with you, and not transmitted anywhere by the software we include here.
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
