@@ -362,7 +362,7 @@
                 async setupItemCategoryView(categoryId){
                     console.log("Setting up view for item category " + categoryId);
                     ItemCategoryView.resetView();
-                    addOrReplaceParams("view", categoryId);
+                    UriUtils.addOrReplaceParams("view", categoryId);
                     ItemCategoryView.catId.text(categoryId);
                     
                     await doRestCall({
@@ -423,7 +423,7 @@
             var viewModal = new bootstrap.Modal(ItemCategoryView.viewModal, { });
 
             ItemCategoryView.viewModal[0].addEventListener("hidden.bs.modal", function (){
-                removeParam("view");
+                UriUtils.removeParam("view");
             });
 
             if(UriUtils.getParams.has("view")){

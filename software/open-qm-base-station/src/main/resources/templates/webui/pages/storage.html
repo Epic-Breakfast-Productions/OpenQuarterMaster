@@ -656,7 +656,7 @@ function setupView(blockId){
     console.log("Setting up view for storage block " + blockId);
     resetView();
     storageBlockViewId.text(blockId);
-    addOrReplaceParams("view", blockId);
+    UriUtils.addOrReplaceParams("view", blockId);
     storageBlockViewModalLabel.text(blockId);
     getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
@@ -749,14 +749,13 @@ function setupView(blockId){
 var viewModal = new bootstrap.Modal(storageBlockViewModal, { });
 
 storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
-    removeParam("view");
+    UriUtils.removeParam("view");
 });
 
 if(UriUtils.getParams.has("view")){
     setupView(UriUtils.getParams.get("view"));
     viewModal.show();
 }
-
 
 function setBulkInsertInputState(){
     if(addBulkEnabledInput.is(":checked")){

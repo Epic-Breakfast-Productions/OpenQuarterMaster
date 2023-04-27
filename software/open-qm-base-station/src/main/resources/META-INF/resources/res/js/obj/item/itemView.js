@@ -28,6 +28,7 @@ var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
 var viewKeywordsSection = $("#viewKeywordsSection");
 var viewAttsSection = $("#viewAttsSection");
 var itemViewId = $("#itemViewId");
+var itemViewEditButton = $('#itemViewEditButton');
 
 var itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
 
@@ -61,6 +62,10 @@ function resetView(){
 	Carousel.clearCarousel(itemViewCarousel);
 	clearHideKeywordDisplay(viewKeywordsSection);
 	clearHideAttDisplay(viewAttsSection);
+
+	if(itemViewEditButton){
+		itemViewEditButton.off('click');
+	}
 }
 
 function addViewAccordionItem(id, content, headerContent, trackedType){
@@ -272,6 +277,10 @@ function getTrackedStoredContent(itemId, blockId, trackedMap){
 function setupView(itemId){
 	console.log("Setting up view for item " + itemId);
 	resetView();
+
+	if(itemViewEditButton){
+		itemViewEditButton.on("click", function(){setupAddEditForEdit(itemId);});
+	}
 
 	itemViewId.text(itemId);
 	UriUtils.addOrReplaceParams("view", itemId);
