@@ -97,11 +97,8 @@ if [ ! -f "/etc/oqm/serviceConfig/core-base+station/config.list" ]; then
 # change only if appropriate
 quarkus.http.ssl.certificate-file=/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
 quarkus.http.ssl.certificate-key-file=/etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
-quarkus.http.ssl-port=8443
 quarkus.http.insecure-requests=redirect
-
 runningInfo.hostname=$(hostname).local
-runningInfo.port=443
 
 # Add your own config here. Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
 

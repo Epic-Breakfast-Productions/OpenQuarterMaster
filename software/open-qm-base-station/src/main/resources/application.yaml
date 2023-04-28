@@ -162,6 +162,8 @@ quarkus:
       proactive: false
     access-log:
       enabled: true
+    port: 80
+    ssl-port: 443
   mailer:
     from: ${runningInfo.fromEmail}
   reactive-messaging:
@@ -212,6 +214,8 @@ smallrye:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
       connection-string: mongodb://localhost:27017
+    http:
+      port: 8080
   service:
     runBy:
       name: The Developers
