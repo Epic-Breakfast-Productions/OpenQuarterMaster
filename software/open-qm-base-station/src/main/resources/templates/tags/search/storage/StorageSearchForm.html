@@ -18,6 +18,13 @@ Ingests:
 		   aria-describedby="{id}-blockLocationInputHelp">
 	<div id="{id}-blockLocationInputHelp" class="form-text">The location of the storage block to find.</div>
 </div>
+<div class="mb-3 col col-3">
+	{#let id=(id + '-blockCategoryInput')}
+	<label for="{id}" class="form-label">Stored Categories</label>
+	{#inputs/categoryInput name="storedCategories"}{/inputs/categoryInput}
+	<div id="{id}-help" class="form-text">Find storage blocks that hold items of these categories.</div>
+	{/let}
+</div>
 <!-- TODO:: This, + categories input
 <div class="mb-3 col col-3">
 	<label for="{id}-blockParentNameInput" class="form-label">Parent Name</label>
