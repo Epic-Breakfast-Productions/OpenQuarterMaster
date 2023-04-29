@@ -11,7 +11,11 @@ import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import javax.measure.Quantity;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 
 @ToString(callSuper = true)
 @Getter
@@ -21,15 +25,16 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	}
 	
 	//for actual queries
-	@QueryParam("label") String labelOrNickname;
+	@QueryParam("labelOrNickname") String labelOrNickname;
 	@QueryParam("location") String location;
+	@QueryParam("storedCategories") List<ObjectId> categories;
 	@QueryParam("parentLabel")
 	List<String> parents;
+	//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
+	@QueryParam("parent") ObjectId parent; //TODO:
 	//capacities
 	@QueryParam("capacity") List<Integer> capacities;//TODO
 	@QueryParam("unit") List<String> units;//TODO
-//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
-	@QueryParam("parent") ObjectId parent; //TODO:
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering
@@ -51,6 +56,17 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 			);
 		}
 		SearchUtils.addBasicSearchFilter(filters, "location", this.getLocation());
+		
+		if (this.getCategories() != null && !this.categories.isEmpty()) {
+			List<Bson> catsFilterList = new ArrayList<>(this.getCategories().size());
+			for (ObjectId curCategoryId : this.getCategories()) {
+				catsFilterList.add(in(
+					"storedCategories",
+					curCategoryId
+				));
+			}
+			filters.add(Filters.or(catsFilterList));
+		}
 		
 		if (parents != null) {
 			for (String curParentLabel : this.getParents()) {

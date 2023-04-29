@@ -19,8 +19,10 @@ import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Collection;
 
+@Named("ItemCategoryService")
 @Slf4j
 @ApplicationScoped
 public class ItemCategoryService extends HasParentObjService<ItemCategory, CategoriesSearch, ItemCategoryTreeNode> {
