@@ -87,7 +87,7 @@ if [ ! -f "/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem" ]
 		-out /etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem \
 		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
 
-	chmod 744 /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+	chmod 644 /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
 	# TODO:: finish/test/see if works with jwt
 fi
 
@@ -95,9 +95,12 @@ if [ ! -f "/etc/oqm/serviceConfig/core-base+station/config.list" ]; then
 	cat <<EOF >> "/etc/oqm/serviceConfig/core-base+station/config.list"
 
 # change only if appropriate
-quarkus.http.ssl.certificate-file=/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
-quarkus.http.ssl.certificate-key-file=/etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+mp.jwt.verify.privatekey.location=/etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+mp.jwt.verify.publickey.location=/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
 quarkus.http.insecure-requests=redirect
+runningInfo.protocol=https
 runningInfo.hostname=$(hostname).local
 
 # Add your own config here. Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc

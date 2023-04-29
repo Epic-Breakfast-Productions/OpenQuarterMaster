@@ -1,9 +1,11 @@
 package tech.ebp.oqm.baseStation.service;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.smallrye.jwt.algorithm.SignatureAlgorithm;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import io.smallrye.jwt.util.KeyUtils;
+import io.smallrye.jwt.util.ResourceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
@@ -13,6 +15,11 @@ import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRespo
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.HashMap;
@@ -38,8 +45,28 @@ public class JwtService {
 	private final String issuer;
 	private final PrivateKey privateKey;
 	
+	private static PrivateKey getPrivateKey(String location) {
+		InputStream contentIS = JwtService.class.getClassLoader().getResourceAsStream(location);
+		if (contentIS == null) {
+			try {
+				contentIS = new FileInputStream(location);
+			} catch(FileNotFoundException e) {
+				throw new RuntimeException("FAILED to open private key file.", e);
+			}
+		}
+		try (
+			InputStream inputStream = contentIS;
+		) {
+			byte[] tmp = new byte[4096];
+			int length = inputStream.read(tmp);
+			return KeyUtils.decodePrivateKey(new String(tmp, 0, length), SignatureAlgorithm.RS256);
+		} catch(Throwable e) {
+			throw new RuntimeException("FAILED to read in private key for jwt creation,", e);
+		}
+	}
+	
 	public JwtService(
-		@ConfigProperty(name = "mp.jwt.verify.privatekey.location")
+		@ConfigProperty(name = "mp.jwt.verify.privatekey.location", defaultValue = "")
 		String privateKeyLocation,
 		@ConfigProperty(name = "mp.jwt.expiration.default")
 		long defaultExpiration,
@@ -56,10 +83,8 @@ public class JwtService {
 		this.sigKeyId = privateKeyLocation;
 		this.issuer = issuer.trim();
 		
-		log.info("Private key location: {}", privateKeyLocation);
-		this.privateKey = KeyUtils.readPrivateKey(
-			privateKeyLocation
-		);
+		log.info("Private key location provided: {}", privateKeyLocation);
+		this.privateKey = getPrivateKey(privateKeyLocation);
 	}
 	
 	/**
@@ -72,11 +97,12 @@ public class JwtService {
 	 */
 	@WithSpan
 	public UserLoginResponse getUserJwt(User user, boolean extendedTimeout) {
-		Instant expiration = Instant.now().plusSeconds((
-														   extendedTimeout
-															   ? this.extendedExpiration
-															   : this.defaultExpiration
-													   ));
+		Instant expiration = Instant.now()
+								 .plusSeconds((
+									 extendedTimeout
+										 ? this.extendedExpiration
+										 : this.defaultExpiration
+								 ));
 		
 		return new UserLoginResponse(this.generateTokenString(user, expiration), expiration);
 	}

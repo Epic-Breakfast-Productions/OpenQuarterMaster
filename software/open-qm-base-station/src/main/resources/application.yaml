@@ -223,6 +223,13 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-#  demo:
-#    perform: true
+   # Use to test out https
+#  mp:
+#    jwt:
+#      verify:
+#        privatekey:
+#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+#        publickey:
+#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
+
 
