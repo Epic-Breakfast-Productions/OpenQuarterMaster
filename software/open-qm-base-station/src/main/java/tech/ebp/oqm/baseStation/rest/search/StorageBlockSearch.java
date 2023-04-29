@@ -82,7 +82,6 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 		}
 		
 		//TODO:: stores
-		//TODO:: categories
 		
 		return filters;
 	}
