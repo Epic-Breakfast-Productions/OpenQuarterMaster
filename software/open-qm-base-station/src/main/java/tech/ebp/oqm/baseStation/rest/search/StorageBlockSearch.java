@@ -21,7 +21,7 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	}
 	
 	//for actual queries
-	@QueryParam("label") String labelOrNickname;
+	@QueryParam("labelOrNickname") String labelOrNickname;
 	@QueryParam("location") String location;
 	@QueryParam("parentLabel")
 	List<String> parents;
@@ -30,6 +30,7 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	@QueryParam("unit") List<String> units;//TODO
 //	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
 	@QueryParam("parent") ObjectId parent; //TODO:
+	@QueryParam("categories") List<ObjectId> categories; //TODO:
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering
@@ -66,6 +67,7 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 		}
 		
 		//TODO:: stores
+		//TODO:: categories
 		
 		return filters;
 	}
