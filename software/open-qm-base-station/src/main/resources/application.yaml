@@ -162,6 +162,8 @@ quarkus:
       proactive: false
     access-log:
       enabled: true
+    port: 80
+    ssl-port: 443
   mailer:
     from: ${runningInfo.fromEmail}
   reactive-messaging:
@@ -212,6 +214,8 @@ smallrye:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
       connection-string: mongodb://localhost:27017
+    http:
+      port: 8080
   service:
     runBy:
       name: The Developers
@@ -219,6 +223,13 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-#  demo:
-#    perform: true
+   # Use to test out https
+#  mp:
+#    jwt:
+#      verify:
+#        privatekey:
+#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+#        publickey:
+#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
+
 
