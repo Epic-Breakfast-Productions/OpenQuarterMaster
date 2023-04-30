@@ -35,7 +35,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainStorageSearch'}
+                    {#search/item/itemSearchForm id='mainItemSearch'}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -91,11 +91,13 @@
 {/search/storage/StorageSearchSelectModal}
 {#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
 {/search/image/imageSearchSelectModal}
-    {#inputs/item/itemAddSubTransModal otherModalId=""}
-    {/inputs/item/itemAddSubTransModal}
+{#inputs/item/itemAddSubTransModal otherModalId=""}
+{/inputs/item/itemAddSubTransModal}
+{#CodeScannerModal}{/CodeScannerModal}
 {/modals}
 
 {#scripts}
+    <script src="/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
     <script src="/res/js/obj/media/imageAdd.js"></script>
     <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
@@ -117,9 +119,11 @@
     <script src="/res/js/item/extItemSearch.js"></script>
     <script src="/res/js/obj/item/itemAddEdit.js"></script>
     <script src="/res/js/obj/item/itemView.js"></script>
+    <script src="/res/js/CodeScanning.js"></script>
 {/scripts}
 {#pageScript}
 <script>
+fillInQueryForm($("#mainItemSearch"));
 const STORAGE_CLASS = "storageBlock";
 
 var keywordInputTemplate = $('#keywordInputTemplate');

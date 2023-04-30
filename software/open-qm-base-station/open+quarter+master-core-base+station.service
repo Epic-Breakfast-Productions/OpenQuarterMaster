@@ -23,7 +23,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_core_base_station || echo 'Cou
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${version}"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
-                                        -p 80:8080 \
+                                        -p 80:80 -p 443:443 \
                                         -v /etc/oqm/serviceConfig/core-base+station/files:/etc/oqm/serviceConfig/core-base+station/files \
                                         --env-file /etc/oqm/serviceConfig/core-base+station/config.list \
                                         --env-file /etc/oqm/serviceConfig/infraConfig.list \
@@ -33,7 +33,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                hcGet=\"$(/usr/bin/curl \"http://localhost/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl -k \"https://localhost/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
