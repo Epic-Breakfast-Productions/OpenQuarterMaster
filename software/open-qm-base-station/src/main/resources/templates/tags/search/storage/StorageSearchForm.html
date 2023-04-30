@@ -20,9 +20,9 @@ Ingests:
 </div>
 <div class="mb-3 col col-3">
 	{#let id=(id + '-blockCategoryInput')}
-	<label for="{id}" class="form-label">Stored Categories</label>
+	<label for="{id}" class="form-label">{#icons/categories}{/icons/categories} Stored Categories</label>
 	{#inputs/categoryInput name="storedCategories"}{/inputs/categoryInput}
-	<div id="{id}-help" class="form-text">Find storage blocks that hold items of these categories.</div>
+	<div id="{id}-help" class="form-text">Find storage blocks that hold items of these {#links/itemCategory}{/links/itemCategory}.</div>
 	{/let}
 </div>
 <!-- TODO:: This, + categories input
