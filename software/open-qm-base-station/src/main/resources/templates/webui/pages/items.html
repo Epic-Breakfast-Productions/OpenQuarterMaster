@@ -35,7 +35,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainStorageSearch'}
+                    {#search/item/itemSearchForm id='mainItemSearch'}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -123,6 +123,7 @@
 {/scripts}
 {#pageScript}
 <script>
+fillInQueryForm($("#mainItemSearch"));
 const STORAGE_CLASS = "storageBlock";
 
 var keywordInputTemplate = $('#keywordInputTemplate');
