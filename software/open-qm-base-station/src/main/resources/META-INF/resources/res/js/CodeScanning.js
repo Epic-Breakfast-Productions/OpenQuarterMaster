@@ -15,9 +15,15 @@ const CodeScanner = {
 		/* verbose= */ false
 	),
 	codeDestInput: null,
+	otherModal: null,
 	cleanupScanner(event){
 		CodeScanner.codeScanner.clear();
 		CodeScanner.codeDestInput = null;
+
+		if(CodeScanner.otherModal != null) {
+			new bootstrap.Modal($("#"+CodeScanner.otherModal)).show();
+			CodeScanner.otherModal = null;
+		}
 	},
 	onScanSuccess(decodedText, decodedResult) {
 		// handle the scanned code as you like, for example:
@@ -40,4 +46,10 @@ CodeScanner.scanningModal.on('show.bs.modal', event => {
 	console.log("Opening Barcode Scanning Modal");
 	CodeScanner.codeScanner.render(CodeScanner.onScanSuccess, CodeScanner.onScanFailure);
 	CodeScanner.codeDestInput = $(event.relatedTarget.nextElementSibling);
+
+	let inputModal = CodeScanner.codeDestInput.closest(".modal");
+	if(inputModal.length){
+		CodeScanner.otherModal = inputModal[0].id;
+	}
+
 });
