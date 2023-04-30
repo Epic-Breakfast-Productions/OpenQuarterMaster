@@ -46,7 +46,7 @@ System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes")
   
   Boundary(boundaryPlugins, "Plugins") {
     System(pluginPoc, "Point of Sale (Planned)", "Standard POS functions")
-    System(pluginStorage, "Interactive and Modular Storage", "A system that intractis with physical storage medims to help convey placement of items.")
+    System(pluginStorage, "Interactive and Modular Storage (Planned)", "A system that intractis with physical storage medims to help convey placement of items.")
   }
 }
 
