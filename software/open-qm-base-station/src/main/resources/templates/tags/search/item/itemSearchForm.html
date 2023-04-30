@@ -13,6 +13,12 @@ Ingests:
     <div id="{id}-itemNameInputHelp" class="form-text">The name of the item to find.</div>
 </div>
 <div class="mb-3 col col-3">
+	{#let id=(id + '-itemCategoryInput')}
+    <label for="{id}" class="form-label">Barcode</label>
+    {#inputs/barcodeInput name='itemBarcode'}{/inputs/barcodeInput}
+    {/let}
+</div>
+<div class="mb-3 col col-3">
     {#let id=(id + '-itemCategoryInput')}
     <label for="{id}" class="form-label">{#icons/categories}{/icons/categories} Categories</label>
         {#inputs/categoryInput name="itemCategories"}{/inputs/categoryInput}
