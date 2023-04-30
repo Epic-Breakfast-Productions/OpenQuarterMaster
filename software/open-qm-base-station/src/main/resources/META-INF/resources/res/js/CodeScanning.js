@@ -15,9 +15,9 @@ const CodeScanner = {
 		/* verbose= */ false
 	),
 	codeDestInput: null,
-	resetScanner(){
+	cleanupScanner(event){
 		CodeScanner.codeScanner.clear();
-		CodeScanner.scanningModalObj.hide();
+		CodeScanner.codeDestInput = null;
 	},
 	onScanSuccess(decodedText, decodedResult) {
 		// handle the scanned code as you like, for example:
@@ -28,18 +28,14 @@ const CodeScanner = {
 		} else {
 			console.warn("No destination input!");
 		}
-		CodeScanner.resetScanner();
-
+		CodeScanner.scanningModalObj.hide();
 	},
 	onScanFailure(error) {
 		console.warn(`Code scan error = ${error}`);
 	}
 };
 
-CodeScanner.scanningModal.on('hidden.bs.modal', event => {
-	CodeScanner.codeScanner.clear();
-	CodeScanner.codeDestInput = null;
-});
+CodeScanner.scanningModal.on('hidden.bs.modal', CodeScanner.cleanupScanner);
 CodeScanner.scanningModal.on('show.bs.modal', event => {
 	console.log("Opening Barcode Scanning Modal");
 	CodeScanner.codeScanner.render(CodeScanner.onScanSuccess, CodeScanner.onScanFailure);
