@@ -39,7 +39,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-scheduler'
 	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
 
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.4'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
 
 	implementation 'com.itextpdf:html2pdf:4.0.5'
 
