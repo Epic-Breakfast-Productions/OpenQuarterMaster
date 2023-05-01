@@ -93,6 +93,7 @@ if [ ! -f "/etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem" ]
 		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
 
 	chmod 644 /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
+	chmod 644 /etc/oqm/serviceConfig/core-base+station/files/jwt-cert-key.pem
 	# TODO:: finish/test/see if works with jwt
 fi
 
