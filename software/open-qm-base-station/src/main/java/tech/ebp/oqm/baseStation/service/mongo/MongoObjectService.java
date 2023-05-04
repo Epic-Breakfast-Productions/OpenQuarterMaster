@@ -394,6 +394,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	/**
+	 * Extend this to provide validation of removal objects; checking dependencies, etc.
+	 * @param clientSession The client session, null if none
+	 * @param objectToRemove The object being removed
+	 */
+	protected void assertCanRemove(ClientSession clientSession, T objectToRemove){
+		//intentionally blank here
+	}
+	
+	/**
 	 * Removes the object with the id given.
 	 *
 	 * @param objectId The id of the object to remove
@@ -401,11 +410,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The object that was removed
 	 */
 	public T remove(ClientSession clientSession, ObjectId objectId) {
-		//TODO:: client session
-		T toRemove = this.get(objectId);
+		T toRemove = this.get(clientSession, objectId);
+		
+		this.assertCanRemove(clientSession, toRemove);
 		
 		DeleteResult result;
-		
 		if (clientSession == null) {
 			result = this.getCollection().deleteOne(eq("_id", objectId));
 		} else {

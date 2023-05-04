@@ -12,6 +12,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTreeNode;
@@ -20,15 +21,22 @@ import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.elemMatch;
 import static com.mongodb.client.model.Filters.eq;
 
 @Slf4j
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
+	
+	
+	private InventoryItemService inventoryItemService;
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -108,5 +116,16 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	@Override
 	protected ParentedMainObjectTree<StorageBlock, StorageBlockTreeNode> getNewTree() {
 		return new StorageBlockTree();
+	}
+	
+	public Set<ObjectId> getObjsReferencing(ClientSession clientSession, Image image){
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			elemMatch("imageIds", eq(image.getId())),
+			null,
+			null
+		).map(StorageBlock::getId).into(list);
+		return list;
 	}
 }
