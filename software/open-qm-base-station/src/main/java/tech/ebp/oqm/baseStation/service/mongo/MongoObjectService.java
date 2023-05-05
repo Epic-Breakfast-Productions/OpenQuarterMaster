@@ -83,7 +83,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public FindIterable<T> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
 		FindIterable<T> results = this.find(clientSession, filter);
 		
-		
 		if (sort != null) {
 			results = results.sort(sort);
 		}

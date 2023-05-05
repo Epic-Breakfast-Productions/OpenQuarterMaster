@@ -119,10 +119,13 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	}
 	
 	public Set<ObjectId> getObjsReferencing(ClientSession clientSession, Image image){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			clientSession,
-			elemMatch("imageIds", eq(image.getId())),
+//			elemMatch("imageIds", eq(image.getId())),
+			eq("imageIds", image.getId()),
 			null,
 			null
 		).map(StorageBlock::getId).into(list);

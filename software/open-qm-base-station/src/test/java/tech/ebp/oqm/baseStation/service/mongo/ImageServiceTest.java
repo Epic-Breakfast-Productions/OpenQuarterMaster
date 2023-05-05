@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.baseStation.testResources.data.ImageTestObjectCreator;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
@@ -20,12 +22,15 @@ import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
 import javax.inject.Inject;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @QuarkusTest
@@ -33,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ImageServiceTest extends MongoHistoriedServiceTest<Image, ImageService> {
 	
 	ImageService imageService;
+	StorageBlockService storageBlockService;
 	
 	ImageTestObjectCreator imageTestObjectCreator;
 	
@@ -40,11 +46,13 @@ class ImageServiceTest extends MongoHistoriedServiceTest<Image, ImageService> {
 	ImageServiceTest(
 		ImageService imageService,
 		ImageTestObjectCreator imageTestObjectCreator,
-		TestUserService testUserService
+		TestUserService testUserService,
+		StorageBlockService storageBlockService
 	) {
 		this.imageService = imageService;
 		this.imageTestObjectCreator = imageTestObjectCreator;
 		this.testUserService = testUserService;
+		this.storageBlockService = storageBlockService;
 	}
 	
 	@Override
@@ -92,6 +100,26 @@ class ImageServiceTest extends MongoHistoriedServiceTest<Image, ImageService> {
 	@Ignore
 	@Test
 	public void testDeleteWithRelational(){
-		//TODO
+		User testUser = this.testUserService.getTestUser();
+		Image testImage = this.getTestObject();
+		
+		this.imageService.add(testImage, testUser);
+		
+		ObjectId storageBlockId = this.storageBlockService.add(
+			(StorageBlock) new StorageBlock().setLabel(FAKER.name().fullName()).setImageIds(List.of(testImage.getId(), ObjectId.get())),
+			testUser
+		);
+		this.storageBlockService.add(
+			(StorageBlock) new StorageBlock().setLabel(FAKER.name().fullName()).setImageIds(List.of(ObjectId.get())),
+			testUser
+		);
+		
+		DbDeleteRelationalException exception = assertThrows(
+			DbDeleteRelationalException.class,
+			()->this.imageService.remove(testImage.getId(), testUser)
+		);
+		
+		assertFalse(exception.getObjectsReferencing().isEmpty());
+		log.info("Referenced objects: {}", exception.getObjectsReferencing());
 	}
 }
