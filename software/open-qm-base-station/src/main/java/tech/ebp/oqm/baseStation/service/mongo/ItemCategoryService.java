@@ -85,7 +85,22 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, Categ
 	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, ItemCategory itemCategory) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, itemCategory);
 		
-		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(cs, itemCategory);
+		Set<ObjectId> refs = new TreeSet<>();
+		
+		this.listIterator(
+			cs,
+			eq(
+				"parent",
+				itemCategory.getId()
+			),
+			null,
+			null
+		).map(ItemCategory::getId).into(refs);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.storageBlockService.getBlocksReferencing(cs, itemCategory);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
 		}

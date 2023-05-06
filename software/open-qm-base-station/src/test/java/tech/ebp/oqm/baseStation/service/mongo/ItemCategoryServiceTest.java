@@ -105,6 +105,11 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 		
 		this.itemCategoryService.add(itemCategory, testUser);
 		{//setup referencing data
+			ItemCategory subCategory = this.getTestObject();
+			subCategory.setParent(itemCategory.getId());
+			ObjectId catId = this.itemCategoryService.add(subCategory, testUser);
+			expectedRefs.put(this.itemCategoryService.getClazz().getSimpleName(), new TreeSet<>(List.of(catId)));
+			
 			//Inventory item, basic
 			this.inventoryItemService.add(new SimpleAmountItem().setName(FAKER.name().name()).setCategories(List.of(ObjectId.get())), testUser);
 			
