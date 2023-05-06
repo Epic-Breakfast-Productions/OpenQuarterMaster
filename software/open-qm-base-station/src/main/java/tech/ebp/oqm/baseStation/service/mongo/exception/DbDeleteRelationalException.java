@@ -13,15 +13,15 @@ public class DbDeleteRelationalException extends IllegalStateException {
 	
 	private static String generateMessage(MainObject object, Map<String, Set<ObjectId>> objectsReferencing) {
 		StringBuilder sb = new StringBuilder(object.getClass().getSimpleName())
-							   .append(" object ")
+							   .append(" object with id ")
 							   .append(object.getId())
-							   .append(" has references to it and could not be deleted. Remove references before deleting. Object(s) that reference it:\n");
+							   .append(" has references to it and could not be deleted. Remove references before deleting. Object(s) that reference it: ");
 		
 		for(Map.Entry<String, Set<ObjectId>> curClass : objectsReferencing.entrySet()){
+			//sb.append("\n");
 			sb.append(curClass.getKey())
 				.append(": ")
-				.append(String.join(", ", curClass.getValue().stream().map(ObjectId::toString).toList()))
-				.append("\n");
+				.append(String.join(", ", curClass.getValue().stream().map(ObjectId::toString).toList()));
 		}
 		
 		return sb.toString();
