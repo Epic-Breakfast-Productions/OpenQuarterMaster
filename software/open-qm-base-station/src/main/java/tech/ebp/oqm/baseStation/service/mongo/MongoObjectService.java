@@ -19,6 +19,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
@@ -29,8 +30,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -99,6 +102,9 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	
 	public FindIterable<T> listIterator() {
 		return this.listIterator(null, null, null, null);
+	}
+	public FindIterable<T> listIterator(ClientSession cs) {
+		return this.listIterator(cs, null, null, null);
 	}
 	
 	/**
@@ -397,8 +403,20 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @param clientSession The client session, null if none
 	 * @param objectToRemove The object being removed
 	 */
-	protected void assertCanRemove(ClientSession clientSession, T objectToRemove){
-		//intentionally blank here
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession clientSession, T objectToRemove){
+		return new HashMap<>();
+	}
+	
+	/**
+	 * Asserts that the given object is not referenced by any other object.
+	 * @param clientSession The client session, null if none
+	 * @param objectToRemove The object being removed
+	 */
+	protected void assertNotReferenced(ClientSession clientSession, T objectToRemove){
+		Map<String, Set<ObjectId>> objsWithRefs = this.getReferencingObjects(clientSession, objectToRemove);
+		if(!objsWithRefs.isEmpty()){
+			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
+		}
 	}
 	
 	/**
@@ -411,7 +429,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public T remove(ClientSession clientSession, ObjectId objectId) {
 		T toRemove = this.get(clientSession, objectId);
 		
-		this.assertCanRemove(clientSession, toRemove);
+		this.assertNotReferenced(clientSession, toRemove);
 		
 		DeleteResult result;
 		if (clientSession == null) {

@@ -8,13 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.lib.core.object.media.Image;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +20,8 @@ import java.util.Set;
 public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch> {
 	
 	private StorageBlockService storageBlockService;
+	private ItemCategoryService itemCategoryService;
+	private InventoryItemService inventoryItemService;
 	
 	ImageService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -35,7 +34,9 @@ public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
-		StorageBlockService storageBlockService
+		StorageBlockService storageBlockService,
+		ItemCategoryService itemCategoryService,
+		InventoryItemService inventoryItemService
 	) {
 		super(
 			objectMapper,
@@ -45,6 +46,8 @@ public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch
 			false
 		);
 		this.storageBlockService = storageBlockService;
+		this.itemCategoryService = itemCategoryService;
+		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan
@@ -55,18 +58,22 @@ public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch
 	
 	@WithSpan
 	@Override
-	protected void assertCanRemove(ClientSession cs, Image objectToRemove) {
-		super.assertCanRemove(cs, objectToRemove);
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, Image objectToRemove) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, objectToRemove);
 		
-		Map<String, Set<ObjectId>> objsWithRefs = new HashMap<>();
-		
-		Set<ObjectId> storageWithRefs = this.storageBlockService.getObjsReferencing(cs, objectToRemove);
-		if(!storageWithRefs.isEmpty()){
-			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), storageWithRefs);
+		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(cs, objectToRemove);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
+		}
+		refs = this.inventoryItemService.getItemsReferencing(cs, objectToRemove);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		refs = this.itemCategoryService.getItemCatsReferencing(cs, objectToRemove);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.itemCategoryService.getClazz().getSimpleName(), refs);
 		}
 		
-		if(!objsWithRefs.isEmpty()){
-			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
-		}
+		return objsWithRefs;
 	}
 }

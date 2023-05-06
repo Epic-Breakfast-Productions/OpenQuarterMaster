@@ -10,7 +10,9 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
+import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
@@ -21,6 +23,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 @Named("ItemCategoryService")
 @Slf4j
@@ -58,5 +65,16 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, Categ
 	@Override
 	protected ParentedMainObjectTree<ItemCategory, ItemCategoryTreeNode> getNewTree() {
 		return new ItemCategoryTree();
+	}
+	
+	public Set<ObjectId> getItemCatsReferencing(ClientSession clientSession, Image image){
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("imageIds", image.getId()),
+			null,
+			null
+		).map(ItemCategory::getId).into(list);
+		return list;
 	}
 }
