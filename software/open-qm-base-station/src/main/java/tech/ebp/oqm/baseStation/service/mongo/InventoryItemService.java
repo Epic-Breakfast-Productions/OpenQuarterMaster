@@ -19,6 +19,7 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
@@ -361,6 +362,20 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			}
 		});
 		
+		return list;
+	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, ItemCategory itemCategory){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("categories", itemCategory.getId()),
+			null,
+			null
+		).map(InventoryItem::getId).into(list);
 		return list;
 	}
 }

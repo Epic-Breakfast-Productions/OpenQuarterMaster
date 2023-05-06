@@ -12,6 +12,7 @@ import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
@@ -128,8 +129,22 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			clientSession,
-//			elemMatch("imageIds", eq(image.getId())),
+			//			elemMatch("imageIds", eq(image.getId())),
 			eq("imageIds", image.getId()),
+			null,
+			null
+		).map(StorageBlock::getId).into(list);
+		return list;
+	}
+	
+	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, ItemCategory itemCategory){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("storedCategories", itemCategory.getId()),
 			null,
 			null
 		).map(StorageBlock::getId).into(list);
