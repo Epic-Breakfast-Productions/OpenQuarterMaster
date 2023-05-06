@@ -20,6 +20,7 @@ import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -42,7 +43,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		InventoryItemService inventoryItemService
 	) {
 		super(
 			objectMapper,
@@ -51,6 +53,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			StorageBlock.class,
 			false
 		);
+		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan
@@ -131,5 +134,18 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			null
 		).map(StorageBlock::getId).into(list);
 		return list;
+	}
+	
+	@WithSpan
+	@Override
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, StorageBlock storageBlock) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, storageBlock);
+		
+		Set<ObjectId> refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		
+		return objsWithRefs;
 	}
 }

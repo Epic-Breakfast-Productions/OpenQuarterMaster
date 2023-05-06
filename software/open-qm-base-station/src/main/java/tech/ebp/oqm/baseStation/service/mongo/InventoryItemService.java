@@ -350,4 +350,17 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		
 		return list;
 	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, StorageBlock storageBlock) {
+		Set<ObjectId> list = new TreeSet<>();
+		
+		//TODO:: figure out how find with query
+		this.listIterator(clientSession).forEach((InventoryItem item)->{
+			if(item.getStorageMap().containsKey(storageBlock.getId())){
+				list.add(item.getId());
+			}
+		});
+		
+		return list;
+	}
 }
