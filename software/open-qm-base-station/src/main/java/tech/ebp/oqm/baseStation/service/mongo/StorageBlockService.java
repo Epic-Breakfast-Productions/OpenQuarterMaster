@@ -156,7 +156,21 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, StorageBlock storageBlock) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, storageBlock);
 		
-		Set<ObjectId> refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
+		Set<ObjectId> refs = new TreeSet<>();
+		this.listIterator(
+			cs,
+			eq(
+				"parent",
+				storageBlock.getId()
+			),
+			null,
+			null
+		).map(StorageBlock::getId).into(refs);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}

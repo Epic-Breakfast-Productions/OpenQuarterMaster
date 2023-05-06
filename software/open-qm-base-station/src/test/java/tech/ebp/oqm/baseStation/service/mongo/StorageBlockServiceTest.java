@@ -111,6 +111,12 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 		
 		this.storageBlockService.add(storageBlock, testUser);
 		{//setup referencing data
+			//parent
+			StorageBlock subBlock = this.getTestObject();
+			subBlock.setParent(storageBlock.getId());
+			ObjectId subBlockId = this.storageBlockService.add(subBlock, testUser);
+			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(subBlockId)));
+			
 			//Inventory item, basic
 			this.inventoryItemService.add(new SimpleAmountItem().setName(FAKER.name().name()), testUser);
 			
