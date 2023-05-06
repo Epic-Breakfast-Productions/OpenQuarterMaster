@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -17,17 +18,32 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
+import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
+import static com.mongodb.client.model.Filters.or;
+import static tech.ebp.oqm.lib.core.rest.media.ObjectCodeContentType.id;
 
 /**
  * TODO::
@@ -73,9 +89,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@WithSpan
-	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents){
-		if(!lowStockEvents.isEmpty()) {
-			for(ItemLowStockEvent event : lowStockEvents) {
+	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents) {
+		if (!lowStockEvents.isEmpty()) {
+			for (ItemLowStockEvent event : lowStockEvents) {
 				
 				event.setEntity(this.baseStationInteractingEntity.getReference());
 				
@@ -104,7 +120,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		List<ItemLowStockEvent> lowStockEvents = item.updateLowStockState();
 		
 		super.update(item);
-		if(!lowStockEvents.isEmpty()) {
+		if (!lowStockEvents.isEmpty()) {
 			this.handleLowStockEvents(item, lowStockEvents);
 		}
 		
@@ -301,5 +317,65 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@WithSpan
 	public long getNumLowStock() {
 		return this.getSumOfIntField("numLowStock");
+	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, Image image) {
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("imageIds", image.getId()),
+			null,
+			null
+		).map(InventoryItem::getId).into(list);
+		
+		//TODO:: figure out how to wrap this into the previous query; finding image in stored entries
+		this.listIterator(clientSession).forEach((InventoryItem item)->{
+			item.getStorageMap().forEach((storageBlockId, storedWrapper)->{
+				List<ObjectId> imageIds;
+				if(storedWrapper instanceof SingleAmountStoredWrapper){
+					imageIds = ((SingleAmountStoredWrapper) storedWrapper).getStored().getImageIds();
+				} else if(storedWrapper instanceof ListAmountStoredWrapper){
+					imageIds = ((ListAmountStoredWrapper) storedWrapper).stream().map(AmountStored::getImageIds).flatMap(List::stream).collect(Collectors.toList());
+				} else if(storedWrapper instanceof TrackedMapStoredWrapper){
+					imageIds = ((TrackedMapStoredWrapper) storedWrapper).storedStream().map(TrackedStored::getImageIds).flatMap(List::stream).collect(Collectors.toList());
+				} else {
+					throw new IllegalStateException("Should not get here.");
+				}
+				if(imageIds.contains(image.getId())){
+					list.add(item.getId());
+				}
+			});
+		});
+		
+		return list;
+	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, StorageBlock storageBlock) {
+		Set<ObjectId> list = new TreeSet<>();
+		
+		//TODO:: figure out how find with query
+		this.listIterator(clientSession).forEach((InventoryItem item)->{
+			if(item.getStorageMap().containsKey(storageBlock.getId())){
+				list.add(item.getId());
+			}
+		});
+		
+		return list;
+	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, ItemCategory itemCategory){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("categories", itemCategory.getId()),
+			null,
+			null
+		).map(InventoryItem::getId).into(list);
+		return list;
 	}
 }
