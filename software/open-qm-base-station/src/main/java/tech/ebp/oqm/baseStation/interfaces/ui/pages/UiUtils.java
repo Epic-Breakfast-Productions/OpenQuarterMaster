@@ -31,12 +31,16 @@ public class UiUtils {
 		String comment,
 		int maxAgeSecs
 	) {
+		String host = uriInfo.getBaseUri().getHost();
+		
+		log.debug("Getting cookie for host: {} - cookie host: {}", uriInfo.getBaseUri(), host);
+		
 		return new NewCookie(
 			new Cookie(
 				cookieName,
 				value,
 				"/",
-				uriInfo.getBaseUri().getHost()
+				 host
 			),
 			comment,
 			maxAgeSecs,
