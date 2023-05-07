@@ -55,6 +55,20 @@
         "review",
         "security"
       ]
+    },
+    {
+      "login": "piercde12",
+      "name": "piercde12",
+      "avatar_url": "https://avatars.githubusercontent.com/u/132835358?v=4",
+      "profile": "https://github.com/piercde12",
+      "contributions": [
+        "business",
+        "content",
+        "doc",
+        "design",
+        "test",
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
