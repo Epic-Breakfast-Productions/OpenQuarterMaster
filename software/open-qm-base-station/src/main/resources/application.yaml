@@ -175,6 +175,7 @@ quarkus:
 mp:
   jwt:
     verify:
+      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
