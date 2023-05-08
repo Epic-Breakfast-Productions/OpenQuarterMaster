@@ -175,14 +175,7 @@ quarkus:
 mp:
   jwt:
     verify:
-      # TODO:: mode packaged keys outside of resources, similar to dev image
-      # TODO:: move to dev mode configuration
-      privatekey:
-        location: security/packagedPrivateKeyPkcs8.pem
-      publickey:
-        location: security/packagedPublicKey.pem
       issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
-    # TODO:: verify persist through Native
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
@@ -216,6 +209,21 @@ smallrye:
       connection-string: mongodb://localhost:27017
     http:
       port: 8080
+      ssl-port: 8443
+      ssl:
+        certificate:
+          files: ../../../../dev/devTest-cert-cert.pem
+          key-files: ../../../../dev/devTest-cert-key.pem
+  mp:
+    jwt:
+      expiration:
+        default: 60
+      verify:
+        privatekey:
+          location: ../../../../dev/devTest-cert-key.pem
+        publickey:
+          location: ../../../../dev/devTest-cert-cert.pem
+        issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
   service:
     runBy:
       name: The Developers
@@ -223,13 +231,5 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-   # Use to test out https
-#  mp:
-#    jwt:
-#      verify:
-#        privatekey:
-#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-key.pem
-#        publickey:
-#          location: /etc/oqm/serviceConfig/core-base+station/files/https-cert-cert.pem
 
 

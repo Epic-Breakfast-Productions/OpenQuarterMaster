@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +11,19 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
-import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTreeNode;
 import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
 import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -29,6 +31,9 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
+	
+	
+	private InventoryItemService inventoryItemService;
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -39,7 +44,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		InventoryItemService inventoryItemService
 	) {
 		super(
 			objectMapper,
@@ -48,6 +54,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			StorageBlock.class,
 			false
 		);
+		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan
@@ -108,5 +115,66 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	@Override
 	protected ParentedMainObjectTree<StorageBlock, StorageBlockTreeNode> getNewTree() {
 		return new StorageBlockTree();
+	}
+	
+	/**
+	 *
+	 * @param clientSession
+	 * @param image
+	 * @return
+	 */
+	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, Image image){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			//			elemMatch("imageIds", eq(image.getId())),
+			eq("imageIds", image.getId()),
+			null,
+			null
+		).map(StorageBlock::getId).into(list);
+		return list;
+	}
+	
+	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, ItemCategory itemCategory){
+		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("storedCategories", itemCategory.getId()),
+			null,
+			null
+		).map(StorageBlock::getId).into(list);
+		return list;
+	}
+	
+	@WithSpan
+	@Override
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, StorageBlock storageBlock) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, storageBlock);
+		
+		Set<ObjectId> refs = new TreeSet<>();
+		this.listIterator(
+			cs,
+			eq(
+				"parent",
+				storageBlock.getId()
+			),
+			null,
+			null
+		).map(StorageBlock::getId).into(refs);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		
+		return objsWithRefs;
 	}
 }

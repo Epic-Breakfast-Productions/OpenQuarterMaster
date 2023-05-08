@@ -32,6 +32,14 @@ quarkus:
   mailer:
     mock: true
     
+mp:
+  jwt:
+    verify:
+      privatekey:
+        location: dev/devTest-cert-key.pem
+      publickey:
+        location: dev/devTest-cert-cert.pem
+      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
 #mp:
 #  messaging:
 #    outgoing:
