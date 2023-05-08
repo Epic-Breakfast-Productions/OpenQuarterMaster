@@ -7,10 +7,12 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.UriInfo;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class UiUtils {
 	) {
 		String host = uriInfo.getBaseUri().getHost();
 		
-		log.debug("Getting cookie for host: {} - cookie host: {}", uriInfo.getBaseUri(), host);
+		log.debug("Getting cookie {} for host: {} - cookie host: {}", cookieName, uriInfo.getBaseUri(), host);
 		
 		return new NewCookie(
 			new Cookie(
@@ -53,7 +55,7 @@ public class UiUtils {
 			uriInfo,
 			cookieName,
 			"",
-			"To remove \"" + cookieName + "\" cookie.",
+			"To remove " + cookieName + " cookie.",
 			0
 		);
 	}
