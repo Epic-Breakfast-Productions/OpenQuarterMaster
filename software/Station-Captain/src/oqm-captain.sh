@@ -166,7 +166,8 @@ source "$LIB_DIR/file-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib file-utils"; fi;
 source "$LIB_DIR/service-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
-
+source "$LIB_DIR/cert-utils.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib cert-utils"; fi;
 
 
 ##################################################
