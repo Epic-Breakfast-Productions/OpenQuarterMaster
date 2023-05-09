@@ -2,7 +2,6 @@
 
 generate_root() {
   # Default values for optional parameters
-  #local SHARED_CONFIG_DIR='/etc/oqm'  --FOR TESTING
   local path="$SHARED_CONFIG_DIR/certs"
   local name=""
 
@@ -39,19 +38,19 @@ generate_root() {
   fi
 
   # Check for pre-existing certs
-  if [ -f "$path/$name.crt" ] && [ -f "$path/$name.key" ]; then
+  if [ -f "$path/$name-CA.crt" ] && [ -f "$path/$name-CA.key" ]; then
     echo "WARNING!!! EXISTING KEY AND CERTIFICATE ALREADY EXIST. DO YOU WANT TO REMOVE EXISTING ROOT CA AND RECREATE IT? (y/n)"
     read answer
     if [ "$answer" == "y" ]; then
       echo "Creating a backup of existing certificates..."
-      tar -czvf "$path/$name-archived-$(date +%Y-%m-%d_%H-%M-%S).tar.gz" "$path/$name.crt" "$path/$name.key"
-      echo "Removing files $path/$name.crt and $path/$name.key..."
-      rm -f "$path/$name.crt" "$path/$name.key"
+      tar -czvf "$path/$name-CA-archived-$(date +%Y-%m-%d_%H-%M-%S).tar.gz" "$path/$name-CA.crt" "$path/$name-CA.key"
+      echo "Removing files $path/$name-CA.crt and $path/$name-CA.key..."
+      rm -f "$path/$name-CA.crt" "$path/$namw-CA.key"
       echo "Certificates successfully removed."
       echo "Creating Root Certificate..."
 
     else
-      echo "Certificates located at $path/$name.crt and $path/$name.key were not removed."
+      echo "Certificates located at $path/$name-CA.crt and $path/$name-CA.key were not removed."
       return
     fi
   fi
@@ -80,6 +79,7 @@ generate_root() {
 #Generates and x509 and all dependiencies and signs with root cert create in generate_root funtion.
 generate_cert() {
   # Default values for optional parameters
+  #local SHARED_CONFIG_DIR='/etc/oqm'  #For Testing
   local path="$SHARED_CONFIG_DIR/certs"
   local ip1=""
   local ip2=""
@@ -89,32 +89,43 @@ generate_cert() {
   local dns3=""
   local name=""
 
-  for cert_file in $path/*.crt; do
-      if openssl x509 -in "$cert_file" -noout -issuer &> /dev/null; then
-        echo "Using the existing signing CA located at at: $cert_file"
-        domain=$(openssl x509 -noout -subject -in $cert_file | awk -F' ' '{print $3}' | tr -d ',')
-      else
-        echo "No existing CA found in $path"
-        read -p "Continue creating a self-signed certificate without a CA? (y/n): " confirm
-        if [[ "$confirm" == "y" ]]; then
-          if [[ -z "$name" ]]; then
-            read -p "Enter the FQDN or IP address to be used on the certificate: " name
-          fi
-            (
-            openssl req -x509 -sha256 -days 2920 -nodes -newkey rsa:2048 \
-            -subj "/CN=${name}/C=US/L=OQM" \
-            -keyout ${path}/$name.key \
-            -out ${path}/$name.crt \
-            2> >(while read line; do echo -ne "."; done) 
-            ) > /dev/null
-            return
-          
-        else
-          echo "Aborted."
-          return
-        fi
+  cert_files=($path/*.crt)
+cert_files_count=${#cert_files[@]}
+
+  if [[ $cert_files_count -eq 0 ]]; then
+    echo "No existing CA found in $path"
+    read -p "Continue creating a self-signed certificate without a CA? (y/n): " confirm
+    if [[ "$confirm" == "y" ]]; then
+      if [[ -z "$name" ]]; then
+        read -p "Enter the FQDN or IP address to be used on the certificate: " name
       fi
-    done
+      (
+      openssl req -x509 -sha256 -days 2920 -nodes -newkey rsa:2048 \
+      -subj "/CN=${name}/C=US/L=OQM" \
+      -keyout ${path}/$name.key \
+      -out ${path}/$name.crt \
+      2> >(while read line; do echo -ne "."; done)
+      ) > /dev/null
+    else
+      echo "Aborted."
+      return
+    fi
+  else
+    if [[ $cert_files_count -eq 1 ]]; then
+      cert_file=${cert_files[0]}
+      echo "Using the existing signing CA located at: $cert_file"
+      domain=$(openssl x509 -noout -subject -in $cert_file | awk -F' ' '{print $3}' | tr -d ',')
+    else
+      echo "Multiple CA certificates found in $path:"
+      select cert_file in "${cert_files[@]}"; do
+        if [[ -n "$cert_file" ]]; then
+          echo "Using the selected signing CA located at: $cert_file"
+          domain=$(openssl x509 -noout -subject -in $cert_file | awk -F' ' '{print $3}' | tr -d ',')
+          break
+        fi
+      done
+    fi
+  fi
 
   # Parse command line arguments
   while [[ $# -gt 0 ]]; do
