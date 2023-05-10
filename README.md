@@ -9,7 +9,6 @@
 ![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)
 ![Station Captain](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg)
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
-[![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://oqm.zulipchat.com)
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
