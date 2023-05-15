@@ -68,7 +68,10 @@ argParser = argparse.ArgumentParser(
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
 argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-argParser.add_argument('-r', '--replace', dest="r", help="Supply a file to replace placeholders in.", nargs=1)
+
+# TODO
+# argParser.add_argument('-r', '--replace', dest="r", help="Supply a file to replace placeholders in.", nargs=1)
+# Secret parsing
 
 args = argParser.parse_args()
 
