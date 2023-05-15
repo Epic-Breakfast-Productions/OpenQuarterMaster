@@ -41,7 +41,7 @@ dependencies {
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
 
-	implementation 'com.itextpdf:html2pdf:4.0.5'
+	implementation 'com.itextpdf:html2pdf:5.0.0'
 
 	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
