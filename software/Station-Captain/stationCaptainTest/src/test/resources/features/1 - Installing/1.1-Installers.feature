@@ -26,6 +26,7 @@ Feature: 1.1 - Installers
 		When the "<installerType>" installer is installed on "<os>"
 		Then the installer completed successfully
 		And the "oqm-captain" script is present
+		And the "oqm-config" script is present
 
 		Examples:
 			| installerType | os     |
