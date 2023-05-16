@@ -1,0 +1,11 @@
+{
+	"test": {
+		"testStr": "hello world",
+		"testInt": 100,
+		"testDouble": 1.5,
+		"testList": [
+			"hello",
+			"world"
+		]
+	}
+}

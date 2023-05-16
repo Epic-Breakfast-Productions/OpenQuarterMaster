@@ -41,6 +41,16 @@ If so, the Base Station and any supporting infra components will be installed.
 
 === Configuration Management
 
+==== Config Utility
+
+Alongside the main script is a utility to help get and manage configurations called `oqm-config`. The Features of this are outlined here.
+
+===== List all configs
+
+===== Get individual config values
+
+===== Replace placeholders in file
+
 === Misc
 
 ==== Only runs as root

@@ -16,16 +16,19 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 public class TestContext implements Closeable {
+	
 	private ShellProcessResults shellProcessResults = null;
 	private Map<String, Object> data = new HashMap<>();
 	private GenericContainer<?> runningContainer = null;
 	private Container.ExecResult containerExecResult = null;
+	private String installer = System.getProperty("test.installer", "deb");
+	private String os = System.getProperty("test.os", "ubuntu");
 	
 	@Override
 	public void close() throws IOException {
-		try(
+		try (
 			GenericContainer<?> container = this.getRunningContainer();
-			){
+		) {
 			log.info("Container was started? {}", container != null);
 		}
 	}

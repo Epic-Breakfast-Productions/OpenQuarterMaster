@@ -1,0 +1,3 @@
+test.testStr="{c.test.testStr}"
+test.testInt={c.test.testInt}
+test.testDouble={c.test.testDouble}
