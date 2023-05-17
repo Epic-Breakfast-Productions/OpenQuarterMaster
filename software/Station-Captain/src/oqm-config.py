@@ -11,7 +11,7 @@ import sys
 SCRIPT_VERSION = 'SCRIPT_VERSION'
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V${SCRIPT_VERSION}"
 CONFIGS_DIR = "/etc/oqm/config"
-MAIN_CONFIG_FILE = CONFIGS_DIR + "/mainConfig.yaml"
+MAIN_CONFIG_FILE = CONFIGS_DIR + "/mainConfig.json"
 ADD_CONFIG_DIR = CONFIGS_DIR + "/configs"
 
 EXIT_CANT_READ_FILE = 2
