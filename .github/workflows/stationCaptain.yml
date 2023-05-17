@@ -73,16 +73,18 @@ jobs:  # This workflow contains a single job called "build"
         # Runs a single command using the runners shell
       -
         name: Archive Cucumber Reports
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Ubuntu
           path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Ubuntu
+        if: always()
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"  # This workflow contains a single job called "build"
+          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
   # This workflow contains a single job called "build"
   testFedora:
     # The type of runner that the job will run on
@@ -109,12 +111,14 @@ jobs:  # This workflow contains a single job called "build"
         # Runs a single command using the runners shell
       -
         name: Archive Cucumber Reports
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Fedora
           path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Fedora
+        if: always()
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
