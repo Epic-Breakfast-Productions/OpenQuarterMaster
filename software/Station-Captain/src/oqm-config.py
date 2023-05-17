@@ -102,33 +102,30 @@ argParser.add_argument('-t', '--template', dest="t",
 
 args = argParser.parse_args()
 
-try:
-    if args.v:
-        print(SCRIPT_TITLE)
-    elif args.l:
-        print(json.dumps(configData, indent=4))
-    elif args.g:
-        configToGet = args.g[0]
-        configValue = getConfigVal(configToGet)
-        print(configValue)
-    elif args.t:
-        configFileToGet = args.t[0]
-        output = ""
-        try:
-            with open(configFileToGet, 'r') as file:
-                output = file.read()
-        except OSError as e:
-            print("Failed to read file: ", e, file=sys.stderr)
-            exit(EXIT_CANT_READ_FILE)
-        placeholders = re.findall(r'\{(.*?)}', output)
+if args.v:
+    print(SCRIPT_TITLE)
+elif args.l:
+    print(json.dumps(configData, indent=4))
+elif args.g:
+    configToGet = args.g[0]
+    configValue = getConfigVal(configToGet)
+    print(configValue)
+elif args.t:
+    configFileToGet = args.t[0]
+    output = ""
+    try:
+        with open(configFileToGet, 'r') as file:
+            output = file.read()
+    except OSError as e:
+        print("Failed to read file: ", e, file=sys.stderr)
+        exit(EXIT_CANT_READ_FILE)
+    placeholders = re.findall(r'\{(.*?)}', output)
 
-        for curPlaceholder in placeholders:
-            # print("debug: resolving placeholder: " + curPlaceholder)
-            output = output.replace("{" + curPlaceholder + "}", getConfigVal(curPlaceholder, format=False))
+    for curPlaceholder in placeholders:
+        # print("debug: resolving placeholder: " + curPlaceholder)
+        output = output.replace("{" + curPlaceholder + "}", getConfigVal(curPlaceholder, format=False))
 
-        print(output)
-    else:
-        print("No input given.")
-        argParser.print_help()
-except RuntimeError:
-    print()
+    print(output)
+else:
+    print("No input given.")
+    argParser.print_help()
