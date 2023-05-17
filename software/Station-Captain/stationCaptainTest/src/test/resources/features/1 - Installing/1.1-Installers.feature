@@ -3,7 +3,7 @@
 @feature-1.1
 Feature: 1.1 - Installers
 
-	This feature covers the creation of installers.
+	This feature covers the creation and usage of installers.
 
 	@feature-1.1.1
 	Scenario: Installers are made

@@ -6,6 +6,9 @@
 		"testList": [
 			"hello",
 			"world"
-		]
+		],
+		"testObj": {
+			"testVal": "lorem"
+		}
 	}
 }

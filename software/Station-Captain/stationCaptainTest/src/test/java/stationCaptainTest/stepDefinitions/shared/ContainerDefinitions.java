@@ -34,11 +34,16 @@ public class ContainerDefinitions extends BaseStepDefinitions {
 		this.getContext().setContainerExecResult(result);
 	}
 	
+	@Then("command from the container returns with {int} code")
+	public void command_returns_with_code(int code) throws InterruptedException {
+		//		log.info("Waiting.");
+		//		Thread.sleep(5*60*1000);
+		assertEquals(code, this.getContext().getContainerExecResult().getExitCode());
+	}
+	
 	@Then("command from the container returns successfully")
 	public void command_returns_successfully() throws InterruptedException {
-//		log.info("Waiting.");
-//		Thread.sleep(5*60*1000);
-		assertEquals(0, this.getContext().getContainerExecResult().getExitCode());
+		this.command_returns_with_code(0);
 	}
 	
 }

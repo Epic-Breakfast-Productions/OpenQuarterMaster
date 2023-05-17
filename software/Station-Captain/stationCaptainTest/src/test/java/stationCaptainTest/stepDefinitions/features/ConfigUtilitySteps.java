@@ -12,6 +12,8 @@ import org.testcontainers.utility.MountableFile;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
@@ -48,5 +50,35 @@ public class ConfigUtilitySteps extends BaseStepDefinitions {
 		
 		assertTrue(object.has("captain"));
 		assertTrue(object.has("test"));
+	}
+	
+	@And("the configuration value {string} was returned")
+	public void theConfigurationValueWasReturned(String expectedOutput) {
+		String rawOutput = this.getContext().getContainerExecResult().getStdout().trim();
+		
+		assertEquals(expectedOutput, rawOutput);
+	}
+	
+	@And("the config template data returned has the placeholders filled")
+	public void theConfigTemplateDataReturnedHasThePlaceholdersFilled() {
+		String rawOutput = this.getContext().getContainerExecResult().getStdout().trim();
+		
+		assertFalse(rawOutput.matches("\\{(.*)}"));
+	}
+	
+	@And("the config command outputs about the file not found")
+	public void theConfigCommandOutputsAboutTheFileNotFound() {
+		String rawOutput = this.getContext().getContainerExecResult().getStderr().trim();
+		
+		assertTrue(rawOutput.contains("Failed to read file"));
+		assertTrue(rawOutput.contains("No such file or directory"));
+	}
+	
+	@And("the config command outputs about the config key {string} not found")
+	public void theConfigCommandOutputsAboutTheConfigKeyNotFound(String configKey) {
+		String rawOutput = this.getContext().getContainerExecResult().getStderr().trim();
+		
+		assertTrue(rawOutput.contains("Config key not found"));
+		assertTrue(rawOutput.contains(configKey));
 	}
 }

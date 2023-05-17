@@ -5,12 +5,17 @@
 import json
 import os
 import argparse
+import re
+import sys
 
 SCRIPT_VERSION = 'SCRIPT_VERSION'
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V${SCRIPT_VERSION}"
 CONFIGS_DIR = "/etc/oqm/config"
 MAIN_CONFIG_FILE = CONFIGS_DIR + "/mainConfig.yaml"
 ADD_CONFIG_DIR = CONFIGS_DIR + "/configs"
+
+EXIT_CANT_READ_FILE = 2
+EXIT_BAD_CONFIG_KEY = 3
 
 configData = {}
 
@@ -25,6 +30,10 @@ if not os.path.isfile(MAIN_CONFIG_FILE):
     }
 }
 ''')
+
+
+class ConfigKeyNotFoundException(Exception):
+    pass
 
 
 def readFile(file: str) -> dict:
@@ -46,19 +55,37 @@ for file in os.listdir(ADD_CONFIG_DIR):
         continue
 
 
-def getConfigVal(configKey: str, data: dict = configData) -> str:
+def getConfigValRec(configKey: str, data: dict = configData, format=True) -> str:
+    # print("debug:: configKey: " + configKey)
+    # print("debug:: data: " + json.dumps(data, indent=4))
     if "." in configKey:
         parts = configKey.split(".", 1)
         curConfig = parts[0]
         keyLeft = parts[1]
 
-        return getConfigVal(keyLeft, data[curConfig])
+        if curConfig not in data:
+            raise ConfigKeyNotFoundException()
+
+        return getConfigValRec(keyLeft, data[curConfig])
+    if configKey not in data:
+        raise ConfigKeyNotFoundException()
     result = data[configKey]
     if isinstance(result, (dict, list)):
-        result = json.dumps(result, indent=4)
+        if format:
+            result = json.dumps(result, indent=4)
+        else:
+            result = json.dumps(result)
     elif not isinstance(result, str):
         result = str(result)
     return result
+
+
+def getConfigVal(configKey: str, data: dict = configData, format=True) -> str:
+    try:
+        return getConfigValRec(configKey, data, format)
+    except ConfigKeyNotFoundException:
+        print("ERROR: Config key not found: " + configKey, file=sys.stderr)
+        exit(EXIT_BAD_CONFIG_KEY)
 
 
 argParser = argparse.ArgumentParser(
@@ -68,26 +95,38 @@ argParser = argparse.ArgumentParser(
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
 argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-argParser.add_argument('-t', '--template', dest="t", help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
-
+argParser.add_argument('-t', '--template', dest="t",
+                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
 
 args = argParser.parse_args()
 
-if args.v:
-    print(SCRIPT_TITLE)
-elif args.l:
-    print(json.dumps(configData, indent=4))
-elif args.g:
-    configToGet = args.g[0]
-    configValue = getConfigVal(configToGet)
-    print(configValue)
-elif args.t:
-    configFileToGet = args.t[0]
-    output = ""
-    with open(configFileToGet, 'r') as file:
-        output = file.read()
+try:
+    if args.v:
+        print(SCRIPT_TITLE)
+    elif args.l:
+        print(json.dumps(configData, indent=4))
+    elif args.g:
+        configToGet = args.g[0]
+        configValue = getConfigVal(configToGet)
+        print(configValue)
+    elif args.t:
+        configFileToGet = args.t[0]
+        output = ""
+        try:
+            with open(configFileToGet, 'r') as file:
+                output = file.read()
+        except OSError as e:
+            print("Failed to read file: ", e, file=sys.stderr)
+            exit(EXIT_CANT_READ_FILE)
+        placeholders = re.findall(r'\{(.*?)}', output)
 
-    print(output.format(c=configData))
-else:
-    print("No input given.")
-    argParser.print_help()
+        for curPlaceholder in placeholders:
+            # print("debug: resolving placeholder: " + curPlaceholder)
+            output = output.replace("{" + curPlaceholder + "}", getConfigVal(curPlaceholder, format=False))
+
+        print(output)
+    else:
+        print("No input given.")
+        argParser.print_help()
+except RuntimeError:
+    print()

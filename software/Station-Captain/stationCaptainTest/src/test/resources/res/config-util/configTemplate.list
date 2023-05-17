@@ -1,3 +1,5 @@
-test.testStr="{c.test.testStr}"
-test.testInt={c.test.testInt}
-test.testDouble={c.test.testDouble}
+test.testStr="{test.testStr}"
+test.testInt={test.testInt}
+test.testDouble={test.testDouble}
+test.testObjVal={test.testObj.testVal}
+

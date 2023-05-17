@@ -48,7 +48,7 @@ jobs:  # This workflow contains a single job called "build"
           path: "software/Station-Captain/bin"
 
   # This workflow contains a single job called "build"
-  buildTestUbuntu:
+  testUbuntu:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -84,7 +84,7 @@ jobs:  # This workflow contains a single job called "build"
           access-token: ${{ secrets.GITHUB_TOKEN }}
           path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"  # This workflow contains a single job called "build"
   # This workflow contains a single job called "build"
-  buildTestFedora:
+  testFedora:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
