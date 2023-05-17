@@ -20,7 +20,7 @@ Feature: 3.1 - Config Utility
 		And the configurations are listed as output
 
 	@feature-3.1.2
-	Scenario Outline: Get a particular config value
+	Scenario Outline: Get a particular config value "<key>"
 
 	This tests that configs can be grabbed individually
 
@@ -36,7 +36,7 @@ Feature: 3.1 - Config Utility
 
 	@feature-3.1.2
 	@type-error
-	Scenario Outline: Get a particular config value - bad config key
+	Scenario Outline: Get a particular config value - bad config key "<key>"
 
 	This tests that when given a bad config key, the error is handled gracefully
 
