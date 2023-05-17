@@ -25,6 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstallerSteps extends BaseStepDefinitions {
 	
+	private static ShellProcessResults MAKE_INSTALLER_RESULTS;
+	
+	private static synchronized ShellProcessResults makeInstallers() throws IOException, InterruptedException {
+		if(MAKE_INSTALLER_RESULTS == null){
+			MAKE_INSTALLER_RESULTS = ShellProcessResults.builderFromProcessBuilder(
+				new ProcessBuilder(FileLocationConstants.MAKE_INSTALLERS_SH)
+			).build();
+		}
+		
+		return MAKE_INSTALLER_RESULTS;
+	}
+	
 	public InstallerSteps(TestContext context) {
 		super(context);
 	}
@@ -37,9 +49,7 @@ public class InstallerSteps extends BaseStepDefinitions {
 	
 	@When("the command to make the installers are made")
 	public void the_command_to_make_the_installers_are_made() throws InterruptedException, IOException {
-		ShellProcessResults results = ShellProcessResults.builderFromProcessBuilder(
-			new ProcessBuilder(FileLocationConstants.MAKE_INSTALLERS_SH)
-		).build();
+		ShellProcessResults results = makeInstallers();
 		
 		AttachUtils.attach(results, "Build installers", this.getScenario());
 		
