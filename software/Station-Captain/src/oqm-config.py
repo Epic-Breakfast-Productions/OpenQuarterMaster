@@ -58,6 +58,8 @@ for file in os.listdir(ADD_CONFIG_DIR):
 def getConfigValRec(configKey: str, data: dict = configData, format=True) -> str:
     # print("debug:: configKey: " + configKey)
     # print("debug:: data: " + json.dumps(data, indent=4))
+    if not isinstance(data, dict):
+        raise ConfigKeyNotFoundException()
     if "." in configKey:
         parts = configKey.split(".", 1)
         curConfig = parts[0]
