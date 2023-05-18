@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static stationCaptainTest.constants.ContainerConstants.UBUNTU_20_04_IMAGE;
+import static stationCaptainTest.constants.ContainerConstants.UBUNTU_22_04_IMAGE;
 
 @Slf4j
 public final class ContainerUtils {
@@ -97,8 +97,8 @@ public final class ContainerUtils {
 		}
 		
 		DockerImageName dockerImageName = switch (os){
-			case "ubuntu", "ubuntu 20.04" -> UBUNTU_20_04_IMAGE;
-			case "fedora", "fedora 37" -> ContainerConstants.FEDORA_37_IMAGE;
+			case "ubuntu", "ubuntu 22.04" -> UBUNTU_22_04_IMAGE;
+			case "fedora", "fedora 38" -> ContainerConstants.FEDORA_38_IMAGE;
 			default -> throw new IllegalArgumentException("Unsupported OS given: " + os);
 		};
 		
