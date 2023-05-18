@@ -7,6 +7,7 @@ import os
 import argparse
 import re
 import sys
+from json import JSONDecodeError
 
 SCRIPT_VERSION = 'SCRIPT_VERSION'
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V${SCRIPT_VERSION}"
@@ -16,7 +17,21 @@ ADD_CONFIG_DIR = CONFIGS_DIR + "/configs"
 
 EXIT_CANT_READ_FILE = 2
 EXIT_BAD_CONFIG_KEY = 3
+EXIT_CONFIG_READ_ERR = 4
 
+#Setup argument parser
+argParser = argparse.ArgumentParser(
+    prog=SCRIPT_TITLE,
+    description="This script is a utility to help manage openQuarterMaster's configuration."
+)
+argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
+argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
+argParser.add_argument('-t', '--template', dest="t",
+                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
+
+
+# Will contain all data read in from files.
 configData = {}
 
 # Ensure main config, additional configs dir exist
@@ -26,14 +41,9 @@ if not os.path.isfile(MAIN_CONFIG_FILE):
         stream.write('''
 {
     "captain": {
-        "test": "hello"
     }
 }
 ''')
-
-
-class ConfigKeyNotFoundException(Exception):
-    pass
 
 
 def readFile(file: str) -> dict:
@@ -42,10 +52,15 @@ def readFile(file: str) -> dict:
     :param file:
     :return:
     """
-    with open(file, 'r') as stream:
-        return json.load(stream)
+    try:
+        with open(file, 'r') as stream:
+            return json.load(stream)
+    except (OSError, JSONDecodeError) as e:
+        print("Error: failed to read file " + file + " into configuration: ", e, file=sys.stderr)
+        exit(EXIT_CONFIG_READ_ERR)
 
 
+# Read in configuration
 configData = readFile(MAIN_CONFIG_FILE)
 for file in os.listdir(ADD_CONFIG_DIR):
     if file.endswith(".json"):
@@ -55,7 +70,20 @@ for file in os.listdir(ADD_CONFIG_DIR):
         continue
 
 
-def getConfigValRec(configKey: str, data: dict = configData, format=True) -> str:
+# Exception to throw when config errors occur
+class ConfigKeyNotFoundException(Exception):
+    pass
+
+
+def getConfigValRec(configKey: str, data: dict, format) -> str:
+    """
+    Recursive function to get a particular value in the data
+    :param configKey: The configuration to get, dot notation I.E. "test.value"
+    :param data: The dict to find the configuration in
+    :param format: If returning an object or list, if to format the data 'pretty'
+    :except ConfigKeyNotFoundException if a value could not be found for the given key
+    :return: The value found as a String
+    """
     # print("debug:: configKey: " + configKey)
     # print("debug:: data: " + json.dumps(data, indent=4))
     if not isinstance(data, dict):
@@ -68,7 +96,7 @@ def getConfigValRec(configKey: str, data: dict = configData, format=True) -> str
         if curConfig not in data:
             raise ConfigKeyNotFoundException()
 
-        return getConfigValRec(keyLeft, data[curConfig])
+        return getConfigValRec(keyLeft, data[curConfig], format)
     if configKey not in data:
         raise ConfigKeyNotFoundException()
     result = data[configKey]
@@ -89,16 +117,6 @@ def getConfigVal(configKey: str, data: dict = configData, format=True) -> str:
         print("ERROR: Config key not found: " + configKey, file=sys.stderr)
         exit(EXIT_BAD_CONFIG_KEY)
 
-
-argParser = argparse.ArgumentParser(
-    prog=SCRIPT_TITLE,
-    description="This script is a utility to help manage openQuarterMaster's configuration."
-)
-argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
-argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-argParser.add_argument('-t', '--template', dest="t",
-                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
 
 args = argParser.parse_args()
 
