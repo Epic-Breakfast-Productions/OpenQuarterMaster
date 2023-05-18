@@ -22,8 +22,7 @@ defaults:
   run:
     working-directory: "software/Station-Captain"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
+jobs:  # This workflow contains a single job called "build"
   buildTest:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -38,11 +37,8 @@ jobs:
           distribution: 'adopt'
       - name: Install dependencies
         run: sudo apt-get install -y dpkg-dev rpm rpmlint jq asciidoctor
-      - name: Build with Maven
-        run: ./mvnw verify
-        working-directory: software/Station-Captain/stationCaptainTest
-    
-          # Runs a single command using the runners shell
+
+        # Runs a single command using the runners shell
       - name: Make Installers
         run: ./makeInstallers.sh
       - name: Archive Installers
@@ -50,13 +46,82 @@ jobs:
         with:
           name: Installers Produced
           path: "software/Station-Captain/bin"
-      - name: Archive Cucumber Reports
+
+  # This workflow contains a single job called "build"
+  testUbuntu:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      -
+        uses: actions/checkout@v3
+      -
+        name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      -
+        name: Install dependencies
+        run: sudo apt-get install -y dpkg-dev rpm rpmlint jq asciidoctor
+      -
+        name: Build with Maven
+        run: ./mvnw verify -Dtest.installer="deb" -Dtest.os="ubuntu"
+        working-directory: software/Station-Captain/stationCaptainTest
+        
+        # Runs a single command using the runners shell
+      -
+        name: Archive Cucumber Reports Ubuntu
+        if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: Cucumber Test Reports
+          name: Cucumber Test Reports Ubuntu
           path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
-      - name: Cucumber Test Results to Annotation
+      -
+        name: Cucumber Test Results to Annotation Ubuntu
+        if: always()
         uses: deblockt/cucumber-report-annotations-action@v1.7
         with:
+          name: Ubuntu Cucumber Reports
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
+  # This workflow contains a single job called "build"
+  testFedora:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      -
+        uses: actions/checkout@v3
+      -
+        name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      -
+        name: Install dependencies
+        run: sudo apt-get install -y dpkg-dev rpm rpmlint jq asciidoctor
+      -
+        name: Build with Maven
+        run: ./mvnw verify -Dtest.installer="rpm" -Dtest.os="fedora"
+        working-directory: software/Station-Captain/stationCaptainTest
+      
+        # Runs a single command using the runners shell
+      -
+        name: Archive Cucumber Reports Fedora
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Cucumber Test Reports Fedora
+          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
+      -
+        name: Cucumber Test Results to Annotation Fedora
+        if: always()
+        uses: deblockt/cucumber-report-annotations-action@v1.7
+        with:
+          name: Fedora Cucumber Reports
           access-token: ${{ secrets.GITHUB_TOKEN }}
           path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
