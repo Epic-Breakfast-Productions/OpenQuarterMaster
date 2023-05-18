@@ -48,7 +48,7 @@ if not os.path.isfile(MAIN_CONFIG_FILE):
 
 def readFile(file: str) -> dict:
     """
-    Reads a file into a python dict
+    Reads a file into a python dict. If error in reading or parsing, exits
     :param file:
     :return:
     """
