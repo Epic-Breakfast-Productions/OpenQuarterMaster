@@ -15,7 +15,8 @@
 #
 # TODO:: Figure out how logs work
 
-configFile="installerProperties.json"
+srcDir="installerSrc"
+configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"
 
 debDir="StationCaptainDeb"
@@ -40,12 +41,12 @@ mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-cp oqm-base-station.desktop "$buildDir/$debDir/usr/share/applications/"
+cp "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
 
 serviceFile="open+quarter+master-core-base+station.service"
 serviceFileEscaped="$(systemd-escape "$serviceFile")"
 
-cp "$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/

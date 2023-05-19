@@ -9,8 +9,8 @@
 		"deb": "curl, jq, docker.io, docker, open+quarter+master-infra-jaeger, open+quarter+master-infra-mongodb"
 	},
 	"copyright": {
-		"contact":"Greg Stewart <contact@gjstewart.net>",
-		"copyright":"2021-2022 Greg Stewart",
+		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
+		"copyright":"2021-2023 Greg Stewart",
 		"licence":"GPL-3+"
 	}
 }
