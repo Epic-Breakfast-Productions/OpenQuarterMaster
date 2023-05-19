@@ -59,6 +59,7 @@ mkdir -p "$buildDir/$debDir/usr/share/applications"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
 
 install -m 755 -D src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
+install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
 install -m 755 -D src/oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
 install -m 755 -D src/integration/oqm-icon.svg "$buildDir/$debDir/etc/oqm/static/"
 install -m 755 -D src/integration/oqm-sc-icon.svg "$buildDir/$debDir/etc/oqm/static/"
@@ -118,6 +119,7 @@ cp -r "src" "$sourcesDir"
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
 sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
+sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-config.py"
 cp "$userGuideFile" "$sourcesDir/integration/stationCaptainUserGuide.html"
 
 sourcesBundle="$sourcesDir.tar.gz"
@@ -152,6 +154,7 @@ mkdir -p %{buildroot}/etc/oqm/static
 mkdir -p %{buildroot}/usr/share/applications
 
 install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
+install -m 755 -D oqm-config.py %{buildroot}/%{_bindir}/oqm-config
 install -m 755 -D lib/* %{buildroot}%{_libdir}/oqm/station-captain/
 
 install -m 755 -D oqm-station-captain-help.txt %{buildroot}/etc/oqm/static/
@@ -168,6 +171,7 @@ rm -rf ${buildroot}
 
 %files
 %{_bindir}/oqm-captain
+%{_bindir}/oqm-config
 %{_libdir}/oqm/station-captain/*
 /etc/oqm/static/oqm-station-captain-help.txt
 /etc/oqm/static/stationCaptainUserGuide.html
