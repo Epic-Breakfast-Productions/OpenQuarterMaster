@@ -3,14 +3,14 @@
 # Script to get configuration and replace values
 #
 import json
+from json import JSONDecodeError
 import os
 import argparse
 import re
 import sys
-from json import JSONDecodeError
 
 SCRIPT_VERSION = 'SCRIPT_VERSION'
-SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V${SCRIPT_VERSION}"
+SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V"+SCRIPT_VERSION
 CONFIGS_DIR = "/etc/oqm/config"
 MAIN_CONFIG_FILE = CONFIGS_DIR + "/mainConfig.json"
 ADD_CONFIG_DIR = CONFIGS_DIR + "/configs"
@@ -21,7 +21,7 @@ EXIT_CONFIG_READ_ERR = 4
 
 #Setup argument parser
 argParser = argparse.ArgumentParser(
-    prog=SCRIPT_TITLE,
+    prog="oqm-config",
     description="This script is a utility to help manage openQuarterMaster's configuration."
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
