@@ -36,6 +36,7 @@ RELEASE_LIST_FILE_CUR="$META_INFO_DIR/releases_cur.json"
 RELEASE_VERSIONS_DIR="$META_INFO_DIR/versions"
 RELEASE_INFRA_VERSIONS="$RELEASE_VERSIONS_DIR/infra.json"
 RELEASE_MNGR_VERSIONS="$RELEASE_VERSIONS_DIR/manager.json"
+BACKUP_SCRIPTS_LOC="$SHARED_CONFIG_DIR/backupScripts"
 
 # Selection
 USER_SELECT_FILE="$TMP_DIR/oqm-captain-input"
@@ -168,6 +169,8 @@ source "$LIB_DIR/file-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib file-utils"; fi;
 source "$LIB_DIR/service-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
+source "$LIB_DIR/backup_restore.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib backup_restore"; fi;
 
 
 

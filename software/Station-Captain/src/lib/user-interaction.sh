@@ -350,6 +350,32 @@ function ui_manageInstallDialog() {
 	done
 }
 
+
+function ui_backupsDialog() {
+	while true; do
+		ui_showDialog --title "Backups" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Trigger Backups Now" \
+			2 "Enable/disable automatic backups TODO" \
+			3 "Set backup location TODO" \
+			4 "Set number of backups to keep TODO" \
+			4 "Set backup frequency TODO" \
+			2>$USER_SELECT_FILE
+		ui_updateSelection
+
+		case $SELECTION in
+		1)
+			ui_showDialog --infobox "Performing backup, please wait." 3 $DEFAULT_WIDTH
+			backRes_backup
+			ui_showDialog --title "Finished backing up." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+
 function ui_mainUi() {
 	while true; do
 		ui_showDialog --title "Main Menu" \
@@ -369,7 +395,8 @@ function ui_mainUi() {
 		2)
 			ui_manageInstallDialog
 			;;
-		3) # TODO:manage backups
+		3)
+			ui_backupsDialog
 			;;
 		4)
 			ui_updatesDialog
