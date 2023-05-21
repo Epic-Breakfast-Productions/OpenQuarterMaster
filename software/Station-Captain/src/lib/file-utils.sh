@@ -7,5 +7,5 @@ function files_clearData(){
 }
 function files_clearConfig(){
 	# rm -rf "$CONFIG_VALUES_DIR"
-	rm -rf "$SERICE_CONFIG_DIR"
+	rm -rf "$SERVICE_CONFIG_DIR"
 }
