@@ -23,7 +23,12 @@ function backRes_backup(){
 	#echo "Calling backup scripts"
 
 	for backupScript in "$BACKUP_SCRIPTS_LOC"/*; do
-		echo "$backupScript --backup \"$compilingDir\"";
+		eval "$backupScript --backup -d \"$compilingDir\"";
+		local result="$?"
+		if [ "$result" -ne 0 ]; then
+			echo "FAILED: $result";
+			# TODO:: end
+		fi
 	done
 
 	# start services back up
