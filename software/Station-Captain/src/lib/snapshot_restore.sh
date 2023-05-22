@@ -22,7 +22,7 @@ function snapRes_snapshot(){
 
 	#echo "Calling backup scripts"
 
-	for backupScript in "$BACKUP_SCRIPTS_LOC"/*; do
+	for backupScript in "SNAPSHOT_SCRIPTS_LOC"/*; do
 		eval "$backupScript --snapshot -d \"$compilingDir\"";
 		local result="$?"
 		if [ "$result" -ne 0 ]; then

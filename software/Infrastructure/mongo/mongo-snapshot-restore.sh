@@ -1,5 +1,5 @@
 #!/bin/bash
-source /etc/oqm/backup/snapshot-restore-base.sh
+source /etc/oqm/snapshot/snapshot-restore-base.sh
 
 #echo "$mode"
 #echo "$targetDir"
