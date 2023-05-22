@@ -2,13 +2,13 @@
 # Functions to handle backing up and restoring data
 #
 
-function backRes_backup(){
+function snapRes_snapshot(){
 	# stop everything for a clean backup
 	services-stop
 
 	# Setup locations
-	local backupName="backup-$(date +"%Y.%m.%d-%H.%M.%S")"
-	local compilingDir="$TMP_DIR/backup/$backupName";
+	local snapshotName="snapshot-$(date +"%Y.%m.%d-%H.%M.%S")"
+	local compilingDir="$TMP_DIR/snapshots/$snapshotName";
 	local configsDir="$compilingDir/configs"
 	local serviceConfigsDir="$compilingDir/serviceConfigs"
 	local dataDir="$compilingDir/data"
@@ -23,7 +23,7 @@ function backRes_backup(){
 	#echo "Calling backup scripts"
 
 	for backupScript in "$BACKUP_SCRIPTS_LOC"/*; do
-		eval "$backupScript --backup -d \"$compilingDir\"";
+		eval "$backupScript --snapshot -d \"$compilingDir\"";
 		local result="$?"
 		if [ "$result" -ne 0 ]; then
 			echo "FAILED: $result";
@@ -34,19 +34,18 @@ function backRes_backup(){
 	# start services back up
 	services-start
 
-	local backupLocation=$(oqm-config -g backups.location)
-	local backupArchiveName="$backupLocation$backupName.tar.gz"
-	mkdir -p "$backupLocation"
+	local snapshotLocation=$(oqm-config -g snapshots.location)
+	local snapshotArchiveName="$snapshotLocation/$snapshotName.tar.gz"
+	mkdir -p "$snapshotLocation"
 
-	#echo "Backup archive: $backupArchiveName"
+	#echo "Snapshot archive: $snapshotArchiveName"
 
-	tar -czvf "$backupArchiveName" -C "$compilingDir" $(ls -A "$compilingDir")
+	tar -czvf "$snapshotArchiveName" -C "$compilingDir" $(ls -A "$compilingDir")
 
 	rm -rf "$compilingDir"
 }
 
-function backRes_restore(){
+function snapRes_restore(){
 	local something=""
 	# TODO
-
 }

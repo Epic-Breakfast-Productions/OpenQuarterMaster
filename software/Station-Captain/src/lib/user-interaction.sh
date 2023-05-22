@@ -253,7 +253,7 @@ function ui_cleanupDialog() {
 			ui_showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		2)
-			ui_showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to backup your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			ui_showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to snapshot your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 			case $? in
 			0)
 				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
@@ -351,23 +351,23 @@ function ui_manageInstallDialog() {
 }
 
 
-function ui_backupsDialog() {
+function ui_snapshotsDialog() {
 	while true; do
-		ui_showDialog --title "Backups" \
+		ui_showDialog --title "Snapshots" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
-			1 "Trigger Backups Now" \
-			2 "Enable/disable automatic backups TODO" \
-			3 "Set backup location TODO" \
-			4 "Set number of backups to keep TODO" \
-			4 "Set backup frequency TODO" \
+			1 "Trigger Snapshot Now" \
+			2 "Enable/disable automatic snapshots TODO" \
+			3 "Set snapshot location TODO" \
+			4 "Set number of snapshots to keep TODO" \
+			4 "Set snapshot frequency TODO" \
 			2>$USER_SELECT_FILE
 		ui_updateSelection
 
 		case $SELECTION in
 		1)
-			ui_showDialog --infobox "Performing backup, please wait." 3 $DEFAULT_WIDTH
-			backRes_backup
-			ui_showDialog --title "Finished backing up." --msgbox "" 0 $DEFAULT_WIDTH
+			ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
+			snapRes_snapshot
+			ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		*)
 			return
@@ -381,7 +381,7 @@ function ui_mainUi() {
 		ui_showDialog --title "Main Menu" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT 1 "Info / Status" \
 			2 "Manage Installation" \
-			3 "Backups" \
+			3 "Snapshots" \
 			4 "Updates" \
 			5 "Captain Settings" \
 			2>$USER_SELECT_FILE
@@ -396,7 +396,7 @@ function ui_mainUi() {
 			ui_manageInstallDialog
 			;;
 		3)
-			ui_backupsDialog
+			ui_snapshotsDialog
 			;;
 		4)
 			ui_updatesDialog

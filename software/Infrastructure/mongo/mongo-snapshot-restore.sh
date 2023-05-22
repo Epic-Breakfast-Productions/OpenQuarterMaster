@@ -1,5 +1,5 @@
 #!/bin/bash
-source /etc/oqm/backup/backup-restore-base.sh
+source /etc/oqm/backup/snapshot-restore-base.sh
 
 #echo "$mode"
 #echo "$targetDir"
@@ -7,7 +7,7 @@ source /etc/oqm/backup/backup-restore-base.sh
 mongoDataDir="/data/oqm/db/mongo"
 mongoTargetDir="$targetDir/data/infra/mongodb/"
 
-if [ "$mode" == "backup" ]; then
+if [ "$mode" == "snapshot" ]; then
         mkdir -p "$mongoTargetDir"
         cp -R "$mongoDataDir/." "$mongoTargetDir"
 else

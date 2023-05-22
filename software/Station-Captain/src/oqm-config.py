@@ -46,8 +46,8 @@ try:
 {
     "captain": {
     },
-    "backups": {
-        "location": "/data/oqm-backups/",
+    "snapshots": {
+        "location": "/data/oqm-snapshots/",
         "numToKeep": 5
     }
 }

@@ -169,8 +169,8 @@ source "$LIB_DIR/file-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib file-utils"; fi;
 source "$LIB_DIR/service-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
-source "$LIB_DIR/backup_restore.sh"
-if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib backup_restore"; fi;
+source "$LIB_DIR/snapshot_restore.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib snapshot_restore"; fi;
 
 
 

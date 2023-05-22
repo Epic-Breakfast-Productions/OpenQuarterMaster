@@ -1,11 +1,11 @@
 #!/bin/bash
-echo "script2 got $# args: $@"
+#echo "got $# args: $@"
 
 HELPTEXT="Usage:"
 
-ARGS_SHORT="hbrd:"
-ARGS_LONG="help,backup,restore,dir:"
-OPTS=$(getopt -a -n backup-restore-base.sh --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
+ARGS_SHORT="hsrd:"
+ARGS_LONG="help,snapshot,restore,dir:"
+OPTS=$(getopt -a -n snapshot-restore-base.sh --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
 
 VALID_ARGUMENTS=$# # Returns the count of arguments that are in short or long options
 if [ "$VALID_ARGUMENTS" -eq 0 ]; then
@@ -24,8 +24,8 @@ do
                         echo "$HELPTEXT";
                         exit;
                 ;;
-                -b | --backup)
-                        mode="backup"
+                -s | --snapshot)
+                        mode="snapshot"
                         shift
                 ;;
                 -r | --restore)
