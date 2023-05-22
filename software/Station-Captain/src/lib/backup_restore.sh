@@ -3,7 +3,8 @@
 #
 
 function backRes_backup(){
-	# TODO:: stop everything?
+	# stop everything for a clean backup
+	services-stop
 
 	# Setup locations
 	local backupName="backup-$(date +"%Y.%m.%d-%H.%M.%S")"
@@ -24,6 +25,9 @@ function backRes_backup(){
 	for backupScript in "$BACKUP_SCRIPTS_LOC"/*; do
 		echo "$backupScript --backup \"$compilingDir\"";
 	done
+
+	# start services back up
+	services-start
 
 	local backupLocation=$(oqm-config -g backups.location)
 	local backupArchiveName="$backupLocation$backupName.tar.gz"
