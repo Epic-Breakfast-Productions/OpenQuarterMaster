@@ -114,6 +114,17 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
+	 * The map of items that are checked out; items that are out of storage but still tracked in the system.
+	 * <p>
+	 * Use cases: - Library checking out books - Equipment rentals - Equipment sign-out - Items in use
+	 * <p>
+	 * TODO::
+	 * Determine if this is the best way to keep track; what to keep track here, what to keep track in history, how the data moves as items are checked out and brought back
+	 * Make new checkout object, use ObjectId for this?
+	 */
+	private Map<@NonNull CheckoutDetail, @NonNull W> checkoutMap = new LinkedHashMap<>();
+	
+	/**
 	 * The total amount of that item in storage, in the {@link #getUnit()} unit.
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
