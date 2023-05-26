@@ -260,7 +260,7 @@ function ui_cleanupDialog() {
 
 				services-stop
 
-				files-clearData
+				files_clearData
 
 				services-start
 
@@ -350,24 +350,58 @@ function ui_manageInstallDialog() {
 	done
 }
 
+function ui_snapshotsRestoreDialog() {
+	ui_showDialog --title "Please choose a snapshot to restore:" \
+	--fselect "$(oqm-config -g snapshots.location)/*" $DEFAULT_HEIGHT $SUPER_WIDE_WIDTH \
+	2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local fileSelected="$SELECTION"
+	echo "File selected: \"$fileSelected\""
+
+	if [ ! -f "$fileSelected" ]; then
+		ui_showDialog --title "Invalid file selected." --msgbox "" 0 $DEFAULT_WIDTH
+		return
+	fi
+
+	ui_showDialog --title "Perform snapshot first?" --yesno "This is an irreversible action without an available snapshot.\nTake precautionary snapshot now?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+	case $? in
+	0)
+		ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
+		snapRes_snapshot "pre_restore"
+		ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+		;;
+	*)
+		echo "Not performing preemptive snapshot."
+		;;
+	esac
+
+	ui_showDialog --infobox "Restoring from snapshot, please wait." 3 $DEFAULT_WIDTH
+	snapRes_restore "$fileSelected"
+	ui_showDialog --title "Finished restore." --msgbox "" 0 $DEFAULT_WIDTH
+}
 
 function ui_snapshotsDialog() {
 	while true; do
 		ui_showDialog --title "Snapshots" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Trigger Snapshot Now" \
-			2 "Enable/disable automatic snapshots TODO" \
-			3 "Set snapshot location TODO" \
-			4 "Set number of snapshots to keep TODO" \
-			4 "Set snapshot frequency TODO" \
+			2 "Restore from snapshot" \
+			3 "Enable/disable automatic snapshots TODO" \
+			4 "Set snapshot location TODO" \
+			5 "Set number of snapshots to keep TODO" \
+			6 "Set snapshot frequency TODO" \
 			2>$USER_SELECT_FILE
 		ui_updateSelection
 
 		case $SELECTION in
 		1)
 			ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
-			snapRes_snapshot
+			snapRes_snapshot "on_demand"
 			ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+			;;
+		2)
+			ui_snapshotsRestoreDialog
 			;;
 		*)
 			return

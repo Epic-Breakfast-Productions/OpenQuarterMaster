@@ -3,11 +3,12 @@
 #
 
 function snapRes_snapshot(){
-	# stop everything for a clean backup
+	local snapshotTrigger="$1"
+	# stop everything for a clean snapshot
 	services-stop
 
 	# Setup locations
-	local snapshotName="snapshot-$(date +"%Y.%m.%d-%H.%M.%S")"
+	local snapshotName="snapshot-$(date +"%Y.%m.%d-%H.%M.%S")-$snapshotTrigger"
 	local compilingDir="$TMP_DIR/snapshots/$snapshotName";
 	local configsDir="$compilingDir/configs"
 	local serviceConfigsDir="$compilingDir/serviceConfigs"
@@ -27,7 +28,7 @@ function snapRes_snapshot(){
 		local result="$?"
 		if [ "$result" -ne 0 ]; then
 			echo "FAILED: $result";
-			# TODO:: end
+			return 1
 		fi
 	done
 
@@ -46,6 +47,38 @@ function snapRes_snapshot(){
 }
 
 function snapRes_restore(){
-	local something=""
-	# TODO
+	local snapshotFile="$1"
+
+	local extractionDir="$TMP_DIR/snapshots/curExtraction"
+
+	mkdir -p "$extractionDir"
+
+	tar -xf "$snapshotFile" -C "$extractionDir"
+	if [ "$?" -ne 0 ]; then
+		echo "FAILED to extract snapshot.";
+		return 1
+	fi
+
+	services-stop
+
+	for backupScript in "$SNAPSHOT_SCRIPTS_LOC"/*; do
+		eval "$backupScript --restore -d \"$extractionDir\"";
+		local result="$?"
+		if [ "$result" -ne 0 ]; then
+			echo "FAILED to restore from script \"$backupScript\": $result";
+			return 2
+		fi
+	done
+
+	# TODO:: we forgot about mainConfig
+	local restoringConfigs="$extractionDir/configs/"
+	local restoringServiceConfigs=""
+
+	rm -rf "$CONFIG_VALUES_DIR/*"
+	cp -R "$CONFIG_VALUES_DIR/." "$configsDir"
+	cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
+
+
+
+	services-start
 }
