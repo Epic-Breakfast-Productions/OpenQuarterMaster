@@ -6,5 +6,6 @@ function files_clearData(){
 	rm -rf "$DATA_DIR"
 }
 function files_clearConfig(){
-	rm -rf "$SHARED_CONFIG_DIR"
+	# rm -rf "$CONFIG_VALUES_DIR"
+	rm -rf "$SERICE_CONFIG_DIR"
 }
