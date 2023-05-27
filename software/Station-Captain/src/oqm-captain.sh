@@ -121,6 +121,10 @@ Usage:
 			TODO
 			Purges ALL data stored by the system. Do so with care, recommend backing up data first.
 
+		-s tag
+		--snapshot tag
+			Takes a snapshot and tags it with the given string.
+
 	System Management:
 
 		--image-clean
@@ -211,8 +215,8 @@ if [ "$#" -eq 0 ]; then
 	ui.doInteraction
 fi
 
-ARGS_SHORT="v,h"
-ARGS_LONG="version,help"
+ARGS_SHORT="vhs:"
+ARGS_LONG="version,help,snapshot:"
 
 OPTS=$(getopt -a -n oqm-captain --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
 
@@ -232,6 +236,12 @@ do
 		;;
 		-h | --help)
 			echo "$HELPTEXT";
+			exitProg;
+		;;
+		-s | --snapshot)
+			snapTag="$2"
+			shift 2
+			snapRes_snapshot "$snapTag"
 			exitProg;
 		;;
 		--)
