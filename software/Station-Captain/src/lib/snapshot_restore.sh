@@ -10,7 +10,7 @@ function snapRes_snapshot(){
 	# Setup locations
 	local snapshotName="snapshot-$(date +"%Y.%m.%d-%H.%M.%S")-$snapshotTrigger"
 	local compilingDir="$TMP_DIR/snapshots/$snapshotName";
-	local configsDir="$compilingDir/configs"
+	local configsDir="$compilingDir/config"
 	local serviceConfigsDir="$compilingDir/serviceConfigs"
 	local dataDir="$compilingDir/data"
 
@@ -18,7 +18,7 @@ function snapRes_snapshot(){
 	mkdir -p "$serviceConfigsDir"
 	mkdir -p "$dataDir"
 
-	cp -R "$CONFIG_VALUES_DIR/." "$configsDir"
+	cp -R "$CONFIG_DIR/." "$configsDir"
 	cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
 
 	#echo "Calling backup scripts"
@@ -42,6 +42,10 @@ function snapRes_snapshot(){
 	#echo "Snapshot archive: $snapshotArchiveName"
 
 	tar -czvf "$snapshotArchiveName" -C "$compilingDir" $(ls -A "$compilingDir")
+	if [ "$?" -ne 0 ]; then
+		echo "FAILED to compress snapshot files.";
+		return 1
+	fi
 
 	rm -rf "$compilingDir"
 }
@@ -51,11 +55,12 @@ function snapRes_restore(){
 
 	local extractionDir="$TMP_DIR/snapshots/curExtraction"
 
+	rm -rf "$extractionDir"
 	mkdir -p "$extractionDir"
 
 	tar -xf "$snapshotFile" -C "$extractionDir"
 	if [ "$?" -ne 0 ]; then
-		echo "FAILED to extract snapshot.";
+		echo "FAILED to extract snapshot data.";
 		return 1
 	fi
 
@@ -70,15 +75,21 @@ function snapRes_restore(){
 		fi
 	done
 
+	echo "DEBUG:: restoring configration"
 	# TODO:: we forgot about mainConfig
-	local restoringConfigs="$extractionDir/configs/"
-	local restoringServiceConfigs=""
+	local restoringConfigs="$extractionDir/config"
+	local restoringServiceConfigs="$extractionDir/serviceConfigs"
 
-	rm -rf "$CONFIG_VALUES_DIR/*"
-	cp -R "$CONFIG_VALUES_DIR/." "$configsDir"
-	cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
+	rm -rf "$CONFIG_DIR"/*
+	cp -R "$restoringConfigs/." "$CONFIG_DIR/."
 
+	rm -rf "$SERVICE_CONFIG_DIR"/*
+	cp -R "$restoringServiceConfigs/." "$SERVICE_CONFIG_DIR/."
 
+	#cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
+
+	#echo "DEBUG:: sleeping"
+	#sleep 5m
 
 	services-start
 }

@@ -9,8 +9,8 @@ mongoTargetDir="$targetDir/data/infra/mongodb"
 
 if [ "$mode" == "snapshot" ]; then
 	mkdir -p "$mongoTargetDir"
-	cp -R "$mongoDataDir/." "$mongoTargetDir"
+	cp -a "$mongoDataDir/." "$mongoTargetDir"
 else
-	rm -rf "$mongoDataDir/*"
-	cp -R "$mongoTargetDir/." "$mongoDataDir"
+	rm -rf "$mongoDataDir"/*
+	cp -a "$mongoTargetDir/." "$mongoDataDir"
 fi
