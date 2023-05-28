@@ -51,7 +51,7 @@ for curPackage in ${packages[@]}; do
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	mkdir -p "$packageDebDir/etc/oqm/config/configs/"
-	mkdir -p "$packageDebDir/etc/oqm/snapshot/scripts/"
+	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
 	
 	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
