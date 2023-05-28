@@ -413,6 +413,22 @@ function ui_setSnapshotsFrequencyDialog() {
 	fi
 }
 
+function ui_setSnapshotsNumToKeepDialog() {
+	ui_showDialog --title "Number of Snapshots to Keep" \
+		--inputbox "The maximum number of snapshots to keep in the directory.\nCurrently set to $(oqm-config -g snapshots.numToKeep)\nPlease enter a number (0 for no limit):" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local numToKeep="$SELECTION"
+	if [ -z "$numToKeep" ]; then
+		ui_showDialog --title "No input given, not changed" --msgbox "" 0 $DEFAULT_WIDTH
+	elif [[ "$numToKeep" =~ ^[0-9]+$ ]]; then
+		oqm-config -s snapshots.numToKeep "$numToKeep" "."
+	else
+		ui_showDialog --title "Bad input given, not changed" --msgbox "" 0 $DEFAULT_WIDTH
+	fi
+}
+
 function ui_snapshotsDialog() {
 	local autoEnabled="false"
 	local autoEnabledText="Enable"
@@ -434,7 +450,7 @@ function ui_snapshotsDialog() {
 			2 "Restore from snapshot" \
 			3 "$autoEnabledText automatic snapshots" \
 			4 "Set snapshot location TODO" \
-			5 "Set number of snapshots to keep TODO" \
+			5 "Set number of snapshots to keep (currently $(oqm-config -g snapshots.numToKeep))" \
 			6 "Set snapshot frequency (currently $(oqm-config -g snapshots.frequency))" \
 			2>$USER_SELECT_FILE
 		ui_updateSelection
@@ -456,6 +472,9 @@ function ui_snapshotsDialog() {
 				cron_disablePeriodicSnapshots
 				ui_showDialog --title "Auto snapshots disabled." --msgbox "" 0 $DEFAULT_WIDTH
 			fi
+			;;
+		5)
+			ui_setSnapshotsNumToKeepDialog
 			;;
 		6)
 			ui_setSnapshotsFrequencyDialog

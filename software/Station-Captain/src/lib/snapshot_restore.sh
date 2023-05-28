@@ -48,6 +48,12 @@ function snapRes_snapshot(){
 	fi
 
 	rm -rf "$compilingDir"
+
+	local numToKeep="$(oqm-config -g snapshots.numToKeep)"
+
+	if [ -"$numToKeep" -gt "0" ]; then
+		(cd "$snapshotLocation" && ls -tp | grep -v '/$' | tail -n "+$(( 1 + $numToKeep ))" | xargs -I {} rm -- {})
+	fi
 }
 
 function snapRes_restore(){
