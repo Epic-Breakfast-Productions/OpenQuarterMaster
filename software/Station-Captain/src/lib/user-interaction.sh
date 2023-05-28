@@ -381,16 +381,61 @@ function ui_snapshotsRestoreDialog() {
 	ui_showDialog --title "Finished restore." --msgbox "" 0 $DEFAULT_WIDTH
 }
 
+function ui_setSnapshotsFrequencyDialog() {
+	ui_showDialog --title "Snapshot Frequency" \
+		--menu "Currently set to $(oqm-config -g snapshots.frequency)\nPlease choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		1 "Hourly" \
+		2 "Daily" \
+		3 "Weekly" \
+		4 "Monthly" \
+		2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local resultFrequency=""
+	case $SELECTION in
+		1)
+			resultFrequency="hourly"
+			;;
+		2)
+			resultFrequency="daily"
+			;;
+		3)
+			resultFrequency="weekly"
+			;;
+		4)
+			resultFrequency="monthly"
+			;;
+		*)
+			;;
+	esac
+	if [ -n "$resultFrequency" ]; then
+		oqm-config -s snapshots.frequency "$resultFrequency"
+	fi
+}
+
 function ui_snapshotsDialog() {
+	local autoEnabled="false"
+	local autoEnabledText="Enable"
+
 	while true; do
+		if [ -z "$(find "/etc/" -maxdepth 2 -name 'oqm-snapshots' -printf 1 -quit)" ]; then
+			echo "Auto snapshots disabled"
+			autoEnabled="false"
+			autoEnabledText="Enable"
+		else
+			echo "Auto snapshots enabled"
+			autoEnabled="true"
+			autoEnabledText="Disable"
+		fi
+
 		ui_showDialog --title "Snapshots" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
 			1 "Trigger Snapshot Now" \
 			2 "Restore from snapshot" \
-			3 "Enable/disable automatic snapshots TODO" \
+			3 "$autoEnabledText automatic snapshots" \
 			4 "Set snapshot location TODO" \
 			5 "Set number of snapshots to keep TODO" \
-			6 "Set snapshot frequency TODO" \
+			6 "Set snapshot frequency (currently $(oqm-config -g snapshots.frequency))" \
 			2>$USER_SELECT_FILE
 		ui_updateSelection
 
@@ -402,6 +447,21 @@ function ui_snapshotsDialog() {
 			;;
 		2)
 			ui_snapshotsRestoreDialog
+			;;
+		3)
+			if [ "$autoEnabled" == "false" ]; then
+				cron_enablePeriodicSnapshots
+				ui_showDialog --title "Auto snapshots enabled." --msgbox "" 0 $DEFAULT_WIDTH
+			elif [ "$autoEnabled" == "true" ]; then
+				cron_disablePeriodicSnapshots
+				ui_showDialog --title "Auto snapshots disabled." --msgbox "" 0 $DEFAULT_WIDTH
+			fi
+			;;
+		6)
+			ui_setSnapshotsFrequencyDialog
+			if [ "$autoEnabled" == "true" ]; then
+				cron_enablePeriodicSnapshots
+			fi
 			;;
 		*)
 			return

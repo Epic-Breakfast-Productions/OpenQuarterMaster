@@ -176,6 +176,8 @@ source "$LIB_DIR/service-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
 source "$LIB_DIR/snapshot_restore.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib snapshot_restore"; fi;
+source "$LIB_DIR/cron-utils.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib cron-utils"; fi;
 
 
 

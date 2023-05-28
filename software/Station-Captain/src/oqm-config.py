@@ -48,7 +48,8 @@ try:
     },
     "snapshots": {
         "location": "/data/oqm-snapshots/",
-        "numToKeep": 5
+        "numToKeep": 5,
+        "frequency": "weekly"
     }
 }
 ''')
