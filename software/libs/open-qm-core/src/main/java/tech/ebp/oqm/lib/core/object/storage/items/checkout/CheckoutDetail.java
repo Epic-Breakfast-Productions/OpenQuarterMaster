@@ -31,7 +31,7 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutDetail<S extends Stored, C, W extends StoredWrapper<C, S>> extends AttKeywordMainObject {
+public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
 	
 	/**
 	 * When these item(s) were checked out
@@ -59,5 +59,5 @@ public class CheckoutDetail<S extends Stored, C, W extends StoredWrapper<C, S>> 
 	 */
 	@NonNull
 	@NotNull
-	private W item;
+	private S item;
 }
