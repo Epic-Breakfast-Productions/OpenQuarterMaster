@@ -531,20 +531,33 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
-	 * Checks out a stored item
-	 * TODO
-	 * @param storageBlockId Where to take the item to checkout from
-	 * @param stored The stored object to checkout
-	 * @param checkoutDetail The checkout detail to use for details. Id and item values will be overridden
-	 * @return The resulting checkout detail object
+	 *
+	 * @param checkoutDetail
+	 * @return
+	 * @throws NotEnoughStoredException
+	 * @throws NoStorageBlockException
 	 */
-	public CheckoutDetail<S> checkout(ObjectId storageBlockId, S stored, CheckoutDetail<S> checkoutDetail)throws NotEnoughStoredException, NoStorageBlockException {
-		checkoutDetail.setItem(this.subtract(storageBlockId, stored));
+	public CheckoutDetail<S> checkout(CheckoutDetail<S> checkoutDetail) throws NotEnoughStoredException, NoStorageBlockException {
+		checkoutDetail.setItem(this.subtract(checkoutDetail.getCheckedOutFrom(), checkoutDetail.getItem()));
 		checkoutDetail.setId(ObjectId.get());
 		
 		this.getCheckoutList().add(checkoutDetail);
 		
 		return checkoutDetail;
+	}
+	
+	/**
+	 * Checks out a stored item
+	 * TODO
+	 * @param storageBlockId Where to take the item to checkout from
+	 * @param stored The stored object to checkout
+	 * @param checkoutDetail The checkout detail to use for details. Id, item, and storage block from values will be overridden
+	 * @return The resulting checkout detail object
+	 */
+	public CheckoutDetail<S> checkout(ObjectId storageBlockId, S stored, CheckoutDetail<S> checkoutDetail)throws NotEnoughStoredException, NoStorageBlockException {
+		checkoutDetail.setCheckedOutFrom(storageBlockId);
+		checkoutDetail.setItem(stored);
+		return this.checkout(checkoutDetail);
 	}
 	
 	/**

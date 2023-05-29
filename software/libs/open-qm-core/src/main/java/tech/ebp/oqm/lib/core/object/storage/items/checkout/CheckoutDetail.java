@@ -46,6 +46,13 @@ public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
 	private ObjectId checkedOutBy;
 	
 	/**
+	 * The storage block this item was checked out from
+	 */
+	@NonNull
+	@NotNull
+	private ObjectId checkedOutFrom;
+	
+	/**
 	 * When the item is due back by
 	 */
 	private ZonedDateTime dueBack = null;
