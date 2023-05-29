@@ -1,12 +1,12 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
+import tech.ebp.oqm.lib.core.object.storage.items.checkout.CheckoutDetail;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -115,17 +115,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * The map of items that are checked out; items that are out of storage but still tracked in the system.
-	 * <p>
-	 * Use cases: - Library checking out books - Equipment rentals - Equipment sign-out - Items in use
-	 * <p>
-	 * TODO::
-	 * Determine if this is the best way to keep track; what to keep track here, what to keep track in history, how the data moves as items are checked out and brought back
-	 * Make new checkout object, use ObjectId for this?
 	 */
-	private Map<@NonNull CheckoutDetail, @NonNull W> checkoutMap = new LinkedHashMap<>();
+	private List<@NonNull CheckoutDetail<S,C,W>> checkoutList = new ArrayList<>();
 	
 	/**
-	 * The total amount of that item in storage, in the {@link #getUnit()} unit.
+	 * The total amount of this item in storage, in the {@link #getUnit()} unit.
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
 	 */
@@ -133,16 +127,14 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
 	
-	//	/**
-	//	 * Don't call this method
-	//	 * @param total
-	//	 * @return
-	//	 */
-	//	@Deprecated(forRemoval = false)
-	//	public InventoryItem<S, C, W> setTotal(Quantity<?> total){
-	//		this.total = total;
-	//		return this;
-	//	}
+	/**
+	 * The total amount of this item checked out, in the {@link #getUnit()} unit.
+	 * <p>
+	 * Calculated in {@link #recalculateDerived()}
+	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@Setter(AccessLevel.PROTECTED)
+	private Quantity<?> totalCheckedOut = null;
 	
 	/**
 	 * The total value of everything stored.
@@ -253,8 +245,32 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.total;
 	}
 	
+	public Quantity<?> getTotalCheckedOut() {
+		if (this.total == null) {
+			this.recalculateDerived();
+		}
+		return this.total;
+	}
+	
+	public Quantity<?> recalcTotalCheckedOut() {
+		QuantitySumHelper helper = new QuantitySumHelper(this.getUnit());
+		
+		helper.addAll(
+			this.getCheckoutList()
+				.stream()
+				.map(CheckoutDetail::getItem)
+				.map((W wrapper)->{
+					wrapper.recalcDerived();
+					return wrapper.getTotal();
+				})
+		);
+		
+		this.setTotalCheckedOut(helper.getTotal());
+		return this.totalCheckedOut;
+	}
+	
 	public Quantity<?> getTotal() {
-		if (total == null) {
+		if (this.total == null) {
 			this.recalculateDerived();
 		}
 		return this.total;
@@ -342,9 +358,12 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 */
 	public InventoryItem<S, C, W> recalculateDerived() {
+		//TODO:: do these at the same time
 		this.getStorageMap().values().parallelStream().forEach(StoredWrapper::recalcDerived);
+		this.getCheckoutList().parallelStream().forEach((c)->c.getItem().recalcDerived());
 		
 		this.recalcTotal();
+		this.recalcTotalCheckedOut();
 		this.recalcValueOfStored();
 		this.recalculateExpiryDerivedStats();
 		return this;
