@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
@@ -19,13 +20,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 /**
- * The details used to describe an item or set of items checked out
- *
- * While extends `MainObject`, is a sub-object of {@link InventoryItem} rather than first class object.
- *
- * TODO:: need to decide what data should be kept here
- *
- *
+ * The details used to describe a checked out item
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -58,7 +53,7 @@ public class ItemCheckout extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId checkedOutBy;
+	private CheckoutFor checkedOutFor;
 	
 	/**
 	 * When the item is due back by
@@ -82,7 +77,7 @@ public class ItemCheckout extends AttKeywordMainObject {
 	private CheckInDetails checkInDetails = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	private boolean isCheckedOut(){
+	private boolean isStillCheckedOut(){
 		return this.checkInDetails == null;
 	};
 }
