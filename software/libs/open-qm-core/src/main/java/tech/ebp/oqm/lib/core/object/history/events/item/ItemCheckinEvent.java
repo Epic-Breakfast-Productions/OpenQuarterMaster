@@ -34,7 +34,7 @@ public class ItemCheckinEvent extends ObjectHistoryEvent {
 	
 	@NonNull
 	@NotNull
-	private ObjectId storageBlockCheckedInto;
+	private ObjectId itemCheckoutId;
 	
 	@Override
 	public EventType getType() {

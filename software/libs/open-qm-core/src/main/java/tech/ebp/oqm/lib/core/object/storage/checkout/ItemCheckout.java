@@ -1,20 +1,21 @@
-package tech.ebp.oqm.lib.core.object.storage.items.checkout;
+package tech.ebp.oqm.lib.core.object.storage.checkout;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
-import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 /**
@@ -31,7 +32,7 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
+public class ItemCheckout extends AttKeywordMainObject {
 	
 	/**
 	 * When these item(s) were checked out
@@ -39,11 +40,11 @@ public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
 	private ZonedDateTime checkoutDate = ZonedDateTime.now();
 	
 	/**
-	 * Who checked out the item
+	 * The id of the checked out item
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId checkedOutBy;
+	private ObjectId item;
 	
 	/**
 	 * The storage block this item was checked out from
@@ -51,6 +52,13 @@ public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private ObjectId checkedOutFrom;
+	
+	/**
+	 * Who checked out the item
+	 */
+	@NonNull
+	@NotNull
+	private ObjectId checkedOutBy;
 	
 	/**
 	 * When the item is due back by
@@ -66,5 +74,15 @@ public class CheckoutDetail<S extends Stored> extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private S item;
+	private Stored checkedOut;
+	
+	/**
+	 * The exact item being checked out
+	 */
+	private CheckInDetails checkInDetails = null;
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	private boolean isCheckedOut(){
+		return this.checkInDetails == null;
+	};
 }

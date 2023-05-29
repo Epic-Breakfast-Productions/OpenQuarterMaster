@@ -10,8 +10,7 @@ import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.EventType;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.storage.items.checkout.CheckoutDetail;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
+import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 
 import javax.validation.constraints.NotNull;
 
@@ -35,11 +34,7 @@ public class ItemCheckoutEvent extends ObjectHistoryEvent {
 	
 	@NonNull
 	@NotNull
-	private ObjectId storageBlockId;
-	
-	@NonNull
-	@NotNull
-	private CheckoutDetail<?> checkedOut;
+	private ObjectId itemCheckoutId;
 	
 	@Override
 	public EventType getType() {

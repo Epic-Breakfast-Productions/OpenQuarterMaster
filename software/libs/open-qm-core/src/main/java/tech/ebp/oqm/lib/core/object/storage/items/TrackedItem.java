@@ -63,11 +63,6 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	}
 	
 	@Override
-	public Quantity<?> recalcTotalCheckedOut() {
-		return Quantities.getQuantity(this.getCheckoutList().size(), OqmProvidedUnits.UNIT);
-	}
-	
-	@Override
 	public BigDecimal recalcValueOfStored() {
 		BigDecimalSumHelper helper = new BigDecimalSumHelper();
 		

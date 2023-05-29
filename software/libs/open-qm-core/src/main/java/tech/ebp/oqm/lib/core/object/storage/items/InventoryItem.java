@@ -6,8 +6,6 @@ import lombok.ToString;
 import tech.ebp.oqm.lib.core.object.ImagedMainObject;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
-import tech.ebp.oqm.lib.core.object.storage.items.checkout.CheckoutDetail;
-import tech.ebp.oqm.lib.core.object.storage.items.exception.NoCheckoutDetailException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.lib.core.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -22,7 +20,6 @@ import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.items.utils.QuantitySumHelper;
 import tech.ebp.oqm.lib.core.quantities.QuantitiesUtils;
@@ -116,13 +113,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
-	 * The map of items that are checked out; items that are out of storage but still tracked in the system.
-	 *
-	 * TODO:: validate: id's unique
-	 */
-	private List<@NonNull CheckoutDetail<S>> checkoutList = new ArrayList<>();
-	
-	/**
 	 * The total amount of this item in storage, in the {@link #getUnit()} unit.
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
@@ -130,15 +120,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
-	
-	/**
-	 * The total amount of this item checked out, in the {@link #getUnit()} unit.
-	 * <p>
-	 * Calculated in {@link #recalculateDerived()}
-	 */
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@Setter(AccessLevel.PROTECTED)
-	private Quantity<?> totalCheckedOut = null;
 	
 	/**
 	 * The total value of everything stored.
@@ -249,15 +230,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return this.total;
 	}
 	
-	public Quantity<?> getTotalCheckedOut() {
-		if (this.total == null) {
-			this.recalculateDerived();
-		}
-		return this.total;
-	}
-	
-	public abstract Quantity<?> recalcTotalCheckedOut();
-	
 	public Quantity<?> getTotal() {
 		if (this.total == null) {
 			this.recalculateDerived();
@@ -351,7 +323,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		this.getStorageMap().values().parallelStream().forEach(StoredWrapper::recalcDerived);
 		
 		this.recalcTotal();
-		this.recalcTotalCheckedOut();
 		this.recalcValueOfStored();
 		this.recalculateExpiryDerivedStats();
 		return this;
@@ -517,67 +488,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		
 		return this;
 	}
-	
-	/**
-	 *
-	 * @param checkoutId The id of the checkout object to get
-	 * @return The checkout object with the id given,
-	 */
-	public CheckoutDetail<S> getCheckout(ObjectId checkoutId){
-		return this.getCheckoutList().stream()
-			.filter(customer -> customer.getId().equals(checkoutId))
-			.findFirst()
-			.orElse(null);
-	}
-	
-	/**
-	 *
-	 * @param checkoutDetail
-	 * @return
-	 * @throws NotEnoughStoredException
-	 * @throws NoStorageBlockException
-	 */
-	public CheckoutDetail<S> checkout(CheckoutDetail<S> checkoutDetail) throws NotEnoughStoredException, NoStorageBlockException {
-		checkoutDetail.setItem(this.subtract(checkoutDetail.getCheckedOutFrom(), checkoutDetail.getItem()));
-		checkoutDetail.setId(ObjectId.get());
-		
-		this.getCheckoutList().add(checkoutDetail);
-		
-		return checkoutDetail;
-	}
-	
-	/**
-	 * Checks out a stored item
-	 * TODO
-	 * @param storageBlockId Where to take the item to checkout from
-	 * @param stored The stored object to checkout
-	 * @param checkoutDetail The checkout detail to use for details. Id, item, and storage block from values will be overridden
-	 * @return The resulting checkout detail object
-	 */
-	public CheckoutDetail<S> checkout(ObjectId storageBlockId, S stored, CheckoutDetail<S> checkoutDetail)throws NotEnoughStoredException, NoStorageBlockException {
-		checkoutDetail.setCheckedOutFrom(storageBlockId);
-		checkoutDetail.setItem(stored);
-		return this.checkout(checkoutDetail);
-	}
-	
-	/**
-	 * Checks in a checked out item
-	 * @param storageBlockId The storage block to put this in
-	 * @param checkoutId The id of the checkout object being checked back in
-	 */
-	public InventoryItem<S, C, W> checkIn(ObjectId storageBlockId, ObjectId checkoutId){
-		CheckoutDetail<S> checkoutDetail = this.getCheckout(checkoutId);
-		
-		if(checkoutDetail == null){
-			throw new NoCheckoutDetailException("No checkout with id " + checkoutId + " present.");
-		}
-		
-		this.add(storageBlockId, checkoutDetail.getItem(), false);
-		this.getCheckoutList().remove(checkoutDetail);
-		
-		return this;
-	}
-	
 	
 	/**
 	 * Gets a stream of all stored items held

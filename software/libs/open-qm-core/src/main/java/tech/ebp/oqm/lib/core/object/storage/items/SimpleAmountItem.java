@@ -2,8 +2,6 @@ package tech.ebp.oqm.lib.core.object.storage.items;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.storage.items.checkout.CheckoutDetail;
-import tech.ebp.oqm.lib.core.object.storage.items.utils.QuantitySumHelper;
 import tech.ebp.oqm.lib.core.units.OqmProvidedUnits;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
@@ -32,22 +30,6 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 	public StorageType getStorageType() {
 		return StorageType.AMOUNT_SIMPLE;
 	}
-	
-	@Override
-	public Quantity<?> recalcTotalCheckedOut() {
-		QuantitySumHelper helper = new QuantitySumHelper(this.getUnit());
-		
-		helper.addAll(
-			this.getCheckoutList()
-				.stream()
-				.map(CheckoutDetail::getItem)
-				.map(AmountStored::getAmount)
-		);
-		
-		this.setTotalCheckedOut(helper.getTotal());
-		return this.getTotalCheckedOut();
-	}
-	
 	
 	@Override
 	protected SingleAmountStoredWrapper newWrapperInstance() {

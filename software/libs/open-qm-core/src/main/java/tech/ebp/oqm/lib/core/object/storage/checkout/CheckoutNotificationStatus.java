@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.object.storage.items.checkout;
+package tech.ebp.oqm.lib.core.object.storage.checkout;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
