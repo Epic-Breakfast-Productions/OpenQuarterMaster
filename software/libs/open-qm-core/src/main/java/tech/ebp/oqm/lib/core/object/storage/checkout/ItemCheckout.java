@@ -49,6 +49,13 @@ public class ItemCheckout extends AttKeywordMainObject {
 	private ObjectId checkedOutFrom;
 	
 	/**
+	 * The exact item being checked out
+	 */
+	@NonNull
+	@NotNull
+	private Stored checkedOut;
+	
+	/**
 	 * Who checked out the item
 	 */
 	@NonNull
@@ -62,14 +69,11 @@ public class ItemCheckout extends AttKeywordMainObject {
 	
 	@NonNull
 	@NotNull
-	private String notes = "";
+	private String reason = "";
 	
-	/**
-	 * The exact item being checked out
-	 */
 	@NonNull
 	@NotNull
-	private Stored checkedOut;
+	private String notes = "";
 	
 	/**
 	 * The exact item being checked out

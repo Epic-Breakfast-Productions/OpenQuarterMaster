@@ -20,9 +20,5 @@ import javax.validation.constraints.NotNull;
 })
 public abstract class CheckoutFor {
 	
-	@NonNull
-	@NotNull
-	private String reason = "";
-	
 	public abstract CheckoutForType getType();
 }
