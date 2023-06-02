@@ -15,7 +15,9 @@ import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
 import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTreeNode;
@@ -34,6 +36,8 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckout, ItemCheckoutSearch> {
 	
+	private InventoryItemService inventoryItemService;
+	
 	ItemCheckoutService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
 	}
@@ -44,7 +48,8 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		InventoryItemService inventoryItemService
 	) {
 		super(
 			objectMapper,
@@ -53,6 +58,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 			ItemCheckout.class,
 			false
 		);
+		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan
@@ -61,6 +67,40 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: this
 	}
+	
+	public ObjectId checkoutItem(ItemCheckoutRequest request, InteractingEntity entity){
+		InventoryItem item = this.inventoryItemService.get(request.getItem());
+		
+		Stored result;
+		try {
+			result = item.subtract(request.getCheckedOutFrom(), request.getToCheckout());
+		} catch(ClassCastException e){
+			throw new IllegalArgumentException("Bad stored type given for item.", e);
+		}
+		
+		ItemCheckout itemCheckout = new ItemCheckout();
+		itemCheckout.setCheckedOut(result);
+		itemCheckout.setItem(request.getItem());
+		itemCheckout.setCheckedOutFrom(request.getCheckedOutFrom());
+		itemCheckout.setCheckedOutFor(request.getCheckedOutFor());
+		itemCheckout.setDueBack(request.getDueBack());
+		itemCheckout.setReason(request.getReason());
+		itemCheckout.setNotes(request.getNotes());
+		
+		ObjectId newId;
+		try(ClientSession cs = this.getNewClientSession(true)){
+			this.inventoryItemService.update(cs, item);
+			//TODO:: add checkout history for inv item
+			
+			newId = this.add(cs, itemCheckout, entity);
+		}
+		
+		return newId;
+	}
+	
+	//TODO:: check in item
+	
+	//TODO:: prevent updates to those that are already checked in
 	
 	public Set<ObjectId> getItemCheckoutsReferencing(ClientSession clientSession, StorageBlock storageBlock){
 		Set<ObjectId> list = new TreeSet<>();
