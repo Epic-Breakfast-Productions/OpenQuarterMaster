@@ -15,7 +15,7 @@ Ingests:
 - pageLoadTime - the string time that the page was loaded
 !}
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
@@ -25,7 +25,7 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.2.3/bootswatch.yeti.min.css" rel="stylesheet">
+	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.3/bootstrap-icons.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
