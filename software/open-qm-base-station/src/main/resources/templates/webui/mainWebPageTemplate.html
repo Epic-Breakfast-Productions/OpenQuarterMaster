@@ -36,6 +36,88 @@ Ingests:
 		{#insert pageStyle} /* No page css */
 		{/}
 	</style>
+	<script>
+		/*!
+ * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/)
+ * Copyright 2011-2023 The Bootstrap Authors
+ * Licensed under the Creative Commons Attribution 3.0 Unported License.
+ */
+
+		(() => {
+			'use strict'
+
+			const getStoredTheme = () => localStorage.getItem('theme')
+			const setStoredTheme = theme => localStorage.setItem('theme', theme)
+
+			const getPreferredTheme = () => {
+				const storedTheme = getStoredTheme()
+				if (storedTheme) {
+					return storedTheme
+				}
+
+				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			}
+
+			const setTheme = theme => {
+				if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					document.documentElement.setAttribute('data-bs-theme', 'dark')
+				} else {
+					document.documentElement.setAttribute('data-bs-theme', theme)
+				}
+			}
+
+			setTheme(getPreferredTheme())
+
+			const showActiveTheme = (theme, focus = false) => {
+				const themeSwitcher = document.querySelector('#bd-theme')
+
+				if (!themeSwitcher) {
+					return
+				}
+
+				const themeSwitcherText = document.querySelector('#bd-theme-text')
+				const activeThemeIcon = document.querySelector('.theme-icon-active')
+				const btnToActive = document.querySelector(`[data-bs-theme-value="`+theme+`"]`)
+				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML
+
+				document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active')
+					element.setAttribute('aria-pressed', 'false')
+				})
+
+				btnToActive.classList.add('active')
+				btnToActive.setAttribute('aria-pressed', 'true')
+				activeThemeIcon.innerHTML = svgOfActiveBtn
+				const themeSwitcherLabel = themeSwitcherText.textContent+` (`+btnToActive.dataset.bsThemeValue+`)`
+				themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
+
+				if (focus) {
+					themeSwitcher.focus()
+				}
+			}
+
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const storedTheme = getStoredTheme()
+				if (storedTheme !== 'light' && storedTheme !== 'dark') {
+					setTheme(getPreferredTheme())
+				}
+			})
+
+			window.addEventListener('DOMContentLoaded', () => {
+				showActiveTheme(getPreferredTheme())
+
+				document.querySelectorAll('[data-bs-theme-value]')
+					.forEach(toggle => {
+						toggle.addEventListener('click', () => {
+							const theme = toggle.getAttribute('data-bs-theme-value')
+							setStoredTheme(theme)
+							setTheme(theme)
+							showActiveTheme(theme, true)
+						})
+					})
+			})
+		})()
+	</script>
 </head>
 <body class="min-vh-100 vstack">
 <span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
@@ -210,15 +292,55 @@ Ingests:
 		{#insert pageContent}<h1>No body!</h1>{/}
 	</main>
 </div>
+
 <footer id="footer" class="container mb-3" role="contentinfo">
 	<hr/>
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h4">Open QuarterMaster Server</span><br/>
 			&copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
-			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0
-				License</a><br/>
-			Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
+			v<a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes">
+				<button class="btn btn-link px-0 text-decoration-none dropdown-toggle"
+						id="bd-theme"
+						type="button"
+						aria-expanded="false"
+						data-bs-toggle="dropdown"
+						data-bs-display="static">
+					<span class="theme-icon-active">
+						{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+					</span>
+							<span id="bd-theme-text">
+					Toggle theme
+					</span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+					<span class="theme-icon">
+						{#icons/themeLight addSpace=true}{/icons/themeLight}
+					</span>
+							Light
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+					<span class="theme-icon">
+						{#icons/themeDark addSpace=true}{#css}{/css}{/icons/themeDark}
+					</span>
+							Dark
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+					<span class="theme-icon">
+						{#icons/themeAuto addSpace=true}{#css}{/css}{/icons/themeAuto}
+					</span>
+							Auto
+						</button>
+					</li>
+				</ul>
+			</div>
 			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
