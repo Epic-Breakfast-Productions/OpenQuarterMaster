@@ -34,6 +34,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	
 	
 	private InventoryItemService inventoryItemService;
+	private ItemCheckoutService itemCheckoutService;
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -45,7 +46,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
-		InventoryItemService inventoryItemService
+		InventoryItemService inventoryItemService,
+		ItemCheckoutService itemCheckoutService
 	) {
 		super(
 			objectMapper,
@@ -55,6 +57,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			false
 		);
 		this.inventoryItemService = inventoryItemService;
+		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@WithSpan
@@ -173,6 +176,11 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, storageBlock);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}
 		
 		return objsWithRefs;

@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	private BaseStationInteractingEntity baseStationInteractingEntity;
 	private ItemLowStockEventNotificationService ilsens;
+	private ItemCheckoutService itemCheckoutService;
 	
 	InventoryItemService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -67,7 +69,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
 		ItemLowStockEventNotificationService ilsens,
-		BaseStationInteractingEntity baseStationInteractingEntity
+		BaseStationInteractingEntity baseStationInteractingEntity,
+		ItemCheckoutService itemCheckoutService
 	) {
 		super(
 			objectMapper,
@@ -78,6 +81,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 		this.baseStationInteractingEntity = baseStationInteractingEntity;
 		this.ilsens = ilsens;
+		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@WithSpan
@@ -377,5 +381,17 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			null
 		).map(InventoryItem::getId).into(list);
 		return list;
+	}
+	
+	@Override
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, InventoryItem item) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, item);
+		
+		Set<ObjectId> refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, item);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
+		}
+		
+		return objsWithRefs;
 	}
 }

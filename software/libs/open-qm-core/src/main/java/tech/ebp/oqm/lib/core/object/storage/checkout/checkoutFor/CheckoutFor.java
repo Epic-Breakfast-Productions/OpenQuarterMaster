@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
 	@JsonSubTypes.Type(value = CheckoutForOqmUser.class, name = "OQM_USER"),
 	@JsonSubTypes.Type(value = CheckoutForExtUser.class, name = "EXT_SYS_USER")
 })
+@BsonDiscriminator
 public abstract class CheckoutFor {
 	
 	public abstract CheckoutForType getType();
