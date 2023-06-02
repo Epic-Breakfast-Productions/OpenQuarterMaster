@@ -15,7 +15,7 @@ Ingests:
 - pageLoadTime - the string time that the page was loaded
 !}
 <!doctype html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
 <head>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
@@ -43,136 +43,135 @@ Ingests:
 <!-- nav here -->
 
 {#if navbar == "full"}
-	{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
-	<nav class="navbar navbar-expand-lg navbar-light bg-light top-nav">
+{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
+<nav class="navbar navbar-expand-lg bg-light top-nav">
 	<div class="container-fluid">
-	<a class="navbar-brand p-0" href="/overview">
-		<img src="/media/logo.svg" alt=""  id="topLogo">
-	</a>
-	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	
-	<div class="collapse navbar-collapse" id="navbarColor03">
-	<ul class="navbar-nav me-auto">
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
-				{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
-				{#if page is 'overview'}
-					<span class="visually-hidden">(current)</span>
-				{/if}
-			</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
-				{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
-				{#if page is 'storage'}
-					<span class="visually-hidden">(current)</span>
-				{/if}
-			</a>
-		</li>
+		<a class="navbar-brand p-0" href="/overview">
+			<img src="/media/logo.svg" alt=""  id="topLogo">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
+				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarColor03">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
+						{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
+						{#if page is 'overview'}
+						<span class="visually-hidden">(current)</span>
+						{/if}
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
+						{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
+						{#if page is 'storage'}
+						<span class="visually-hidden">(current)</span>
+						{/if}
+					</a>
+				</li>
+				
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+							aria-haspopup="true" aria-expanded="false">
+						{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+					</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item {#if page is 'items'}active{/if}" href="/items">
+							{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+							{#if page is 'items'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<!-- Not ready yet
+						<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
+							{#icons/pageIcon page='itemLists'}{/icons/pageIcon} Item Lists
+							{#if page is 'itemLists'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item" href="/itemLists#add">
+							{#icons/add}{/icons/add} New Item List
+						</a>
+						-->
+						<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/categories">
+							{#icons/categories}{/icons/categories} Categories
+							{#if page is 'categories'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+							aria-haspopup="true" aria-expanded="false">
+						{#icons/icon icon='infinity'}{/icons/icon} Other</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
+							{#icons/pageIcon page='images'}{/icons/pageIcon} Images
+							{#if page is 'images'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
+							{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
+							{#if page is 'codes'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
+							{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
+							{#if page is 'help'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+					</div>
+				</li>
+			</ul>
 		
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-					aria-haspopup="true" aria-expanded="false">
-				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
-			</a>
-			<div class="dropdown-menu">
-				<a class="dropdown-item {#if page is 'items'}active{/if}" href="/items">
-					{#icons/pageIcon page='items'}{/icons/pageIcon} Items
-					{#if page is 'items'}
-					<span class="visually-hidden">(current)</span>
+			<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
+				<div class="input-group">
+					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
+					<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
+						<option data-action="/items" data-field="name" selected>Items</option>
+						<option data-action="/storage" data-field="label">Storage Blocks</option>
+					</select>
+					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
+				</div>
+			</form>
+			<ul class="d-flex navbar-nav me-auto">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+						{#icons/user}{/icons/user}
+						<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
+					<div class="dropdown-menu">
+					<a class="dropdown-item" href="/you" id="youLink">
+						{#icons/you}{/icons/you} You
+					</a>
+					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
+					<div class="dropdown-divider"></div>
 					{/if}
-				</a>
-				<!-- Not ready yet
-				<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
-					{#icons/pageIcon page='itemLists'}{/icons/pageIcon} Item Lists
-					{#if page is 'itemLists'}
-					<span class="visually-hidden">(current)</span>
+					{#if userInfo.getRoles().contains('userAdmin')}
+					<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
+						{#icons/userAdmin}{/icons/userAdmin} User Administration
+					</a>
 					{/if}
-				</a>
-				<a class="dropdown-item" href="/itemLists#add">
-					{#icons/add}{/icons/add} New Item List
-				</a>
-				-->
-				<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/categories">
-					{#icons/categories}{/icons/categories} Categories
-					{#if page is 'categories'}
-					<span class="visually-hidden">(current)</span>
+					{#if userInfo.getRoles().contains('inventoryAdmin')}
+					<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
+						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
+					</a>
 					{/if}
-				</a>
-			</div>
-		</li>
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-					aria-haspopup="true" aria-expanded="false">
-				{#icons/icon icon='infinity'}{/icons/icon} Other</a>
-			<div class="dropdown-menu">
-				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
-					{#icons/pageIcon page='images'}{/icons/pageIcon} Images
-					{#if page is 'images'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-				<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
-					{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
-					{#if page is 'codes'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-				<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
-					{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
-					{#if page is 'help'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-			</div>
-		</li>
-	</ul>
-	
-	<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
-		<div class="input-group">
-			<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
-			<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
-				<option data-action="/items" data-field="name" selected>Items</option>
-				<option data-action="/storage" data-field="label">Storage Blocks</option>
-			</select>
-			<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
+					<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="#" id="logoutButton">
+							{#icons/icon icon='door-closed'}{/icons/icon} Logout
+						</a>
+					</div>
+				</li>
+			</ul>
 		</div>
-	</form>
-	<ul class="d-flex navbar-nav me-auto">
-	<li class="nav-item dropdown">
-	<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-		{#icons/user}{/icons/user}
-		<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
-	<div class="dropdown-menu">
-	<a class="dropdown-item" href="/you" id="youLink">
-		{#icons/you}{/icons/you} You
-	</a>
-	{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
-	<div class="dropdown-divider"></div>
-	{/if}
-	{#if userInfo.getRoles().contains('userAdmin')}
-		<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
-			{#icons/userAdmin}{/icons/userAdmin} User Administration
-		</a>
-	{/if}
-	{#if userInfo.getRoles().contains('inventoryAdmin')}
-		<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-			{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
-		</a>
-	{/if}
-	<div class="dropdown-divider"></div>
-	<a class="dropdown-item" href="#" id="logoutButton">
-		{#icons/icon icon='door-closed'}{/icons/icon} Logout
-	</a>
 	</div>
-	</li>
-	</ul>
-	</div>
-	</div>
-	</nav>
+</nav>
 {#else if navbar == "toLogin"}
 {! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
 <nav class="navbar navbar-expand-lg navbar-light bg-light top-nav fw-bold">
