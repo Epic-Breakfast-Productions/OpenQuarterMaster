@@ -15,7 +15,7 @@ Ingests:
 - pageLoadTime - the string time that the page was loaded
 !}
 <!doctype html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
@@ -37,82 +37,79 @@ Ingests:
 		{/}
 	</style>
 	<script>
-		/*!
- * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/)
- * Copyright 2011-2023 The Bootstrap Authors
- * Licensed under the Creative Commons Attribution 3.0 Unported License.
- */
-
+		/**
+		 * Script to handle theme changing. At top in order to prevent flashing
+		 */
 		(() => {
 			'use strict'
 
-			const getStoredTheme = () => localStorage.getItem('theme')
-			const setStoredTheme = theme => localStorage.setItem('theme', theme)
+			const getStoredTheme = () => localStorage.getItem('theme');
+			const setStoredTheme = theme => localStorage.setItem('theme', theme);
 
 			const getPreferredTheme = () => {
-				const storedTheme = getStoredTheme()
+				const storedTheme = getStoredTheme();
 				if (storedTheme) {
-					return storedTheme
+					return storedTheme;
 				}
-
-				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+				return "auto";
+				// return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 			}
 
 			const setTheme = theme => {
 				if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					document.documentElement.setAttribute('data-bs-theme', 'dark')
+					document.documentElement.setAttribute('data-bs-theme', 'dark');
 				} else {
-					document.documentElement.setAttribute('data-bs-theme', theme)
+					document.documentElement.setAttribute('data-bs-theme', theme);
 				}
 			}
 
 			setTheme(getPreferredTheme())
 
 			const showActiveTheme = (theme, focus = false) => {
-				const themeSwitcher = document.querySelector('#bd-theme')
+				const themePicker = document.querySelector('#theme-picker');
+				const themeSwitcherButton = themePicker.querySelector('#bd-theme');
 
-				if (!themeSwitcher) {
-					return
-				}
+				const themeSwitcherText = themePicker.querySelector('#bd-theme-text');
+				const activeThemeIcon = themePicker.querySelector('.theme-icon-active');
+				const btnToActive = themePicker.querySelector(`[data-bs-theme-value="`+theme+`"]`);
+				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML;
 
-				const themeSwitcherText = document.querySelector('#bd-theme-text')
-				const activeThemeIcon = document.querySelector('.theme-icon-active')
-				const btnToActive = document.querySelector(`[data-bs-theme-value="`+theme+`"]`)
-				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML
-
-				document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
-					element.classList.remove('active')
-					element.setAttribute('aria-pressed', 'false')
+				themePicker.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active');
+					element.setAttribute('aria-pressed', 'false');
 				})
 
-				btnToActive.classList.add('active')
-				btnToActive.setAttribute('aria-pressed', 'true')
-				activeThemeIcon.innerHTML = svgOfActiveBtn
-				const themeSwitcherLabel = themeSwitcherText.textContent+` (`+btnToActive.dataset.bsThemeValue+`)`
-				themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
+				btnToActive.classList.add('active');
+				btnToActive.setAttribute('aria-pressed', 'true');
+				activeThemeIcon.innerHTML = svgOfActiveBtn;
+				const themeSwitcherLabel = themeSwitcherText.textContent+` (`+btnToActive.dataset.bsThemeValue+`)`;
+				themeSwitcherButton.setAttribute('aria-label', themeSwitcherLabel);
 
 				if (focus) {
-					themeSwitcher.focus()
+					themeSwitcherButton.focus();
 				}
+				console.log("Set theme to " + theme);
 			}
 
 			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-				const storedTheme = getStoredTheme()
+				const storedTheme = getStoredTheme();
 				if (storedTheme !== 'light' && storedTheme !== 'dark') {
-					setTheme(getPreferredTheme())
+					setTheme(getPreferredTheme());
 				}
 			})
 
 			window.addEventListener('DOMContentLoaded', () => {
-				showActiveTheme(getPreferredTheme())
+				let preferredTheme = getPreferredTheme();
+				console.log("Preferred theme: " + preferredTheme);
+				showActiveTheme(preferredTheme);
 
 				document.querySelectorAll('[data-bs-theme-value]')
 					.forEach(toggle => {
 						toggle.addEventListener('click', () => {
 							const theme = toggle.getAttribute('data-bs-theme-value')
-							setStoredTheme(theme)
-							setTheme(theme)
-							showActiveTheme(theme, true)
+							setStoredTheme(theme);
+							setTheme(theme);
+							showActiveTheme(theme, true);
 						})
 					})
 			})
@@ -297,11 +294,11 @@ Ingests:
 	<hr/>
 	<div class="row">
 		<div class="col-sm-4">
-			<span class="h4">Open QuarterMaster Server</span><br/>
-			&copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
-			v<a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
-			<div class="dropup color-modes">
-				<button class="btn btn-link px-0 text-decoration-none dropdown-toggle"
+			<span class="h5">Open QuarterMaster Base Station</span><br/>
+			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes" id="theme-picker">
+				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
 						id="bd-theme"
 						type="button"
 						aria-expanded="false"
@@ -317,25 +314,25 @@ Ingests:
 				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
-					<span class="theme-icon">
-						{#icons/themeLight addSpace=true}{/icons/themeLight}
-					</span>
+							<span class="theme-icon">
+								{#icons/themeLight addSpace=true}{/icons/themeLight}
+							</span>
 							Light
 						</button>
 					</li>
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
-					<span class="theme-icon">
-						{#icons/themeDark addSpace=true}{#css}{/css}{/icons/themeDark}
-					</span>
+							<span class="theme-icon">
+								{#icons/themeDark addSpace=true}{/icons/themeDark}
+							</span>
 							Dark
 						</button>
 					</li>
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
-					<span class="theme-icon">
-						{#icons/themeAuto addSpace=true}{#css}{/css}{/icons/themeAuto}
-					</span>
+							<span class="theme-icon">
+								{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+							</span>
 							Auto
 						</button>
 					</li>
@@ -366,7 +363,7 @@ Ingests:
 				<img src="/api/v1/media/runBy/logo" style="float:right; max-width: 30%;">
 			{/if}
 			{#if config:['service.runBy.name'] != " "}
-				<span class="h4">Run by:</span><br/>
+				<span class="h5">Run by:</span><br/>
 				{config:['service.runBy.name']}
 			{/if}
 			<br/>
