@@ -26,11 +26,14 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
+import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmUser;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
 
@@ -72,7 +75,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	
 	@POST
 	@Operation(
-		summary = "Adds a new Item Checkout."
+		summary = "Checks out an item."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -89,7 +92,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
@@ -109,14 +112,10 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		return ((ItemCheckoutService)this.getObjectService()).checkoutItem(itemCheckoutRequest, entity);
 	}
 	
-	//TODO:: checkin
-	
-	
-	
-	@POST
-	@Path("{itemId}/{storageBlock}")
+	@PUT
+	@Path("{id}")
 	@Operation(
-		summary = "Checks out an item"
+		summary = "Checks in an item."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -133,14 +132,18 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId checkout(
+	public ItemCheckout create(
 		@Context SecurityContext securityContext,
-		@Valid ItemCheckout itemCheckout
+		@PathParam("id") String id,
+		@Valid ItemCheckinRequest itemCheckoutRequest
 	) {
-		return super.create(securityContext, itemCheckout);
+		logRequestContext(this.getJwt(), securityContext);
+		InteractingEntity entity = this.getInteractingEntityFromJwt();
+		
+		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), itemCheckoutRequest, entity);
 	}
 	
 	@GET

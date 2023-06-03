@@ -23,6 +23,7 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
 	@QueryParam("storage") String storageCheckedOutFrom;
 	@QueryParam("entity") String checkedOutBy;
+	@QueryParam("stillCheckedOut") boolean stillCheckedOut;
 	
 	
 	//TODO:: object specific fields, add to bson filter list

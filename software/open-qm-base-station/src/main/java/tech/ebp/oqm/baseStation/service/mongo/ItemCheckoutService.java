@@ -10,13 +10,18 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
+import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
@@ -89,16 +94,33 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		
 		ObjectId newId;
 		try(ClientSession cs = this.getNewClientSession(true)){
-			this.inventoryItemService.update(cs, item);
-			//TODO:: add checkout history for inv item
-			
 			newId = this.add(cs, itemCheckout, entity);
+			this.inventoryItemService.update(cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
 		}
 		
 		return newId;
 	}
 	
-	//TODO:: check in item
+	public ItemCheckout checkinItem(ObjectId checkoutId, ItemCheckinRequest request, InteractingEntity entity) {
+		ItemCheckout checkout = this.get(checkoutId);
+		InventoryItem item = this.inventoryItemService.get(checkout.getItem());
+		
+		CheckInDetails.Builder checkInDetailBuilder = CheckInDetails.fromRequest(request);
+		
+		if(request.getStorageBlockCheckedInto() == null){
+			checkInDetailBuilder.storageBlockCheckedInto(checkout.getCheckedOutFrom());
+		}
+		
+		checkout.setCheckInDetails(checkInDetailBuilder.build());
+		item.add(checkout.getCheckInDetails().getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
+		
+		try(ClientSession cs = this.getNewClientSession(true)){
+			this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+			this.update(checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+		}
+		
+		return checkout;
+	}
 	
 	//TODO:: prevent updates to those that are already checked in
 	
