@@ -81,7 +81,7 @@ public class ItemCheckout extends AttKeywordMainObject {
 	private CheckInDetails checkInDetails = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	private boolean isStillCheckedOut(){
+	public boolean isStillCheckedOut(){
 		return this.checkInDetails == null;
 	};
 }
