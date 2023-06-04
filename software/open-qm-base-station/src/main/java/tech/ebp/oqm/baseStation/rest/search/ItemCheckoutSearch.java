@@ -23,10 +23,7 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
 	@QueryParam("storage") String storageCheckedOutFrom;
 	@QueryParam("entity") String checkedOutBy;
-	@QueryParam("stillCheckedOut") boolean stillCheckedOut;
-	
-	
-	//TODO:: object specific fields, add to bson filter list
+	@QueryParam("stillCheckedOut") Boolean stillCheckedOut;
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering
@@ -39,7 +36,23 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		//TODO:: these
+		if (this.hasValue(this.getStillCheckedOut())) {
+			filters.add(
+				eq("stillCheckedOut", this.getStillCheckedOut())
+			);
+		}
+		if (this.hasValue(this.getItemCheckedOut())) {
+			filters.add(
+				eq("item", this.getItemCheckedOut())
+			);
+		}
+		if (this.hasValue(this.getStorageCheckedOutFrom())) {
+			filters.add(
+				eq("checkedOutFrom", this.getStorageCheckedOutFrom())
+			);
+		}
+		
+		//TODO:: checkedOutBy
 		
 		return filters;
 	}
