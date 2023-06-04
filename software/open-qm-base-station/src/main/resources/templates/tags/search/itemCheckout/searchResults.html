@@ -1,4 +1,4 @@
-{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.storage.ItemCategory> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout> searchResults}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {!
   Template to show storage search results. Gives the contents of a table, but not the main table tag
@@ -20,9 +20,11 @@
     </td>
   </tr>
   <tr>
-    <th scope="col" class="searchResultImageCol">Image</th>
-    <th scope="col">Name</th>
-    <th scope="col">Parent</th>
+    {#if showItem}<th scope="col">Item</th>{/if}
+    {#if showStillCheckedOut}<th scope="col">Out</th>{/if}
+    <th scope="col">From</th>
+    <th scope="col">By</th>
+    <th scope="col">Due Back</th>
     <th scope="col" width="125px">Actions</th>
   </tr>
   </thead>
@@ -31,49 +33,48 @@
   <tr>
     <td colspan="6" class="text-center">
       <h2>
-        No Item Categories
+        Nothing Checked Out
       </h2>
-      {#if actionType == 'full'}
-      <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                data-bs-target="#categoryAddEditModal" onclick="setupAddEditForAdd();">
-          {#icons/add}{/icons/add} Add Item Category
-        </button>
-      </div>
-      {/if}
     </td>
   </tr>
   {#else}
   {#for result in searchResults.getResults()}
-  <tr class="itemCategoryResultRow align-middle">
+  <tr class="align-middle">
+    {#if showItem}
     <td>
-      {#if !result.getImageIds().isEmpty()}
-      <img src="/api/v1/media/image/for/item_category/{result.getId()}" class="searchResultImage">
+      {cdi:InventoryItemService.get(result.getItem()).getName()}
+    </td>
+    {/if}
+    {#if showStillCheckedOut}
+      <td class="table-{#if result.isStillCheckedOut()}active{#else}success{/if}">
+      {#if result.isStillCheckedOut()}
+        {#icons/checkOut}{/icons/checkOut} Out
+      {#else}
+        {#icons/checkIn}{/icons/checkIn} In
       {/if}
+      </td>
+    {/if}
+    <td>
+      {#links/storageBlock storageBlock=result.getCheckedOutFrom()}{/links/storageBlock}
     </td>
-    <td {#if result.getColor()??}style="background-color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getColor())}; color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getTextColor())}"{/if}>
-      {result.getName()}
+    <td>
+      By TODO
     </td>
-    <td>{#if result.getParent()??}{itemCatService.get(result.getParent()).getName()}{/if}</td>
+    <td>
+      {result.getDueBack()}
+    </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCategoryViewModal" onclick="ItemCategoryView.setupItemCategoryView('{result.getId()}');">
-        {#icons/view}{/icons/view}
-      </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemCategoryModal" onclick="Category.setupAddEditItemCategoryForEdit('{result.getId()}');">
-        {#icons/edit}{/icons/edit}
-      </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeItemCategory('{result.getId()}', '{result.getName()}');">{#icons/remove}{/icons/remove}</button>
-      {#else if actionType == 'select'}
+    </td>
+    {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
+      <button type="button" class="btn btn-sm btn-success" title="Select"
               data-bs-toggle="modal" data-bs-target="#{otherModalId}"
               onclick="">
         {#icons/select}{/icons/select} Select
       </button>
-      {/if}
     </td>
+    {/if}
   </tr>
   {/for}
   {/if}

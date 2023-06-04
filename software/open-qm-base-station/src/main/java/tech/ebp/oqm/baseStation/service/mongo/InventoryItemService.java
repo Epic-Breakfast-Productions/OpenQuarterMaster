@@ -33,6 +33,7 @@ import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -50,6 +51,7 @@ import static tech.ebp.oqm.lib.core.rest.media.ObjectCodeContentType.id;
  * TODO::
  *    - Figure out how to handle expired state when adding, updating
  */
+@Named("InventoryItemService")
 @Slf4j
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch> {
