@@ -140,7 +140,7 @@ quarkus:
     info-version: ${service.apiVersion}
     info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
     #    info-terms-of-service: <url>
-    info-contact-email: contact@gjstewart.net
+    info-contact-email: greg@epic-breakfast-productions.tech
     info-contact-name: Greg Stewart
     info-contact-url: ${service.gitLink}
     info-license-name: GNU General Public License v3.0
