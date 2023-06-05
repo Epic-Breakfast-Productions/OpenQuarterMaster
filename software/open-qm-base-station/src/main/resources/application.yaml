@@ -217,7 +217,7 @@ smallrye:
   mp:
     jwt:
       expiration:
-        default: 60
+#        default: 60
       verify:
         privatekey:
           location: ../../../../dev/devTest-cert-key.pem
