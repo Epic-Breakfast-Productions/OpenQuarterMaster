@@ -1,7 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +37,10 @@ import java.util.List;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class UserUi extends UiProvider {
+public class ItemCheckout extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/you")
+	@Location("webui/pages/itemCheckout")
 	Template overview;
 	
 	@Inject
@@ -64,8 +63,8 @@ public class UserUi extends UiProvider {
 	Span span;
 	
 	@GET
-	@Path("you")
-	@RolesAllowed(Roles.USER)
+	@Path("itemCheckout")
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview(
 		@Context SecurityContext securityContext,
@@ -80,13 +79,6 @@ public class UserUi extends UiProvider {
 		);
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, span, ugr)
-				.data("user", ugr)
-				.data("userService", userService)
-				.data("interactingEntityService", interactingEntityService)
-				.data("numItems", inventoryItemService.count())
-				.data("numStorageBlocks", storageBlockService.count())
-				.data("historySearchObject", new HistorySearch())
-				.data("jwt", this.jwt.getRawToken())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
