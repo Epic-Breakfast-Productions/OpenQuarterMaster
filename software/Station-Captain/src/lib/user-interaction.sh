@@ -14,6 +14,11 @@ function ui_updateSelection() {
 #
 #
 
+function ui_warnSystemRestart(){
+	ui_showDialog --title "Are you sure?" --yesno "This action will bring the system down for a short period.\nDo you want to continue?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+	return $?
+}
+
 function ui_displayBaseOsInfo() {
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 
@@ -364,6 +369,12 @@ function ui_snapshotsRestoreDialog() {
 		return
 	fi
 
+	if ! ui_warnSystemRestart; then
+		echo 'Canceled restoring snapshot.';
+		ui_showDialog --title 'Canceled restoring snapshot.' --msgbox "" 0 $DEFAULT_WIDTH
+		return
+	fi
+
 	ui_showDialog --title "Perform snapshot first?" --yesno "This is an irreversible action without an available snapshot.\nTake precautionary snapshot now?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 	case $? in
 	0)
@@ -457,9 +468,14 @@ function ui_snapshotsDialog() {
 
 		case $SELECTION in
 		1)
-			ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
-			snapRes_snapshot "on_demand"
-			ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+			if ! ui_warnSystemRestart; then
+				echo 'Canceled creating snapshot.';
+				ui_showDialog --title 'Canceled creating snapshot.' --msgbox "" 0 $DEFAULT_WIDTH
+			else
+				ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
+				snapRes_snapshot "on_demand"
+				ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+			fi
 			;;
 		2)
 			ui_snapshotsRestoreDialog
