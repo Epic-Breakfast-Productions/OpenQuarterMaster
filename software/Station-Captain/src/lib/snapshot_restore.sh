@@ -10,16 +10,16 @@ function snapRes_snapshot(){
 	# Setup locations
 	local snapshotName="snapshot-$(date +"%Y.%m.%d-%H.%M.%S")-$snapshotTrigger"
 	local compilingDir="$TMP_DIR/snapshots/$snapshotName";
-	local configsDir="$compilingDir/config"
-	local serviceConfigsDir="$compilingDir/serviceConfigs"
+	local compilingConfigsDir="$compilingDir/config"
+	local compilingServiceConfigsDir="$compilingDir/serviceConfigs"
 	local dataDir="$compilingDir/data"
 
-	mkdir -p "$configsDir"
-	mkdir -p "$serviceConfigsDir"
+	mkdir -p "$compilingConfigsDir"
+	mkdir -p "$compilingServiceConfigsDir"
 	mkdir -p "$dataDir"
 
-	cp -R "$CONFIG_DIR/." "$configsDir"
-	cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
+	cp -R "$CONFIG_DIR/." "$compilingConfigsDir"
+	cp -R "$SERVICE_CONFIG_DIR/." "$compilingServiceConfigsDir"
 
 	#echo "Calling backup scripts"
 
@@ -92,7 +92,7 @@ function snapRes_restore(){
 	rm -rf "$SERVICE_CONFIG_DIR"/*
 	cp -R "$restoringServiceConfigs/." "$SERVICE_CONFIG_DIR/."
 
-	#cp -R "$SERVICE_CONFIG_DIR/." "$serviceConfigsDir"
+	#cp -R "$SERVICE_CONFIG_DIR/." "$compilingServiceConfigsDir"
 
 	#echo "DEBUG:: sleeping"
 	#sleep 5m
