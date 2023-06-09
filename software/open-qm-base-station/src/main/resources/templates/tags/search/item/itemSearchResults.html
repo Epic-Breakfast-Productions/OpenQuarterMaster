@@ -59,7 +59,7 @@
     <td>{result.getStorageMap().size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
