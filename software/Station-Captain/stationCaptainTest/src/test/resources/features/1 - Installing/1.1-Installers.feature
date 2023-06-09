@@ -3,7 +3,7 @@
 @feature-1.1
 Feature: 1.1 - Installers
 
-	This feature covers the creation of installers.
+	This feature covers the creation and usage of installers.
 
 	@feature-1.1.1
 	Scenario: Installers are made
@@ -26,6 +26,7 @@ Feature: 1.1 - Installers
 		When the "<installerType>" installer is installed on "<os>"
 		Then the installer completed successfully
 		And the "oqm-captain" script is present
+		And the "oqm-config" script is present
 
 		Examples:
 			| installerType | os     |

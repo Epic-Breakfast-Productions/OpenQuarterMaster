@@ -19,3 +19,9 @@ Features are identified by the following tag structure:
 `@feature-#`
 
 `@feature-#.#`
+
+### Testing Types
+
+#### Error handling
+
+`@type-error`

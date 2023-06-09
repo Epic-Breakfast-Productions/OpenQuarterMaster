@@ -2,6 +2,8 @@ package stationCaptainTest.stepDefinitions.features;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.testcontainers.containers.Container;
@@ -23,6 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InstallerSteps extends BaseStepDefinitions {
 	
+	private static ShellProcessResults MAKE_INSTALLER_RESULTS;
+	
+	private static synchronized ShellProcessResults makeInstallers() throws IOException, InterruptedException {
+		if(MAKE_INSTALLER_RESULTS == null){
+			MAKE_INSTALLER_RESULTS = ShellProcessResults.builderFromProcessBuilder(
+				new ProcessBuilder(FileLocationConstants.MAKE_INSTALLERS_SH)
+			).build();
+		}
+		
+		return MAKE_INSTALLER_RESULTS;
+	}
+	
 	public InstallerSteps(TestContext context) {
 		super(context);
 	}
@@ -35,9 +49,7 @@ public class InstallerSteps extends BaseStepDefinitions {
 	
 	@When("the command to make the installers are made")
 	public void the_command_to_make_the_installers_are_made() throws InterruptedException, IOException {
-		ShellProcessResults results = ShellProcessResults.builderFromProcessBuilder(
-			new ProcessBuilder(FileLocationConstants.MAKE_INSTALLERS_SH)
-		).build();
+		ShellProcessResults results = makeInstallers();
 		
 		AttachUtils.attach(results, "Build installers", this.getScenario());
 		
@@ -62,7 +74,6 @@ public class InstallerSteps extends BaseStepDefinitions {
 	@When("the {string} installer is installed on {string}")
 	public void the_installer_is_installed(String installerType, String os) throws IOException, InterruptedException {
 		this.getContext().setRunningContainer(ContainerUtils.startContainer(this.getContext(), installerType, os, false));
-		
 		this.getContext().setContainerExecResult(ContainerUtils.installStationCaptain(this.getContext(), this.getContext().getRunningContainer(), false));
 	}
 	
@@ -81,4 +92,15 @@ public class InstallerSteps extends BaseStepDefinitions {
 		assertEquals(0, result.getExitCode());
 	}
 	
+	@Given("the command to make the installers are made is successful")
+	public void theCommandToMakeTheInstallersAreMadeIsSuccessful() throws IOException, InterruptedException {
+		this.the_command_to_make_the_installers_are_made();
+		assertEquals(0, this.getContext().getShellProcessResults().getExitCode());
+	}
+	
+	@And("the installer is successfully installed on the os")
+	public void theInstallerIsSuccessfullyInstalledOnTheOs() throws IOException, InterruptedException {
+		this.the_installer_is_installed(this.getContext().getInstaller(),this.getContext().getOs());
+		this.the_installer_completed_successfully();
+	}
 }
