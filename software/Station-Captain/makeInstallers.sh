@@ -57,6 +57,7 @@ mkdir "$buildDir/$debDir/bin"
 mkdir -p "$buildDir/$debDir/usr/lib/oqm/station-captain"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
+mkdir -p "$buildDir/$debDir/etc/oqm/backup/scripts/"
 
 install -m 755 -D src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
 install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
@@ -66,8 +67,9 @@ install -m 755 -D src/integration/oqm-sc-icon.svg "$buildDir/$debDir/etc/oqm/sta
 install -m 755 -D src/integration/oqm-sc-guide-icon.svg "$buildDir/$debDir/etc/oqm/static/"
 install -m 755 -D src/integration/oqm-captain.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D src/integration/oqm-captain-user-guide.desktop "$buildDir/$debDir/usr/share/applications/"
-install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 install -m 755 -D "$userGuideFile" "$buildDir/$debDir/etc/oqm/static/stationCaptainUserGuide.html"
+install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/backup/"
+install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
@@ -151,12 +153,14 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libdir}/oqm/station-captain
 mkdir -p %{buildroot}/etc/oqm/static
+mkdir -p %{buildroot}/etc/oqm/snapshot/scripts
 mkdir -p %{buildroot}/usr/share/applications
 
 install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
 install -m 755 -D oqm-config.py %{buildroot}/%{_bindir}/oqm-config
 install -m 755 -D lib/* %{buildroot}%{_libdir}/oqm/station-captain/
 
+install -m 755 -D snapshot-restore-base.sh %{buildroot}/etc/oqm/snapshot/
 install -m 755 -D oqm-station-captain-help.txt %{buildroot}/etc/oqm/static/
 install -m 755 -D integration/stationCaptainUserGuide.html %{buildroot}/etc/oqm/static/
 install -m 755 -D integration/oqm-icon.svg %{buildroot}/etc/oqm/static/
@@ -178,6 +182,7 @@ rm -rf ${buildroot}
 /etc/oqm/static/oqm-icon.svg
 /etc/oqm/static/oqm-sc-icon.svg
 /etc/oqm/static/oqm-sc-guide-icon.svg
+/etc/oqm/snapshot/snapshot-restore-base.sh
 /usr/share/applications/oqm-captain.desktop
 /usr/share/applications/oqm-captain-user-guide.desktop
 

@@ -28,14 +28,16 @@ DOWNLOAD_DIR="$TMP_DIR/download"
 DATA_DIR="/data/oqm"
 SHARED_CONFIG_DIR="/etc/oqm"
 META_INFO_DIR="$SHARED_CONFIG_DIR/meta"
-CONFIG_VALUES_DIR="$SHARED_CONFIG_DIR/config/configs"
-SERICE_CONFIG_DIR="$SHARED_CONFIG_DIR/serviceConfig"
+CONFIG_DIR="$SHARED_CONFIG_DIR/config"
+CONFIG_VALUES_DIR="$CONFIG_DIR/configs"
+SERVICE_CONFIG_DIR="$SHARED_CONFIG_DIR/serviceConfig"
 RELEASE_LIST_FILE="$META_INFO_DIR/releases.json"
 RELEASE_LIST_FILE_WORKING="$META_INFO_DIR/releases_unfinished.json"
 RELEASE_LIST_FILE_CUR="$META_INFO_DIR/releases_cur.json"
 RELEASE_VERSIONS_DIR="$META_INFO_DIR/versions"
 RELEASE_INFRA_VERSIONS="$RELEASE_VERSIONS_DIR/infra.json"
 RELEASE_MNGR_VERSIONS="$RELEASE_VERSIONS_DIR/manager.json"
+SNAPSHOT_SCRIPTS_LOC="$SHARED_CONFIG_DIR/snapshot/scripts"
 
 # Selection
 USER_SELECT_FILE="$TMP_DIR/oqm-captain-input"
@@ -119,6 +121,10 @@ Usage:
 			TODO
 			Purges ALL data stored by the system. Do so with care, recommend backing up data first.
 
+		-s tag
+		--snapshot tag
+			Takes a snapshot and tags it with the given string.
+
 	System Management:
 
 		--image-clean
@@ -168,6 +174,10 @@ source "$LIB_DIR/file-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib file-utils"; fi;
 source "$LIB_DIR/service-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib service-utils"; fi;
+source "$LIB_DIR/snapshot_restore.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib snapshot_restore"; fi;
+source "$LIB_DIR/cron-utils.sh"
+if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib cron-utils"; fi;
 
 
 
@@ -207,8 +217,8 @@ if [ "$#" -eq 0 ]; then
 	ui.doInteraction
 fi
 
-ARGS_SHORT="v,h"
-ARGS_LONG="version,help"
+ARGS_SHORT="vhs:"
+ARGS_LONG="version,help,snapshot:"
 
 OPTS=$(getopt -a -n oqm-captain --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
 
@@ -228,6 +238,12 @@ do
 		;;
 		-h | --help)
 			echo "$HELPTEXT";
+			exitProg;
+		;;
+		-s | --snapshot)
+			snapTag="$2"
+			shift 2
+			snapRes_snapshot "$snapTag"
 			exitProg;
 		;;
 		--)
