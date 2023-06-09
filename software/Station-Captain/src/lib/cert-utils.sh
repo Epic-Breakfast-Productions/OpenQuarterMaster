@@ -1,6 +1,6 @@
 #Generates root certificate that can be used to issue and sign x509 certs.
 
-generate_root() {
+function certs_generate_root() {
   # Default values for optional parameters
   local path="$SHARED_CONFIG_DIR/certs"
   local name=""
@@ -77,7 +77,7 @@ generate_root() {
 
 
 #Generates and x509 and all dependiencies and signs with root cert create in generate_root funtion.
-generate_cert() {
+function certs_generate_cert() {
   # Default values for optional parameters
   #local SHARED_CONFIG_DIR='/etc/oqm'  #For Testing
   local path="$SHARED_CONFIG_DIR/certs"

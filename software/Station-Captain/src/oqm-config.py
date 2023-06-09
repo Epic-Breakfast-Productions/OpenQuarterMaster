@@ -51,6 +51,10 @@ try:
         "numToKeep": 5,
         "frequency": "weekly"
     }
+    "certificates": {
+        "privateKeyFile" : "/etc/oqm/certs/oqm-private-key.pem",
+        "publicKeyFile" : "/etc/oqm/certs/oqm-public-key.pem"
+    }
 }
 ''')
 except OSError as e:
