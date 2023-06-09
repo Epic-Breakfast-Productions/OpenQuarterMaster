@@ -173,14 +173,33 @@ const ItemView = {
 
 		return output;
 	},
+	getCheckoutBlockLink(stored, small = false) {
+		let output = $('<div class=""></div>');
+
+		let checkoutButton = $('<button type=button class="btn btn-warning"></button>');
+		checkoutButton.append(Icons.itemCheckout + "Checkout");
+		output.append(checkoutButton);
+
+		if (small) {
+			output.addClass("col-1");
+		} else {
+			output.addClass("col");
+		}
+
+		return output;
+	},
 	getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false, includeStoredLink = false) {
-		let newContent = $('<div class="row"></div>');
+		let newContent = $('<div class="row storedViewRow"></div>');
 
 		if (includeStoredLink) {
 			newContent.append(
 				ItemView.getStoredBlockLink(storageBlockId, true)
 			);
 		}
+
+		newContent.append(
+			ItemView.getCheckoutBlockLink(stored, true)
+		);
 
 		newContent.append(
 			ItemView.getStorageBlockAmountHeldView(stored, storedType),
