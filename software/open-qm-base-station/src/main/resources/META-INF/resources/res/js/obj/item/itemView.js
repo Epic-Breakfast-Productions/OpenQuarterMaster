@@ -176,8 +176,11 @@ const ItemView = {
 	getCheckoutBlockLink(stored, itemId, storageId, small = false) {
 		let output = $('<div class=""></div>');
 
+		console.log("Creating checkout link. Item: " + itemId + " Block: " + storageId + " Stored: " + JSON.stringify(stored))
+
 		let checkoutButton = $('<button type=button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemCheckoutModal"></button>');
-		checkoutButton.on("click", function (){ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId)});
+		let setupCheckoutFunc = function (){ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId);}
+		checkoutButton = checkoutButton.on("click", setupCheckoutFunc);
 		checkoutButton.append(Icons.itemCheckout + "Checkout");
 		output.append(checkoutButton);
 
@@ -243,12 +246,9 @@ const ItemView = {
 			accordContent.append($('<h4>Nothing currently stored.</h4>'));
 		}
 
-		return '<div class="row mb-1"> ' +
-			ItemView.getStoredBlockLink(blockId).prop("outerHTML") +
-			'</div>' +
-			'<div class="row"> ' +
-			accordContent.prop("outerHTML") +
-			'</div>';
+		return $('<div></div>')
+			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row"></div>').append(accordContent));
 	},
 	getTrackedStoredContent(itemId, blockId, trackedMap) {
 		console.log("Getting view content for tracked stored.");
@@ -272,12 +272,11 @@ const ItemView = {
 			accordContent.html('<h4>Nothing currently stored.</h4>');
 		}
 
-		return '<div class="row mb-1"> ' +
-			ItemView.getStoredBlockLink(blockId).prop("outerHTML") +
-			'</div>' +
-			'<div class="row"> ' +
-			accordContent.prop("outerHTML") +
-			'</div>';
+
+
+		return $('<div></div>')
+			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row"></div>').append(accordContent));
 	},
 	setupView(itemId) {
 		console.log("Setting up view for item " + itemId);
