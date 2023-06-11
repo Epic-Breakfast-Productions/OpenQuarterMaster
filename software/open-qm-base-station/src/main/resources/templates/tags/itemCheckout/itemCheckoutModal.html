@@ -1,0 +1,19 @@
+
+{#modal id='itemCheckout' large=true title='Checkout Item'}
+	<div class="row">
+		<div class="col" id="itemCheckoutMessages">
+		
+		</div>
+	</div>
+	
+	
+	{#footerButtons}
+		<div id="itemCheckoutButtonContainer" class="">
+			<a href="/itemList/" class="btn btn-lg btn-warning" id="itemListReviewEditButton">{#icons/edit}{/icons/edit} Edit</a>
+		</div>
+		<div class="btn-group btn-group-lg" role="group" aria-label="Apply Item List Button">
+			<button type="button" class="btn btn-success" id="" onclick="ItemListView.toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
+			<button type="button" class="btn btn-success disabled"  id="" onclick="ItemListView.applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+		</div>
+	{/footerButtons}
+{/modal}

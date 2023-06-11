@@ -173,10 +173,11 @@ const ItemView = {
 
 		return output;
 	},
-	getCheckoutBlockLink(stored, small = false) {
+	getCheckoutBlockLink(stored, itemId, storageId, small = false) {
 		let output = $('<div class=""></div>');
 
-		let checkoutButton = $('<button type=button class="btn btn-warning"></button>');
+		let checkoutButton = $('<button type=button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemCheckoutModal"></button>');
+		checkoutButton.on("click", function (){ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId)});
 		checkoutButton.append(Icons.itemCheckout + "Checkout");
 		output.append(checkoutButton);
 
@@ -198,7 +199,7 @@ const ItemView = {
 		}
 
 		newContent.append(
-			ItemView.getCheckoutBlockLink(stored, true)
+			ItemView.getCheckoutBlockLink(stored, itemId, storageBlockId, true)
 		);
 
 		newContent.append(
