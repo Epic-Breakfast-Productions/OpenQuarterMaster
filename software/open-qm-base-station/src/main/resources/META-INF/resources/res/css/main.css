@@ -87,7 +87,7 @@
 }
 
 .itemCatBadge {
-
+	border-radius: 3px;
 }
 
 .itemCatBadgeImage {
@@ -107,4 +107,5 @@
 
 .barcodeViewImg {
 	max-width: 100%;
+	border: 2px solid white;
 }
