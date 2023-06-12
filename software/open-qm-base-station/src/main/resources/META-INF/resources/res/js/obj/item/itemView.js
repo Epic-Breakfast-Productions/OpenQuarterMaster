@@ -413,7 +413,7 @@ const ItemView = {
 		});
 
 		//TODO:: adjust html to match history
-		ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
+		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
 		setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
 	}
 };
