@@ -17,7 +17,44 @@
 	<hr />
 	<div class="row">
 		<form class="col" id="itemCheckoutForm" onsubmit="ItemCheckout.submitCheckout(e);">
-		
+			<input type="hidden" id="itemCheckoutFormItemIdInput" value="">
+			<input type="hidden" id="itemCheckoutFormCheckedOutFromIdIdInput" value="">
+			<input type="hidden" id="itemCheckoutFormToCheckoutInput" value="">
+			
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormDueBackInput">Due Back:</label>
+				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control storedExpiredInput"> //TODO:: enforce future date
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormForSelectInput">For Who:</label>
+				<select class="form-select" id="itemCheckoutFormForSelectInput">
+					<option value="self">Yourself</option>
+					<option value="self">Another OQM User</option>
+					<option value="self">External Entity</option>
+				</select>
+			</div>
+			<div class="mb-3" id="itemCheckoutFormForAnotherOqmUserContainer">
+				<label class="form-label" for="itemCheckoutFormForAnotherOqmUserInput">Select a user:</label>
+				<textarea class="form-control" id="itemCheckoutFormForAnotherOqmUserInput" rows="1"></textarea>
+			</div>
+			<div id="itemCheckoutFormForExternalUserContainer">
+				<div class="mb-3" id="">
+					<label class="form-label" for="itemCheckoutFormForExternalUserNameInput">External User Name:</label>
+					<textarea class="form-control" id="itemCheckoutFormForExternalUserNameInput" rows="1"></textarea>
+				</div>
+				<div class="mb-3" id="">
+					<label class="form-label" for="itemCheckoutFormForExternalUserIdInput">External User Id:</label>
+					<input type="text" class="form-control" id="itemCheckoutFormForExternalUserIdInput">
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormReasonInput">Reason</label>
+				<textarea class="form-control" id="itemCheckoutFormReasonInput" rows="2"></textarea>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormNotesInput">Notes</label>
+				<textarea class="form-control" id="itemCheckoutFormNotesInput" rows="3"></textarea>
+			</div>
 		</form>
 	</div>
 	
