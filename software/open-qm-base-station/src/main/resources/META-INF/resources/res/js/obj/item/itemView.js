@@ -28,6 +28,7 @@ const ItemView = {
 	itemViewId: $("#itemViewId"),
 	itemViewEditButton: $('#itemViewEditButton'),
 	itemHistoryAccordionCollapse: $("#itemHistoryAccordionCollapse"),
+	itemViewCheckedOutResultsContainer: $("#itemViewCheckedOutResultsContainer"),
 
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
@@ -53,6 +54,8 @@ const ItemView = {
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
+
+		ItemView.itemViewCheckedOutResultsContainer.html("");
 
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
@@ -179,7 +182,9 @@ const ItemView = {
 		console.log("Creating checkout link. Item: " + itemId + " Block: " + storageId + " Stored: " + JSON.stringify(stored))
 
 		let checkoutButton = $('<button type=button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemCheckoutModal"></button>');
-		let setupCheckoutFunc = function (){ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId);}
+		let setupCheckoutFunc = function () {
+			ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId);
+		}
 		checkoutButton = checkoutButton.on("click", setupCheckoutFunc);
 		checkoutButton.append(Icons.itemCheckout + "Checkout");
 		output.append(checkoutButton);
@@ -217,7 +222,7 @@ const ItemView = {
 
 		return newContent;
 	},
-	getAmountStoredContent(stored, itemId, storageBlockId){
+	getAmountStoredContent(stored, itemId, storageBlockId) {
 		console.log("Getting view content for simple amount stored.");
 		return ItemView.getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId, false, true);
 	},
@@ -273,7 +278,6 @@ const ItemView = {
 		}
 
 
-
 		return $('<div></div>')
 			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
 			.append($('<div class="row"></div>').append(accordContent));
@@ -295,40 +299,41 @@ const ItemView = {
 		doRestCall({
 			spinnerContainer: ItemView.itemViewModal,
 			url: "/api/v1/inventory/item/" + itemId,
-			done: async function (data) {
+			failMessagesDiv: ItemView.itemViewMessages,
+			done: async function (itemData) {
 				let promises = [];
 
-				if (data.categories.length) {
+				if (itemData.categories.length) {
 					ItemView.itemViewCategoriesContainer.show();
-					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, data.categories));
+					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
 				}
 
-				processKeywordDisplay(ItemView.viewKeywordsSection, data.keywords);
-				processAttDisplay(ItemView.viewKeywordsSection, data.attributes);
-				ItemView.itemViewModalLabel.text(data.name);
-				ItemView.itemViewStorageType.text(data.storageType);
-				ItemView.itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
-				ItemView.itemViewTotalVal.text(data.valueOfStored);
+				processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
+				processAttDisplay(ItemView.viewKeywordsSection, itemData.attributes);
+				ItemView.itemViewModalLabel.text(itemData.name);
+				ItemView.itemViewStorageType.text(itemData.storageType);
+				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
+				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
 
-				if (data.description) {
-					ItemView.itemViewDescription.text(data.description);
+				if (itemData.description) {
+					ItemView.itemViewDescription.text(itemData.description);
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if (data.barcode) {
-					ItemView.itemViewBarcode.attr("src", "/api/v1/media/code/item/" + data.id + "/barcode")
+				if (itemData.barcode) {
+					ItemView.itemViewBarcode.attr("src", "/api/v1/media/code/item/" + itemData.id + "/barcode")
 					ItemView.itemViewBarcodeContainer.show();
 				}
 
-				if (data.lowStockThreshold) {
-					ItemView.itemViewTotalLowStockThreshold.text(data.lowStockThreshold.value + "" + data.lowStockThreshold.unit.symbol);
+				if (itemData.lowStockThreshold) {
+					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
 					ItemView.itemViewTotalLowStockThresholdContainer.show();
 				}
 
-				if (data.imageIds.length) {
+				if (itemData.imageIds.length) {
 					console.log("Item had images to show.");
 					ItemView.itemViewCarousel.show();
-					promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, ItemView.itemViewCarousel));
+					promises.push(Carousel.setCarouselImagesFromIds(itemData.imageIds, ItemView.itemViewCarousel));
 				} else {
 					console.log("Storage block had no images to show.");
 					ItemView.itemViewCarousel.hide();
@@ -336,7 +341,7 @@ const ItemView = {
 
 				console.log("Setting up view of stored.");
 
-				let numStorageBlocks = Object.keys(data.storageMap).length;
+				let numStorageBlocks = Object.keys(itemData.storageMap).length;
 
 				if (numStorageBlocks === 0) {
 					console.log("None stored.");
@@ -348,22 +353,22 @@ const ItemView = {
 				}
 
 				let showAmountStoredPricePerUnit = function () {
-					ItemView.itemViewValPerUnit.text(data.valuePerUnit);
+					ItemView.itemViewValPerUnit.text(itemData.valuePerUnit);
 				}
 				StoredTypeUtils.foreachStoredType(
-					data.storageType,
+					itemData.storageType,
 					showAmountStoredPricePerUnit,
 					showAmountStoredPricePerUnit,
 					function () {
-						ItemView.itemViewValPerUnit.text(data.defaultValue);
+						ItemView.itemViewValPerUnit.text(itemData.defaultValue);
 						ItemView.itemViewValPerUnitDefault.show();
 
-						ItemView.itemViewIdentifyingAtt.text(data.trackedItemIdentifierName);
+						ItemView.itemViewIdentifyingAtt.text(itemData.trackedItemIdentifierName);
 						ItemView.itemViewIdentifyingAttContainer.show();
 					}
 				);
 
-				Object.keys(data.storageMap).forEach(key => {
+				Object.keys(itemData.storageMap).forEach(key => {
 					promises.push(new Promise(async function () {
 						console.log("Processing stored under storage block " + key);
 						let curBlockName = key;
@@ -378,25 +383,25 @@ const ItemView = {
 						});
 
 						StoredTypeUtils.foreachStoredType(
-							data.storageType,
+							itemData.storageType,
 							function () {
 								ItemView.addViewStorageBlocksAccordionItem(
 									key,
-									ItemView.getAmountStoredContent(data.storageMap[key].stored, data.id, key),
+									ItemView.getAmountStoredContent(itemData.storageMap[key].stored, itemData.id, key),
 									curBlockName
 								);
 							},
 							function () {
 								ItemView.addViewStorageBlocksAccordionItem(
 									key,
-									ItemView.getAmountListStoredContent(data.id, key, data.storageMap[key].stored),
+									ItemView.getAmountListStoredContent(itemData.id, key, itemData.storageMap[key].stored),
 									curBlockName
 								);
 							},
 							function () {
 								ItemView.addViewStorageBlocksAccordionItem(
 									key,
-									ItemView.getTrackedStoredContent(data.id, key, data.storageMap[key].stored),
+									ItemView.getTrackedStoredContent(itemData.id, key, itemData.storageMap[key].stored),
 									curBlockName
 								);
 							}
@@ -404,10 +409,11 @@ const ItemView = {
 					}));
 				});
 				await Promise.all(promises);
-			},
-			failMessagesDiv: ItemView.itemViewMessages
+			}
 		});
 
+		//TODO:: adjust html to match history
+		ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
 		setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
 	}
 };
@@ -416,7 +422,8 @@ ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
 	UriUtils.removeParam("view");
 });
 
-if (UriUtils.getParams.has("view")) {
+if (UriUtils.getParams.has("view")
+) {
 	ItemView.setupView(UriUtils.getParams.get("view"));
 	ItemView.viewBsModal.show();
 }
