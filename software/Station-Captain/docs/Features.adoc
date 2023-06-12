@@ -51,6 +51,8 @@ Alongside the main script is a utility to help get and manage configurations cal
 
 ===== Replace placeholders in file
 
+===== Update values in existing config files
+
 === Misc
 
 ==== Only runs as root

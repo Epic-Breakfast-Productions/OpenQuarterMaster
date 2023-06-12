@@ -14,6 +14,11 @@ function ui_updateSelection() {
 #
 #
 
+function ui_warnSystemRestart(){
+	ui_showDialog --title "Are you sure?" --yesno "This action will bring the system down for a short period.\nDo you want to continue?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+	return $?
+}
+
 function ui_displayBaseOsInfo() {
 	# https://medium.com/technology-hits/basic-linux-commands-to-check-hardware-and-system-information-62a4436d40db
 
@@ -253,14 +258,14 @@ function ui_cleanupDialog() {
 			ui_showDialog --title "Docker cleanup complete!" --msgbox "" 0 $DEFAULT_WIDTH
 			;;
 		2)
-			ui_showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to backup your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+			ui_showDialog --title "RESET DATA" --yesno "Are you sure? This will erase ALL data used on the system. Configuration will be untouched, but all application data will be gone. It is recommended to snapshot your data before doing this.\n\nAre you sure?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
 			case $? in
 			0)
 				ui_showDialog --infobox "Resetting all application data. Please wait." 3 $DEFAULT_WIDTH
 
 				services-stop
 
-				files-clearData
+				files_clearData
 
 				services-start
 
@@ -350,12 +355,162 @@ function ui_manageInstallDialog() {
 	done
 }
 
+function ui_snapshotsRestoreDialog() {
+	ui_showDialog --title "Please choose a snapshot to restore:" \
+	--fselect "$(oqm-config -g snapshots.location)/*" $DEFAULT_HEIGHT $SUPER_WIDE_WIDTH \
+	2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local fileSelected="$SELECTION"
+	echo "File selected: \"$fileSelected\""
+
+	if [ ! -f "$fileSelected" ]; then
+		ui_showDialog --title "Invalid file selected." --msgbox "" 0 $DEFAULT_WIDTH
+		return
+	fi
+
+	if ! ui_warnSystemRestart; then
+		echo 'Canceled restoring snapshot.';
+		ui_showDialog --title 'Canceled restoring snapshot.' --msgbox "" 0 $DEFAULT_WIDTH
+		return
+	fi
+
+	ui_showDialog --title "Perform snapshot first?" --yesno "This is an irreversible action without an available snapshot.\nTake precautionary snapshot now?" $DEFAULT_HEIGHT $DEFAULT_WIDTH
+	case $? in
+	0)
+		ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
+		snapRes_snapshot "pre_restore"
+		ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+		;;
+	*)
+		echo "Not performing preemptive snapshot."
+		;;
+	esac
+
+	ui_showDialog --infobox "Restoring from snapshot, please wait." 3 $DEFAULT_WIDTH
+	snapRes_restore "$fileSelected"
+	ui_showDialog --title "Finished restore." --msgbox "" 0 $DEFAULT_WIDTH
+}
+
+function ui_setSnapshotsFrequencyDialog() {
+	ui_showDialog --title "Snapshot Frequency" \
+		--menu "Currently set to $(oqm-config -g snapshots.frequency)\nPlease choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		1 "Hourly" \
+		2 "Daily" \
+		3 "Weekly" \
+		4 "Monthly" \
+		2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local resultFrequency=""
+	case $SELECTION in
+		1)
+			resultFrequency="hourly"
+			;;
+		2)
+			resultFrequency="daily"
+			;;
+		3)
+			resultFrequency="weekly"
+			;;
+		4)
+			resultFrequency="monthly"
+			;;
+		*)
+			;;
+	esac
+	if [ -n "$resultFrequency" ]; then
+		oqm-config -s snapshots.frequency "$resultFrequency"
+	fi
+}
+
+function ui_setSnapshotsNumToKeepDialog() {
+	ui_showDialog --title "Number of Snapshots to Keep" \
+		--inputbox "The maximum number of snapshots to keep in the directory.\nCurrently set to $(oqm-config -g snapshots.numToKeep)\nPlease enter a number (0 for no limit):" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+		2>$USER_SELECT_FILE
+	ui_updateSelection
+
+	local numToKeep="$SELECTION"
+	if [ -z "$numToKeep" ]; then
+		ui_showDialog --title "No input given, not changed" --msgbox "" 0 $DEFAULT_WIDTH
+	elif [[ "$numToKeep" =~ ^[0-9]+$ ]]; then
+		oqm-config -s snapshots.numToKeep "$numToKeep" "."
+	else
+		ui_showDialog --title "Bad input given, not changed" --msgbox "" 0 $DEFAULT_WIDTH
+	fi
+}
+
+function ui_snapshotsDialog() {
+	local autoEnabled="false"
+	local autoEnabledText="Enable"
+
+	while true; do
+		if [ -z "$(find "/etc/" -maxdepth 2 -name 'oqm-snapshots' -printf 1 -quit)" ]; then
+			echo "Auto snapshots disabled"
+			autoEnabled="false"
+			autoEnabledText="Enable"
+		else
+			echo "Auto snapshots enabled"
+			autoEnabled="true"
+			autoEnabledText="Disable"
+		fi
+
+		ui_showDialog --title "Snapshots" \
+			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT \
+			1 "Trigger Snapshot Now" \
+			2 "Restore from snapshot" \
+			3 "$autoEnabledText automatic snapshots" \
+			4 "Set snapshot location TODO" \
+			5 "Set number of snapshots to keep (currently $(oqm-config -g snapshots.numToKeep))" \
+			6 "Set snapshot frequency (currently $(oqm-config -g snapshots.frequency))" \
+			2>$USER_SELECT_FILE
+		ui_updateSelection
+
+		case $SELECTION in
+		1)
+			if ! ui_warnSystemRestart; then
+				echo 'Canceled creating snapshot.';
+				ui_showDialog --title 'Canceled creating snapshot.' --msgbox "" 0 $DEFAULT_WIDTH
+			else
+				ui_showDialog --infobox "Performing snapshot, please wait." 3 $DEFAULT_WIDTH
+				snapRes_snapshot "on_demand"
+				ui_showDialog --title "Finished snapshot." --msgbox "" 0 $DEFAULT_WIDTH
+			fi
+			;;
+		2)
+			ui_snapshotsRestoreDialog
+			;;
+		3)
+			if [ "$autoEnabled" == "false" ]; then
+				cron_enablePeriodicSnapshots
+				ui_showDialog --title "Auto snapshots enabled." --msgbox "" 0 $DEFAULT_WIDTH
+			elif [ "$autoEnabled" == "true" ]; then
+				cron_disablePeriodicSnapshots
+				ui_showDialog --title "Auto snapshots disabled." --msgbox "" 0 $DEFAULT_WIDTH
+			fi
+			;;
+		5)
+			ui_setSnapshotsNumToKeepDialog
+			;;
+		6)
+			ui_setSnapshotsFrequencyDialog
+			if [ "$autoEnabled" == "true" ]; then
+				cron_enablePeriodicSnapshots
+			fi
+			;;
+		*)
+			return
+			;;
+		esac
+	done
+}
+
 function ui_mainUi() {
 	while true; do
 		ui_showDialog --title "Main Menu" \
 			--menu "Please choose an option:" $DEFAULT_HEIGHT $DEFAULT_WIDTH $DEFAULT_HEIGHT 1 "Info / Status" \
 			2 "Manage Installation" \
-			3 "Backups" \
+			3 "Snapshots" \
 			4 "Updates" \
 			5 "Captain Settings" \
 			2>$USER_SELECT_FILE
@@ -369,7 +524,8 @@ function ui_mainUi() {
 		2)
 			ui_manageInstallDialog
 			;;
-		3) # TODO:manage backups
+		3)
+			ui_snapshotsDialog
 			;;
 		4)
 			ui_updatesDialog

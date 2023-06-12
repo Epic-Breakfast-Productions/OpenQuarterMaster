@@ -35,7 +35,7 @@ Feature: 3.1 - Config Utility
 			| test.testDouble | 1.5         |
 
 	@feature-3.1.2
-	@type-error
+		@type-error
 	Scenario Outline: Get a particular config value - bad config key "<key>"
 
 	This tests that when given a bad config key, the error is handled gracefully
@@ -69,3 +69,18 @@ Feature: 3.1 - Config Utility
 		Then command from the container returns with 2 code
 		And the config command outputs about the file not found
 
+
+	@feature-3.1.4
+	Scenario Outline: Update configuration
+
+	This tests that the
+
+		When the 'oqm-config -s <key> <value> 99-custom.json' command is made on the running container
+		Then command from the container returns successfully
+		And the json output matches '<result>'
+		And the default addendum config file is updated
+
+		Examples:
+			| key | value | result           |
+			| a   | b     | {"a":"b"}        |
+			| a.b | c     | {"a": {"b":"c"}} |

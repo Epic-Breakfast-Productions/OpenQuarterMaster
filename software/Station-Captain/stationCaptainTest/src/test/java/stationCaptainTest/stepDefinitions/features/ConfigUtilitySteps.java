@@ -1,16 +1,18 @@
 package stationCaptainTest.stepDefinitions.features;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.cucumber.cienvironment.internal.com.eclipsesource.json.JsonObject;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.testcontainers.utility.MountableFile;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
+
+import java.io.ByteArrayOutputStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,5 +82,30 @@ public class ConfigUtilitySteps extends BaseStepDefinitions {
 		
 		assertTrue(rawOutput.contains("Config key not found"));
 		assertTrue(rawOutput.contains(configKey));
+	}
+	
+	@And("the json output matches {string}")
+	public void theJsonOutputMatches(String expectedJson) throws JsonProcessingException {
+		String rawOutput = this.getContext().getContainerExecResult().getStdout().trim();
+		
+		ObjectNode expected = (ObjectNode) OBJECT_MAPPER.readTree(expectedJson);
+		ObjectNode actual = (ObjectNode) OBJECT_MAPPER.readTree(rawOutput);
+		
+		assertEquals(expected, actual);
+		
+		this.getContext().getData().put("expectedJson", expected);
+	}
+	
+	@And("the default addendum config file is updated")
+	public void theDefaultAddendumConfigFileIsUpdated() {
+		ObjectNode expected = (ObjectNode) this.getContext().getData().get("expectedJson");
+		
+		ObjectNode actual = (ObjectNode) this.getContext().getRunningContainer().copyFileFromContainer("/etc/oqm/config/configs/99-custom.json", inputStream -> {
+			try(ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+				IOUtils.copy(inputStream, output);
+				return OBJECT_MAPPER.readTree(output.toByteArray());
+			}
+		});
+		assertEquals(expected, actual);
 	}
 }
