@@ -25,7 +25,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/core/ba
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/core/base+station/user-config.list >> /tmp/oqm/serviceConfig/core/base+station/base-station-config.list"
 
 # Pull image as separate task
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${version}"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${version} || echo 'Could not pull image.'"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
                                         -p 80:80 -p 443:443 \

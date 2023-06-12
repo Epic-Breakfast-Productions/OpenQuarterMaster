@@ -6,10 +6,10 @@ import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.QrCode;
 import uk.org.okapibarcode.backend.Symbol;
+import uk.org.okapibarcode.graphics.Color;
 import uk.org.okapibarcode.output.SvgRenderer;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
