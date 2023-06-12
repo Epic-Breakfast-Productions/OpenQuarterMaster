@@ -3,3 +3,7 @@
 a.active,button.active {
 	font-weight: bold !important;
 }
+
+.badge {
+	font-weight: bold;
+}
