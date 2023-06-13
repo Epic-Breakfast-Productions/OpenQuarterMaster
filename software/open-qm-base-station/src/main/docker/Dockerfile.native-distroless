@@ -14,7 +14,7 @@
 # docker run -i --rm -p 8080:8080 quarkus/open-qm-base-station
 #
 ###
-FROM quay.io/quarkus/quarkus-distroless-image:1.0
+FROM quay.io/quarkus/quarkus-distroless-image:2.0
 COPY build/*-runner /application
 
 EXPOSE 8080

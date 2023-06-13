@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
+import tech.ebp.oqm.lib.core.jackson.ColorModule;
 import tech.ebp.oqm.lib.core.jackson.MongoObjectIdModule;
 import tech.ebp.oqm.lib.core.jackson.TempQuantityJacksonModule;
 import tech.ebp.oqm.lib.core.jackson.UnitModule;
@@ -36,6 +37,7 @@ public final class ObjectUtils {
 		new UnitJacksonModule(),
 		new JavaTimeModule(),
 		new MongoObjectIdModule(),
+		new ColorModule(),
 		new TempQuantityJacksonModule(),
 		new UnitModule()
 	};

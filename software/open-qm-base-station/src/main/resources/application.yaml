@@ -15,13 +15,14 @@ service:
     clientId: quartermaster
     clientSecret: secret
     scope: openid
-    realmBasePath: /auth/realms/${service.externalAuth.realm:}
+    realmBasePath: /realms/${service.externalAuth.realm:}
     realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
     interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
     interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
     tokenPath: ${service.externalAuth.interactionBasePath:}/token
     tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackUrl: ${runningInfo.baseUrl}/api/v1/auth/user/callback
+    callbackPath: /api/v1/auth/user/callback
+    callbackUrl: ${runningInfo.baseUrl}${service.externalAuth.callbackPath:}
   runBy:
     name: " "
     email: " "
@@ -98,6 +99,8 @@ externalService:
     # Service entries here
   
 quarkus:
+  application:
+    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
     keycloak:
       url: ${service.externalAuth.tokenUrl}
@@ -120,7 +123,11 @@ quarkus:
   log:
     level: DEBUG
     console:
-      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}](%-26t):: %s%e%n"
+      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
+#    category: TODO:: make this work to suppress mongo debug statements
+#      #      "com.mongodb.internal.diagnostics": INFO
+#      #      "com.mongodb": INFO
+#      com.mongodb.internal.diagnostics.logging: INFO
   mongodb:
     database: openQuarterMaster
     tracing:
@@ -150,12 +157,6 @@ quarkus:
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With <3, EBP
-  # https://quarkus.io/guides/opentracing
-  jaeger:
-    enabled: true
-    service-name: ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
-    sampler-type: const
-    sampler-param: 1
   #    metrics:
   #      enabled: true
   http:
@@ -165,6 +166,8 @@ quarkus:
       proactive: false
     access-log:
       enabled: true
+    port: 80
+    ssl-port: 443
   mailer:
     from: ${runningInfo.fromEmail}
   reactive-messaging:
@@ -176,14 +179,7 @@ quarkus:
 mp:
   jwt:
     verify:
-      # TODO:: mode packaged keys outside of resources, similar to dev image
-      # TODO:: move to dev mode configuration
-      privatekey:
-        location: security/packagedPrivateKeyPkcs8.pem
-      publickey:
-        location: security/packagedPublicKey.pem
       issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
-    # TODO:: verify persist through Native
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
@@ -201,15 +197,37 @@ smallrye:
 
 "%dev":
   quarkus:
+    application:
+      name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
       level: DEBUG
+    opentelemetry:
+      enabled: true
+      tracer:
+        exporter:
+          otlp:
+            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
-    jaeger:
-      endpoint: http://localhost:8091/api/traces
-      service-name: ${service.nameShort} - V${service.apiVersion} - DEV
     mongodb:
       connection-string: mongodb://localhost:27017
+    http:
+      port: 8080
+      ssl-port: 8443
+      ssl:
+        certificate:
+          files: ../../../../dev/devTest-cert-cert.pem
+          key-files: ../../../../dev/devTest-cert-key.pem
+  mp:
+    jwt:
+      expiration:
+#        default: 60
+      verify:
+        privatekey:
+          location: ../../../../dev/devTest-cert-key.pem
+        publickey:
+          location: ../../../../dev/devTest-cert-cert.pem
+        issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
   service:
     runBy:
       name: The Developers
@@ -217,6 +235,5 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-#  demo:
-#    perform: true
+
 

@@ -238,6 +238,7 @@ class ImageTest extends BasicTest {
 		ImageCreateRequest icr = new ImageCreateRequest(
 			"hello",
 			"world",
+			"test",
 			"data:image/png;base64," + new String(base64Is.readAllBytes()),
 			new ArrayList<>(),
 			new HashMap<>()

@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -12,11 +13,10 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.interfaces.ui.UiUtils;
+import tech.ebp.oqm.baseStation.interfaces.ui.pages.UiUtils;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
@@ -47,11 +47,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/auth/user")
 @Tags({@Tag(name = "Auth", description = "Endpoints for user authorization.")})
@@ -81,6 +81,8 @@ public class UserAuth extends EndpointProvider {
 	String externalClientSecret;
 	@ConfigProperty(name = "service.externalAuth.scope", defaultValue = "")
 	String externalScope;
+	@ConfigProperty(name = "service.externalAuth.callbackPath", defaultValue = "")
+	String callbackPath;
 	@ConfigProperty(name = "service.externalAuth.callbackUrl", defaultValue = "")
 	String callbackUrl;
 	@ConfigProperty(name = "mp.jwt.token.cookie")
@@ -140,21 +142,21 @@ public class UserAuth extends EndpointProvider {
 		if (user == null) {
 			return Response.status(Response.Status.BAD_REQUEST).entity(ErrorMessage.builder().displayMessage("User not found.").build()).build();
 		}
-		if(user.isDisabled()){
+		if (user.isDisabled()) {
 			return Response.status(Response.Status.UNAUTHORIZED)
-						   .entity(
-							   ErrorMessage.builder()
-										   .displayMessage("Account Disabled. Contact an admin for details.")
-										   .build()
-						   ).build();
+					   .entity(
+						   ErrorMessage.builder()
+							   .displayMessage("Account Disabled. Contact an admin for details.")
+							   .build()
+					   ).build();
 		}
 		
 		//TODO:: check for # of login attempts?
 		
 		if (!this.passwordService.passwordMatchesHash(user, loginRequest)) {
 			return Response.status(Response.Status.BAD_REQUEST)
-						   .entity(ErrorMessage.builder().displayMessage("Invalid Password.").build())
-						   .build();
+					   .entity(ErrorMessage.builder().displayMessage("Invalid Password.").build())
+					   .build();
 		}
 		
 		log.info("User {} authenticated, generating token and returning. Extended expire? {}", user.getId(), loginRequest.isExtendedExpire());
@@ -166,10 +168,9 @@ public class UserAuth extends EndpointProvider {
 		);
 		
 		return Response.status(Response.Status.ACCEPTED)
-					   .entity(this.jwtService.getUserJwt(user, loginRequest.isExtendedExpire()))
-					   .build();
+				   .entity(this.jwtService.getUserJwt(user, loginRequest.isExtendedExpire()))
+				   .build();
 	}
-	
 	
 	@GET
 	@Path("callback")
@@ -203,26 +204,30 @@ public class UserAuth extends EndpointProvider {
 		if (!origState.equals(state)) {
 			return Response.seeOther(
 				UriBuilder.fromUri("/")
-						  .queryParam("messageHeading", "Error")
-						  .queryParam("message", "An error occurred when trying to communicate with keycloak.")
-						  .queryParam("messageType", "danger")
-						  .build()
+					.queryParam("messageHeading", "Error")
+					.queryParam("message", "An error occurred when trying to communicate with keycloak.")
+					.queryParam("messageType", "danger")
+					.build()
 			).build();
 		}
 		
 		JsonNode returned;
 		try {
+			//redirect uri here must be the same as was sent to Keycloak initially
+			String redirectUri = StringUtils.removeEnd(this.uri.getBaseUri().toString(), "/") + this.callbackPath;
+			redirectUri = (
+				returnPath == null || returnPath.isBlank() ?
+//					this.callbackUrl : //dislikes this; http://host.testcontainers.internal:8081/api/v1/auth/user/callback
+					redirectUri : //likes this; http://host.testcontainers.internal:8081//api/v1/auth/user/callback
+					new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString()
+			);
 			returned = this.keycloakServiceCaller.getJwt(
 				this.externalClientId,
 				this.externalClientSecret,
 				this.externalScope,
 				"authorization_code",
 				code,
-				(
-					returnPath == null || returnPath.isBlank() ?
-						this.callbackUrl :
-						new URIBuilder(this.callbackUrl).addParameter("returnPath", returnPath).build().toString()
-				)
+				redirectUri
 			);
 		} catch(Throwable e) {
 			log.warn("Failed to get token from keycloak (exception)- ", e);
@@ -237,16 +242,19 @@ public class UserAuth extends EndpointProvider {
 			returned
 		);
 		
-		Response.ResponseBuilder responseBuilder = Response.seeOther(
-			UriBuilder.fromUri(
-						  (returnPath == null || returnPath.isBlank() ? "/overview" : returnPath)
-					  )
-					  .build()
-		).cookie(
-			newCookies.toArray(
-				new NewCookie[]{}
+		URI returnUri = UriBuilder.fromUri(
+				(returnPath == null || returnPath.isBlank() ? "/overview" : returnPath)
 			)
-		);
+							.build();
+		
+		Response.ResponseBuilder responseBuilder = Response.seeOther(returnUri)
+													   .cookie(
+														   newCookies.toArray(
+															   new NewCookie[]{}
+														   )
+													   )
+			;
+		responseBuilder.entity("<html><head></head><body>Redirecting to <a href=\""+returnUri+"\">"+returnUri+"</a></body></html>");
 		
 		return responseBuilder.build();
 	}
@@ -271,9 +279,9 @@ public class UserAuth extends EndpointProvider {
 	) {
 		log.info("Logging out user.");
 		return Response.seeOther(
-						   UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")
-									 .build()
-					   ).cookie(UiUtils.getAuthRemovalCookie(this.uri))
-					   .build();
+				UriBuilder.fromUri("/?messageHeading=Logout Success!&message=You have logged out.&messageType=success")
+					.build()
+			).cookie(UiUtils.getAuthRemovalCookie(this.uri))
+				   .build();
 	}
 }

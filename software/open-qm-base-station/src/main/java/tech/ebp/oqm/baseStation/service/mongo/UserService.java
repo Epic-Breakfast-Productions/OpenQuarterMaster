@@ -3,18 +3,19 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.security.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.lib.core.rest.auth.roles.UserRoles;
 import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -36,7 +37,6 @@ import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.or;
 import static tech.ebp.oqm.baseStation.service.JwtService.JWT_USER_TITLE_CLAIM;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
@@ -69,6 +69,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		this.authMode = authMode;
 	}
 	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, User newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
@@ -106,6 +107,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 	 *
 	 * @return
 	 */
+	@WithSpan
 	public User getFromUsernameEmail(String usernameOrEmail) {
 		return this.getCollection()
 				   .find(
@@ -118,6 +120,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 				   .first();
 	}
 	
+	@WithSpan
 	public boolean usernameAvailable(
 		@NotNull
 		@NotBlank
@@ -127,6 +130,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		return !this.fieldValueExists("username", username);
 	}
 	
+	@WithSpan
 	public boolean emailAvailable(
 		@Email
 		String email
@@ -134,10 +138,12 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		return !this.fieldValueExists("email", email);
 	}
 	
+	@WithSpan
 	public User getFromLoginRequest(UserLoginRequest loginRequest) {
 		return this.getFromUsernameEmail(loginRequest.getUsernameEmail());
 	}
 	
+	@WithSpan
 	private User getExternalUser(String externalSource, String externalId) {
 		if (externalId == null) {
 			return null;
@@ -145,6 +151,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		return this.getCollection().find(eq("externIds." + externalSource, externalId)).limit(1).first();
 	}
 	
+	@WithSpan
 	private User getOrCreateExternalUser(JsonWebToken jwt) {
 		String externalSource = jwt.getIssuer();
 		String externalId = jwt.getClaim(Claims.sub);
@@ -157,12 +164,17 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 		}
 		
 		//TODO:: verify has all these fields & throw exception
+		
+		
+		Set<String> userRoles = jwt.getClaim(Claims.groups);
+		userRoles.retainAll(UserRoles.USER_ROLES);
+		
 		User.Builder userBuilder = User.builder()
 									   .firstName(jwt.getClaim(Claims.given_name))
 									   .lastName(jwt.getClaim(Claims.family_name))
 									   .email(jwt.getClaim(Claims.email))
 									   .title(jwt.getClaim(JWT_USER_TITLE_CLAIM))
-									   .roles(jwt.getClaim(Claims.groups));
+									   .roles(userRoles);
 		
 		if (jwt.getClaim(Claims.upn) != null) {
 			userBuilder.username(jwt.getClaim(Claims.upn));
@@ -201,6 +213,7 @@ public class UserService extends MongoHistoriedObjectService<User, UserSearch> {
 	 *
 	 * @return The user the jwt was for. Null if no user found.
 	 */
+	@WithSpan
 	public User getFromJwt(JsonWebToken jwt) {
 		//TODO:: check is user?
 		switch (this.authMode) {

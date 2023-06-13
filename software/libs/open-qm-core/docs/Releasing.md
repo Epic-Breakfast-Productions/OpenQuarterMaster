@@ -3,6 +3,7 @@
 1. Setup:
    1. Have pgp public key 
       1. https://central.sonatype.org/publish/requirements/gpg/
+      2. Easiest to copy `~/.gnupg` from pre-setup
    2. create `gradle.properties`, fill out
 2. Check for outdated dependencies
 3. Run _all_ tests:

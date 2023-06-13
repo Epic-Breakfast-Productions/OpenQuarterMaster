@@ -2,7 +2,7 @@ package tech.ebp.oqm.baseStation.service.printouts;
 
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
-import tech.ebp.oqm.baseStation.interfaces.ui.UiUtils;
+import tech.ebp.oqm.baseStation.interfaces.ui.pages.UiUtils;
 
 import java.time.ZonedDateTime;
 

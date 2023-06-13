@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Jaeger - Open QuarterMaster
+GenericName=OQM Jaeger
+
+Comment=Quick link to open the Open QuarterMaster Jaeger instance
+
+# TODO:: use box's hostname for this
+Exec=xdg-open http://localhost:8090
+# Image Credit to https://cncf-branding.netlify.app/projects/jaeger/ / Jaeger
+Icon=/etc/oqm/static/jaeger-icon.svg
+Terminal=false
+
+Type=Application
+# TODO:: determine best categories
+Categories=Office;Database;Core
+
+

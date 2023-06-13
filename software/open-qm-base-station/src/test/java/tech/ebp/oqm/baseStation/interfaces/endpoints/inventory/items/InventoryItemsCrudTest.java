@@ -3,18 +3,22 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.items;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreator;
@@ -33,6 +37,9 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.Sin
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
@@ -62,6 +69,10 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@Inject
 	TestUserService testUserService;
 	
+	@Inject
+	@Location("templates/items.csv")
+	Template itemsCsv;
+	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
 		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
 										   .contentType(ContentType.JSON)
@@ -79,6 +90,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		log.info("Got object id back from create request: {}", returned);
 		return returned;
 	}
+	
 	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
 		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
 										   .contentType(ContentType.JSON)
@@ -95,13 +107,13 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		return returned;
 	}
 	
-	public static Stream<Arguments> getSimpleAmountItems(){
+	public static Stream<Arguments> getSimpleAmountItems() {
 		return Stream.of(
 			Arguments.of(
 				new SimpleAmountItem().setName(FAKER.commerce().productName())
 			),
 			Arguments.of(
-				new SimpleAmountItem(){{
+				new SimpleAmountItem() {{
 					this.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, this.getUnit())));
 				}}.setName(FAKER.commerce().productName())
 			)
@@ -145,8 +157,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	public void testCreateTrackedItem() throws JsonProcessingException {
 		User user = this.testUserService.getTestUser(false, true);
 		TrackedItem item = (TrackedItem) new TrackedItem()
-			.setTrackedItemIdentifierName("id")
-			.setName(FAKER.commerce().productName());
+											 .setTrackedItemIdentifierName("id")
+											 .setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
 		InventoryItem stored = inventoryItemService.get(returned);
@@ -170,6 +182,35 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		
 		ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updateData.put("name", FAKER.commerce().productName());
+	}
+	
+	@Test
+	public void testAddFromCsv() throws IOException {
+		User user = this.testUserService.getTestUser(false, true);
+		
+		String csvData = this.itemsCsv.render();
+		
+		csvData += System.lineSeparator() + "Test Simple, testing a simple amount item, AMOUNT_SIMPLE,,1.00,,,";
+		csvData += System.lineSeparator() + "Test List, testing a list amount item, AMOUNT_LIST,,1.00,,,";
+		csvData += System.lineSeparator() + "Test Tracked, testing a tracked item, TRACKED,,1.00,,serial,";
+		
+		
+		ImportBundleFileBody body = new ImportBundleFileBody();
+		body.file = new ByteArrayInputStream(csvData.getBytes());
+		body.fileName = "test.csv";
+		
+		
+		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+										   .contentType(ContentType.MULTIPART)
+										   .multiPart("file", csvData)
+										   .multiPart("fileName", "test.csv")
+										   .when()
+										   .post()
+										   .then();
+		
+		response.statusCode(Response.Status.OK.getStatusCode());
+		
+		log.info("Got response body: {}", response.extract().body().asString());
 		
 	}
 }

@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,10 @@ public class ExtItemLookupResult {
 	@lombok.Builder.Default
 	private String description = "";
 	
+	private BigDecimal price;
+	
+	private String barcode;
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
@@ -49,4 +54,13 @@ public class ExtItemLookupResult {
 	@lombok.Builder.Default
 	private List<@NotNull @NonNull @NotBlank String> images = new ArrayList<>();
 	
+	public ExtItemLookupResult addAttIfNotBlank(String key, String val){
+		if(
+			key != null && !key.isBlank() &&
+			val != null && !val.isBlank()
+		){
+			this.getAttributes().put(key, val);
+		}
+		return this;
+	}
 }

@@ -1,9 +1,9 @@
 package tech.ebp.oqm.baseStation.scheduled;
 
 import com.mongodb.client.FindIterable;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.scheduler.Scheduled;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
@@ -18,7 +18,6 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.not;
 import static com.mongodb.client.model.Filters.size;
 
-@Traced
 @Slf4j
 @ApplicationScoped
 public class ExpiryProcessor {
@@ -32,7 +31,7 @@ public class ExpiryProcessor {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	@Traced
+	@WithSpan
 	@Scheduled(
 		identity = "searchAndProcessExpiredItems",
 		cron = "{service.item.expiryCheck.cron}",

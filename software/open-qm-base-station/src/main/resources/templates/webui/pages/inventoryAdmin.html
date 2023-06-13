@@ -234,7 +234,7 @@
 					failMessagesDiv: $("#dataImportMessages"),
 					done: function (data){
 						console.log("Successfully imported the data.");
-						reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+						PageMessages.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
 					}
 					//TODO:: fail message
 				});
@@ -299,7 +299,7 @@
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){
-						reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+						PageMessages.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
 					},
 					fail: function (data){
 					}

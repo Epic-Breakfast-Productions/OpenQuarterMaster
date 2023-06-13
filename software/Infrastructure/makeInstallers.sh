@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo" "prometheus" "artemis")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel")
 
 #
 # Clean
@@ -50,9 +50,17 @@ for curPackage in ${packages[@]}; do
 	mkdir -p "$packageDebDir"
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
+	mkdir -p "$packageDebDir/etc/oqm/config/configs/"
+	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
 	
 	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+
+	cp "$curPackage/10-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
+
+	if [ -f "$curPackage/$curPackage-snapshot-restore.sh" ]; then
+		cp "$curPackage/$curPackage-snapshot-restore.sh" "$packageDebDir/etc/oqm/snapshots/scripts/"
+	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -95,10 +103,13 @@ systemctl daemon-reload
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 
-#add config to file
+#add config to file TODO:: remove
 mkdir -p /etc/oqm/serviceConfig
 touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
+
+
+	# TODO:: remove
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
 		curConfig="$(echo ${row} | base64 --decode)"
 		cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
@@ -110,6 +121,10 @@ if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
 	fi
 EOT
 	done
+
+
+
+
 	chmod +x "$packageDebDir/DEBIAN/postinst"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
@@ -120,14 +135,19 @@ systemctl stop "$serviceFileEscaped"
 
 echo "Stopped $serviceFileEscaped"
 
-# remove config from infra config file
 EOT
+
+
+
+	# TODO:: remove
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
 		curConfig="$(echo ${row} | base64 --decode)"
 		cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
 sed -i -e "s!$curConfig!!g" /etc/oqm/serviceConfig/infraConfig.list
 EOT
  	done
+
+
 	chmod +x "$packageDebDir/DEBIAN/prerm"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/postrm"
@@ -165,15 +185,23 @@ EOT
 
 		mkdir -p "$(dirname "$curConfigFile")"
 
-		curConfigFileContent="$(jq -r ".configFiles.\"$configFileKey\""  "$packageConfigFile")"
-#		echo "Config file content: $curConfigFileContent"
-		echo "$curConfigFileContent" > "$curConfigFile"
+		curConfigFileInSrc="$(jq -r ".configFiles.\"$configFileKey\""  "$packageConfigFile")"
+		echo "Adding config file: $curConfigFileInSrc to directory $configFileKey";
+		cp "$curPackage/$curConfigFileInSrc" "$curConfigFile"
 	done;
 
 
+	fileKeys=($(jq -r '.files | keys[]'  "$packageConfigFile"))
 
+	for fileKey in ${fileKeys[@]}; do
+		curFile="$packageDebDir$fileKey"
 
-
+		mkdir -p "$(dirname "$curFile")"
+		fileInSrc="$(jq -r ".files.\"$fileKey\""  "$packageConfigFile")"
+#		echo "Config file content: $curConfigFileContent"
+		echo "Adding file: $fileInSrc to directory $fileKey";
+		cp "$curPackage/$fileInSrc" "$curFile"
+	done;
 
 	dpkg-deb --build "$packageDebDir" "$buildDir"
 	

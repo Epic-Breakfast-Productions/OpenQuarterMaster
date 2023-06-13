@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.itemLookup;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -9,7 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
@@ -36,7 +36,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 /**
  * TODO:: reorganize these endpoints
  */
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/externalItemLookup")
 @Tags({@Tag(name = "External Item Lookup", description = "Endpoints for searching for items from other places.")})
@@ -155,7 +154,6 @@ public class ItemLookup extends EndpointProvider {
 		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
 	}
 	
-	
 	@GET
 	@Path("/webpage/providers")
 	@Operation(
@@ -210,7 +208,6 @@ public class ItemLookup extends EndpointProvider {
 		).build();
 	}
 	
-	
 	@GET
 	@Path("lego/part/{partNo}")
 	@Operation(
@@ -236,7 +233,6 @@ public class ItemLookup extends EndpointProvider {
 		
 		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
 	}
-	
 	
 	@GET
 	@Path("/lego/providers")

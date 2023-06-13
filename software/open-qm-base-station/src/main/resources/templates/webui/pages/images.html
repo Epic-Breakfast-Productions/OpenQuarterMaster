@@ -21,7 +21,8 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    {#icons/search}{/icons/search} Search Fields
+                    {#icons/search}{/icons/search}
+                    Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
@@ -79,7 +80,8 @@
 </div>
 {/modal}
 
-{#modal id='view' title='View' large=true}
+{#modal id='view' title='View' size='xl'}
+{#titleIcon}{#icons/image}{/icons/image}{/titleIcon}
 <div class="row">
     <div class="col-lg-7 text-center">
         <img class="imageViewImage img-thumbnail" src="">
@@ -136,6 +138,7 @@ fillInQueryForm($("#mainImageSearch"));
 
 var addEditImageForm = $("#addEditImageForm");
 var addEditModalLabel = $("#addEditModalLabel");
+var addEditModalLabelIcon = $("#addEditModalLabelIcon");
 var addEditFormSubmitButton = $("#addEditFormSubmitButton");
 var addEditFormMessages = $("#addEditFormMessages");
 
@@ -161,6 +164,7 @@ function resetAddEdit(){
 function setupAddEditForAdd(){
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
+    addEditModalLabelIcon.html(Icons.add);
     addEditFormMode.val("add");
     addEditModalLabel.text("Add Image");
     addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Image');
@@ -168,6 +172,7 @@ function setupAddEditForAdd(){
 function setupAddEditForEdit(id){
     console.log("Setting up add/edit form for edit.");
     resetAddEdit();
+    addEditModalLabelIcon.html(Icons.edit);
     addEditFormMode.val("edit");
     addEditModalLabel.text("Edit Image");
     addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Image');
@@ -216,11 +221,11 @@ addEditImageForm.submit(function (ev) {
                 data: addEditData,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
-                    reloadPageWithMessage("Created image successfully!", "success", "Success!");
+                    PageMessages.reloadPageWithMessage("Created image successfully!", "success", "Success!");
                 },
                 fail: function (data) {
                     console.warn("Bad response from image add attempt: " + JSON.stringify(data));
-                    addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
+                    PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
                 }
             });
         } else if (addEditFormMode.val() == "edit") {
@@ -233,13 +238,13 @@ addEditImageForm.submit(function (ev) {
                 data: addEditData,
                 done: function (data) {
                     console.log("Response from update request: " + JSON.stringify(data));
-                    reloadPageWithMessage("Updated image successfully!", "success", "Success!");
+                    PageMessages.reloadPageWithMessage("Updated image successfully!", "success", "Success!");
                 },
                 failMessagesDiv: addEditFormMessages
             });
         
         } else {
-            addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
         }
     });
 });
@@ -311,7 +316,7 @@ function setupViewForImage(id){
                     method: "DELETE",
                     done: function(data) {
                         console.log("Response from create request: " + JSON.stringify(data));
-                        reloadPageWithMessage("Delete image successfully!", "success", "Success!");
+                        PageMessages.reloadPageWithMessage("Delete image successfully!", "success", "Success!");
                     },
                     failMessagesDiv: imageViewMessages
                 });

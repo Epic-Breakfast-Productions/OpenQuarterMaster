@@ -1,12 +1,9 @@
 package tech.ebp.oqm.lib.core.object.history;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
-import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
@@ -19,6 +16,10 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryWarningEvent;
+import tech.ebp.oqm.lib.core.object.history.events.itemList.ItemListActionAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.itemList.ItemListApplyEvent;
+import tech.ebp.oqm.lib.core.object.history.events.itemList.ItemListActionDeleteEvent;
+import tech.ebp.oqm.lib.core.object.history.events.itemList.ItemListActionUpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserDisabledEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserEnabledEvent;
 import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
@@ -61,6 +62,11 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER"),
+	
+	@JsonSubTypes.Type(value = ItemListActionAddEvent.class, name = "ITEM_LIST_ACTION_ADD"),
+	@JsonSubTypes.Type(value = ItemListActionUpdateEvent.class, name = "ITEM_LIST_ACTION_UPDATE"),
+	@JsonSubTypes.Type(value = ItemListActionDeleteEvent.class, name = "ITEM_LIST_ACTION_REMOVE"),
+	@JsonSubTypes.Type(value = ItemListApplyEvent.class, name = "ITEM_LIST_APPLY"),
 	
 	@JsonSubTypes.Type(value = ExtServiceSetupEvent.class, name = "EXT_SERVICE_SETUP"),
 	@JsonSubTypes.Type(value = ExtServiceAuthEvent.class, name = "EXT_SERVICE_AUTH"),

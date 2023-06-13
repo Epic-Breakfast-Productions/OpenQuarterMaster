@@ -1,9 +1,9 @@
 package tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage;
 
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jsoup.nodes.Document;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
@@ -16,7 +16,6 @@ import java.util.Map;
 
 @ApplicationScoped
 @Slf4j
-@Traced
 @NoArgsConstructor
 public class GenericWebProductScrapeService extends WebPageProductScrapeService {
 	
@@ -33,6 +32,7 @@ public class GenericWebProductScrapeService extends WebPageProductScrapeService 
 										.build();
 	}
 	
+	@WithSpan
 	@Override
 	protected ExtItemLookupResult scrapePageContent(Document webPageContent) {
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.getInitialBuilder(webPageContent);

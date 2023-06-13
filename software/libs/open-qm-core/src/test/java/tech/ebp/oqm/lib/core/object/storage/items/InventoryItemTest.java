@@ -36,6 +36,7 @@ public abstract class InventoryItemTest extends BasicTest {
 		
 		item.setName(FAKER.commerce().productName());
 		item.setDescription(FAKER.lorem().paragraph());
+		item.setBarcode(FAKER.barcode().gtin14()+"");
 		
 		for (int i = 0; i < NUM_ATTS; i++) {
 			item.getAttributes().put(
@@ -57,6 +58,7 @@ public abstract class InventoryItemTest extends BasicTest {
 	}
 	
 	public static void fillCommon(Stored stored) {
+		stored.setBarcode(FAKER.barcode().gtin14()+"");
 		stored.setCondition(RandomUtils.nextInt(0, 101));
 		stored.setConditionNotes(FAKER.lorem().paragraph());
 		stored.setExpires(LocalDateTime.now());

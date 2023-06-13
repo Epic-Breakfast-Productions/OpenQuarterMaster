@@ -62,9 +62,6 @@
 	/*-1px -1px 0 #000;*/
 }
 
-.badge {
-	font-weight: bold;
-}
 
 .thinAccordion {
 	padding: 3px;
@@ -87,4 +84,28 @@
 .searchResultsContainer{
 	padding-top: 2px;
 	padding-bottom: 2px;
+}
+
+.itemCatBadge {
+	border-radius: 3px;
+}
+
+.itemCatBadgeImage {
+	max-height: 50px;
+	margin-right: 3px;
+}
+
+.extProductResultCarousel{
+	aspect-ratio: 1 / 1;
+}
+
+/* TODO:: figure out how to make controls actually visible */
+.carousel-control-prev .carousel-control-prev {
+	/*color: #1b1b1b !important;*/
+	/*background-color: #1b1b1b;*/
+}
+
+.barcodeViewImg {
+	max-width: 100%;
+	border: 2px solid white;
 }

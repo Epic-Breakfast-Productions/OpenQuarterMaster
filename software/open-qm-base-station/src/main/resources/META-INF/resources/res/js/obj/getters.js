@@ -48,3 +48,15 @@ function getImageName(imageId, doneFunc) {
 		}
 	});
 }
+
+async function getItemCategoryChildrenData(categoryId) {
+	console.log("Getting children of category \"" + categoryId + "\"");
+	return new Promise((done, fail) => {
+		doRestCall({
+			spinnerContainer: null,
+			url: "/api/v1/inventory/item-categories/" + categoryId + "/children",
+			done: done,
+			fail: fail
+		})
+	});
+}

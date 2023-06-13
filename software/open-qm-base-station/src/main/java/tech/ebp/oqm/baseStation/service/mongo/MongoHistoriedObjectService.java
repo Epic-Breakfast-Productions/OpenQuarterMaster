@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;
@@ -19,9 +20,12 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.lib.core.object.history.EventType;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 
 import javax.validation.Valid;
@@ -35,7 +39,6 @@ import java.util.List;
  * @param <T> The type of object stored.
  */
 @Slf4j
-@Traced
 public abstract class MongoHistoriedObjectService<T extends MainObject, S extends SearchObject<T>> extends MongoObjectService<T, S> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
@@ -102,6 +105,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return The object found. Null if not found.
 	 */
+	@WithSpan
 	public T get(ObjectId objectId) {
 		try {
 			return super.get(objectId);
@@ -117,6 +121,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		}
 	}
 	
+	@WithSpan
 	public T update(T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
 		object = this.update(object);
 		this.addHistoryFor(object, entity, event);
@@ -132,6 +137,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return
 	 */
+	@WithSpan
 	public T update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
 		assertNotNullEntity(interactingEntity);
 		T updated = this.update(id, updateJson);
@@ -156,6 +162,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return The id of the newly added object.
 	 */
+	@WithSpan
 	public ObjectId add(ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
 		if (!this.allowNullEntityForCreate) {
 			assertNotNullEntity(entity);
@@ -183,6 +190,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return this.add(object, null);
 	}
 	
+	@WithSpan
 	public List<ObjectId> addBulk(List<T> objects, InteractingEntity entity) {
 		try(
 			ClientSession session = this.getMongoClient().startSession();
@@ -212,6 +220,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return The object that was removed
 	 */
+	@WithSpan
 	public T remove(ClientSession session, ObjectId objectId, InteractingEntity entity) {
 		assertNotNullEntity(entity);
 		T removed = super.remove(session, objectId);
@@ -237,6 +246,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
+	@WithSpan
 	//TODO:: change to interacting entity
 	public long removeAll(User user) {
 		//TODO:: client session
@@ -253,39 +263,66 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
+	@WithSpan
 	public List<ObjectHistoryEvent> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
 		return this.getHistoryService().list(filter, sort, pageOptions);
 	}
 	
+	@WithSpan
 	public Iterator<ObjectHistoryEvent> historyIterator() {
 		return this.getHistoryService().iterator();
 	}
 	
+	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){
 		return this.getHistoryService().search(search, defaultPageSizeIfNotSet);
 	}
 	
-	
+	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(ObjectId objectId){
 		return this.getHistoryService().getHistoryFor(objectId);
 	}
 	
+	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(String objectId){
 		return this.getHistoryFor(new ObjectId(objectId));
 	}
 	
+	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(T object){
 		return this.getHistoryFor(object.getId());
 	}
 	
+	@WithSpan
 	public ObjectId addHistoryFor(ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event){
 		return this.getHistoryService().addHistoryFor(clientSession, object, entity, event);
 	}
 	
+	@WithSpan
 	public ObjectId addHistoryFor(T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.addHistoryFor(null, object, entity, event);
 	}
+	
+	
+	
+	@WithSpan
+	public CreateEvent getCreateEvent(ObjectId objectId){
+		CreateEvent output = (CreateEvent) this.getHistoryService().listIterator(
+			Filters.and(
+				Filters.eq("type", EventType.CREATE),
+				Filters.eq("objectId", objectId)
+			),
+			null,
+			null
+		)
+								 .limit(1)
+								 .first();
 		
+		//TODO:: validate; if null, exception
+		InteractingEntityReference reference = output.getEntity();
+		return output;
+	}
+	
 		//TODO:: more aggregate history functions (counts updated since, etc)?
 	
 }

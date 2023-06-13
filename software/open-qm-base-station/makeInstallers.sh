@@ -15,7 +15,8 @@
 #
 # TODO:: Figure out how logs work
 
-configFile="installerProperties.json"
+srcDir="installerSrc"
+configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"
 
 debDir="StationCaptainDeb"
@@ -38,11 +39,16 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
+mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
+mkdir -p "$buildDir/$debDir/usr/share/applications"
+
+install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
+install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
 
 serviceFile="open+quarter+master-core-base+station.service"
 serviceFileEscaped="$(systemd-escape "$serviceFile")"
 
-cp "$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
@@ -74,21 +80,36 @@ EOT
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 #!/bin/bash
 
-mkdir -p /etc/oqm/serviceConfig/core-base+station/
+mkdir -p /etc/oqm/serviceConfig/core/base+station/files/
 
-if [ ! -f "/etc/oqm/serviceConfig/core-base+station/config.list" ]; then
-	cat <<EOF >> "/etc/oqm/serviceConfig/core-base+station/config.list"
+# https://unix.stackexchange.com/questions/104171/create-ssl-certificate-non-interactively
+if [ ! -f "/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem" ]; then
+	echo "Setting up keys."
+	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
+		-keyout /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem \
+		-out /etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem \
+		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
 
-# change as appropriate
-runningInfo.hostname=localhost
-runningInfo.port=80
+	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
+		-keyout /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem \
+		-out /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-cert.pem \
+		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
 
-# Add your own config here. Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
+	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
+	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem
+	# TODO:: finish/test/see if works with jwt
+fi
+
+if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
+	cat <<EOF >> "/etc/oqm/serviceConfig/core/base+station/user-config.list"
+# Add your own config here.
+# Configuration here will override those in base-station-config.list
+# Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
+
 
 EOF
 fi
 EOT
-
 chmod +x "$buildDir/$debDir/DEBIAN/preinst"
 
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"

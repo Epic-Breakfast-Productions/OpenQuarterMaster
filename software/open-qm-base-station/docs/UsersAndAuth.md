@@ -53,6 +53,19 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 - service needs the `mp.jwt.verify.publickey` set to the public key cert from the issuer of the jwt tokens
 - Tokens need to be provided with all claims listed above
 
+#### Setting up for Keycloak
+
+1. Have a realm (in tests, called `apps`). Operate under this realm.
+2. Add a client. Client type should be `OpenId Connect`. Used for testing, id is `quartermaster`, with name "Open QuarterMaster"
+3. In tests, we used thee capability configs:
+   ![img_2.png](img_2.png)
+3. Ensure Valid redirect URIs
+   4. URL's used for testing:
+      ![img_1.png](img_1.png)
+4. Ensure all roles added from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java under "roles"
+5. Setup mappers (Under Clients -> quartermaster-> clientScopes -> quartermaster-dedicated ): ![img.png](img.png)
+   1. A `client roles` mapper, with token claim name `groups`
+
 ## User Roles
 
 | Role           | Description                                                                            |

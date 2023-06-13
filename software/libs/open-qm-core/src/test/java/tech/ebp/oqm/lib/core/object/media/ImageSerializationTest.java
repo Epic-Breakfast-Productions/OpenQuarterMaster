@@ -22,6 +22,7 @@ class ImageSerializationTest extends ObjectSerializationTest<Image> {
 				BasicTest.FAKER.job().title(),
 				BasicTest.FAKER.lorem().paragraph(),
 				"png",
+				"test",
 				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
 			))
 		);

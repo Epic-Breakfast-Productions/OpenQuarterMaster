@@ -4,7 +4,8 @@ Template for the search form for storage blocks
 Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
-{#modal id='itemSearchSelect' large=true title='Select an Inventory Item' otherModalId=otherModalId}
+{#modal id='itemSearchSelect' size='xl' title='Select an Inventory Item' otherModalId=otherModalId}
+{#titleIcon}{#icons/search}{/icons/search}{/titleIcon}
 {#search/item/itemSearchForm id='itemSearchSelectForm' searchObject=tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:newInventoryItemSearchInstance()}
 {/search/item/itemSearchForm}
 <div class="col table-responsive">

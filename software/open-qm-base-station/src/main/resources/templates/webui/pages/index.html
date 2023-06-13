@@ -71,7 +71,7 @@
 				);
 
 				if (!result) {
-					addMessage("danger", "Login failed", "Login Failed", loginFormMessages);
+					PageMessages.addMessage("danger", "Login failed", "Login Failed", loginFormMessages);
 				} else {
 					login(result, rememberUser);
 				}

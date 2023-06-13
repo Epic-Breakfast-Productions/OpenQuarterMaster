@@ -209,7 +209,7 @@ itemAddSubtractTransferForm.on("submit", function (e) {
 		data: data,
 		method: method,
 		done: function (data) {
-			reloadPageWithMessage("Operation successful!", "success", "Success!");
+			PageMessages.reloadPageWithMessage("Operation successful!", "success", "Success!");
 		},
 		failMessagesDiv: itemAddSubtractTransferFormMessages
 	});

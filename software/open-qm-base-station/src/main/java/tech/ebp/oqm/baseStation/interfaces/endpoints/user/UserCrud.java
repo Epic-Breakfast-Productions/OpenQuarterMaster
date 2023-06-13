@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -17,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/user")
 @Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
@@ -81,9 +80,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		this.passwordService = passwordService;
 		this.authMode = authMode;
 	}
-	
-	
-	
 	
 	@POST
 	@Operation(
@@ -150,7 +146,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return super.create(securityContext, newUser);
 	}
 	
-	
 	@GET
 	@Operation(
 		summary = "Gets a list of users, using search parameters."
@@ -200,7 +195,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return this.getSearchResultResponseBuilder(output).build();
 	}
 	
-	
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -243,7 +237,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 		return super.update(securityContext, id, updates);
 	}
 	
-	
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -282,7 +275,6 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	) {
 		return UserGetResponse.builder(this.get(securityContext, id)).build();
 	}
-	
 	
 	@GET
 	@Path("self")

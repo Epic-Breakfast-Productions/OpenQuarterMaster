@@ -1,6 +1,6 @@
 package tech.ebp.oqm.baseStation.service.notification.item;
 
-import org.eclipse.microprofile.opentracing.Traced;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiredEvent;
@@ -12,7 +12,6 @@ import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.StoredWrapper;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-@Traced
 @ApplicationScoped
 public class ItemEventNotificationDispatchService extends ItemEventNotificationService<ObjectHistoryEvent> {
 	
@@ -32,6 +31,7 @@ public class ItemEventNotificationDispatchService extends ItemEventNotificationS
 	 * @param <W>
 	 * @param <I>
 	 */
+	@WithSpan
 	@Override
 	public <S extends Stored, C, W extends StoredWrapper<C, S>, I extends InventoryItem<S, C, W>> void sendEvent(
 		I item,

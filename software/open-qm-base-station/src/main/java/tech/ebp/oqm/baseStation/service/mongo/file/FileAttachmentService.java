@@ -3,12 +3,12 @@ package tech.ebp.oqm.baseStation.service.mongo.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
@@ -20,7 +20,6 @@ import javax.inject.Inject;
 /**
  * TODO:: figure out how to do this with gridfs https://www.mongodb.com/docs/drivers/java/sync/v4.3/fundamentals/gridfs/
  */
-@Traced
 @Slf4j
 @ApplicationScoped
 public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch> {
@@ -53,7 +52,7 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		((FileAttachmentObjectService)this.getFileObjectService()).setFileService(this);
 	}
 	
-	
+	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);

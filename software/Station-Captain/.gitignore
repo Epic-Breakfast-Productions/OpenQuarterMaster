@@ -1,0 +1,4 @@
+installerBuild
+*.deb
+*.rpm
+/oqm-captain-*

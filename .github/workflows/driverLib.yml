@@ -8,19 +8,19 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/libs/open-qm-driver/**"
+      - "software/libs/open-qm-moduleDriver/**"
       - ".github/workflows/driverLib.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/libs/open-qm-driver/**"
+      - "software/libs/open-qm-moduleDriver/**"
       - ".github/workflows/driverLib.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/libs/open-qm-driver"
+    working-directory: "software/libs/open-qm-moduleDriver"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -40,44 +40,44 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: check
-          build-root-directory: "software/libs/open-qm-driver"
+          build-root-directory: "software/libs/open-qm-moduleDriver"
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: javadoc jar javadocJar sourcesJar
-          build-root-directory: "software/libs/open-qm-driver"
+          build-root-directory: "software/libs/open-qm-moduleDriver"
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
           name: Code Coverage Report
-          path: "software/libs/open-qm-driver/build/reports/jacoco/test/html"
+          path: "software/libs/open-qm-moduleDriver/build/reports/jacoco/test/html"
       - name: Archive Junit Test Report
         uses: actions/upload-artifact@v2
         with:
           name: Junit Test Report
-          path: "software/libs/open-qm-driver/build/reports/tests/test"
+          path: "software/libs/open-qm-moduleDriver/build/reports/tests/test"
       - name: Archive Javadocs
         uses: actions/upload-artifact@v2
         with:
           name: Javadocs
-          path: "software/libs/open-qm-driver/build/docs/javadoc"
+          path: "software/libs/open-qm-moduleDriver/build/docs/javadoc"
       - name: Archive libs (Jars)
         uses: actions/upload-artifact@v2
         with:
           name: Libs (Jars)
-          path: "software/libs/open-qm-driver/build/libs/*"
+          path: "software/libs/open-qm-moduleDriver/build/libs/*"
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test Report            # Name of the check run which will be created
-          path: "software/libs/open-qm-driver/build/test-results/test/*.xml"    # Path to test results
+          path: "software/libs/open-qm-moduleDriver/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
       - name: Add coverage
         id: jacoco
         uses: madrapps/jacoco-report@v1.2
         with:
-          paths: "software/libs/open-qm-driver/build/reports/jacoco/test/jacocoTestReport.xml"
+          paths: "software/libs/open-qm-moduleDriver/build/reports/jacoco/test/jacocoTestReport.xml"
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 60
           min-coverage-changed-files: 80

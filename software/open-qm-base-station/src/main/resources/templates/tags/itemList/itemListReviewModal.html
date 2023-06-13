@@ -1,0 +1,35 @@
+
+{#modal id='itemListReview' large=true title='Review Item List'}
+	<div class="row">
+		<div class="col" id="itemListReviewMessages">
+		
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<p class="mb-0">
+				Created by: <span id="itemListReviewCreatorRef"></span><br />
+				On: <span id="itemListReviewCreatedTime"></span><br />
+				<small>Id: <span id="itemListReviewId"></span>{#copyTextButton textContainerId='itemListReviewId'}{/copyTextButton}</small>
+				<span id="itemListReviewDescContainer">
+					<br />
+					<span id="itemListReviewDesc"></span>
+				</span>
+			</p>
+		</div>
+	</div>
+	<hr />
+	<div class="" id="itemListReviewActionsContent">
+		TODO:: this
+	</div>
+	
+	{#footerButtons}
+		<div id="itemListReviewEditButtonContainer" class="">
+			<a href="/itemList/" class="btn btn-lg btn-warning" id="itemListReviewEditButton">{#icons/edit}{/icons/edit} Edit</a>
+		</div>
+		<div class="btn-group btn-group-lg" role="group" aria-label="Apply Item List Button">
+			<button type="button" class="btn btn-success" id="applyLockButton"  onclick="ItemListView.toggleApplyLock()">{#icons/locked}{/icons/locked}</button>
+			<button type="button" class="btn btn-success disabled"  id="applyButton" onclick="ItemListView.applyList();">{#icons/icon icon='list-check'}{/icons/icon} Apply</button>
+		</div>
+	{/footerButtons}
+{/modal}

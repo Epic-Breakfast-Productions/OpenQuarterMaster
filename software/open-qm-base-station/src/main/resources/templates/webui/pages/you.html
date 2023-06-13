@@ -50,11 +50,34 @@
   </dd>
   {/if}
 </dl>
+<div class="row">
+    <div class="col">
+        <div class="accordion" id="loginTokenAccord">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="loginTokenAccordHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#loginTokenAccordCollapse" aria-expanded="false" aria-controls="loginTokenAccordCollapse">
+                        Your Login Token
+                    </button>
+                </h2>
+                <div id="loginTokenAccordCollapse" class="accordion-collapse collapse" aria-labelledby="loginTokenAccordHeading" data-bs-parent="#loginTokenAccord">
+                    <div class="accordion-body">
+                        <p>
+                            This token is used to perform actions on the API. Use with caution.
+                        </p>
+                        {#copyTextButton textContainerId='userCurrentToken'}{/copyTextButton}
+                        <p>
+                            <code id="userCurrentToken" class="user-select-all">{jwt}</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <hr />
 <div class="row">
     <div class="col">
         {#objView/history/objHistoryView containerId='userHistory' objectUrl='/api/v1/user/' objectId=user.getId()}{/objView/history/objHistoryView}
-
     </div>
 </div>
 
@@ -62,6 +85,7 @@
 {#scripts}
 <script src="/res/js/search.js"></script>
 <script src="/res/js/historySearch.js"></script>
+<script src="/res/js/textCopy.js"></script>
 {/scripts}
 {#pageScript}
     <script>

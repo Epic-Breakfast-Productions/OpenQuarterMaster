@@ -9,15 +9,34 @@ function paginationClick(formId, page){
 }
 
 function fillInQueryForm(queryForm){
-    var formInputs = queryForm.find('input');
     var getParams = new URLSearchParams(window.location.search);
 
     console.log("Filling in query form from page query.");
-    formInputs.each(function(ind, formInput){
-        if(getParams.has(formInput.name)){
-            $(formInput).val(getParams.get(formInput.name));
-        }
-    });
+    {
+        let formInputs = queryForm.find('input');
+        formInputs.each(function (ind, formInput) {
+            if (getParams.has(formInput.name)) {
+                $(formInput).val(getParams.get(formInput.name));
+            }
+        });
+    }
+    {
+        let formSelects = queryForm.find('select');
+        formSelects.each(function (ind, formSelect) {
+            let multi = formSelect.multiple;
+            let value = (multi ? getParams.getAll(formSelect.name): getParams.get(formSelect.name));
+
+            if (getParams.has(formSelect.name)) {
+                if(formSelect.classList.contains("dselect-select")){
+                    Dselect.setValues($(formSelect), value);
+                } else {
+                    $(formSelect).val(value);
+                }
+            }
+        });
+    }
+    
+    
 
     var keywordAddButton = queryForm.find(".keywordAddButton");
     if(keywordAddButton){

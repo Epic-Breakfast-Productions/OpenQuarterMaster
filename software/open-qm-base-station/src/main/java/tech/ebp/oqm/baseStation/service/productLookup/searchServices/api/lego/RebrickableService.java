@@ -1,11 +1,11 @@
 package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.opentracing.Traced;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.RebrickableLookupClient;
 import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
@@ -22,7 +22,6 @@ import java.util.concurrent.CompletionStage;
 
 @ApplicationScoped
 @Slf4j
-@Traced
 @NoArgsConstructor
 public class RebrickableService extends LegoLookupService {
 	
@@ -78,6 +77,7 @@ public class RebrickableService extends LegoLookupService {
 		return this.providerInfo.isEnabled() && this.apiKey != null && !this.apiKey.isBlank();
 	}
 	
+	@WithSpan
 	@Override
 	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder()
@@ -112,6 +112,7 @@ public class RebrickableService extends LegoLookupService {
 		return List.of(resultBuilder.build());
 	}
 	
+	@WithSpan
 	@Override
 	protected CompletionStage<JsonNode> performPartNumberSearchCall(String partNum) {
 		return this.rebrickableLookupClient.getFromPartNum(this.apiKey, partNum);

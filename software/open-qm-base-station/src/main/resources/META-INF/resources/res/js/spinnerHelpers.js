@@ -5,7 +5,7 @@ var spinnerOpts = {
   radius: 45, // The radius of the inner circle
   scale: 1, // Scales overall size of the spinner
   corners: 1, // Corner roundness (0..1)
-  color: '#000000', // CSS color or array of colors
+  color: '#868686', // CSS color or array of colors
   fadeColor: 'transparent', // CSS color or array of colors
   speed: 1, // Rounds per second
   rotate: 0, // The rotation offset

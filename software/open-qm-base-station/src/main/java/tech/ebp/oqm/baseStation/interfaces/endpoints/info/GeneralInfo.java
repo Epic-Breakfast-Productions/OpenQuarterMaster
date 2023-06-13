@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.opentracing.Traced;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.lib.core.units.UnitCategory;
 import tech.ebp.oqm.lib.core.units.UnitUtils;
@@ -36,7 +36,6 @@ import java.util.Set;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Traced
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/info")
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
@@ -160,6 +159,5 @@ public class GeneralInfo extends EndpointProvider {
 				return Response.notAcceptable(Variant.encodings(MediaType.APPLICATION_JSON, MediaType.TEXT_HTML).build()).build();
 		}
 	}
-	
 	
 }

@@ -25,11 +25,17 @@ public class ImageCreateRequest {
 	@NonNull
 	@NotNull
 	@NotBlank
-	@Size(max = 50)
+	@Size(max = 100)
 	public String title;
 	
 	@Size(max = 500)
 	public String description = "";
+	
+	@NonNull
+	@NotNull
+	@NotBlank
+	public String source = "user";
+	
 	@NonNull
 	@NotNull
 	@NotBlank

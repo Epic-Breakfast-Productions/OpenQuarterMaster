@@ -20,7 +20,11 @@ public class DataImportResult {
 	@Builder.Default
 	private long numImages = 0;
 	@Builder.Default
+	private long numItemCategories = 0;
+	@Builder.Default
 	private long numStorageBlocks = 0;
 	@Builder.Default
 	private long numInventoryItems = 0;
+	@Builder.Default
+	private long numItemLists = 0;
 }

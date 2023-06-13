@@ -98,7 +98,7 @@
 </div>
 	{/pageContent}
 	{#modals}
-		{#modal id='userView' large=true title='User View'}
+		{#modal id='userView' size='xl' title='User View'}
 			<div class="row">
 				<div class="col" id="userViewMessages">
 				</div>
@@ -170,7 +170,7 @@
 	</div>
 	</div>
 	{/modal}
-{#modal id='userEdit' large=true title='User edit' submitForm='userEditItemForm' submitDismiss=false}
+{#modal id='userEdit' size='xl' title='User edit' submitForm='userEditItemForm' submitDismiss=false}
 	<div class="row">
 		<div class="col" id="userEditFormMessages">
 		</div>
@@ -284,7 +284,7 @@
 				doRestCall({
 					url: "/api/v1/user/" + userId,
 					method: "GET",
-					failMessagesDiv: messageDiv,
+					failMessagesDiv: PageMessages.mainMessageDiv,
 					done: function (data){
 						let confirmMessage = "Are you sure? User "+data.username+" currently has the following roles:\n"
 
@@ -303,7 +303,7 @@
 								disabled: false
 							},
 							done: function (data) {
-								reloadPageWithMessage("Enabled user "+data.username+"!", "success", "Success!");
+								PageMessages.reloadPageWithMessage("Enabled user "+data.username+"!", "success", "Success!");
 							}
 						});
 					}
@@ -313,7 +313,7 @@
 				doRestCall({
 					url: "/api/v1/user/" + userId,
 					method: "GET",
-					failMessagesDiv: messageDiv,
+					failMessagesDiv: PageMessages.mainMessageDiv,
 					done: function (data){
 						if(!confirm("Are you sure? User "+data.username+" will no longer have access.")){
 							return;
@@ -329,7 +329,7 @@
 								alert("Error: " + data);
 							},
 							done: function (data) {
-								reloadPageWithMessage("Disabled user "+data.username+"!", "success", "Success!");
+								PageMessages.reloadPageWithMessage("Disabled user "+data.username+"!", "success", "Success!");
 							}
 						});
 					}
@@ -409,7 +409,7 @@
 					data: data,
 					failMessagesDiv: userEditFormMessages,
 					done: function (data) {
-						reloadPageWithMessage("Updated user "+data.username+"!", "success", "Success!");
+						PageMessages.reloadPageWithMessage("Updated user "+data.username+"!", "success", "Success!");
 					}
 				});
 			});
