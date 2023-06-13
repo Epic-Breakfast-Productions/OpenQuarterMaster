@@ -17,7 +17,7 @@ import static tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResou
 public class MongoDbServerManager implements QuarkusTestResourceLifecycleManager {
 	
 	// https://hub.docker.com/_/mongo?tab=tags
-	private static final DockerImageName IMAGE_NAME = DockerImageName.parse("mongo:5.0.14");
+	private static final DockerImageName IMAGE_NAME = DockerImageName.parse("mongo:6.0.6");
 	public static final String TEST_RES_CONNECTION_STRING_CONFIG_KEY = "quarkus.mongodb.connection-string-local";
 	
 	private MongoDBContainer mongoDBContainer = null;

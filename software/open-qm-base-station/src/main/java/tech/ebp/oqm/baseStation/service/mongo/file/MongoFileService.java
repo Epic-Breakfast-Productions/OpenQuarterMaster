@@ -84,6 +84,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	protected GridFSBucket getGridFSBucket() {
 		if (this.gridFSBucket == null) {
 			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getCollectionName());
+			
 		}
 		return this.gridFSBucket;
 	}
@@ -91,6 +92,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	@PostConstruct
 	void setupCollGridfs(){
 		log.info("Setting up new file service: {}", this.getCollectionName());
+		//fails here
 		this.getGridFSBucket().uploadFromStream("init.txt", new ByteArrayInputStream("".getBytes()));
 		//TODO:: try removing this file after testing
 		this.getFileObjectService().getCollection();
