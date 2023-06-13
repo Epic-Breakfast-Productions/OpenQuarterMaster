@@ -131,24 +131,24 @@ public class DataExportService {
 			//  - Create folder for objects and their files
 			//  - in each folder, write object json and one folder for each file, named 0-however many revisions. write file with original name in folders.
 			
-//			if (!objectDataDir.mkdir()) {
-//				log.error("Failed to create export of data. Failed to create directory: {}", objectDataDir);
-//				throw new IOException("Failed to create directory for collection " + service.getCollectionName());
-//			}
-//
-//			Iterator<T> it = service.iterator();
-//			while (it.hasNext()) {
-//				T curObj = it.next();
-//				ObjectId curId = curObj.getId();
-//				File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
-//
-//				if (!curObjectFile.createNewFile()) {
-//					log.error("Failed to create data file for object.");
-//					throw new IOException("Failed to create data file for object.");
-//				}
-//
-//				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-//			}
+			if (!objectDataDir.mkdir()) {
+				log.error("Failed to create export of data. Failed to create directory: {}", objectDataDir);
+				throw new IOException("Failed to create directory for collection " + service.getCollectionName());
+			}
+
+			Iterator<T> it = service.iterator();
+			while (it.hasNext()) {
+				T curObj = it.next();
+				ObjectId curId = curObj.getId();
+				File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
+
+				if (!curObjectFile.createNewFile()) {
+					log.error("Failed to create data file for object.");
+					throw new IOException("Failed to create data file for object.");
+				}
+
+				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
+			}
 			
 			//TODO:: refactor
 			if (service instanceof MongoHistoriedFileService<T,S> && includeHistory) {
@@ -223,8 +223,7 @@ public class DataExportService {
 			
 			CompletableFuture<Void> future = CompletableFuture.allOf(
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.customUnitService, !excludeHistory); return null;}),
-				//TODO:: once we figure out file nonsense #51
-//				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemItemCategoryService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),

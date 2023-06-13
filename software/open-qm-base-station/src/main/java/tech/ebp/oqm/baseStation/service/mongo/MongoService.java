@@ -100,7 +100,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 *
 	 * @return The Mongo collection for this service.
 	 */
-	protected MongoCollection<T> getCollection() {
+	public MongoCollection<T> getCollection() {
 		if (this.collection == null) {
 			this.collection = this.getDatabase().getCollection(this.collectionName, this.clazz);
 		}

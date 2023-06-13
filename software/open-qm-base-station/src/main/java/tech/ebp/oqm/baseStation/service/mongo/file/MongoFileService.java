@@ -35,6 +35,8 @@ import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.lib.core.object.FileMainObject;
 import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
+import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -84,6 +86,14 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getCollectionName());
 		}
 		return this.gridFSBucket;
+	}
+	
+	@PostConstruct
+	void setupCollGridfs(){
+		log.info("Setting up new file service: {}", this.getCollectionName());
+		this.getGridFSBucket().uploadFromStream("init.txt", new ByteArrayInputStream("".getBytes()));
+		//TODO:: try removing this file after testing
+		this.getFileObjectService().getCollection();
 	}
 	
 	protected Document metadataToDocument(FileMetadata object) {
