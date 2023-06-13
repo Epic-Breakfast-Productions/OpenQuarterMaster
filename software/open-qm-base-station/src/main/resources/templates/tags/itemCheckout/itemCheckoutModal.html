@@ -35,16 +35,23 @@
 			
 			<div class="mb-3">
 				<label class="form-label" for="itemCheckoutFormDueBackInput">Due Back:</label>
-				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control datetimeInputFuture">
+				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control datetimeInputFuture" aria-describedby="itemCheckoutFormDueBackInputHelp">
+				<div id="itemCheckoutFormDueBackInputHelp" class="form-text">
+					Leave blank for no due date
+				</div>
 			</div>
 			<div class="mb-3">
 				<label class="form-label" for="itemCheckoutFormForSelectInput">For Who:</label>
-				<select class="form-select" id="itemCheckoutFormForSelectInput" onchange="ItemCheckout.setForView()">
+				<select class="form-select" id="itemCheckoutFormForSelectInput" onchange="ItemCheckout.setForView()" aria-describedby="itemCheckoutFormForSelectInputHelp">
 					<option value="self" selected>Yourself</option>
 					<option value="otherOqmUser">Another OQM User</option>
 					<option value="extUser">External Entity</option>
 				</select>
+				<div id="itemCheckoutFormForSelectInputHelp" class="form-text">
+					Who this action is being done by or for. Who the item is being given to.
+				</div>
 			</div>
+			<!-- TODO:: add field for when just stored to specify how much to checkout -->
 			<div class="mb-3" id="itemCheckoutFormForAnotherOqmUserContainer">
 				<label class="form-label" for="itemCheckoutFormForAnotherOqmUserInput">Select a user:</label>
 				<textarea class="form-control" id="itemCheckoutFormForAnotherOqmUserInput" rows="1"></textarea>
@@ -67,6 +74,10 @@
 				<label class="form-label" for="itemCheckoutFormNotesInput">Notes</label>
 				<textarea class="form-control" id="itemCheckoutFormNotesInput" rows="3"></textarea>
 			</div>
+			{#inputs/keywordInput}
+			{/inputs/keywordInput}
+			{#inputs/attInput}
+			{/inputs/attInput}
 		</form>
 	</div>
 	
