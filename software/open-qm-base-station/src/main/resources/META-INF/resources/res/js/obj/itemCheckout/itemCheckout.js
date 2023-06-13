@@ -4,6 +4,7 @@ const ItemCheckout = {
 	messages: $("#itemCheckoutMessages"),
 	itemNameLabel: $("#itemCheckoutItemNameLabel"),
 	storageFromLabel: $("#itemCheckoutStorageLabelLabel"),
+	storedDetails: $("#itemCheckoutStoredDetails"),
 
 	itemCheckoutForm: $("#itemCheckoutForm"),
 	itemIdInput: $("#itemCheckoutFormItemIdInput"),
@@ -33,6 +34,7 @@ const ItemCheckout = {
 	resetItemCheckoutForm(){
 		this.itemNameLabel.text("");
 		this.storageFromLabel.text("");
+		this.storedDetails.text("");
 		this.messages.text('');
 		this.itemIdInput.val("");
 		this.dueBackInput.val("");
@@ -58,7 +60,17 @@ const ItemCheckout = {
 		this.storageFromIdInput.val(storageId);
 
 		//TODO:: fill out stored details
-
+		this.storedDetails.append(
+			ItemView.getStoredViewContent(
+				stored,
+				itemId,
+				storageId,
+				false,
+				false,
+				false,
+				true
+			)
+		);
 	}
 };
 
