@@ -60,7 +60,7 @@ dependencies {
 	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
 
 	implementation 'org.passay:passay:1.6.3'
-	implementation 'commons-io:commons-io:2.12.0'
+	implementation 'commons-io:commons-io:2.13.0'
 	implementation 'commons-codec:commons-codec:1.15'
 	implementation 'org.apache.tika:tika-core:2.8.0'
 //	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'//https://search.maven.org/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
@@ -80,7 +80,7 @@ dependencies {
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
-	testImplementation 'net.datafaker:datafaker:1.9.0'
+	testImplementation 'net.datafaker:datafaker:2.0.0'
 	testImplementation 'ch.qos.logback:logback-classic:1.4.7'
 	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
