@@ -1,36 +1,48 @@
 {#modal id='itemCheckout' size='sm' title='Checkout Item'}
+	{#titleIcon}{#icons/checkout}{/icons/checkout}{/titleIcon}
 	<div class="row">
 		<div class="col" id="itemCheckoutMessages">
-		
 		</div>
 	</div>
 	<div class="row">
-		<div class="col" id="itemCheckoutItemStorageDetails">
-		
+		<div class="col">
+			<h5>
+				Item:
+			</h5>
+			<p id="itemCheckoutItemNameLabel">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h5>
+				Checking out from:
+			</h5>
+			<p id="itemCheckoutStorageLabelLabel">
+			</p>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col" id="itemCheckoutStoredDetails">
-		
 		</div>
 	</div>
 	<hr />
 	<div class="row">
-		<form class="col" id="itemCheckoutForm" onsubmit="ItemCheckout.submitCheckout(e);">
+		<form class="col" id="itemCheckoutForm">
 			<input type="hidden" id="itemCheckoutFormItemIdInput" value="">
-			<input type="hidden" id="itemCheckoutFormCheckedOutFromIdIdInput" value="">
+			<input type="hidden" id="itemCheckoutFormCheckedOutFromIdInput" value="">
 			<input type="hidden" id="itemCheckoutFormToCheckoutInput" value="">
 			
 			<div class="mb-3">
 				<label class="form-label" for="itemCheckoutFormDueBackInput">Due Back:</label>
-				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control storedExpiredInput"> //TODO:: enforce future date
+				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control datetimeInputFuture">
 			</div>
 			<div class="mb-3">
 				<label class="form-label" for="itemCheckoutFormForSelectInput">For Who:</label>
-				<select class="form-select" id="itemCheckoutFormForSelectInput">
-					<option value="self">Yourself</option>
-					<option value="self">Another OQM User</option>
-					<option value="self">External Entity</option>
+				<select class="form-select" id="itemCheckoutFormForSelectInput" onchange="ItemCheckout.setForView()">
+					<option value="self" selected>Yourself</option>
+					<option value="otherOqmUser">Another OQM User</option>
+					<option value="extUser">External Entity</option>
 				</select>
 			</div>
 			<div class="mb-3" id="itemCheckoutFormForAnotherOqmUserContainer">
@@ -38,11 +50,11 @@
 				<textarea class="form-control" id="itemCheckoutFormForAnotherOqmUserInput" rows="1"></textarea>
 			</div>
 			<div id="itemCheckoutFormForExternalUserContainer">
-				<div class="mb-3" id="">
+				<div class="mb-3">
 					<label class="form-label" for="itemCheckoutFormForExternalUserNameInput">External User Name:</label>
 					<textarea class="form-control" id="itemCheckoutFormForExternalUserNameInput" rows="1"></textarea>
 				</div>
-				<div class="mb-3" id="">
+				<div class="mb-3">
 					<label class="form-label" for="itemCheckoutFormForExternalUserIdInput">External User Id:</label>
 					<input type="text" class="form-control" id="itemCheckoutFormForExternalUserIdInput">
 				</div>

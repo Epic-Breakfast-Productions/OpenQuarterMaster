@@ -12,3 +12,9 @@ navSearchTypeSelect.on("change", function(event){
     navSearchForm.attr("action", navSearchTypeSelect[0].options[event.target.selectedIndex].dataset.action);
     navSearchInput.attr("name", navSearchTypeSelect[0].options[event.target.selectedIndex].dataset.field);
 });
+
+
+let nowDateTimeStamp = new Date().toISOString().slice(0, 16);
+$(".datetimeInputFuture").each(function(i, element){
+    element.min = nowDateTimeStamp;
+});
