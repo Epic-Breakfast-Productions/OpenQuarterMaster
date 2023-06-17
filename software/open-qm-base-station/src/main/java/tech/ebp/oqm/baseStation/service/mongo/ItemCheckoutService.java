@@ -74,6 +74,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	}
 	
 	public ObjectId checkoutItem(ItemCheckoutRequest request, InteractingEntity entity){
+		log.info("Checking out item: {}", request);
 		InventoryItem item = this.inventoryItemService.get(request.getItem());
 		
 		Stored result;
@@ -96,6 +97,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		try(ClientSession cs = this.getNewClientSession(true)){
 			newId = this.add(cs, itemCheckout, entity);
 			this.inventoryItemService.update(cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
+			cs.commitTransaction();
 		}
 		
 		return newId;
@@ -117,6 +119,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		try(ClientSession cs = this.getNewClientSession(true)){
 			this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
 			this.update(checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+			cs.commitTransaction();
 		}
 		
 		return checkout;
