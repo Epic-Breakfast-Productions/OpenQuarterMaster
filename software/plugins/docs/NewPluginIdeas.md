@@ -12,6 +12,8 @@ https://github.com/LAION-AI/Open-Assistant
 
 https://cmusphinx.github.io/wiki/tutorial/
 
+https://github.com/openai/whisper
+
 ## Fridge Integration
 
 ## Workflow manager
