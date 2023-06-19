@@ -58,16 +58,11 @@
       {#links/storageBlock storageBlock=result.getCheckedOutFrom()}{/links/storageBlock}
     </td>
     <td>
-      {!{#if result.getCheckedOutFor() instanceof tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity}!}
-      {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
-      {!{/if}!}
-      
-      {!{#when result.getCheckedOutFor().getType()}!}
-      {!{#is OQM_ENTITY}!}
-      {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
-      {!{#is EXT_SYS_USER}!}
-      {!!}
-      {!{/when}!}
+      {#when result.getCheckedOutFor().getType()}
+      {#is OQM_ENTITY}
+      {#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}
+      {#is EXT_SYS_USER}
+      {/when}
     </td>
     <td>
       {! TODO:: special styling !}

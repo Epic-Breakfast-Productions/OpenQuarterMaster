@@ -151,14 +151,11 @@ quarkus:
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
-  
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With ❤️, EBP
-  #    metrics:
-  #      enabled: true
   http:
     limits:
       max-body-size: 95M
@@ -175,7 +172,10 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
-      
+  qute:
+    type-check-excludes:
+      - "tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor.*"
+
 mp:
   jwt:
     verify:
