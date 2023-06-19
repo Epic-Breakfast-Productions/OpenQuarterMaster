@@ -1,0 +1,53 @@
+{#modal id='itemCheckin' size='sm' title='Checkin Item'}
+	{#titleIcon}{#icons/checkin}{/icons/checkin}{/titleIcon}
+	<div class="row">
+		<div class="col" id="itemCheckinMessages">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h5>
+				Item:
+			</h5>
+			<p id="itemCheckinItemNameLabel">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h5>
+				Originally checked out from:
+			</h5>
+			<p id="itemCheckinOriginalStorageLabelLabel">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col" id="itemCheckinStoredDetails">
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<form class="col" id="itemCheckinForm">
+			<input type="hidden" id="itemCheckinFormCheckinIdInput" value="">
+			
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckinFormReturnedInput">Returned:</label>
+				<input type="datetime-local" id="itemCheckinFormReturnedInput" class="form-control" aria-describedby="itemCheckinFormReturnedInputHelp">
+				<div id="itemCheckinFormReturnedInputHelp" class="form-text">
+					When the item was checked back in.
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckinFormNotesInput">Notes</label>
+				<textarea class="form-control" id="itemCheckinFormNotesInput" rows="3"></textarea>
+			</div>
+		</form>
+	</div>
+	
+	{#footerButtons}
+		<div id="itemCheckoutButtonContainer" class="">
+			<button type="submit" form="itemCheckoutForm" class="btn btn-success">{#icons/checkout}{/icons/checkout} Checkout</button>
+		</div>
+	{/footerButtons}
+{/modal}

@@ -145,7 +145,7 @@ quarkus:
     info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
     #    info-terms-of-service: <url>
     info-contact-email: greg@epic-breakfast-productions.tech
-    info-contact-name: Greg Stewart
+    info-contact-name: EBP
     info-contact-url: ${service.gitLink}
     info-license-name: GNU General Public License v3.0
     info-license-url: ${service.gitLink}/blob/main/LICENSE
@@ -156,7 +156,7 @@ quarkus:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
-    footer: With <3, EBP
+    footer: With ❤️, EBP
   #    metrics:
   #      enabled: true
   http:

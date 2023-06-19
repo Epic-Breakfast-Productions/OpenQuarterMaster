@@ -1,4 +1,3 @@
-
 const ItemCheckout = {
 	itemCheckoutModal: $("#itemCheckoutModal"),
 	messages: $("#itemCheckoutMessages"),
@@ -109,6 +108,4 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 		},
 		failMessagesDiv: ItemCheckout.messages
 	});
-
-
 });

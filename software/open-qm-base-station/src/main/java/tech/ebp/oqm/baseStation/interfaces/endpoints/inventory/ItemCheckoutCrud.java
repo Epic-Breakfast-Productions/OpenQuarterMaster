@@ -109,7 +109,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	}
 	
 	@PUT
-	@Path("{id}")
+	@Path("{id}/checkin")
 	@Operation(
 		summary = "Checks in an item."
 	)
@@ -131,15 +131,15 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ItemCheckout create(
+	public ItemCheckout checkin(
 		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
-		@Valid ItemCheckinRequest itemCheckoutRequest
+		@Valid ItemCheckinRequest itemCheckinRequest
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		InteractingEntity entity = this.getInteractingEntityFromJwt();
 		
-		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), itemCheckoutRequest, entity);
+		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), itemCheckinRequest, entity);
 	}
 	
 	@GET
