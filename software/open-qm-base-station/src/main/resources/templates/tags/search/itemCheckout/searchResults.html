@@ -15,7 +15,7 @@
 !}
   <thead>
   <tr>
-    <td colspan="6" class="text-center">
+    <td colspan="7" class="text-center">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
@@ -23,6 +23,7 @@
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
     {#if showStillCheckedOut}<th scope="col">Status</th>{/if}
     <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
+    <th scope="col">For</th>
     <th scope="col">By</th>
     <th scope="col">Due Back</th>
     <th scope="col" width="125px">Actions</th>
@@ -65,6 +66,9 @@
       {/when}
     </td>
     <td>
+      {#interactingEntityRef entityRef=cdi:ItemCheckoutService.getCreateEvent(result.getId()).getEntity()}{/interactingEntityRef}
+    </td>
+    <td>
       {! TODO:: special styling !}
       {result.getDueBack()}
     </td>
@@ -86,7 +90,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="6" class="text-center">
+    <td colspan="7" class="text-center">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
