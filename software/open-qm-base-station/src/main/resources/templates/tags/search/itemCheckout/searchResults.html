@@ -20,9 +20,9 @@
     </td>
   </tr>
   <tr>
-    {#if showItem}<th scope="col">Item</th>{/if}
-    {#if showStillCheckedOut}<th scope="col">Out</th>{/if}
-    <th scope="col">From</th>
+    {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
+    {#if showStillCheckedOut}<th scope="col">Status</th>{/if}
+    <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
     <th scope="col">By</th>
     <th scope="col">Due Back</th>
     <th scope="col" width="125px">Actions</th>
@@ -42,15 +42,15 @@
   <tr class="align-middle">
     {#if showItem}
     <td>
-      {cdi:InventoryItemService.get(result.getItem()).getName()}
+      {#links/inventoryItem inventoryItem=result.getItem()}{/links/inventoryItem}
     </td>
     {/if}
     {#if showStillCheckedOut}
       <td class="table-{#if result.isStillCheckedOut()}active{#else}success{/if}">
       {#if result.isStillCheckedOut()}
-        {#icons/checkOut}{/icons/checkOut} Out
+        {#icons/checkout}{/icons/checkout} Out
       {#else}
-        {#icons/checkIn}{/icons/checkIn} In
+        {#icons/checkin}{/icons/checkin} In
       {/if}
       </td>
     {/if}
@@ -58,9 +58,19 @@
       {#links/storageBlock storageBlock=result.getCheckedOutFrom()}{/links/storageBlock}
     </td>
     <td>
-      By TODO
+      {!{#if result.getCheckedOutFor() instanceof tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity}!}
+      {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
+      {!{/if}!}
+      
+      {!{#when result.getCheckedOutFor().getType()}!}
+      {!{#is OQM_ENTITY}!}
+      {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
+      {!{#is EXT_SYS_USER}!}
+      {!!}
+      {!{/when}!}
     </td>
     <td>
+      {! TODO:: special styling !}
       {result.getDueBack()}
     </td>
     {#if actionType == 'full'}

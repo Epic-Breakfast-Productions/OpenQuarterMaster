@@ -26,16 +26,12 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmUser;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
-import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -105,7 +101,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		
 		if(itemCheckoutRequest.getCheckedOutFor() == null){
 			itemCheckoutRequest.setCheckedOutFor(
-				new CheckoutForOqmUser(entity.getId())
+				new CheckoutForOqmEntity(entity.getReference())
 			);
 		}
 		

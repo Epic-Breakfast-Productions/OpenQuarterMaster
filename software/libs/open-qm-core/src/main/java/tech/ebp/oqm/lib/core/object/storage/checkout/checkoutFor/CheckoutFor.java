@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +13,7 @@ import javax.validation.constraints.NotNull;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = CheckoutForOqmUser.class, name = "OQM_USER"),
+	@JsonSubTypes.Type(value = CheckoutForOqmEntity.class, name = "OQM_USER"),
 	@JsonSubTypes.Type(value = CheckoutForExtUser.class, name = "EXT_SYS_USER")
 })
 @BsonDiscriminator

@@ -24,7 +24,7 @@ import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInState;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForExtUser;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmUser;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
@@ -266,7 +266,7 @@ class DataImportServiceTest extends RunningServerTest {
 			if(rand.nextBoolean()){
 				//internal user checked out
 				checkout.setCheckedOutFor(
-					new CheckoutForOqmUser(testUser.getId())
+					new CheckoutForOqmEntity(testUser.getReference())
 				);
 			} else {
 				checkout.setCheckedOutFor(

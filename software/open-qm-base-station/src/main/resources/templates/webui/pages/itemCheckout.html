@@ -3,8 +3,36 @@
 
 {/pageStyle}
 {#pageContent}
-    {! TODO:: RUD checkouts, prune checkouts,  !}
- 
+<div class="row">
+	<div class="col accordion" id="searchAccordion">
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="searchHeader">
+			<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+				data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+				aria-controls="searchCollapse">
+				{#icons/search}{/icons/search} Search Fields
+			</button>
+			</h2>
+			<div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+						 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+				<div class="accordion-body">
+					{#search/itemCheckout/searchForm id='mainCheckedoutSearch'}
+					{/search/itemCheckout/searchForm}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col table-responsive">
+		<table class=" table table-bordered table-striped table-hover table-sm">
+			{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' searchFormId='mainCheckedoutSearch' pagingCalculations=pagingCalculations}
+			{/search/itemCheckout/searchResults}
+		</table>
+	</div>
+</div>
+
+
 {/pageContent}
 {#scripts}
 <script src="/res/js/search.js"></script>

@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.bson.types.ObjectId;
+import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
 
 import javax.validation.constraints.NotNull;
 
@@ -15,14 +15,14 @@ import javax.validation.constraints.NotNull;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckoutForOqmUser extends CheckoutFor {
+public class CheckoutForOqmEntity extends CheckoutFor {
 	
 	@NonNull
 	@NotNull
-	private ObjectId userId;
+	private InteractingEntityReference entity;
 	
 	@Override
 	public CheckoutForType getType() {
-		return CheckoutForType.OQM_USER;
+		return CheckoutForType.OQM_ENTITY;
 	}
 }

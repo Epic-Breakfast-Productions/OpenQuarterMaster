@@ -15,9 +15,6 @@ const Getters = {
 	}
 }
 
-
-
-
 async function getStorageBlock(blockId){
 	//TODO
 }
