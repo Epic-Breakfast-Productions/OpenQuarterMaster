@@ -74,6 +74,15 @@
     </td>
     {#if actionType == 'full'}
     <td>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="//ItemView.setupView('{result.getId()}');">
+        {#icons/view}{/icons/view}
+      </button>
+      <button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{result.getId()}');">
+        {#icons/checkin}{/icons/checkin}
+      </button>
+      <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItem('{result.getId()}');">
+        {#icons/remove}{/icons/remove}
+      </button>
     </td>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">

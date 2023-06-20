@@ -66,7 +66,7 @@ const ItemCheckout = {
 		this.toCheckoutInput.val(JSON.stringify(stored));
 
 		this.storedDetails.append(
-			ItemView.getStoredViewContent(
+			StoredView.getStoredViewContent(
 				stored,
 				itemId,
 				storageId,

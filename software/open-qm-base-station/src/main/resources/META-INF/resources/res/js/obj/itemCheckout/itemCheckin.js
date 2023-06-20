@@ -3,6 +3,7 @@ const ItemCheckin = {
 	itemNameLabel: $("#itemCheckinItemNameLabel"),
 	originalStorageLabelLabel: $("#itemCheckinOriginalStorageLabelLabel"),
 	storedDetails: $("#itemCheckinStoredDetails"),
+	returnedDtInput: $("#itemCheckinFormReturnedInput"),
 
 
 	resetCheckinForm(){
@@ -10,7 +11,7 @@ const ItemCheckin = {
 		ItemCheckin.itemNameLabel.text("");
 		ItemCheckin.originalStorageLabelLabel.text("");
 		ItemCheckin.storedDetails.text("");
-
+		ItemCheckin.returnedDtInput.val(new Date().toISOString().slice(0, 16))
 	},
 	async setupCheckinForm(checkoutId){
 		console.log("Checking in " + checkoutId);
@@ -28,8 +29,8 @@ const ItemCheckin = {
 				getStorageBlockLabel(data.checkedOutFrom, function (label){
 					ItemCheckin.originalStorageLabelLabel.text(label);
 				});
-				this.storedDetails.append(
-					ItemView.getStoredViewContent(
+				ItemCheckin.storedDetails.append(
+					StoredView.getStoredViewContent(
 						data.checkedOut,
 						data.item,
 						data.checkedOutFrom,

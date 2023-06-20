@@ -115,139 +115,11 @@ const ItemView = {
 	addViewStorageBlocksAccordionItem: function (blockId, content, stored) {
 		return ItemView.itemViewStoredAccordion.append($(ItemView.addViewAccordionItem(blockId, content, stored)));
 	},
-	getBlockViewCell(name, value) {
-		let output = $('<div class="col"><h5></h5><p></p></div>');
 
-		output.find("h5").text(name);
-		output.find("p").text(value);
-		return output;
-	},
-	getStorageBlockTrackedIdentifierView(stored) {
-		if (stored.storedType.includes("TRACKED")) {
-			return ItemView.getBlockViewCell("Identifier", stored.identifier);
-		}
-		return "";
-	},
-	getStorageBlockAmountHeldView(stored) {
-		if (stored.storedType.includes("AMOUNT")) {
-			return ItemView.getBlockViewCell("Stored", stored.amount.value + stored.amount.unit.symbol);
-		}
-		return "";
-	},
-	getStorageBlockBarcodeView(stored, itemId, storageBlockId, index = false) {
-		if (stored.barcode) {
-			let url = "/api/v1/media/code/item/" + itemId + "/barcode/stored/" + storageBlockId;
 
-			if (index !== false) {
-				url += "/" + index;
-			}
-
-			return '<div class="col"><h5>Barcode:</h5><img src="' + url + '" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg"></div>';
-		}
-		return "";
-	},
-	getStorageBlockIdentifyingDetailsView(stored) {
-		if (stored.storedType.includes("TRACKED") && stored.identifyingDetails) {
-			return ItemView.getBlockViewCell("Identifying Details", stored.identifyingDetails);
-		}
-		return "";
-	},
-	getStorageBlockConditionView(stored) {
-		if (stored.condition) {
-			return ItemView.getBlockViewCell("Condition", stored.condition + "%");
-		}
-		return "";
-	},
-	getStorageBlockConditionNotesView(stored) {
-		if (stored.conditionNotes) {
-			return ItemView.getBlockViewCell("Condition Notes", stored.conditionNotes);
-		}
-		return "";
-	},
-	getStorageBlockExpiresView(stored) {
-		if (stored.expires) {
-			return ItemView.getBlockViewCell("Expires", stored.expires);
-		}
-		return "";
-	},
-	getStoredBlockLink(storageBlockId, small = false) {
-		let output = $('<div class=""></div>');
-		output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
-
-		if (small) {
-			output.addClass("col-1");
-		} else {
-			output.addClass("col");
-		}
-
-		return output;
-	},
-	getCheckoutBlockLink(stored, itemId, storageId, small = false) {
-		let output = $('<div class=""></div>');
-
-		console.log("Creating checkout link. Item: " + itemId + " Block: " + storageId + " Stored: " + JSON.stringify(stored))
-
-		let checkoutButton = $('<button type=button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemCheckoutModal"></button>');
-		let setupCheckoutFunc = function () {
-			ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId);
-		}
-		checkoutButton = checkoutButton.on("click", setupCheckoutFunc);
-		checkoutButton.append(Icons.itemCheckout + "Checkout");
-		output.append(checkoutButton);
-
-		if (small) {
-			output.addClass("col-1");
-		} else {
-			output.addClass("col");
-		}
-
-		return output;
-	},
-	getStoredViewContent(
-		stored,
-		itemId,
-		storageBlockId,
-		index = false,
-		includeStoredLink = false,
-		includeCheckoutLink = false,
-		includeIdentifier = false
-	) {
-		console.log("Getting stored view html for "+JSON.stringify(stored))
-		let newContent = $('<div class="row storedViewRow"></div>');
-
-		if (includeStoredLink) {
-			newContent.append(
-				ItemView.getStoredBlockLink(storageBlockId, true)
-			);
-		}
-
-		if (includeCheckoutLink) {
-			newContent.append(
-				ItemView.getCheckoutBlockLink(stored, itemId, storageBlockId, true)
-			);
-		}
-
-		if (includeIdentifier) {
-			newContent.append(
-				ItemView.getStorageBlockTrackedIdentifierView(stored)
-			);
-		}
-
-		newContent.append(
-			ItemView.getStorageBlockAmountHeldView(stored),
-			ItemView.getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
-			ItemView.getStorageBlockIdentifyingDetailsView(stored),
-			ItemView.getStorageBlockConditionView(stored),
-			ItemView.getStorageBlockConditionNotesView(stored),
-			ItemView.getStorageBlockExpiresView(stored),
-		);
-		//TODO:: images, keywords, atts
-
-		return newContent;
-	},
 	getAmountStoredContent(stored, itemId, storageBlockId) {
 		console.log("Getting view content for simple amount stored.");
-		return ItemView.getStoredViewContent(stored, itemId, storageBlockId, false, true, true);
+		return StoredView.getStoredViewContent(stored, itemId, storageBlockId, false, true, true);
 	},
 	getAmountListStoredContent(itemId, blockId, storedList) {
 		console.log("Getting view content for list amount stored.");
@@ -262,7 +134,7 @@ const ItemView = {
 				accordContent.append(
 					ItemView.addViewAccordionItem(
 						accordId + i,
-						ItemView.getStoredViewContent(curStored, itemId, blockId, i, false, true),
+						StoredView.getStoredViewContent(curStored, itemId, blockId, i, false, true),
 						curStored,
 						"AMOUNT_LIST"
 					)
@@ -291,7 +163,7 @@ const ItemView = {
 
 				accordContent.append(ItemView.addViewAccordionItem(
 					accordId + key,
-					ItemView.getStoredViewContent(trackedMap[key], itemId, blockId, key, false, true, true),
+					StoredView.getStoredViewContent(trackedMap[key], itemId, blockId, key, false, true, true),
 					key
 				));
 			});
