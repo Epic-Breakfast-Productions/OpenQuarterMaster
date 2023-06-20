@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInState;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInType;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -22,7 +22,7 @@ public class ItemCheckinRequest {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private CheckInState state = CheckInState.OK;
+	private CheckInType state = CheckInType.RETURN;
 	
 	/**
 	 * Where the item went when checked in

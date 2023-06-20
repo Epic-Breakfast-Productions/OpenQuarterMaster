@@ -1,22 +1,19 @@
 package tech.ebp.oqm.lib.core.object.storage.checkout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 /**
