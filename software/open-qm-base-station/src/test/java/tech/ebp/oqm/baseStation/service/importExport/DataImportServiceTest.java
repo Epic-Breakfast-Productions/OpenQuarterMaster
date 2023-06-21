@@ -20,9 +20,9 @@ import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
-import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInState;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.LossCheckin;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.ReturnCheckin;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForExtUser;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
@@ -251,7 +251,9 @@ class DataImportServiceTest extends RunningServerTest {
 			InventoryItem itemCheckingOut = this.inventoryItemService.get(checkout.getItem());
 			List<ObjectId> storageBlocksInItem = itemCheckingOut
 													 .getStorageMap().keySet().stream().toList();
-			checkout.setCheckedOutFrom(storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size())));
+			checkout.setCheckedOutFrom(
+				storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size()))
+			);
 			checkout.setCheckedOut(
 				switch (itemCheckingOut.getStorageType()){
 					case AMOUNT_LIST, AMOUNT_SIMPLE -> new AmountStored(rand.nextInt(), itemCheckingOut.getUnit());
@@ -276,18 +278,22 @@ class DataImportServiceTest extends RunningServerTest {
 			
 			if(rand.nextBoolean()){
 				//checked back in
-				checkout.setCheckInDetails(new CheckInDetails(
-					CheckInState.values()[rand.nextInt(CheckInState.values().length)],
-					storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size())),
-					FAKER.lorem().paragraph(),
-					ZonedDateTime.now()
-				));
+				if(rand.nextBoolean()){
+					checkout.setCheckInDetails(
+						new ReturnCheckin(storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size())))
+							.setNotes(FAKER.lorem().paragraph())
+					);
+				} else {
+					checkout.setCheckInDetails(
+						new LossCheckin(FAKER.lorem().paragraph())
+							.setNotes(FAKER.lorem().paragraph())
+					);
+				}
 			}
 			
 			this.itemCheckoutService.add(checkout, testUser);
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
-		
 		
 		
 		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null);

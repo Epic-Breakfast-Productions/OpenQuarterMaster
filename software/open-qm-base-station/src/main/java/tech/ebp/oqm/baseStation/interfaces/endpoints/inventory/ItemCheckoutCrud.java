@@ -28,6 +28,7 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
@@ -134,12 +135,12 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	public ItemCheckout checkin(
 		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
-		@Valid ItemCheckinRequest itemCheckinRequest
+		@Valid CheckInDetails checkInDetails
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		InteractingEntity entity = this.getInteractingEntityFromJwt();
 		
-		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), itemCheckinRequest, entity);
+		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), checkInDetails, entity);
 	}
 	
 	@GET

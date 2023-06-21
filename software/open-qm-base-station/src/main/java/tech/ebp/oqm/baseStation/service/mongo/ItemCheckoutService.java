@@ -16,8 +16,9 @@ import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.checkout.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInDetails;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.ReturnCheckin;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
@@ -30,6 +31,7 @@ import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTreeNode;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -103,21 +105,24 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		return newId;
 	}
 	
-	public ItemCheckout checkinItem(ObjectId checkoutId, ItemCheckinRequest request, InteractingEntity entity) {
+	public ItemCheckout checkinItem(
+		ObjectId checkoutId,
+		@Valid CheckInDetails checkInDetails,
+		InteractingEntity entity
+	) {
 		ItemCheckout checkout = this.get(checkoutId);
-		InventoryItem item = this.inventoryItemService.get(checkout.getItem());
+		checkout.setCheckInDetails(checkInDetails);
+		InventoryItem item = null;
 		
-		CheckInDetails.Builder checkInDetailBuilder = CheckInDetails.fromRequest(request);
-		
-		if(request.getStorageBlockCheckedInto() == null){
-			checkInDetailBuilder.storageBlockCheckedInto(checkout.getCheckedOutFrom());
+		if(checkInDetails instanceof ReturnCheckin){
+			item = this.inventoryItemService.get(checkout.getItem());
+			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
 		}
 		
-		checkout.setCheckInDetails(checkInDetailBuilder.build());
-		item.add(checkout.getCheckInDetails().getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
-		
 		try(ClientSession cs = this.getNewClientSession(true)){
-			this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+			if(item != null) {
+				this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+			}
 			this.update(checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
 			cs.commitTransaction();
 		}
