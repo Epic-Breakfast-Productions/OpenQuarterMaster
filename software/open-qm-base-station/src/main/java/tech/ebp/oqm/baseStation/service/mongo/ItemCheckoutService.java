@@ -4,35 +4,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
 import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInDetails;
 import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.ReturnCheckin;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
 import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
-import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
-import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
-import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -107,7 +100,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	
 	public ItemCheckout checkinItem(
 		ObjectId checkoutId,
-		@Valid CheckInDetails checkInDetails,
+		@NonNull @Valid CheckInDetails checkInDetails,
 		InteractingEntity entity
 	) {
 		ItemCheckout checkout = this.get(checkoutId);
@@ -123,7 +116,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 			if(item != null) {
 				this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
 			}
-			this.update(checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+			this.update(cs, checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
 			cs.commitTransaction();
 		}
 		

@@ -4,6 +4,9 @@ const ItemCheckin = {
 	itemNameLabel: $("#itemCheckinItemNameLabel"),
 	originalStorageLabelLabel: $("#itemCheckinOriginalStorageLabelLabel"),
 	storedDetails: $("#itemCheckinStoredDetails"),
+	itemCheckinForm: $("#itemCheckinForm"),
+
+	checkinIdInput: $("#itemCheckinFormCheckinIdInput"),
 	returnedDtInput: $("#itemCheckinFormReturnedInput"),
 	notesInput: $("#itemCheckinFormNotesInput"),
 	checkinTypeInput: $("#itemCheckinFormTypeInput"),
@@ -11,6 +14,8 @@ const ItemCheckin = {
 	intoInput: $("#itemCheckinFormIntoInput"),
 	lossReasonInputContainer: $("#itemCheckinFormLossReasonInputContainer"),
 	lossReasonInput: $("#itemCheckinFormLossReasonInput"),
+	keywords: $("#itemCheckinForm").find(".keywordInputDiv"),
+	atts: $("#itemCheckinForm").find(".attInputDiv"),
 
 	setCheckinTypeView(){
 		ItemCheckin.intoInputContainer.hide();
@@ -26,11 +31,12 @@ const ItemCheckin = {
 		}
 	},
 	resetCheckinForm(){
+		ItemCheckin.checkinIdInput.val("");
 		ItemCheckin.messages.text("");
 		ItemCheckin.itemNameLabel.text("");
 		ItemCheckin.originalStorageLabelLabel.text("");
 		ItemCheckin.storedDetails.text("");
-		ItemCheckin.returnedDtInput.val(new Date().toISOString().slice(0, 16));
+		ItemCheckin.returnedDtInput.val(TimeHelpers.getNowTs());
 		ItemCheckin.notesInput.val("");
 		ItemCheckin.checkinTypeInput.val("RETURN");
 		ItemCheckin.setCheckinTypeView();
@@ -40,6 +46,8 @@ const ItemCheckin = {
 	async setupCheckinForm(checkoutId){
 		console.log("Checking in " + checkoutId);
 		this.resetCheckinForm();
+
+		ItemCheckin.checkinIdInput.val(checkoutId);
 
 		await doRestCall({
 			spinnerContainer: ItemCheckin.modal,
@@ -91,3 +99,45 @@ const ItemCheckin = {
 		});
 	}
 };
+
+ItemCheckin.itemCheckinForm.on("submit", function(e){
+	e.preventDefault();
+	console.log("Submitting item checkin form.");
+
+	let checkinDetailsData = {
+		"checkinDateTime": ItemCheckin.returnedDtInput.val(),
+		"notes": ItemCheckin.notesInput.val(),
+		"checkinType": ItemCheckin.checkinTypeInput.val()
+	};
+	addKeywordAttData(checkinDetailsData, ItemCheckin.keywords, ItemCheckin.atts);
+
+	switch (checkinDetailsData.checkinType){
+		case "RETURN":
+			checkinDetailsData["storageBlockCheckedInto"]=ItemCheckin.intoInput.val();
+			break;
+		case "LOSS":
+			checkinDetailsData["reason"]=ItemCheckin.lossReasonInput.val();
+			break;
+		default:
+			PageMessages.addMessageToDiv(
+				ItemCheckin.messages,
+				"danger",
+				"Invalid checkin type"
+			);
+			return;
+	}
+
+	doRestCall({
+		spinnerContainer: ItemCheckin.modal,
+		failMessagesDiv: ItemCheckin.messages,
+		url: "/api/v1/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
+		method: "PUT",
+		data: checkinDetailsData,
+		done: function (data) {
+			PageMessages.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
+		}
+	})
+
+
+
+});

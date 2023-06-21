@@ -1,7 +1,6 @@
-
-var navSearchInput = $('#navSearchInput');
-var navSearchForm = $('#navSearchForm');
-var navSearchTypeSelect = $('#navSearchTypeSelect');
+const navSearchInput = $('#navSearchInput');
+const navSearchForm = $('#navSearchForm');
+const navSearchTypeSelect = $('#navSearchTypeSelect');
 
 navSearchTypeSelect.on("change", function(event){
     console.log(
@@ -13,8 +12,4 @@ navSearchTypeSelect.on("change", function(event){
     navSearchInput.attr("name", navSearchTypeSelect[0].options[event.target.selectedIndex].dataset.field);
 });
 
-
-let nowDateTimeStamp = new Date().toISOString().slice(0, 16);
-$(".datetimeInputFuture").each(function(i, element){
-    element.min = nowDateTimeStamp;
-});
+TimeHelpers.setupDateTimeInputs();
