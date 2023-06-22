@@ -89,6 +89,7 @@ public class ItemCheckout extends UiProvider {
 				.data("searchObject", itemCheckoutSearch)
 				.data("showItem", true)
 				.data("showStillCheckedOut", true)
+				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

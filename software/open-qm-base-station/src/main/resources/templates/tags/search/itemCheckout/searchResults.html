@@ -74,7 +74,7 @@
     </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="//ItemView.setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="ItemCheckoutView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
       {#if result.isStillCheckedOut()}

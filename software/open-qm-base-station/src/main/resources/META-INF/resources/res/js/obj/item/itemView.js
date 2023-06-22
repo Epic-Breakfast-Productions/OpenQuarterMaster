@@ -61,7 +61,7 @@ const ItemView = {
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		clearHideKeywordDisplay(ItemView.viewKeywordsSection);
-		clearHideAttDisplay(ItemView.viewKeywordsSection);
+		clearHideAttDisplay(ItemView.viewAttsSection);
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.off('click');
@@ -218,7 +218,7 @@ const ItemView = {
 				}
 
 				processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
-				processAttDisplay(ItemView.viewKeywordsSection, itemData.attributes);
+				processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
 				ItemView.itemViewStorageType.text(itemData.storageType);
 				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
@@ -244,7 +244,7 @@ const ItemView = {
 					ItemView.itemViewCarousel.show();
 					promises.push(Carousel.setCarouselImagesFromIds(itemData.imageIds, ItemView.itemViewCarousel));
 				} else {
-					console.log("Storage block had no images to show.");
+					console.log("Item had no images to show.");
 					ItemView.itemViewCarousel.hide();
 				}
 
