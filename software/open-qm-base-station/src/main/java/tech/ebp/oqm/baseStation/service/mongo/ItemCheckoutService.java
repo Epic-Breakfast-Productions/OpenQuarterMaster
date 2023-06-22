@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.AlreadyCheckedInException;
 import tech.ebp.oqm.lib.core.object.MainObject;
 import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 @Named("ItemCheckoutService")
 @Slf4j
@@ -104,6 +106,11 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		InteractingEntity entity
 	) {
 		ItemCheckout checkout = this.get(checkoutId);
+		
+		if(!checkout.isStillCheckedOut()){
+			throw new AlreadyCheckedInException("Checkout with id " + checkout.getId().toHexString() + " already checked in.");
+		}
+		
 		checkout.setCheckInDetails(checkInDetails);
 		InventoryItem item = null;
 		
@@ -129,7 +136,10 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			clientSession,
-			eq("checkedOutFrom", storageBlock.getId()),
+			or(
+				eq("checkedOutFrom", storageBlock.getId()),
+				eq("checkinDetails.storageBlockCheckedInto", storageBlock.getId())
+			),
 			null,
 			null
 		).map(MainObject::getId).into(list);
