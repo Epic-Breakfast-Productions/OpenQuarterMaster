@@ -80,7 +80,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		}
 		
 		ItemCheckout itemCheckout = new ItemCheckout();
-		itemCheckout.setCheckedOut(result);
+		itemCheckout.setCheckedOut(request.getToCheckout());
 		itemCheckout.setItem(request.getItem());
 		itemCheckout.setCheckedOutFrom(request.getCheckedOutFrom());
 		itemCheckout.setCheckedOutFor(request.getCheckedOutFor());

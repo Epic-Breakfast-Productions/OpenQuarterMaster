@@ -77,9 +77,11 @@
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="//ItemView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
+      {#if result.isStillCheckedOut()}
       <button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{result.getId()}');">
         {#icons/checkin}{/icons/checkin}
       </button>
+      {/if}
       <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItem('{result.getId()}');">
         {#icons/remove}{/icons/remove}
       </button>
