@@ -69,7 +69,7 @@ const ItemCheckin = {
 							console.log("hello "+ storageId);
 							getStorageBlockLabel(storageId, function (label){
 								let newOp = $("<option></option>")
-								newOp.attr("id", storageId);
+								newOp.attr("value", storageId);
 								newOp.text(label);
 								if(storageId === data.checkedOutFrom){
 									newOp.prop("selected", true);
@@ -105,7 +105,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 	console.log("Submitting item checkin form.");
 
 	let checkinDetailsData = {
-		"checkinDateTime": ItemCheckin.returnedDtInput.val(),
+		"checkinDateTime": TimeHelpers.getTsFromInput(ItemCheckin.returnedDtInput),
 		"notes": ItemCheckin.notesInput.val(),
 		"checkinType": ItemCheckin.checkinTypeInput.val()
 	};

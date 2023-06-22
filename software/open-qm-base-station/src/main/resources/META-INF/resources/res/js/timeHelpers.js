@@ -1,4 +1,10 @@
-//TODO:: helpers for datetime inputs; setting value, getting value, dealing with timezones
+/**
+ *
+ * TODO:: function to turn dt from server to client's tz, format
+ *
+ * https://moment.github.io/luxon/demo/global.html
+ * @type {{getNowTs(): *, setupDateTimeInputs(): void, getTsForServer(*): (null|*)}}
+ */
 const TimeHelpers = {
 
 	/**
@@ -6,6 +12,20 @@ const TimeHelpers = {
 	 */
 	getNowTs(){
 		return luxon.DateTime.now().toISO().slice(0, 16);
+	},
+	getTsFromInput(dtInputJq){
+		let value = dtInputJq.val();
+
+		if(!value){
+			console.log("No dt value.");
+			return null;
+		}
+
+		value = luxon.DateTime.fromISO(value);
+		value = value.toISO();
+
+		console.log("Returning dt value: " + value);
+		return value;
 	},
 	setupDateTimeInputs(){
 		let nowDateTimeStamp = this.getNowTs();

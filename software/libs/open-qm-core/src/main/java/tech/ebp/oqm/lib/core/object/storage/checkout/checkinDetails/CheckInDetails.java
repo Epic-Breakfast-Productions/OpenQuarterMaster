@@ -3,14 +3,12 @@ package tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.object.AttKeywordContaining;
-import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
-import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckinRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,6 +29,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = ReturnCheckin.class, name = "RETURN"),
 	@JsonSubTypes.Type(value = LossCheckin.class, name = "LOSS"),
 })
+@BsonDiscriminator
 public abstract class CheckInDetails implements AttKeywordContaining {
 	
 	public abstract CheckInType getCheckinType();
