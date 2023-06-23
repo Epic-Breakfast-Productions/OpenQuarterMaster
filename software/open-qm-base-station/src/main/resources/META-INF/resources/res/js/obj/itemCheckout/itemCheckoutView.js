@@ -12,6 +12,11 @@ const ItemCheckoutView = {
 	checkedOutOn: $("#itemCheckoutViewCheckedOutOn"),
 	dueBackOnContainer: $("#itemCheckoutViewDueBackOnContainer"),
 	dueBackOn: $("#itemCheckoutViewDueBackOn"),
+	reason: $("#itemCheckoutViewReason"),
+	reasonContainer: $("#itemCheckoutViewReasonContainer"),
+	notes: $("#itemCheckoutViewNotes"),
+	notesContainer: $("#itemCheckoutViewNotesContainer"),
+
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 	viewKeywordsSection: $("#itemCheckoutViewKeywordsSection"),
 	viewAttsSection: $("#itemCheckoutViewAttsSection"),
@@ -31,6 +36,10 @@ const ItemCheckoutView = {
 		ItemCheckoutView.dueBackOnContainer.hide();
 		ItemCheckoutView.dueBackOnContainer.removeClass("bg-danger")
 		ItemCheckoutView.dueBackOn.text("");
+		ItemCheckoutView.reasonContainer.hide();
+		ItemCheckoutView.reason.text("");
+		ItemCheckoutView.notesContainer.hide();
+		ItemCheckoutView.notes.text("");
 		resetHistorySearch(ItemCheckoutView.history);
 		clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
 		clearHideAttDisplay(ItemCheckoutView.viewAttsSection);
@@ -68,6 +77,15 @@ const ItemCheckoutView = {
 				} else {
 					ItemCheckoutView.statusLabel.html(Icons.itemCheckin + " In");
 					ItemCheckoutView.statusLabelContainer.addClass("bg-success");
+				}
+
+				if(checkoutData.reason){
+					ItemCheckoutView.reason.text(checkoutData.reason);
+					ItemCheckoutView.reasonContainer.show();
+				}
+				if(checkoutData.notes){
+					ItemCheckoutView.notes.text(checkoutData.notes);
+					ItemCheckoutView.notesContainer.show();
 				}
 
 				promises.push(doRestCall({
