@@ -16,10 +16,19 @@ const ItemCheckoutView = {
 	reasonContainer: $("#itemCheckoutViewReasonContainer"),
 	notes: $("#itemCheckoutViewNotes"),
 	notesContainer: $("#itemCheckoutViewNotesContainer"),
+	checkinDetailsContainer: $("#itemCheckoutViewCheckinDetailsContainer"),
+	checkinDetailsReturnedContainer: $("#itemCheckoutViewCheckinDetailsReturnedContainer"),
+	checkinDetailsLossContainer: $("#itemCheckoutViewCheckinDetailsLossContainer"),
+	checkinDetailsTime: $("#itemCheckoutViewCheckinDetailsTime"),
+	checkinDetailsNotesContainer: $("#itemCheckoutViewCheckinDetailsNotesContainer"),
+	checkinDetailsNotes: $("#itemCheckoutViewCheckinDetailsNotes"),
+	checkinDetailsCarousel: $("#itemCheckoutViewCheckinDetailsCarousel"),
 
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 	viewKeywordsSection: $("#itemCheckoutViewKeywordsSection"),
 	viewAttsSection: $("#itemCheckoutViewAttsSection"),
+	checkinDetailsKeywordsSection: $("#itemCheckoutViewCheckinDetailsKeywordsSection"),
+	checkinDetailsAttsSection: $("#itemCheckoutViewCheckinDetailsAttsSection"),
 
 
 	resetCheckoutView(){
@@ -40,9 +49,18 @@ const ItemCheckoutView = {
 		ItemCheckoutView.reason.text("");
 		ItemCheckoutView.notesContainer.hide();
 		ItemCheckoutView.notes.text("");
+		ItemCheckoutView.checkinDetailsContainer.hide();
+		ItemCheckoutView.checkinDetailsReturnedContainer.hide();
+		ItemCheckoutView.checkinDetailsLossContainer.hide();
+		ItemCheckoutView.checkinDetailsTime.text("");
+		ItemCheckoutView.checkinDetailsNotesContainer.hide();
+		ItemCheckoutView.checkinDetailsNotes.text("");
+
 		resetHistorySearch(ItemCheckoutView.history);
 		clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
 		clearHideAttDisplay(ItemCheckoutView.viewAttsSection);
+		clearHideKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection);
+		clearHideAttDisplay(ItemCheckoutView.checkinDetailsAttsSection);
 	},
 	async setupView(itemCheckoutId){
 		console.log("Setting up view for item checkout " + itemCheckoutId);
@@ -117,9 +135,23 @@ const ItemCheckoutView = {
 					)
 				);
 
+				if(!checkoutData.stillCheckedOut){
+					//TODO:: checked in by, checkin type, associated type fields
+					ItemCheckoutView.checkinDetailsTime.text(checkoutData.checkInDetails.checkinDateTime);
+					processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);
+					processAttDisplay(ItemCheckoutView.checkinDetailsAttsSection, checkoutData.checkInDetails.attributes);
+
+					if(checkoutData.checkInDetails.notes) {
+						ItemCheckoutView.checkinDetailsNotes.text(checkoutData.checkInDetails.notes);
+						ItemCheckoutView.checkinDetailsNotesContainer.show();
+					}
+
+					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
+
+					ItemCheckoutView.checkinDetailsContainer.show();
+				}
+
 				//TODO:: Who for/by
-				//TODO:: if checked in, show details
-				//TODO:: reason, notes
 			}
 		});
 

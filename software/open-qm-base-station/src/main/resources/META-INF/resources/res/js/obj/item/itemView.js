@@ -239,14 +239,7 @@ const ItemView = {
 					ItemView.itemViewTotalLowStockThresholdContainer.show();
 				}
 
-				if (itemData.imageIds.length) {
-					console.log("Item had images to show.");
-					ItemView.itemViewCarousel.show();
-					promises.push(Carousel.setCarouselImagesFromIds(itemData.imageIds, ItemView.itemViewCarousel));
-				} else {
-					console.log("Item had no images to show.");
-					ItemView.itemViewCarousel.hide();
-				}
+				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);
 
 				console.log("Setting up view of stored.");
 
