@@ -99,16 +99,17 @@
             <h3 class="card-title">
                 {#icons/checkin}{/icons/checkin} Checkin Details:
             </h3>
-            <div id="itemCheckoutViewCheckinDetailsReturnedContainer">
-                Return
-            </div>
-            <div id="itemCheckoutViewCheckinDetailsLossContainer">
-                Loss
-            </div>
             <div class="row">
                 {#carousel id='itemCheckoutViewCheckinDetailsCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
                     <div class="row">
+                        <div class="card col-sm-12 col-md-6" id="itemCheckoutViewCheckinDetailsTypeContainer">
+                            <div class="card-body">
+                                <h5 class="card-title">Checkin Type:</h5>
+                                <p id="itemCheckoutViewCheckinDetailsType" class="">
+                                </p>
+                            </div>
+                        </div>
                         <div class="card col-sm-12 col-md-6">
                             <div class="card-body">
                                 <h5 class="card-title">Checkin Time:</h5>
@@ -116,6 +117,22 @@
                                 </p>
                             </div>
                         </div>
+                        <div class="card col-sm-12 col-md-6" id="itemCheckoutViewCheckinDetailsCheckedIntoContainer">
+                            <div class="card-body">
+                                <h5 class="card-title">Checked into:</h5>
+                                <p id="itemCheckoutViewCheckinDetailsCheckedInto" class="">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="itemCheckoutViewCheckinDetailsLossReasonContainer">
+                <div class="card col-12">
+                    <div class="card-body">
+                        <h5 class="card-title">Loss Reason:</h5>
+                        <p id="itemCheckoutViewCheckinDetailsLossReason" class="">
+                        </p>
                     </div>
                 </div>
             </div>

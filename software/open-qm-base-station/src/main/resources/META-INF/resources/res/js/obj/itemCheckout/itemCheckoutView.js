@@ -17,12 +17,16 @@ const ItemCheckoutView = {
 	notes: $("#itemCheckoutViewNotes"),
 	notesContainer: $("#itemCheckoutViewNotesContainer"),
 	checkinDetailsContainer: $("#itemCheckoutViewCheckinDetailsContainer"),
-	checkinDetailsReturnedContainer: $("#itemCheckoutViewCheckinDetailsReturnedContainer"),
-	checkinDetailsLossContainer: $("#itemCheckoutViewCheckinDetailsLossContainer"),
 	checkinDetailsTime: $("#itemCheckoutViewCheckinDetailsTime"),
 	checkinDetailsNotesContainer: $("#itemCheckoutViewCheckinDetailsNotesContainer"),
 	checkinDetailsNotes: $("#itemCheckoutViewCheckinDetailsNotes"),
 	checkinDetailsCarousel: $("#itemCheckoutViewCheckinDetailsCarousel"),
+	checkinDetailsTypeContainer: $("#itemCheckoutViewCheckinDetailsTypeContainer"),
+	checkinDetailsType: $("#itemCheckoutViewCheckinDetailsType"),
+	checkinDetailsLossReasonContainer: $("#itemCheckoutViewCheckinDetailsLossReasonContainer"),
+	checkinDetailsLossReason: $("#itemCheckoutViewCheckinDetailsLossReason"),
+	checkinDetailsCheckedIntoContainer: $("#itemCheckoutViewCheckinDetailsCheckedIntoContainer"),
+	checkinDetailsCheckedInto: $("#itemCheckoutViewCheckinDetailsCheckedInto"),
 
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 	viewKeywordsSection: $("#itemCheckoutViewKeywordsSection"),
@@ -50,11 +54,15 @@ const ItemCheckoutView = {
 		ItemCheckoutView.notesContainer.hide();
 		ItemCheckoutView.notes.text("");
 		ItemCheckoutView.checkinDetailsContainer.hide();
-		ItemCheckoutView.checkinDetailsReturnedContainer.hide();
-		ItemCheckoutView.checkinDetailsLossContainer.hide();
+		ItemCheckoutView.checkinDetailsTypeContainer.removeClass("bg-success", "bg-danger");
+		ItemCheckoutView.checkinDetailsType.text("");
 		ItemCheckoutView.checkinDetailsTime.text("");
 		ItemCheckoutView.checkinDetailsNotesContainer.hide();
 		ItemCheckoutView.checkinDetailsNotes.text("");
+		ItemCheckoutView.checkinDetailsLossReasonContainer.hide();
+		ItemCheckoutView.checkinDetailsLossReason.text("");
+		ItemCheckoutView.checkinDetailsCheckedIntoContainer.hide();
+		ItemCheckoutView.checkinDetailsCheckedInto.text("");
 
 		resetHistorySearch(ItemCheckoutView.history);
 		clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
@@ -85,7 +93,10 @@ const ItemCheckoutView = {
 					ItemCheckoutView.dueBackOnContainer.show();
 					ItemCheckoutView.dueBackOn.text(checkoutData.dueBack);
 
-					if(luxon.DateTime.fromISO(checkoutData.dueBack) < luxon.DateTime.local()){
+					if(
+						checkoutData.stillCheckedOut &&
+						luxon.DateTime.fromISO(checkoutData.dueBack) < luxon.DateTime.local()
+					){
 						ItemCheckoutView.dueBackOnContainer.addClass("bg-danger");
 					}
 				}
@@ -136,7 +147,8 @@ const ItemCheckoutView = {
 				);
 
 				if(!checkoutData.stillCheckedOut){
-					//TODO:: checked in by, checkin type, associated type fields
+					//TODO:: checked in by
+					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
 					ItemCheckoutView.checkinDetailsTime.text(checkoutData.checkInDetails.checkinDateTime);
 					processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);
 					processAttDisplay(ItemCheckoutView.checkinDetailsAttsSection, checkoutData.checkInDetails.attributes);
@@ -146,7 +158,30 @@ const ItemCheckoutView = {
 						ItemCheckoutView.checkinDetailsNotesContainer.show();
 					}
 
-					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
+					switch (checkoutData.checkInDetails.checkinType){
+						case "RETURN":
+							ItemCheckoutView.checkinDetailsTypeContainer.addClass("bg-success");
+							ItemCheckoutView.checkinDetailsType.text("Returned");
+
+							getStorageBlockLabel(checkoutData.checkedOutFrom, function (label){
+								ItemCheckoutView.checkinDetailsCheckedInto.append(
+									Links.getStorageViewLink(checkoutData.checkInDetails.storageBlockCheckedInto, label)
+								);
+								ItemCheckoutView.checkinDetailsCheckedIntoContainer.show();
+							});
+
+							break;
+						case "LOSS":
+							ItemCheckoutView.checkinDetailsTypeContainer.addClass("bg-danger");
+							ItemCheckoutView.checkinDetailsType.text("Loss");
+
+							if(checkoutData.checkInDetails.reason){
+								ItemCheckoutView.checkinDetailsLossReason.text(checkoutData.checkInDetails.reason);
+								ItemCheckoutView.checkinDetailsLossReasonContainer.show();
+							}
+							break;
+					}
+
 
 					ItemCheckoutView.checkinDetailsContainer.show();
 				}
