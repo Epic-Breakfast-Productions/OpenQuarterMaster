@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -18,8 +19,11 @@ import javax.validation.constraints.NotNull;
 public class CheckoutForExtUser extends CheckoutFor {
 	@NonNull
 	@NotNull
+	@NotBlank
 	private String externalId;
 	
+	@NonNull
+	@NotNull
 	private String name;
 	
 	//TODO:: determine from community what goes here

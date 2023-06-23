@@ -85,6 +85,33 @@ const ItemCheckoutView = {
 			done: function (checkoutData) {
 				let promises = [];
 
+				//TODO:: get create history event for checkout to show who checked out
+
+
+				switch (checkoutData.checkedOutFor.type){
+					case "OQM_ENTITY":
+						EntityRef.getEntityRef(
+							checkoutData.checkedOutFor.entity,
+							function(refHtml){
+								ItemCheckoutView.checkedOutForLabel.append(refHtml);
+							}
+						);
+						break;
+					case "EXT_SYS_USER":
+						ItemCheckoutView.checkedOutForLabel.append(
+							$("<h6>Id:</h6>"),
+							$("<p></p>").text(checkoutData.checkedOutFor.externalId)
+						);
+
+						if(checkoutData.checkedOutFor.name){
+							ItemCheckoutView.checkedOutForLabel.append(
+								$("<h6>Name:</h6>"),
+								$("<p></p>").text(checkoutData.checkedOutFor.name)
+							);
+						}
+						break;
+				}
+
 				processKeywordDisplay(ItemCheckoutView.viewKeywordsSection, checkoutData.keywords);
 				processAttDisplay(ItemCheckoutView.viewAttsSection, checkoutData.attributes);
 				ItemCheckoutView.checkedOutOn.text(checkoutData.checkoutDate);
@@ -181,7 +208,6 @@ const ItemCheckoutView = {
 							}
 							break;
 					}
-
 
 					ItemCheckoutView.checkinDetailsContainer.show();
 				}

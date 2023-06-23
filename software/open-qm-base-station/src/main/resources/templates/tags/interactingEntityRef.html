@@ -1,19 +1,23 @@
 {@tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference entityRef}
 {#if entityRef != null && entityRef.getEntityType() != null}
 	{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(entityRef)}
-		<a href="/entityView/baseStation" class="text-decoration-none" target="_blank">
+		<a href="/entityView/baseStation" class="text-decoration-none entityViewLink" target="_blank">
 		Base Station {#icons/newTab}{/icons/newTab}
 	</a>
 	{#else}
 		{#let entity=cdi:InteractingEntityService.getEntity(entityRef)}
-		<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none" target="_blank">
+		<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none entityViewLink" target="_blank">
+			<span class="entityViewSymbol">
 			{#switch entity.getInteractingEntityType()}
-				{#case EXTERNAL_SERVICE}
-					{#icons/extService}{/icons/extService}
-				{#case USER}
-					{#icons/user}{/icons/user}
+			{#case EXTERNAL_SERVICE}
+				{#icons/extService}{/icons/extService}
+			{#case USER}
+				{#icons/user}{/icons/user}
 			{/switch}
-			{#if entity.getName() != null}{entity.getName()}{/if}
+			</span>
+			<span class="entityViewName">
+				{entity.getName()}
+			</span>
 			{#icons/newTab}{/icons/newTab}
 		</a>
 		{/let}
