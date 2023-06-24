@@ -211,8 +211,6 @@ const ItemCheckoutView = {
 
 					ItemCheckoutView.checkinDetailsContainer.show();
 				}
-
-				//TODO:: Who for/by
 			}
 		});
 
