@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -14,7 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.resteasy.annotations.cache.NoCache;
+import org.jboss.resteasy.reactive.NoCache;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.interfaces.ui.pages.UiUtils;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
@@ -219,7 +218,7 @@ public class UserAuth extends EndpointProvider {
 				returnPath == null || returnPath.isBlank() ?
 //					this.callbackUrl : //dislikes this; http://host.testcontainers.internal:8081/api/v1/auth/user/callback
 					redirectUri : //likes this; http://host.testcontainers.internal:8081//api/v1/auth/user/callback
-					new URIBuilder(redirectUri).addParameter("returnPath", returnPath).build().toString()
+					UriBuilder.fromUri(redirectUri).queryParam("returnPath", returnPath).build().toString()
 			);
 			returned = this.keycloakServiceCaller.getJwt(
 				this.externalClientId,

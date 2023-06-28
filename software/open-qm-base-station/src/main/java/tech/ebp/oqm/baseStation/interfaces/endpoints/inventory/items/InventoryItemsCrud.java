@@ -6,13 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -24,7 +21,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
@@ -38,14 +34,8 @@ import tech.ebp.oqm.lib.core.object.ObjectUtils;
 import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.Stored;
-import tech.ebp.oqm.lib.core.rest.ErrorMessage;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -56,6 +46,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -64,17 +55,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
-import static tech.ebp.oqm.lib.core.object.storage.items.stored.StorageType.AMOUNT_SIMPLE;
 
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/item")
@@ -326,7 +312,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.get(securityContext, id);
 	}
@@ -366,7 +352,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		return super.update(securityContext, id, updates);
@@ -406,7 +392,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.delete(securityContext, id);
 	}
@@ -444,7 +430,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
@@ -507,8 +493,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredInventoryItem(
 		@Context SecurityContext securityContext,
-		@PathParam String itemId,
-		@PathParam String storageBlockId
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		//TODO
@@ -539,8 +525,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response addStoredInventoryItem(
 		@Context SecurityContext securityContext,
-		@PathParam String itemId,
-		@PathParam String storageBlockId,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode addObject
 	) throws JsonProcessingException {
 		logRequestContext(this.getJwt(), securityContext);
@@ -584,8 +570,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response subtractStoredInventoryItem(
 		@Context SecurityContext securityContext,
-		@PathParam String itemId,
-		@PathParam String storageBlockId,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode subtractObject
 	) throws JsonProcessingException {
 		logRequestContext(this.getJwt(), securityContext);
@@ -629,9 +615,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response transferStoredInventoryItem(
 		@Context SecurityContext securityContext,
-		@PathParam String itemId,
-		@PathParam String storageBlockIdFrom,
-		@PathParam String storageBlockIdTo,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
+		@PathParam("storageBlockIdTo") String storageBlockIdTo,
 		JsonNode transferObject
 	) throws JsonProcessingException {
 		logRequestContext(this.getJwt(), securityContext);

@@ -16,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
@@ -40,15 +39,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.Validator;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -258,7 +249,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Image get(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.get(securityContext, id);
 	}
@@ -298,7 +289,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image update(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		//TODO:: handle updates, json given is icr
@@ -339,7 +330,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image delete(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return super.delete(securityContext, id);
 	}
@@ -377,7 +368,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
@@ -436,7 +427,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageData(
 		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id
+		@PathParam("id") String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image with id \"{}\"'s data", id);
@@ -498,8 +489,8 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@Context SecurityContext securityContext,
-		@PathParam IMAGED_OBJ_TYPE_NAME object,
-		@PathParam String id
+		@PathParam("id") IMAGED_OBJ_TYPE_NAME object,
+		@PathParam("id") String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image for {} of id \"{}\"", object, id);

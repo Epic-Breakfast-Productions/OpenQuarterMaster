@@ -18,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
@@ -45,6 +44,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -231,7 +231,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public User update(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		return super.update(securityContext, id, updates);
@@ -271,7 +271,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	@RolesAllowed(Roles.USER_ADMIN)
 	public UserGetResponse getUser(
 		@Context SecurityContext securityContext,
-		@PathParam String id
+		@PathParam("id") String id
 	) {
 		return UserGetResponse.builder(this.get(securityContext, id)).build();
 	}
@@ -346,7 +346,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	@RolesAllowed(Roles.USER_ADMIN)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@PathParam String id,
+		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
