@@ -1,9 +1,9 @@
 <div class="mb-3 col col-3">
 	<div class="input-group">
-		<input type="hidden" id="{id}-itemInputId" name="itemId">
+		<input type="hidden" id="{id}-itemInputId" name="item">
 		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal" onclick="ItemSearchSelect.setupItemSearchModal('{id}-itemInput');//setupStorageSearchModal('addEditParentInput');storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
 		<input type="text" class="form-control" id="{id}-itemInputName" placeholder="Item" name="itemName" aria-describedby="{id}-itemNameInput-help" disabled>
-		<button class="btn btn-outline-secondary" type="button" onclick="//clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
+		<button class="btn btn-outline-secondary" type="button" onclick="ItemSearchSelect.clearSearchInput($(this));">{#icons/remove}{/icons/remove}</button>
 	</div>
 	<div id="{id}-itemNameInput-help" class="form-text"></div>
 </div>

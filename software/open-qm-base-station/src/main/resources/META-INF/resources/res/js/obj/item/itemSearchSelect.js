@@ -13,6 +13,10 @@ const ItemSearchSelect = {
 	},
 	setupItemSearchModal(inputIdPrepend) {
 		ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+	},
+	clearSearchInput(clearButtPushed){
+		clearButtPushed.siblings("input[name=itemName]").val("");
+		clearButtPushed.siblings("input[name=item]").val("");
 	}
 };
 

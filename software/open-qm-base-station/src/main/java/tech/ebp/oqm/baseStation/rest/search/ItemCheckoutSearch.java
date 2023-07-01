@@ -43,12 +43,12 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 		}
 		if (this.hasValue(this.getItemCheckedOut())) {
 			filters.add(
-				eq("item", this.getItemCheckedOut())
+				eq("item", new ObjectId(this.getItemCheckedOut()))
 			);
 		}
 		if (this.hasValue(this.getStorageCheckedOutFrom())) {
 			filters.add(
-				eq("checkedOutFrom", this.getStorageCheckedOutFrom())
+				eq("checkedOutFrom", new ObjectId(this.getStorageCheckedOutFrom()))
 			);
 		}
 		
