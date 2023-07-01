@@ -609,7 +609,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 	return newStorage;
 }
 
-function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
+StorageSearchSelect.selectStorageBlock = function(blockName, blockId, inputIdPrepend, otherModalId){
 	console.log("Selected " + blockId + " - " + blockName);
 	var newStorageBody = createStorageBlockAccord(blockName, blockId);
 }
