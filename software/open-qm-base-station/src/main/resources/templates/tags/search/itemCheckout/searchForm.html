@@ -7,6 +7,7 @@ Ingests:
 {@tech.ebp.oqm.baseStation.rest.search.CategoriesSearch searchObject}
 {#include tags/search/searchForm id=id action='/itemCheckout' showKeywords=true showAttributes=true pagingOptions=searchObject.getPagingOptions(true)}
 {#inputs}
-
+	{#inputs/item/itemSelectInput id=id}
+	{/inputs/item/itemSelectInput}
 {/inputs}
 {/include}
