@@ -80,7 +80,6 @@ function fillInQueryForm(queryForm){
         console.log("No attributes in search");
     }
 
-
     console.log("DONE filling in query form from page query.");
 }
 
