@@ -4,6 +4,7 @@ const ItemSearchSelect = {
 	itemSearchSelectResults: $("#itemSearchSelectResults"),
 
 	selectItem(itemName, itemId, inputIdPrepend, otherModalId) {
+		console.log("Selected item: " + itemId + " - " + itemName);
 		let nameInputId = inputIdPrepend + "Id";
 		let nameInputName = inputIdPrepend + "Name";
 
