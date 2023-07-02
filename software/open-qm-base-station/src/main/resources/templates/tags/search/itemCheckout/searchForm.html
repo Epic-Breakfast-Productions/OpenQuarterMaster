@@ -11,5 +11,11 @@ Ingests:
 	{/inputs/item/itemSelectInput}
 	{#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='storageCheckedOutFrom'}
 	{/inputs/storageBlock/storageBlockSelectInput}
+	<div class="mb-3 col col-3 form-check">
+		<input class="form-check-input" type="checkbox" value="false" name="stillCheckedOut">
+		<label class="form-check-label" for="flexCheckChecked">
+			Show checked in
+		</label>
+	</div>
 {/inputs}
 {/include}

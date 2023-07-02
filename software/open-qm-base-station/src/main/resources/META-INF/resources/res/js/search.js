@@ -16,7 +16,15 @@ function fillInQueryForm(queryForm){
         let formInputs = queryForm.find('input');
         formInputs.each(function (ind, formInput) {
             if (getParams.has(formInput.name)) {
-                $(formInput).val(getParams.get(formInput.name));
+                switch (formInput.type){
+                    case "checkbox":
+                        if(getParams.has(formInput.name)){
+                            formInput.checked = true;
+                        }
+                        break;
+                    default:
+                        $(formInput).val(getParams.get(formInput.name));
+                }
             }
         });
     }

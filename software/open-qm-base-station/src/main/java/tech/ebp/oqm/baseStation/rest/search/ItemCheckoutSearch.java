@@ -23,7 +23,7 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
 	@QueryParam("storageCheckedOutFrom") String storageCheckedOutFrom;
 	@QueryParam("entity") String checkedOutBy;
-	@QueryParam("stillCheckedOut") Boolean stillCheckedOut;
+	@QueryParam("stillCheckedOut") Boolean stillCheckedOut = true;
 	
 	@HeaderParam("accept") String acceptHeaderVal;
 	//options for html rendering
