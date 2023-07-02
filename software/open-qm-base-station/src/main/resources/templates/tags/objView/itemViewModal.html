@@ -101,10 +101,50 @@
 <div class="itemViewCheckedOutContainer">
     <hr />
     <div class="row">
-        <div class="col">
-            <h4>{#icons/checkout}{/icons/checkout} Checked out:</h4><!-- TODO:: search form, set to this specific item. -->
-            <table class="table table-sm table-bordered table-hover" id="itemViewCheckedOutResultsContainer">
-            </table>
+        <div class="col accordion" id="itemViewCheckedOutAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewCheckedOutAccordionCollapse" aria-expanded="false" aria-controls="itemViewCheckedOutAccordionCollapse">
+                        {#icons/checkout}{/icons/checkout} Checked out:
+                    </button>
+                </h2>
+                <div id="itemViewCheckedOutAccordionCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewCheckedOutAccordion">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col accordion" id="itemViewCheckoutSearchAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
+                                        aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse">
+                                        {#icons/search}{/icons/search} Search Fields
+                                    </button>
+                                    </h2>
+                                    <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+                                                 aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
+                                        <div class="accordion-body">
+                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm'}
+                                            {/search/itemCheckout/searchForm}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col table-responsive">
+                                <table class=" table table-bordered table-striped table-hover table-sm" id="itemViewCheckoutSearchResults">
+                                    {!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+                                    {!{/search/itemCheckout/searchResults}!}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {!<h4></h4><!-- TODO:: search form, set to this specific item. -->!}
+            {!<table class="table table-sm table-bordered table-hover" id="itemViewCheckedOutResultsContainer">!}
+            {!</table>!}
         </div>
     </div>
 </div>

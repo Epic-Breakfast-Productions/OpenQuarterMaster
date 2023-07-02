@@ -31,6 +31,7 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
 	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
 	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
+	@HeaderParam("showItemCol") Boolean showItemCol = true;
 	
 	@Override
 	public List<Bson> getSearchFilters() {

@@ -29,6 +29,12 @@ const ItemView = {
 	itemViewEditButton: $('#itemViewEditButton'),
 	itemHistoryAccordionCollapse: $("#itemHistoryAccordionCollapse"),
 	itemViewCheckedOutResultsContainer: $("#itemViewCheckedOutResultsContainer"),
+	checkoutSearchForm: $("#itemViewCheckoutSearchForm"),
+	checkoutSearchResults: $("#itemViewCheckoutSearchResults"),
+	checkoutSearchFormItemNameInput: $("#itemViewCheckoutSearchForm-itemInputName"),
+	checkoutSearchFormItemIdInput: $("#itemViewCheckoutSearchForm-itemInputId"),
+	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
+	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
@@ -56,6 +62,10 @@ const ItemView = {
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
+
+		ItemView.checkoutSearchFormItemNameInput.val("");
+		ItemView.checkoutSearchFormItemIdInput.val("");
+		ItemView.checkoutSearchForm.trigger("reset");
 
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
@@ -291,7 +301,11 @@ const ItemView = {
 						);
 					}));
 				});
+				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
+				ItemView.checkoutSearchFormItemIdInput.val(itemId);
+				ItemView.checkoutSearchForm.submit();
 				await Promise.all(promises);
+
 			}
 		});
 
@@ -310,3 +324,35 @@ if (UriUtils.getParams.has("view")
 	ItemView.setupView(UriUtils.getParams.get("view"));
 	ItemView.viewBsModal.show();
 }
+
+
+//TODO:: disable item input
+
+ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
+ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
+ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
+
+ItemView.checkoutSearchForm.on("submit", function(e){
+	e.preventDefault();
+	let searchParams = new URLSearchParams(new FormData(e.target));
+	console.log("URL search params: " + searchParams);
+
+	doRestCall({
+		spinnerContainer: ItemView.itemViewModal.get(0),
+		url: "/api/v1/inventory/item-checkout?" + searchParams,
+		method: 'GET',
+		failNoResponse: null,
+		failNoResponseCheckStatus: true,
+		extraHeaders: {
+			"accept": "text/html",
+			"actionType": "full",
+			"searchFormId": "itemViewCheckoutSearchForm",
+			"showItemCol": false
+		},
+		async: false,
+		done: function (data) {
+			console.log("Got data!");
+			ItemView.checkoutSearchResults.html(data);
+		}
+	});
+})

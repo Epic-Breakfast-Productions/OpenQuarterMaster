@@ -211,6 +211,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 										   itemCheckoutSearch.getOtherModalIdHeaderVal()
 								   )
 							   )
+							   .data("showItem", itemCheckoutSearch.getShowItemCol())
 							   .data("pagingCalculations", new PagingCalculations(output))
 							   .data("storageService", this.getObjectService())
 					   )
