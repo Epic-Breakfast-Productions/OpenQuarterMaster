@@ -21,7 +21,7 @@ import static com.mongodb.client.model.Filters.in;
 @Getter
 public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
-	@QueryParam("storage") String storageCheckedOutFrom;
+	@QueryParam("storageCheckedOutFrom") String storageCheckedOutFrom;
 	@QueryParam("entity") String checkedOutBy;
 	@QueryParam("stillCheckedOut") Boolean stillCheckedOut;
 	
