@@ -1,5 +1,6 @@
 const ItemCheckoutView = {
 	itemCheckoutViewModal: $("#itemCheckoutViewModal"),
+	viewBsModal: new bootstrap.Modal($("#itemCheckoutViewModal"), {}),
 	messages: $("#itemCheckoutViewMessages"),
 	viewId: $("#itemCheckoutViewId"),
 	statusLabel: $("#itemCheckoutViewStatusLabel"),
@@ -217,3 +218,13 @@ const ItemCheckoutView = {
 		setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
 	}
 };
+
+ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
+	UriUtils.removeParam("view");
+});
+
+if (UriUtils.getParams.has("view")
+) {
+	ItemCheckoutView.setupView(UriUtils.getParams.get("view"));
+	ItemCheckoutView.viewBsModal.show();
+}

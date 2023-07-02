@@ -95,6 +95,10 @@
         {#icons/select}{/icons/select} Select
       </button>
     </td>
+    {#else if actionType == 'viewLink'}
+    <td>
+      {#links/itemCheckoutButton id=result.getId()}{/links/itemCheckoutButton}
+    </td>
     {/if}
   </tr>
   {/for}
