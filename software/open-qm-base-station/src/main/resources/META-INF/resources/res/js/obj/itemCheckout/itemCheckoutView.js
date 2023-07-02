@@ -28,6 +28,7 @@ const ItemCheckoutView = {
 	checkinDetailsLossReason: $("#itemCheckoutViewCheckinDetailsLossReason"),
 	checkinDetailsCheckedIntoContainer: $("#itemCheckoutViewCheckinDetailsCheckedIntoContainer"),
 	checkinDetailsCheckedInto: $("#itemCheckoutViewCheckinDetailsCheckedInto"),
+	checkinButton: $("#itemCheckoutViewCheckinButton"),
 
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 	viewKeywordsSection: $("#itemCheckoutViewKeywordsSection"),
@@ -64,6 +65,7 @@ const ItemCheckoutView = {
 		ItemCheckoutView.checkinDetailsLossReason.text("");
 		ItemCheckoutView.checkinDetailsCheckedIntoContainer.hide();
 		ItemCheckoutView.checkinDetailsCheckedInto.text("");
+		ItemCheckoutView.checkinButton.hide();
 
 		resetHistorySearch(ItemCheckoutView.history);
 		clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
@@ -78,7 +80,7 @@ const ItemCheckoutView = {
 		ItemCheckoutView.viewId.text(itemCheckoutId);
 
 		await doRestCall({
-			spinnerContainer: ItemCheckin.modal,
+			spinnerContainer: ItemCheckoutView.itemCheckoutViewModal.get(0),
 			url: "/api/v1/inventory/item-checkout/" + itemCheckoutId,
 			method: "GET",
 			async: false,
@@ -130,6 +132,7 @@ const ItemCheckoutView = {
 				}
 
 				if(checkoutData.stillCheckedOut){
+					ItemCheckoutView.checkinButton.show();
 					ItemCheckoutView.statusLabel.html(Icons.itemCheckout + " Out");
 				} else {
 					ItemCheckoutView.statusLabel.html(Icons.itemCheckin + " In");
@@ -218,6 +221,10 @@ const ItemCheckoutView = {
 		setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
 	}
 };
+
+ItemCheckoutView.checkinButton.on("click", function (e){
+	ItemCheckin.setupCheckinForm(ItemCheckoutView.viewId.text());
+});
 
 ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
 	UriUtils.removeParam("view");

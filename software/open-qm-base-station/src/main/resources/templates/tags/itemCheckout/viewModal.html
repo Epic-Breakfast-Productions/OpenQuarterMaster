@@ -1,5 +1,10 @@
 {#modal id='itemCheckoutView' size='xl' title='Item Checkout View'}
     {#titleIcon}{#icons/checkout}{/icons/checkout}{/titleIcon}
+    {#footerButtons}
+    <button type="button" class="btn btn-success" id="itemCheckoutViewCheckinButton" data-bs-toggle="modal" data-bs-target="#itemCheckinModal">
+        {#icons/checkin}{/icons/checkin} Checkin
+    </button>
+    {/footerButtons}
     <div class="row">
         <div class="col" id="itemCheckoutViewMessages"></div>
     </div>

@@ -50,7 +50,7 @@ const ItemCheckin = {
 		ItemCheckin.checkinIdInput.val(checkoutId);
 
 		await doRestCall({
-			spinnerContainer: ItemCheckin.modal,
+			spinnerContainer: ItemCheckin.modal.get(0),
 			url: "/api/v1/inventory/item-checkout/" + checkoutId,
 			method: "GET",
 			async: false,
@@ -128,7 +128,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 	}
 
 	doRestCall({
-		spinnerContainer: ItemCheckin.modal,
+		spinnerContainer: ItemCheckin.modal.get(0),
 		failMessagesDiv: ItemCheckin.messages,
 		url: "/api/v1/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
 		method: "PUT",
