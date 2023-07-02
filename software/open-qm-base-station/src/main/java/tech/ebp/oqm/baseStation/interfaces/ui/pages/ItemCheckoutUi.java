@@ -11,15 +11,11 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
-import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
 
@@ -43,7 +39,7 @@ import java.util.List;
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class ItemCheckout extends UiProvider {
+public class ItemCheckoutUi extends UiProvider {
 	
 	@Inject
 	@Location("webui/pages/itemCheckout")
@@ -82,7 +78,7 @@ public class ItemCheckout extends UiProvider {
 			refreshAuthToken(ksc, refreshToken)
 		);
 		
-		SearchResult<tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout> searchResults = this.itemCheckoutService.search(itemCheckoutSearch, true);
+		SearchResult<ItemCheckout> searchResults = this.itemCheckoutService.search(itemCheckoutSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, span, ugr, searchResults)
