@@ -1,5 +1,6 @@
 const ItemCheckin = {
 	modal: $("#itemCheckinModal"),
+	modalBs: new bootstrap.Modal($("#itemCheckinModal"), {}),
 	messages: $("#itemCheckinMessages"),
 	itemNameLabel: $("#itemCheckinItemNameLabel"),
 	originalStorageLabelLabel: $("#itemCheckinOriginalStorageLabelLabel"),
@@ -54,7 +55,22 @@ const ItemCheckin = {
 			url: "/api/v1/inventory/item-checkout/" + checkoutId,
 			method: "GET",
 			async: false,
-			done: function (data) {
+			done: async function (data) {
+
+				if (!data.stillCheckedOut) {
+					ItemCheckin.modalBs.hide();
+					ItemCheckoutView.viewBsModal.show();
+					await ItemCheckoutView.setupView(checkoutId);
+					//TODO:: close checkin view
+					PageMessages.addMessageToDiv(
+						ItemCheckoutView.messages,
+						"danger",
+						"This has already been checked in. Details below.",
+						"Already checked in!"
+					);
+					return;
+				}
+
 				let promises = [];
 
 				promises.push(doRestCall({
@@ -66,12 +82,12 @@ const ItemCheckin = {
 						ItemCheckin.itemNameLabel.text(itemData.name);
 
 						for (const storageId of Object.keys(itemData.storageMap)) {
-							console.log("hello "+ storageId);
-							getStorageBlockLabel(storageId, function (label){
+							console.log("hello " + storageId);
+							getStorageBlockLabel(storageId, function (label) {
 								let newOp = $("<option></option>")
 								newOp.attr("value", storageId);
 								newOp.text(label);
-								if(storageId === data.checkedOutFrom){
+								if (storageId === data.checkedOutFrom) {
 									newOp.prop("selected", true);
 								}
 								ItemCheckin.intoInput.append(newOp);
@@ -80,7 +96,7 @@ const ItemCheckin = {
 					}
 				}));
 
-				getStorageBlockLabel(data.checkedOutFrom, function (label){
+				getStorageBlockLabel(data.checkedOutFrom, function (label) {
 					ItemCheckin.originalStorageLabelLabel.text(label);
 				});
 				ItemCheckin.storedDetails.append(
@@ -134,10 +150,19 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 		method: "PUT",
 		data: checkinDetailsData,
 		done: function (data) {
+			if (UriUtils.getParams.has("checkin")) {
+				UriUtils.removeParam("checkin");
+			}
 			PageMessages.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
 		}
 	})
-
-
-
 });
+
+ItemCheckin.modalBs[0].addEventListener("hidden.bs.modal", function () {
+	UriUtils.removeParam("checkin");
+});
+
+if (UriUtils.getParams.has("checkin")) {
+	ItemCheckin.setupCheckinForm(UriUtils.getParams.get("checkin"));
+	ItemCheckin.modalBs.show();
+}

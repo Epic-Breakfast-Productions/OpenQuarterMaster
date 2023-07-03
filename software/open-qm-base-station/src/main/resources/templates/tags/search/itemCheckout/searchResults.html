@@ -98,6 +98,7 @@
     {#else if actionType == 'viewLink'}
     <td>
       {#links/itemCheckoutButton id=result.getId()}{/links/itemCheckoutButton}
+      <a href="/itemCheckout?checkin={result.getId()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
     </td>
     {/if}
   </tr>
