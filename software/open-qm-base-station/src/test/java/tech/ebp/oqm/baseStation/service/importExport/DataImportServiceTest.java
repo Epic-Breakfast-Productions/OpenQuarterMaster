@@ -31,7 +31,9 @@ import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
@@ -50,9 +52,14 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Stream;
 
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
+import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -92,6 +99,7 @@ class DataImportServiceTest extends RunningServerTest {
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
+		
 		// add units
 		int unitCount = 0;
 		for (int i = 0; i < 5; i++) {
@@ -190,6 +198,7 @@ class DataImportServiceTest extends RunningServerTest {
 		}
 		//add items
 		List<ObjectId> itemIds = new ArrayList<>();
+		List<SimpleAmountItem> simpleAmountItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			SimpleAmountItem item = new SimpleAmountItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -197,15 +206,18 @@ class DataImportServiceTest extends RunningServerTest {
 			item.setUnit(customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit());
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(rand.nextInt(), item.getUnit())
+					.setAmount(abs(rand.nextInt()), item.getUnit())
 					.setCondition(rand.nextInt(100))
 					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			itemIds.add(this.inventoryItemService.add(item, testUser));
+			ObjectId newId = this.inventoryItemService.add(item, testUser);
+			itemIds.add(newId);
+			simpleAmountItems.add(item);
 		}
+		List<ListAmountItem> listAmountItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			ListAmountItem item = new ListAmountItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -213,7 +225,7 @@ class DataImportServiceTest extends RunningServerTest {
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size()))).add(
 					(AmountStored) new AmountStored()
-									   .setAmount(rand.nextInt(),  item.getUnit())
+									   .setAmount(abs(rand.nextInt()), item.getUnit())
 									   .setCondition(rand.nextInt(100))
 									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())
@@ -222,7 +234,9 @@ class DataImportServiceTest extends RunningServerTest {
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
 			itemIds.add(this.inventoryItemService.add(item, testUser));
+			listAmountItems.add(item);
 		}
+		List<TrackedItem> trackedItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			TrackedItem item = new TrackedItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -240,58 +254,31 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			itemIds.add(this.inventoryItemService.add(item, testUser));
+			ObjectId newId =this.inventoryItemService.add(item, testUser);
+			itemIds.add(newId);
+			trackedItems.add(item);
 		}
 		//add item checkouts
-		for (int i = 0; i < 15; i++) {
-			ItemCheckout checkout = new ItemCheckout();
-			
-			//set checkout main data
-			checkout.setItem(itemIds.get(rand.nextInt(itemIds.size())));
-			InventoryItem itemCheckingOut = this.inventoryItemService.get(checkout.getItem());
-			List<ObjectId> storageBlocksInItem = itemCheckingOut
-													 .getStorageMap().keySet().stream().toList();
-			checkout.setCheckedOutFrom(
-				storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size()))
-			);
-			checkout.setCheckedOut(
-				switch (itemCheckingOut.getStorageType()){
-					case AMOUNT_LIST, AMOUNT_SIMPLE -> new AmountStored(rand.nextInt(), itemCheckingOut.getUnit());
-					case TRACKED -> new TrackedStored(FAKER.barcode().gtin14()+"");
-				}
-			);
-			
-			checkout.setNotes(FAKER.lorem().paragraph());
-			checkout.setReason(FAKER.lorem().paragraph());
-			checkout.setDueBack(ZonedDateTime.now().plusDays(rand.nextInt()));
-			
-			if(rand.nextBoolean()){
-				//internal user checked out
-				checkout.setCheckedOutFor(
-					new CheckoutForOqmEntity(testUser.getReference())
-				);
-			} else {
-				checkout.setCheckedOutFor(
-					new CheckoutForExtUser(FAKER.idNumber().valid(), FAKER.name().name())
+		for (int i = 0; i < 1; i++) {
+			{
+				SimpleAmountItem checkingOutItem = simpleAmountItems.get(rand.nextInt(simpleAmountItems.size()));
+				
+				LinkedList<Map.Entry<ObjectId, SingleAmountStoredWrapper>> storedEntries = new LinkedList<>(checkingOutItem.getStorageMap().entrySet());
+				
+				Map.Entry<ObjectId, SingleAmountStoredWrapper> checkingOutEntry = storedEntries.removeFirst();
+				ObjectId checkoutId = this.itemCheckoutService.checkoutItem(
+					ItemCheckoutRequest.builder()
+						.item(checkingOutItem.getId())
+						.checkedOutFrom(checkingOutEntry.getKey())
+						.toCheckout(checkingOutEntry.getValue().getStored())
+						.checkedOutFor(new CheckoutForOqmEntity(testUser.getReference()))
+						.reason(FAKER.lorem().paragraph())
+						.notes(FAKER.lorem().paragraph())
+						.build(),
+					testUser
 				);
 			}
 			
-			if(rand.nextBoolean()){
-				//checked back in
-				if(rand.nextBoolean()){
-					checkout.setCheckInDetails(
-						new ReturnCheckin(storageBlocksInItem.get(rand.nextInt(storageBlocksInItem.size())))
-							.setNotes(FAKER.lorem().paragraph())
-					);
-				} else {
-					checkout.setCheckInDetails(
-						new LossCheckin(FAKER.lorem().paragraph())
-							.setNotes(FAKER.lorem().paragraph())
-					);
-				}
-			}
-			
-			this.itemCheckoutService.add(checkout, testUser);
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
 		

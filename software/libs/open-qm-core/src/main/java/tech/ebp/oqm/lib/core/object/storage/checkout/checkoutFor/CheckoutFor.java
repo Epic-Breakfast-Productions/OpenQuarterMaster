@@ -13,7 +13,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = CheckoutForOqmEntity.class, name = "OQM_USER"),
+	@JsonSubTypes.Type(value = CheckoutForOqmEntity.class, name = "OQM_ENTITY"),
 	@JsonSubTypes.Type(value = CheckoutForExtUser.class, name = "EXT_SYS_USER")
 })
 @BsonDiscriminator
