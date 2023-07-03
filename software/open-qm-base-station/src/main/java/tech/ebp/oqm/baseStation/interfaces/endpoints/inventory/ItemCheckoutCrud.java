@@ -381,7 +381,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
-		@org.jboss.resteasy.annotations.jaxrs.PathParam String id,
+		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
