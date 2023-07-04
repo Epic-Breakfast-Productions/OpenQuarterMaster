@@ -44,7 +44,7 @@ dependencies {
 	//if need ObjectIds, BsonIgnore
 //	implementation 'org.mongodb:bson:4.4.0'
 
-	implementation 'com.fazecast:jSerialComm:2.9.3'
+	implementation 'com.fazecast:jSerialComm:2.10.1'
 
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
