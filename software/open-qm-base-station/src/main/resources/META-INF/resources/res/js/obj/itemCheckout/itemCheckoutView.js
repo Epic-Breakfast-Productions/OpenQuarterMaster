@@ -88,8 +88,7 @@ const ItemCheckoutView = {
 			done: function (checkoutData) {
 				let promises = [];
 
-				//TODO:: get create history event for checkout to show who checked out
-
+				//TODO:: get create history event for checkout to show who checked out, enabled by #332
 
 				switch (checkoutData.checkedOutFor.type){
 					case "OQM_ENTITY":
@@ -178,7 +177,7 @@ const ItemCheckoutView = {
 				);
 
 				if(!checkoutData.stillCheckedOut){
-					//TODO:: checked in by
+					//TODO:: checked in by, enabled by #332
 					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
 					ItemCheckoutView.checkinDetailsTime.text(checkoutData.checkInDetails.checkinDateTime);
 					processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);

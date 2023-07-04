@@ -158,7 +158,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 	})
 });
 
-ItemCheckin.modalBs[0].addEventListener("hidden.bs.modal", function () {
+ItemCheckin.modal[0].addEventListener("hidden.bs.modal", function () {
 	UriUtils.removeParam("checkin");
 });
 
