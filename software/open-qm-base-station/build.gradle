@@ -70,6 +70,9 @@ dependencies {
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.4.0'
 
+	// TODO:: remove to resolve #344
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
 	/*
 	Test Dependencies
 	 */

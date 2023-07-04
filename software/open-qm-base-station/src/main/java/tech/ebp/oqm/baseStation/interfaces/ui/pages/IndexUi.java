@@ -7,6 +7,7 @@ import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -31,6 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
@@ -96,15 +98,24 @@ public class IndexUi extends UiProvider {
 		
 		
 		if (EXTERNAL.equals(this.authMode)) {
-			UriBuilder signInLinkBuilder = UriBuilder.fromUri(this.externInteractionBase + "/auth");
 			String state = UUID.randomUUID().toString();
 			
-			signInLinkBuilder.queryParam("response_type", "code");
-			signInLinkBuilder.queryParam("scope", "openid");
-			signInLinkBuilder.queryParam("audience", "account");
-			signInLinkBuilder.queryParam("state", state);
-			signInLinkBuilder.queryParam("client_id", externInteractionClientId);
-			signInLinkBuilder.queryParam("redirect_uri", redirectUri);
+//			UriBuilder signInLinkBuilder = UriBuilder.fromUri(this.externInteractionBase + "/auth");
+//			signInLinkBuilder.queryParam("response_type", "code");
+//			signInLinkBuilder.queryParam("scope", "openid");
+//			signInLinkBuilder.queryParam("audience", "account");
+//			signInLinkBuilder.queryParam("state", state);
+//			signInLinkBuilder.queryParam("client_id", externInteractionClientId);
+//			signInLinkBuilder.queryParam("redirect_uri", redirectUri);
+			
+			//TODO:: use the code before this instead, when it is properly encoding redirectUri to resolve #344
+			URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
+			signInLinkBuilder.setParameter("response_type", "code");
+			signInLinkBuilder.setParameter("scope", "openid");
+			signInLinkBuilder.setParameter("audience", "account");
+			signInLinkBuilder.setParameter("state", state);
+			signInLinkBuilder.setParameter("client_id", externInteractionClientId);
+			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
 			
 			responseBuilder.entity(
 				this.setupPageTemplate(index, span)
