@@ -58,6 +58,7 @@ async function doRestCall(
 		extraHeaders = {},
 		async = true,
 		crossDomain = false,
+		returnType = null,
 		done,
 		fail = function () {
 		},
@@ -89,6 +90,9 @@ async function doRestCall(
 			console.log("Sending json data: " + ajaxOps.data);
 		}
 	}
+	if(returnType){
+		ajaxOps.dataType = returnType;
+	}
 
 	if (authorization) {
 		extraHeaders = {
@@ -116,7 +120,12 @@ async function doRestCall(
 	let ajaxPromise = $.ajax(ajaxOps)
 		.done(function (data, status, xhr) {
 			console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
-			done(data, status, xhr);
+			try{
+				done(data, status, xhr);
+			} catch (e){
+				console.error("Done func failed: " + e);
+				throw e;
+			}
 		}).fail(function (data, status, statusStr) {
 			console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
 

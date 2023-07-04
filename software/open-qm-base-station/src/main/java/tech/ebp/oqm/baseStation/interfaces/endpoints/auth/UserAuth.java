@@ -217,7 +217,7 @@ public class UserAuth extends EndpointProvider {
 			redirectUri = (
 				returnPath == null || returnPath.isBlank() ?
 //					this.callbackUrl : //dislikes this; http://host.testcontainers.internal:8081/api/v1/auth/user/callback
-					redirectUri : //likes this; http://host.testcontainers.internal:8081//api/v1/auth/user/callback
+					redirectUri : //likes this;         http://host.testcontainers.internal:8081//api/v1/auth/user/callback
 					UriBuilder.fromUri(redirectUri).queryParam("returnPath", returnPath).build().toString()
 			);
 			returned = this.keycloakServiceCaller.getJwt(

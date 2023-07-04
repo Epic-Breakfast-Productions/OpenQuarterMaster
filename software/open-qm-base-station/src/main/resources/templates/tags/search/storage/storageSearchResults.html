@@ -71,7 +71,7 @@
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getLabel()}"
               data-bs-toggle="modal" data-bs-target="#{otherModalId}"
-              onclick="selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">
+              onclick="StorageSearchSelect.selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}
