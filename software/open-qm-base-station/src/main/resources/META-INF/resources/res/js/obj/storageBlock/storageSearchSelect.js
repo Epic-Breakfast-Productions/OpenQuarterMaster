@@ -1,30 +1,29 @@
-var storageSearchSelectModal = $("#storageSearchSelectModal");
-var storageSearchSelectForm = $("#storageSearchSelectForm");
-var storageSearchSelectResults = $("#storageSearchSelectResults");
 
+const StorageSearchSelect = {
+	storageSearchSelectModal: $("#storageSearchSelectModal"),
+	storageSearchSelectForm: $("#storageSearchSelectForm"),
+	storageSearchSelectResults: $("#storageSearchSelectResults"),
+	setupStorageSearchModal(inputIdPrepend) {
+		StorageSearchSelect.storageSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+	},
+	selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId) {
+		let nameInputId = inputIdPrepend + "Id";
+		let nameInputName = inputIdPrepend + "Name";
 
-function setupStorageSearchModal(inputIdPrepend) {
-	storageSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
-}
+		$("#" + nameInputId).val(blockId);
+		$("#" + nameInputName).val(blockName);
+	}
+};
 
-function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId) {
-	var nameInputId = inputIdPrepend + "Id";
-	var nameInputName = inputIdPrepend + "Name";
-
-	$("#" + nameInputId).val(blockId);
-	$("#" + nameInputName).val(blockName);
-}
-
-
-storageSearchSelectForm.on("submit", function (event) {
+StorageSearchSelect.storageSearchSelectForm.on("submit", function (event) {
 	event.preventDefault();
-	console.log("Submitting search form.");
+	console.log("Submitting storage block search form.");
 
-	var searchParams = new URLSearchParams(new FormData(event.target));
+	let searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
 
 	doRestCall({
-		spinnerContainer: storageSearchSelectModal.get(0),
+		spinnerContainer: StorageSearchSelect.storageSearchSelectModal.get(0),
 		url: "/api/v1/inventory/storage-block?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
@@ -33,13 +32,13 @@ storageSearchSelectForm.on("submit", function (event) {
 			"accept": "text/html",
 			"actionType": "select",
 			"searchFormId": "storageSearchSelectForm",
-			"inputIdPrepend": storageSearchSelectModal.attr("data-bs-inputIdPrepend"),
-			"otherModalId": storageSearchSelectModal.attr("data-bs-otherModalId")
+			"inputIdPrepend": StorageSearchSelect.storageSearchSelectModal.attr("data-bs-inputIdPrepend"),
+			"otherModalId": StorageSearchSelect.storageSearchSelectModal.attr("data-bs-otherModalId")
 		},
 		async: false,
 		done: function (data) {
 			console.log("Got data!");
-			storageSearchSelectResults.html(data);
+			StorageSearchSelect.storageSearchSelectResults.html(data);
 		}
 	});
 });

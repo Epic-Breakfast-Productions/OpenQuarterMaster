@@ -121,11 +121,15 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		}
 	}
 	
+	public T update(ClientSession cs, T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
+		object = this.update(cs, object);
+		this.addHistoryFor(cs, object, entity, event);
+		return object;
+	}
+	
 	@WithSpan
 	public T update(T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
-		object = this.update(object);
-		this.addHistoryFor(object, entity, event);
-		return object;
+		return this.update(null, object, entity, event);
 	}
 	
 	/**

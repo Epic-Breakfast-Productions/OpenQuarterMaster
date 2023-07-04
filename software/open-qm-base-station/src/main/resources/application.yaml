@@ -39,6 +39,8 @@ service:
   item:
     expiryCheck:
       cron: 0 0 * ? * * # Every Hour
+  display:
+    datetimeFormat: "" #TODO:: determine good time format, use wherever datetimes are displayed
   tempDir: "/tmp/oqm/baseStation"
     
 productLookup:
@@ -144,21 +146,18 @@ quarkus:
     info-version: ${service.apiVersion}
     info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
     #    info-terms-of-service: <url>
-    info-contact-email: contact@gjstewart.net
-    info-contact-name: Greg Stewart
+    info-contact-email: greg@epic-breakfast-productions.tech
+    info-contact-name: EBP
     info-contact-url: ${service.gitLink}
     info-license-name: GNU General Public License v3.0
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
-  
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
-    footer: With <3, EBP
-  #    metrics:
-  #      enabled: true
+    footer: With ❤️, EBP
   http:
     limits:
       max-body-size: 95M
@@ -175,7 +174,10 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
-      
+  qute:
+    type-check-excludes:
+      - "tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor.*"
+
 mp:
   jwt:
     verify:

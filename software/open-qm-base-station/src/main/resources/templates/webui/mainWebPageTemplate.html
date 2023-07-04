@@ -152,7 +152,7 @@ Ingests:
 				</li>
 				
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+					<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' || page is 'itemCheckout' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
 							aria-haspopup="true" aria-expanded="false">
 						{#icons/pageIcon page='items'}{/icons/pageIcon} Items
 					</a>
@@ -180,6 +180,14 @@ Ingests:
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
+						{#if userInfo.getRoles().contains('inventoryEdit')}
+						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="/itemCheckout">
+							{#icons/checkinout}{/icons/checkinout} Checkouts
+							{#if page is 'itemCheckout'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						{/if}
 					</div>
 				</li>
 				<li class="nav-item dropdown">
@@ -390,6 +398,7 @@ Ingests:
 <!-- scripts -->
 <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
 <script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
@@ -399,6 +408,7 @@ Ingests:
 <script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
+<script src="/res/js/timeHelpers.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>
 <script src="/res/js/links.js"></script>

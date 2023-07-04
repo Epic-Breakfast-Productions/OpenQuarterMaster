@@ -1,417 +1,358 @@
-//TODO:: put inside 'namespace'
+const ItemView = {
+	itemViewModal: $("#itemViewModal"),
+	viewBsModal: new bootstrap.Modal($("#itemViewModal"), {}),
+	itemViewMessages: $("#itemViewMessages"),
+	itemViewModalLabel: $("#itemViewModalLabel"),
+	itemViewStored: $("#itemViewStored"),
+	itemViewStoredNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
+	itemViewStoredNum: $("#itemViewStoredNum"),
+	itemViewStoredAccordion: $("#itemViewStoredAccordion"),
+	itemViewTotal: $("#itemViewTotal"),
+	itemViewTotalVal: $("#itemViewTotalVal"),
+	itemViewValPerUnitDefault: $("#itemViewValPerUnitDefault"),
+	itemViewValPerUnit: $("#itemViewValPerUnit"),
+	itemViewCategoriesContainer: $("#itemViewCategoriesContainer"),
+	itemViewCategories: $("#itemViewCategories"),
+	itemViewCarousel: $("#itemViewCarousel"),
+	itemViewStorageType: $("#itemViewStorageType"),
+	itemViewDescriptionContainer: $("#itemViewDescriptionContainer"),
+	itemViewDescription: $("#itemViewDescription"),
+	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
+	itemViewBarcode: $("#itemViewBarcode"),
+	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
+	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
+	itemViewIdentifyingAttContainer: $("#itemViewIdentifyingAttContainer"),
+	itemViewIdentifyingAtt: $("#itemViewIdentifyingAtt"),
+	viewKeywordsSection: $("#viewKeywordsSection"),
+	viewAttsSection: $("#viewAttsSection"),
+	itemViewId: $("#itemViewId"),
+	itemViewEditButton: $('#itemViewEditButton'),
+	itemHistoryAccordionCollapse: $("#itemHistoryAccordionCollapse"),
+	itemViewCheckedOutResultsContainer: $("#itemViewCheckedOutResultsContainer"),
+	checkoutSearchForm: $("#itemViewCheckoutSearchForm"),
+	checkoutSearchResults: $("#itemViewCheckoutSearchResults"),
+	checkoutSearchFormItemNameInput: $("#itemViewCheckoutSearchForm-itemInputName"),
+	checkoutSearchFormItemIdInput: $("#itemViewCheckoutSearchForm-itemInputId"),
+	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
+	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 
-var itemViewModal = $("#itemViewModal");
-var itemViewMessages = $("#itemViewMessages");
-var itemViewModalLabel = $("#itemViewModalLabel");
-var itemViewStored = $("#itemViewStored");
-var itemViewStoredNonePresentContainer = $("#itemViewStoredNonePresentContainer");
-var itemViewStoredNum = $("#itemViewStoredNum");
-var itemViewStoredAccordion = $("#itemViewStoredAccordion");
-var itemViewTotalVal = $("#itemViewTotalVal");
-var itemViewValPerUnitDefault = $("#itemViewValPerUnitDefault");
-var itemViewValPerUnit = $("#itemViewValPerUnit");
-var itemViewCategoriesContainer = $("#itemViewCategoriesContainer");
-var itemViewCategories = $("#itemViewCategories");
+	resetView: function () {
+		ItemView.itemViewModalLabel.text("");
+		ItemView.itemViewStoredNum.text("");
+		ItemView.itemViewStored.hide();
+		ItemView.itemViewStoredNonePresentContainer.hide();
+		ItemView.itemViewStoredAccordion.text("");
+		ItemView.itemViewValPerUnitDefault.hide();
+		ItemView.itemViewValPerUnit.text("");
+		ItemView.itemViewIdentifyingAttContainer.hide();
+		ItemView.itemViewTotalVal.text("");
 
-var itemViewCarousel = $("#itemViewCarousel");
-var itemViewStorageType = $("#itemViewStorageType");
-var itemViewDescriptionContainer = $("#itemViewDescriptionContainer");
-var itemViewDescription = $("#itemViewDescription");
-var itemViewBarcodeContainer = $('#itemViewBarcodeContainer');
-var itemViewBarcode = $("#itemViewBarcode");
-var itemViewTotal = $("#itemViewTotal");
-var itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
-var itemViewTotalLowStockThreshold = $("#itemViewTotalLowStockThreshold");
-var itemViewIdentifyingAttContainer = $("#itemViewIdentifyingAttContainer");
-var itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
+		ItemView.itemViewCategoriesContainer.hide();
+		ItemView.itemViewCategories.text("");
 
-var viewKeywordsSection = $("#viewKeywordsSection");
-var viewAttsSection = $("#viewAttsSection");
-var itemViewId = $("#itemViewId");
-var itemViewEditButton = $('#itemViewEditButton');
+		ItemView.itemViewIdentifyingAtt.text("");
 
-var itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
+		ItemView.itemViewStorageType.text("");
+		ItemView.itemViewDescriptionContainer.hide();
+		ItemView.itemViewDescription.text("");
+		ItemView.itemViewBarcodeContainer.hide();
+		ItemView.itemViewBarcode.attr("src", "");
+		ItemView.itemViewTotal.text("");
+		ItemView.itemViewTotalLowStockThreshold.text("");
+		ItemView.itemViewTotalLowStockThresholdContainer.hide();
 
-function resetView(){
-	itemViewModalLabel.text("");
-	itemViewStoredNum.text("");
-	itemViewStored.hide();
-	itemViewStoredNonePresentContainer.hide();
-	itemViewStoredAccordion.text("");
-	itemViewValPerUnitDefault.hide();
-	itemViewValPerUnit.text("");
-	itemViewIdentifyingAttContainer.hide();
-	itemViewTotalVal.text("");
+		ItemView.itemViewCheckedOutResultsContainer.html("");
 
-	itemViewCategoriesContainer.hide();
-	itemViewCategories.text("");
+		ItemView.checkoutSearchFormItemNameInput.val("");
+		ItemView.checkoutSearchFormItemIdInput.val("");
+		ItemView.checkoutSearchForm.trigger("reset");
 
-	itemViewIdentifyingAtt.text("");
+		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
-	itemViewStorageType.text("");
-	itemViewDescriptionContainer.hide();
-	itemViewDescription.text("");
-	itemViewBarcodeContainer.hide();
-	itemViewBarcode.attr("src", "");
-	itemViewTotal.text("");
-	itemViewTotalLowStockThreshold.text("");
-	itemViewTotalLowStockThresholdContainer.hide();
+		Carousel.clearCarousel(ItemView.itemViewCarousel);
+		clearHideKeywordDisplay(ItemView.viewKeywordsSection);
+		clearHideAttDisplay(ItemView.viewAttsSection);
 
-	resetHistorySearch(itemHistoryAccordionCollapse);
-
-	Carousel.clearCarousel(itemViewCarousel);
-	clearHideKeywordDisplay(viewKeywordsSection);
-	clearHideAttDisplay(viewAttsSection);
-
-	if(itemViewEditButton){
-		itemViewEditButton.off('click');
-	}
-}
-
-function addViewAccordionItem(id, content, headerContent, trackedType){
-	let accordId = "itemViewAccordBlock" + id;
-
-	//if not string, expected as stored obj
-	if (typeof headerContent !== 'string' && !(headerContent instanceof String)){
-		let stored = headerContent;
-		headerContent = "";
-
-		let funcForAmount = function (){
-			headerContent += stored.amount.value + stored.amount.unit.symbol;
-		};
-		StoredTypeUtils.foreachStoredType(
-			trackedType,
-			funcForAmount,
-			funcForAmount,
-			function (){
-
-			}
-		);
-
-		if(stored.condition){
-			headerContent += " Condition: " + stored.condition + "%";
+		if (ItemView.itemViewEditButton) {
+			ItemView.itemViewEditButton.off('click');
 		}
-		if(stored.expires){
-			headerContent += " Expires: " + stored.expires;
-		}
-	}
+	},
+	addViewAccordionItem: function (id, content, headerContent, trackedType) {
+		let accordId = "itemViewAccordBlock" + id;
 
-	let newAccordItem = $('<div class="accordion-item">'+
-		'<h2 class="accordion-header" id="'+accordId+'Header">'+
-		'<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordId+'Collapse" aria-expanded="false" aria-controls="'+accordId+'Collapse">'+
-		headerContent+
-		'</button>'+
-		'</h2>'+
-		'<div id="'+accordId+'Collapse" class="accordion-collapse collapse" aria-labelledby="'+accordId+'Header" data-bs-parent="#'+accordId+'Header">'+
-		'<div class="accordion-body">'+
-		'</div>'+
-		'</div>'+
-		'</div>');
+		//if not string, expected as stored obj
+		if (typeof headerContent !== 'string' && !(headerContent instanceof String)) {
+			let stored = headerContent;
+			headerContent = "";
 
-	newAccordItem.find('.accordion-button').text(headerContent);
-	newAccordItem.find('.accordion-body').append(content);
-
-	return newAccordItem;
-}
-
-function addViewStorageBlocksAccordionItem(blockId, content, stored){
-	return itemViewStoredAccordion.append($(addViewAccordionItem(blockId, content, stored)));
-}
-
-function getBlockViewCell(name, value){
-	let output = $('<div class="col"><h5></h5><p></p></div>');
-
-	output.find("h5").text(name);
-	output.find("p").text(value);
-	return output;
-}
-
-function getStorageBlockAmountHeldView(stored, storedType){
-	if(storedType.includes("AMOUNT")) {
-		return getBlockViewCell("Stored", stored.amount.value + stored.amount.unit.symbol);
-	}
-	return "";
-}
-function getStorageBlockBarcodeView(stored, itemId, storageBlockId, index = false){
-	if(stored.barcode) {
-		let url = "/api/v1/media/code/item/"+itemId+"/barcode/stored/"+storageBlockId;
-
-		if(index !== false){
-			url += "/"+index;
-		}
-
-		return '<div class="col"><h5>Barcode:</h5><img src="'+url+'" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg"></div>';
-	}
-	return "";
-}
-
-function getStorageBlockIdentifyingDetailsView(stored, storedType){
-	if(storedType.includes("TRACKED") && stored.identifyingDetails) {
-		return getBlockViewCell("Identifying Details", stored.identifyingDetails);
-	}
-	return "";
-}
-
-function getStorageBlockConditionView(stored){
-	if(stored.condition) {
-		return getBlockViewCell("Condition", stored.condition + "%");
-	}
-	return "";
-}
-function getStorageBlockConditionNotesView(stored){
-	if(stored.conditionNotes) {
-		return getBlockViewCell("Condition Notes", stored.conditionNotes);
-	}
-	return "";
-}
-function getStorageBlockExpiresView(stored){
-	if(stored.expires) {
-		return getBlockViewCell("Expires", stored.expires);
-	}
-	return "";
-}
-
-function getStoredBlockLink(storageBlockId, small=false){
-	let output = $('<div class=""></div>');
-	output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
-
-	if(small){
-		output.addClass("col-1");
-	} else {
-		output.addClass("col");
-	}
-
-	return output;
-}
-
-function getStoredViewContent(stored, storedType, itemId, storageBlockId, index = false, includeStoredLink=false){
-	let newContent = $('<div class="row"></div>');
-
-	if(includeStoredLink){
-		newContent.append(
-			getStoredBlockLink(storageBlockId, true)
-		);
-	}
-
-	newContent.append(
-		getStorageBlockAmountHeldView(stored, storedType),
-		getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
-		getStorageBlockIdentifyingDetailsView(stored, storedType),
-		getStorageBlockConditionView(stored),
-		getStorageBlockConditionNotesView(stored),
-		getStorageBlockExpiresView(stored),
-	);
-	//TODO:: images, keywords, atts
-
-	return newContent;
-}
-
-function getAmountStoredContent(stored, itemId, storageBlockId){
-	console.log("Getting view content for simple amount stored.");
-	return getStoredViewContent(stored, "AMOUNT_SIMPLE", itemId, storageBlockId, false, true);
-}
-
-function getAmountListStoredContent(itemId, blockId, storedList){
-	console.log("Getting view content for list amount stored.");
-
-	let accordContent = $('<div class="col accordion"></div>');
-
-	if(storedList.length > 0) {
-		let accordId = "itemViewStored"+blockId+"Accordion";
-		accordContent.prop("id", accordId);
-		let i = 0;
-		storedList.forEach(function (curStored) {
-			accordContent.append(
-				addViewAccordionItem(
-					accordId + i,
-					getStoredViewContent(curStored, "AMOUNT_LIST", itemId, blockId, i),
-					curStored,
-					"AMOUNT_LIST"
-				)
-			);
-			i++;
-		});
-
-	} else {
-		accordContent.append($('<h4>Nothing currently stored.</h4>'));
-	}
-
-	return '<div class="row mb-1"> ' +
-		getStoredBlockLink(blockId).prop("outerHTML") +
-		'</div>' +
-		'<div class="row"> ' +
-		accordContent.prop("outerHTML") +
-		'</div>';
-}
-
-function getTrackedStoredContent(itemId, blockId, trackedMap){
-	console.log("Getting view content for tracked stored.");
-
-	let accordContent = $('<div class="col accordion"></div>');
-	let storageIds = Object.keys(trackedMap);
-
-	if(storageIds.length > 0) {
-		let accordId = "itemViewStored"+blockId+"Accordion";
-		accordContent.prop("id", accordId);
-		storageIds.forEach(key => {
-
-			accordContent.append(addViewAccordionItem(
-				accordId + key,
-				getStoredViewContent(trackedMap[key], "TRACKED",itemId, blockId, key),
-				key
-			));
-		});
-
-	} else {
-		accordContent.html('<h4>Nothing currently stored.</h4>');
-	}
-
-	return '<div class="row mb-1"> ' +
-		getStoredBlockLink(blockId).prop("outerHTML") +
-		'</div>' +
-		'<div class="row"> ' +
-		accordContent.prop("outerHTML") +
-		'</div>';
-}
-
-function setupView(itemId){
-	console.log("Setting up view for item " + itemId);
-	resetView();
-
-	if(itemViewEditButton){
-		itemViewEditButton.on("click", function(){setupAddEditForEdit(itemId);});
-	}
-
-	itemViewId.text(itemId);
-	UriUtils.addOrReplaceParams("view", itemId);
-	itemViewModalLabel.text(itemId);
-
-	doRestCall({
-		spinnerContainer: itemViewModal,
-		url: "/api/v1/inventory/item/" + itemId,
-		done: async function (data) {
-			let promises = [];
-
-			if(data.categories.length){
-				itemViewCategoriesContainer.show();
-				promises.push(ItemCategoryView.setupItemCategoryView(itemViewCategories, data.categories));
-			}
-
-			processKeywordDisplay(viewKeywordsSection, data.keywords);
-			processAttDisplay(viewAttsSection, data.attributes);
-			itemViewModalLabel.text(data.name);
-			itemViewStorageType.text(data.storageType);
-			itemViewTotal.text(data.total.value + "" + data.total.unit.symbol);
-			itemViewTotalVal.text(data.valueOfStored);
-
-			if(data.description){
-				itemViewDescription.text(data.description);
-				itemViewDescriptionContainer.show();
-			}
-
-			if(data.barcode){
-				itemViewBarcode.attr("src", "/api/v1/media/code/item/"+data.id+"/barcode")
-				itemViewBarcodeContainer.show();
-			}
-
-			if(data.lowStockThreshold){
-				itemViewTotalLowStockThreshold.text(data.lowStockThreshold.value + "" + data.lowStockThreshold.unit.symbol);
-				itemViewTotalLowStockThresholdContainer.show();
-			}
-
-			if (data.imageIds.length) {
-				console.log("Item had images to show.");
-				itemViewCarousel.show();
-				promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, itemViewCarousel));
-			} else {
-				console.log("Storage block had no images to show.");
-				itemViewCarousel.hide();
-			}
-
-			console.log("Setting up view of stored.");
-
-			let numStorageBlocks = Object.keys(data.storageMap).length;
-
-			if (numStorageBlocks === 0) {
-				console.log("None stored.");
-				itemViewStoredNonePresentContainer.show();
-			} else {
-				console.log(numStorageBlocks + " stored.");
-				itemViewStoredNum.text(numStorageBlocks);
-				itemViewStored.show();
-			}
-
-			let showAmountStoredPricePerUnit = function () {
-				itemViewValPerUnit.text(data.valuePerUnit);
-			}
+			let funcForAmount = function () {
+				headerContent += stored.amount.value + stored.amount.unit.symbol;
+			};
 			StoredTypeUtils.foreachStoredType(
-				data.storageType,
-				showAmountStoredPricePerUnit,
-				showAmountStoredPricePerUnit,
+				trackedType,
+				funcForAmount,
+				funcForAmount,
 				function () {
-					itemViewValPerUnit.text(data.defaultValue);
-					itemViewValPerUnitDefault.show();
 
-					itemViewIdentifyingAtt.text(data.trackedItemIdentifierName);
-					itemViewIdentifyingAttContainer.show();
 				}
 			);
 
-			Object.keys(data.storageMap).forEach(key => {
-				promises.push(new Promise( async function(){
-					console.log("Processing stored under storage block " + key);
-					let curBlockName = key;
-					await doRestCall({
-						spinnerContainer: null,
-						async: false,
-						url: "/api/v1/inventory/storage-block/" + key,
-						failMessagesDiv: itemViewMessages,
-						done: function (data) {
-							curBlockName = data.label;
-						}
-					});
+			if (stored.condition) {
+				headerContent += " Condition: " + stored.condition + "%";
+			}
+			if (stored.expires) {
+				headerContent += " Expires: " + stored.expires;
+			}
+		}
 
-					StoredTypeUtils.foreachStoredType(
-						data.storageType,
-						function () {
-							addViewStorageBlocksAccordionItem(
-								key,
-								getAmountStoredContent(data.storageMap[key].stored, data.id, key),
-								curBlockName
-							);
-						},
-						function () {
-							addViewStorageBlocksAccordionItem(
-								key,
-								getAmountListStoredContent(data.id, key, data.storageMap[key].stored),
-								curBlockName
-							);
-						},
-						function () {
-							addViewStorageBlocksAccordionItem(
-								key,
-								getTrackedStoredContent(data.id, key, data.storageMap[key].stored),
-								curBlockName
-							);
-						}
-					);
-				}));
+		let newAccordItem = $('<div class="accordion-item">' +
+			'<h2 class="accordion-header" id="' + accordId + 'Header">' +
+			'<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordId + 'Collapse" aria-expanded="false" aria-controls="' + accordId + 'Collapse">' +
+			headerContent +
+			'</button>' +
+			'</h2>' +
+			'<div id="' + accordId + 'Collapse" class="accordion-collapse collapse" aria-labelledby="' + accordId + 'Header" data-bs-parent="#' + accordId + 'Header">' +
+			'<div class="accordion-body">' +
+			'</div>' +
+			'</div>' +
+			'</div>');
+
+		newAccordItem.find('.accordion-button').text(headerContent);
+		newAccordItem.find('.accordion-body').append(content);
+
+		return newAccordItem;
+	},
+	addViewStorageBlocksAccordionItem: function (blockId, content, stored) {
+		return ItemView.itemViewStoredAccordion.append($(ItemView.addViewAccordionItem(blockId, content, stored)));
+	},
+
+
+	getAmountStoredContent(stored, itemId, storageBlockId) {
+		console.log("Getting view content for simple amount stored.");
+		return StoredView.getStoredViewContent(stored, itemId, storageBlockId, false, true, true);
+	},
+	getAmountListStoredContent(itemId, blockId, storedList) {
+		console.log("Getting view content for list amount stored.");
+
+		let accordContent = $('<div class="col accordion"></div>');
+
+		if (storedList.length > 0) {
+			let accordId = "itemViewStored" + blockId + "Accordion";
+			accordContent.prop("id", accordId);
+			let i = 0;
+			storedList.forEach(function (curStored) {
+				accordContent.append(
+					ItemView.addViewAccordionItem(
+						accordId + i,
+						StoredView.getStoredViewContent(curStored, itemId, blockId, i, false, true),
+						curStored,
+						"AMOUNT_LIST"
+					)
+				);
+				i++;
 			});
-			await Promise.all(promises);
-		},
-		failMessagesDiv: itemViewMessages
-	});
 
-	setupHistorySearch(itemHistoryAccordionCollapse, itemId);
-}
+		} else {
+			accordContent.append($('<h4>Nothing currently stored.</h4>'));
+		}
 
-var viewModal = new bootstrap.Modal(itemViewModal, { });
+		return $('<div></div>')
+			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row"></div>').append(accordContent));
+	},
+	getTrackedStoredWrapperContent(itemId, blockId, trackedMap) {
+		console.log("Getting view content for tracked stored wrapper.");
 
-itemViewModal[0].addEventListener("hidden.bs.modal", function (){
+		let accordContent = $('<div class="col accordion"></div>');
+		let storageIds = Object.keys(trackedMap);
+
+		if (storageIds.length > 0) {
+			let accordId = "itemViewStored" + blockId + "Accordion";
+			accordContent.prop("id", accordId);
+			storageIds.forEach(key => {
+
+				accordContent.append(ItemView.addViewAccordionItem(
+					accordId + key,
+					StoredView.getStoredViewContent(trackedMap[key], itemId, blockId, key, false, true, true),
+					key
+				));
+			});
+
+		} else {
+			accordContent.html('<h4>Nothing currently stored.</h4>');
+		}
+
+
+		return $('<div></div>')
+			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row"></div>').append(accordContent));
+	},
+	getStoredAccordView(storageType, itemId, storageId, storedWrapperData){
+		return StoredTypeUtils.foreachStoredType(
+			storageType,
+			function () {
+				return ItemView.getAmountStoredContent(storedWrapperData, itemId, storageId);
+			},
+			function () {
+				return ItemView.getAmountListStoredContent(itemId, storageId, storedWrapperData);
+			},
+			function () {
+				return ItemView.getTrackedStoredWrapperContent(itemId, storageId, storedWrapperData)
+			}
+		);
+	},
+	setupView(itemId) {
+		console.log("Setting up view for item " + itemId);
+		ItemView.resetView();
+
+		if (ItemView.itemViewEditButton) {
+			ItemView.itemViewEditButton.on("click", function () {
+				setupAddEditForEdit(itemId);
+			});
+		}
+
+		ItemView.itemViewId.text(itemId);
+		UriUtils.addOrReplaceParams("view", itemId);
+		ItemView.itemViewModalLabel.text(itemId);
+
+		doRestCall({
+			spinnerContainer: ItemView.itemViewModal,
+			url: "/api/v1/inventory/item/" + itemId,
+			failMessagesDiv: ItemView.itemViewMessages,
+			done: async function (itemData) {
+				let promises = [];
+
+				if (itemData.categories.length) {
+					ItemView.itemViewCategoriesContainer.show();
+					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
+				}
+
+				processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
+				processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
+				ItemView.itemViewModalLabel.text(itemData.name);
+				ItemView.itemViewStorageType.text(itemData.storageType);
+				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
+				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
+
+				if (itemData.description) {
+					ItemView.itemViewDescription.text(itemData.description);
+					ItemView.itemViewDescriptionContainer.show();
+				}
+
+				if (itemData.barcode) {
+					ItemView.itemViewBarcode.attr("src", "/api/v1/media/code/item/" + itemData.id + "/barcode")
+					ItemView.itemViewBarcodeContainer.show();
+				}
+
+				if (itemData.lowStockThreshold) {
+					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
+					ItemView.itemViewTotalLowStockThresholdContainer.show();
+				}
+
+				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);
+
+				console.log("Setting up view of stored.");
+
+				let numStorageBlocks = Object.keys(itemData.storageMap).length;
+
+				if (numStorageBlocks === 0) {
+					console.log("None stored.");
+					ItemView.itemViewStoredNonePresentContainer.show();
+				} else {
+					console.log(numStorageBlocks + " stored.");
+					ItemView.itemViewStoredNum.text(numStorageBlocks);
+					ItemView.itemViewStored.show();
+				}
+
+				let showAmountStoredPricePerUnit = function () {
+					ItemView.itemViewValPerUnit.text(itemData.valuePerUnit);
+				}
+				StoredTypeUtils.foreachStoredType(
+					itemData.storageType,
+					showAmountStoredPricePerUnit,
+					showAmountStoredPricePerUnit,
+					function () {
+						ItemView.itemViewValPerUnit.text(itemData.defaultValue);
+						ItemView.itemViewValPerUnitDefault.show();
+
+						ItemView.itemViewIdentifyingAtt.text(itemData.trackedItemIdentifierName);
+						ItemView.itemViewIdentifyingAttContainer.show();
+					}
+				);
+
+				Object.keys(itemData.storageMap).forEach(storageId => {
+					promises.push(new Promise(async function () {
+						console.log("Processing stored wrapper under storage block " + storageId);
+						let curBlockName = storageId;
+						await doRestCall({
+							spinnerContainer: null,
+							async: false,
+							url: "/api/v1/inventory/storage-block/" + storageId,
+							failMessagesDiv: ItemView.itemViewMessages,
+							done: function (data) {
+								curBlockName = data.label;
+							}
+						});
+
+						ItemView.addViewStorageBlocksAccordionItem(
+							storageId,
+							ItemView.getStoredAccordView(itemData.storageType, itemId, storageId, itemData.storageMap[storageId].stored),
+							curBlockName
+						);
+					}));
+				});
+				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
+				ItemView.checkoutSearchFormItemIdInput.val(itemId);
+				ItemView.checkoutSearchForm.submit();
+				await Promise.all(promises);
+
+			}
+		});
+
+		//TODO:: adjust html to match history
+		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
+		setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
+	}
+};
+
+ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
 	UriUtils.removeParam("view");
 });
 
-if(UriUtils.getParams.has("view")){
-	setupView(UriUtils.getParams.get("view"));
-	viewModal.show();
+if (UriUtils.getParams.has("view")
+) {
+	ItemView.setupView(UriUtils.getParams.get("view"));
+	ItemView.viewBsModal.show();
 }
+
+
+//TODO:: disable item input
+
+ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
+ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
+ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
+
+ItemView.checkoutSearchForm.on("submit", function(e){
+	e.preventDefault();
+	let searchParams = new URLSearchParams(new FormData(e.target));
+	console.log("URL search params: " + searchParams);
+
+	doRestCall({
+		spinnerContainer: ItemView.itemViewModal.get(0),
+		url: "/api/v1/inventory/item-checkout?" + searchParams,
+		method: 'GET',
+		failNoResponse: null,
+		failNoResponseCheckStatus: true,
+		extraHeaders: {
+			"accept": "text/html",
+			"actionType": "viewLink",
+			"searchFormId": "itemViewCheckoutSearchForm",
+			"showItemCol": false
+		},
+		async: false,
+		done: function (data) {
+			console.log("Got data!");
+			ItemView.checkoutSearchResults.html(data);
+		}
+	});
+})
