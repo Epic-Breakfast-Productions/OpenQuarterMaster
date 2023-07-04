@@ -32,7 +32,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.UUID;
 
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
