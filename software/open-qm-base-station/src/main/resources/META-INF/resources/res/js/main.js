@@ -1,7 +1,6 @@
-
-var navSearchInput = $('#navSearchInput');
-var navSearchForm = $('#navSearchForm');
-var navSearchTypeSelect = $('#navSearchTypeSelect');
+const navSearchInput = $('#navSearchInput');
+const navSearchForm = $('#navSearchForm');
+const navSearchTypeSelect = $('#navSearchTypeSelect');
 
 navSearchTypeSelect.on("change", function(event){
     console.log(
@@ -12,3 +11,5 @@ navSearchTypeSelect.on("change", function(event){
     navSearchForm.attr("action", navSearchTypeSelect[0].options[event.target.selectedIndex].dataset.action);
     navSearchInput.attr("name", navSearchTypeSelect[0].options[event.target.selectedIndex].dataset.field);
 });
+
+TimeHelpers.setupDateTimeInputs();

@@ -59,7 +59,7 @@
     <td>{result.getStorageMap().size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
@@ -73,7 +73,7 @@
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
-              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+              data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
               onclick="ItemSearchSelect.selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>

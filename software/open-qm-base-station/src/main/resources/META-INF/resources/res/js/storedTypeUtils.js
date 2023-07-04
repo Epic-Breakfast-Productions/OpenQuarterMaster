@@ -7,15 +7,15 @@ const StoredTypeUtils = {
 	) {
 		if (storedType === "AMOUNT_SIMPLE") {
 			if (whenAmountSimple !== null) {
-				whenAmountSimple();
+				return whenAmountSimple();
 			}
 		} else if (storedType === "AMOUNT_LIST") {
 			if (whenAmountList !== null) {
-				whenAmountList();
+				return whenAmountList();
 			}
 		} else if (storedType === "TRACKED") {
 			if (whenTracked !== null) {
-				whenTracked();
+				return whenTracked();
 			}
 		}
 	}

@@ -1,3 +1,20 @@
+
+const Getters = {
+	InventoryItem: {
+		getItemName(itemId, doneFunc) {
+			console.log("Getting name for inventory item \"" + itemId + "\"");
+			return doRestCall({
+				spinnerContainer: null,
+				url: "/api/v1/inventory/item/" + itemId,
+				done: function (data) {
+					console.log("Got label: " + data.name);
+					doneFunc(data.name);
+				}
+			});
+		}
+	}
+}
+
 async function getStorageBlock(blockId){
 	//TODO
 }
