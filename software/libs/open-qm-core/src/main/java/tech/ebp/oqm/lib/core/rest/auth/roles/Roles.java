@@ -42,6 +42,9 @@ public final class Roles {
 	public static final String INVENTORY_EDIT = "inventoryEdit";
 	public static final String INVENTORY_EDIT_DESCRIPTION = "Role to enable editing inventory.";
 	
+	public static final String INVENTORY_CHECKOUT = "itemCheckout";
+	public static final String INVENTORY_CHECKOUT_DESCRIPTION = "Role to enable checking out (and back in) items.";
+	
 	/**
 	 * Map to easily associate roles with their description.
 	 */
@@ -55,6 +58,7 @@ public final class Roles {
 		
 		this.put(INVENTORY_VIEW, INVENTORY_VIEW_DESCRIPTION);
 		this.put(INVENTORY_EDIT, INVENTORY_EDIT_DESCRIPTION);
+		this.put(INVENTORY_CHECKOUT, INVENTORY_CHECKOUT_DESCRIPTION);
 	}});
 	
 }

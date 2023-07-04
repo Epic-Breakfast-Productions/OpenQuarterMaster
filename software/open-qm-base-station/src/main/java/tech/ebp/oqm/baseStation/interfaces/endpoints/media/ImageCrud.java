@@ -489,7 +489,7 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@Context SecurityContext securityContext,
-		@PathParam("id") IMAGED_OBJ_TYPE_NAME object,
+		@PathParam("object") IMAGED_OBJ_TYPE_NAME object,
 		@PathParam("id") String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
