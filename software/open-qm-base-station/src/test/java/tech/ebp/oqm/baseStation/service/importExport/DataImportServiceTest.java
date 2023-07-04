@@ -11,6 +11,7 @@ import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -19,13 +20,20 @@ import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
 import tech.ebp.oqm.lib.core.object.media.Image;
 import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
+import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.LossCheckin;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.ReturnCheckin;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForExtUser;
+import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
 import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
 import tech.ebp.oqm.lib.core.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
@@ -41,11 +49,17 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Stream;
 
+import static com.fasterxml.jackson.databind.type.LogicalType.Map;
+import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -75,14 +89,18 @@ class DataImportServiceTest extends RunningServerTest {
 	@Inject
 	InventoryItemService inventoryItemService;
 	@Inject
+	ItemCheckoutService itemCheckoutService;
+	@Inject
 	TempFileService tempFileService;
 	
 	@Test
 	public void testImportService() throws IOException {
-		User testUser = testUserService.getTestUser();
+		User testUser = testUserService.getTestUser(true, true);
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
+		
+		// add units
 		int unitCount = 0;
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry curImage = new CustomUnitEntry(
@@ -97,7 +115,6 @@ class DataImportServiceTest extends RunningServerTest {
 		}
 		List<CustomUnitEntry> customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
-		
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry curImage = new CustomUnitEntry(
 				UnitCategory.Number,
@@ -136,6 +153,7 @@ class DataImportServiceTest extends RunningServerTest {
 //			}
 //		}
 		
+		//Add images
 		for (int i = 0; i < 5; i++) {
 			Image curImage = new Image();
 			curImage.setTitle(FAKER.name().name());
@@ -146,6 +164,7 @@ class DataImportServiceTest extends RunningServerTest {
 			this.imageService.add(curImage, testUser);
 		}
 		
+		//add item category
 		List<ObjectId> itemCategoryIds = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			ItemCategory curCategory = new ItemCategory();
@@ -160,7 +179,7 @@ class DataImportServiceTest extends RunningServerTest {
 			
 			itemCategoryIds.add(this.itemCategoryService.add(curCategory, testUser));
 		}
-		
+		//add storage blocks
 		List<ObjectId> storageIds = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			StorageBlock storageBlock = new StorageBlock();
@@ -177,6 +196,9 @@ class DataImportServiceTest extends RunningServerTest {
 			storageBlock.getKeywords().add("hello world");
 			storageIds.add(this.storageBlockService.add(storageBlock, testUser));
 		}
+		//add items
+		List<ObjectId> itemIds = new ArrayList<>();
+		List<SimpleAmountItem> simpleAmountItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			SimpleAmountItem item = new SimpleAmountItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -184,15 +206,18 @@ class DataImportServiceTest extends RunningServerTest {
 			item.setUnit(customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit());
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(rand.nextInt(), item.getUnit())
+					.setAmount(abs(rand.nextInt()), item.getUnit())
 					.setCondition(rand.nextInt(100))
 					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			storageIds.add(this.inventoryItemService.add(item, testUser));
+			ObjectId newId = this.inventoryItemService.add(item, testUser);
+			itemIds.add(newId);
+			simpleAmountItems.add(item);
 		}
+		List<ListAmountItem> listAmountItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			ListAmountItem item = new ListAmountItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -200,7 +225,7 @@ class DataImportServiceTest extends RunningServerTest {
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size()))).add(
 					(AmountStored) new AmountStored()
-									   .setAmount(rand.nextInt(),  item.getUnit())
+									   .setAmount(abs(rand.nextInt()), item.getUnit())
 									   .setCondition(rand.nextInt(100))
 									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 									   .setConditionNotes(FAKER.lorem().paragraph())
@@ -208,8 +233,10 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			storageIds.add(this.inventoryItemService.add(item, testUser));
+			itemIds.add(this.inventoryItemService.add(item, testUser));
+			listAmountItems.add(item);
 		}
+		List<TrackedItem> trackedItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			TrackedItem item = new TrackedItem();
 			item.setDescription(FAKER.lorem().paragraph());
@@ -219,20 +246,46 @@ class DataImportServiceTest extends RunningServerTest {
 				item.add(
 					storageIds.get(rand.nextInt(storageIds.size())),
 					(TrackedStored) new TrackedStored()
-									   .setIdentifier(FAKER.idNumber().valid())
-									   .setCondition(rand.nextInt(100))
-									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
-									   .setConditionNotes(FAKER.lorem().paragraph())
+										.setIdentifier(FAKER.idNumber().valid())
+										.setCondition(rand.nextInt(100))
+										.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
+										.setConditionNotes(FAKER.lorem().paragraph())
 				);
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			storageIds.add(this.inventoryItemService.add(item, testUser));
+			ObjectId newId =this.inventoryItemService.add(item, testUser);
+			itemIds.add(newId);
+			trackedItems.add(item);
+		}
+		//add item checkouts
+		for (int i = 0; i < 1; i++) {
+			{
+				SimpleAmountItem checkingOutItem = simpleAmountItems.get(rand.nextInt(simpleAmountItems.size()));
+				
+				LinkedList<Map.Entry<ObjectId, SingleAmountStoredWrapper>> storedEntries = new LinkedList<>(checkingOutItem.getStorageMap().entrySet());
+				
+				Map.Entry<ObjectId, SingleAmountStoredWrapper> checkingOutEntry = storedEntries.removeFirst();
+				ObjectId checkoutId = this.itemCheckoutService.checkoutItem(
+					ItemCheckoutRequest.builder()
+						.item(checkingOutItem.getId())
+						.checkedOutFrom(checkingOutEntry.getKey())
+						.toCheckout(checkingOutEntry.getValue().getStored())
+						.checkedOutFor(new CheckoutForOqmEntity(testUser.getReference()))
+						.reason(FAKER.lorem().paragraph())
+						.notes(FAKER.lorem().paragraph())
+						.build(),
+					testUser
+				);
+			}
+			//TODO:: rest of item types
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
 		
 		
-		
+		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null);
+		this.itemCheckoutService.removeAll(testUser);
+		this.itemCheckoutService.getHistoryService().removeAll();
 		List<InventoryItem> oldItems = this.inventoryItemService.list(null, Sorts.ascending("name"), null);
 		this.inventoryItemService.removeAll(testUser);
 		this.inventoryItemService.getHistoryService().removeAll();
@@ -281,6 +334,9 @@ class DataImportServiceTest extends RunningServerTest {
 		
 		assertEquals(oldItemCategories.size(), this.itemCategoryService.list().size());
 		assertEquals(oldItemCategories, this.itemCategoryService.list(null, Sorts.ascending("name"), null));
+		
+		assertEquals(oldCheckedout.size(), this.itemCheckoutService.list().size());
+		assertEquals(oldCheckedout, this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null));
 		
 		//TODO:: verify file attachments once we got that going
 	}

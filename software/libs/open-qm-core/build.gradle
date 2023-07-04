@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	// https://plugins.gradle.org/plugin/io.freefair.lombok
-	id "io.freefair.lombok" version "8.0.1"
+	id "io.freefair.lombok" version "8.1.0"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.61-1-167-6-SNAPSHOT'
+version '1.0.61-4-SNAPSHOT'
 
 repositories {
 	mavenLocal()
@@ -51,7 +51,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-	implementation 'tech.units:indriya:2.1.4'
+	implementation 'tech.units:indriya:2.2'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 	implementation 'systems.uom:systems-common:2.1'
