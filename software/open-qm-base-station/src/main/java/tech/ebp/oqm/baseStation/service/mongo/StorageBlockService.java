@@ -20,6 +20,7 @@ import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,12 +29,14 @@ import java.util.TreeSet;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+@Named("StorageBlockService")
 @Slf4j
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
 	
 	
 	private InventoryItemService inventoryItemService;
+	private ItemCheckoutService itemCheckoutService;
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -45,7 +48,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
-		InventoryItemService inventoryItemService
+		InventoryItemService inventoryItemService,
+		ItemCheckoutService itemCheckoutService
 	) {
 		super(
 			objectMapper,
@@ -55,6 +59,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			false
 		);
 		this.inventoryItemService = inventoryItemService;
+		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@WithSpan
@@ -173,6 +178,11 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, storageBlock);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}
 		
 		return objsWithRefs;

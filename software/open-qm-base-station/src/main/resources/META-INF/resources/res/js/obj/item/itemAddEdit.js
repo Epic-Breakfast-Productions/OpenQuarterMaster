@@ -609,7 +609,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 	return newStorage;
 }
 
-function selectStorageBlock(blockName, blockId, inputIdPrepend, otherModalId){
+StorageSearchSelect.selectStorageBlock = function(blockName, blockId, inputIdPrepend, otherModalId){
 	console.log("Selected " + blockId + " - " + blockName);
 	var newStorageBody = createStorageBlockAccord(blockName, blockId);
 }
@@ -661,7 +661,6 @@ function buildStoredObj(addEditItemStoredContainer, type){
 	}
 	addKeywordAttData(output, $(addEditItemStoredContainer.find(".keywordInputDiv").get(0)), $(addEditItemStoredContainer.find(".attInputDiv").get(0)));
 	addImagesToData(output, $(addEditItemStoredContainer.find(".imagesSelected").get(0)));
-
 
 	return output;
 }

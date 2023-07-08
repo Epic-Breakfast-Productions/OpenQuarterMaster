@@ -25,8 +25,8 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.2.3/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.3/bootstrap-icons.css">
+	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
@@ -36,6 +36,85 @@ Ingests:
 		{#insert pageStyle} /* No page css */
 		{/}
 	</style>
+	<script>
+		/**
+		 * Script to handle theme changing. At top in order to prevent flashing
+		 */
+		(() => {
+			'use strict'
+
+			const getStoredTheme = () => localStorage.getItem('theme');
+			const setStoredTheme = theme => localStorage.setItem('theme', theme);
+
+			const getPreferredTheme = () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme) {
+					return storedTheme;
+				}
+				return "auto";
+				// return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			}
+
+			const setTheme = theme => {
+				if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					document.documentElement.setAttribute('data-bs-theme', 'dark');
+				} else {
+					document.documentElement.setAttribute('data-bs-theme', theme);
+				}
+			}
+
+			setTheme(getPreferredTheme());
+
+			const showActiveTheme = (theme, focus = false) => {
+				const themePicker = document.querySelector('#theme-picker');
+				const themeSwitcherButton = themePicker.querySelector('#bd-theme');
+
+				const themeSwitcherText = themePicker.querySelector('#bd-theme-text');
+				const activeThemeIcon = themePicker.querySelector('.theme-icon-active');
+				const btnToActive = themePicker.querySelector(`[data-bs-theme-value="`+theme+`"]`);
+				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML;
+
+				themePicker.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active');
+					element.setAttribute('aria-pressed', 'false');
+				})
+
+				btnToActive.classList.add('active');
+				btnToActive.setAttribute('aria-pressed', 'true');
+				activeThemeIcon.innerHTML = svgOfActiveBtn;
+				const themeSwitcherLabel = themeSwitcherText.textContent+` (`+btnToActive.dataset.bsThemeValue+`)`;
+				themeSwitcherButton.setAttribute('aria-label', themeSwitcherLabel);
+
+				if (focus) {
+					themeSwitcherButton.focus();
+				}
+				console.log("Set theme to " + theme);
+			}
+
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme !== 'light' && storedTheme !== 'dark') {
+					setTheme(getPreferredTheme());
+				}
+			})
+
+			window.addEventListener('DOMContentLoaded', () => {
+				let preferredTheme = getPreferredTheme();
+				console.log("Preferred theme: " + preferredTheme);
+				showActiveTheme(preferredTheme);
+
+				document.querySelectorAll('[data-bs-theme-value]')
+					.forEach(toggle => {
+						toggle.addEventListener('click', () => {
+							const theme = toggle.getAttribute('data-bs-theme-value')
+							setStoredTheme(theme);
+							setTheme(theme);
+							showActiveTheme(theme, true);
+						})
+					})
+			})
+		})()
+	</script>
 </head>
 <body class="min-vh-100 vstack">
 <span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
@@ -43,136 +122,143 @@ Ingests:
 <!-- nav here -->
 
 {#if navbar == "full"}
-	{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
-	<nav class="navbar navbar-expand-lg navbar-light bg-light top-nav">
+{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
+<nav class="navbar navbar-expand-lg bg-light top-nav" data-bs-theme="light">
 	<div class="container-fluid">
-	<a class="navbar-brand p-0" href="/overview">
-		<img src="/media/logo.svg" alt=""  id="topLogo">
-	</a>
-	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	
-	<div class="collapse navbar-collapse" id="navbarColor03">
-	<ul class="navbar-nav me-auto">
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
-				{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
-				{#if page is 'overview'}
-					<span class="visually-hidden">(current)</span>
-				{/if}
-			</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
-				{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
-				{#if page is 'storage'}
-					<span class="visually-hidden">(current)</span>
-				{/if}
-			</a>
-		</li>
+		<a class="navbar-brand p-0" href="/overview">
+			<img src="/media/logo.svg" alt=""  id="topLogo">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
+				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarColor03">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
+						{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
+						{#if page is 'overview'}
+						<span class="visually-hidden">(current)</span>
+						{/if}
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
+						{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
+						{#if page is 'storage'}
+						<span class="visually-hidden">(current)</span>
+						{/if}
+					</a>
+				</li>
+				
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' || page is 'itemCheckout' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+							aria-haspopup="true" aria-expanded="false">
+						{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+					</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item {#if page is 'items'}active{/if}" href="/items">
+							{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+							{#if page is 'items'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<!-- Not ready yet
+						<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
+							{#icons/pageIcon page='itemLists'}{/icons/pageIcon} Item Lists
+							{#if page is 'itemLists'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item" href="/itemLists#add">
+							{#icons/add}{/icons/add} New Item List
+						</a>
+						-->
+						<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/categories">
+							{#icons/categories}{/icons/categories} Categories
+							{#if page is 'categories'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						{#if userInfo.getRoles().contains('inventoryEdit')}
+						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="/itemCheckout">
+							{#icons/checkinout}{/icons/checkinout} Checkouts
+							{#if page is 'itemCheckout'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						{/if}
+					</div>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+							aria-haspopup="true" aria-expanded="false">
+						{#icons/icon icon='infinity'}{/icons/icon} Other</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
+							{#icons/pageIcon page='images'}{/icons/pageIcon} Images
+							{#if page is 'images'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
+							{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
+							{#if page is 'codes'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
+							{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
+							{#if page is 'help'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+					</div>
+				</li>
+			</ul>
 		
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle {#if page is 'items' || page is 'itemLists' || page is 'categories' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-					aria-haspopup="true" aria-expanded="false">
-				{#icons/pageIcon page='items'}{/icons/pageIcon} Items
-			</a>
-			<div class="dropdown-menu">
-				<a class="dropdown-item {#if page is 'items'}active{/if}" href="/items">
-					{#icons/pageIcon page='items'}{/icons/pageIcon} Items
-					{#if page is 'items'}
-					<span class="visually-hidden">(current)</span>
+			<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
+				<div class="input-group">
+					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
+					<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
+						<option data-action="/items" data-field="name" selected>Items</option>
+						<option data-action="/storage" data-field="label">Storage Blocks</option>
+					</select>
+					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
+				</div>
+			</form>
+			<ul class="d-flex navbar-nav me-auto">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+						{#icons/user}{/icons/user}
+						<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
+					<div class="dropdown-menu">
+					<a class="dropdown-item" href="/you" id="youLink">
+						{#icons/you}{/icons/you} You
+					</a>
+					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
+					<div class="dropdown-divider"></div>
 					{/if}
-				</a>
-				<!-- Not ready yet
-				<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
-					{#icons/pageIcon page='itemLists'}{/icons/pageIcon} Item Lists
-					{#if page is 'itemLists'}
-					<span class="visually-hidden">(current)</span>
+					{#if userInfo.getRoles().contains('userAdmin')}
+					<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
+						{#icons/userAdmin}{/icons/userAdmin} User Administration
+					</a>
 					{/if}
-				</a>
-				<a class="dropdown-item" href="/itemLists#add">
-					{#icons/add}{/icons/add} New Item List
-				</a>
-				-->
-				<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/categories">
-					{#icons/categories}{/icons/categories} Categories
-					{#if page is 'categories'}
-					<span class="visually-hidden">(current)</span>
+					{#if userInfo.getRoles().contains('inventoryAdmin')}
+					<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
+						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
+					</a>
 					{/if}
-				</a>
-			</div>
-		</li>
-		<li class="nav-item dropdown">
-			<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-					aria-haspopup="true" aria-expanded="false">
-				{#icons/icon icon='infinity'}{/icons/icon} Other</a>
-			<div class="dropdown-menu">
-				<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
-					{#icons/pageIcon page='images'}{/icons/pageIcon} Images
-					{#if page is 'images'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-				<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
-					{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
-					{#if page is 'codes'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-				<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
-					{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
-					{#if page is 'help'}
-						<span class="visually-hidden">(current)</span>
-					{/if}
-				</a>
-			</div>
-		</li>
-	</ul>
-	
-	<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
-		<div class="input-group">
-			<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
-			<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
-				<option data-action="/items" data-field="name" selected>Items</option>
-				<option data-action="/storage" data-field="label">Storage Blocks</option>
-			</select>
-			<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
+					<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="#" id="logoutButton">
+							{#icons/icon icon='door-closed'}{/icons/icon} Logout
+						</a>
+					</div>
+				</li>
+			</ul>
 		</div>
-	</form>
-	<ul class="d-flex navbar-nav me-auto">
-	<li class="nav-item dropdown">
-	<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-		{#icons/user}{/icons/user}
-		<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
-	<div class="dropdown-menu">
-	<a class="dropdown-item" href="/you" id="youLink">
-		{#icons/you}{/icons/you} You
-	</a>
-	{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
-	<div class="dropdown-divider"></div>
-	{/if}
-	{#if userInfo.getRoles().contains('userAdmin')}
-		<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
-			{#icons/userAdmin}{/icons/userAdmin} User Administration
-		</a>
-	{/if}
-	{#if userInfo.getRoles().contains('inventoryAdmin')}
-		<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-			{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
-		</a>
-	{/if}
-	<div class="dropdown-divider"></div>
-	<a class="dropdown-item" href="#" id="logoutButton">
-		{#icons/icon icon='door-closed'}{/icons/icon} Logout
-	</a>
 	</div>
-	</li>
-	</ul>
-	</div>
-	</div>
-	</nav>
+</nav>
 {#else if navbar == "toLogin"}
 {! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
 <nav class="navbar navbar-expand-lg navbar-light bg-light top-nav fw-bold">
@@ -211,15 +297,55 @@ Ingests:
 		{#insert pageContent}<h1>No body!</h1>{/}
 	</main>
 </div>
+
 <footer id="footer" class="container mb-3" role="contentinfo">
 	<hr/>
 	<div class="row">
 		<div class="col-sm-4">
-			<span class="h4">Open QuarterMaster Server</span><br/>
-			&copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
-			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0
-				License</a><br/>
-			Version {config:['service.version']} <a href="{config:['service.gitLink']}" target="_blank">Github</a><br/>
+			<span class="h5">Open QuarterMaster Base Station</span><br/>
+			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes" id="theme-picker">
+				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
+						id="bd-theme"
+						type="button"
+						aria-expanded="false"
+						data-bs-toggle="dropdown"
+						data-bs-display="static">
+					<span class="theme-icon-active">
+						{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+					</span>
+							<span id="bd-theme-text">
+					Toggle theme
+					</span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+							<span class="theme-icon">
+								{#icons/themeLight addSpace=true}{/icons/themeLight}
+							</span>
+							Light
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+							<span class="theme-icon">
+								{#icons/themeDark addSpace=true}{/icons/themeDark}
+							</span>
+							Dark
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+							<span class="theme-icon">
+								{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+							</span>
+							Auto
+						</button>
+					</li>
+				</ul>
+			</div>
 			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
@@ -245,7 +371,7 @@ Ingests:
 				<img src="/api/v1/media/runBy/logo" style="float:right; max-width: 30%;">
 			{/if}
 			{#if config:['service.runBy.name'] != " "}
-				<span class="h4">Run by:</span><br/>
+				<span class="h5">Run by:</span><br/>
 				{config:['service.runBy.name']}
 			{/if}
 			<br/>
@@ -271,7 +397,8 @@ Ingests:
 
 <!-- scripts -->
 <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
 <script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
@@ -281,6 +408,7 @@ Ingests:
 <script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/login.js"></script>
+<script src="/res/js/timeHelpers.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>
 <script src="/res/js/links.js"></script>

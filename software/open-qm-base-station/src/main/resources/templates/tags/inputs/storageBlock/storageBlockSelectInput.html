@@ -1,0 +1,9 @@
+<div class="mb-3 col col-3">
+	<div class="input-group">
+		<input type="hidden" id="{id}-storageBlockInputId" name="{#if blockIdName??}{blockIdName}{#else}storageBlock{/if}">
+		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupStorageSearchModal('{id}-storageBlockInput');StorageSearchSelect.storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
+		<input type="text" class="form-control" id="{id}-storageBlockInputName" placeholder="Storage Block" name="storageBlockName" aria-describedby="{id}-storageBlockNameInput-help" readonly>
+		<button class="btn btn-outline-secondary" type="button" id="{id}-storageBlockInputClearButton" onclick="ItemSearchSelect.clearSearchInput($(this));">{#icons/remove}{/icons/remove}</button>
+	</div>
+	<div id="{id}-storageBlockNameInput-help" class="form-text"></div>
+</div>

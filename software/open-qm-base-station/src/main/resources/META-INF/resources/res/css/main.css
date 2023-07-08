@@ -62,9 +62,6 @@
 	/*-1px -1px 0 #000;*/
 }
 
-.badge {
-	font-weight: bold;
-}
 
 .thinAccordion {
 	padding: 3px;
@@ -90,7 +87,7 @@
 }
 
 .itemCatBadge {
-
+	border-radius: 3px;
 }
 
 .itemCatBadgeImage {
@@ -110,4 +107,5 @@
 
 .barcodeViewImg {
 	max-width: 100%;
+	border: 2px solid white;
 }

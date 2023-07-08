@@ -51,11 +51,16 @@ for curPackage in ${packages[@]}; do
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	mkdir -p "$packageDebDir/etc/oqm/config/configs/"
+	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
 	
 	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 
 	cp "$curPackage/10-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
+
+	if [ -f "$curPackage/$curPackage-snapshot-restore.sh" ]; then
+		cp "$curPackage/$curPackage-snapshot-restore.sh" "$packageDebDir/etc/oqm/snapshots/scripts/"
+	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles

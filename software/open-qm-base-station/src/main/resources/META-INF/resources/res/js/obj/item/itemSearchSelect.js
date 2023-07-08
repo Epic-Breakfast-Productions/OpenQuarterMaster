@@ -4,6 +4,7 @@ const ItemSearchSelect = {
 	itemSearchSelectResults: $("#itemSearchSelectResults"),
 
 	selectItem(itemName, itemId, inputIdPrepend, otherModalId) {
+		console.log("Selected item: " + itemId + " - " + itemName);
 		let nameInputId = inputIdPrepend + "Id";
 		let nameInputName = inputIdPrepend + "Name";
 
@@ -12,6 +13,10 @@ const ItemSearchSelect = {
 	},
 	setupItemSearchModal(inputIdPrepend) {
 		ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+	},
+	clearSearchInput(clearButtPushed){
+		clearButtPushed.siblings("input[name=itemName]").val("");
+		clearButtPushed.siblings("input[name=item]").val("");
 	}
 };
 

@@ -49,12 +49,13 @@ public class WebDriverWrapper {
 		
 		if(isLoggedIn()) {
 			this.logoutUser();
-			if (AuthMode.EXTERNAL.equals(this.authMode)) {
-				String logoutUrl = this.keycloakInteractionBase + "/logout";
-				log.info("Logging out of Keycloak at: {}", logoutUrl);
-				driver.manage().deleteAllCookies();
-				driver.get(logoutUrl);
-			}
+		}
+		if (AuthMode.EXTERNAL.equals(this.authMode)) {
+			String logoutUrl = this.keycloakInteractionBase + "/logout";
+			log.info("Logging out of Keycloak at: {}", logoutUrl);
+			driver.manage().deleteAllCookies();
+			driver.get(logoutUrl);
+			driver.manage().deleteAllCookies();
 		}
 		driver.manage().deleteAllCookies();
 		this.goToIndex();

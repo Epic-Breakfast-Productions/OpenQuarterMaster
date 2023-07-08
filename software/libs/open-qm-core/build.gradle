@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	// https://plugins.gradle.org/plugin/io.freefair.lombok
-	id "io.freefair.lombok" version "8.0.1"
+	id "io.freefair.lombok" version "8.1.0"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'
@@ -13,7 +13,7 @@ plugins {
 //group 'com.ebp.openQuarterMaster.lib'
 group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
 archivesBaseName = "openQuarterMaster-lib-core"
-version '1.0.61-1-167-6-SNAPSHOT'
+version '1.0.62'
 
 repositories {
 	mavenLocal()
@@ -51,7 +51,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-	implementation 'tech.units:indriya:2.1.4'
+	implementation 'tech.units:indriya:2.2'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 	implementation 'systems.uom:systems-common:2.1'
@@ -60,8 +60,8 @@ dependencies {
 	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
 
 	implementation 'org.passay:passay:1.6.3'
-	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'commons-codec:commons-codec:1.15'
+	implementation 'commons-io:commons-io:2.13.0'
+	implementation 'commons-codec:commons-codec:1.16.0'
 	implementation 'org.apache.tika:tika-core:2.8.0'
 //	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'//https://search.maven.org/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
 
@@ -80,8 +80,8 @@ dependencies {
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
-	testImplementation 'net.datafaker:datafaker:1.9.0'
-	testImplementation 'ch.qos.logback:logback-classic:1.4.7'
+	testImplementation 'net.datafaker:datafaker:2.0.1'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.8'
 	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
 }

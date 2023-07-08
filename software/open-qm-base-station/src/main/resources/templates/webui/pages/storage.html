@@ -121,9 +121,9 @@ Accepts:
                 <div class="col-sm-10">
                     <div class="input-group">
                         <input type="hidden" id="addEditParentInputId" name="parentId">
-                        <button class="btn btn-outline-dark" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="setupStorageSearchModal('addEditParentInput');storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
+                        <button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupStorageSearchModal('addEditParentInput');StorageSearchSelect.storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
                         <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" aria-describedby="addEditParentInputName-help" disabled>
-                        <button class="btn btn-outline-dark" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
                     </div>
                     <div id="addEditParentInputName-help" class="form-text">Optional. The storage block this block is to be located within.</div>
                 </div>
@@ -317,7 +317,7 @@ Accepts:
             </div>
             <div class="card" id="storageBlockViewStoredItemCategoriesContainer">
                 <div class="card-body">
-                    <h5 class="card-title">Stored Item Categories:</h5>
+                    <h5 class="card-title">{#icons/categories}{/icons/categories} Stored Item Categories:</h5>
                     <div id="storageBlockViewStoredItemCategories">
                     </div>
                 </div>
@@ -332,7 +332,7 @@ Accepts:
     <hr />
     <div class="row">
         <div class="col">
-            <h3>Items Stored:</h3>
+            <h3>{#icons/items}{/icons/items} Items Stored:</h3>
             <table class="table table-bordered table-striped table-hover table-sm">
                 <thead>
                     <tr>

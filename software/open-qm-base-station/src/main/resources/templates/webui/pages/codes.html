@@ -160,7 +160,7 @@
 			}
 			
 			var objectContentTypeInput = $("#objectContentTypeInput");
-			function selectStorageBlock(label, id, thing){
+			StorageSearchSelect.selectStorageBlock = function (label, id, thing){
 				outputImage.attr("src", "/api/v1/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
