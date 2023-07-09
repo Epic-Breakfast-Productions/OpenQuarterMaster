@@ -80,7 +80,10 @@
         <div class="col">
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
-                    <label for="importBulkFileInput" class="form-label"><a href="/api/v1/templates/itemsCsv" target="_blank" title="Get CSV Template file">CSV</a>, or JSON file:</label>
+                    <label for="importBulkFileInput" class="form-label">
+                        <a href="/api/v1/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        or {#icons/fileJson}{/icons/fileJson} JSON file:
+                    </label>
                     <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
                 </div>
             </form>
