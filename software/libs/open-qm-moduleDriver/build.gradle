@@ -55,7 +55,7 @@ dependencies {
 //	implementation 'systems.uom:systems-common:2.1'
 
 	implementation 'javax.validation:validation-api:2.0.1.Final'
-	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1'
+	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:3.1.1'
 
 //	implementation 'org.passay:passay:1.6.1'
 //	implementation 'commons-io:commons-io:2.11.0'
