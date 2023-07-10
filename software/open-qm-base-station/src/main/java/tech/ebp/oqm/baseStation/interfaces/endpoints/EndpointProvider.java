@@ -16,7 +16,6 @@ public abstract class EndpointProvider {
 	private static final String ROOT_API_ENDPOINT = "/api";
 	public static final String ROOT_API_ENDPOINT_V1 = ROOT_API_ENDPOINT + "/v1";
 	
-	
 	protected static void assertSelfAuthMode(AuthMode authMode) {
 		if (!AuthMode.SELF.equals(authMode)) {
 			//TODO:: throw custom exception, handle to return proper response object

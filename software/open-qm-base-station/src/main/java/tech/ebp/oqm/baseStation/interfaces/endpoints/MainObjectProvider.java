@@ -21,8 +21,6 @@ import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
 
 import javax.validation.Valid;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -116,7 +114,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 			output = this.getObjectService().add(object, this.getInteractingEntityFromJwt());
 		}
 		
-		
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
@@ -136,7 +133,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
 		@Context SecurityContext securityContext,
-		@BeanParam S searchObject
+//		@BeanParam
+		S searchObject
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		
@@ -178,7 +176,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@WithSpan
 	public Response search(
 		@Context SecurityContext securityContext,
-		@BeanParam S searchObject
+//		@BeanParam
+		S searchObject
 	) {
 		return this.getSearchResponseBuilder(securityContext, searchObject).getItem1().build();
 	}
@@ -218,7 +217,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@WithSpan
 	public T get(
 		@Context SecurityContext securityContext,
-		@PathParam("id") String id
+//		@PathParam("id")
+		String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
@@ -266,7 +266,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@WithSpan
 	public T update(
 		@Context SecurityContext securityContext,
-		@PathParam("id") String id,
+//		@PathParam("id")
+		String id,
 		ObjectNode updates
 	) {
 		logRequestContext(this.getJwt(), securityContext);
@@ -313,7 +314,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	@WithSpan
 	public T delete(
 		@Context SecurityContext securityContext,
-		@PathParam("id") String id
+//		@PathParam("id")
+		String id
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
@@ -361,9 +363,12 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	public Response getHistoryForObject(
 		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		//@BeanParam
+		HistorySearch searchObject,
+//		@HeaderParam("accept")
+		String acceptHeaderVal,
+//		@HeaderParam("searchFormId")
+		String searchFormId
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
@@ -422,8 +427,10 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
-		@BeanParam HistorySearch searchObject
+		//@Context
+		SecurityContext securityContext,
+		//@BeanParam
+		HistorySearch searchObject
 	) {
 		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
