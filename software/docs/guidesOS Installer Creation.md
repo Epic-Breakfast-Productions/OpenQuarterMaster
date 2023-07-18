@@ -1,6 +1,6 @@
 # Creating a customized Installer Image
 
-## Setps
+## Steps
 
 ### Install Cubic
 
@@ -21,14 +21,20 @@ Use the latest Ubuntu LTS version as the base.
  1. Update the system: `sudo apt update && sudo apt upgrade`
  2. Install `curl`: `apt install curl`
  3. Move files into system
-   1. OQM Station Captain Installer
-   2. Image files
+    1. OQM Station Captain Installer
+    2. Image files
  4. Install OQM Captian:
-   1. Download latest station captain release: `curl -ks https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster/releases/latest | grep "browser_download_url.*.deb" | cut -d : -f 2,3 | tr -d \" | xargs wget --no-check-certificate`
-   2. Install: `apt install -f ./<deb file just downloaded>`
+    1. Download latest station captain release: `curl -ks https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster/releases/latest | grep "browser_download_url.*.deb" | cut -d : -f 2,3 | tr -d \" | xargs wget --no-check-certificate`
+    2. Install: `apt install -f ./<deb file just downloaded>`
  5. Set gnome settings:
-   1. `gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/muo_wallpaper.jpg`
- 6.  
+    1. Background image:
+       1. `gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/muo_wallpaper.jpg`
+       2. `gsettings set org.gnome.desktop.background picture-options 'centered'` 
+       3. `gsettings set org.gnome.desktop.screensaver picture-uri file:///usr/share/backgrounds/muo_wallpaper.jpg`
+       4. `gsettings set org.gnome.desktop.screensaver picture-options 'centered'` 
+    3. Theme:
+       1. `gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-olive'`
+       2. `gsettings set org.gnome.desktop.interface icon-theme 'Yaru-olive'`
 
 
 
