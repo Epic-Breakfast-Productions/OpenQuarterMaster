@@ -83,6 +83,7 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'org.assertj:assertj-core:3.24.2'
 
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
@@ -114,7 +115,7 @@ compileTestJava {
 
 test {
 	minHeapSize = "128m" // initial heap size
-	maxHeapSize = "1g" // maximum heap size
+	maxHeapSize = "2g" // maximum heap size
 	jvmArgs(
 		"--add-opens", "java.base/java.lang=ALL-UNNAMED",
 		"--add-opens", "java.base/java.io=ALL-UNNAMED",
