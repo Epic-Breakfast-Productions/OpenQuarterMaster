@@ -177,6 +177,9 @@ quarkus:
   qute:
     type-check-excludes:
       - "tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor.*"
+  keycloak:
+  oidc-client:
+  
 
 mp:
   jwt:
@@ -220,6 +223,10 @@ smallrye:
         certificate:
           files: ../../../../dev/devTest-cert-cert.pem
           key-files: ../../../../dev/devTest-cert-key.pem
+    keycloak:
+      devservices:
+        realm-path: "../../../../dev/keycloak-realm.json"
+        realm-name: "apps"
   mp:
     jwt:
       expiration:
