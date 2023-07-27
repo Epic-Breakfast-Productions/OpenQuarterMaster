@@ -14,8 +14,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.lib.core.object.MainObject;
 
 import javax.validation.Valid;
 import javax.validation.Validation;

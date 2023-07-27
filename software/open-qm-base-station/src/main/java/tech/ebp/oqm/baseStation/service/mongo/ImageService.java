@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
-import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

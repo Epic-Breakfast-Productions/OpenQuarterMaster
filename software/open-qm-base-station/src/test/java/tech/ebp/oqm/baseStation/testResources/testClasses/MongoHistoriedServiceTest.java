@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

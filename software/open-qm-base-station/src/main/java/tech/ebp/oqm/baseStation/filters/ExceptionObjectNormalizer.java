@@ -4,7 +4,7 @@ package tech.ebp.oqm.baseStation.filters;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.utils.UrlUtils;
-import tech.ebp.oqm.lib.core.rest.ErrorMessage;
+import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;

@@ -12,7 +12,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.lib.core.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

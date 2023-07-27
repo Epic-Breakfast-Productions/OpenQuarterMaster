@@ -2,8 +2,8 @@ package tech.ebp.oqm.baseStation.config;
 
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

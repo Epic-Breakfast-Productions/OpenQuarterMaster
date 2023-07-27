@@ -2,7 +2,7 @@ package tech.ebp.oqm.baseStation.rest.search;
 
 import lombok.Getter;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;

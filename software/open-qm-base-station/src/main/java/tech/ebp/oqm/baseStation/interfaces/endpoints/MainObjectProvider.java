@@ -16,9 +16,9 @@ import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 import javax.validation.Valid;
 import javax.ws.rs.PathParam;

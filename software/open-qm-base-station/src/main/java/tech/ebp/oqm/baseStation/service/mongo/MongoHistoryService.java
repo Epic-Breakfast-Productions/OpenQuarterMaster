@@ -14,14 +14,14 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.history.EventType;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
-import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
-import tech.ebp.oqm.lib.core.object.history.events.UpdateEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.history.EventType;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
+import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
+import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 import java.util.List;
 

@@ -26,11 +26,11 @@ import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.user.UserCreateRequest;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.user.UserCreateRequest;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;

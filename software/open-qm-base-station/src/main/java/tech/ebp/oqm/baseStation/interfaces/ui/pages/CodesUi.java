@@ -11,8 +11,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

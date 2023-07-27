@@ -6,9 +6,9 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 import java.io.File;
 import java.io.IOException;

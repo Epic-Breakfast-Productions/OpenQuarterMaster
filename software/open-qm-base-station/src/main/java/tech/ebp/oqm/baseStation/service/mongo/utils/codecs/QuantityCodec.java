@@ -6,7 +6,7 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
 import javax.inject.Singleton;
 import javax.measure.Quantity;

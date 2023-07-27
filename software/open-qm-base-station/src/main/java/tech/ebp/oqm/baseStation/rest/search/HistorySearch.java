@@ -5,8 +5,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.history.EventType;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.history.EventType;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
 import javax.ws.rs.QueryParam;
 import java.util.List;

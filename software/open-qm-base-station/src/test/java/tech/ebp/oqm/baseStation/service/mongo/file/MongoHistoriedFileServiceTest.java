@@ -16,8 +16,8 @@ import tech.ebp.oqm.baseStation.testResources.data.TestMongoHistoriedFileService
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.media.FileMetadata;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 
 import javax.inject.Inject;
 import java.io.File;

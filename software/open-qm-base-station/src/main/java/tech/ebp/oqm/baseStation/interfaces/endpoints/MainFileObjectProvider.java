@@ -16,9 +16,9 @@ import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.HeaderParam;

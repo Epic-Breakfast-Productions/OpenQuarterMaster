@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
-import tech.ebp.oqm.lib.core.object.history.events.item.expiry.ItemExpiryEvent;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

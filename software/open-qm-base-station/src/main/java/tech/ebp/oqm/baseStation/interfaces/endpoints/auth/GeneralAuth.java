@@ -12,8 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.jboss.resteasy.reactive.NoCache;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.auth.TokenCheckResponse;
 import tech.ebp.oqm.baseStation.utils.TimeUtils;
-import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

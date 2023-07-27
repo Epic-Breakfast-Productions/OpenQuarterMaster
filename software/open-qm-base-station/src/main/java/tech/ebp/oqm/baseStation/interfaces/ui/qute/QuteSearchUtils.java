@@ -7,8 +7,8 @@ import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.rest.search.UserSearch;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 
 @TemplateData
 class QuteSearchUtils {

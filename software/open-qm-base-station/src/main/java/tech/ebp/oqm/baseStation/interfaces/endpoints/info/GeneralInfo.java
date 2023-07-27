@@ -13,8 +13,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.lib.core.units.UnitCategory;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.units.UnitCategory;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;

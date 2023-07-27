@@ -8,8 +8,8 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.28/lombok-1.18.28.jar" />
         </processorPath>
-        <module name="tech.epic-breakfast-productions.openQuarterMaster.lib.open-qm-lib-core.main" />
-        <module name="open-qm-lib-core.test" />
+        <module name="open-qm-core.open-qm-lib-core.main" />
+        <module name="tech.epic-breakfast-productions.openQuarterMaster.lib.open-qm-lib-core.test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17" />

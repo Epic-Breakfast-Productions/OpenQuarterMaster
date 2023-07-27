@@ -9,10 +9,10 @@ import io.smallrye.jwt.util.ResourceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
-import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginResponse;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginResponse;
+import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.io.FileInputStream;

@@ -14,10 +14,10 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.unit.custom.NewCustomUnitRequest;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.measure.Unit;
 import javax.ws.rs.core.MediaType;
