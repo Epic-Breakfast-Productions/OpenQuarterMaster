@@ -12,8 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResults;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

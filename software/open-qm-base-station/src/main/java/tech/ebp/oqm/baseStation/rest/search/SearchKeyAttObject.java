@@ -3,8 +3,8 @@ package tech.ebp.oqm.baseStation.rest.search;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
-import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 
 import javax.ws.rs.QueryParam;
 import java.util.List;

@@ -21,11 +21,11 @@ import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.history.events.user.UserLoginEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
+import tech.ebp.oqm.baseStation.model.object.history.events.user.UserLoginEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
+import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
+import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

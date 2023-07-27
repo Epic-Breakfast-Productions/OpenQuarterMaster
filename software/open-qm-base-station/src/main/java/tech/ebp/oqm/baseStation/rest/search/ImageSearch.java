@@ -4,7 +4,7 @@ import com.mongodb.client.model.Filters;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
-import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;

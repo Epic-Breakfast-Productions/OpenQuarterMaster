@@ -1,8 +1,8 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.qute;
 
 import io.quarkus.qute.TemplateData;
-import tech.ebp.oqm.lib.core.object.itemList.ItemListActionMode;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.CheckInType;
+import tech.ebp.oqm.baseStation.model.object.itemList.ItemListActionMode;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInType;
 
 @TemplateData
 public class QuteEnumUtils {

@@ -14,7 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.validation.validators.PasswordConstraintValidator;
+import tech.ebp.oqm.baseStation.model.validation.validators.PasswordConstraintValidator;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;

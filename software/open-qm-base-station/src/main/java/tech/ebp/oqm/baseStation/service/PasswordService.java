@@ -9,10 +9,10 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
-import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginRequest;
+import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;

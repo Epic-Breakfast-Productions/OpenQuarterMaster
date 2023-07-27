@@ -13,11 +13,11 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.EmailUtils;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
-import tech.ebp.oqm.lib.core.rest.user.availability.EmailAvailabilityResponse;
-import tech.ebp.oqm.lib.core.rest.user.availability.UsernameAvailabilityResponse;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.rest.user.availability.EmailAvailabilityResponse;
+import tech.ebp.oqm.baseStation.model.rest.user.availability.UsernameAvailabilityResponse;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
