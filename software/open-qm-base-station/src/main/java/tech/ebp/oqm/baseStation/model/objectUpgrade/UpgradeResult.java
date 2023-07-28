@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.model.object.upgrade;
+package tech.ebp.oqm.baseStation.model.objectUpgrade;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +7,7 @@ import lombok.NonNull;
 import tech.ebp.oqm.baseStation.model.object.Versionable;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +18,13 @@ public class UpgradeResult<T extends Versionable> {
 	@NonNull
 	private T upgradedObject;
 	
+	@NotNull
+	@NonNull
+	private Duration timeToUpgrade;
+	
 	private int oldVersion;
 	
 	private boolean wasUpgraded(){
-		return this.getOldVersion() < upgradedObject.getObjectVersion();
+		return this.getOldVersion() < upgradedObject.getSchemaVersion();
 	}
 }
