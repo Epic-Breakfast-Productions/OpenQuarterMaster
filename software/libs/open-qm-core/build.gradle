@@ -82,7 +82,7 @@ dependencies {
 
 	testImplementation 'net.datafaker:datafaker:2.0.1'
 	testImplementation 'ch.qos.logback:logback-classic:1.4.8'
-	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.13.0'
 
 }
 
