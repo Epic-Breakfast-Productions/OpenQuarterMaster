@@ -17,7 +17,7 @@ import tech.ebp.oqm.baseStation.scheduled.ExpiryProcessor;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

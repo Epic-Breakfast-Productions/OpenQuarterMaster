@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.data.sanitizers;
 
 
-import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
 
 public abstract class MainObjectSanitizer extends Sanitizer<MainObject> {
 	

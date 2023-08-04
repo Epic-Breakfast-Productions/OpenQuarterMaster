@@ -27,12 +27,12 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.ImagedMainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
-import tech.ebp.oqm.lib.core.rest.storage.IMAGED_OBJ_TYPE_NAME;
+import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.media.ImageCreateRequest;
+import tech.ebp.oqm.baseStation.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

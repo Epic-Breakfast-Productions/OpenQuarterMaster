@@ -11,18 +11,18 @@
 //import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 //import tech.ebp.oqm.baseStation.config.ExtServicesConfig;
 //import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+//import tech.ebp.oqm.baseStation.model.object.history.events.externalService.ExtServiceSetupEvent;
+//import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
+//import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
+//import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginRequest;
+//import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+//import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
+//import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupRequest;
+//import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupResponse;
 //import tech.ebp.oqm.baseStation.service.JwtService;
 //import tech.ebp.oqm.baseStation.service.PasswordService;
 //import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 //import tech.ebp.oqm.baseStation.utils.AuthMode;
-//import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
-//import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
-//import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-//import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
-//import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-//import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
-//import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupRequest;
-//import tech.ebp.oqm.lib.core.rest.externalService.ExternalServiceSetupResponse;
 //
 //import javax.annotation.security.PermitAll;
 //import javax.annotation.security.RolesAllowed;

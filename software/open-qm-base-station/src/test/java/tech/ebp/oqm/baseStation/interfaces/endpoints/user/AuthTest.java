@@ -11,15 +11,16 @@
 //import org.junit.jupiter.api.Tag;
 //import org.junit.jupiter.api.Test;
 //import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+//import tech.ebp.oqm.baseStation.interfaces.endpoints.auth.UserAuth;
 //import tech.ebp.oqm.baseStation.testResources.TestRestUtils;
 //import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 //import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 //import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-//import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-//import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-//import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
-//import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
-//import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginResponse;
+//import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+//import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
+//import tech.ebp.oqm.baseStation.model.rest.auth.TokenCheckResponse;
+//import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
+//import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
 //
 //import javax.inject.Inject;
 //import javax.ws.rs.core.Response;

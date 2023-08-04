@@ -13,9 +13,9 @@ import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.product
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.AdafruitWebProductScrapeService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.AmazonWebProductScrapeService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.WebPageProductScrapeService;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResults;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

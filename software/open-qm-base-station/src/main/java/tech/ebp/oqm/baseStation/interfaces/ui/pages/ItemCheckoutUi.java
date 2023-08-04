@@ -14,10 +14,10 @@ import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

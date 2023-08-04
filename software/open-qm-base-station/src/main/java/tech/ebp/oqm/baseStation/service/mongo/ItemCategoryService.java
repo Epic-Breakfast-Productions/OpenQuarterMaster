@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
-import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTree;
-import tech.ebp.oqm.lib.core.rest.tree.itemCategory.ItemCategoryTreeNode;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
+import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
+import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
+import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTreeNode;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

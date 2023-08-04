@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

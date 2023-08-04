@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

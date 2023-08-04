@@ -25,15 +25,15 @@ import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreato
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
-import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;

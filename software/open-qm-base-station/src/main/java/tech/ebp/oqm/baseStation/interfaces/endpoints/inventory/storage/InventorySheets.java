@@ -14,7 +14,7 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.printouts.StorageBlockInventorySheetService;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

@@ -25,11 +25,11 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.itemList.ItemList;
-import tech.ebp.oqm.lib.core.object.itemList.ItemListAction;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
+import tech.ebp.oqm.baseStation.model.object.itemList.ItemListAction;
+import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;

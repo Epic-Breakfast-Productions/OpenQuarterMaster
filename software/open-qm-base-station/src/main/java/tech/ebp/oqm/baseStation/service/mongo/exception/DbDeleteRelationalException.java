@@ -2,8 +2,8 @@ package tech.ebp.oqm.baseStation.service.mongo.exception;
 
 import lombok.Getter;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
 
 import java.util.List;
 import java.util.Map;

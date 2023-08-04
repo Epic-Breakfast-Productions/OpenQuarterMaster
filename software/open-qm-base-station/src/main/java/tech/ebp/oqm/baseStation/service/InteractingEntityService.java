@@ -3,13 +3,13 @@ package tech.ebp.oqm.baseStation.service;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.service.mongo.ExternalServiceService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

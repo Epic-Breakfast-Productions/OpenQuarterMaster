@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.WebUiTest;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import java.util.stream.Stream;
 

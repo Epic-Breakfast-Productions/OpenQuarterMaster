@@ -6,7 +6,7 @@ import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;

@@ -10,9 +10,9 @@ import tech.ebp.oqm.baseStation.testResources.data.TestMongoHistoriedService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.history.events.CreateEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import javax.inject.Inject;
 import java.util.List;

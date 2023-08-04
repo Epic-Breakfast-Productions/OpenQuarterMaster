@@ -3,7 +3,7 @@ package tech.ebp.oqm.baseStation.utils;
 import io.quarkus.mailer.MailTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 

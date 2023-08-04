@@ -27,13 +27,13 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
-import tech.ebp.oqm.lib.core.object.media.FileMetadata;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -229,7 +229,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public FileContentsGet getLatestFile(ClientSession clientSession, ObjectId id) throws IOException {
 		T fileObj = this.getObject(clientSession, id);
 		
-		FileContentsGet.FileContentsGetBuilder<?, ?> outputBuilder = FileContentsGet.builder();
+		FileContentsGet.Builder<?, ?> outputBuilder = FileContentsGet.builder();
 		
 		List<FileMetadata> revisions = this.getRevisions(clientSession, id);
 		int latestRev = revisions.size() - 1;

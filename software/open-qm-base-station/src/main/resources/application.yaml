@@ -176,11 +176,11 @@ quarkus:
       enabled: true
   qute:
     type-check-excludes:
-      - "tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutFor.*"
+      - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
   keycloak:
   oidc-client:
   
-
+  
 mp:
   jwt:
     verify:

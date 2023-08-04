@@ -19,10 +19,10 @@ import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.auth.roles.UserRoles;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.UserRoles;
+import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
