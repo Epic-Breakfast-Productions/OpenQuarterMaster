@@ -24,7 +24,7 @@ public class UpgradeResult<T extends Versionable> {
 	
 	private int oldVersion;
 	
-	private boolean wasUpgraded(){
+	public boolean wasUpgraded(){
 		return this.getOldVersion() < upgradedObject.getSchemaVersion();
 	}
 }

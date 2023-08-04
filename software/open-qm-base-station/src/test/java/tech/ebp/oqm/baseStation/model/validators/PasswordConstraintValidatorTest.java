@@ -1,8 +1,9 @@
-package tech.ebp.oqm.baseStation.model.validation.validators;
+package tech.ebp.oqm.baseStation.model.validators;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.model.testUtils.BasicTest;
+import tech.ebp.oqm.baseStation.model.validation.validators.PasswordConstraintValidator;
 
 @Slf4j
 public class PasswordConstraintValidatorTest extends BasicTest {

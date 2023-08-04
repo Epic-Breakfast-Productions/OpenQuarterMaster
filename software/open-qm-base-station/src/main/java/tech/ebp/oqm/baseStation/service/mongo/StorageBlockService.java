@@ -67,6 +67,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, storageBlock, clientSession);
 		
+//		this.getDatabase().getCollection(this.getCollectionName()).find()
+		
 		Bson parentFilter = and(
 			eq("label", storageBlock.getLabel()),
 			eq("location", storageBlock.getLocation()),

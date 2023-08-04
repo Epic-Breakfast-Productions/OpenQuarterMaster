@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
+import org.bson.Document;
+import org.bson.json.JsonWriterSettings;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.Versionable;
 import tech.ebp.oqm.baseStation.model.object.storage.items.AmountItem;
@@ -14,10 +16,12 @@ import tech.ebp.oqm.baseStation.model.objectUpgrade.exception.ClassUpgraderNotFo
 import tech.ebp.oqm.baseStation.model.objectUpgrade.exception.UpgradeFailedException;
 import tech.ebp.oqm.baseStation.model.objectUpgrade.exception.VersionBumperListIncontiguousException;
 
+import java.lang.annotation.Documented;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -78,12 +82,16 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		);
 	}
 	
-	public Iterator<ObjectVersionBumper<T>> getIteratorAtVersion(int curVersion){
-		Iterator<ObjectVersionBumper<T>> it = this.versionBumpers.iterator();
+	protected Iterator<ObjectVersionBumper<T>> getIteratorAtVersion(int curObjVersion){
+		int curVersionTo = curObjVersion + 1;
 		
-		//TODO
+		LinkedList<ObjectVersionBumper<T>> bumpers = new LinkedList<>(this.versionBumpers);
 		
-		return it;
+		while(bumpers.getFirst().getBumperTo() < curVersionTo){
+			bumpers.removeFirst();
+		}
+		
+		return bumpers.iterator();
 	}
 	
 	
@@ -113,5 +121,16 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		resultBuilder.timeToUpgrade(Duration.ofMillis(sw.getTime()));
 		
 		return resultBuilder.build();
+	}
+	
+	public UpgradeResult<T> upgrade(Document oldObj) throws JsonProcessingException {
+		return this.upgrade(
+			ObjectUtils.OBJECT_MAPPER.readTree(
+				oldObj.toJson(
+					JsonWriterSettings.builder()
+						.build()
+				)
+			)
+		);
 	}
 }

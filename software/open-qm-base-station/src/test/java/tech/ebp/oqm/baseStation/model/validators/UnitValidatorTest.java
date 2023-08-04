@@ -1,6 +1,5 @@
-package tech.ebp.oqm.baseStation.model.validation.validators;
+package tech.ebp.oqm.baseStation.model.validators;
 
-import tech.ebp.oqm.baseStation.model.units.LibUnits;
 import tech.ebp.oqm.baseStation.model.testUtils.ObjectValidatorTest;
 import tech.ebp.oqm.baseStation.model.testUtils.TestConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.validation.validators.UnitValidator;
 import tech.units.indriya.unit.Units;
 
 import javax.measure.Unit;
