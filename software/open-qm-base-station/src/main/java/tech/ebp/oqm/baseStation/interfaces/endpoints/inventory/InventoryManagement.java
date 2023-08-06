@@ -1,7 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -14,7 +13,7 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.scheduled.ExpiryProcessor;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;

@@ -1,11 +1,13 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
 import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupRequest;
@@ -38,9 +40,10 @@ public class PluginService extends ExternalService {
 		return output;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
-	public ServiceType getServiceType() {
-		return ServiceType.PLUGIN;
+	public InteractingEntityType getInteractingEntityType() {
+		return InteractingEntityType.SERVICE_PLUGIN;
 	}
 	
 	@Override

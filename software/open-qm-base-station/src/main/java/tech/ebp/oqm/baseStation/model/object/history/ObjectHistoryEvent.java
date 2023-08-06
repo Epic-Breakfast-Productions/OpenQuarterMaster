@@ -89,7 +89,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
-	private InteractingEntityReference entity = null;
+	private ObjectId entity = null;
 	
 	/**
 	 * When the event occurred
@@ -103,7 +103,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
 		if(entity != null) {
-			this.entity = entity.getReference();
+			this.entity = entity.getId();
 		}
 	}
 	

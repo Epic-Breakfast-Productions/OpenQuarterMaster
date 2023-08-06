@@ -1,7 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -20,8 +19,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.rest.search.UserSearch;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
+import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -60,7 +59,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/user")
 @Tags({@Tag(name = "Users", description = "Endpoints for user CRUD")})
 @RequestScoped
-public class UserCrud extends MainObjectProvider<User, UserSearch> {
+public class UserCrud extends MainObjectProvider<User, InteractingEntitySearch> {
 	
 	PasswordService passwordService;
 	AuthMode authMode;
@@ -175,7 +174,7 @@ public class UserCrud extends MainObjectProvider<User, UserSearch> {
 	@RolesAllowed(Roles.USER_ADMIN)
 	public Response search(
 		@Context SecurityContext securityContext,
-		@BeanParam UserSearch searchObject
+		@BeanParam InteractingEntitySearch searchObject
 	) {
 		Tuple2<Response.ResponseBuilder, SearchResult<User>> results = this.getSearchResponseBuilder(securityContext, searchObject);
 		SearchResult<User> originalResult = results.getItem2();

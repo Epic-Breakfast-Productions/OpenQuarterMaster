@@ -31,48 +31,31 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
-public class User extends ImagedMainObject implements InteractingEntity {
+public class User extends InteractingEntity {
 	
 	@NonNull
 	@NotNull
 	@NotBlank
 	@Size(max = 30)
-	private String firstName;
-	@NonNull
-	@NotNull
-	@NotBlank
-	@Size(max = 30)
-	private String lastName;
+	private String name;
+	
 	@NonNull
 	@NotNull
 	@NotBlank
 	@Size(max = 30)
 	private String username;
+	
 	@NonNull
 	@NotNull
 	@Email
 	private String email;
-	private String title;
 	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private NotificationSettings notificationSettings = new NotificationSettings();
 	
-	@lombok.Builder.Default
-	private boolean disabled = true;
-	
-	/*
-	 * Not used if service.authMode set to EXTERNAL
-	 */
-	private String pwHash = null;
-	
 	private Set<@ValidUserRole String> roles = new HashSet<>();
-	
-	/*
-	 * Only used if service.authMode set to EXTERNAL
-	 */
-	private Map<@NotBlank String, String> externIds = new HashMap<>();
 	
 	/**
 	 * Still responsible for setting:
@@ -88,21 +71,13 @@ public class User extends ImagedMainObject implements InteractingEntity {
 	 */
 	public static User.Builder builder(UserCreateRequest userCreateRequest) {
 		return new User.Builder()
-				   .firstName(userCreateRequest.getFirstName())
-				   .lastName(userCreateRequest.getLastName())
+				   .name(userCreateRequest.getFirstName())
 				   .username(userCreateRequest.getUsername())
-				   .email(userCreateRequest.getEmail())
-				   .title(userCreateRequest.getTitle());
+				   .email(userCreateRequest.getEmail());
 	}
 	
 	public static User.Builder builder() {
 		return new User.Builder();
-	}
-	
-	
-	@Override
-	public String getName() {
-		return this.getFirstName() + " " + this.getLastName();
 	}
 	
 	@Override

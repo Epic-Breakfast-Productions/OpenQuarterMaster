@@ -31,16 +31,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "serviceType"
-)
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = GeneralService.class, name = "GENERAL"),
-	@JsonSubTypes.Type(value = PluginService.class, name = "PLUGIN"),
-})
-@BsonDiscriminator(key = "serviceType_mongo")
-public abstract class ExternalService extends AttKeywordMainObject implements InteractingEntity {
+public abstract class ExternalService extends InteractingEntity {
 	
 	@NonNull
 	@NotNull
@@ -65,19 +56,6 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 	@Email
 	private String developerEmail;
 	
-	/**
-	 * Only used when authmode == SELF
-	 */
-	@NonNull
-	@NotNull
-	private boolean disabled = true;
-	
-	/**
-	 * Only used when authmode == SELF
-	 */
-	@NonNull
-	@NotNull
-	private Set<@Valid RequestedRole> requestedRoles = new HashSet<>();
 	
 	/**
 	 * Only used when authmode == SELF
@@ -91,8 +69,6 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 	 */
 	private String setupTokenHash;
 	
-	public abstract ServiceType getServiceType();
-	
 	/**
 	 * Wrapper for {@link #getDeveloperEmail()}
 	 *
@@ -104,17 +80,7 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 		return this.getDeveloperEmail();
 	}
 	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@Override
-	public InteractingEntityType getInteractingEntityType() {
-		return InteractingEntityType.EXTERNAL_SERVICE;
-	}
-	
-	
 	public boolean changedGiven(ExternalServiceSetupRequest newServiceIn) {
-		if (!this.getServiceType().equals(newServiceIn.getServiceType())) {
-			return true;
-		}
 		if (!this.getName().equals(newServiceIn.getName())) {
 			return true;
 		}
@@ -125,9 +91,6 @@ public abstract class ExternalService extends AttKeywordMainObject implements In
 			return true;
 		}
 		if (!this.getDeveloperName().equals(newServiceIn.getDeveloperName())) {
-			return true;
-		}
-		if (!this.getRequestedRoles().equals(newServiceIn.getRequestedRoles())) {
 			return true;
 		}
 		return false;
