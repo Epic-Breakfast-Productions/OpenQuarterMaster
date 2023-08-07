@@ -4,36 +4,22 @@ import com.mongodb.client.model.Filters;
 import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import io.quarkus.security.Authenticated;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
-import org.eclipse.microprofile.openapi.annotations.security.OAuthScope;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
-import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.util.List;
 
 @Blocking
 @Slf4j
@@ -48,17 +34,9 @@ public class OverviewUi extends UiProvider {
 	Template overview;
 	
 	@Inject
-	UserService userService;
-	@Inject
 	InventoryItemService inventoryItemService;
 	@Inject
 	StorageBlockService storageBlockService;
-	
-	@Inject
-	JsonWebToken jwt;
-	@Inject
-	@RestClient
-	KeycloakServiceCaller ksc;
 	
 	@Inject
 	Span span;
@@ -67,16 +45,9 @@ public class OverviewUi extends UiProvider {
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public Response overview(
-		@Context SecurityContext securityContext,
-		@CookieParam("jwt_refresh") String refreshToken
-	) {
-		logRequestContext(jwt, securityContext);
-		User user = userService.getFromJwt(this.jwt);
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
-		
+	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, UserGetResponse.builder(user).build())
+			this.setupPageTemplate(overview, span, this.getInteractingEntity())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())
 				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
@@ -88,10 +59,6 @@ public class OverviewUi extends UiProvider {
 				.data("storageBlockService", storageBlockService),
 			MediaType.TEXT_HTML_TYPE
 		);
-		
-		if (newCookies != null && !newCookies.isEmpty()) {
-			responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
-		}
 		
 		return responseBuilder.build();
 	}

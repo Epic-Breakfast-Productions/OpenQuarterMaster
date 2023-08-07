@@ -6,13 +6,9 @@ import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.net.URIBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.model.validation.validators.PasswordConstraintValidator;
 
@@ -26,16 +22,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.UUID;
-
-import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
-import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
 @Blocking
 @Slf4j
@@ -52,17 +41,11 @@ public class IndexUi extends UiProvider {
 	@Location("webui/pages/accountCreate")
 	Template accountCreate;
 	
-	@Inject
-	JsonWebToken jwt;
-	
 	@Context
 	UriInfo uri;
 	
 	@Inject
 	Span span;
-	
-	@Inject
-	UserService userService;
 	
 	@ConfigProperty(name = "service.authMode")
 	AuthMode authMode;
@@ -78,58 +61,24 @@ public class IndexUi extends UiProvider {
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
 	public Response index(
-		@Context SecurityContext securityContext,
 		@QueryParam("returnPath") String returnPath
 	) throws MalformedURLException, URISyntaxException {
-		logRequestContext(jwt, securityContext);
+//		TODO:: do this if set to do so
+//		if(this.authMode == SELF && this.userService.collectionEmpty()){
+//			return Response.seeOther(new URI("/accountCreate")).build();
+//		}
 		
-		if(this.authMode == SELF && this.userService.collectionEmpty()){
-			return Response.seeOther(new URI("/accountCreate")).build();
-		}
+		//TODO:: no redirect uri, just attempt to go to /overview to login; will be taken to keycloak
 		
-		String redirectUri = StringUtils.removeEnd(this.uri.getBaseUri().toString(), "/") + externInteractionCallbackPath;
-		
-		if (returnPath != null && !returnPath.isBlank()) {
-			redirectUri = UriBuilder.fromUri(redirectUri).queryParam("returnPath", returnPath).build().toString();
-		}
+//		String redirectUri = StringUtils.removeEnd(this.uri.getBaseUri().toString(), "/") + externInteractionCallbackPath;
+//
+//		if (returnPath != null && !returnPath.isBlank()) {
+//			redirectUri = UriBuilder.fromUri(redirectUri).queryParam("returnPath", returnPath).build().toString();
+//		}
 		
 		Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
 		
-		
-		if (EXTERNAL.equals(this.authMode)) {
-			String state = UUID.randomUUID().toString();
-			
-//			UriBuilder signInLinkBuilder = UriBuilder.fromUri(this.externInteractionBase + "/auth");
-//			signInLinkBuilder.queryParam("response_type", "code");
-//			signInLinkBuilder.queryParam("scope", "openid");
-//			signInLinkBuilder.queryParam("audience", "account");
-//			signInLinkBuilder.queryParam("state", state);
-//			signInLinkBuilder.queryParam("client_id", externInteractionClientId);
-//			signInLinkBuilder.queryParam("redirect_uri", redirectUri);
-			
-			//TODO:: use the code before this instead, when it is properly encoding redirectUri to resolve #344
-			URIBuilder signInLinkBuilder = new URIBuilder(this.externInteractionBase + "/auth");
-			signInLinkBuilder.setParameter("response_type", "code");
-			signInLinkBuilder.setParameter("scope", "openid");
-			signInLinkBuilder.setParameter("audience", "account");
-			signInLinkBuilder.setParameter("state", state);
-			signInLinkBuilder.setParameter("client_id", externInteractionClientId);
-			signInLinkBuilder.setParameter("redirect_uri", redirectUri);
-			
-			responseBuilder.entity(
-				this.setupPageTemplate(index, span)
-					.data("signInLink", signInLinkBuilder.build())
-			).cookie(
-				UiUtils.getNewCookie(
-					this.getUri(),
-					"externState",
-					state,
-					"For verification or return.", UiUtils.DEFAULT_COOKIE_AGE
-				)
-			);
-		} else {
-			responseBuilder.entity(this.setupPageTemplate(index, span));
-		}
+		responseBuilder.entity(this.setupPageTemplate(index, span));
 		
 		return responseBuilder.build();
 	}
@@ -138,17 +87,9 @@ public class IndexUi extends UiProvider {
 	@Path("/accountCreate")
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
-	public TemplateInstance accountCreate(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(jwt, securityContext);
-		
-		if(this.authMode == EXTERNAL){
-			//TODO:: redirect to login, message about
-		}
-		
+	public TemplateInstance accountCreate() {
 		return this.setupPageTemplate(accountCreate, span)
-				   .data("firstUser", this.userService.collectionEmpty())
+				   .data("firstUser", this.getInteractingEntityService().collectionEmpty())
 				   .data("passwordHelpText", PasswordConstraintValidator.getPasswordRulesDescriptionHtml());
 	}
 }

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
-public class BaseStationInteractingEntity implements InteractingEntity {
+public class BaseStationInteractingEntity extends InteractingEntity {
 	
 	@Inject
 	@ConfigProperty(name = "service.runBy.email", defaultValue = "")

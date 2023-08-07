@@ -15,7 +15,6 @@ import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
@@ -51,13 +50,7 @@ public class CategoriesUi extends UiProvider {
 	Template categories;
 	
 	@Inject
-	UserService userService;
-	
-	@Inject
 	ItemCategoryService itemItemCategoryService;
-	
-	@Inject
-	JsonWebToken jwt;
 	
 	@Inject
 	@RestClient
@@ -71,19 +64,12 @@ public class CategoriesUi extends UiProvider {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response categories(
-		@Context SecurityContext securityContext,
-		@CookieParam("jwt_refresh") String refreshToken,
 		@BeanParam CategoriesSearch categoriesSearch
 	) {
-		//TODO:: rework for categories
-		logRequestContext(jwt, securityContext);
-		User user = userService.getFromJwt(this.jwt);
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(this.getUri(), refreshAuthToken(ksc, refreshToken));
-		
 		SearchResult<ItemCategory> searchResults = this.itemItemCategoryService.search(categoriesSearch, true);
 		this.itemItemCategoryService.listIterator();
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(categories, span, UserGetResponse.builder(user).build(), searchResults)
+			this.setupPageTemplate(categories, span, this.getInteractingEntity(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numCategories", itemItemCategoryService.count())
 				.data("itemCatService", itemItemCategoryService)
@@ -93,9 +79,6 @@ public class CategoriesUi extends UiProvider {
 				.data("historySearchObject", new HistorySearch()),
 			MediaType.TEXT_HTML_TYPE
 		);
-		if (newCookies != null && !newCookies.isEmpty()) {
-			responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
-		}
 		
 		return responseBuilder.build();
 	}
