@@ -81,7 +81,7 @@ dependencies {
 	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
 
 	testImplementation 'net.datafaker:datafaker:2.0.1'
-	testImplementation 'ch.qos.logback:logback-classic:1.4.8'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.9'
 	testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
 }
