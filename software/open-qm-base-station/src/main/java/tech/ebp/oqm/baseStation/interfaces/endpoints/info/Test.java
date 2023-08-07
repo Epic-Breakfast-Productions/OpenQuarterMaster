@@ -11,6 +11,7 @@ import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
@@ -27,7 +28,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/test")
 @Tags({@Tag(name = "Test")})
-@ApplicationScoped
+@RequestScoped
 public class Test extends EndpointProvider {
 	
 	@GET
@@ -41,7 +42,7 @@ public class Test extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response illegalArgException(@Context SecurityContext ctx) {
+	public Response illegalArgException() {
 		throw new IllegalArgumentException("bad");
 	}
 	
@@ -56,12 +57,13 @@ public class Test extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response illegalStateException(@Context SecurityContext ctx) {
+	public Response illegalStateException() {
 		throw new IllegalStateException("bad");
 	}
 	
 	@NoArgsConstructor
-	public static class TestClass{
+	public static class TestClass {
+		
 		@NotBlank
 		public String field;
 	}
@@ -78,9 +80,8 @@ public class Test extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validationException(
-		@Context SecurityContext ctx,
 		@Valid TestClass test
-		) {
+	) {
 		return Response.ok().build();
 	}
 	

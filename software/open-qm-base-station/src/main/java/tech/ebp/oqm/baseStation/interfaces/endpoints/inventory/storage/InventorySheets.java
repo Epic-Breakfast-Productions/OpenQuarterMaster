@@ -38,13 +38,7 @@ public class InventorySheets extends EndpointProvider {
 	private String id;
 	
 	@Inject
-	JsonWebToken jwt;
-	
-	@Inject
 	StorageBlockInventorySheetService storageSheetService;
-	
-	@Inject
-	InteractingEntityService interactingEntityService;
 	
 	@Blocking
 	@GET
@@ -69,11 +63,9 @@ public class InventorySheets extends EndpointProvider {
 		@Context SecurityContext securityContext,
 		@BeanParam InventorySheetsOptions options
 	) throws Throwable {
-		logRequestContext(this.jwt, securityContext);
-		
 		Response.ResponseBuilder response = Response.ok(
 			this.storageSheetService.getPdfInventorySheet(
-				this.interactingEntityService.getEntity(this.jwt),
+				this.getInteractingEntity(),
 				new ObjectId(this.id),
 				options
 			)

@@ -49,18 +49,11 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class InventoryManagement extends EndpointProvider {
 	
-	
-	@Inject
-	JsonWebToken jwt;
-	
 	@Inject
 	DataExportService dataExportService;
 	
 	@Inject
 	DataImportService dataImportService;
-	
-	@Inject
-	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	ExpiryProcessor expiryProcessor;
@@ -86,11 +79,8 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@Context SecurityContext securityContext,
 		@QueryParam("excludeHistory") boolean excludeHistory
 	) throws IOException {
-		logRequestContext(this.jwt, securityContext);
-		
 		File outputFile = dataExportService.exportDataToBundle(excludeHistory);
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
@@ -120,12 +110,9 @@ public class InventoryManagement extends EndpointProvider {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
-		@Context SecurityContext securityContext,
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		logRequestContext(this.jwt, securityContext);
-		
-		DataImportResult result = this.dataImportService.importBundle(body, this.interactingEntityService.getEntity(this.jwt));
+		DataImportResult result = this.dataImportService.importBundle(body, this.getInteractingEntity());
 		
 		return Response.ok(result).build();
 	}
@@ -146,11 +133,7 @@ public class InventoryManagement extends EndpointProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
-	public Response triggerSearchAndProcessExpiring(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response triggerSearchAndProcessExpiring() {
 		expiryProcessor.searchAndProcessExpiring();
 		
 		return Response.ok().build();

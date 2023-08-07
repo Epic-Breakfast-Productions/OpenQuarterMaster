@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForType;
@@ -21,7 +23,11 @@ public class CheckoutForOqmEntity extends CheckoutFor {
 	
 	@NonNull
 	@NotNull
-	private InteractingEntityReference entity;
+	private ObjectId entity;
+	
+	public CheckoutForOqmEntity(InteractingEntity entity){
+		this(entity.getId());
+	}
 	
 	@Override
 	public CheckoutForType getType() {

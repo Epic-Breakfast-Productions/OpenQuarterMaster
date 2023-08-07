@@ -74,9 +74,11 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	
 	@Inject
 	public ImageCrud(
-		ImageService imageService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		ImageService imageService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		StorageBlockService storageBlockService,
@@ -86,7 +88,14 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		Template imageSearchResultsTemplate,
 		Validator validator
 	) {
-		super(Image.class, imageService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			Image.class,
+			imageService,
+			historyRowsTemplate
+		);
 		this.storageBlockService = storageBlockService;
 		this.itemService = itemService;
 		this.itemCategoryService = itemCategoryService;
@@ -120,13 +129,12 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid ImageCreateRequest icr
 	) {
 		Image image = new Image(icr);
 		
 		this.validator.validate(image);
-		return super.create(securityContext, image);
+		return super.create(image);
 	}
 	
 	@GET
@@ -157,10 +165,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam ImageSearch searchObject
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(securityContext, searchObject);
+		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(searchObject);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", searchObject.getAcceptHeaderVal());
@@ -248,10 +255,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Image get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -288,12 +294,11 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		//TODO:: handle updates, json given is icr
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -329,10 +334,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	@GET
@@ -367,13 +371,12 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -401,10 +404,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	@GET
@@ -426,10 +428,8 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	//    @Produces(MediaType.)//TODO
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageData(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image with id \"{}\"'s data", id);
 		Image output = this.getObjectService().get(id);
 		
@@ -488,11 +488,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("object") IMAGED_OBJ_TYPE_NAME object,
 		@PathParam("id") String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image for {} of id \"{}\"", object, id);
 		
 		switch (object) {

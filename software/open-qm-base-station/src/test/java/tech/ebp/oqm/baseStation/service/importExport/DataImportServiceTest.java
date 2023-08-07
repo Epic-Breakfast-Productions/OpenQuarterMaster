@@ -271,7 +271,7 @@ class DataImportServiceTest extends RunningServerTest {
 						.item(checkingOutItem.getId())
 						.checkedOutFrom(checkingOutEntry.getKey())
 						.toCheckout(checkingOutEntry.getValue().getStored())
-						.checkedOutFor(new CheckoutForOqmEntity(testUser.getReference()))
+						.checkedOutFor(new CheckoutForOqmEntity(testUser.getId()))
 						.reason(FAKER.lorem().paragraph())
 						.notes(FAKER.lorem().paragraph())
 						.build(),

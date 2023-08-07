@@ -72,11 +72,9 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBarcode(
-		@Context SecurityContext ctx,
 		@PathParam("codeType") CodeImageType type,
 		@PathParam("code") String data
 	) {
-		logRequestContext(this.jwt, ctx);
 		log.info("Getting {}.", type);
 		return Response.status(Response.Status.OK)
 					   .entity(this.barcodeService.getCodeData(type, data))
@@ -97,13 +95,11 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getQrCode(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("object") IMAGED_OBJ_TYPE_NAME object,
 		@NonNull @PathParam("id") String id,
 		@NonNull @PathParam("codeType") CodeImageType codeType,
 		@NonNull @PathParam("codeContentType") ObjectCodeContentType codeContent
 	) {
-		logRequestContext(this.jwt, ctx);
 		log.info("Getting {} with {} for object {} {}.", codeType, codeContent, object, id);
 		
 		//ensure object exists
@@ -174,10 +170,8 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getItemBarcode(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String id
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(id);
 		String barcode = item.getBarcode();
 		
@@ -204,11 +198,9 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredItemBarcodeAmountSimple(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String itemId,
 		@NonNull @PathParam("storageBlockId") String storageBlockId
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(itemId);
 		
 		SingleAmountStoredWrapper wrapper;
@@ -248,12 +240,10 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredItemBarcodeAmountListTracked(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String itemId,
 		@NonNull @PathParam("storageBlockId") String storageBlockId,
 		@NonNull @PathParam("index") String index
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(itemId);
 		
 		String barcode;

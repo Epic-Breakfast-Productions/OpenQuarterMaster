@@ -177,6 +177,11 @@ quarkus:
   qute:
     type-check-excludes:
       - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
+  oidc:
+    application-type: hybrid
+    logout:
+      path: /api/v1/auth/logout
+      post-logout-path: /
   keycloak:
   oidc-client:
   

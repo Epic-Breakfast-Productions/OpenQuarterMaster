@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.auth;
 
+import io.quarkus.oidc.IdToken;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -36,8 +37,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @NoCache
 public class GeneralAuth extends EndpointProvider {
 	@Inject
-	JsonWebToken jwt;
-	@Inject
 	SecurityIdentity identity;
 	
 	@GET
@@ -56,19 +55,18 @@ public class GeneralAuth extends EndpointProvider {
 	@SecurityRequirement(name = "JwtAuth")
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response tokenCheck(@Context SecurityContext ctx) {
-		logRequestContext(this.jwt, ctx);
+	public Response tokenCheck() {
 		log.info("Checking user's token.");
 		
 		TokenCheckResponse response = new TokenCheckResponse();
-		if (jwt.getRawToken() != null) {
+		if (this.getJwt().getRawToken() != null) {
 			log.info("User roles: {}", this.identity.getRoles());
-			log.info("User JWT claims: {}", this.jwt.getClaimNames());
+			log.info("User JWT claims: {}", this.getJwt().getClaimNames());
 			
 			response.setHadToken(true);
-			response.setTokenSecure(ctx.isSecure());
-			response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());
-			response.setExpirationDate(new Date(jwt.getExpirationTime()));
+			response.setTokenSecure(this.getSecurityContext().isSecure());
+			response.setExpired(this.getJwt().getExpirationTime() <= TimeUtils.currentTimeInSecs());
+			response.setExpirationDate(new Date(this.getJwt().getExpirationTime()));
 		} else {
 			log.info("User had no jwt");
 		}

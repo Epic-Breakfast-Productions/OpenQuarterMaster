@@ -52,15 +52,24 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	
 	@Inject
 	public ItemCategoriesCrud(
-		ItemCategoryService itemCategoryService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		ItemCategoryService itemCategoryService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/category/searchResults.html")
 		Template itemCategoriesSearchResultsTemplate
 	) {
-		super(ItemCategory.class, itemCategoryService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			ItemCategory.class,
+			itemCategoryService,
+			historyRowsTemplate
+		);
 		this.itemCategoriesSearchResultsTemplate = itemCategoriesSearchResultsTemplate;
 	}
 	
@@ -88,10 +97,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid ItemCategory itemCategory
 	) {
-		return super.create(securityContext, itemCategory);
+		return super.create(itemCategory);
 	}
 	
 	@POST
@@ -120,10 +128,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public List<ObjectId> createBulk(
-		@Context SecurityContext securityContext,
 		@Valid List<ItemCategory> itemCategories
 	) {
-		return super.createBulk(securityContext, itemCategories);
+		return super.createBulk(itemCategories);
 	}
 	
 	@GET
@@ -155,10 +162,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam CategoriesSearch categoriesSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemCategory>> tuple = super.getSearchResponseBuilder(securityContext, categoriesSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<ItemCategory>> tuple = super.getSearchResponseBuilder(categoriesSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", categoriesSearch.getAcceptHeaderVal());
@@ -244,10 +250,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemCategory get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -285,11 +290,10 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -326,10 +330,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	//TODO:: this
@@ -358,11 +361,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ItemCategoryTree tree(
-		@Context SecurityContext securityContext,
 		//for actual queries
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		return (ItemCategoryTree) ((ItemCategoryService)this.getObjectService()).getTree(onlyInclude);
 	}
 	
@@ -400,13 +401,12 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -434,10 +434,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	//</editor-fold>
@@ -468,10 +467,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@Produces({MediaType.APPLICATION_JSON})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getChildrenOfCategory(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String storageBlockId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Getting children of \"{}\"", storageBlockId);
 		return Response.ok(((ItemCategoryService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
 	}

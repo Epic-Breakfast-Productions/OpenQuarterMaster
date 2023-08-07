@@ -34,9 +34,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class RunByUtils extends EndpointProvider {
 	
-	@Inject
-	JsonWebToken jwt;
-	
 	@ConfigProperty(name = "service.runBy.logo", defaultValue = "/")
 	File runByLogo;
 	@ConfigProperty(name = "service.runBy.banner", defaultValue = "/")
@@ -83,10 +80,8 @@ public class RunByUtils extends EndpointProvider {
 	@PermitAll
 	@Produces({"image/*", "text/plain"})
 	public Response getImageData(
-		@Context SecurityContext securityContext,
 		@PathParam("image") String runByImage
 	) throws FileNotFoundException {
-		logRequestContext(this.jwt, securityContext);
 		log.info("Getting image data for {}", runByImage);
 		
 		switch (runByImage) {

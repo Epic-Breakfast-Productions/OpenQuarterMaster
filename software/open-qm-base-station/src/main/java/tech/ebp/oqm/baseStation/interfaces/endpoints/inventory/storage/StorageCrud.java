@@ -53,15 +53,24 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	@Inject
 	public StorageCrud(
-		StorageBlockService storageBlockService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		StorageBlockService storageBlockService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/storage/storageSearchResults.html")
 		Template storageSearchResultsTemplate
 	) {
-		super(StorageBlock.class, storageBlockService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			StorageBlock.class,
+			storageBlockService,
+			historyRowsTemplate
+		);
 		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
 	}
 	
@@ -89,10 +98,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid StorageBlock storageBlock
 	) {
-		return super.create(securityContext, storageBlock);
+		return super.create(storageBlock);
 	}
 	
 	@POST
@@ -121,10 +129,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public List<ObjectId> createBulk(
-		@Context SecurityContext securityContext,
 		@Valid List<StorageBlock> storageBlocks
 	) {
-		return super.createBulk(securityContext, storageBlocks);
+		return super.createBulk(storageBlocks);
 	}
 	
 	@GET
@@ -156,10 +163,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam StorageBlockSearch blockSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<StorageBlock>> tuple = super.getSearchResponseBuilder(securityContext, blockSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<StorageBlock>> tuple = super.getSearchResponseBuilder(blockSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", blockSearch.getAcceptHeaderVal());
@@ -245,10 +251,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public StorageBlock get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -286,11 +291,10 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -327,10 +331,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	@GET
@@ -358,11 +361,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces({MediaType.APPLICATION_JSON})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public StorageBlockTree tree(
-		@Context SecurityContext securityContext,
 		//for actual queries
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(onlyInclude);
 	}
 	
@@ -400,13 +401,12 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -434,10 +434,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	//</editor-fold>
@@ -467,10 +466,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces({MediaType.APPLICATION_JSON})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getChildrenOfBlock(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String storageBlockId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Getting children of \"{}\"", storageBlockId);
 		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
 	}

@@ -54,15 +54,24 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	
 	@Inject
 	public ItemCheckoutCrud(
-		ItemCheckoutService itemCheckoutService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		ItemCheckoutService itemCheckoutService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/itemCheckout/searchResults.html")
 		Template itemCheckoutSearchResultsTemplate
 	) {
-		super(ItemCheckout.class, itemCheckoutService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			ItemCheckout.class,
+			itemCheckoutService,
+			historyRowsTemplate
+		);
 		this.itemCheckoutSearchResultsTemplate = itemCheckoutSearchResultsTemplate;
 	}
 	
@@ -89,16 +98,13 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid ItemCheckoutRequest itemCheckoutRequest
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
-		InteractingEntity entity = this.getInteractingEntityFromJwt();
+		InteractingEntity entity = this.getInteractingEntity();
 		
 		if(itemCheckoutRequest.getCheckedOutFor() == null){
 			itemCheckoutRequest.setCheckedOutFor(
-				new CheckoutForOqmEntity(entity.getReference())
+				new CheckoutForOqmEntity(entity)
 			);
 		}
 		
@@ -133,10 +139,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		@PathParam("id") String id,
 		@Valid CheckInDetails checkInDetails
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		InteractingEntity entity = this.getInteractingEntityFromJwt();
-		
-		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), checkInDetails, entity);
+		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), checkInDetails, this.getInteractingEntity());
 	}
 	
 	@GET
@@ -168,10 +171,9 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam ItemCheckoutSearch itemCheckoutSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemCheckout>> tuple = super.getSearchResponseBuilder(securityContext, itemCheckoutSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<ItemCheckout>> tuple = super.getSearchResponseBuilder(itemCheckoutSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", itemCheckoutSearch.getAcceptHeaderVal());
@@ -258,10 +260,9 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemCheckout get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -299,11 +300,10 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCheckout update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -340,10 +340,9 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCheckout delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	//<editor-fold desc="History">
@@ -379,13 +378,12 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -413,10 +411,9 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	//</editor-fold>

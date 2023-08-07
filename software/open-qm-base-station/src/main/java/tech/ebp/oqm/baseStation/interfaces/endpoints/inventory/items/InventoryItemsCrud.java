@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
+import io.quarkus.oidc.IdToken;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -68,16 +69,17 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
 	
-	
 	Template itemSearchResultsTemplate;
 	ObjectMapper objectMapper;
 	InvItemCsvConverter invItemCsvConverter;
 	
 	@Inject
 	public InventoryItemsCrud(
-		InventoryItemService inventoryItemService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		InventoryItemService inventoryItemService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/item/itemSearchResults.html")
@@ -85,7 +87,14 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		ObjectMapper objectMapper,
 		InvItemCsvConverter invItemCsvConverter
 	) {
-		super(InventoryItem.class, inventoryItemService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			InventoryItem.class,
+			inventoryItemService,
+			historyRowsTemplate
+		);
 		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
 		this.objectMapper = objectMapper;
 		this.invItemCsvConverter = invItemCsvConverter;
@@ -114,10 +123,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid InventoryItem item
 	) {
-		return super.create(securityContext, item);
+		return super.create(item);
 	}
 	
 	@POST
@@ -144,12 +152,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
-		@Context SecurityContext securityContext,
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		logRequestContext(this.getJwt(), securityContext);
-		InteractingEntity user = this.getInteractingEntityFromJwt();
-		
 		log.info("Processing item file: {}", body.fileName);
 		
 		final String fileExtension = FilenameUtils.getExtension(body.fileName);
@@ -184,7 +188,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 					this.getObjectService().add(
 						session,
 						items.remove(0),
-						user
+						this.getInteractingEntity()
 					)
 				);
 			}
@@ -222,11 +226,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
-		@Context SecurityContext securityContext,
 		//for actual queries
 		@BeanParam InventoryItemSearch itemSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<InventoryItem>> tuple = super.getSearchResponseBuilder(securityContext, itemSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<InventoryItem>> tuple = super.getSearchResponseBuilder(itemSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", itemSearch.getAcceptHeaderVal());
@@ -311,10 +314,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -351,11 +353,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -391,10 +392,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	@GET
@@ -429,13 +429,12 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -463,10 +462,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	@GET
@@ -492,11 +490,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredInventoryItem(
-		@Context SecurityContext securityContext,
 		@PathParam("itemId") String itemId,
 		@PathParam("storageBlockId") String storageBlockId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		//TODO
 		return Response.serverError().entity("Not implemented yet.").build();
 	}
@@ -524,12 +520,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response addStoredInventoryItem(
-		@Context SecurityContext securityContext,
 		@PathParam("itemId") String itemId,
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode addObject
 	) throws JsonProcessingException {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Adding to item");
 		InventoryItem item = this.getObjectService().get(itemId);
 		
@@ -540,7 +534,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				addObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),
-			this.getInteractingEntityFromJwt()
+			this.getInteractingEntity()
 		);
 		
 		return Response.ok(item).build();
@@ -569,13 +563,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response subtractStoredInventoryItem(
-		@Context SecurityContext securityContext,
 		@PathParam("itemId") String itemId,
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode subtractObject
 	) throws JsonProcessingException {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).subtract(
@@ -585,7 +576,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				subtractObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),
-			this.getInteractingEntityFromJwt()
+			this.getInteractingEntity()
 		);
 		
 		return Response.ok(item).build();
@@ -614,14 +605,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public Response transferStoredInventoryItem(
-		@Context SecurityContext securityContext,
 		@PathParam("itemId") String itemId,
 		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
 		@PathParam("storageBlockIdTo") String storageBlockIdTo,
 		JsonNode transferObject
 	) throws JsonProcessingException {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		InventoryItem item = this.getObjectService().get(itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).transfer(
@@ -632,7 +620,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				transferObject,
 				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
 			),
-			this.getInteractingEntityFromJwt()
+			this.getInteractingEntity()
 		);
 		
 		return Response.ok(item).build();
@@ -662,11 +650,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInventoryItemsInBlock(
-		@Context SecurityContext securityContext,
 		@PathParam("storageBlockId") String storageBlockId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(storageBlockId)).build();
 	}
 	

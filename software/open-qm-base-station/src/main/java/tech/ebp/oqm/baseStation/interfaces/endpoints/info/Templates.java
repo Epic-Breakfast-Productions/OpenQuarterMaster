@@ -34,12 +34,8 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class Templates extends EndpointProvider {
 	
 	@Inject
-	JsonWebToken jwt;
-	
-	@Inject
 	@Location("templates/items.csv")
 	Template itemsCsv;
-	
 	
 	@GET
 	@Path("itemsCsv")
@@ -53,11 +49,7 @@ public class Templates extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces({"text/csv", "text/plain"})
-	public Response getItemCsvTemplate(
-		@Context SecurityContext securityContext
-	) throws FileNotFoundException {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response getItemCsvTemplate() {
 		return Response.ok(
 			itemsCsv.instance()
 		).build();

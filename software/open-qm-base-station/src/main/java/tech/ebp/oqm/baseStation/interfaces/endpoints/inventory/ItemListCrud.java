@@ -53,15 +53,24 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	
 	@Inject
 	public ItemListCrud(
-		ItemListService itemListService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		@Context
+		SecurityContext securityContext,
+		ItemListService itemListService,
 		@Location("tags/objView/history/searchResults.html")
 		Template historyRowsTemplate,
 		@Location("tags/search/itemList/searchResults.html")
 		Template ItemListSearchResultsTemplate
 	) {
-		super(ItemList.class, itemListService, interactingEntityService, jwt, historyRowsTemplate);
+		super(
+			jwt,
+			interactingEntityService,
+			securityContext,
+			ItemList.class,
+			itemListService,
+			historyRowsTemplate
+		);
 		this.itemListSearchResultsTemplate = ItemListSearchResultsTemplate;
 	}
 	
@@ -89,10 +98,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid ItemList itemList
 	) {
-		return super.create(securityContext, itemList);
+		return super.create(itemList);
 	}
 	
 	@POST
@@ -121,10 +129,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public List<ObjectId> createBulk(
-		@Context SecurityContext securityContext,
 		@Valid List<ItemList> itemLists
 	) {
-		return super.createBulk(securityContext, itemLists);
+		return super.createBulk(itemLists);
 	}
 	
 	@GET
@@ -156,10 +163,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam ItemListSearch itemListSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemList>> tuple = super.getSearchResponseBuilder(securityContext, itemListSearch);
+		Tuple2<Response.ResponseBuilder, SearchResult<ItemList>> tuple = super.getSearchResponseBuilder(itemListSearch);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", itemListSearch.getAcceptHeaderVal());
@@ -168,40 +174,40 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 				log.debug("Requestor wanted html.");
 				SearchResult<ItemList> output = tuple.getItem2();
 				rb = rb.entity(
-						   this.itemListSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data("actionType", (
-								   itemListSearch.getActionTypeHeaderVal() == null || itemListSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									   itemListSearch.getActionTypeHeaderVal()
-							   ))
-							   .data(
-								   "searchFormId",
-								   (
-									   itemListSearch.getSearchFormIdHeaderVal() == null || itemListSearch.getSearchFormIdHeaderVal().isBlank() ?
-										   "" :
-										   itemListSearch.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   itemListSearch.getInputIdPrependHeaderVal() == null || itemListSearch.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   itemListSearch.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   itemListSearch.getOtherModalIdHeaderVal() == null || itemListSearch.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   itemListSearch.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("pagingCalculations", new PagingCalculations(output))
-							   .data("storageService", this.getObjectService())
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
+						this.itemListSearchResultsTemplate
+							.data("searchResults", output)
+							.data("actionType", (
+								itemListSearch.getActionTypeHeaderVal() == null || itemListSearch.getActionTypeHeaderVal().isBlank() ? "full" :
+									itemListSearch.getActionTypeHeaderVal()
+							))
+							.data(
+								"searchFormId",
+								(
+									itemListSearch.getSearchFormIdHeaderVal() == null || itemListSearch.getSearchFormIdHeaderVal().isBlank() ?
+										"" :
+										itemListSearch.getSearchFormIdHeaderVal()
+								)
+							)
+							.data(
+								"inputIdPrepend",
+								(
+									itemListSearch.getInputIdPrependHeaderVal() == null || itemListSearch.getInputIdPrependHeaderVal().isBlank() ?
+										"" :
+										itemListSearch.getInputIdPrependHeaderVal()
+								)
+							)
+							.data(
+								"otherModalId",
+								(
+									itemListSearch.getOtherModalIdHeaderVal() == null || itemListSearch.getOtherModalIdHeaderVal().isBlank() ?
+										"" :
+										itemListSearch.getOtherModalIdHeaderVal()
+								)
+							)
+							.data("pagingCalculations", new PagingCalculations(output))
+							.data("storageService", this.getObjectService())
+					)
+						 .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:
@@ -245,10 +251,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemList get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -286,11 +291,10 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemList update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -327,10 +331,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemList delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	//<editor-fold desc="History">
@@ -366,13 +369,12 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -400,10 +402,9 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	//</editor-fold>
@@ -441,12 +442,10 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public ItemList addAction(
-		@Context SecurityContext securityContext,
 		@PathParam("listId") String listId,
 		@PathParam("itemId") String itemId,
 		ItemListAction action
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		return ((ItemListService)this.getObjectService()).addAction(listId, itemId, action, this.getInteractingEntityFromJwt());
+		return ((ItemListService) this.getObjectService()).addAction(listId, itemId, action, this.getInteractingEntity());
 	}
 }

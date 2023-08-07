@@ -1,3 +1,4 @@
+//TODO:: rework this under new auth scheme
 //package tech.ebp.oqm.baseStation.interfaces.endpoints.externalService;
 //
 //import io.opentelemetry.instrumentation.annotations.WithSpan;

@@ -19,9 +19,11 @@ import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.measure.Unit;
 import javax.validation.Valid;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -42,7 +44,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity")
 @Tags({@Tag(name = "Interacting Entities", description = "Endpoints for dealing with interacting entities.")})
-@ApplicationScoped
+@RequestScoped
 public class InteractingEntityEndpoints extends EndpointProvider {
 	
 	@Inject
@@ -59,11 +61,14 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 		description = "Got the currency."
 	)
 	@PermitAll
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_HTML)
-	public TemplateInstance getCurrency(
-		@Context SecurityContext ctx,
+	public TemplateInstance getInteractingEntityReferenceTemplate(
 		@Valid InteractingEntityReference ref
 	) {
+		//TODO:: will need to change
 		return interactingRefTemplate.data("entityRef", ref);
 	}
+	
+	//TODO:: add search, get, history endpoints
 }

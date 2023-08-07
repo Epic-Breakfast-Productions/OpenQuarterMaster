@@ -47,10 +47,6 @@ public class CustomUnit extends EndpointProvider {
 	@Inject
 	InteractingEntityService interactingEntityService;
 	
-	@Inject
-	@Getter
-	JsonWebToken jwt;
-	
 	@POST
 	@Operation(
 		summary = "Adds a new custom unit."
@@ -74,11 +70,8 @@ public class CustomUnit extends EndpointProvider {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId createCustomUnit(
-		@Context SecurityContext securityContext,
 		@Valid NewCustomUnitRequest ncur
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.customUnitService.getNextOrderValue());
 		
 		UnitUtils.registerAllUnits(newUnit);

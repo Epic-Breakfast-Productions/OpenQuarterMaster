@@ -42,39 +42,24 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	@Getter
 	private MongoHistoriedFileService<T, S> fileService;
 	@Getter
-	private InteractingEntityService interactingEntityService;
-	@Getter
-	private JsonWebToken jwt;
-	private InteractingEntity interactingEntityFromJwt = null;
-	@Getter
 	private Template historyRowsTemplate;
 	
 	protected MainFileObjectProvider(
-		MongoHistoriedFileService<T, S> fileService,
-		InteractingEntityService interactingEntityService,
 		JsonWebToken jwt,
+		InteractingEntityService interactingEntityService,
+		SecurityContext securityContext,
+		MongoHistoriedFileService<T, S> fileService,
 		Template historyRowsTemplate
 	) {
+		super(jwt, interactingEntityService, securityContext);
 		this.fileService = fileService;
-		this.interactingEntityService = interactingEntityService;
-		this.jwt = jwt;
 		this.historyRowsTemplate = historyRowsTemplate;
-	}
-	
-	protected InteractingEntity getInteractingEntityFromJwt() {
-		if (this.interactingEntityFromJwt == null) {
-			this.interactingEntityFromJwt = this.getInteractingEntityService().getEntity(this.getJwt());
-		}
-		return this.interactingEntityFromJwt;
 	}
 	
 	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
-		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, false);
 		
 		return Tuple2.of(
@@ -151,13 +136,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
@@ -214,10 +197,8 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
 		return this.getFileService().getFileObjectService().searchHistory(searchObject, false);

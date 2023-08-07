@@ -18,6 +18,7 @@ import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.measure.Unit;
 import javax.ws.rs.GET;
@@ -39,7 +40,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/info")
 @Tags({@Tag(name = "Informational", description = "Endpoints for getting general information from the server.")})
-@ApplicationScoped
+@RequestScoped
 public class GeneralInfo extends EndpointProvider {
 	
 	@Inject
