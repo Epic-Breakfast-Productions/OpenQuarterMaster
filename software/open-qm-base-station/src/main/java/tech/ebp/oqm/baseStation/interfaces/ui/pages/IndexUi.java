@@ -22,6 +22,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -63,21 +64,14 @@ public class IndexUi extends UiProvider {
 	public Response index(
 		@QueryParam("returnPath") String returnPath
 	) throws MalformedURLException, URISyntaxException {
-//		TODO:: do this if set to do so
-//		if(this.authMode == SELF && this.userService.collectionEmpty()){
-//			return Response.seeOther(new URI("/accountCreate")).build();
-//		}
-		
-		//TODO:: no redirect uri, just attempt to go to /overview to login; will be taken to keycloak
-		
-//		String redirectUri = StringUtils.removeEnd(this.uri.getBaseUri().toString(), "/") + externInteractionCallbackPath;
-//
-//		if (returnPath != null && !returnPath.isBlank()) {
-//			redirectUri = UriBuilder.fromUri(redirectUri).queryParam("returnPath", returnPath).build().toString();
-//		}
+		//if logged in, skip to overview
+		if(this.getInteractingEntity() != null){
+			return Response.seeOther(
+				UriBuilder.fromUri("/overview").build()
+			).build();
+		}
 		
 		Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
-		
 		responseBuilder.entity(this.setupPageTemplate(index, span));
 		
 		return responseBuilder.build();

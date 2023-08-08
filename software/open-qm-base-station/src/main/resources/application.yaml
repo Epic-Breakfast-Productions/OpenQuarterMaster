@@ -230,8 +230,8 @@ smallrye:
           key-files: ../../../../dev/devTest-cert-key.pem
     keycloak:
       devservices:
-        realm-path: "../../../../dev/keycloak-realm.json"
-        realm-name: "apps"
+#        realm-path: "../../../../dev/keycloak-realm.json"
+#        realm-name: "apps"
   mp:
     jwt:
       expiration:

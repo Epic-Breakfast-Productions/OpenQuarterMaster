@@ -2,81 +2,36 @@
 	{#pageContent}
 		<br/>
 		<div class="row justify-content-center ">
-		<form class="col align-self-center col-md-6 card text-center p-0" id="signInForm">
-		<div class="card-header">
-			<img src="/media/logo.svg" alt="Open QuarterMaster Logo" style="width: 100%;">
-			{#if config:['service.runBy.name'] != " "}
-			<h3>As Run By {config:['service.runBy.name']}</h3>
-			{/if}
-			{#if config:['service.runBy.banner'] != " "}
-				<img src="/api/v1/media/runBy/banner" style="max-height: 150px;">
-			{/if}
-			<h1>
-				Please sign in
-			</h1>
-			{#if config:['service.authMode'] == 'SELF'}
-				<a href="/accountCreate">Or, Create account {#icons/addUser}{/icons/addUser}</a>
-			{/if}
-		</div>
-		<div class="card-body">
-		{#if config:['service.authMode'] == 'SELF'}
-			<div id="loginFormMessages">
-			</div>
-			<div class="mb-3">
-				<label for="emailUsernameInput">Email address or Username:</label>
-				<input type="text" class="form-control text-center" id="emailUsernameInput" placeholder="Email or Username">
-			</div>
-			<div class="mb-3">
-				<label for="passwordInput">Password:</label>
-				<input type="password" class="form-control text-center" id="passwordInput" placeholder="Password">
-			</div>
-			<div class="checkbox mb-3">
-				<label>
-					<input type="checkbox" value="remember-me" id="rememberUserCheckbox"> Remember me
-				</label>
-			</div>
-			
-			<button class="w-100 btn btn-lg btn-primary" type="submit" id="signInButton">
-				{#icons/icon icon='door-open'}{/icons/icon} Sign in
-			</button>
-			{#else}
-			<a href="{signInLink}" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
-				{#icons/icon icon='door-open'}{/icons/icon} Sign in with {config:['service.externalAuth.name']}
-			</a>
-		{/if}
-		
-		<p class="mt-3 text-muted">&copy; 2021–{generateDatetime.getYear()}</p>
-		</div>
-		</form>
+			<form class="col align-self-center col-md-6 card text-center p-0" id="signInForm">
+				<div class="card-header">
+					<img src="/media/logo.svg" alt="Open QuarterMaster Logo" style="width: 100%;">
+					{#if config:['service.runBy.name'] != " "}
+					<h3>As Run By {config:['service.runBy.name']}</h3>
+					{/if}
+					{#if config:['service.runBy.banner'] != " "}
+						<img src="/api/v1/media/runBy/banner" style="max-height: 150px;">
+					{/if}
+					
+					{!{#if config:['service.authMode'] == 'SELF'} TODO:: 361 this !}
+						{!<a href="/accountCreate">Or, Create account {#icons/addUser}{/icons/addUser}</a>!}
+					{!{/if}!}
+				</div>
+				<div class="card-body d-grid gap-2">
+					<a href="/overview" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
+						{#icons/icon icon='door-open'}{/icons/icon} Continue
+					</a>
+				</div>
+				<div class="card-footer">
+					<p class="mt-3 text-muted">
+						&copy; 2021–{generateDatetime.getYear()}
+					</p>
+				</div>
+			</form>
 		</div>
 	{/pageContent}
 	{#pageScript}
 		<script>
-			assertNotLoggedIn();
-
-			var signInForm = $("#signInForm");
-
-			signInForm.submit(async function (event) {
-				event.preventDefault();
-				{#if config:['service.authMode'] == 'SELF'}
-				console.log("Submitting login form.");
-
-				var result = false;
-				var rememberUser = $("#rememberUserCheckbox").is(":checked");
-				
-				result = await getToken(
-					$("#emailUsernameInput").val(),
-					$("#passwordInput").val(),
-					rememberUser
-				);
-
-				if (!result) {
-					PageMessages.addMessage("danger", "Login failed", "Login Failed", loginFormMessages);
-				} else {
-					login(result, rememberUser);
-				}
-				{/if}
-			});
+		
 		</script>
 	{/pageScript}
 {/include}
