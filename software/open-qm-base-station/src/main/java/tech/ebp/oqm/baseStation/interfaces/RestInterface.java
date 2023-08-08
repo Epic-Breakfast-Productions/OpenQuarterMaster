@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.interfaces;
 
 import io.quarkus.oidc.IdToken;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

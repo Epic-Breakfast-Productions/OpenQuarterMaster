@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
@@ -38,10 +37,6 @@ public class ItemCheckoutUi extends UiProvider {
 	
 	@Inject
 	ItemCheckoutService itemCheckoutService;
-	
-	@Inject
-	@RestClient
-	KeycloakServiceCaller ksc;
 	
 	@Inject
 	Span span;

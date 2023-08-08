@@ -11,7 +11,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.printouts.PageSizeOption;
-import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
@@ -50,10 +49,6 @@ public class CategoriesUi extends UiProvider {
 	
 	@Inject
 	ItemCategoryService itemItemCategoryService;
-	
-	@Inject
-	@RestClient
-	KeycloakServiceCaller ksc;
 	
 	@Inject
 	Span span;

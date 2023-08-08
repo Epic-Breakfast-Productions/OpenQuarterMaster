@@ -1,25 +1,27 @@
-{@tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference entityRef}
-{#if entityRef != null && entityRef.getEntityType() != null}
-	{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(entityRef)}
-		<a href="/entityView/baseStation" class="text-decoration-none entityViewLink" target="_blank">
-		Base Station {#icons/newTab}{/icons/newTab}
-	</a>
-	{#else}
-		{#let entity=cdi:InteractingEntityService.getEntity(entityRef)}
-		<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none entityViewLink" target="_blank">
-			<span class="entityViewSymbol">
-			{#switch entity.getInteractingEntityType()}
-			{#case EXTERNAL_SERVICE}
-				{#icons/extService}{/icons/extService}
-			{#case USER}
-				{#icons/user}{/icons/user}
-			{/switch}
-			</span>
-			<span class="entityViewName">
-				{entity.getName()}
-			</span>
-			{#icons/newTab}{/icons/newTab}
-		</a>
-		{/let}
-	{/if}
-{/if}
+{! TODO:: 361 update !}
+
+{!{@org.bson.types.ObjectId entityRef}!}
+{!{#if entityRef != null && entityRef.getEntityType() != null}!}
+	{!{#if tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:historyEntityIsBaseStation(entityRef)}!}
+		{!<a href="/entityView/baseStation" class="text-decoration-none entityViewLink" target="_blank">!}
+		{!Base Station {#icons/newTab}{/icons/newTab}!}
+	{!</a>!}
+	{!{#else}!}
+		{!{#let entity=cdi:InteractingEntityService.get(entityRef)}!}
+		{!<a href="/entityView/{entity.getInteractingEntityType()}/{entity.getId()}" class="text-decoration-none entityViewLink" target="_blank">!}
+			{!<span class="entityViewSymbol">!}
+			{!{#switch entity.getInteractingEntityType()}!}
+			{!{#case EXTERNAL_SERVICE}!}
+				{!{#icons/extService}{/icons/extService}!}
+			{!{#case USER}!}
+				{!{#icons/user}{/icons/user}!}
+			{!{/switch}!}
+			{!</span>!}
+			{!<span class="entityViewName">!}
+				{!{entity.getName()}!}
+			{!</span>!}
+			{!{#icons/newTab}{/icons/newTab}!}
+		{!</a>!}
+		{!{/let}!}
+	{!{/if}!}
+{!{/if}!}

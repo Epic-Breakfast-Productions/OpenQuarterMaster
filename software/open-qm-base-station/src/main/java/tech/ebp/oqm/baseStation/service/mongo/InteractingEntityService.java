@@ -5,16 +5,20 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.NotificationSettings;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,18 +33,24 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class InteractingEntityService extends MongoHistoriedObjectService<InteractingEntity, InteractingEntitySearch> {
 	
+	InteractingEntityService() {//required for DI
+		super(null, null, null, null, null, null, false, null);
+	}
+	
 	@Inject
-	public InteractingEntityService(
+	InteractingEntityService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
-		String database,
-		String collectionName,
-		Class<InteractingEntity> clazz,
-		MongoCollection<InteractingEntity> collection,
-		boolean allowNullEntityForCreate,
-		MongoHistoryService<InteractingEntity> historyService
+		@ConfigProperty(name = "quarkus.mongodb.database")
+		String database
 	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService);
+		super(
+			objectMapper,
+			mongoClient,
+			database,
+			InteractingEntity.class,
+			false
+		);
 	}
 	
 	private Optional<InteractingEntity> getEntity(String authProvider, String idFromAuthProvider) {

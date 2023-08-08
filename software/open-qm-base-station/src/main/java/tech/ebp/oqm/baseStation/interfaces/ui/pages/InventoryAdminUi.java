@@ -7,8 +7,6 @@ import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
@@ -46,10 +44,6 @@ public class InventoryAdminUi extends UiProvider {
 	StorageBlockService storageBlockService;
 	@Inject
 	CustomUnitService customUnitService;
-	
-	@Inject
-	@RestClient
-	KeycloakServiceCaller ksc;
 	
 	@Inject
 	Span span;
