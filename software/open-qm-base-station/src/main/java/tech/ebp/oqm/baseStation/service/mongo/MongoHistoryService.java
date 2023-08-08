@@ -167,7 +167,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	public ObjectId addHistoryFor(ClientSession session, T created, InteractingEntity entity, ObjectHistoryEvent history){
 		history.setObjectId(created.getId());
 		if(entity != null) {
-			history.setEntity(entity);
+			history.setEntity(entity.getId());
 		}
 		
 		return this.add(session, history);

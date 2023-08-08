@@ -57,7 +57,7 @@ public class ExpiryProcessor {
 			if (!expiryEvents.isEmpty()) {
 				inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
-					curEvent.setEntity(this.baseStationInteractingEntity);
+					curEvent.setEntity(this.baseStationInteractingEntity.getId());
 					inventoryItemService.addHistoryFor(cur, null, curEvent);
 					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}

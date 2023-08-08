@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
@@ -114,9 +116,5 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId){
 		this.entity = interactingEntityId;
 		return this;
-	}
-	
-	public ObjectHistoryEvent setEntity(InteractingEntity entity){
-		return this.setEntity(entity.getId());
 	}
 }

@@ -99,7 +99,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		if (!lowStockEvents.isEmpty()) {
 			for (ItemLowStockEvent event : lowStockEvents) {
 				
-				event.setEntity(this.baseStationInteractingEntity);
+				event.setEntity(this.baseStationInteractingEntity.getId());
 				
 				this.getHistoryService().addHistoryFor(
 					item, null, event
