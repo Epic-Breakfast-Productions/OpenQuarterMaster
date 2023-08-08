@@ -128,24 +128,6 @@ public class PasswordService {
 	}
 	
 	/**
-	 * Checks to see if the password given in the login request matches the hashed pasword of the user.
-	 * <p>
-	 * Wrapper for {@link #passwordMatchesHash(String, String)}.
-	 *
-	 * @param user The user to get the pw hash from
-	 * @param loginRequest The request sent to try to authenticate a user
-	 *
-	 * @return If the request contained the correct password for the user.
-	 */
-	public boolean passwordMatchesHash(User user, UserLoginRequest loginRequest) {
-		return this.passwordMatchesHash(user.getPwHash(), loginRequest.getPassword());
-	}
-	
-	public boolean passwordMatchesHash(ExternalService service, ExternalServiceLoginRequest loginRequest) {
-		return this.passwordMatchesHash(service.getSetupTokenHash(), loginRequest.getSetupToken());
-	}
-	
-	/**
 	 * Gets a random salt.
 	 *
 	 * @return A random salt

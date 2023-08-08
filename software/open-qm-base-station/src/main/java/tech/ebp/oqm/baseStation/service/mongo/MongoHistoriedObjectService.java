@@ -323,7 +323,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 								 .first();
 		
 		//TODO:: validate; if null, exception
-		InteractingEntityReference reference = output.getEntity();
+		ObjectId reference = output.getEntity();
 		return output;
 	}
 	

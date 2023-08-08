@@ -19,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
-import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -64,9 +63,6 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	InventoryItemService inventoryItemService;
 	
 	@Inject
-	JwtService jwtService;
-	
-	@Inject
 	TestUserService testUserService;
 	
 	@Inject
@@ -74,7 +70,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	Template itemsCsv;
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(), "jwt")//TODO:: 361
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()
@@ -92,7 +88,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	}
 	
 	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(), "jwt")
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(updateData))
 										   .when()
@@ -200,7 +196,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		body.fileName = "test.csv";
 		
 		
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(), "jwt")
 										   .contentType(ContentType.MULTIPART)
 										   .multiPart("file", csvData)
 										   .multiPart("fileName", "test.csv")

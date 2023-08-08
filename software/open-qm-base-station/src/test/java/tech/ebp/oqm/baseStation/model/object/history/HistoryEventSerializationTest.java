@@ -49,35 +49,35 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistor
 		return Stream.of(
 			//create
 			Arguments.of(new CreateEvent()),
-			Arguments.of(new CreateEvent().setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))),
+			Arguments.of(new CreateEvent().setEntity(ObjectId.get())),
 			//update
 			Arguments.of(new UpdateEvent()),
 			Arguments.of(new UpdateEvent()
 							 .setDescription(FAKER.lorem().paragraph())
-							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+							 .setEntity(ObjectId.get())
 			),
 			//			Arguments.of(UpdateEvent.builder().updateJson(getRandJsonNode()).build()),
 			//delete
 			Arguments.of(new DeleteEvent()),
 			Arguments.of(new DeleteEvent()
 							 .setDescription(FAKER.lorem().paragraph())
-							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+							 .setEntity(ObjectId.get())
 			),
 			//login
 			Arguments.of(new UserLoginEvent()),
-			Arguments.of(new UserLoginEvent().setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))),
+			Arguments.of(new UserLoginEvent().setEntity(ObjectId.get())),
 			//item expired
 			Arguments.of(new ItemExpiredEvent().setStorageBlockId(ObjectId.get())),
 			Arguments.of(
 				new ItemExpiredEvent()
 					.setIndex(5)
-					.setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+					.setEntity(ObjectId.get())
 			),
 			Arguments.of(new ItemExpiryWarningEvent().setStorageBlockId(ObjectId.get())),
 			Arguments.of(new ItemExpiryWarningEvent()
 							 .setStorageBlockId(ObjectId.get())
 							 .setIndex(5)
-							 .setEntity(new InteractingEntityReference(ObjectId.get(), InteractingEntityType.USER))
+							 .setEntity(ObjectId.get())
 			),
 			//item low stock
 			

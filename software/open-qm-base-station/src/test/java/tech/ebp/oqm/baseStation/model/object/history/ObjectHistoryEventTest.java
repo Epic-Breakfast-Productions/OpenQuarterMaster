@@ -26,8 +26,8 @@ public class ObjectHistoryEventTest extends BasicTest {
 		User entity = new User();
 		entity.setId(new ObjectId());
 		
-		ev.setEntity(entity.getReference());
+		ev.setEntity(entity);
 		
-		assertEquals(entity.getReference(), ev.getEntity());
+		assertEquals(entity.getId(), ev.getEntity());
 	}
 }

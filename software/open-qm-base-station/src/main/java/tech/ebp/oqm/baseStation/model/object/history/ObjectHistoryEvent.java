@@ -110,4 +110,13 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
 		this(object.getId(), entity);
 	}
+	
+	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId){
+		this.entity = interactingEntityId;
+		return this;
+	}
+	
+	public ObjectHistoryEvent setEntity(InteractingEntity entity){
+		return this.setEntity(entity.getId());
+	}
 }

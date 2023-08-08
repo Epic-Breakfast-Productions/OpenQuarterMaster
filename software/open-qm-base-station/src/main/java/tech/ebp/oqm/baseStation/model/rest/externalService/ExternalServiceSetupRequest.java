@@ -82,7 +82,6 @@ public abstract class ExternalServiceSetupRequest {
 			.setName(this.getName())
 			.setDescription(this.getDescription())
 			.setDeveloperName(this.getDeveloperName())
-			.setDeveloperEmail(this.getDeveloperEmail())
-			.setRequestedRoles(this.getRequestedRoles());
+			.setDeveloperEmail(this.getDeveloperEmail());
 	}
 }

@@ -16,9 +16,7 @@ import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
@@ -37,6 +35,10 @@ import static tech.ebp.oqm.baseStation.testResources.lifecycleManagers.Utils.HOS
 import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
 import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
+/**
+ *
+ * TODO:: 361 replace this functionality
+ */
 @ApplicationScoped
 @Slf4j
 public class TestUserService {
@@ -44,11 +46,8 @@ public class TestUserService {
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
 	
-	private final UserService userService;
 	private final MongoTestConnector mongoTestConnector = new MongoTestConnector();
 	private final PasswordService passwordService = new PasswordService();
-	
-	private final JwtService jwtService;
 	
 	private final AuthMode authMode = ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class);
 	
@@ -59,26 +58,7 @@ public class TestUserService {
 	private final String keycloakClientSecret = ConfigProvider.getConfig().getValue("service.externalAuth.clientSecret", String.class);
 	
 	public TestUserService(){
-		try {
-			this.jwtService = new JwtService(
-				ConfigProvider.getConfig().getValue("mp.jwt.verify.privatekey.location", String.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.expiration.default", Long.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.expiration.extended", Long.class),
-				ConfigProvider.getConfig().getValue("externalService.serviceTokenExpires", Long.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class)
-			);
-		} catch(Exception e) {
-			throw new IllegalStateException("Failed to setup jwt service.", e);
-		}
-		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-			this.userService = new UserService(
-				validatorFactory.getValidator(),
-				ObjectUtils.OBJECT_MAPPER,
-				this.mongoTestConnector.getClient(),
-				this.mongoTestConnector.mongoDatabaseName,
-				this.authMode
-			);
-		}
+	
 	}
 	
 	private static String getRandomPassword() {
@@ -92,28 +72,28 @@ public class TestUserService {
 		return sb.toString();
 	}
 	
-	private static UserRepresentation userToRepresentation(User testUser) {
-		UserRepresentation rep = new UserRepresentation();
-		
-		rep.setEnabled(true);
-		rep.setUsername(testUser.getUsername());
-		rep.setFirstName(testUser.getFirstName());
-		rep.setLastName(testUser.getLastName());
-		rep.setEmail(testUser.getEmail());
-		rep.setEmailVerified(true);
-		rep.setOrigin("tests");
-		
-		
-		{
-			//            rep.setGroups(testUser.getRoles());
-			rep.setClientRoles(Map.of(
-				"quartermaster",
-				new ArrayList<>(testUser.getRoles())
-			));
-		}
-		
-		return rep;
-	}
+//	private static UserRepresentation userToRepresentation(User testUser) {
+//		UserRepresentation rep = new UserRepresentation();
+//
+//		rep.setEnabled(true);
+//		rep.setUsername(testUser.getUsername());
+//		rep.setFirstName(testUser.getFirstName());
+//		rep.setLastName(testUser.getLastName());
+//		rep.setEmail(testUser.getEmail());
+//		rep.setEmailVerified(true);
+//		rep.setOrigin("tests");
+//
+//
+//		{
+//			//            rep.setGroups(testUser.getRoles());
+//			rep.setClientRoles(Map.of(
+//				"quartermaster",
+//				new ArrayList<>(testUser.getRoles())
+//			));
+//		}
+//
+//		return rep;
+//	}
 	
 	public void persistTestUser(User testUser) {
 		if (SELF.equals(this.authMode)) {
@@ -126,7 +106,7 @@ public class TestUserService {
 	private void persistTestUserInternal(User testUser) {
 //		this.userService.add(testUser, null);
 		
-		this.userService.add(testUser);
+//		this.userService.add(testUser);
 		
 //		try(MongoClient client = this.mongoTestConnector.getClient()){
 //
@@ -152,56 +132,56 @@ public class TestUserService {
 											   .password(this.keycloakAdminPass)
 											   .build();
 		) {
-			
-			UserRepresentation userRep = userToRepresentation(testUser);
-			
-			RealmResource realmResource = keycloak.realm(this.keycloakRealm);
-			ClientRepresentation
-				clientRepresentation =
-				realmResource.clients()
-							 .findAll()
-							 .stream()
-							 .filter(client->client.getClientId().equals(this.keycloakClientId))
-							 .collect(Collectors.toList())
-							 .get(0);
-			ClientResource clientResource = realmResource.clients().get(clientRepresentation.getId());
-			UsersResource usersResource = realmResource.users();
-			
-			String userId;
-			try (Response response = usersResource.create(userRep);) {
-				log.info("Response from creating test user: {} {}", response.getStatus(), response.getStatusInfo());
-				userId = CreatedResponseUtil.getCreatedId(response);
-				testUser.getAttributes().put(TEST_EXTERN_ID_ATT_KEY, userId);
-				log.info("ID of user in keycloak: {}", testUser.getAttributes().get(TEST_EXTERN_ID_ATT_KEY));
-			}
-			
-			if (usersResource.search(testUser.getUsername()).size() != 1) {
-				throw new IllegalStateException("Test user cannot be found after creation!");
-			}
-			UserResource testUserResource = usersResource.get(userId);
-			
-			{
-				CredentialRepresentation passwordCred = new CredentialRepresentation();
-				passwordCred.setTemporary(false);
-				passwordCred.setType(CredentialRepresentation.PASSWORD);
-				passwordCred.setValue(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
-				
-				testUserResource.resetPassword(passwordCred);
-			}
-			{
-				//                    UserRepresentation testUserRepresentation = testUserResource.toRepresentation();
-				//                    RoleRepresentation roleRepresentation =;
-				
-				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
-					testUser.getRoles().stream().map((String role)->{
-						return clientResource.roles().list().stream()
-											 .filter(element->element.getName().equals(role))
-											 .collect(Collectors.toList())
-											 .get(0);
-					}).collect(Collectors.toList())
-				);
-			}
-			
+//
+//			UserRepresentation userRep = userToRepresentation(testUser);
+//
+//			RealmResource realmResource = keycloak.realm(this.keycloakRealm);
+//			ClientRepresentation
+//				clientRepresentation =
+//				realmResource.clients()
+//							 .findAll()
+//							 .stream()
+//							 .filter(client->client.getClientId().equals(this.keycloakClientId))
+//							 .collect(Collectors.toList())
+//							 .get(0);
+//			ClientResource clientResource = realmResource.clients().get(clientRepresentation.getId());
+//			UsersResource usersResource = realmResource.users();
+//
+//			String userId;
+//			try (Response response = usersResource.create(userRep);) {
+//				log.info("Response from creating test user: {} {}", response.getStatus(), response.getStatusInfo());
+//				userId = CreatedResponseUtil.getCreatedId(response);
+//				testUser.getAttributes().put(TEST_EXTERN_ID_ATT_KEY, userId);
+//				log.info("ID of user in keycloak: {}", testUser.getAttributes().get(TEST_EXTERN_ID_ATT_KEY));
+//			}
+//
+//			if (usersResource.search(testUser.getUsername()).size() != 1) {
+//				throw new IllegalStateException("Test user cannot be found after creation!");
+//			}
+//			UserResource testUserResource = usersResource.get(userId);
+//
+//			{
+//				CredentialRepresentation passwordCred = new CredentialRepresentation();
+//				passwordCred.setTemporary(false);
+//				passwordCred.setType(CredentialRepresentation.PASSWORD);
+//				passwordCred.setValue(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
+//
+//				testUserResource.resetPassword(passwordCred);
+//			}
+//			{
+//				//                    UserRepresentation testUserRepresentation = testUserResource.toRepresentation();
+//				//                    RoleRepresentation roleRepresentation =;
+//
+//				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
+//					testUser.getRoles().stream().map((String role)->{
+//						return clientResource.roles().list().stream()
+//											 .filter(element->element.getName().equals(role))
+//											 .collect(Collectors.toList())
+//											 .get(0);
+//					}).collect(Collectors.toList())
+//				);
+//			}
+//
 		}
 		
 	}
@@ -210,11 +190,11 @@ public class TestUserService {
 		User.Builder builder = User.builder();
 		
 		builder.username(FAKER.name().username());
-		builder.firstName(FAKER.name().firstName());
-		builder.lastName(FAKER.name().lastName());
+//		builder.firstName(FAKER.name().firstName());
+//		builder.lastName(FAKER.name().lastName());
 		builder.email(FAKER.internet().emailAddress());
-		builder.title(FAKER.company().profession());
-		builder.disabled(false);
+//		builder.title(FAKER.company().profession());
+//		builder.disabled(false);
 		builder.roles(new HashSet<>() {{
 			add(Roles.USER);
 			add(Roles.INVENTORY_EDIT);
@@ -225,18 +205,18 @@ public class TestUserService {
 				add(Roles.EXT_SERVICE_ADMIN);
 			}
 		}});
-		
-		String password = getRandomPassword();
-		builder.pwHash(this.passwordService.createPasswordHash(password));
+//
+//		String password = getRandomPassword();
+//		builder.pwHash(this.passwordService.createPasswordHash(password));
 		
 		User testUser = builder.build();
 		
-		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, password);
+//		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, password);
 		
 		if (persisted) {
 			this.persistTestUser(testUser);
 		}
-		log.debug("Done creating new user: {} - {} {}", testUser.getUsername(), testUser.getFirstName(), testUser.getLastName());
+//		log.debug("Done creating new user: {} - {} {}", testUser.getUsername(), testUser.getFirstName(), testUser.getLastName());
 		
 		return testUser;
 	}
@@ -259,7 +239,7 @@ public class TestUserService {
 	}
 	
 	private String getTestUserTokenInternal(User testUser) {
-		return this.jwtService.getUserJwt(testUser, true).getToken();
+		return "";// this.jwtService.getUserJwt(testUser, true).getToken();
 	}
 	
 	private String getTestUserTokenKeycloak(User testUser) {

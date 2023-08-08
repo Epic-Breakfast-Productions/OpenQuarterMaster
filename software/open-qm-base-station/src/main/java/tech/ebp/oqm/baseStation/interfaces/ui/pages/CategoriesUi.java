@@ -19,7 +19,6 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.annotation.security.RolesAllowed;

@@ -55,7 +55,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		
 		assertEquals(objectId, createEvent.getObjectId());
 		assertNotNull(createEvent.getEntity());
-		assertEquals(testUser.getReference(), createEvent.getEntity());
+		assertEquals(testUser.getId(), createEvent.getEntity());
 		
 	}
 	
