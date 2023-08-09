@@ -20,7 +20,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
-	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
+//	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
 	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
@@ -39,7 +39,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 //	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 //	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
-	implementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
+//	implementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
 
 	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
 	// https://quarkus.io/guides/logging
@@ -79,9 +79,6 @@ dependencies {
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.4.0'
 
-	// TODO:: remove to resolve #344
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-
 	/*
 	Test Dependencies
 	 */
@@ -91,9 +88,9 @@ dependencies {
 	testImplementation 'net.datafaker:datafaker:2.0.1'
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 
-	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
+//	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
+//	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 

@@ -4,18 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.keycloak.OAuth2Constants;
-import org.keycloak.admin.client.CreatedResponseUtil;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.admin.client.resource.ClientResource;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.ClientRepresentation;
-import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
@@ -118,20 +106,20 @@ public class TestUserService {
 	}
 	
 	private void persistTestUserKeycloak(User testUser) {
-		try (
-			Keycloak keycloak = KeycloakBuilder.builder()
-											   .serverUrl(
-												   ConfigProvider.getConfig()
-																 .getValue("test.keycloak.authUrl", String.class)
-																 .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
-											   )
-											   .realm("master")
-											   .grantType(OAuth2Constants.PASSWORD)
-											   .clientId("admin-cli")
-											   .username(this.keycloakAdminName)
-											   .password(this.keycloakAdminPass)
-											   .build();
-		) {
+//		try (
+//			Keycloak keycloak = KeycloakBuilder.builder()
+//											   .serverUrl(
+//												   ConfigProvider.getConfig()
+//																 .getValue("test.keycloak.authUrl", String.class)
+//																 .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
+//											   )
+//											   .realm("master")
+//											   .grantType(OAuth2Constants.PASSWORD)
+//											   .clientId("admin-cli")
+//											   .username(this.keycloakAdminName)
+//											   .password(this.keycloakAdminPass)
+//											   .build();
+//		) {
 //
 //			UserRepresentation userRep = userToRepresentation(testUser);
 //
@@ -182,7 +170,7 @@ public class TestUserService {
 //				);
 //			}
 //
-		}
+//		}
 		
 	}
 	
@@ -243,37 +231,37 @@ public class TestUserService {
 	}
 	
 	private String getTestUserTokenKeycloak(User testUser) {
-		try (
-			Keycloak keycloak = KeycloakBuilder.builder()
-											   .serverUrl(
-												   ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class)
-												   //														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
-											   )
-											   .realm(this.keycloakRealm)
-											   .clientId(this.keycloakClientId)
-											   .clientSecret(this.keycloakClientSecret)
-											   .grantType(OAuth2Constants.PASSWORD)
-											   .username(testUser.getUsername())
-											   .password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
-											   .build()
-		) {
+//		try (
+//			Keycloak keycloak = KeycloakBuilder.builder()
+//											   .serverUrl(
+//												   ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class)
+//												   //														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
+//											   )
+//											   .realm(this.keycloakRealm)
+//											   .clientId(this.keycloakClientId)
+//											   .clientSecret(this.keycloakClientSecret)
+//											   .grantType(OAuth2Constants.PASSWORD)
+//											   .username(testUser.getUsername())
+//											   .password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
+//											   .build()
+//		) {
 			//				keycloak.realms();
 			
 			//Issuer (iss) claim value (http://localhost:49649/auth/realms/apps) doesn't match expected value of http://host.testcontainers.internal:49649/auth/realms/apps]
 			
-			AccessTokenResponse response = keycloak
-											   .tokenManager()
-											   .getAccessToken();
+//			AccessTokenResponse response = keycloak
+//											   .tokenManager()
+//											   .getAccessToken();
+//
+//			log.info("Get user token response: {}", response.getSessionState());
 			
-			log.info("Get user token response: {}", response.getSessionState());
-			
-			String token = response.getToken();
+			String token = "";//response.getToken();
 			log.info("Test user's token: {}", token);
 			return token;
-		} catch(Exception e) {
-			log.error("FAILED to get token for user: ", e);
-			throw e;
-		}
+//		} catch(Exception e) {
+//			log.error("FAILED to get token for user: ", e);
+//			throw e;
+//		}
 	}
 	
 }

@@ -1,0 +1,10 @@
+{
+	"infra": {
+		"mongodb": {
+			"host": "host.docker.internal",
+			"port": "8115",
+			"username": "",
+			"password": ""
+		}
+	}
+}

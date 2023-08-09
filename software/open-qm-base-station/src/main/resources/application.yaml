@@ -230,8 +230,11 @@ smallrye:
           key-files: ../../../../dev/devTest-cert-key.pem
     keycloak:
       devservices:
-#        realm-path: "../../../../dev/keycloak-realm.json"
-#        realm-name: "apps"
+        # Required to export realm
+        start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
+        realm-path: "../../../../dev/oqm-realm.json"
+        realm-name: "oqm"
+        show-logs: true
   mp:
     jwt:
       expiration:

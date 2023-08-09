@@ -32,10 +32,7 @@ public class LifecycleBean {
 	
 	private ZonedDateTime startDateTime;
 	
-	void onStart(
-		@Observes
-		StartupEvent ev
-	) {
+	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster Web Server starting.");
 		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
@@ -65,22 +62,15 @@ public class LifecycleBean {
 			}
 			log.debug("Configuration: \n{}", sb);
 		}
-		
-		log.info("Reading existing custom units from database...");
-		
-		try (
-			MongoCursor<CustomUnitEntry> it = this.customUnitService
-												  .listIterator(null, Sorts.ascending("order"), null)
-												  .batchSize(1)
-												  .iterator()
-		) {
-			while (it.hasNext()){
-				CustomUnitEntry curEntry = it.next();
-				log.debug("Registering unit {}", curEntry);
-				UnitUtils.registerAllUnits(curEntry);
-			}
-		}
-		log.info("Done.");
+	}
+	
+	void onStart(
+		@Observes
+		StartupEvent ev
+	) {
+		this.startLogAnnounce();
+		//ensures the unit service bean is initialized, and by extension had existing custom units read in
+		this.customUnitService.count();
 	}
 	
 	void onStop(

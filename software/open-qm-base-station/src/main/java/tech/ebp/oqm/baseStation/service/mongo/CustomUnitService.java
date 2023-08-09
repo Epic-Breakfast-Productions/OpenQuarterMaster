@@ -3,16 +3,19 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.measure.Unit;
@@ -43,6 +46,24 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 		);
 	}
 	
+	@PostConstruct
+	void readInUnits() {
+		log.info("Reading existing custom units from database...");
+		
+		try (
+			MongoCursor<CustomUnitEntry> it = this.listIterator(null, Sorts.ascending("order"), null)
+												  .batchSize(1)
+												  .iterator()
+		) {
+			while (it.hasNext()) {
+				CustomUnitEntry curEntry = it.next();
+				log.debug("Registering unit {}", curEntry);
+				UnitUtils.registerAllUnits(curEntry);
+			}
+		}
+		log.info("Done.");
+	}
+	
 	@WithSpan
 	@Override
 	public void ensureObjectValid(boolean newObject, CustomUnitEntry newOrChangedObject, ClientSession clientSession) {
@@ -69,10 +90,10 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 			null
 		);
 		
-		if(matchList.size() == 0){
+		if (matchList.size() == 0) {
 			throw new DbNotFoundException("Could not find custom unit " + unit, CustomUnitEntry.class);
 		}
-		if(matchList.size() != 1){
+		if (matchList.size() != 1) {
 			throw new DbNotFoundException(
 				"Could not find custom unit " + unit + " - Too many matched units (" + matchList.size() + ")",
 				CustomUnitEntry.class
