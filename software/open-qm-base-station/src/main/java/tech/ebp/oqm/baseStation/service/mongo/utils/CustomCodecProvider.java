@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.UUIDCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.UnitCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.ZonedDateTimeCodec;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped

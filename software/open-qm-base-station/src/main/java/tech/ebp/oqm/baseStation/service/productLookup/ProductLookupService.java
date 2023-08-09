@@ -17,8 +17,8 @@ import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProvi
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

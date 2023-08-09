@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NonNull;
 import tech.ebp.oqm.baseStation.model.object.Versionable;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

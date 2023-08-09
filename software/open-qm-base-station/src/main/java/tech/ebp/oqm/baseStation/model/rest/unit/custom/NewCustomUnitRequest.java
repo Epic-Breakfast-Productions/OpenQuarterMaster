@@ -14,7 +14,7 @@ import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 
 import javax.measure.Unit;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

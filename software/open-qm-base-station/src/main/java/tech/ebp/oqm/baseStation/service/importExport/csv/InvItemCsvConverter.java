@@ -11,7 +11,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

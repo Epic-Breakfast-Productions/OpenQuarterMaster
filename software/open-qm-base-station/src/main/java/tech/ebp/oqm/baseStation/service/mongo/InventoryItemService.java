@@ -31,11 +31,11 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountS
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

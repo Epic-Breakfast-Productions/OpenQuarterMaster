@@ -104,21 +104,18 @@ quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
-    keycloak:
-      url: ${service.externalAuth.tokenUrl}
-      scope: javax.inject.Singleton
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     upc-datakick:
       url: ${productLookup.providers.datakick.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     upc-upcitemdb:
       url: ${productLookup.providers.upcitemdb.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     lego-rebrickable:
       url: ${productLookup.providers.rebrickable.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
   native:
     resources:
       includes: security/*
@@ -178,6 +175,7 @@ quarkus:
     type-check-excludes:
       - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
   oidc:
+    client-id: oqm-app
     application-type: hybrid
     logout:
       path: /api/v1/auth/logout
@@ -235,6 +233,8 @@ smallrye:
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
         show-logs: true
+    arc:
+      fail-on-intercepted-private-method: false # TODO:: remove
   mp:
     jwt:
       expiration:
@@ -253,4 +253,4 @@ smallrye:
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
 
-
+  

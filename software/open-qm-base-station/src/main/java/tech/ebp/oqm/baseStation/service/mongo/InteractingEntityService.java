@@ -20,9 +20,9 @@ import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.Optional;
 import java.util.Set;
 

@@ -4,7 +4,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidInteractingEntityReference;
 import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

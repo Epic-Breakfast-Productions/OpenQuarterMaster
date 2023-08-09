@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 
-import javax.ws.rs.HeaderParam;
+import jakarta.ws.rs.HeaderParam;
 
 @ToString(callSuper = true)
 @Getter

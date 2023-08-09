@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.jackson.ObjectMapperCustomizer;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class JacksonModuleCustomizer implements ObjectMapperCustomizer {

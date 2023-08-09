@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.model.units.UnitTools;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidUnit;
 
 import javax.measure.Unit;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data

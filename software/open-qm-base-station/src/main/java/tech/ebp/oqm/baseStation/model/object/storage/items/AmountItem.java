@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
@@ -13,7 +12,7 @@ import tech.ebp.oqm.baseStation.model.validation.annotations.ValidHeldStoredUnit
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidUnit;
 
 import javax.measure.Unit;
-import javax.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 
 /**

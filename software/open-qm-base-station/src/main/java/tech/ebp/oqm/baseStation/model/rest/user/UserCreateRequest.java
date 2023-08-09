@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidPassword;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForType;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -22,8 +22,8 @@
 //import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 //import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
 //
-//import javax.inject.Inject;
-//import javax.ws.rs.core.Response;
+//import jakarta.inject.Inject;
+//import jakarta.ws.rs.core.Response;
 //
 //import static io.restassured.RestAssured.given;
 //import static org.junit.jupiter.api.Assertions.assertEquals;

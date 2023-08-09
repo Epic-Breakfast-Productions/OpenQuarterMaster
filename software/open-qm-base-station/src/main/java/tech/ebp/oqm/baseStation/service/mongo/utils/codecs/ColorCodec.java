@@ -8,8 +8,7 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
-import javax.inject.Singleton;
-import javax.measure.Unit;
+import jakarta.inject.Singleton;
 import java.awt.*;
 
 

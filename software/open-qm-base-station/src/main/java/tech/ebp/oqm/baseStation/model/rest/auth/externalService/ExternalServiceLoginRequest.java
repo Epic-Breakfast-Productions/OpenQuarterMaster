@@ -7,8 +7,8 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * The request object for logging in a user

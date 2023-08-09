@@ -6,7 +6,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredW
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidHeldStoredUnits;
 import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;

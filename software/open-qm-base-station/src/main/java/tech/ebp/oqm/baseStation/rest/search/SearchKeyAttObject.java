@@ -6,7 +6,7 @@ import org.bson.conversions.Bson;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 import java.util.List;
 
 @ToString(callSuper = true)

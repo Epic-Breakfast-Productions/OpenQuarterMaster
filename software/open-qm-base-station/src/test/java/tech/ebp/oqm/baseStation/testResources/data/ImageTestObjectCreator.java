@@ -9,7 +9,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.baseStation.model.rest.media.ImageCreateRequest;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

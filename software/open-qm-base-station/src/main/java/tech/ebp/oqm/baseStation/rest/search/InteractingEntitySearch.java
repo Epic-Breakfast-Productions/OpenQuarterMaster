@@ -7,7 +7,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.regex;

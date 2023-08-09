@@ -24,8 +24,8 @@
 //import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 //import tech.ebp.oqm.baseStation.utils.AuthMode;
 //
-//import javax.enterprise.context.ApplicationScoped;
-//import javax.inject.Inject;
+//import jakarta.enterprise.context.ApplicationScoped;
+//import jakarta.inject.Inject;
 //import java.util.ArrayList;
 //import java.util.LinkedList;
 //import java.util.List;

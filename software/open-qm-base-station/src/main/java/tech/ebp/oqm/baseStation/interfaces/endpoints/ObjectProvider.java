@@ -5,8 +5,8 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @NoArgsConstructor
 public abstract class ObjectProvider extends EndpointProvider {

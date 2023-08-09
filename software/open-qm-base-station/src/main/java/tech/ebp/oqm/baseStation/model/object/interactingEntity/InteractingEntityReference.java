@@ -9,7 +9,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidInteractingEntityReference;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * An identifier for an interacting entity.

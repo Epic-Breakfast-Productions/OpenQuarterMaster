@@ -11,7 +11,7 @@ import tech.ebp.oqm.baseStation.model.object.history.DescriptiveEvent;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

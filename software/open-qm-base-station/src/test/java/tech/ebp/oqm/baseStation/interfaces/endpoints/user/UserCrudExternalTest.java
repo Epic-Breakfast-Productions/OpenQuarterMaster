@@ -18,8 +18,8 @@
 //import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 //import tech.ebp.oqm.baseStation.model.rest.user.UserCreateRequest;
 //
-//import javax.inject.Inject;
-//import javax.ws.rs.core.Response;
+//import jakarta.inject.Inject;
+//import jakarta.ws.rs.core.Response;
 //
 //import static io.restassured.RestAssured.given;
 //

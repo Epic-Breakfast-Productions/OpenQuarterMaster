@@ -11,7 +11,7 @@ import org.passay.RuleResult;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidPassword;
 import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 

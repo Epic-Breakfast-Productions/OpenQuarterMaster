@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.QueryParam;
 
 @ToString(callSuper = true)
 @Getter

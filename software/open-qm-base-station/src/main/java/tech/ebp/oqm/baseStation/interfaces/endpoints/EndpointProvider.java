@@ -9,8 +9,8 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.utils.AuthMode;
 
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -10,8 +10,8 @@ import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationD
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;

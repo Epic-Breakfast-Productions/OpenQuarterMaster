@@ -13,7 +13,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.S
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.Plugin;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

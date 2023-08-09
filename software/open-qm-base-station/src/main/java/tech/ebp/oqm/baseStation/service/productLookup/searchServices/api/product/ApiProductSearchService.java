@@ -10,7 +10,7 @@ import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApi
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
 
-import javax.json.Json;
+import jakarta.json.Json;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

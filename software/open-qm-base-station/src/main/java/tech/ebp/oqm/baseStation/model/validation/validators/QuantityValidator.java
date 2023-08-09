@@ -5,7 +5,7 @@ import tech.ebp.oqm.baseStation.model.validation.annotations.ValidQuantity;
 import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
 import javax.measure.Quantity;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

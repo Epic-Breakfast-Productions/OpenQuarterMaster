@@ -41,7 +41,7 @@ import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

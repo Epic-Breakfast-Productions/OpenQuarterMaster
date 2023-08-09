@@ -11,8 +11,8 @@ import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.RebrickableLook
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;

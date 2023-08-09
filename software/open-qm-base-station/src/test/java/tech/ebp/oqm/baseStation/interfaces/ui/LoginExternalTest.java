@@ -18,7 +18,7 @@ import tech.ebp.oqm.baseStation.testResources.ui.pages.KeycloakLogin;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.Root;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static com.mongodb.assertions.Assertions.assertTrue;
 

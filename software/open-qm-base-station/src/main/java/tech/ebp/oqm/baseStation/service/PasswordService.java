@@ -14,7 +14,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginRequest;
 import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

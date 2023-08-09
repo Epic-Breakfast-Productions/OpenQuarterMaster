@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
 import tech.units.indriya.unit.BaseUnit;
 
 import javax.measure.Unit;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

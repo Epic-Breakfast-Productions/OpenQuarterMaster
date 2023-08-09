@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemListActionMode;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * TODO:: validator to ensure from/to storage ids straight

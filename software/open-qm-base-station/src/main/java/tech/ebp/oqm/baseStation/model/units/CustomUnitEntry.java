@@ -10,8 +10,8 @@ import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

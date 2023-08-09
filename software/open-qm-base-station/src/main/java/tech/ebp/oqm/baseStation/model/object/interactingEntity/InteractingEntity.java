@@ -14,8 +14,8 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.G
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 

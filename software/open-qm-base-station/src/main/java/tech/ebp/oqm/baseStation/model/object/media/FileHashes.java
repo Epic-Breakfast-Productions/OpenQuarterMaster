@@ -7,8 +7,8 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -11,7 +11,7 @@ import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemAddSubEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Event for the transfer of items from a storage block to another.

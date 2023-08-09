@@ -14,7 +14,7 @@
 //import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginResponse;
 //import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginResponse;
 //
-//import javax.enterprise.context.ApplicationScoped;
+//import jakarta.enterprise.context.ApplicationScoped;
 //import java.io.FileInputStream;
 //import java.io.FileNotFoundException;
 //import java.io.IOException;

@@ -26,8 +26,8 @@ import tech.ebp.oqm.baseStation.model.quantities.QuantitiesUtils;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;

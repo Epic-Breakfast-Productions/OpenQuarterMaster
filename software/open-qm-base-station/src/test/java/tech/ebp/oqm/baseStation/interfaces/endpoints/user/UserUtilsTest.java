@@ -15,7 +15,7 @@
 //import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 //import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 //
-//import javax.inject.Inject;
+//import jakarta.inject.Inject;
 //import java.util.List;
 //
 //import static io.restassured.RestAssured.given;

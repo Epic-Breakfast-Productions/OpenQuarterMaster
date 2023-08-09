@@ -13,8 +13,8 @@ import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.Che
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.LossCheckin;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.ReturnCheckin;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

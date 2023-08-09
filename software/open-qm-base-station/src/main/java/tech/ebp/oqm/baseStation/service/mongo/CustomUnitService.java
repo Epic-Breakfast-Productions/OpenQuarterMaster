@@ -15,9 +15,9 @@ import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import javax.measure.Unit;
 import java.util.List;
 

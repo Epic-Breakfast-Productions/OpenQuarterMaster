@@ -27,8 +27,8 @@
 //import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 //import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 //
-//import javax.inject.Inject;
-//import javax.ws.rs.core.Response;
+//import jakarta.inject.Inject;
+//import jakarta.ws.rs.core.Response;
 //import java.util.stream.Stream;
 //
 //import static io.restassured.RestAssured.given;

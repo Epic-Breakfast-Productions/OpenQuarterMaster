@@ -9,7 +9,7 @@ import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInDetails;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInType;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

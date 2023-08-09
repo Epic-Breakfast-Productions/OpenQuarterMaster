@@ -26,8 +26,8 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

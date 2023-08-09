@@ -3,8 +3,8 @@ package tech.ebp.oqm.baseStation.rest.printouts;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.QueryParam;
 
 @ToString
 @Getter

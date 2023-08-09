@@ -18,8 +18,8 @@ import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLife
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
-import javax.inject.Inject;
-import javax.validation.ValidationException;
+import jakarta.inject.Inject;
+import jakarta.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

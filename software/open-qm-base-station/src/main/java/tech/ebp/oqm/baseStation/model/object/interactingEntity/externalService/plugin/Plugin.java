@@ -13,8 +13,8 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.p
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavItem;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavSubMenu;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 //@AllArgsConstructor

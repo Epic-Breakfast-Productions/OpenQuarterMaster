@@ -11,8 +11,8 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.p
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavItem;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -10,10 +10,10 @@ import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;

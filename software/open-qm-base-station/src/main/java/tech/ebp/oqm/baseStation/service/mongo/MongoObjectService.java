@@ -26,8 +26,8 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Valid;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

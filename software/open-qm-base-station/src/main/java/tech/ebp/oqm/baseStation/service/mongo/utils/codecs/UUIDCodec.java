@@ -6,7 +6,7 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.UUID;
 
 @Singleton

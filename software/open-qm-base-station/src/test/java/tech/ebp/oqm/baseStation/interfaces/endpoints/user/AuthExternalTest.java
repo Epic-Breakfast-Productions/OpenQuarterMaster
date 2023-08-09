@@ -24,8 +24,8 @@
 //import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 //import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 //
-//import javax.inject.Inject;
-//import javax.ws.rs.core.Response;
+//import jakarta.inject.Inject;
+//import jakarta.ws.rs.core.Response;
 //
 //import static io.restassured.RestAssured.given;
 //
