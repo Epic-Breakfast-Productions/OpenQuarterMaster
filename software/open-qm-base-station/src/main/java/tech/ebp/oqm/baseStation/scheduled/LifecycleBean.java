@@ -18,6 +18,7 @@ import jakarta.inject.Singleton;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 @Singleton
 @Slf4j
@@ -46,18 +47,25 @@ public class LifecycleBean {
 		log.info(this.startTemplate.render());
 		
 		if (log.isDebugEnabled()) {
-			StringBuilder sb = new StringBuilder();
-			for (String curProp : ConfigProvider.getConfig().getPropertyNames()) {
+			TreeMap<String, String> configMap = new TreeMap<>();
+			
+			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
 				String value;
 				try {
 					value = ConfigProvider.getConfig().getValue(curProp, String.class);
 				} catch(NoSuchElementException e) {
 					value = "";
 				}
+				configMap.put(curProp, value);
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			for (String curProp : configMap.keySet()) {
+				
 				sb.append('\t');
 				sb.append(curProp);
 				sb.append('=');
-				sb.append(value);
+				sb.append(configMap.get(curProp));
 				sb.append(System.lineSeparator());
 			}
 			log.debug("Configuration: \n{}", sb);

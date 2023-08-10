@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
@@ -31,6 +32,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder(builderClassName = "Builder")
+@BsonDiscriminator
 public class User extends InteractingEntity {
 	
 	@NonNull
@@ -39,14 +41,14 @@ public class User extends InteractingEntity {
 	@Size(max = 30)
 	private String name;
 	
-	@NonNull
-	@NotNull
-	@NotBlank
-	@Size(max = 30)
+//	@NonNull
+//	@NotNull
+//	@NotBlank
+//	@Size(max = 30)
 	private String username;
 	
-	@NonNull
-	@NotNull
+//	@NonNull
+//	@NotNull
 	@Email
 	private String email;
 	

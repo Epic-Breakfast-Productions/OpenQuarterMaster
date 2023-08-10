@@ -53,18 +53,110 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 - service needs the `mp.jwt.verify.publickey` set to the public key cert from the issuer of the jwt tokens
 - Tokens need to be provided with all claims listed above
 
-#### Setting up for Keycloak
+#### Setting up for Keycloak Realm
 
 1. Have a realm (in tests, called `apps`). Operate under this realm.
-2. Add a client. Client type should be `OpenId Connect`. Used for testing, id is `quartermaster`, with name "Open QuarterMaster"
+2. Add a client. Client type should be `OpenId Connect`. Used for testing, id is `quartermaster`, with name "Open
+   QuarterMaster"
 3. In tests, we used thee capability configs:
    ![img_2.png](img_2.png)
 3. Ensure Valid redirect URIs
-   4. URL's used for testing:
-      ![img_1.png](img_1.png)
-4. Ensure all roles added from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java under "roles"
+    4. URL's used for testing:
+       ![img_1.png](img_1.png)
+4. Ensure all roles added
+   from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java
+   under "roles"
 5. Setup mappers (Under Clients -> quartermaster-> clientScopes -> quartermaster-dedicated ): ![img.png](img.png)
-   1. A `client roles` mapper, with token claim name `groups`
+    1. A `client roles` mapper, with token claim name `groups`
+
+#### (New) Steps for setting up keycloak Realm
+
+- https://www.baeldung.com/keycloak-user-registration
+
+1. Comment out references to existing realm in main `application.yaml`
+2. Remove existing users
+3. Ensure all roles added
+   from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java
+   added under "Realm Roles"
+4. Add Groups:
+    5.
+3. Adjust until all settings are appropriate:
+    1. Realm Settings -> General
+        1. Realm ID changed to `oqm`
+        2. Display name and HTML Display name set to `Open QuarterMaster`
+        2. User-managed access turned on
+    3. Realm Settings -> Login
+        4. Turn on:
+            - User Registration
+            - Forgot Password
+            - Remember Me
+            - Email as Username
+            - Edit Username
+    2. Clients -> `quarkus-app` -> Settings
+        1. Client ID set to `oqm-app`
+        2. Name set to `Open QuarterMaster App`
+        3. TODO:: themes
+    4.
+    3. Realm Settings -> User Registration
+        1. Set default group
+
+
+1. Enter Keycloak Admin Console
+2. Under realm dropdown, hit "Create Realm". Name it `oqm`.
+3. Realm Settings -> General
+    1. Realm ID changed to `oqm`
+    2. Display name and HTML Display name set to `Open QuarterMaster`
+    3. User-managed access turned on
+    4. Hit "Save"
+4. Realm Settings -> Login. Turn on:
+    - User Registration
+    - Forgot Password
+    - Remember Me
+    - Email as Username?
+    - Edit Username
+5. Authentication -> Policies -> Password Policy. Add the following policies:
+    - Minimum Length of 8
+    - Not username
+    - Not email
+    - Special chars
+    - Uppercase letters
+    - Lowercase letters
+    - Digits
+5. Create Client
+    1. Clients -> Create Client
+    2. Client id: `oqm-app`
+    3. Name: `Open QuarterMaster App`
+    4. Always display in UI
+    5. Client authentication on
+    6. "Standard flow", "Direct access grants", "Implicit flow", and "Service Account Roles" all on
+    7. Valid redirect URIs: `*`
+    8. Valid post logout redirect URIs: `+`
+    9. Create
+6. Add all roles
+   from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java
+   - `inventoryAdmin` -> `Role to enable inventory administration. Can import/export inventory data.`
+   - `inventoryView` -> `Role to enable viewing inventory.`
+   - `inventoryEdit` -> `Role to enable editing inventory.`
+   - `itemCheckout` -> `Role to enable checking out (and back in) items.`
+7. Add groups with roles:
+   - `users`
+       - `inventoryView`
+       - `inventoryEdit`
+       - `itemCheckout`
+   - `admins` as child group of `users`
+       - `inventoryAdmin`
+8. Realm Settings -> User Registration -> Default Groups
+   1. Add `admins` to default group
+2. Clients -> oqm-app -> Settings -> Logout Settings. Turn off "Front Channel Logout"
+
+
+	quarkus.oidc.application-type=hybrid
+	quarkus.oidc.auth-server-url=http://localhost:32803/realms/quarkus
+	quarkus.oidc.client-id=quarkus-app
+	quarkus.oidc.credentials.secret=secret
+	quarkus.oidc.logout.path=/api/v1/auth/logout
+	quarkus.oidc.logout.post-logout-path=/
+	quarkus.oidc.token-state-manager.split-tokens=true
 
 ## User Roles
 

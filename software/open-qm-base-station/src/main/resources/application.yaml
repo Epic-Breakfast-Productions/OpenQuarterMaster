@@ -8,6 +8,8 @@ service:
   authMode: SELF # SELF or EXTERNAL
   # Not used if authMode = SELF
   # TODO:: move data that doesn't need to be here
+  auth:
+    userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
   externalAuth:
     name: Keycloak
     url: http://localhost:49185
@@ -175,8 +177,9 @@ quarkus:
     type-check-excludes:
       - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
   oidc:
-    client-id: oqm-app
     application-type: hybrid
+    token-state-manager:
+      split-tokens: true
     logout:
       path: /api/v1/auth/logout
       post-logout-path: /
@@ -226,6 +229,10 @@ smallrye:
         certificate:
           files: ../../../../dev/devTest-cert-cert.pem
           key-files: ../../../../dev/devTest-cert-key.pem
+    oidc:
+      client-id: oqm-app
+      credentials:
+        secret: "secret"
     keycloak:
       devservices:
         # Required to export realm
