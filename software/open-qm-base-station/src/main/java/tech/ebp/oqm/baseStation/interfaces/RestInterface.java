@@ -52,10 +52,11 @@ public abstract class RestInterface {
 			return Optional.empty();
 		} else {
 			log.info(
-				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {}",
+				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} jwt: {}",
 				this.getSecurityContext().getUserPrincipal().getName(),
 				this.getSecurityContext().isSecure(),
-				jwt.getIssuer()
+				jwt.getIssuer(),
+				jwt.getRawToken()
 			);
 			if (this.getSecurityContext().isSecure()) {
 				log.warn("Request with JWT made without HTTPS");

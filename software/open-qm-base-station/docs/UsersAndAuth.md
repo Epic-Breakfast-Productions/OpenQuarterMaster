@@ -148,6 +148,8 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 8. Realm Settings -> User Registration -> Default Groups
    1. Add `admins` to default group
 2. Clients -> oqm-app -> Settings -> Logout Settings. Turn off "Front Channel Logout"
+2. Clients -> oqm-app -> Client Scopes, set `microprofile-jwt` to "default"
+3. Client Scopes -> Set `microprofile-jwt` to "default"
 
 
 	quarkus.oidc.application-type=hybrid

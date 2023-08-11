@@ -48,6 +48,7 @@ public class OverviewUi extends UiProvider {
 	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, span, this.getInteractingEntity())
+				.data("userJwt", this.getJwt().getRawToken())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())
 				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
