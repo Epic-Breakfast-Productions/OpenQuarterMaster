@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
@@ -20,5 +21,11 @@ public class GeneralService extends ExternalService {
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.SERVICE_GENERAL;
+	}
+	
+	@Override
+	public boolean updateFrom(JsonWebToken jwt) {
+		//TODO
+		return false;
 	}
 }

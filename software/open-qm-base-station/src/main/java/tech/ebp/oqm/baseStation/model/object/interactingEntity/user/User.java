@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
@@ -18,6 +19,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import tech.ebp.oqm.baseStation.service.JwtUtils;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -85,5 +88,28 @@ public class User extends InteractingEntity {
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.USER;
+	}
+	
+	@Override
+	public boolean updateFrom(JsonWebToken jwt) {
+		boolean updated = false;
+		if(!this.getEmail().equals(JwtUtils.getEmail(jwt))){
+			this.setEmail(JwtUtils.getEmail(jwt));
+			updated = true;
+		}
+		if(!this.getName().equals(JwtUtils.getName(jwt))){
+			this.setName(JwtUtils.getName(jwt));
+			updated = true;
+		}
+		if(!this.getUsername().equals(JwtUtils.getUserName(jwt))){
+			this.setName(JwtUtils.getName(jwt));
+			updated = true;
+		}
+		if(!this.getRoles().equals(JwtUtils.getRoles(jwt))){
+			this.setRoles(JwtUtils.getRoles(jwt));
+			updated = true;
+		}
+		
+		return updated;
 	}
 }

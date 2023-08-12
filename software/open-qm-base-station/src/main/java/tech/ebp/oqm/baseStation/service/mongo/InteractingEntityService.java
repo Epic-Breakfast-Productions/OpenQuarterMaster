@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claims;
@@ -29,12 +30,13 @@ import java.util.Set;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+@Slf4j
 @Named("InteractingEntityService")
 @ApplicationScoped
-public class InteractingEntityService extends MongoHistoriedObjectService<InteractingEntity, InteractingEntitySearch> {
+public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch> {
 	
 	InteractingEntityService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null);
 	}
 	
 	@Inject
@@ -48,8 +50,7 @@ public class InteractingEntityService extends MongoHistoriedObjectService<Intera
 			objectMapper,
 			mongoClient,
 			database,
-			InteractingEntity.class,
-			false
+			InteractingEntity.class
 		);
 	}
 	
@@ -71,34 +72,24 @@ public class InteractingEntityService extends MongoHistoriedObjectService<Intera
 	@WithSpan
 	public InteractingEntity getEntity(JsonWebToken jwt) {
 		String authProvider = jwt.getIssuer();
-		String idFromAuthProvider = jwt.getSubject();// jwt.getClaim(Claims.sub);
-		String email = jwt.getClaim(Claims.email);
-		String name = jwt.getName();
-		String userName = jwt.getClaim(Claims.preferred_username);
-		Set<String> groups = jwt.getGroups();
-		
+		String idFromAuthProvider = jwt.getSubject();
 		
 		InteractingEntity entity = null;
 		Optional<InteractingEntity> returningEntityOp = this.getEntity(authProvider, idFromAuthProvider);
 		if(returningEntityOp.isEmpty()){
-			//TODO:: 361 determine if service account or not
-			
-			entity = new User(
-				name,
-				userName,
-				email,
-				new NotificationSettings(),
-				groups
-			);
-			entity.setAuthProvider(authProvider);
-			entity.setIdFromAuthProvider(idFromAuthProvider);
-			
-			this.add(entity, entity);
+			log.info("New entity interacting with system.");
+			entity = InteractingEntity.createEntity(jwt);
 		} else {
+			log.info("Returning entity interacting with system.");
 			entity = returningEntityOp.get();
 		}
 		
-		//TODO:: 361 update entity details
+		if(entity.getId() == null){
+			this.add(entity);
+		} else if (entity.updateFrom(jwt)) {
+			this.update(entity);
+			log.info("Entity has been updated.");
+		}
 		
 		return entity;
 	}

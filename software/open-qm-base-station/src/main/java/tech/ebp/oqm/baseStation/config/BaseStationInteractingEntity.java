@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.config;
 
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 
@@ -40,5 +41,10 @@ public class BaseStationInteractingEntity extends InteractingEntity {
 	@Override
 	public Set<String> getRoles() {
 		return new HashSet<>(){{add("Yes");}};
+	}
+	
+	@Override
+	public boolean updateFrom(JsonWebToken jwt) {
+		return false;
 	}
 }

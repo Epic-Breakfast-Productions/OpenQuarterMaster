@@ -181,7 +181,7 @@ quarkus:
     token-state-manager:
       split-tokens: true
     logout:
-      path: /api/v1/auth/logout
+      path: /logout
       post-logout-path: /
   keycloak:
   oidc-client:
@@ -232,7 +232,7 @@ smallrye:
     oidc:
       client-id: oqm-app
       credentials:
-        secret: "secret"
+        secret: "**********"
     keycloak:
       devservices:
         # Required to export realm

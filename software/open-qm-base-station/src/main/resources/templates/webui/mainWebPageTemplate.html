@@ -253,7 +253,7 @@ Ingests:
 					</a>
 					{/if}
 					<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#" id="logoutButton">
+						<a class="dropdown-item" href="{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout
 						</a>
 					</div>
@@ -410,7 +410,6 @@ Ingests:
 <script src="/res/js/pageMessages.js"></script>
 <script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
-<script src="/res/js/login.js"></script>
 <script src="/res/js/timeHelpers.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>

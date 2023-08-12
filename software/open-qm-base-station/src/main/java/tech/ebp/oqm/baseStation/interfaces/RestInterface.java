@@ -52,17 +52,18 @@ public abstract class RestInterface {
 			return Optional.empty();
 		} else {
 			log.info(
-				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} jwt: {}",
+				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
 				this.getSecurityContext().getUserPrincipal().getName(),
 				this.getSecurityContext().isSecure(),
 				jwt.getIssuer(),
-				jwt.getRawToken()
+				jwt.getGroups()
 			);
 			if (this.getSecurityContext().isSecure()) {
 				log.warn("Request with JWT made without HTTPS");
 			}
 			
 			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getJwt());
+			
 			return Optional.of(this.interactingEntity);
 		}
 	}

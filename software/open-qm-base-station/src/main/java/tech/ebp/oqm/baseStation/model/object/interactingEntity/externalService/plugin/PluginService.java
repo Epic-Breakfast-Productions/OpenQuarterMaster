@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
@@ -44,6 +45,12 @@ public class PluginService extends ExternalService {
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.SERVICE_PLUGIN;
+	}
+	
+	@Override
+	public boolean updateFrom(JsonWebToken jwt) {
+		//TODO
+		return false;
 	}
 	
 	@Override

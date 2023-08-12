@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
@@ -16,6 +18,8 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import tech.ebp.oqm.baseStation.service.JwtUtils;
+
 import java.util.Set;
 
 
@@ -52,4 +56,26 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	public abstract InteractingEntityType getInteractingEntityType();
 	
 	public abstract Set<String> getRoles();
+	
+	public abstract boolean updateFrom(JsonWebToken jwt);
+	
+	public static InteractingEntity createEntity(JsonWebToken jwt){
+		InteractingEntity newEntity;
+		//TODO:: support services
+		
+		{
+			User newUser = new User();
+			newEntity = newUser;
+			newUser.setEmail(JwtUtils.getEmail(jwt));
+			newUser.setName(JwtUtils.getName(jwt));
+			newUser.setUsername(JwtUtils.getUserName(jwt));
+			newUser.setRoles(JwtUtils.getRoles(jwt));
+		}
+		newEntity.setAuthProvider(jwt.getIssuer());
+		newEntity.setIdFromAuthProvider(jwt.getSubject());
+		
+		
+		return newEntity;
+	}
+	
 }
