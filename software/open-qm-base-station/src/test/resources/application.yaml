@@ -31,6 +31,18 @@ quarkus:
     info-title: Open QuarterMaster Base Station API (TEST)
   mailer:
     mock: true
+  oidc:
+    client-id: oqm-app
+    credentials:
+      secret: "**********"
+  keycloak:
+    admin-client:
+      username: admin
+      password: admin
+    devservices:
+      realm-path: "../../../../dev/oqm-realm.json"
+      realm-name: "oqm"
+      show-logs: true
     
 mp:
   jwt:
@@ -53,32 +65,8 @@ test:
   keycloak:
     url: " "
     authUrl: " "
-    adminName: " "
-    adminPass: " "
-
-"%externalAuth":
-  test:
-    profile: externalAuth
-    keycloak:
-      # These values populated by `TestResourceLifecycleManager`
-      url: " "
-      authUrl: " "
-      adminName: " "
-      adminPass: " "
-  service:
-    authMode: EXTERNAL
-    externalAuth:
-      name: Test Keycloak
-      realm: apps
-      clientId: quartermaster
-      clientSecret: 12abaab8-0b4f-4ccb-a068-668764593c06
-      scope: openid
-  mp:
-    jwt:
-      verify:
-        privatekey:
-          location:
-        issuer: ${service.externalAuth.realmBase:}
+    adminName: "admin"
+    adminPass: "admin"
         
 "%quickExpiryCheck":
   service:

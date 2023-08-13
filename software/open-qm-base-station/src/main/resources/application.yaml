@@ -191,9 +191,7 @@ mp:
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
-    token:
-      header: Cookie
-      cookie: jwt
+
 #  messaging:
 #    outgoing:
 #      items.add:
@@ -236,7 +234,6 @@ smallrye:
         start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
-        show-logs: true
     arc:
       fail-on-intercepted-private-method: false # TODO:: remove
   mp:
