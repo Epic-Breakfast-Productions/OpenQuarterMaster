@@ -19,13 +19,13 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -44,7 +44,8 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		BaseStationInteractingEntity baseStationInteractingEntityArc
 	) {
 		super(
 			objectMapper,
@@ -52,6 +53,19 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 			database,
 			InteractingEntity.class
 		);
+		//force getting around Arc subclassing out the injected class
+		BaseStationInteractingEntity baseStationInteractingEntity = new BaseStationInteractingEntity(
+			baseStationInteractingEntityArc.getEmail()
+		);
+		//ensure we have the base station in the db
+		try{
+			this.get(baseStationInteractingEntity.getId());
+			this.update(baseStationInteractingEntity);
+			log.info("Updated base station interacting entity entry.");
+		} catch(DbNotFoundException e){
+			this.add(baseStationInteractingEntity);
+			log.info("Added base station interacting entity entry.");
+		}
 	}
 	
 	private Optional<InteractingEntity> getEntity(String authProvider, String idFromAuthProvider) {

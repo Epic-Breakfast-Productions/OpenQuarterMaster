@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
@@ -35,7 +33,6 @@ import tech.ebp.oqm.baseStation.model.object.history.events.user.UserDisabledEve
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserEnabledEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;

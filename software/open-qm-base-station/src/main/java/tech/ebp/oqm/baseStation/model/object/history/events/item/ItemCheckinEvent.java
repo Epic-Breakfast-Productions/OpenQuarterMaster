@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
@@ -21,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 //@SuperBuilder
+@BsonDiscriminator
 public class ItemCheckinEvent extends ObjectHistoryEvent {
 	
 	public ItemCheckinEvent(ObjectId objectId, InteractingEntity entity) {

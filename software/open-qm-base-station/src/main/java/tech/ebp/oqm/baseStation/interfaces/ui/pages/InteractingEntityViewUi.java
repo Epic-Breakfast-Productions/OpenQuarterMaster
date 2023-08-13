@@ -49,11 +49,10 @@ public class InteractingEntityViewUi extends UiProvider {
 	Span span;
 	
 	@GET
-	@Path("entityView/{type}/{id}")
+	@Path("entityView/{id}")
 	@RolesAllowed("user")
 	@Produces(MediaType.TEXT_HTML)
 	public Response extEntityView(
-		@PathParam("type") InteractingEntityType entityType,
 		@PathParam("id") String entityId
 	) {
 		InteractingEntity entity = this.getInteractingEntityService().get(entityId);
