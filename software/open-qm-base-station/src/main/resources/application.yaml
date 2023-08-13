@@ -5,26 +5,9 @@ service:
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-  authMode: SELF # SELF or EXTERNAL
-  # Not used if authMode = SELF
   # TODO:: move data that doesn't need to be here
   auth:
     userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
-  externalAuth:
-    name: Keycloak
-    url: http://localhost:49185
-    realm: apps
-    clientId: quartermaster
-    clientSecret: secret
-    scope: openid
-    realmBasePath: /realms/${service.externalAuth.realm:}
-    realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
-    interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
-    interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
-    tokenPath: ${service.externalAuth.interactionBasePath:}/token
-    tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackPath: /api/v1/auth/user/callback
-    callbackUrl: ${runningInfo.baseUrl}${service.externalAuth.callbackPath:}
   runBy:
     name: " "
     email: " "

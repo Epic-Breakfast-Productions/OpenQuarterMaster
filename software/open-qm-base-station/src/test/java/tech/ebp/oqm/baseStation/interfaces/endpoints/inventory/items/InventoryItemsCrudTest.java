@@ -119,7 +119,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@ParameterizedTest
 	@MethodSource("getSimpleAmountItems")
 	public void testCreateSimpleAmountItem(SimpleAmountItem item) throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		
 		ObjectId returned = create(user, item);
 		
@@ -135,7 +135,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateListAmountItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
@@ -151,7 +151,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -169,7 +169,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testUpdateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -182,7 +182,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testAddFromCsv() throws IOException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		
 		String csvData = this.itemsCsv.render();
 		

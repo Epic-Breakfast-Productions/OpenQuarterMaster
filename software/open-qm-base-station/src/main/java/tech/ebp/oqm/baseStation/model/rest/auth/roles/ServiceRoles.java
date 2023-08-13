@@ -11,7 +11,6 @@ public class ServiceRoles {
 	public static List<String> SERVICE_ROLES = List.of(
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.EXT_SERVICE,
 		
-		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.EXT_SERVICE_ADMIN,
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.INVENTORY_ADMIN,
 		
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.INVENTORY_VIEW,
@@ -29,7 +28,6 @@ public class ServiceRoles {
 	
 	
 	public static final List<String> SELECTABLE_ROLES = List.of(
-		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.EXT_SERVICE_ADMIN,
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.INVENTORY_ADMIN,
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.INVENTORY_VIEW,
 		tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles.INVENTORY_EDIT,

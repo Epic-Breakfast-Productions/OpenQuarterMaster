@@ -12,11 +12,6 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
-import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.UserRoles;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -48,37 +43,35 @@ public class UserAdminUi extends UiProvider {
 	@Inject
 	Span span;
 	
-	@ConfigProperty(name = "service.authMode")
-	AuthMode authMode;
-	
-	@GET
-	@Path("userAdmin")
-	@RolesAllowed(Roles.USER_ADMIN)
-	@Produces(MediaType.TEXT_HTML)
-	public Response admin() throws URISyntaxException {
-		if (this.authMode != AuthMode.SELF) {
-			return Response.seeOther(new URI("/")).build();
-		}
-		
-		InteractingEntitySearch search = new InteractingEntitySearch();
-		SearchResult<InteractingEntity> userResults = this.getInteractingEntityService().search(search, true);
-		
-		search.getPagingOptions(true);
-		PagingCalculations pagingCalculations = new PagingCalculations(userResults);
-		
-		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(userAdminTemplate, span, this.getInteractingEntity())
-				.data("showSearch", false)
-				.data("searchResults", userResults)
-				.data("pagingCalculations", pagingCalculations)
-				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES_DESC_MAP)
-				.data("searchObject", search)
-				.data("historySearchObject", new HistorySearch())
-			,
-			MediaType.TEXT_HTML_TYPE
-		);
-		
-		return responseBuilder.build();
-	}
+	//TODO:: 361 instead, user search
+//	@GET
+//	@Path("userAdmin")
+//	@RolesAllowed(Roles.USER_ADMIN)
+//	@Produces(MediaType.TEXT_HTML)
+//	public Response admin() throws URISyntaxException {
+//		if (this.authMode != AuthMode.SELF) {
+//			return Response.seeOther(new URI("/")).build();
+//		}
+//
+//		InteractingEntitySearch search = new InteractingEntitySearch();
+//		SearchResult<InteractingEntity> userResults = this.getInteractingEntityService().search(search, true);
+//
+//		search.getPagingOptions(true);
+//		PagingCalculations pagingCalculations = new PagingCalculations(userResults);
+//
+//		Response.ResponseBuilder responseBuilder = Response.ok(
+//			this.setupPageTemplate(userAdminTemplate, span, this.getInteractingEntity())
+//				.data("showSearch", false)
+//				.data("searchResults", userResults)
+//				.data("pagingCalculations", pagingCalculations)
+//				.data("selectableRolesMap", UserRoles.SELECTABLE_ROLES_DESC_MAP)
+//				.data("searchObject", search)
+//				.data("historySearchObject", new HistorySearch())
+//			,
+//			MediaType.TEXT_HTML_TYPE
+//		);
+//
+//		return responseBuilder.build();
+//	}
 	
 }

@@ -1,8 +1,11 @@
 package tech.ebp.oqm.baseStation.model.rest.auth.roles;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Roles that define what entities are allowed to do in OpenQuarterMaster.
@@ -21,14 +24,12 @@ public final class Roles {
 	/*
 		Admin Roles
 	 */
-	public static final String USER_ADMIN = "userAdmin";
-	public static final String USER_ADMIN_DESCRIPTION = "Role to enable user administration. Can enable/disable users, and " +
-														"control their roles.";
 	
-	public static final String EXT_SERVICE_ADMIN = "extServiceAdmin";
-	public static final String EXT_SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable services, and " +
-															   "control their roles. For plugins, can enable/disable individual plugin " +
-															   "entries.";
+	//This will probably change to "pluginAdmin"
+//	public static final String EXT_SERVICE_ADMIN = "extServiceAdmin";
+//	public static final String EXT_SERVICE_ADMIN_DESCRIPTION = "Role to enable service administration. Can enable/disable services, and " +
+//															   "control their roles. For plugins, can enable/disable individual plugin " +
+//															   "entries.";
 	
 	public static final String INVENTORY_ADMIN = "inventoryAdmin";
 	public static final String INVENTORY_ADMIN_DESCRIPTION = "Role to enable inventory administration. Can import/export inventory data.";
@@ -52,8 +53,7 @@ public final class Roles {
 		this.put(USER, USER_DESCRIPTION);
 		this.put(EXT_SERVICE, EXT_SERVICE_DESCRIPTION);
 		
-		this.put(USER_ADMIN, USER_ADMIN_DESCRIPTION);
-		this.put(EXT_SERVICE_ADMIN, EXT_SERVICE_ADMIN_DESCRIPTION);
+//		this.put(EXT_SERVICE_ADMIN, EXT_SERVICE_ADMIN_DESCRIPTION);
 		this.put(INVENTORY_ADMIN, INVENTORY_ADMIN_DESCRIPTION);
 		
 		this.put(INVENTORY_VIEW, INVENTORY_VIEW_DESCRIPTION);
@@ -61,4 +61,12 @@ public final class Roles {
 		this.put(INVENTORY_CHECKOUT, INVENTORY_CHECKOUT_DESCRIPTION);
 	}});
 	
+	public static final Set<String> ALL_ROLES = Collections.unmodifiableSet(ROLE_DESCRIPTION_MAP.keySet());
+	
+	public static final Set<String> ADMIN_ROLES = Set.of(INVENTORY_ADMIN);
+	public static final Set<String> NON_ADMIN_ROLES = Collections.unmodifiableSet(
+		ALL_ROLES.stream()
+			.filter((String role )->!ADMIN_ROLES.contains(role))
+			.collect(Collectors.toSet())
+	);
 }

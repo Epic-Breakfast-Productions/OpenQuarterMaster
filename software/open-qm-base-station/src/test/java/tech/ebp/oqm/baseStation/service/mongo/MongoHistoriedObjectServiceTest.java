@@ -38,7 +38,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testAdd(){
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		
 		ObjectId objectId = this.testMongoService.add(

@@ -6,10 +6,8 @@ import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.model.validation.validators.PasswordConstraintValidator;
 
 import jakarta.annotation.security.PermitAll;
@@ -47,16 +45,6 @@ public class IndexUi extends UiProvider {
 	
 	@Inject
 	Span span;
-	
-	@ConfigProperty(name = "service.authMode")
-	AuthMode authMode;
-	
-	@ConfigProperty(name = "service.externalAuth.interactionBase", defaultValue = "")
-	String externInteractionBase;
-	@ConfigProperty(name = "service.externalAuth.clientId", defaultValue = "")
-	String externInteractionClientId;
-	@ConfigProperty(name = "service.externalAuth.callbackPath", defaultValue = "")
-	String externInteractionCallbackPath;
 	
 	@GET
 	@PermitAll

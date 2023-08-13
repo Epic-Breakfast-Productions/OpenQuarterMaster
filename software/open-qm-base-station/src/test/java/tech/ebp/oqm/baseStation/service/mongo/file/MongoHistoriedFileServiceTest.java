@@ -51,7 +51,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testAddFile() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		assertEquals(0, this.testMongoService.count());
 		
@@ -76,7 +76,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetFileObject() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
@@ -92,7 +92,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetFileObjectNotFound() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
@@ -107,7 +107,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetLatestMetadataOneRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		FileMetadata expected = new FileMetadata(this.testFileOne);
@@ -132,7 +132,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetLatestMetadataTwoRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		FileMetadata expected = new FileMetadata(this.testFileTwo);
@@ -164,7 +164,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetLatestMetadataNotFound() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
@@ -179,7 +179,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetLatestFileOneRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
@@ -196,7 +196,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetLatestFileTwoRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		
@@ -219,7 +219,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetRevisionsOneRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		FileMetadata expected = new FileMetadata(this.testFileOne);
@@ -247,7 +247,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testGetRevisionsTwoRev() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		FileMetadata expectedOne = new FileMetadata(this.testFileOne);
@@ -286,7 +286,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testFileWithNoExt() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser();
 		
 		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
 		

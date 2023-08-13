@@ -65,7 +65,7 @@ public class PageLookOverTest extends WebUiTest {
 	@ParameterizedTest
 	@MethodSource("getPages")
 	public void testPages(boolean loggedIn, String endpoint, String expectedTitle) {
-		User testUser = this.testUserService.getTestUser(true, true);
+		User testUser = this.testUserService.getTestUser();
 		
 		if(loggedIn){
 			this.webDriverWrapper.loginUser(testUser);

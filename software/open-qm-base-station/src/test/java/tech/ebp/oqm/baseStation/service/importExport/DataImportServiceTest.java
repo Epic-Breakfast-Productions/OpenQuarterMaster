@@ -95,7 +95,7 @@ class DataImportServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testImportService() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser(true);
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor

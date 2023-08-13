@@ -15,7 +15,6 @@ import tech.ebp.oqm.baseStation.testResources.ui.assertions.UserRelated;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.General;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.KeycloakLogin;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.Root;
-import tech.ebp.oqm.baseStation.utils.AuthMode;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import java.time.Duration;
@@ -30,7 +29,6 @@ public class WebDriverWrapper {
 	private final int defaultWait = ConfigProvider.getConfig().getValue("test.selenium.defaultWait", Integer.class);
 	private final String baseUrl = ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class);
 	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("service.externalAuth.interactionBase", String.class);
-	private final AuthMode authMode = ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class);
 	
 	public WebDriverWrapper(){
 		this.webDriver = TestResourceLifecycleManager.getWebDriver();
@@ -50,13 +48,11 @@ public class WebDriverWrapper {
 		if(isLoggedIn()) {
 			this.logoutUser();
 		}
-		if (AuthMode.EXTERNAL.equals(this.authMode)) {
-			String logoutUrl = this.keycloakInteractionBase + "/logout";
-			log.info("Logging out of Keycloak at: {}", logoutUrl);
-			driver.manage().deleteAllCookies();
-			driver.get(logoutUrl);
-			driver.manage().deleteAllCookies();
-		}
+		String logoutUrl = this.keycloakInteractionBase + "/logout";
+		log.info("Logging out of Keycloak at: {}", logoutUrl);
+		driver.manage().deleteAllCookies();
+		driver.get(logoutUrl);
+		
 		driver.manage().deleteAllCookies();
 		this.goToIndex();
 		driver.manage().deleteAllCookies();
@@ -118,26 +114,16 @@ public class WebDriverWrapper {
 		
 		this.waitForPageLoad();
 		
-		if (AuthMode.EXTERNAL.equals(this.authMode)) {
-			log.info("Logging in via external means.");
-			this.getWebDriver().findElement(Root.LOGIN_WITH_EXTERNAL_LINK).click();
-			
-			log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
-			
-			this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
-			this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
-			
-			this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
-		} else {
-			log.info("Logging in via self.");
-			this.getWebDriver().findElement(Root.EMAIL_USERNAME_INPUT).sendKeys(testUser.getUsername());
-			this.getWebDriver()
-				.findElement(Root.PASSWORD_INPUT)
-				.sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
-			log.info("Entered user's credentials.");
-			this.getWebDriver().findElement(Root.SIGN_IN_BUTTON).click();
-			log.info("Clicked the sign in button.");
-		}
+		log.info("Logging in via external means.");
+		this.getWebDriver().findElement(Root.CONTINUE_LINK).click();
+		
+		log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
+		
+		this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+		this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+		
+		this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
+		
 		this.waitForPageLoad();
 		//TODO:: log page messages
 		

@@ -17,24 +17,17 @@ import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import tech.ebp.oqm.baseStation.service.PasswordService;
-import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
 import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.eclipse.microprofile.jwt.Claims.iss;
-import static tech.ebp.oqm.baseStation.testResources.lifecycleManagers.Utils.HOST_TESTCONTAINERS_INTERNAL;
-import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
-import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
 
 /**
  *
@@ -50,8 +43,6 @@ public class TestUserService {
 	
 	private final MongoTestConnector mongoTestConnector = new MongoTestConnector();
 	private final PasswordService passwordService = new PasswordService();
-	
-	private final AuthMode authMode = ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class);
 	
 	private final String keycloakAdminName = ConfigProvider.getConfig().getValue("quarkus.keycloak.admin-client.username", String.class);
 	private final String keycloakAdminPass = ConfigProvider.getConfig().getValue("quarkus.keycloak.admin-client.password", String.class);
@@ -174,17 +165,42 @@ public class TestUserService {
 		
 	}
 	
-	public User getTestUser(String ... roles) {
+	private String getTestUserTokenKeycloak(User testUser) {
+		try (
+			Keycloak keycloak = KeycloakBuilder.builder()
+									.serverUrl(this.keycloakUrl)
+									.realm(this.keycloakRealm)
+									.clientId(this.keycloakClientId)
+									.clientSecret(this.keycloakClientSecret)
+									.grantType(OAuth2Constants.PASSWORD)
+									.username(testUser.getUsername())
+									.password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
+									.build()
+		) {
+			keycloak.realms();
+			
+			AccessTokenResponse response = keycloak
+											   .tokenManager()
+											   .getAccessToken();
+			
+			log.info("Get user token response: {}", response.getSessionState());
+			
+			String token = response.getToken();
+			log.info("Test user's token: {}", token);
+			return token;
+		} catch(Exception e) {
+			log.error("FAILED to get token for user: ", e);
+			throw e;
+		}
+	}
+	
+	public User getTestUser(Set<String> roles) {
 		User.Builder builder = User.builder();
 		
 		builder.username(FAKER.name().username());
 		builder.email(FAKER.internet().emailAddress());
 		builder.name(FAKER.name().fullName());
-		builder.roles(new HashSet<>() {{
-			for(String role : roles){
-				add(role);
-			}
-		}});
+		builder.roles(roles);
 		User testUser = builder.build();
 		
 		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
@@ -195,33 +211,21 @@ public class TestUserService {
 		return testUser;
 	}
 	
-	private String getTestUserTokenKeycloak(User testUser) {
-		try (
-			Keycloak keycloak = KeycloakBuilder.builder()
-											   .serverUrl(this.keycloakUrl)
-											   .realm(this.keycloakRealm)
-											   .clientId(this.keycloakClientId)
-											   .clientSecret(this.keycloakClientSecret)
-											   .grantType(OAuth2Constants.PASSWORD)
-											   .username(testUser.getUsername())
-											   .password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
-											   .build()
-		) {
-			keycloak.realms();
-
-			AccessTokenResponse response = keycloak
-											   .tokenManager()
-											   .getAccessToken();
-
-			log.info("Get user token response: {}", response.getSessionState());
-
-			String token = response.getToken();
-			log.info("Test user's token: {}", token);
-			return token;
-		} catch(Exception e) {
-			log.error("FAILED to get token for user: ", e);
-			throw e;
-		}
+	public User getTestUser(String ... roles) {
+		return this.getTestUser(Set.of(roles));
 	}
 	
+	public User getTestUser(boolean admin) {
+		Set<String> roles = new HashSet<>(Roles.NON_ADMIN_ROLES);
+		
+		if(admin){
+			roles.addAll(Roles.ADMIN_ROLES);
+		}
+		
+		return this.getTestUser(roles);
+	}
+	
+	public User getTestUser(){
+		return this.getTestUser(true);
+	}
 }
