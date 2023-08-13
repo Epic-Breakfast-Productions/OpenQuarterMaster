@@ -183,9 +183,6 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: /
-  keycloak:
-  oidc-client:
-  
   
 mp:
   jwt:

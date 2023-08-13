@@ -4,45 +4,47 @@
 {/pageStyle}
 {#pageContent}
 {! TODO:: edit self !}
+<div class="row mb-3">
+	<div class="col">
+		<a href="{config:['service.auth.userSettingsUrl']}" target="_blank">{#icons/edit}{/icons/edit} Click here to manage your account</a>
+	</div>
+</div>
 <dl class="row">
   <dt class="col-sm-3 col-md-2">Username:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{user.getUsername()}</dd>
+  <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getUsername()}</dd>
   
   <dt class="col-sm-3 col-md-2">Name:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{user.getFirstName()} {user.getLastName()}</dd>
-  
-  <dt class="col-sm-3 col-md-2">Title:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{user.getTitle()}</dd>
+  <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getName()}</dd>
   
   <dt class="col-sm-3 col-md-2">Email:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{user.getEmail()}</dd>
+  <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getEmail()}</dd>
   
   <dt class="col-sm-3 col-md-2">Roles:</dt>
   <dd class="col-sm-9 col-md-10">
-        {#for curRole in user.getRoles()}
+        {#for curRole in userInfo.getRoles()}
             <span class="user-select-all badge bg-secondary">{curRole}</span>
         {/for}
   </dd>
   
-  <dt class="col-sm-3 col-md-2">Id:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{user.getId()}</dd>
+  <dt class="col-sm-3 col-md-2">OQM Id:</dt>
+  <dd class="col-sm-9 col-md-10 user-select-all"><span id="userOqmId">{userInfo.getId()}</span>{#copyTextButton textContainerId='userOqmId'}{/copyTextButton}</dd>
   
-  {#if !user.getExternIds().isEmpty()}
-  <dt class="col-sm-3 col-md-2">External Ids:</dt>
-  <dd class="col-sm-9 col-md-10">
-    <dl class="row">
-        {#for externalIdEntry in user.getExternIds().entrySet()}
-            <dt class="col-sm-4 user-select-all">{externalIdEntry.getKey()}</dt>
-            <dd class="col-sm-8 user-select-all">{externalIdEntry.getValue()}</dd>
-        {/for}
-    </dl>
-  </dd>
-  {/if}
-  {#if !user.getAttributes().isEmpty()}
+  {!{#if !user.getExternIds().isEmpty()}!}
+  {!<dt class="col-sm-3 col-md-2">External Ids:</dt>!}
+  {!<dd class="col-sm-9 col-md-10">!}
+    {!<dl class="row">!}
+        {!{#for externalIdEntry in user.getExternIds().entrySet()}!}
+            {!<dt class="col-sm-4 user-select-all">{externalIdEntry.getKey()}</dt>!}
+            {!<dd class="col-sm-8 user-select-all">{externalIdEntry.getValue()}</dd>!}
+        {!{/for}!}
+    {!</dl>!}
+  {!</dd>!}
+  {!{/if}!}
+  {#if !userInfo.getAttributes().isEmpty()}
   <dt class="col-sm-3 col-md-2">Attributes:</dt>
   <dd class="col-sm-9 col-md-10">
     <dl class="row">
-        {#for curAtt in user.getAttributes().entrySet()}
+        {#for curAtt in userInfo.getAttributes().entrySet()}
             <dt class="col-sm-4 user-select-all">{curAtt.getKey()}</dt>
             <dd class="col-sm-8 user-select-all">{curAtt.getValue()}</dd>
         {/for}
@@ -75,10 +77,12 @@
     </div>
 </div>
 <!-- TODO:: add checked out items -->
+<!-- TODO:: add item history search -->
+<!-- TODO:: add storage history search -->
 <hr />
 <div class="row">
     <div class="col">
-        {#objView/history/objHistoryView containerId='userHistory' objectUrl='/api/v1/user/' objectId=user.getId()}{/objView/history/objHistoryView}
+        {#objView/history/objHistoryView containerId='userHistory' objectUrl='/api/v1/user/' objectId=userInfo.getId()}{/objView/history/objHistoryView}
     </div>
 </div>
 

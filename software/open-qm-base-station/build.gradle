@@ -84,6 +84,7 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
 	testImplementation 'net.datafaker:datafaker:2.0.1'
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 
