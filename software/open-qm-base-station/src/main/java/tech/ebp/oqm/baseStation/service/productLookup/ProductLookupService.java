@@ -70,7 +70,6 @@ public class ProductLookupService {
 		this.legoSearchServices.add(rebrickableService);
 	}
 	
-	@WithSpan
 	private ExtItemLookupResults processRequestsList(Map<String, CompletableFuture<List<ExtItemLookupResult>>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
 		Map<String, String> errList = new HashMap<>();
@@ -99,7 +98,6 @@ public class ProductLookupService {
 								   .build();
 	}
 	
-	@WithSpan
 	private ExtItemLookupResults processRequestsSingle(Map<String, CompletableFuture<ExtItemLookupResult>> requests) {
 		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
 		Map<String, String> errList = new HashMap<>();

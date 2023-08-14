@@ -94,7 +94,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
-	@WithSpan
 	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents) {
 		if (!lowStockEvents.isEmpty()) {
 			for (ItemLowStockEvent event : lowStockEvents) {
@@ -133,12 +132,10 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
-	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
 		T toAdd,
-		@Valid
 		InteractingEntity entity
 	) {
 		this.get(item.getId());//ensure exists
@@ -183,7 +180,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
-	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
@@ -231,13 +227,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
-	@WithSpan
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
 		T toTransfer,
-		@NotNull
 		InteractingEntity entity
 	) {
 		this.get(item.getId());//ensure exists

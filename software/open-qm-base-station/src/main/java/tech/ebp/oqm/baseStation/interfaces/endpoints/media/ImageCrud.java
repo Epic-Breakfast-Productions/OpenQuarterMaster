@@ -440,7 +440,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 				   .build();
 	}
 	
-	@WithSpan
 	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);

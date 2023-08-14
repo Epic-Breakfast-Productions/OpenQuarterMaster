@@ -217,8 +217,6 @@ smallrye:
         start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
-    arc:
-      fail-on-intercepted-private-method: false # TODO:: remove
   mp:
     jwt:
       expiration:

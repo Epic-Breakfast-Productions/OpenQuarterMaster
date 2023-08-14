@@ -15,6 +15,7 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import tech.ebp.oqm.baseStation.service.PasswordService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
@@ -25,7 +26,9 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -150,15 +153,31 @@ public class TestUserService {
 			{
 				//                    UserRepresentation testUserRepresentation = testUserResource.toRepresentation();
 				//                    RoleRepresentation roleRepresentation =;
-
-				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
+				
+				
+				testUserResource.roles().realmLevel().add(
 					testUser.getRoles().stream().map((String role)->{
-						return clientResource.roles().list().stream()
-											 .filter(element->element.getName().equals(role))
-											 .collect(Collectors.toList())
-											 .get(0);
-					}).collect(Collectors.toList())
+						List<RoleRepresentation> representationList = realmResource.roles().list().stream()
+								   .filter(element->element.getName().equals(role))
+								   .collect(Collectors.toList());
+						
+						if(representationList.isEmpty()){
+							return null;
+						}
+						return representationList.get(0);
+					})
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList())
 				);
+				
+//				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
+//					testUser.getRoles().stream().map((String role)->{
+//						return clientResource.roles().list().stream()
+//											 .filter(element->element.getName().equals(role))
+//											 .collect(Collectors.toList())
+//											 .get(0);
+//					}).collect(Collectors.toList())
+//				);
 			}
 
 		}

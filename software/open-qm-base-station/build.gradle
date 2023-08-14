@@ -38,7 +38,6 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 //	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 //	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
-//	implementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
 
 	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
 	// https://quarkus.io/guides/logging

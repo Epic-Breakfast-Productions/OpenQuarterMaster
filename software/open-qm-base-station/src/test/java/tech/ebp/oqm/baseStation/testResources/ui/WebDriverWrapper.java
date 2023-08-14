@@ -28,7 +28,7 @@ public class WebDriverWrapper {
 	
 	private final int defaultWait = ConfigProvider.getConfig().getValue("test.selenium.defaultWait", Integer.class);
 	private final String baseUrl = ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class);
-	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("service.externalAuth.interactionBase", String.class);
+	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("quarkus.oidc.auth-server-url", String.class);
 	
 	public WebDriverWrapper(){
 		this.webDriver = TestResourceLifecycleManager.getWebDriver();
@@ -48,7 +48,8 @@ public class WebDriverWrapper {
 		if(isLoggedIn()) {
 			this.logoutUser();
 		}
-		String logoutUrl = this.keycloakInteractionBase + "/logout";
+		//http://auth-server/auth/realms/{realm-name}/protocol/openid-connect/logout?redirect_uri=encodedRedirectUri
+		String logoutUrl = this.keycloakInteractionBase + "/protocol/openid-connect/logout";
 		log.info("Logging out of Keycloak at: {}", logoutUrl);
 		driver.manage().deleteAllCookies();
 		driver.get(logoutUrl);

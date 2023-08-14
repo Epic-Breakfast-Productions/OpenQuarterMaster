@@ -40,9 +40,9 @@ quarkus:
       username: admin
       password: admin
     devservices:
-      realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
-      show-logs: true
+#      show-logs: true
     
 mp:
   jwt:
@@ -62,11 +62,6 @@ test:
   profile: test
   selenium:
     defaultWait: 10 # seconds
-  keycloak:
-    url: " "
-    authUrl: " "
-    adminName: "admin"
-    adminPass: "admin"
         
 "%quickExpiryCheck":
   service:

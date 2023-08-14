@@ -67,7 +67,6 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	@Location("printouts/storageBlockInvSheet/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
-	@WithSpan
 	private File getTempPdfFile(String name) throws IOException {
 		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
 		File tempDir = tempDirPath.toFile();
@@ -77,7 +76,6 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		return new File(tempDir, exportFileName);
 	}
 	
-	@WithSpan
 	private TemplateInstance getHtmlInventorySheet(
 		StorageBlock storageBlock,
 		StorageBlockSearch storageBlockSearch,
