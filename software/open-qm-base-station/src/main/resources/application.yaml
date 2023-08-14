@@ -199,7 +199,7 @@ smallrye:
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
-      connection-string: mongodb://localhost:27017
+#      connection-string: mongodb://localhost:27017
     http:
       port: 8080
       ssl-port: 8443
