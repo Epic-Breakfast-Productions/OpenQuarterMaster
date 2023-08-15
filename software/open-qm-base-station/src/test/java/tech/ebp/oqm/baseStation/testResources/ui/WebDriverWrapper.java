@@ -49,15 +49,16 @@ public class WebDriverWrapper {
 			this.logoutUser();
 		}
 		//http://auth-server/auth/realms/{realm-name}/protocol/openid-connect/logout?redirect_uri=encodedRedirectUri
-		String logoutUrl = this.keycloakInteractionBase + "/protocol/openid-connect/logout";
-		log.info("Logging out of Keycloak at: {}", logoutUrl);
-		driver.manage().deleteAllCookies();
-		driver.get(logoutUrl);
+//		String logoutUrl = this.keycloakInteractionBase + "/protocol/openid-connect/logout";
+//		log.info("Logging out of Keycloak at: {}", logoutUrl);
+//		driver.manage().deleteAllCookies();
+//		driver.get(logoutUrl);
 		
 		driver.manage().deleteAllCookies();
 		this.goToIndex();
 		driver.manage().deleteAllCookies();
 		driver.get("about:logo");
+		driver.manage().deleteAllCookies();
 		driver.navigate().refresh();
 		
 		log.info("Completed cleanup of webdriver wrapper.");

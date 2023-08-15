@@ -36,16 +36,13 @@ public class UserUi extends UiProvider {
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("you")
 	@RolesAllowed(Roles.USER)
 	@Produces(MediaType.TEXT_HTML)
 	public Response user() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity())
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("historySearchObject", new HistorySearch())

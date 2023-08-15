@@ -45,9 +45,6 @@ public class InteractingEntityViewUi extends UiProvider {
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("entityView/{id}")
 	@RolesAllowed("user")
@@ -58,7 +55,7 @@ public class InteractingEntityViewUi extends UiProvider {
 		InteractingEntity entity = this.getInteractingEntityService().get(entityId);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity())
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("entity", entity)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
@@ -79,7 +76,7 @@ public class InteractingEntityViewUi extends UiProvider {
 		@CookieParam("jwt_refresh") String refreshToken
 	) {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity())
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("entity", this.baseStationInteractingEntity)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())

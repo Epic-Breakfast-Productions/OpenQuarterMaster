@@ -51,9 +51,6 @@ public class ItemListsUi extends UiProvider {
 	@Inject
 	ItemCategoryService itemCategoryService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("itemLists")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -67,7 +64,6 @@ public class ItemListsUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					this.itemLists,
-					span,
 					this.getInteractingEntity(),
 					searchResults
 				)
@@ -92,7 +88,6 @@ public class ItemListsUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					this.itemList,
-					span,
 					this.getInteractingEntity()
 				)
 				.data("itemList", list)

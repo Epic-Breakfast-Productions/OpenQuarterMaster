@@ -50,9 +50,6 @@ public class CategoriesUi extends UiProvider {
 	@Inject
 	ItemCategoryService itemItemCategoryService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("categories")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -63,7 +60,7 @@ public class CategoriesUi extends UiProvider {
 		SearchResult<ItemCategory> searchResults = this.itemItemCategoryService.search(categoriesSearch, true);
 		this.itemItemCategoryService.listIterator();
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(categories, span, this.getInteractingEntity(), searchResults)
+			this.setupPageTemplate(categories, this.getInteractingEntity(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numCategories", itemItemCategoryService.count())
 				.data("itemCatService", itemItemCategoryService)

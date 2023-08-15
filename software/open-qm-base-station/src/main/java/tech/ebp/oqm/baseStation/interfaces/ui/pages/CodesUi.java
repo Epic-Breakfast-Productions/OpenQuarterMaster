@@ -30,16 +30,13 @@ public class CodesUi extends UiProvider {
 	@Location("webui/pages/codes")
 	Template overview;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("codes")
 	@RolesAllowed("user")
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity()),
+			this.setupPageTemplate(overview, this.getInteractingEntity()),
 			MediaType.TEXT_HTML_TYPE
 		);
 		

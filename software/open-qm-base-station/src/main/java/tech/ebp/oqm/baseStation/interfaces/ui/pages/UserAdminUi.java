@@ -40,9 +40,6 @@ public class UserAdminUi extends UiProvider {
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	@Inject
-	Span span;
-	
 	//TODO:: 361 instead, user search
 //	@GET
 //	@Path("userAdmin")

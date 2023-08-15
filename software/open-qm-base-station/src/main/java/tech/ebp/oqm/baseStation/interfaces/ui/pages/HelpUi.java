@@ -33,9 +33,6 @@ public class HelpUi extends UiProvider {
 	Template overview;
 	
 	@Inject
-	Span span;
-	
-	@Inject
 	ProductLookupService productLookupService;
 	
 	@GET
@@ -45,10 +42,10 @@ public class HelpUi extends UiProvider {
 	public Response help() {
 		TemplateInstance template;
 		if (this.getInteractingEntity() == null) {
-			template = this.setupPageTemplate(overview, span)
+			template = this.setupPageTemplate(overview)
 						   .data("navbar", "toLogin");
 		} else {
-			template = this.setupPageTemplate(overview, span, this.getInteractingEntity())
+			template = this.setupPageTemplate(overview, this.getInteractingEntity())
 						   .data("navbar", "full");
 		}
 		template = template

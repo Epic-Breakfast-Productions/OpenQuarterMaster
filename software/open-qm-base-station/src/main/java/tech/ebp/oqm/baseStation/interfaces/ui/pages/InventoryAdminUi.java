@@ -45,16 +45,13 @@ public class InventoryAdminUi extends UiProvider {
 	@Inject
 	CustomUnitService customUnitService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("inventoryAdmin")
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces(MediaType.TEXT_HTML)
 	public Response inventoryAdmin() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(inventoryAdminTemplate, span, this.getInteractingEntity())
+			this.setupPageTemplate(inventoryAdminTemplate, this.getInteractingEntity())
 				.data("unitDerivisionTypes", NewDerivedCustomUnitRequest.DeriveType.values())
 				.data("unitDimensions", ValidUnitDimension.values())
 				.data("unitCategories", UnitCategory.values())

@@ -40,9 +40,6 @@ public class ImagesUi extends UiProvider {
 	@Inject
 	ImageService imageService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("/images")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -55,7 +52,6 @@ public class ImagesUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					images,
-					span,
 					this.getInteractingEntity(),
 					searchResults
 				)

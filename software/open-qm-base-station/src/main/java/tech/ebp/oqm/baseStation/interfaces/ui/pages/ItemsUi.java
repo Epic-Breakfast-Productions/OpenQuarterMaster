@@ -59,7 +59,6 @@ public class ItemsUi extends UiProvider {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					items,
-					span,
 					this.getInteractingEntity(),
 					searchResults
 				)

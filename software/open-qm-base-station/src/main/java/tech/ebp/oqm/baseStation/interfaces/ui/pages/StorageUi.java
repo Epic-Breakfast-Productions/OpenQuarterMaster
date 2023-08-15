@@ -46,10 +46,6 @@ public class StorageUi extends UiProvider {
 	@Inject
 	ItemCategoryService itemCategoryService;
 	
-	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -60,7 +56,7 @@ public class StorageUi extends UiProvider {
 		SearchResult<StorageBlock> searchResults = this.storageBlockService.search(storageBlockSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(storage, span, this.getInteractingEntity(), searchResults)
+			this.setupPageTemplate(storage, this.getInteractingEntity(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("storageService", storageBlockService)

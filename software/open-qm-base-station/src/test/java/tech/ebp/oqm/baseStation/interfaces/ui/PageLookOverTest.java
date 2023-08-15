@@ -39,7 +39,7 @@ public class PageLookOverTest extends WebUiTest {
 	public static Stream<Arguments> getPages(){
 		return Stream.of(
 			Arguments.of(false, "/", "Login"),
-			Arguments.of(false, "/accountCreate", "Account Create"),
+			Arguments.of(false,  "/help", "Help and User Guide"),
 			Arguments.of(true,  "/overview", "Overview"),
 			Arguments.of(true,  "/help", "Help and User Guide"),
 			Arguments.of(true,  "/codes", "Create QR & Bar Codes"),

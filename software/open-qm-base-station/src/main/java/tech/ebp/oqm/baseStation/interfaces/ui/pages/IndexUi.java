@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import io.opentelemetry.api.trace.Span;
+import io.quarkus.oidc.OidcSession;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -36,9 +37,6 @@ public class IndexUi extends UiProvider {
 	@Inject
 	@Location("webui/pages/index")
 	Template index;
-	@Inject
-	@Location("webui/pages/accountCreate")
-	Template accountCreate;
 	
 	@Context
 	UriInfo uri;
@@ -46,12 +44,13 @@ public class IndexUi extends UiProvider {
 	@Inject
 	Span span;
 	
+	@Inject
+	OidcSession oidcSession;
+	
 	@GET
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
-	public Response index(
-		@QueryParam("returnPath") String returnPath
-	) throws MalformedURLException, URISyntaxException {
+	public Response index() throws MalformedURLException, URISyntaxException {
 		//if logged in, skip to overview
 		if(this.getInteractingEntity() != null){
 			return Response.seeOther(
@@ -60,18 +59,20 @@ public class IndexUi extends UiProvider {
 		}
 		
 		Response.ResponseBuilder responseBuilder = Response.ok().type(MediaType.TEXT_HTML_TYPE);
-		responseBuilder.entity(this.setupPageTemplate(index, span));
+		responseBuilder.entity(this.setupPageTemplate(index));
 		
 		return responseBuilder.build();
 	}
 	
 	@GET
-	@Path("/accountCreate")
+	@Path("logout")
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
-	public TemplateInstance accountCreate() {
-		return this.setupPageTemplate(accountCreate, span)
-				   .data("firstUser", this.getInteractingEntityService().collectionEmpty())
-				   .data("passwordHelpText", PasswordConstraintValidator.getPasswordRulesDescriptionHtml());
+	public Response logout() throws MalformedURLException, URISyntaxException {
+		this.oidcSession.logout().await().indefinitely();
+
+		return Response.seeOther(
+			UriBuilder.fromUri("/?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out").build()
+		).build();
 	}
 }

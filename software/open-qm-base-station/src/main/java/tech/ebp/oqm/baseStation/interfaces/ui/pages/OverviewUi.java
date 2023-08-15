@@ -38,16 +38,13 @@ public class OverviewUi extends UiProvider {
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	@Inject
-	Span span;
-	
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity())
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("userJwt", this.getJwt().getRawToken())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())

@@ -51,7 +51,7 @@ public class ItemCheckoutUi extends UiProvider {
 		SearchResult<ItemCheckout> searchResults = this.itemCheckoutService.search(itemCheckoutSearch, true);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, this.getInteractingEntity(), searchResults)
+			this.setupPageTemplate(overview, this.getInteractingEntity(), searchResults)
 				.data("searchObject", itemCheckoutSearch)
 				.data("showItem", true)
 				.data("showStillCheckedOut", true)
