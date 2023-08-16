@@ -44,17 +44,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	@Getter
 	private Template historyRowsTemplate;
 	
-	protected MainFileObjectProvider(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		SecurityContext securityContext,
-		MongoHistoriedFileService<T, S> fileService,
-		Template historyRowsTemplate
-	) {
-		super(jwt, interactingEntityService, securityContext);
-		this.fileService = fileService;
-		this.historyRowsTemplate = historyRowsTemplate;
-	}
 	
 	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(

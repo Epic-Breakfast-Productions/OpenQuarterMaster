@@ -1,9 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.management;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -26,9 +24,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.SecurityContext;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -78,7 +74,7 @@ public class CustomUnit extends EndpointProvider {
 		
 		ObjectId id = this.customUnitService.add(
 			newUnit,
-			this.interactingEntityService.getEntity(this.getJwt())
+			this.interactingEntityService.getEntity(this.getIdToken())
 		);
 		
 		return id;

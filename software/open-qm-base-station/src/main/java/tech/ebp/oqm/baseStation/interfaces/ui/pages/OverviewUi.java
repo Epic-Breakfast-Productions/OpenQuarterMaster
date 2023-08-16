@@ -1,7 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
 import com.mongodb.client.model.Filters;
-import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -45,7 +44,7 @@ public class OverviewUi extends UiProvider {
 	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview, this.getInteractingEntity())
-				.data("userJwt", this.getJwt().getRawToken())
+				.data("userJwt", this.getIdToken().getRawToken())
 				.data("numItems", inventoryItemService.count())
 				.data("totalExpired", inventoryItemService.getNumStoredExpired())
 				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))

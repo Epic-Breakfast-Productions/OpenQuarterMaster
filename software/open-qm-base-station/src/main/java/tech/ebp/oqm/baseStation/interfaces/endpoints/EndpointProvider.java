@@ -16,11 +16,4 @@ public abstract class EndpointProvider extends RestInterface {
 	private static final String ROOT_API_ENDPOINT = "/api";
 	public static final String ROOT_API_ENDPOINT_V1 = ROOT_API_ENDPOINT + "/v1";
 	
-	protected EndpointProvider(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		SecurityContext securityContext
-	) {
-		super(jwt, interactingEntityService, securityContext);
-	}
 }

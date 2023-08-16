@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
@@ -46,33 +48,18 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
 @RequestScoped
-@NoArgsConstructor
 public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSearch> {
 	
-	Template storageSearchResultsTemplate;
+	@Inject
+	@Getter
+	StorageBlockService objectService;
 	
 	@Inject
-	public StorageCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		StorageBlockService storageBlockService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		@Location("tags/search/storage/storageSearchResults.html")
-		Template storageSearchResultsTemplate
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			StorageBlock.class,
-			storageBlockService,
-			historyRowsTemplate
-		);
-		this.storageSearchResultsTemplate = storageSearchResultsTemplate;
-	}
+	@Location("tags/search/storage/storageSearchResults.html")
+	Template storageSearchResultsTemplate;
+	
+	@Getter
+	Class<StorageBlock> objectClass =  StorageBlock.class;
 	
 	@POST
 	@Operation(

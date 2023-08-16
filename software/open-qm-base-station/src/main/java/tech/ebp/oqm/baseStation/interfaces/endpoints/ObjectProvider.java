@@ -18,11 +18,4 @@ public abstract class ObjectProvider extends EndpointProvider {
 				   .header("query-num-results", searchResult.getNumResultsForEntireQuery());
 	}
 	
-	protected ObjectProvider(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		SecurityContext securityContext
-	) {
-		super(jwt, interactingEntityService, securityContext);
-	}
 }

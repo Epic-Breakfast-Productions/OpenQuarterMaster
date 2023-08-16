@@ -1,6 +1,5 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class UserUi extends UiProvider {
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("historySearchObject", new HistorySearch())
-				.data("jwt", this.getJwt().getRawToken())
+				.data("jwt", this.getIdToken().getRawToken())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

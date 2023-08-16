@@ -2,17 +2,17 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -21,10 +21,9 @@ import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
 import jakarta.validation.Valid;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+
 import java.util.List;
 
 /**
@@ -38,26 +37,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
 	
+	@Inject
+	@Location("tags/objView/history/searchResults.html")
 	@Getter
-	private Class<T> objectClass;
-	@Getter
-	private MongoHistoriedObjectService<T, S> objectService;
-	@Getter
-	private Template historyRowsTemplate;
+	Template historyRowsTemplate;
 	
-	protected MainObjectProvider(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		SecurityContext securityContext,
-		Class<T> objectClass,
-		MongoHistoriedObjectService<T, S> objectService,
-		Template historyRowsTemplate
-	) {
-		super(jwt, interactingEntityService, securityContext);
-		this.objectClass = objectClass;
-		this.objectService = objectService;
-		this.historyRowsTemplate = historyRowsTemplate;
-	}
+	public abstract Class<T> getObjectClass();
+	public abstract MongoHistoriedObjectService<T, S> getObjectService();
 	
 	//<editor-fold desc="CRUD operations">
 	
@@ -92,7 +78,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		ObjectId output;
 		if (
 			this.getObjectService().isAllowNullEntityForCreate()
-			&& this.getJwt().getRawToken() == null
+			&& this.getIdToken().getRawToken() == null
 		) {
 			output = this.getObjectService().add(object, null);
 		} else {

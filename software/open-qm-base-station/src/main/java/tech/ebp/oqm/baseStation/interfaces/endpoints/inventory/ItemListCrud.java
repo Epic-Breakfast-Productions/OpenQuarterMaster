@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
@@ -46,33 +48,18 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-list")
 @Tags({@Tag(name = "Item Lists", description = "Endpoints for managing Item Lists.")})
 @RequestScoped
-@NoArgsConstructor
 public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	
+	@Inject
+	@Location("tags/search/itemList/searchResults.html")
 	Template itemListSearchResultsTemplate;
 	
 	@Inject
-	public ItemListCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		ItemListService itemListService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		@Location("tags/search/itemList/searchResults.html")
-		Template ItemListSearchResultsTemplate
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			ItemList.class,
-			itemListService,
-			historyRowsTemplate
-		);
-		this.itemListSearchResultsTemplate = ItemListSearchResultsTemplate;
-	}
+	@Getter
+	ItemListService objectService;
+	
+	@Getter
+	Class<ItemList> objectClass =  ItemList.class;
 	
 	@POST
 	@Operation(

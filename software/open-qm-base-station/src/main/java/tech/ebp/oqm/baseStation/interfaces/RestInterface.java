@@ -23,7 +23,11 @@ public abstract class RestInterface {
 	@Getter(AccessLevel.PROTECTED)
 	@Inject
 	@IdToken
-	JsonWebToken jwt;
+	JsonWebToken idToken;
+	
+	@Getter(AccessLevel.PROTECTED)
+	@Inject
+	JsonWebToken accessToken;
 	
 	@Getter(AccessLevel.PROTECTED)
 	@Inject
@@ -36,18 +40,33 @@ public abstract class RestInterface {
 	@Getter(AccessLevel.PROTECTED)
 	InteractingEntity interactingEntity = null;
 	
-	protected RestInterface(JsonWebToken jwt, InteractingEntityService interactingEntityService, SecurityContext securityContext) {
-		this.jwt = jwt;
-		this.interactingEntityService = interactingEntityService;
-		this.securityContext = securityContext;
+	protected boolean hasIdToken() {
+		return this.getIdToken() != null && this.getIdToken().getClaimNames() != null;
 	}
 	
-	protected boolean hasJwt() {
-		return this.getJwt() != null && this.getJwt().getClaimNames() != null;
+	protected boolean hasAccessToken(){
+		return this.getAccessToken() != null && this.getAccessToken().getClaimNames() != null;
 	}
+	
+	/**
+	 * When hit from bare API call with just bearer, token will be access token.
+	 *
+	 * When hit from ui, idToken.
+	 * @return
+	 */
+	protected JsonWebToken getUserToken(){
+		if(this.hasIdToken()){
+			return this.getIdToken();
+		}
+		if(this.hasAccessToken()){
+			return this.getAccessToken();
+		}
+		return null;
+	}
+	
 	
 	protected Optional<InteractingEntity> logRequestAndProcessEntity() {
-		if (!this.hasJwt()) {
+		if (this.getUserToken() == null) {
 			log.info("Processing request with no JWT; ssh:{}", this.getSecurityContext().isSecure());
 			return Optional.empty();
 		} else {
@@ -55,14 +74,14 @@ public abstract class RestInterface {
 				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
 				this.getSecurityContext().getUserPrincipal().getName(),
 				this.getSecurityContext().isSecure(),
-				jwt.getIssuer(),
-				jwt.getGroups()
+				idToken.getIssuer(),
+				idToken.getGroups()
 			);
 			if (this.getSecurityContext().isSecure()) {
 				log.warn("Request with JWT made without HTTPS");
 			}
 			
-			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getJwt());
+			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getUserToken());
 			
 			return Optional.of(this.interactingEntity);
 		}

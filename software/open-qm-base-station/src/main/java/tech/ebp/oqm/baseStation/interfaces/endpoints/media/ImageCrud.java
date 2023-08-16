@@ -5,6 +5,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
@@ -66,43 +68,24 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	}
 	
+	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
 	InventoryItemService itemService;
+	@Inject
 	ItemCategoryService itemCategoryService;
+	@Inject
+	@Location("tags/search/image/imageSearchResults.html")
 	Template imageSearchResultsTemplate;
+	@Inject
 	Validator validator;
 	
 	@Inject
-	public ImageCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		ImageService imageService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		StorageBlockService storageBlockService,
-		InventoryItemService itemService,
-		ItemCategoryService itemCategoryService,
-		@Location("tags/search/image/imageSearchResults.html")
-		Template imageSearchResultsTemplate,
-		Validator validator
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			Image.class,
-			imageService,
-			historyRowsTemplate
-		);
-		this.storageBlockService = storageBlockService;
-		this.itemService = itemService;
-		this.itemCategoryService = itemCategoryService;
-		this.validator = validator;
-		this.imageSearchResultsTemplate = imageSearchResultsTemplate;
-	}
+	@Getter
+	ImageService objectService;
 	
+	@Getter
+	Class<Image> objectClass =  Image.class;
 	
 	//<editor-fold desc="CRUD operations">
 	

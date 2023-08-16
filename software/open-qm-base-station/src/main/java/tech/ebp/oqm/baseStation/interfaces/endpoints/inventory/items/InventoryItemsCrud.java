@@ -10,6 +10,7 @@ import io.quarkus.oidc.IdToken;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
@@ -69,36 +70,20 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
 	
+	@Inject
+	@Location("tags/search/item/itemSearchResults.html")
 	Template itemSearchResultsTemplate;
+	@Inject
 	ObjectMapper objectMapper;
+	@Inject
 	InvItemCsvConverter invItemCsvConverter;
 	
+	@Getter
 	@Inject
-	public InventoryItemsCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		InventoryItemService inventoryItemService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		@Location("tags/search/item/itemSearchResults.html")
-		Template itemSearchResultsTemplate,
-		ObjectMapper objectMapper,
-		InvItemCsvConverter invItemCsvConverter
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			InventoryItem.class,
-			inventoryItemService,
-			historyRowsTemplate
-		);
-		this.itemSearchResultsTemplate = itemSearchResultsTemplate;
-		this.objectMapper = objectMapper;
-		this.invItemCsvConverter = invItemCsvConverter;
-	}
+	InventoryItemService objectService;
+	
+	@Getter
+	Class<InventoryItem> objectClass =  InventoryItem.class;
 	
 	@POST
 	@Operation(

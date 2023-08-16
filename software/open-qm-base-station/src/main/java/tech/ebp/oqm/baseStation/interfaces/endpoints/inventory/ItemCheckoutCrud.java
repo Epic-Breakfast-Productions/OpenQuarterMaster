@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
@@ -47,33 +49,18 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-checkout")
 @Tags({@Tag(name = "Item Checkout", description = "Endpoints for managing Item Checkouts.")})
 @RequestScoped
-@NoArgsConstructor
 public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheckoutSearch> {
 	
+	@Inject
+	@Location("tags/search/itemCheckout/searchResults.html")
 	Template itemCheckoutSearchResultsTemplate;
 	
 	@Inject
-	public ItemCheckoutCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		ItemCheckoutService itemCheckoutService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		@Location("tags/search/itemCheckout/searchResults.html")
-		Template itemCheckoutSearchResultsTemplate
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			ItemCheckout.class,
-			itemCheckoutService,
-			historyRowsTemplate
-		);
-		this.itemCheckoutSearchResultsTemplate = itemCheckoutSearchResultsTemplate;
-	}
+	@Getter
+	ItemCheckoutService objectService;
+	
+	@Getter
+	Class<ItemCheckout> objectClass =  ItemCheckout.class;
 	
 	@POST
 	@Operation(
@@ -108,7 +95,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			);
 		}
 		
-		return ((ItemCheckoutService)this.getObjectService()).checkoutItem(itemCheckoutRequest, entity);
+		return this.getObjectService().checkoutItem(itemCheckoutRequest, entity);
 	}
 	
 	@PUT
@@ -139,7 +126,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		@PathParam("id") String id,
 		@Valid CheckInDetails checkInDetails
 	) {
-		return ((ItemCheckoutService)this.getObjectService()).checkinItem(new ObjectId(id), checkInDetails, this.getInteractingEntity());
+		return this.getObjectService().checkinItem(new ObjectId(id), checkInDetails, this.getInteractingEntity());
 	}
 	
 	@GET

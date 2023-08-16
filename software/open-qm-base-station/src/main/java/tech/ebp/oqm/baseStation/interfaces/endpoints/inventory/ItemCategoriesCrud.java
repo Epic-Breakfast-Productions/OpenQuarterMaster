@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
@@ -45,33 +47,18 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-categories")
 @Tags({@Tag(name = "Item Categories", description = "Endpoints for managing Item Categories.")})
 @RequestScoped
-@NoArgsConstructor
 public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, CategoriesSearch> {
 	
+	@Inject
+	@Location("tags/search/category/searchResults.html")
 	Template itemCategoriesSearchResultsTemplate;
 	
 	@Inject
-	public ItemCategoriesCrud(
-		JsonWebToken jwt,
-		InteractingEntityService interactingEntityService,
-		@Context
-		SecurityContext securityContext,
-		ItemCategoryService itemCategoryService,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		@Location("tags/search/category/searchResults.html")
-		Template itemCategoriesSearchResultsTemplate
-	) {
-		super(
-			jwt,
-			interactingEntityService,
-			securityContext,
-			ItemCategory.class,
-			itemCategoryService,
-			historyRowsTemplate
-		);
-		this.itemCategoriesSearchResultsTemplate = itemCategoriesSearchResultsTemplate;
-	}
+	@Getter
+	ItemCategoryService objectService;
+	
+	@Getter
+	Class<ItemCategory> objectClass =  ItemCategory.class;
 	
 	@POST
 	@Operation(
