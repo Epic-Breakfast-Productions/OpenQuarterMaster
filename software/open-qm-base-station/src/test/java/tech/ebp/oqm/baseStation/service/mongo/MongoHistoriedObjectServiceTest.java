@@ -31,6 +31,9 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	@Inject
 	TestUserService testUserService;
 	
+	@Inject
+	InteractingEntityService interactingEntityService;
+	
 	@Test
 	public void testEmptyHistory(){
 		assertEquals(0, testMongoService.getHistoryService().count());
@@ -39,7 +42,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	@Test
 	public void testAdd(){
 		User testUser = testUserService.getTestUser();
-		
+		this.interactingEntityService.add(testUser);
 		
 		ObjectId objectId = this.testMongoService.add(
 			new TestMainObject(FAKER.lorem().paragraph()),
@@ -51,7 +54,6 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		assertEquals(1, events.size());
 		
 		CreateEvent createEvent = (CreateEvent) events.get(0);
-		
 		
 		assertEquals(objectId, createEvent.getObjectId());
 		assertNotNull(createEvent.getEntity());

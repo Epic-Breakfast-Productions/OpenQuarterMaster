@@ -141,7 +141,8 @@ public class TestUserService {
 				throw new IllegalStateException("Test user cannot be found after creation!");
 			}
 			UserResource testUserResource = usersResource.get(userId);
-
+			testUser.setIdFromAuthProvider(userId);
+			testUser.setAuthProvider(testUserResource.toRepresentation().getId());
 			{
 				CredentialRepresentation passwordCred = new CredentialRepresentation();
 				passwordCred.setTemporary(false);

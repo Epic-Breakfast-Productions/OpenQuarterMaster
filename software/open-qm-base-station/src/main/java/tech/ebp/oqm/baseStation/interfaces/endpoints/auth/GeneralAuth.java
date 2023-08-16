@@ -1,9 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.auth;
 
-import io.quarkus.oidc.IdToken;
 import io.quarkus.security.identity.SecurityIdentity;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -22,10 +20,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+
 import java.util.Date;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
@@ -59,14 +56,14 @@ public class GeneralAuth extends EndpointProvider {
 		log.info("Checking user's token.");
 		
 		TokenCheckResponse response = new TokenCheckResponse();
-		if (this.getJwt().getRawToken() != null) {
+		if (this.getIdToken().getRawToken() != null) {
 			log.info("User roles: {}", this.identity.getRoles());
-			log.info("User JWT claims: {}", this.getJwt().getClaimNames());
+			log.info("User JWT claims: {}", this.getIdToken().getClaimNames());
 			
 			response.setHadToken(true);
 			response.setTokenSecure(this.getSecurityContext().isSecure());
-			response.setExpired(this.getJwt().getExpirationTime() <= TimeUtils.currentTimeInSecs());
-			response.setExpirationDate(new Date(this.getJwt().getExpirationTime()));
+			response.setExpired(this.getIdToken().getExpirationTime() <= TimeUtils.currentTimeInSecs());
+			response.setExpirationDate(new Date(this.getIdToken().getExpirationTime()));
 		} else {
 			log.info("User had no jwt");
 		}
