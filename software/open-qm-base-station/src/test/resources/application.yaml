@@ -21,6 +21,9 @@ quarkus:
     port: 8081
   log:
     level: TRACE
+    category:
+      "com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire": # Debug wire transfer statements. Far too much spam of hexadecimal
+        level: INFO
   mongodb:
     database: openQuarterMasterTest
     write-concern:
@@ -40,6 +43,7 @@ quarkus:
       username: admin
       password: admin
     devservices:
+#      port: 8089
       realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
 #      show-logs: true

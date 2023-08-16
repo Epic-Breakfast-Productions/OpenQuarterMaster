@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
@@ -77,6 +78,8 @@ class DataImportServiceTest extends RunningServerTest {
 	TestUserService testUserService;
 	
 	@Inject
+	InteractingEntityService interactingEntityService;
+	@Inject
 	CustomUnitService customUnitService;
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -96,6 +99,7 @@ class DataImportServiceTest extends RunningServerTest {
 	@Test
 	public void testImportService() throws IOException {
 		User testUser = testUserService.getTestUser(true);
+		this.interactingEntityService.add(testUser);
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor

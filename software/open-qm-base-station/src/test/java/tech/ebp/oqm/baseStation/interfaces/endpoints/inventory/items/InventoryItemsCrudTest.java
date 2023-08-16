@@ -70,7 +70,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	Template itemsCsv;
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), "jwt")//TODO:: 361
+		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))//TODO:: 361
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()
@@ -88,7 +88,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	}
 	
 	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), "jwt")
+		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(updateData))
 										   .when()
@@ -196,7 +196,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		body.fileName = "test.csv";
 		
 		
-		ValidatableResponse response = setupJwtCall(given(), "jwt")
+		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.MULTIPART)
 										   .multiPart("file", csvData)
 										   .multiPart("fileName", "test.csv")

@@ -42,7 +42,10 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 			
 			this.browserWebDriverContainer = new BrowserWebDriverContainer<>()
 												 .withCapabilities(new FirefoxOptions())
-												 .withReuse(false);
+												 .withReuse(false)
+												 .withAccessToHost(true)
+//												 .withNetworkAliases("host.docker.internal:localhost")
+			;
 			
 			if (RECORD) {
 				File recordingDir = new File(
@@ -76,6 +79,12 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 		return Map.of(
 			"runningInfo.hostname",
 			Utils.HOST_TESTCONTAINERS_INTERNAL
+			
+//			"quarkus.keycloak.devservices.enabled",
+//			"true",
+//
+//			"quarkus.oidc.auth-server-url",
+//			"http://"+Utils.HOST_TESTCONTAINERS_INTERNAL+":8089/realms/oqm"
 		);
 	}
 	
