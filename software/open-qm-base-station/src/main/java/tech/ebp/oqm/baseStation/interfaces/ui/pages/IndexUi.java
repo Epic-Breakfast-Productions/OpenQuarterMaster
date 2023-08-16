@@ -41,12 +41,6 @@ public class IndexUi extends UiProvider {
 	@Context
 	UriInfo uri;
 	
-	@Inject
-	Span span;
-	
-	@Inject
-	OidcSession oidcSession;
-	
 	@GET
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
@@ -64,15 +58,4 @@ public class IndexUi extends UiProvider {
 		return responseBuilder.build();
 	}
 	
-	@GET
-	@Path("logout")
-	@PermitAll
-	@Produces(MediaType.TEXT_HTML)
-	public Response logout() throws MalformedURLException, URISyntaxException {
-		this.oidcSession.logout().await().indefinitely();
-
-		return Response.seeOther(
-			UriBuilder.fromUri("/?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out").build()
-		).build();
-	}
 }

@@ -145,6 +145,10 @@ quarkus:
       max-body-size: 95M
     auth:
       proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
     access-log:
       enabled: true
     port: 80
