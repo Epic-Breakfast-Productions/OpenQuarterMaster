@@ -1,0 +1,20 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json",
+    "title": "Storage Block State Information.",
+    "description": "The general info about a MSS Module Storage Block",
+    "type": "object"
+    "properties": {
+        "blockNumber": {
+            "description": "The number of this block in the 0-based array of blocks managed by the module. Must correspond to this object's place in the holding array.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "lightSettings": {
+            "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockLightSetting.json"
+        }
+    },
+    "required": [
+        "blockNumber"
+    ]
+}

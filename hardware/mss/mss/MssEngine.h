@@ -9,7 +9,9 @@
 
 class MssEngine {
   private:
+    // https://forum.arduino.cc/t/how-to-read-the-id-serial-number-of-an-arduino/45214/8
     String moduleSerialId; //TODO:: change this to ModuleInfo data class
+    
     uint16_t numStorageBins;
     uint16_t numLedsInStrip;
     uint16_t ledPin;
