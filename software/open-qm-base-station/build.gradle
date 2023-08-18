@@ -27,7 +27,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
-	implementation 'io.quarkus:quarkus-mongodb-panache'
+	implementation 'io.quarkus:quarkus-mongodb-client'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
 	implementation 'io.quarkus:quarkus-container-image-jib'
