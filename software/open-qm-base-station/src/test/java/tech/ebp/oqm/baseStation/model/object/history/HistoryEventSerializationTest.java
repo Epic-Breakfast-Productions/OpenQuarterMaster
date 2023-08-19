@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.history;
 
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
 import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
@@ -21,6 +23,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.provider.Arguments;
+import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -30,6 +33,8 @@ import static tech.ebp.oqm.baseStation.model.object.ObjectUtils.OBJECT_MAPPER;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
+@QuarkusTest
+//@QuarkusTestResource(TestResourceLifecycleManager.class)
 class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistoryEvent> {
 	
 	private static final Quantity<?> testQuantity = Quantities.getQuantity(20, OqmProvidedUnits.UNIT);
