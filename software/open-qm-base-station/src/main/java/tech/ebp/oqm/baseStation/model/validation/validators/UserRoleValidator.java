@@ -16,11 +16,6 @@ public class UserRoleValidator extends Validator<ValidUserRole, String> {
 		
 		if (role == null) {
 			errs.add("Invalid user role, was null.");
-		} else {
-		//TODO:: 361 add this back in?
-//			if (!UserRoles.roleAllowed(role)) {
-//				errs.add("Invalid user role. " + role + " not usable for user.");
-//			}
 		}
 		
 		return this.processValidationResults(errs, constraintValidatorContext);

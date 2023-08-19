@@ -12,8 +12,6 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemTransferEve
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserLoginEvent;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.testUtils.ObjectSerializationTest;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,15 +21,12 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.provider.Arguments;
-import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
-
-import static tech.ebp.oqm.baseStation.model.object.ObjectUtils.OBJECT_MAPPER;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)

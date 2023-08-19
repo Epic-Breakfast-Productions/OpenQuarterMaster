@@ -70,7 +70,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	Template itemsCsv;
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))//TODO:: 361
+		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()

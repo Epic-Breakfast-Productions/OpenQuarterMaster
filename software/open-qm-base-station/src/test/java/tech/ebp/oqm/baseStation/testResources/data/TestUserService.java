@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 /**
  *
- * TODO:: 361 replace this functionality
  */
 @ApplicationScoped
 @Slf4j

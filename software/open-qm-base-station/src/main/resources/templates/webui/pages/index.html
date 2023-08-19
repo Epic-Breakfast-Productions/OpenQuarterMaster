@@ -11,10 +11,6 @@
 					{#if config:['service.runBy.banner'] != " "}
 						<img src="/api/v1/media/runBy/banner" style="max-height: 150px;">
 					{/if}
-					
-					{!{#if config:['service.authMode'] == 'SELF'} TODO:: 361 this !}
-						{!<a href="/accountCreate">Or, Create account {#icons/addUser}{/icons/addUser}</a>!}
-					{!{/if}!}
 				</div>
 				<div class="card-body d-grid gap-2">
 					<a href="/overview" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
