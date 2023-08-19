@@ -24,7 +24,7 @@
             "minimum": 0
         },
         "capabilities": {
-            "description": "The number of storage blocks this module has.",
+            "description": "What this module is capable of.",
             "type": "object",
             "properties": {
                 "blockLights": {

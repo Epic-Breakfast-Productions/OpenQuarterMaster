@@ -4,13 +4,14 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <ArduinoJson.h>
+#include "MssModInfo.h"
 #include "MssConnector.h"
 
 
 class MssEngine {
   private:
     // https://forum.arduino.cc/t/how-to-read-the-id-serial-number-of-an-arduino/45214/8
-    String moduleSerialId; //TODO:: change this to ModuleInfo data class
+    MssModInfo* modInfo;
     
     uint16_t numStorageBins;
     uint16_t numLedsInStrip;
@@ -20,7 +21,7 @@ class MssEngine {
   
   public:
     MssEngine(
-      String moduleSerialId,
+      MssModInfo* modInfo,
       MssConnector* connector,
       uint16_t numStorageBins,
       uint16_t numLedsInStrip,
