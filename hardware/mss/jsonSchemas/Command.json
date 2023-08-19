@@ -1,9 +1,9 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json",
-    "title": "The base object for a command to send to a storage module.",
-    "description": "The general info about a MSS Module Storage Block",
-    "type": "object"
+    "title": "Module Command Base Class",
+    "description": "Describes the 'base class' of a command that is sent to a storage module.",
+    "type": "object",
     "properties": {
         "command": {
             "description": "The command.",

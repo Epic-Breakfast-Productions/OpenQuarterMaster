@@ -3,7 +3,7 @@
     "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json",
     "title": "Storage Block State Information.",
     "description": "The general info about a MSS Module Storage Block",
-    "type": "object"
+    "type": "object",
     "properties": {
         "blockNumber": {
             "description": "The number of this block in the 0-based array of blocks managed by the module. Must correspond to this object's place in the holding array.",

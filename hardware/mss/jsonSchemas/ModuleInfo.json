@@ -3,11 +3,11 @@
     "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ModuleInfo.json",
     "title": "Module Info",
     "description": "The general info about a MSS Module",
-    "type": "object"
+    "type": "object",
     "properties": {
         "specVersion" : {
-            "description": "The version of the Communication spec (outlined by these json schemas) this module adheres to. Can be anything, as long as it is unique."
-            "type":"string",
+            "description": "The version of the Communication spec (outlined by these json schemas) this module adheres to. Can be anything, as long as it is unique.",
+            "type":"string"
         },
         "serialId": {
             "description": "The unique identifier for a module. Must be unique to all modules. Must be consistent between module restarts.",
@@ -19,7 +19,7 @@
             "pattern": "^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))$"
         },
         "numBlocks": {
-            "description": "The number of storage blocks this module has."
+            "description": "The number of storage blocks this module has.",
             "type": "integer",
             "minimum": 0
         },

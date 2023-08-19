@@ -3,7 +3,7 @@
     "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ModuleState.json",
     "title": "Module Info",
     "description": "The current state of the module.",
-    "type": "object"
+    "type": "object",
     "properties": {
         "storageBlocks": {
             "description": "The 0-based array of storage blocks managed by this module.",
