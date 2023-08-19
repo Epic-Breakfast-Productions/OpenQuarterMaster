@@ -46,6 +46,8 @@ jobs:
           name: Code Coverage Report
           path: "software/open-qm-base-station/build/jacoco-report"
       - name: Archive Test Report
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
