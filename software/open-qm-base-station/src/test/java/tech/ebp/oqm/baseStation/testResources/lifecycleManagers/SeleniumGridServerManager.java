@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.testResources.lifecycleManagers;
 
+import io.quarkus.test.common.DevServicesContext;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,11 +20,12 @@ import java.util.Optional;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
 
 @Slf4j
-public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleManager {
+public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleManager, DevServicesContext.ContextAware {
 	
 	public static final boolean RECORD = true;
 	
 	private BrowserWebDriverContainer<?> browserWebDriverContainer = null;
+	private Optional<String> containerNetworkId;
 	
 	private boolean uiTest = false;
 	
@@ -129,6 +131,11 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 	public void init(Map<String, String> initArgs) {
 		QuarkusTestResourceLifecycleManager.super.init(initArgs);
 		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(TestResourceLifecycleManager.UI_TEST_ARG, Boolean.toString(this.uiTest)));
+	}
+	
+	@Override
+	public void setIntegrationTestContext(DevServicesContext context) {
+		containerNetworkId = context.containerNetworkId();
 	}
 	
 	//	public WebDriver getDriver() {

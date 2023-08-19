@@ -115,6 +115,8 @@ quarkus:
     database: openQuarterMaster
     tracing:
       enabled: true
+    metrics:
+      enabled: true
   #  package:
   #    type: uber-jar
   scheduler:
