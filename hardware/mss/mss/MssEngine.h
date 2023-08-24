@@ -10,10 +10,14 @@
 #ifndef MSS_VAR_NLEDS_PER_BLOCK
 #error "MSS_VAR_NLEDS_PER_BLOCK not defined."
 #endif
+#ifndef MSS_SPKR_PIN
+#error "MSS_SPKR_PIN not defined."
+#endif
 
 #ifndef MSS_NUM_LEDS
 #define MSS_NUM_LEDS    MSS_VAR_NBLOCKS * MSS_VAR_NLEDS_PER_BLOCK
 #endif
+#define NOTE_C4  262
 
 
 #include <Arduino.h>
@@ -52,6 +56,7 @@ class MssEngine {
      * Call this to init the engine.
      */
     void init(){
+        pinMode(MSS_SPKR_PIN, OUTPUT);
         for(int i = 1; i <= MSS_VAR_NBLOCKS; i++){
             BlockState newState(i);
             this->blockStateArr[i] = newState;
@@ -71,6 +76,7 @@ class MssEngine {
         }
         FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(this->leds, MSS_NUM_LEDS);
         this->submitLedState();
+        tone(MSS_SPKR_PIN, NOTE_C4, 1000)
     }
 
     void loop(){

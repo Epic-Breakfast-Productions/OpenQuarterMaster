@@ -5,3 +5,5 @@
 ## Resources:
 
  - https://howtomechatronics.com/tutorials/arduino/how-to-control-ws2812b-individually-addressable-leds-using-arduino/
+ - https://www.szynalski.com/tone-generator/
+ - 

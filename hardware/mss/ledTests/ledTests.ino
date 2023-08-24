@@ -4,6 +4,9 @@
 #define MSS_VAR_NLEDS_PER_BLOCK 3
 #define MSS_LED_PIN     2
 #define MSS_NUM_LEDS MSS_VAR_NBLOCKS * MSS_VAR_NLEDS_PER_BLOCK
+#define MSS_SPKR_PIN    9
+#define NOTE_C4  262
+
 
 #define DELAY    500
 
@@ -60,9 +63,12 @@ void wholeThingTest() {
 }
 
 void setup() {
+    pinMode(MSS_SPKR_PIN, OUTPUT);
 	FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(leds, MSS_NUM_LEDS);
+    tone(MSS_SPKR_PIN, 2093, 500);
 }
 
 void loop() {
 	wholeThingTest();
+    tone(MSS_SPKR_PIN, 130, 500);
 }
