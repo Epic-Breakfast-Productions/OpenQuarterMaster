@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockLightSetting.json",
-    "title": "Module Info",
+    "title": "Block Light Setting",
     "description": "Outlines the current settings for the lights of a given storage block.",
     "type": "object",
     "properties": {

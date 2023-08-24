@@ -6,7 +6,7 @@
     "type": "object",
     "properties": {
         "storageBlocks": {
-            "description": "The 0-based array of storage blocks managed by this module.",
+            "description": "The array of storage blocks managed by this module. Actual storage block number determined by the object's held value.",
             "type": "array",
             "items": {
                 "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json"

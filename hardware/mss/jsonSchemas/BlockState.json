@@ -8,7 +8,7 @@
         "blockNumber": {
             "description": "The number of this block in the 0-based array of blocks managed by the module. Must correspond to this object's place in the holding array.",
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
         },
         "lightSettings": {
             "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockLightSetting.json"

@@ -1,66 +1,32 @@
-#include <FastLED.h>
-#include "MssEngine.h"
+#define MSS_VAR_NBLOCKS 64
+#define MSS_VAR_NLEDS_PER_BLOCK 3
+#define MSS_LED_PIN     2
 
-#define LED_PIN     2
-#define NUM_LEDS    24
 #define DELAY    500
 
-CRGB leds[NUM_LEDS];
-MssModCapabilities capabilities(
-        true,
-        true,
-        true
-);
-MssModInfo info(
-        "1.0.0",
-        "test-01",
-        64,
-        &capabilities
-);
+#include <FastLED.h>
+#include "MssEngine.h"
+#include "MssSerialConnector.h"
 
+MssEngine mssEngine(
+        MssModInfo(
+                "1.0.0",
+                "test-01",
+                MssModCapabilities(
+                        true,
+                        true,
+                        false
+                )
+        ),
+        new MssSerialConnector()
+);
 
 void setup() {
-
-    FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-
-
-
+    mssEngine.init();
 }
 
+
+
 void loop() {
-
-    for (int i = 0; i <= (NUM_LEDS - 1); i += 3) {
-        leds[i] = CRGB(255, 0, 0);
-        leds[i + 1] = CRGB(255, 0, 0);
-        leds[i + 2] = CRGB(255, 0, 0);
-        FastLED.show();
-        delay(DELAY);
-    }
-
-//    for (int i = 0; i <= (NUM_LEDS - 1); i++) {
-//        leds[i] = CRGB(0, 0, 0);
-//    }
-//    FastLED.show();
-
-    for (int i = (NUM_LEDS - 1); i >= 0; i -= 3) {
-        leds[i] = CRGB(0, 255, 0);
-        leds[i - 1] = CRGB(0, 255, 0);
-        leds[i - 2] = CRGB(0, 255, 0);
-        FastLED.show();
-        delay(DELAY);
-    }
-    for (int i = 0; i <= (NUM_LEDS - 1); i += 3) {
-        leds[i] = CRGB(0, 0, 255);
-        leds[i + 1] = CRGB(0, 0, 255);
-        leds[i + 2] = CRGB(0, 0, 255);
-        FastLED.show();
-        delay(DELAY);
-    }
-    for (int i = (NUM_LEDS - 1); i >= 0; i -= 3) {
-        leds[i] = CRGB(255, 0, 255);
-        leds[i - 1] = CRGB(255, 0, 255);
-        leds[i - 2] = CRGB(255, 0, 255);
-        FastLED.show();
-        delay(DELAY);
-    }
+//    mssEngine.test();
 }
