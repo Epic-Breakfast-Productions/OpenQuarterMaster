@@ -1,0 +1,25 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/CommandResponse.json",
+    "title": "Module Command response.",
+    "description": ".",
+    "type": "object",
+    "properties": {
+        "state": {
+            "description": "The state of the command. 'OK' or 'R_ERROR' or 'ERROR'",
+            "type": "string",
+            "enum": [ "OK", "R_ERR", "ERR" ]
+        },
+        "detail": {
+            "description": "If applicable, details behind the response.",
+            "type": "string"
+        },
+        "response": {
+            "description": "If applicable, the returned object.",
+            "type": "object"
+        }
+    },
+    "required": [
+        "state"
+    ]
+}

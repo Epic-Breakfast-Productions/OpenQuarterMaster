@@ -2,11 +2,12 @@
 #define MSS_CONNECTOR_H
 
 #include <ArduinoJson.h>
+#include "MssCommand.h"
 
 class MssConnector {
 public:
   virtual bool hasCommand() = 0;
-  virtual JsonDocument* getCommand() = 0;
+  virtual Command getCommand() = 0;
   virtual void sendStr(String message) = 0;
 
   void sendJson(JsonDocument* payload){
@@ -18,6 +19,7 @@ public:
   void sendObj(ToJson* payload){
       this->sendJson(payload->toJson());
   }
+
 };
 
 #endif

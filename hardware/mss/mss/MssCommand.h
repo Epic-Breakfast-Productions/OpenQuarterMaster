@@ -4,16 +4,24 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+enum CommandType {
+    GET_MODULE_INFO,
+    GET_MODULE_STATE,
+    GET_BLOCK_STATE,
+    SET_BLOCK_STATE,
+    ERR
+};
+
 class Command {
 private:
-    String command;
+    CommandType commandType;
 protected:
-    Command(String command){
-        this->command = command;
+    Command(CommandType command){
+        this->commandType = command;
     }
 public:
-    String getCommand(){
-        return this->command;
+    CommandType getCommand(){
+        return this->commandType;
     }
 
     /**
@@ -22,8 +30,15 @@ public:
      * @return
      */
     static Command parse(JsonDocument& doc){
-        //TODO:: switch case to do this
-        return Command("");
+        const char* commandStr = doc[F("command")];
+
+        if(strcmp_P((PGM_P)F("GET_MODULE_INFO"), commandStr) == 0){
+            return Command(GET_MODULE_INFO);
+        } else if(strcmp_P((PGM_P)F("GET_MODULE_STATE"), commandStr) == 0){
+            return Command(GET_MODULE_STATE);
+        }
+
+        return Command(ERR);
     }
 
     /**

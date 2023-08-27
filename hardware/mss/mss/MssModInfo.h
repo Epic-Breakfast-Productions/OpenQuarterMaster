@@ -7,13 +7,13 @@
 
 class MssModInfo : public ToJson {
 private:
-    String specVersion;
-    String serialId;
+    const char * specVersion;
+    const char * serialId;
     MssModCapabilities capabilities;
 public:
     MssModInfo(
-            String specVersion,
-            String serialId,
+            const char * specVersion,
+            const char * serialId,
             MssModCapabilities capabilities
     ) {
         this->specVersion = specVersion;
@@ -27,11 +27,11 @@ public:
     JsonDocument *toJson() {
         DynamicJsonDocument doc(128);
 
-        doc["specVersion"] = this->specVersion;
-        doc["serialId"] = this->serialId;
-        doc["numBlocks"] = MSS_VAR_NBLOCKS;
+        doc[F("specVersion")] = this->specVersion;
+        doc[F("serialId")] = this->serialId;
+        doc[F("numBlocks")] = MSS_VAR_NBLOCKS;
 
-        JsonObject capabilities = doc.createNestedObject("capabilities");
+        JsonObject capabilities = doc.createNestedObject(F("capabilities"));
         this->capabilities.addToJson(&capabilities);
 
         return &doc;

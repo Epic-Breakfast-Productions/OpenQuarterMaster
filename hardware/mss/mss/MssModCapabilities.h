@@ -33,10 +33,10 @@ public:
     }
 
     void addToJson(JsonObject* obj){
-        (*obj)["bulkOps"] = MSS_ALLOW_BULK_OPS;
-        (*obj)["blockLights"] = this->blockLights;
-        (*obj)["blockLightColor"] = this->blockLightColor;
-        (*obj)["blockLightBrightness"] = this->blockLightBrightness;
+        (*obj)[F("bulkOps")] = MSS_ALLOW_BULK_OPS;
+        (*obj)[F("blockLights")] = this->blockLights;
+        (*obj)[F("blockLightColor")] = this->blockLightColor;
+        (*obj)[F("blockLightBrightness")] = this->blockLightBrightness;
     }
 };
 

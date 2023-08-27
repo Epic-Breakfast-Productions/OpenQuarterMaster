@@ -19,7 +19,8 @@ MssEngine mssEngine(
                         false
                 )
         ),
-        new MssSerialConnector()
+        new MssSerialConnector(),
+        true
 );
 
 void setup() {
@@ -29,5 +30,6 @@ void setup() {
 
 
 void loop() {
+    mssEngine.loop();
 //    mssEngine.test();
 }

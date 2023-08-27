@@ -32,85 +32,101 @@
  * http://fastled.io/docs/class_c_fast_l_e_d.html
  */
 class MssEngine {
-  private:
+private:
     // https://forum.arduino.cc/t/how-to-read-the-id-serial-number-of-an-arduino/45214/8
     MssModInfo modInfo;
-    MssConnector* connector;
+    MssConnector *connector;
     BlockState blockStateArr[MSS_VAR_NBLOCKS];
-    CRGBArray<MSS_NUM_LEDS> leds;
+    CRGB leds[MSS_NUM_LEDS];
 
-  public:
+    bool loopDelay = false;
+public:
     MssEngine(
-      MssModInfo modInfo,
-      MssConnector* connector
-    ){
+            MssModInfo modInfo,
+            MssConnector *connector,
+            bool loopDelay
+    ) {
         this->modInfo = modInfo;
         this->connector = connector;
+        this->loopDelay = loopDelay;
     }
 
-    MssConnector* getConnector(){
+    MssConnector *getConnector() {
         return this->connector;
     }
 
     /**
      * Call this to init the engine.
      */
-    void init(){
+    void init() {
         pinMode(MSS_SPKR_PIN, OUTPUT);
-        for(int i = 1; i <= MSS_VAR_NBLOCKS; i++){
+        for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             BlockState newState(i);
             this->blockStateArr[i] = newState;
-//            CRGB* curColor = this->blockStateArr[i]->getLightSetting()->getColor();
-
-            int ledStart = i * 3;
-            int ledEnd = ledStart + 2;
-
-
-            CRGBSet curBlockLeds(this->leds(ledStart, ledEnd));
-
-            curBlockLeds = this->blockStateArr[i].getLightSetting()->setColor(curBlockLeds);
-
-//            for(int j = i * 3; j < MSS_VAR_NLEDS_PER_BLOCK; j++){
-//
-//            }
         }
         FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(this->leds, MSS_NUM_LEDS);
         this->submitLedState();
-        tone(MSS_SPKR_PIN, NOTE_C4, 1000)
+        tone(MSS_SPKR_PIN, 2093, 250);
     }
 
-    void loop(){
-        //TODO
-        this->modInfo.toJson();
+    void loop() {
+        if (this->connector->hasCommand()) {
+            Command command = this->connector->getCommand();
+            this->process(&command);
+        }
+        if (this->loopDelay) {
+            delay(100);
+        }
     }
 
-    void process(Command* command){
-        //TODO
+
+    BlockState getBlock(unsigned int blockNum) {
+        return this->blockStateArr[blockNum];
     }
 
-    BlockState getBlock(unsigned int i){
-        return this->blockStateArr[i];
-    }
+    void submitLedState() {
+        for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
+            CRGB curColor = this->getBlock(i).getLightSetting()->getColor();
 
-    void submitLedState(){
+            if (this->getBlock(i).getLightSetting()->getPowerState() == OFF) {
+                curColor = CRGB(0, 0, 0);
+            }
+
+            unsigned int ledStartInd = (i - 1) * 3;
+            for (int j = ledStartInd; j < (ledStartInd + MSS_VAR_NLEDS_PER_BLOCK); j++) {
+                this->leds[j] = curColor;
+            }
+        }
         FastLED.show();
     }
 
-    void test(){
-        for(int i = 0; i < MSS_VAR_NBLOCKS; i++){
 
-            if(i > 0){
-                CRGB noColor(0,0,0);
-                this->getBlock(i - 1).getLightSetting()->setColor(noColor);
+    void sendModInfo() {
+        //TODO
+    }
+
+    void process(Command *command) {
+        //TODO
+        switch (command->getCommand()) {
+            case CommandType::GET_MODULE_INFO:
+                this->sendModInfo();
+                break;
+        }
+    }
+
+    void test() {
+        for (int i = 1; i < MSS_VAR_NBLOCKS; i++) {
+            if (i == 0) {
+                this->getBlock(MSS_VAR_NBLOCKS - 1).getLightSetting()->turnOff();
+            } else if (i > 1) {
+                this->getBlock(i - 1).getLightSetting()->turnOff();
             }
-            CRGB newColor(255,0,0);
-            this->getBlock(i).getLightSetting()->setColor(newColor);
+            this->getBlock(i).getLightSetting()->turnOn();
             this->submitLedState();
             delay(DELAY);
         }
+        tone(MSS_SPKR_PIN, 130, 125);
     }
 };
-
-
 
 #endif

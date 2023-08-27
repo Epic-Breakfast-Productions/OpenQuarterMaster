@@ -65,10 +65,10 @@ void wholeThingTest() {
 void setup() {
     pinMode(MSS_SPKR_PIN, OUTPUT);
 	FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(leds, MSS_NUM_LEDS);
-    tone(MSS_SPKR_PIN, 2093, 500);
+    tone(MSS_SPKR_PIN, 2093, 250);
 }
 
 void loop() {
 	wholeThingTest();
-    tone(MSS_SPKR_PIN, 130, 500);
+    tone(MSS_SPKR_PIN, 130, 125);
 }
