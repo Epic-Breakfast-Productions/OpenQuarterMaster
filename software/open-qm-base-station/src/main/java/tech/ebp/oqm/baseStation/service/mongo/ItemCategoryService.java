@@ -4,25 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTreeNode;
+import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
 
 @Named("ItemCategoryService")
 @Slf4j

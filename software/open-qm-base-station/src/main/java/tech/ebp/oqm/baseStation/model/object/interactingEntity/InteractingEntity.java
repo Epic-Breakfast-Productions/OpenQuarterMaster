@@ -2,6 +2,8 @@ package tech.ebp.oqm.baseStation.model.object.interactingEntity;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,15 +11,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import tech.ebp.oqm.baseStation.service.JwtUtils;
 
 import java.util.Set;

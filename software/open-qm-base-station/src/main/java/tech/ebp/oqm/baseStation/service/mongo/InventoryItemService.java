@@ -4,15 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
-import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemSubEvent;
@@ -21,7 +21,6 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
@@ -30,12 +29,10 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountS
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +41,6 @@ import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
-import static com.mongodb.client.model.Filters.or;
-import static tech.ebp.oqm.baseStation.model.rest.media.ObjectCodeContentType.id;
 
 /**
  * TODO::

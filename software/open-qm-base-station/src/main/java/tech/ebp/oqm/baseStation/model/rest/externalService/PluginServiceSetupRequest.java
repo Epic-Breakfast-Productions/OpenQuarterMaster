@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.model.rest.externalService;
 
 //TODO:: for general, plugin
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,6 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.S
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.Plugin;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

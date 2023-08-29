@@ -1,8 +1,8 @@
 package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.wildfly.common.codec.DecodeException;
 import org.wildfly.security.password.PasswordFactory;
@@ -9,12 +10,7 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.baseStation.model.rest.auth.externalService.ExternalServiceLoginRequest;
-import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

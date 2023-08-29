@@ -1,10 +1,6 @@
 package tech.ebp.oqm.baseStation.model.units;
 
 import lombok.NonNull;
-import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
-import tech.ebp.oqm.baseStation.model.units.LibUnits;
-import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 
 import javax.measure.Unit;
 import java.util.ArrayList;

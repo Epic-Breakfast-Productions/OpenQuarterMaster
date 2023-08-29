@@ -1,11 +1,10 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
-
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.QueryParam;
 
 @ToString(callSuper = true)
 @Getter

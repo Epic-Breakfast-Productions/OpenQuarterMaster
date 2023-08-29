@@ -2,15 +2,11 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.produc
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
-import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.ItemApiSearchService;
 
-import jakarta.json.Json;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

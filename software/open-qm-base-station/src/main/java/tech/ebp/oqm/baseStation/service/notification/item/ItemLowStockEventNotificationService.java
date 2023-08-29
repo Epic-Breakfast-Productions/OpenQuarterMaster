@@ -1,12 +1,11 @@
 package tech.ebp.oqm.baseStation.service.notification.item;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ItemLowStockEventNotificationService extends ItemEventNotificationService<ItemLowStockEvent> {

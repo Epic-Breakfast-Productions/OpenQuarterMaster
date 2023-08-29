@@ -1,12 +1,8 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
-import lombok.NoArgsConstructor;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+import lombok.NoArgsConstructor;
+import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 
 @NoArgsConstructor
 public abstract class ObjectProvider extends EndpointProvider {

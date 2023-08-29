@@ -1,6 +1,14 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -11,9 +19,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.service.barcode.BarcodeService;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
@@ -25,18 +30,9 @@ import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.media.CodeImageType;
 import tech.ebp.oqm.baseStation.model.rest.media.ObjectCodeContentType;
 import tech.ebp.oqm.baseStation.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
-
-import jakarta.annotation.security.PermitAll;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+import tech.ebp.oqm.baseStation.service.barcode.BarcodeService;
+import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 

@@ -7,17 +7,16 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
-import lombok.With;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.model.units.UnitUtils;
-import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
+import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+
 import javax.measure.Unit;
 import java.util.List;
 

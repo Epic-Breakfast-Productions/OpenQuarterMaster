@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -10,9 +11,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;

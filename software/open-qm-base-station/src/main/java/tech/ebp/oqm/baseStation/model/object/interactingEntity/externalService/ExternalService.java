@@ -1,28 +1,20 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.roles.RequestedRole;
 import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupRequest;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidServiceRole;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 

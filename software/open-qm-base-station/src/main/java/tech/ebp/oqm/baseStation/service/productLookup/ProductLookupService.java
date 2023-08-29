@@ -1,8 +1,13 @@
 package tech.ebp.oqm.baseStation.service.productLookup;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.ItemSearchService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego.LegoLookupService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego.RebrickableService;
@@ -13,12 +18,7 @@ import tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.product
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.AdafruitWebProductScrapeService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.AmazonWebProductScrapeService;
 import tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage.WebPageProductScrapeService;
-import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
-import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

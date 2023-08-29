@@ -1,16 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-
 import jakarta.annotation.security.PermitAll;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -18,10 +8,15 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 

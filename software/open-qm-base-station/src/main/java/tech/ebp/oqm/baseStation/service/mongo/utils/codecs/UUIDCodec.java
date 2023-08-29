@@ -1,12 +1,12 @@
 package tech.ebp.oqm.baseStation.service.mongo.utils.codecs;
 
+import jakarta.inject.Singleton;
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 
-import jakarta.inject.Singleton;
 import java.util.UUID;
 
 @Singleton

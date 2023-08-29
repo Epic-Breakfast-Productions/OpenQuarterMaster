@@ -1,6 +1,11 @@
 package tech.ebp.oqm.baseStation.interfaces;
 
 import io.quarkus.oidc.IdToken;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +14,6 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.SecurityContext;
 import java.util.Optional;
 
 @Slf4j
@@ -64,8 +64,7 @@ public abstract class RestInterface {
 		return null;
 	}
 	
-	
-	protected Optional<InteractingEntity> logRequestAndProcessEntity() {
+	private Optional<InteractingEntity> logRequestAndProcessEntity() {
 		if (this.getUserToken() == null) {
 			log.info("Processing request with no JWT; ssh:{}", this.getSecurityContext().isSecure());
 			return Optional.empty();
@@ -87,7 +86,7 @@ public abstract class RestInterface {
 		}
 	}
 	
-	protected InteractingEntity logRequestAndProcessEntityRequireEntity() {
+	protected InteractingEntity requireAndGetEntity() {
 		Optional<InteractingEntity> entityOptional = this.logRequestAndProcessEntity();
 		
 		if(entityOptional.isEmpty()){

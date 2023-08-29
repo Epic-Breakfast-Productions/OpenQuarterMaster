@@ -4,6 +4,11 @@ package tech.ebp.oqm.baseStation.model.rest.externalService;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +18,6 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.E
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.roles.RequestedRole;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -1,10 +1,9 @@
 package tech.ebp.oqm.baseStation.rest.printouts;
 
-import lombok.Getter;
-import lombok.ToString;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
+import lombok.Getter;
+import lombok.ToString;
 
 @ToString
 @Getter

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.Plugin;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginType;
 
-import jakarta.validation.constraints.NotNull;
 import java.net.URL;
 
 @Data

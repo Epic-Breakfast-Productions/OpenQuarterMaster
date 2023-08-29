@@ -1,10 +1,9 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.HeaderParam;
 import lombok.Getter;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
-
-import jakarta.ws.rs.HeaderParam;
 
 @ToString(callSuper = true)
 @Getter

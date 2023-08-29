@@ -1,20 +1,16 @@
 package tech.ebp.oqm.baseStation.scheduled;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Sorts;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
-import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
-import tech.ebp.oqm.baseStation.model.units.UnitUtils;
-
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
+import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;

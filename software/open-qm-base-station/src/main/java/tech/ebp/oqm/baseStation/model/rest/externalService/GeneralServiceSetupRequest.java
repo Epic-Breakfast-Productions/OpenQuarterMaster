@@ -9,7 +9,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
-import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupRequest;
 
 @Data
 //@AllArgsConstructor

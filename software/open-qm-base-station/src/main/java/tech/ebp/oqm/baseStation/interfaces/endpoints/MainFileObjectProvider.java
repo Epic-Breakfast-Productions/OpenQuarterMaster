@@ -3,30 +3,24 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.model.object.FileMainObject;
-import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * Main abstract method to handle standard CRUD operations for MainObjects

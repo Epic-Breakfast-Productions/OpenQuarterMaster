@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.validation.validators;
 
+import jakarta.validation.ConstraintValidatorContext;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.IllegalSequenceRule;
@@ -9,9 +10,7 @@ import org.passay.PasswordValidator;
 import org.passay.Rule;
 import org.passay.RuleResult;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidPassword;
-import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 

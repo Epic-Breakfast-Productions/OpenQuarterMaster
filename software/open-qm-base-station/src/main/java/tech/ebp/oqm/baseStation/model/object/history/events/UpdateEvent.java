@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.history.events;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,6 @@ import tech.ebp.oqm.baseStation.model.object.history.DescriptiveEvent;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

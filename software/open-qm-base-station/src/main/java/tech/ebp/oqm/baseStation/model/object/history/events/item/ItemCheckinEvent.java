@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.history.events.item;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,6 @@ import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-
-import jakarta.validation.constraints.NotNull;
 
 /**
  * Event for the addition of items to a storage block.

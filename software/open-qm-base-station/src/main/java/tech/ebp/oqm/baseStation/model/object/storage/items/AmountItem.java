@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items;
 
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,6 @@ import tech.ebp.oqm.baseStation.model.validation.annotations.ValidHeldStoredUnit
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidUnit;
 
 import javax.measure.Unit;
-import jakarta.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 
 /**

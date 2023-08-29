@@ -1,12 +1,12 @@
 package tech.ebp.oqm.baseStation.model.rest.externalItemLookup;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import jakarta.validation.constraints.NotNull;
 import java.net.URL;
 
 /**

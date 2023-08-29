@@ -1,6 +1,9 @@
 package tech.ebp.oqm.baseStation.model.object.storage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,9 +14,6 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.HasParent;
 import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.awt.*;
 
 /**

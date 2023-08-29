@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,11 +11,9 @@ import lombok.ToString;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
 import tech.ebp.oqm.baseStation.model.rest.externalService.ExternalServiceSetupRequest;
 import tech.ebp.oqm.baseStation.model.rest.externalService.PluginServiceSetupRequest;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

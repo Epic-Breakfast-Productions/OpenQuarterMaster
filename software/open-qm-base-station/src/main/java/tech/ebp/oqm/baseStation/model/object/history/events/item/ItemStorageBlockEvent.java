@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.history.events.item;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,6 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-
-import jakarta.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

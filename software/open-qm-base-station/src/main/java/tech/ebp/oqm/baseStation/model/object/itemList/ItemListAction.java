@@ -1,14 +1,12 @@
 package tech.ebp.oqm.baseStation.model.object.itemList;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.baseStation.model.object.itemList.ItemListActionMode;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
-
-import jakarta.validation.constraints.NotNull;
 
 /**
  * TODO:: validator to ensure from/to storage ids straight

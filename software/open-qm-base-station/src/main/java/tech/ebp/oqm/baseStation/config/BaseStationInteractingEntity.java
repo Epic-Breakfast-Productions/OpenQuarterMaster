@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.config;
 
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
@@ -11,10 +11,6 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.ServiceType;
 
 @Data
 @NoArgsConstructor

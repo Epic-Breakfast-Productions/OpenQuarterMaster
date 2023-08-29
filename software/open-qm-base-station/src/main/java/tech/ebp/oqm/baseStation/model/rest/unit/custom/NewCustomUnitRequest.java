@@ -2,19 +2,17 @@ package tech.ebp.oqm.baseStation.model.rest.unit.custom;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewBaseCustomUnitRequest;
-import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 
 import javax.measure.Unit;
-import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

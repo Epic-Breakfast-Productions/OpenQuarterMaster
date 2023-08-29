@@ -2,6 +2,8 @@ package tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,12 +11,7 @@ import lombok.NonNull;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.AttKeywordContaining;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInType;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.LossCheckin;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.ReturnCheckin;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

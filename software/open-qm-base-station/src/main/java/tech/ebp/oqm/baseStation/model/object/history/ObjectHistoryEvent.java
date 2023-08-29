@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.model.object.history;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,6 @@ import tech.ebp.oqm.baseStation.model.object.history.events.user.UserEnabledEven
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**

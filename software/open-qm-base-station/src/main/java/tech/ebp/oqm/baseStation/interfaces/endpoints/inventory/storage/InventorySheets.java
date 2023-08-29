@@ -1,20 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
 import io.smallrye.common.annotation.Blocking;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.printouts.StorageBlockInventorySheetService;
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -25,6 +11,17 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
+import tech.ebp.oqm.baseStation.service.printouts.StorageBlockInventorySheetService;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 

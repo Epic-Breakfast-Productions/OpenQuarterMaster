@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.baseStation.model.rest.user.availability.AvailabilityResponse;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

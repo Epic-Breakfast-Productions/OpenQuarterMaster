@@ -2,29 +2,19 @@ package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.NotificationSettings;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;

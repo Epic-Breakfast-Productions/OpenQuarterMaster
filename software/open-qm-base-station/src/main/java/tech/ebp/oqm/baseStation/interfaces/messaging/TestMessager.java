@@ -1,13 +1,13 @@
 package tech.ebp.oqm.baseStation.interfaces.messaging;
 
 import io.smallrye.reactive.messaging.annotations.Blocking;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Random;
 
 @Slf4j

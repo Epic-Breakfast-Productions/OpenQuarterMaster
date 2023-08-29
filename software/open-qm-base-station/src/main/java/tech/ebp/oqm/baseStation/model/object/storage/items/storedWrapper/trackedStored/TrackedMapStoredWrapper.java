@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.trackedStored;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,8 +15,6 @@ import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 

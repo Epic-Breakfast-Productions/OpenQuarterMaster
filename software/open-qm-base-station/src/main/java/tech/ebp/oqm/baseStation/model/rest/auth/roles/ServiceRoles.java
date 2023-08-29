@@ -1,7 +1,5 @@
 package tech.ebp.oqm.baseStation.model.rest.auth.roles;
 
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

@@ -1,7 +1,5 @@
 package tech.ebp.oqm.baseStation.model.rest.auth.roles;
 
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;

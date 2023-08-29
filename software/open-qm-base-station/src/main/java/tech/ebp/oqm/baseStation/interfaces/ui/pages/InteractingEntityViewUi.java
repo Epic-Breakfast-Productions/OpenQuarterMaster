@@ -1,18 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
-import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -25,6 +14,14 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
+import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 
 @Slf4j
 @Path("/")
