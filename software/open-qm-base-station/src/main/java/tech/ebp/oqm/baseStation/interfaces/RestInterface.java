@@ -87,14 +87,14 @@ public abstract class RestInterface {
 	}
 	
 	protected InteractingEntity requireAndGetEntity() {
-		Optional<InteractingEntity> entityOptional = this.logRequestAndProcessEntity();
+		InteractingEntity entity = this.getInteractingEntity();
 		
-		if(entityOptional.isEmpty()){
+		if(entity == null){
 			//TODO:: review this
 			throw new ForbiddenException("Required to have auth. No entity.");
 		}
 		
-		return entityOptional.get();
+		return entity;
 	}
 	
 	@PostConstruct
