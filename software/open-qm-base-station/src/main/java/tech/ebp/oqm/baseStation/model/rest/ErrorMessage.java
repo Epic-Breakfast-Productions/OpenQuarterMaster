@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ErrorMessage {
 	
-	@Builder.Default
+	@lombok.Builder.Default
 	private String displayMessage = "Unspecified error.";
 	
 	@JsonTypeInfo(
@@ -24,7 +24,7 @@ public class ErrorMessage {
 		property = "causeType"
 	)
 	
-	@Builder.Default
+	@lombok.Builder.Default
 	private Object cause = null;
 	
 	public ErrorMessage(String errorMessage) {

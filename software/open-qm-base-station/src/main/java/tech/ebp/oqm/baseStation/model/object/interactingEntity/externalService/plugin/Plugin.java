@@ -38,7 +38,7 @@ public abstract class Plugin {
 	
 	@NonNull
 	@NotNull
-	@Builder.Default
+	@lombok.Builder.Default
 	public String description = "";
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
