@@ -8,7 +8,10 @@ enum CommandType {
     GET_MODULE_INFO,
     GET_MODULE_STATE,
     GET_BLOCK_STATE,
+    HIGHLIGHT_BLOCKS,
+
     SET_BLOCK_STATE,
+
     ERR
 };
 

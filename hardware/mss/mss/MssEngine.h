@@ -38,6 +38,7 @@ private:
     MssConnector *connector;
     BlockState blockStateArr[MSS_VAR_NBLOCKS];
     CRGB leds[MSS_NUM_LEDS];
+    byte brightness = 25;
 
     bool loopDelay = false;
 public:
@@ -80,15 +81,15 @@ public:
     }
 
 
-    BlockState getBlock(unsigned int blockNum) {
-        return this->blockStateArr[blockNum];
+    BlockState* getBlock(unsigned int blockNum) {
+        return &(this->blockStateArr[blockNum - 1]);
     }
 
     void submitLedState() {
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
-            CRGB curColor = this->getBlock(i).getLightSetting()->getColor();
+            CRGB curColor = this->getBlock(i)->getLightSetting()->getColor();
 
-            if (this->getBlock(i).getLightSetting()->getPowerState() == OFF) {
+            if (this->getBlock(i)->getLightSetting()->getPowerState() == PowerState::OFF) {
                 curColor = CRGB(0, 0, 0);
             }
 
@@ -97,6 +98,9 @@ public:
                 this->leds[j] = curColor;
             }
         }
+        FastLED.setBrightness(this->brightness);
+//        this->leds[0] = CRGB(0, 75, 0);
+//        this->leds[1] = curColor;
         FastLED.show();
     }
 
@@ -114,14 +118,19 @@ public:
         }
     }
 
+    void resetLightPowerState(){
+        for(int i = 1; i <= MSS_VAR_NBLOCKS; i++){
+            this->getBlock(i)->getLightSetting()->turnOff();
+        }
+    }
+
     void test() {
-        for (int i = 1; i < MSS_VAR_NBLOCKS; i++) {
-            if (i == 0) {
-                this->getBlock(MSS_VAR_NBLOCKS - 1).getLightSetting()->turnOff();
-            } else if (i > 1) {
-                this->getBlock(i - 1).getLightSetting()->turnOff();
-            }
-            this->getBlock(i).getLightSetting()->turnOn();
+
+        for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
+            this->getBlock(i)->getLightSetting()->setRandColor();
+
+            this->resetLightPowerState();
+            this->getBlock(i)->getLightSetting()->turnOn();
             this->submitLedState();
             delay(DELAY);
         }

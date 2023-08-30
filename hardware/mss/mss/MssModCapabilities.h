@@ -4,7 +4,7 @@
 #include "AddToJson.h"
 
 #ifndef MSS_ALLOW_BULK_OPS
-#define MSS_ALLOW_BULK_OPS false;
+#define MSS_ALLOW_BULK_OPS false
 #endif
 
 

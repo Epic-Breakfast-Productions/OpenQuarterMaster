@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/HighlightBlocksCommand.json",
+	"title": "Highlight Blocks Command",
+	"description": "Command to highlight a set of blocks to the user. Can be called repeatedly, supplying new blocks to show at one time with multiple calls. If Bulk ops are turned off, recommended a small number of items in blocks array with any one call.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "HIGHLIGHT_BLOCKS"
+		},
+		"duration": {
+			"description": "The number of seconds to highlight for. If not specified, defaults to 30 seconds. Any negative value for indefinitely.",
+			"type": "integer",
+			"minimum": -1
+		},
+		"carry": {
+			"description": "If this request is a continuation of a previous call. Defaults to 'false'",
+			"type": "boolean"
+		},
+		"storageBlocks": {
+			"description": "The array of storage blocks managed by this module.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"blockNum": {
+						"description": "The block these settings are for",
+						"type": "integer",
+						"minimum": 1
+					},
+					"lightPowerState": {
+						"description": "The power state of the lights. Defaults to 'ON' if omitted.",
+						"type": "string",
+						"enum": [ "ON", "FLASHING" ]
+					},
+					"lightColor": {
+						"description": "The color of the lights. Must be valid hex color string, or 'RAND' (for random color). I.e, '#FFFFFF'. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command.",
+						"type": "string",
+						"pattern": "^#(([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|(RAND))$"
+					}
+				},
+				"required": [
+					"blockNum"
+				]
+			}
+		}
+	},
+	"required": [
+		"command",
+		"storageBlocks"
+	]
+}

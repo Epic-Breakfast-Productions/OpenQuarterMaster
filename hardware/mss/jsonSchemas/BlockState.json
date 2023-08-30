@@ -5,7 +5,7 @@
     "description": "The general info about a MSS Module Storage Block",
     "type": "object",
     "properties": {
-        "blockNumber": {
+        "blockNum": {
             "description": "The number of this block in the 0-based array of blocks managed by the module. Must correspond to this object's place in the holding array.",
             "type": "integer",
             "minimum": 1
