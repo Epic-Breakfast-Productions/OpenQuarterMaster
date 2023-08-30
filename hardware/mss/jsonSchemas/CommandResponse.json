@@ -5,8 +5,8 @@
     "description": ".",
     "type": "object",
     "properties": {
-        "state": {
-            "description": "The state of the command. 'OK' or 'R_ERROR' or 'ERROR'",
+        "status": {
+            "description": "The status of the command. 'OK' or 'R_ERROR' or 'ERROR'",
             "type": "string",
             "enum": [ "OK", "R_ERR", "ERR" ]
         },

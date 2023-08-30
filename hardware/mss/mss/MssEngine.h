@@ -38,7 +38,7 @@ private:
     MssConnector *connector;
     BlockState blockStateArr[MSS_VAR_NBLOCKS];
     CRGB leds[MSS_NUM_LEDS];
-    byte brightness = 25;
+    byte brightness = 255;
 
     bool loopDelay = false;
 public:
@@ -124,8 +124,7 @@ public:
         }
     }
 
-    void test() {
-
+    void lightTest() {
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             this->getBlock(i)->getLightSetting()->setRandColor();
 
@@ -134,7 +133,30 @@ public:
             this->submitLedState();
             delay(DELAY);
         }
-        tone(MSS_SPKR_PIN, 130, 125);
+
+        for (int i = MSS_VAR_NBLOCKS; i >= 1; i--) {
+            this->getBlock(i)->getLightSetting()->setRandColor();
+
+            this->resetLightPowerState();
+            this->getBlock(i)->getLightSetting()->turnOn();
+            this->submitLedState();
+            tone(MSS_SPKR_PIN, 130 * i, DELAY/4);
+            delay(DELAY/4);
+        }
+
+        this->resetLightPowerState();
+
+        this->getBlock(1)->getLightSetting()->turnOn();
+        this->getBlock(1)->getLightSetting()->setColor(CRGB(255,0,0));
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->turnOn();
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setColor(CRGB(255,0,0));
+        this->submitLedState();
+
+        tone(MSS_SPKR_PIN, 130 * 4, DELAY);
+        delay(DELAY);
+        tone(MSS_SPKR_PIN, 130 * 4, DELAY);
+        delay(DELAY);
+        delay(DELAY);
     }
 };
 
