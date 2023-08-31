@@ -46,6 +46,7 @@ TODO:: move to these
 | 8107  | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
 | 8110  | Grafana          | Grafana UI port                   |
 | 8115  | Keycloak         | Keycloak port                     |
+| 8120  | Postgres         | Postgres port                     |
 
 ## TODO's
 

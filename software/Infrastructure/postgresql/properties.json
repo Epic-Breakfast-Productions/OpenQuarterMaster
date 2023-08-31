@@ -1,0 +1,15 @@
+{
+	"packageName":"open+quarter+master-infra-postgresql",
+	"version":"1.0.0",
+	"description":"Postgresql instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql",
+	"configs": [
+	],
+	"dependencies": {
+		"deb": ""
+	},
+	"configFiles":{
+	},
+	"files":{
+	}
+}

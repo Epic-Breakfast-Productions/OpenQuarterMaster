@@ -7,6 +7,7 @@
 #  TODO:: figure out better username/password situation
 #    - https://lzone.de/blog/Using-Linux-keyring-secrets-from-your-scripts
 #
+# - https://www.keycloak.org/server/containers
 # - https://www.keycloak.org/getting-started/getting-started-docker
 #
 
