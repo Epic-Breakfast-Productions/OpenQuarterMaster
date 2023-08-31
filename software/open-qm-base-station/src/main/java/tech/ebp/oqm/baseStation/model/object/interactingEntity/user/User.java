@@ -15,7 +15,6 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.baseStation.model.rest.user.UserCreateRequest;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidUserRole;
 import tech.ebp.oqm.baseStation.service.JwtUtils;
 
@@ -57,25 +56,6 @@ public class User extends InteractingEntity {
 	private NotificationSettings notificationSettings = new NotificationSettings();
 	
 	private Set<@ValidUserRole String> roles = new HashSet<>();
-	
-	/**
-	 * Still responsible for setting:
-	 * <ul>
-	 *     <li>password hash</li>
-	 *     <li>Roles</li>
-	 *     <li>attributes</li>
-	 * </ul>
-	 *
-	 * @param userCreateRequest
-	 *
-	 * @return
-	 */
-	public static User.Builder builder(UserCreateRequest userCreateRequest) {
-		return new User.Builder()
-				   .name(userCreateRequest.getFirstName())
-				   .username(userCreateRequest.getUsername())
-				   .email(userCreateRequest.getEmail());
-	}
 	
 	public static User.Builder builder() {
 		return new User.Builder();
