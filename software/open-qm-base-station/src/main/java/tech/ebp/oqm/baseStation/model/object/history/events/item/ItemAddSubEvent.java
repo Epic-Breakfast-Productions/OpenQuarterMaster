@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.DescriptiveEvent;
@@ -17,6 +18,7 @@ import javax.measure.Quantity;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 //@SuperBuilder
+@BsonDiscriminator
 public abstract class ItemAddSubEvent
 	extends DescriptiveEvent
 {

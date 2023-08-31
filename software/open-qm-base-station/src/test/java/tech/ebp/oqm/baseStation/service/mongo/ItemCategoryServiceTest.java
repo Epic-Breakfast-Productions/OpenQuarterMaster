@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

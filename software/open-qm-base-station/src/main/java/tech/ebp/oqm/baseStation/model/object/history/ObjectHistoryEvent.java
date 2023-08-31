@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.model.object.history;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,9 +34,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.user.UserDisabledEve
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserEnabledEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**
@@ -89,7 +88,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
-	private InteractingEntityReference entity = null;
+	private ObjectId entity = null;
 	
 	/**
 	 * When the event occurred
@@ -103,11 +102,16 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
 		if(entity != null) {
-			this.entity = entity.getReference();
+			this.entity = entity.getId();
 		}
 	}
 	
 	public ObjectHistoryEvent(MainObject object, InteractingEntity entity) {
 		this(object.getId(), entity);
+	}
+	
+	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId){
+		this.entity = interactingEntityId;
+		return this;
 	}
 }

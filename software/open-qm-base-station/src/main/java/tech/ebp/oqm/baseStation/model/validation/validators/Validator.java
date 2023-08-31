@@ -1,7 +1,8 @@
 package tech.ebp.oqm.baseStation.model.validation.validators;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 

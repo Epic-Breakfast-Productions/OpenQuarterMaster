@@ -25,17 +25,13 @@ public class GeneralServiceTest<T extends ExternalService> extends ExternalServi
 		s.setName(FAKER.name().name())
 		 .setDescription(FAKER.lorem().paragraph())
 		 .setDeveloperName(FAKER.name().name())
-		 .setDeveloperEmail(FAKER.internet().emailAddress())
-		 .setRequestedRoles(Set.of(
-			 new RequestedRole(ServiceRoles.SERVICE_ROLES.get(0), "To do the thing", false)
-		 ));
+		 .setDeveloperEmail(FAKER.internet().emailAddress());
 		
 		GeneralServiceSetupRequest r = GeneralServiceSetupRequest.builder()
 																 .name(s.getName())
 																 .description(s.getDescription())
 																 .developerName(s.getDeveloperName())
 																 .developerEmail(s.getDeveloperEmail())
-																 .requestedRoles(s.getRequestedRoles())
 																 .build();
 		
 		return Stream.of(
@@ -48,10 +44,7 @@ public class GeneralServiceTest<T extends ExternalService> extends ExternalServi
 		s.setName(FAKER.name().name())
 		 .setDescription(FAKER.lorem().paragraph())
 		 .setDeveloperName(FAKER.name().name())
-		 .setDeveloperEmail(FAKER.internet().emailAddress())
-		 .setRequestedRoles(Set.of(
-			 new RequestedRole(ServiceRoles.SERVICE_ROLES.get(0), "To do the thing", false)
-		 ));
+		 .setDeveloperEmail(FAKER.internet().emailAddress());
 		
 		return Stream.of(
 			Arguments.of(s, GeneralServiceSetupRequest.builder()
@@ -59,28 +52,24 @@ public class GeneralServiceTest<T extends ExternalService> extends ExternalServi
 													  .description(s.getDescription())
 													  .developerName(s.getDeveloperName())
 													  .developerEmail(s.getDeveloperEmail())
-													  .requestedRoles(s.getRequestedRoles())
 													  .build()),
 			Arguments.of(s, GeneralServiceSetupRequest.builder()
 													  .name(s.getName())
 													  .description(FAKER.lorem().paragraph())
 													  .developerName(s.getDeveloperName())
 													  .developerEmail(s.getDeveloperEmail())
-													  .requestedRoles(s.getRequestedRoles())
 													  .build()),
 			Arguments.of(s, GeneralServiceSetupRequest.builder()
 													  .name(s.getName())
 													  .description(s.getDescription())
 													  .developerName(FAKER.name().name())
 													  .developerEmail(s.getDeveloperEmail())
-													  .requestedRoles(s.getRequestedRoles())
 													  .build()),
 			Arguments.of(s, GeneralServiceSetupRequest.builder()
 													  .name(s.getName())
 													  .description(s.getDescription())
 													  .developerName(s.getDeveloperName())
 													  .developerEmail(FAKER.internet().emailAddress())
-													  .requestedRoles(s.getRequestedRoles())
 													  .build()),
 			Arguments.of(s, GeneralServiceSetupRequest.builder()
 								.name(s.getName())
@@ -92,22 +81,5 @@ public class GeneralServiceTest<T extends ExternalService> extends ExternalServi
 								))
 								.build())
 		);
-	}
-	
-	
-	@Test
-	public void getEntityReferenceTest() {
-		GeneralService service = new GeneralService();
-		service.setId(new ObjectId());
-		
-		InteractingEntityReference ref = service.getReference();
-		
-		assertNotNull(ref);
-		assertNotNull(ref.getEntityId());
-		assertNotNull(ref.getEntityType());
-		assertEquals(InteractingEntityType.EXTERNAL_SERVICE, ref.getEntityType());
-		assertEquals(service.getId(), ref.getEntityId());
-		
-		log.info("Reference: {}", ref);
 	}
 }

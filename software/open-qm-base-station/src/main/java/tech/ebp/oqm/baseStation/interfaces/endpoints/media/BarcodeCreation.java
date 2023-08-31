@@ -1,6 +1,14 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -11,9 +19,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.service.barcode.BarcodeService;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
@@ -25,18 +30,9 @@ import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.media.CodeImageType;
 import tech.ebp.oqm.baseStation.model.rest.media.ObjectCodeContentType;
 import tech.ebp.oqm.baseStation.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
-
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import tech.ebp.oqm.baseStation.service.barcode.BarcodeService;
+import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -72,11 +68,9 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBarcode(
-		@Context SecurityContext ctx,
 		@PathParam("codeType") CodeImageType type,
 		@PathParam("code") String data
 	) {
-		logRequestContext(this.jwt, ctx);
 		log.info("Getting {}.", type);
 		return Response.status(Response.Status.OK)
 					   .entity(this.barcodeService.getCodeData(type, data))
@@ -97,13 +91,11 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getQrCode(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("object") IMAGED_OBJ_TYPE_NAME object,
 		@NonNull @PathParam("id") String id,
 		@NonNull @PathParam("codeType") CodeImageType codeType,
 		@NonNull @PathParam("codeContentType") ObjectCodeContentType codeContent
 	) {
-		logRequestContext(this.jwt, ctx);
 		log.info("Getting {} with {} for object {} {}.", codeType, codeContent, object, id);
 		
 		//ensure object exists
@@ -174,10 +166,8 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getItemBarcode(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String id
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(id);
 		String barcode = item.getBarcode();
 		
@@ -204,11 +194,9 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredItemBarcodeAmountSimple(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String itemId,
 		@NonNull @PathParam("storageBlockId") String storageBlockId
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(itemId);
 		
 		SingleAmountStoredWrapper wrapper;
@@ -248,12 +236,10 @@ public class BarcodeCreation extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getStoredItemBarcodeAmountListTracked(
-		@Context SecurityContext ctx,
 		@NonNull @PathParam("id") String itemId,
 		@NonNull @PathParam("storageBlockId") String storageBlockId,
 		@NonNull @PathParam("index") String index
 	) {
-		logRequestContext(this.jwt, ctx);
 		InventoryItem<?, ?, ?> item = this.inventoryItemService.get(itemId);
 		
 		String barcode;

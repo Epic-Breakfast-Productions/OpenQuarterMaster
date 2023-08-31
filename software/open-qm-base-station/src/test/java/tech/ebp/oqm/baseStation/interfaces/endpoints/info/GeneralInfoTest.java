@@ -13,7 +13,7 @@ import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
 import javax.measure.Unit;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.util.Currency;
 import java.util.stream.Stream;
 

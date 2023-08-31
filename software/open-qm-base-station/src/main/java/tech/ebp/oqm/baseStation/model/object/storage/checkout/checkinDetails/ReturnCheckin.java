@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInDetails;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.CheckInType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)

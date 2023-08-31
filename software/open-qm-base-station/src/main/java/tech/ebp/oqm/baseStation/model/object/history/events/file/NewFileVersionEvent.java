@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
@@ -11,6 +12,7 @@ import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@BsonDiscriminator
 public class NewFileVersionEvent extends ObjectHistoryEvent {
 	
 	@Override

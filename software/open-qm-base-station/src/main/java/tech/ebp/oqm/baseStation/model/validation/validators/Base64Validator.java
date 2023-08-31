@@ -1,10 +1,9 @@
 package tech.ebp.oqm.baseStation.model.validation.validators;
 
+import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.codec.binary.Base64;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidBase64;
-import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

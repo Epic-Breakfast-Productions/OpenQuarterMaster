@@ -1,12 +1,11 @@
 package tech.ebp.oqm.baseStation.model.rest.unit;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import tech.ebp.oqm.baseStation.model.rest.unit.UnitListEntry;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

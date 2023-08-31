@@ -2,17 +2,17 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.lego;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.RebrickableLookupClient;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.RebrickableLookupClient;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;

@@ -17,21 +17,5 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @Slf4j
 class UserTest extends BasicTest {
-	
-	@Test
-	public void getEntityReferenceTest() {
-		User user = new User();
-		user.setId(new ObjectId());
-		
-		InteractingEntityReference ref = user.getReference();
-		
-		assertNotNull(ref);
-		assertNotNull(ref.getEntityId());
-		assertNotNull(ref.getEntityType());
-		assertEquals(InteractingEntityType.USER, ref.getEntityType());
-		assertEquals(user.getId(), ref.getEntityId());
-		
-		log.info("Reference: {}", ref);
-	}
-	
+
 }

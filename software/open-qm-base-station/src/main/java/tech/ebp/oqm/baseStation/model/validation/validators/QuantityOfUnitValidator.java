@@ -1,11 +1,10 @@
 package tech.ebp.oqm.baseStation.model.validation.validators;
 
+import jakarta.validation.ConstraintValidatorContext;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidQuantityOfUnit;
-import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
 import javax.measure.Quantity;
-import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

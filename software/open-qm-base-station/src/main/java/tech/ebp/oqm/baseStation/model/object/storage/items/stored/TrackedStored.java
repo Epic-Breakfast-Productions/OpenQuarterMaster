@@ -1,16 +1,14 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.stored;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.baseStation.model.object.storage.items.stored.StoredType;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 /**

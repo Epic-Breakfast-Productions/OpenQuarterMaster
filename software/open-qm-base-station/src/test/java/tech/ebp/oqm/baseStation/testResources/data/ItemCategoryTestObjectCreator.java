@@ -5,7 +5,7 @@ package tech.ebp.oqm.baseStation.testResources.data;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.awt.*;
 import java.security.SecureRandom;
 import java.util.ArrayList;

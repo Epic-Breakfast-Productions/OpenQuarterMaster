@@ -2,8 +2,8 @@ package tech.ebp.oqm.baseStation.model.testUtils;
 
 import lombok.Getter;
 
-import javax.validation.ClockProvider;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ClockProvider;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

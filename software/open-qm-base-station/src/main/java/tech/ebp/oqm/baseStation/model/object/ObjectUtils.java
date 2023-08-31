@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,8 +56,8 @@ public final class ObjectUtils {
 		mapper.registerModules(MAPPER_MODULES);
 		
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		//        mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
-		//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+		mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+		mapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
 		
 		//set the timezone to this server's.
 		mapper.setTimeZone(TimeZone.getDefault());

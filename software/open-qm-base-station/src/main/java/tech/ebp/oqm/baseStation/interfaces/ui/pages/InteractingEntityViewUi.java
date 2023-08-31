@@ -1,40 +1,27 @@
 package tech.ebp.oqm.baseStation.interfaces.ui.pages;
 
-import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.CookieParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
-import tech.ebp.oqm.baseStation.rest.restCalls.KeycloakServiceCaller;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.baseStation.model.rest.user.UserGetResponse;
-
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.util.List;
 
 @Slf4j
 @Path("/")
@@ -51,61 +38,28 @@ public class InteractingEntityViewUi extends UiProvider {
 	BaseStationInteractingEntity baseStationInteractingEntity;
 	
 	@Inject
-	UserService userService;
-	@Inject
-	InteractingEntityService interactingEntityService;
-	@Inject
 	InventoryItemService inventoryItemService;
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	@Inject
-	JsonWebToken jwt;
-	
-	@Inject
-	@RestClient
-	KeycloakServiceCaller ksc;
-	
-	@Inject
-	Span span;
-	
 	@GET
-	@Path("entityView/{type}/{id}")
+	@Path("entityView/{id}")
 	@RolesAllowed("user")
 	@Produces(MediaType.TEXT_HTML)
 	public Response extEntityView(
-		@Context SecurityContext securityContext,
-		@PathParam("type") InteractingEntityType entityType,
-		@PathParam("id") String entityId,
-		@CookieParam("jwt_refresh") String refreshToken
+		@PathParam("id") String entityId
 	) {
-		logRequestContext(jwt, securityContext);
-		User user = userService.getFromJwt(this.jwt);
-		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(
-			this.getUri(),
-			refreshAuthToken(ksc, refreshToken)
-		);
-		
-		InteractingEntity entity = this.interactingEntityService.getEntity(entityType, new ObjectId(entityId));
-		
+		InteractingEntity entity = this.getInteractingEntityService().get(entityId);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, ugr)
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("entity", entity)
-				.data("user", ugr)
-				.data("userService", userService)
-				.data("interactingEntityService", interactingEntityService)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
-		
-		if (newCookies != null && !newCookies.isEmpty()) {
-			responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
-		}
 		
 		return responseBuilder.build();
 	}
@@ -118,30 +72,15 @@ public class InteractingEntityViewUi extends UiProvider {
 		@Context SecurityContext securityContext,
 		@CookieParam("jwt_refresh") String refreshToken
 	) {
-		logRequestContext(jwt, securityContext);
-		User user = userService.getFromJwt(this.jwt);
-		UserGetResponse ugr = UserGetResponse.builder(user).build();
-		List<NewCookie> newCookies = UiUtils.getExternalAuthCookies(
-			this.getUri(),
-			refreshAuthToken(ksc, refreshToken)
-		);
-		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview, span, ugr)
+			this.setupPageTemplate(overview, this.getInteractingEntity())
 				.data("entity", this.baseStationInteractingEntity)
-				.data("user", ugr)
-				.data("userService", userService)
-				.data("interactingEntityService", interactingEntityService)
 				.data("numItems", inventoryItemService.count())
 				.data("numStorageBlocks", storageBlockService.count())
 				.data("historySearchObject", new HistorySearch())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
-		
-		if (newCookies != null && !newCookies.isEmpty()) {
-			responseBuilder.cookie(newCookies.toArray(new NewCookie[]{}));
-		}
 		
 		return responseBuilder.build();
 	}

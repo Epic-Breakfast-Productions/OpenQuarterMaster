@@ -1,38 +1,33 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.scheduled.ExpiryProcessor;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
-import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.io.File;
 import java.io.IOException;
 
@@ -50,18 +45,11 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class InventoryManagement extends EndpointProvider {
 	
-	
-	@Inject
-	JsonWebToken jwt;
-	
 	@Inject
 	DataExportService dataExportService;
 	
 	@Inject
 	DataImportService dataImportService;
-	
-	@Inject
-	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	ExpiryProcessor expiryProcessor;
@@ -87,11 +75,8 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@Context SecurityContext securityContext,
 		@QueryParam("excludeHistory") boolean excludeHistory
 	) throws IOException {
-		logRequestContext(this.jwt, securityContext);
-		
 		File outputFile = dataExportService.exportDataToBundle(excludeHistory);
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
@@ -121,12 +106,9 @@ public class InventoryManagement extends EndpointProvider {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response importData(
-		@Context SecurityContext securityContext,
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		logRequestContext(this.jwt, securityContext);
-		
-		DataImportResult result = this.dataImportService.importBundle(body, this.interactingEntityService.getEntity(this.jwt));
+		DataImportResult result = this.dataImportService.importBundle(body, this.getInteractingEntity());
 		
 		return Response.ok(result).build();
 	}
@@ -147,11 +129,7 @@ public class InventoryManagement extends EndpointProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
-	public Response triggerSearchAndProcessExpiring(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response triggerSearchAndProcessExpiring() {
 		expiryProcessor.searchAndProcessExpiring();
 		
 		return Response.ok().build();

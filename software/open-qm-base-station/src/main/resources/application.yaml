@@ -5,24 +5,9 @@ service:
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-  authMode: SELF # SELF or EXTERNAL
-  # Not used if authMode = SELF
   # TODO:: move data that doesn't need to be here
-  externalAuth:
-    name: Keycloak
-    url: http://localhost:49185
-    realm: apps
-    clientId: quartermaster
-    clientSecret: secret
-    scope: openid
-    realmBasePath: /realms/${service.externalAuth.realm:}
-    realmBase: ${service.externalAuth.url:}${service.externalAuth.realmBasePath:}
-    interactionBasePath: ${service.externalAuth.realmBasePath:}/protocol/openid-connect
-    interactionBase: ${service.externalAuth.url:}${service.externalAuth.interactionBasePath:}
-    tokenPath: ${service.externalAuth.interactionBasePath:}/token
-    tokenUrl: ${service.externalAuth.url:}${service.externalAuth.tokenPath:}
-    callbackPath: /api/v1/auth/user/callback
-    callbackUrl: ${runningInfo.baseUrl}${service.externalAuth.callbackPath:}
+  auth:
+    userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
   runBy:
     name: " "
     email: " "
@@ -104,21 +89,18 @@ quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
-    keycloak:
-      url: ${service.externalAuth.tokenUrl}
-      scope: javax.inject.Singleton
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     upc-datakick:
       url: ${productLookup.providers.datakick.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     upc-upcitemdb:
       url: ${productLookup.providers.upcitemdb.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
     lego-rebrickable:
       url: ${productLookup.providers.rebrickable.url}
-      scope: javax.inject.Singleton
+      scope: jakarta.inject.Singleton
   native:
     resources:
       includes: security/*
@@ -126,13 +108,14 @@ quarkus:
     level: DEBUG
     console:
       format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
-#    category: TODO:: make this work to suppress mongo debug statements
-#      #      "com.mongodb.internal.diagnostics": INFO
-#      #      "com.mongodb": INFO
-#      com.mongodb.internal.diagnostics.logging: INFO
+    category:
+      "org.mongodb.driver":
+        level: INFO
   mongodb:
     database: openQuarterMaster
     tracing:
+      enabled: true
+    metrics:
       enabled: true
   #  package:
   #    type: uber-jar
@@ -163,6 +146,10 @@ quarkus:
       max-body-size: 95M
     auth:
       proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
     access-log:
       enabled: true
     port: 80
@@ -177,7 +164,14 @@ quarkus:
   qute:
     type-check-excludes:
       - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
-
+  oidc:
+    application-type: hybrid
+    token-state-manager:
+      split-tokens: true
+    logout:
+      path: /logout
+      post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+  
 mp:
   jwt:
     verify:
@@ -185,9 +179,7 @@ mp:
     expiration:
       default: 86400 # 1 day
       extended: 2678400 # 1 month
-    token:
-      header: Cookie
-      cookie: jwt
+
 #  messaging:
 #    outgoing:
 #      items.add:
@@ -212,7 +204,7 @@ smallrye:
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
-      connection-string: mongodb://localhost:27017
+#      connection-string: mongodb://localhost:27017
     http:
       port: 8080
       ssl-port: 8443
@@ -220,6 +212,16 @@ smallrye:
         certificate:
           files: ../../../../dev/devTest-cert-cert.pem
           key-files: ../../../../dev/devTest-cert-key.pem
+    oidc:
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
+    keycloak:
+      devservices:
+        # Required to export realm
+        start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
+        realm-path: "../../../../dev/oqm-realm.json"
+        realm-name: "oqm"
   mp:
     jwt:
       expiration:
@@ -238,4 +240,4 @@ smallrye:
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
 
-
+  

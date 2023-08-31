@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.media;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,8 +9,6 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

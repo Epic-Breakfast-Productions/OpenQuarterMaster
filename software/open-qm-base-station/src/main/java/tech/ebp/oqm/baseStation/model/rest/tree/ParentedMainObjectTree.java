@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.HasParent;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
-import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTreeNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
