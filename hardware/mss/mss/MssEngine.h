@@ -109,20 +109,25 @@ public:
         this->connector->send(this->modInfo);
     }
 
+    /**
+     * TODO:: determine how to get the Command casting to work
+     * @param command
+     */
     void process(Command &command) {
         //TODO
         switch (command.getCommand()) {
             case CommandType::NULL_OP:
                 //Nothing to do.
                 break;
+            case CommandType::REQUEST_ERROR:
+                this->connector->send(
+                        ResponseType::R_ERR,
+                        command.getDetail()
+                );
+                break;
             case CommandType::GET_MODULE_INFO:
                 this->sendModInfo();
                 break;
-            default:
-                this->connector->send(
-                        ResponseType::R_ERR,
-                        F("Unsupported operation.")
-                );
         }
     }
 
