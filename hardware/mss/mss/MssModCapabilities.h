@@ -32,11 +32,11 @@ public:
     MssModCapabilities(): MssModCapabilities(false, false, false){
     }
 
-    void addToJson(JsonObject* obj){
-        (*obj)[F("bulkOps")] = MSS_ALLOW_BULK_OPS;
-        (*obj)[F("blockLights")] = this->blockLights;
-        (*obj)[F("blockLightColor")] = this->blockLightColor;
-        (*obj)[F("blockLightBrightness")] = this->blockLightBrightness;
+    void addToJson(JsonObject& obj){
+        obj[F("bulkOps")] = MSS_ALLOW_BULK_OPS;
+        obj[F("blockLights")] = this->blockLights;
+        obj[F("blockLightColor")] = this->blockLightColor;
+        obj[F("blockLightBrightness")] = this->blockLightBrightness;
     }
 };
 

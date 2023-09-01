@@ -6,6 +6,7 @@
 #define DELAY    500
 
 #include <FastLED.h>
+#include <ArduinoJson.h>
 #include "MssEngine.h"
 #include "MssSerialConnector.h"
 
@@ -30,6 +31,22 @@ void setup() {
 
 
 void loop() {
-    //mssEngine.loop();
+//    mssEngine.loop();
     mssEngine.lightTest();
+
+//    if(Serial.available()){
+//        StaticJsonDocument<256> doc;
+//
+//
+//        DeserializationError error = deserializeJson(doc, Serial);
+//
+//        if (error) {
+//            Serial.print(F("deserializeJson() failed: "));
+//            Serial.println(error.f_str());
+//        } else {
+//            serializeJson(doc, Serial);
+//            Serial.println();
+//        }
+//
+//    }
 }

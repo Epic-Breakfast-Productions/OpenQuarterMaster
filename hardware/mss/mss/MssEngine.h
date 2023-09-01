@@ -67,13 +67,16 @@ public:
         }
         FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(this->leds, MSS_NUM_LEDS);
         this->submitLedState();
+
+        this->connector->init();
+
         tone(MSS_SPKR_PIN, 2093, 250);
     }
 
     void loop() {
         if (this->connector->hasCommand()) {
             Command command = this->connector->getCommand();
-            this->process(&command);
+            this->process(command);
         }
         if (this->loopDelay) {
             delay(100);
@@ -81,7 +84,7 @@ public:
     }
 
 
-    BlockState* getBlock(unsigned int blockNum) {
+    BlockState *getBlock(unsigned int blockNum) {
         return &(this->blockStateArr[blockNum - 1]);
     }
 
@@ -99,27 +102,32 @@ public:
             }
         }
         FastLED.setBrightness(this->brightness);
-//        this->leds[0] = CRGB(0, 75, 0);
-//        this->leds[1] = curColor;
         FastLED.show();
     }
 
-
     void sendModInfo() {
-        //TODO
+        this->connector->send(this->modInfo);
     }
 
-    void process(Command *command) {
+    void process(Command &command) {
         //TODO
-        switch (command->getCommand()) {
+        switch (command.getCommand()) {
+            case CommandType::NULL_OP:
+                //Nothing to do.
+                break;
             case CommandType::GET_MODULE_INFO:
                 this->sendModInfo();
                 break;
+            default:
+                this->connector->send(
+                        ResponseType::R_ERR,
+                        F("Unsupported operation.")
+                );
         }
     }
 
-    void resetLightPowerState(){
-        for(int i = 1; i <= MSS_VAR_NBLOCKS; i++){
+    void resetLightPowerState() {
+        for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             this->getBlock(i)->getLightSetting()->turnOff();
         }
     }
@@ -140,16 +148,16 @@ public:
             this->resetLightPowerState();
             this->getBlock(i)->getLightSetting()->turnOn();
             this->submitLedState();
-            tone(MSS_SPKR_PIN, 130 * i, DELAY/4);
-            delay(DELAY/4);
+            tone(MSS_SPKR_PIN, 130 * i, DELAY / 4);
+            delay(DELAY / 4);
         }
 
         this->resetLightPowerState();
 
         this->getBlock(1)->getLightSetting()->turnOn();
-        this->getBlock(1)->getLightSetting()->setColor(CRGB(255,0,0));
+        this->getBlock(1)->getLightSetting()->setColor(CRGB(255, 0, 0));
         this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->turnOn();
-        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setColor(CRGB(255,0,0));
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setColor(CRGB(255, 0, 0));
         this->submitLedState();
 
         tone(MSS_SPKR_PIN, 130 * 4, DELAY);

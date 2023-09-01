@@ -1,26 +1,13 @@
-#ifndef MSS_COMMAND_H
-#define MSS_COMMAND_H
+#ifndef MSS_ERRING_COMMAND_H
+#define MSS_ERRING_COMMAND_H
 
-#include <Arduino.h>
-#include <ArduinoJson.h>
+#include "MssCommand.h."
 
-enum CommandType {
-    GET_MODULE_INFO,
-    GET_MODULE_STATE,
-    GET_BLOCK_STATE,
-    HIGHLIGHT_BLOCKS,
-
-    SET_BLOCK_STATE,
-
-    ERROR,
-    NULL_OP
-};
-
-class Command {
+class ErringCommand : public Command {
 private:
     CommandType commandType;
 protected:
-    Command(CommandType command){
+    ErringCommand(CommandType command){
         this->commandType = command;
     }
 public:

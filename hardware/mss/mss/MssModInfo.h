@@ -2,10 +2,10 @@
 #define MSS_MOD_INFO_H
 
 #include <ArduinoJson.h>
-#include "ToJson.h"
+#include "AddToJson.h"
 #include "MssModCapabilities.h"
 
-class MssModInfo : public ToJson {
+class MssModInfo : public AddToJson {
 private:
     const char * specVersion;
     const char * serialId;
@@ -24,17 +24,13 @@ public:
     MssModInfo(){
     }
 
-    JsonDocument *toJson() {
-        DynamicJsonDocument doc(128);
-
+    void addToJson(JsonObject& doc){
         doc[F("specVersion")] = this->specVersion;
         doc[F("serialId")] = this->serialId;
         doc[F("numBlocks")] = MSS_VAR_NBLOCKS;
 
         JsonObject capabilities = doc.createNestedObject(F("capabilities"));
-        this->capabilities.addToJson(&capabilities);
-
-        return &doc;
+        this->capabilities.addToJson(capabilities);
     }
 
 };

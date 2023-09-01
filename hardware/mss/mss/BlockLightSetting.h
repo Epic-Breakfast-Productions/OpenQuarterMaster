@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 #include <FastLED.h>
 
+#define MSS_MIN_RAND_COLOR_VAL 128
+
 enum PowerState {
     ON, OFF, FLASHING
 };
@@ -30,13 +32,13 @@ public:
                     g = 0,
                     b = 0;
             if (random(0, 2)) {
-                r = random(25, 255);
+                r = random(MSS_MIN_RAND_COLOR_VAL, 255);
             }
             if (random(0, 2)) {
-                g = random(25, 255);
+                g = random(MSS_MIN_RAND_COLOR_VAL, 255);
             }
             if (random(0, 2)) {
-                b = random(25, 255);
+                b = random(MSS_MIN_RAND_COLOR_VAL, 255);
             }
             color = CRGB(r, g, b);
         }

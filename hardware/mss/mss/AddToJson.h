@@ -5,7 +5,11 @@
 
 class AddToJson {
 public:
-    virtual void addToJson(JsonObject* obj) = 0;
+    virtual void addToJson(JsonObject& obj) = 0;
+    void addToJson(JsonDocument& doc){
+        JsonObject object = doc.to<JsonObject>();
+        this->addToJson(object);
+    }
 };
 
 #endif
