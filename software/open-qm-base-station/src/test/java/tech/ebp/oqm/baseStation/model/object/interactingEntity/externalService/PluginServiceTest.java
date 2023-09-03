@@ -33,9 +33,7 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 		 .setDescription(FAKER.lorem().paragraph())
 		 .setDeveloperName(FAKER.name().name())
 		 .setDeveloperEmail(FAKER.internet().emailAddress())
-		 .setRequestedRoles(Set.of(
-			 new RequestedRole(ServiceRoles.SERVICE_ROLES.get(0), "To do the thing", false)
-		 ));
+		;
 		s.setDisabledPageComponents(
 			List.of(
 				NavItem.builder()
@@ -60,7 +58,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 															   .description(s.getDescription())
 															   .developerName(s.getDeveloperName())
 															   .developerEmail(s.getDeveloperEmail())
-															   .requestedRoles(s.getRequestedRoles())
 															   .pageComponents(
 																   List.of(
 																	   s.getDisabledPageComponents().get(0),
@@ -79,10 +76,7 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 		s.setName(FAKER.name().name())
 		 .setDescription(FAKER.lorem().paragraph())
 		 .setDeveloperName(FAKER.name().name())
-		 .setDeveloperEmail(FAKER.internet().emailAddress())
-		 .setRequestedRoles(Set.of(
-			 new RequestedRole(ServiceRoles.SERVICE_ROLES.get(0), "To do the thing", false)
-		 ));
+		 .setDeveloperEmail(FAKER.internet().emailAddress());
 		s.setDisabledPageComponents(
 			List.of(
 				NavItem.builder()
@@ -108,7 +102,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 													 .description(s.getDescription())
 													 .developerName(s.getDeveloperName())
 													 .developerEmail(s.getDeveloperEmail())
-													 .requestedRoles(s.getRequestedRoles())
 													 .pageComponents(
 														 List.of(
 															 s.getDisabledPageComponents().get(0),
@@ -122,7 +115,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 													 .description(FAKER.lorem().paragraph())
 													 .developerName(s.getDeveloperName())
 													 .developerEmail(s.getDeveloperEmail())
-													 .requestedRoles(s.getRequestedRoles())
 													 .pageComponents(
 														 List.of(
 															 s.getDisabledPageComponents().get(0),
@@ -136,7 +128,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 													 .description(s.getDescription())
 													 .developerName(FAKER.name().name())
 													 .developerEmail(s.getDeveloperEmail())
-													 .requestedRoles(s.getRequestedRoles())
 													 .pageComponents(
 														 List.of(
 															 s.getDisabledPageComponents().get(0),
@@ -150,7 +141,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 													 .description(s.getDescription())
 													 .developerName(s.getDeveloperName())
 													 .developerEmail(FAKER.internet().emailAddress())
-													 .requestedRoles(s.getRequestedRoles())
 													 .pageComponents(
 														 List.of(
 															 s.getDisabledPageComponents().get(0),
@@ -180,7 +170,6 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 													 .description(s.getDescription())
 													 .developerName(s.getDeveloperName())
 													 .developerEmail(s.getDeveloperEmail())
-								.requestedRoles(s.getRequestedRoles())
 								.pageComponents(
 									List.of(
 										s.getDisabledPageComponents().get(0)
@@ -191,19 +180,4 @@ public class PluginServiceTest<T extends ExternalService> extends ExternalServic
 		);
 	}
 	
-	@Test
-	public void getEntityReferenceTest() {
-		PluginService service = new PluginService();
-		service.setId(new ObjectId());
-		
-		InteractingEntityReference ref = service.getReference();
-		
-		assertNotNull(ref);
-		assertNotNull(ref.getEntityId());
-		assertNotNull(ref.getEntityType());
-		assertEquals(InteractingEntityType.EXTERNAL_SERVICE, ref.getEntityType());
-		assertEquals(service.getId(), ref.getEntityId());
-		
-		log.info("Reference: {}", ref);
-	}
 }

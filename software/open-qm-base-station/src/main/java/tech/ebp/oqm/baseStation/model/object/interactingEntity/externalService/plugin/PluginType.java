@@ -1,7 +1,5 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin;
 
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginTypeType;
-
 /**
  * Other ideas: - Overview page tab entry
  */

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.testResources;
 
 import io.restassured.http.Header;
+import io.restassured.http.Headers;
 import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;

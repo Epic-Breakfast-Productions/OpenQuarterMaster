@@ -3,15 +3,15 @@ package tech.ebp.oqm.baseStation.scheduled;
 import com.mongodb.client.FindIterable;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
-import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
@@ -57,7 +57,7 @@ public class ExpiryProcessor {
 			if (!expiryEvents.isEmpty()) {
 				inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
-					curEvent.setEntity(this.baseStationInteractingEntity.getReference());
+					curEvent.setEntity(this.baseStationInteractingEntity.getId());
 					inventoryItemService.addHistoryFor(cur, null, curEvent);
 					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
 				}

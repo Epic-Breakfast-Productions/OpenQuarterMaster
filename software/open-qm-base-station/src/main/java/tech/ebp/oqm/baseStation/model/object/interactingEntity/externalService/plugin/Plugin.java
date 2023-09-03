@@ -3,18 +3,15 @@ package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Builder;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavItem;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavSubMenu;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 //@AllArgsConstructor
@@ -41,7 +38,7 @@ public abstract class Plugin {
 	
 	@NonNull
 	@NotNull
-	@Builder.Default
+	@lombok.Builder.Default
 	public String description = "";
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

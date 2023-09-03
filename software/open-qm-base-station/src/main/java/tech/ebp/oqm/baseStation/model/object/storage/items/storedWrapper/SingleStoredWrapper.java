@@ -7,7 +7,6 @@ import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
 
 import java.time.Duration;
 import java.util.List;

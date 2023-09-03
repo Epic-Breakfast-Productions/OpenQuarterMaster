@@ -1,26 +1,79 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.bson.types.ObjectId;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityType;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.GeneralService;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginService;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.service.JwtUtils;
 
 import java.util.Set;
 
-public interface InteractingEntity {
+
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "interactingEntityType"
+)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = User.class, name = "USER"),
+	@JsonSubTypes.Type(value = PluginService.class, name = "SERVICE_PLUGIN"),
+	@JsonSubTypes.Type(value = GeneralService.class, name = "SERVICE_GENERAL"),
+})
+@BsonDiscriminator
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public abstract class InteractingEntity extends AttKeywordMainObject {
 	
-	public ObjectId getId();
+	@NonNull
+	@NotNull
+	@NotBlank
+	private String idFromAuthProvider;
+	@NonNull
+	@NotNull
+	@NotBlank
+	private String authProvider;
 	
-	public String getName();
+	public abstract String getName();
 	
-	public String getEmail();
+	public abstract String getEmail();
 	
-	public InteractingEntityType getInteractingEntityType();
+	public abstract InteractingEntityType getInteractingEntityType();
 	
-	public Set<String> getRoles();
+	public abstract Set<String> getRoles();
 	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public default InteractingEntityReference getReference() {
-		return new InteractingEntityReference(this.getId(), this.getInteractingEntityType());
+	public abstract boolean updateFrom(JsonWebToken jwt);
+	
+	public static InteractingEntity createEntity(JsonWebToken jwt){
+		InteractingEntity newEntity;
+		//TODO:: support services
+		
+		{
+			User newUser = new User();
+			newEntity = newUser;
+			newUser.setEmail(JwtUtils.getEmail(jwt));
+			newUser.setName(JwtUtils.getName(jwt));
+			newUser.setUsername(JwtUtils.getUserName(jwt));
+			newUser.setRoles(JwtUtils.getRoles(jwt));
+		}
+		newEntity.setAuthProvider(jwt.getIssuer());
+		newEntity.setIdFromAuthProvider(jwt.getSubject());
+		
+		
+		return newEntity;
 	}
+	
 }

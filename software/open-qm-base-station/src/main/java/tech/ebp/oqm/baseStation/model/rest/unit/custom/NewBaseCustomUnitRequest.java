@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.rest.unit.custom;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,12 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
 import tech.units.indriya.unit.BaseUnit;
 
 import javax.measure.Unit;
-import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

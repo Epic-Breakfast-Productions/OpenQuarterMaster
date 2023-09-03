@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.DescriptiveEvent;
@@ -14,6 +15,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@BsonDiscriminator
 public class ItemListApplyEvent extends DescriptiveEvent {
 	public ItemListApplyEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);

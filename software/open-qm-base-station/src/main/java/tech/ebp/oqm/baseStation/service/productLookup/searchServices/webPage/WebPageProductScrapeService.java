@@ -2,8 +2,8 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import tech.ebp.oqm.baseStation.service.productLookup.searchServices.ItemSearchService;
 import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.service.productLookup.searchServices.ItemSearchService;
 
 import java.io.IOException;
 import java.net.URL;

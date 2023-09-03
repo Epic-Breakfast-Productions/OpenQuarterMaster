@@ -22,7 +22,10 @@ class PluginServiceSerializationTest extends ObjectSerializationTest<PluginServi
 					.setName(FAKER.name().name())
 					.setDeveloperName(FAKER.name().name())
 					.setDeveloperEmail(FAKER.internet().emailAddress())
+					.setAuthProvider("keycloak")
+					.setIdFromAuthProvider("id")
 					.setId(ObjectId.get())
+					
 			)
 		);
 	}

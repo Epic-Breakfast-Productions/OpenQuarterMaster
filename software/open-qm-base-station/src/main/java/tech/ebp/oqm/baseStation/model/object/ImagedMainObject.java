@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +9,6 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

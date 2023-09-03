@@ -1,19 +1,19 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 
-import javax.ws.rs.QueryParam;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.regex;
 
 @ToString(callSuper = true)
 @Getter
-public class UserSearch extends SearchKeyAttObject<User> {
+public class InteractingEntitySearch extends SearchKeyAttObject<InteractingEntity> {
 	@QueryParam("name") String name;
 	//TODO:: object specific fields, add to bson filter list
 	

@@ -95,6 +95,6 @@ async function assertNotLoggedIn() {
 
 }
 
-$("#logoutButton").click(function(){
-    logout();
-});
+// $("#logoutButton").click(function(){
+//     logout();
+// });

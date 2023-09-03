@@ -7,16 +7,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.model.object.HasParent;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
-import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
-import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTreeNode;
-import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
-import tech.ebp.oqm.baseStation.model.rest.tree.storageBlock.StorageBlockTree;
-import tech.ebp.oqm.baseStation.model.rest.tree.storageBlock.StorageBlockTreeNode;
+import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 
 import java.util.Collection;
 import java.util.List;

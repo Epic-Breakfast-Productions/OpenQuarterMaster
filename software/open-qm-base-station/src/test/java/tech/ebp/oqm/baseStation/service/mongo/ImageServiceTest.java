@@ -25,7 +25,7 @@ import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.units.indriya.quantity.Quantities;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

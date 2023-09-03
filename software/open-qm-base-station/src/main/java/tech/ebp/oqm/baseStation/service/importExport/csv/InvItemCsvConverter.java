@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.service.importExport.csv;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -11,7 +12,6 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -1,7 +1,5 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.utils;
 
-import tech.ebp.oqm.baseStation.model.object.storage.items.utils.SumHelper;
-
 import java.math.BigDecimal;
 
 public class BigDecimalSumHelper extends SumHelper<BigDecimal> {

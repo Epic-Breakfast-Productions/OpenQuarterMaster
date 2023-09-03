@@ -1,10 +1,9 @@
 package tech.ebp.oqm.baseStation.model.validation.validators;
 
+import jakarta.validation.ConstraintValidatorContext;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidInteractingEntityReference;
-import tech.ebp.oqm.baseStation.model.validation.validators.Validator;
 
-import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
 

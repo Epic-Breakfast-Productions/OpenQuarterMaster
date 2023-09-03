@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.media.file;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * TODO:: use gridfs:

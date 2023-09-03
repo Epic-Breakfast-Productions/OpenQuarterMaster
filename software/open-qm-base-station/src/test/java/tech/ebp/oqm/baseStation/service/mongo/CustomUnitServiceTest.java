@@ -10,7 +10,7 @@ import tech.ebp.oqm.baseStation.testResources.testClasses.MongoHistoriedServiceT
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.stream.Stream;
 
 
