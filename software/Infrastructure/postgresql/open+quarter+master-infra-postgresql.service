@@ -5,13 +5,11 @@
 #  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
 #
 #  TODO:: figure out better username/password situation
-#    - https://lzone.de/blog/Using-Linux-keyring-secrets-from-your-scripts
-#
-# - https://www.postgresql.org/docs/current/backup-file.html
+#  https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
 #
 
 [Unit]
-Description=Keycloak server for Open Quartermaster. Version ${version}, using Postgres tagged to "15".
+Description=Postgres server for Open Quartermaster. Version ${version}, using Postgres tagged to "15".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
 After=docker.service
 Wants=network-online.target docker.socket
@@ -31,10 +29,10 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull postgres:15 || echo 'Could not p
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name oqm_infra_postgres \
                                  -p=8080:8120 \
-                                 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin \
+                                 -e POSTGRES_PASSWORD=mysecretpassword \
                                  -v /data/oqm/db/postgres/:/usr/local/pgsql/data  \
                                  postgres:15 start-dev"
-# TODO:: properly determine that keycloak is running
+# TODO:: properly determine that postgres is running
 ExecStartPost=/bin/bash -c ""
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_postgres || echo 'Could not stop postgres container'"
