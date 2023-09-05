@@ -10,11 +10,10 @@ from json import JSONDecodeError
 import os
 import sys
 
-
 CONFIG_MNGR_CONFIGS_DIR = "/etc/oqm/config"
 CONFIG_MNGR_MAIN_CONFIG_FILE = CONFIG_MNGR_CONFIGS_DIR + "/mainConfig.json"
 CONFIG_MNGR_ADD_CONFIG_DIR = CONFIG_MNGR_CONFIGS_DIR + "/configs"
-CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = "99-custom.json"
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = CONFIG_MNGR_CONFIGS_DIR + "/99-custom.json"
 
 SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
 SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
@@ -62,10 +61,10 @@ class SecretManager:
         output = SECRET_MNGR_SECRET_PLACEHOLDER
         if key in secretsDict.keys():
             output = secretsDict[key]
-            output = self.fernet.decrypt(output).decode()
+            output = self.fernet.decrypt(bytes(output, 'utf-8')).decode('utf-8')
         elif generateIfNone:
             output = SecretManager.newSecret()
-            secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8'))
+            secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8')).decode('utf-8')
             jsonData = json.dumps(secretsDict, indent=4)
             try:
                 with open(SECRET_MNGR_SECRETS_FILE, 'w') as stream:
@@ -86,7 +85,7 @@ class SecretManager:
         elif isinstance(val, list):
             for i, s in enumerate(val):
                 val[i] = self.updateSecrets(
-                    key + ".["+i+"]",
+                    key + ".[" + i + "]",
                     s,
                     generateIfNone
                 )
@@ -135,10 +134,12 @@ class SecretManager:
         message = "hello geeks"
 
         encMessage = f1.encrypt(message.encode())
+        encMessageStr = encMessage.decode('utf-8')
 
         print("key: ", key1)
         print("original string: ", message)
-        print("encrypted string: ", encMessage)
+        print("encrypted string (bytes): ", encMessage)
+        print("encrypted string: ", encMessageStr)
 
         decMessage = f1.decrypt(encMessage).decode()
         print("decrypted string from f1: ", decMessage)
@@ -157,6 +158,9 @@ class SecretManager:
         decMessage = f2.decrypt(encMessage).decode()
         print("decrypted string from f2: ", decMessage)
         print("new secret: ", SecretManager.newSecret())
+
+        decMessage = f2.decrypt(bytes(encMessageStr, 'utf-8')).decode('utf-8')
+        print("decrypted string from string: ", decMessage)
 
 
 # Exception to throw when config errors occur
@@ -272,11 +276,16 @@ class ConfigManager:
             data[configKey] = configVal
 
     @staticmethod
-    def setConfigValInFile(configKeyToSet: str, configValToSet: str,
-                           configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE) -> str:
+    def setConfigValInFile(
+            configKeyToSet: str,
+            configValToSet: str,
+            configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE
+    ) -> str:
         if configFile == ".":
             configFile = CONFIG_MNGR_MAIN_CONFIG_FILE
-        elif configFile != CONFIG_MNGR_DEFAULT_ADDENDUM_FILE:
+        elif configFile == "":
+            configFile = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE
+        else:
             configFile = CONFIG_MNGR_ADD_CONFIG_DIR + "/" + configFile
 
         try:
