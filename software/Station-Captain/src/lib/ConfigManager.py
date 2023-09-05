@@ -10,16 +10,18 @@ from json import JSONDecodeError
 import os
 import sys
 
-SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
-SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
-SECRET_MNGR_SECRET_PW_HASH_LEN = 32
-SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
-SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
 
 CONFIG_MNGR_CONFIGS_DIR = "/etc/oqm/config"
 CONFIG_MNGR_MAIN_CONFIG_FILE = CONFIG_MNGR_CONFIGS_DIR + "/mainConfig.json"
 CONFIG_MNGR_ADD_CONFIG_DIR = CONFIG_MNGR_CONFIGS_DIR + "/configs"
 CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = "99-custom.json"
+
+SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
+SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
+SECRET_MNGR_SECRET_PW_HASH_LEN = 32
+SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
+SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
+SECRET_MNGR_SECRETS_FILE = CONFIG_MNGR_CONFIGS_DIR + "/secrets.json"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
@@ -37,10 +39,65 @@ class SecretManager:
                 self.getSecretPassword()
             )
         ))
+        # ensure secrets file exists
+        try:
+            os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
+            if not os.path.isfile(SECRET_MNGR_SECRETS_FILE):
+                with open(SECRET_MNGR_SECRETS_FILE, 'x') as stream:
+                    stream.write('''
+{
+}
+        ''')
+        except OSError as e:
+            # TODO:: just throw error
+            print(
+                "Error: failed to setup default configuration. Try running as root, at least for first run. Error: ",
+                e,
+                file=sys.stderr
+            )
+            exit(1)
 
     def getSecretVal(self, key: str, generateIfNone: bool = True) -> str:
-        # TODO
-        return key
+        secretsDict = ConfigManager.readFile(SECRET_MNGR_SECRETS_FILE)
+        output = SECRET_MNGR_SECRET_PLACEHOLDER
+        if key in secretsDict.keys():
+            output = secretsDict[key]
+            output = self.fernet.decrypt(output).decode()
+        elif generateIfNone:
+            output = SecretManager.newSecret()
+            secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8'))
+            jsonData = json.dumps(secretsDict, indent=4)
+            try:
+                with open(SECRET_MNGR_SECRETS_FILE, 'w') as stream:
+                    stream.write(jsonData)
+            except OSError as e:
+                # TODO:: throw exception
+                print("Error: failed to write new secret to secrets file. Error: ",
+                      e,
+                      file=sys.stderr)
+                exit(1)
+
+        return output
+
+    def updateSecrets(self, key: str, val, generateIfNone: bool = True):
+        if isinstance(val, str):
+            if self.valIsSecret(val):
+                val = self.getSecretVal(key, generateIfNone)
+        elif isinstance(val, list):
+            for i, s in enumerate(val):
+                val[i] = self.updateSecrets(
+                    key + ".["+i+"]",
+                    s,
+                    generateIfNone
+                )
+        elif isinstance(val, dict):
+            for k, v in val.items():
+                val[k] = self.updateSecrets(
+                    key + "." + k,
+                    v,
+                    generateIfNone
+                )
+        return val
 
     @staticmethod
     def valIsSecret(value: str) -> bool:
@@ -107,7 +164,6 @@ class ConfigKeyNotFoundException(Exception):
     pass
 
 
-# TODO:: all this
 class ConfigManager:
     secretManager = SecretManager()
     configData = {}
@@ -146,11 +202,11 @@ class ConfigManager:
             else:
                 continue
 
-    @staticmethod
-    def getConfigValRec(configKey: str, data: dict, formatData) -> str:
+    def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, formatData) -> str:
         """
         Recursive function to get a particular value in the data
-        :param configKey: The configuration to get, dot notation I.E. "test.value"
+        :param configKeyOrig: The configuration to get, dot notation I.E. "test.value"
+        :param configKey: At first call, same as configKeyOrig. Is whittled down until reaching final segment in dot notation.
         :param data: The dict to find the configuration in
         :param formatData: If returning an object or list, if to format the data 'pretty'
         :except ConfigKeyNotFoundException if a value could not be found for the given key
@@ -168,23 +224,24 @@ class ConfigManager:
             if curConfig not in data:
                 raise ConfigKeyNotFoundException()
 
-            return ConfigManager.getConfigValRec(keyLeft, data[curConfig], formatData)
+            return ConfigManager.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
         if configKey not in data:
             raise ConfigKeyNotFoundException()
         result = data[configKey]
-        if isinstance(result, (dict, list)):
-            if formatData:
-                result = json.dumps(result, indent=4)
-            else:
-                result = json.dumps(result)
-        elif not isinstance(result, str):
+        if isinstance(result, (dict, list, str)):
+            result = self.secretManager.updateSecrets(configKeyOrig, result)
+            if not isinstance(result, str):
+                if formatData:
+                    result = json.dumps(result, indent=4)
+                else:
+                    result = json.dumps(result)
+        else:
             result = str(result)
-            # TODO:: secret dealings
         return result
 
     def getConfigVal(self, configKey: str, data: dict, formatData=True) -> str:
         try:
-            return self.getConfigValRec(configKey, data, formatData)
+            return self.getConfigValRec(configKey, configKey, data, formatData)
         except ConfigKeyNotFoundException:
             # TODO:: throw exception
             print("ERROR: Config key not found: " + configKey, file=sys.stderr)
