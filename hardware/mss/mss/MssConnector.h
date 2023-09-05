@@ -12,7 +12,7 @@ public:
 
     virtual bool hasCommand() = 0;
 
-    virtual Command getCommand() = 0;
+    virtual DeserializationError getCommand(JsonDocument &doc) = 0;
 
 //    virtual void send(String message) = 0;
 
@@ -40,7 +40,7 @@ public:
     void send(
             ResponseType status
     ) {
-        DynamicJsonDocument doc(16);
+        StaticJsonDocument<16> doc;
 
         doc[F("status")] = responseTypeFromEnum(status);
         this->send(doc);
@@ -50,7 +50,7 @@ public:
             ResponseType status,
             const char *description
     ) {
-        DynamicJsonDocument doc(256);
+        StaticJsonDocument<256> doc;
 
         doc[F("status")] = responseTypeFromEnum(status);
         doc[F("description")] = description;
@@ -62,7 +62,7 @@ public:
             ResponseType status,
             const __FlashStringHelper *description
     ) {
-        DynamicJsonDocument doc(256);
+        StaticJsonDocument<256> doc;
 
         doc[F("status")] = responseTypeFromEnum(status);
         doc[F("description")] = description;

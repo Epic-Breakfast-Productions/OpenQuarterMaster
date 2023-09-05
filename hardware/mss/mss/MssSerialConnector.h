@@ -27,8 +27,8 @@ class MssSerialConnector : public MssConnector {
         return Serial.available();
     }
 
-    Command getCommand(){
-        return Command::parse(Serial);
+    DeserializationError getCommand(JsonDocument &doc){
+        return deserializeJson(doc, Serial);
     }
 
     void send(JsonDocument& payload){

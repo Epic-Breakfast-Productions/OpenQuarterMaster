@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include "BlockLightSetting.h"
 
 
 enum CommandType {
@@ -11,11 +12,7 @@ enum CommandType {
     GET_BLOCK_STATE,
     HIGHLIGHT_BLOCKS,
 
-    SET_BLOCK_STATE,
-
-    REQUEST_ERROR,
-    ERROR,
-    NULL_OP
+    SET_BLOCK_STATE
 };
 
 class Command {
@@ -26,6 +23,7 @@ protected:
     Command(CommandType command) {
         this->commandType = command;
     }
+
     Command(CommandType command, const __FlashStringHelper *detail) {
         this->commandType = command;
         this->detail = detail;
@@ -36,53 +34,64 @@ public:
         return this->commandType;
     }
 
-    const __FlashStringHelper * getDetail(){
+    const __FlashStringHelper *getDetail() {
         return this->detail;
     }
 
-    /**
-     *
-     * @param doc
-     * @return
-     */
-    static Command parse(JsonDocument &doc);
-
-    /**
-     * Parses a command from a stream.
-     * @param stream
-     * @return
-     */
-    static Command parse(Stream &stream);
 };
 
-static Command Command::parse(JsonDocument &doc) {
-//        Serial.print(F("DEBUG:: input json: "));serializeJson(doc, Serial);Serial.println();
-    const char *commandStr = doc[F("command")];
-//        Serial.print("DEBUG:: ");Serial.println(commandStr);
-    if (strcmp_P(commandStr, (PGM_P)F("GET_MODULE_INFO")) == 0) {
-//            Serial.println(F("DEBUG:: was info command"));
-        return Command(GET_MODULE_INFO);
-    } else if (strcmp_P((PGM_P) F("GET_MODULE_STATE"), commandStr) == 0) {
-        return Command(GET_MODULE_STATE);
+class GetModuleInfoCommand : public Command {
+public:
+    GetModuleInfoCommand() : Command(CommandType::GET_MODULE_INFO) {
+
     }
-//        Serial.println(F("DEBUG:: was error"));
-    return Command(CommandType::REQUEST_ERROR, F("Unsupported command given."));
-}
+};
 
-static Command Command::parse(Stream &stream) {
-    StaticJsonDocument<256> doc;
-    DeserializationError error = deserializeJson(doc, stream);
+class GetModuleStateCommand : public Command {
+public:
+    GetModuleStateCommand() : Command(CommandType::GET_MODULE_STATE) {
 
-    if (error) {
-//            Serial.print(F("DEBUG:: deserializeJson() failed: "));Serial.println(error.f_str());
-        if (error == DeserializationError::EmptyInput) {
-            return Command(CommandType::NULL_OP);
-        } else {
-            return Command(CommandType::REQUEST_ERROR, F("Could not parse json."));
-        }
+    }
+};
+
+class HighlightBlocksCommandLightSetting {
+private:
+    unsigned int blockNum = 0;
+    PowerState powerState = OFF;
+    CRGB color = CRGB(0, 0, 0);
+public:
+    HighlightBlocksCommandLightSetting() {
     }
 
-    return parse(doc);
-}
+    HighlightBlocksCommandLightSetting(
+            unsigned int blockNum,
+            PowerState powerState,
+            CRGB color
+    ) {
+        this->blockNum = blockNum;
+        this->powerState = powerState;
+        this->color = color;
+    }
+};
+
+class HighlightBlocksCommand : public Command {
+private:
+    int duration = 30;
+    bool carry = false;
+    int numSettings;
+    const HighlightBlocksCommandLightSetting *blockLightSettings;
+public:
+    HighlightBlocksCommand(
+            int duration,
+            bool carry,
+            int numSettings,
+            const HighlightBlocksCommandLightSetting *blockLightSettings
+    ) : Command(CommandType::HIGHLIGHT_BLOCKS) {
+        this->duration = duration;
+        this->carry = carry;
+        this->blockLightSettings = blockLightSettings;
+        this->numSettings = numSettings;
+    }
+};
 
 #endif

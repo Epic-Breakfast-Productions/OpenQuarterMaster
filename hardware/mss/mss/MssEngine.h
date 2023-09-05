@@ -73,13 +73,88 @@ public:
         tone(MSS_SPKR_PIN, 2093, 250);
     }
 
+    void processCommand() {
+        Command *command;
+        { // Needs to happen here due to the limitations of returning abstract classes in C++
+            StaticJsonDocument<256> commandJson;
+            DeserializationError error = this->connector->getCommand(commandJson);
+
+            if (error) {
+//            Serial.print(F("DEBUG:: deserializeJson() failed: "));Serial.println(error.f_str());
+                if (error == DeserializationError::EmptyInput) {
+                    //nothing to do
+                    return;
+                } else {
+                    this->connector->send(ResponseType::R_ERR, F("Could not parse Json."));
+                    return;
+                }
+            }
+
+            Serial.print(F("DEBUG:: input json: "));
+            serializeJson(commandJson, Serial);
+            Serial.println();
+
+            const char *commandStr = commandJson[F("command")];
+            Serial.print("DEBUG:: ");
+            Serial.println(commandStr);
+
+            if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_INFO")) == 0) {
+//                Serial.println(F("DEBUG:: was info command"));
+                command = new GetModuleInfoCommand();
+            } else if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_STATE")) == 0) {
+                command = new GetModuleStateCommand();
+            } else if (strcmp_P(commandStr, (PGM_P) F("HIGHLIGHT_BLOCKS")) == 0) {
+                JsonArray blockArr = commandJson[F("storageBlocks")].as<JsonArray>();
+                int numSettings = blockArr.size();
+                HighlightBlocksCommandLightSetting settings[numSettings];
+
+                //TODO:: fails, presumably due to running out of memory?
+//                for (int i = 0; i < numSettings; i++) {
+//                    JsonObject v = blockArr[i].as<JsonObject>();
+//
+//                    PowerState powerState = PowerState::ON;
+//                    {
+//                        const char *lightSettingStr = v[F("lightPowerState")];
+//                        if (strcmp_P(commandStr, (PGM_P) F("FLASHING")) == 0) {
+//                            powerState = PowerState::FLASHING;
+//                        }
+//                    }
+//
+//                    settings[i] = HighlightBlocksCommandLightSetting(
+//                        v[F("blockNum")].as<uint16_t>(),
+//                        powerState,
+//                        ColorUtils::getColorFromString(v[F("lightColor")].as<const char*>())
+//                    );
+//
+//                }
+
+                command = new HighlightBlocksCommand(
+                        commandJson[F("duration")].as<int16_t>(),
+                        commandJson[F("carry")].as<bool>(),
+                        numSettings,
+                        settings
+                );
+            } else {
+                this->connector->send(ResponseType::R_ERR, F("Unrecognized command given."));
+                return;
+            }
+        }
+
+        switch (command->getCommand()) {
+            case CommandType::GET_MODULE_INFO:
+                this->sendModInfo();
+                break;
+            default:
+                this->connector->send(ResponseType::ERR, F("Unsupported operation."));
+        }
+    }
+
     void loop() {
         if (this->connector->hasCommand()) {
-            Command command = this->connector->getCommand();
-            this->process(command);
+            this->processCommand();
         }
         if (this->loopDelay) {
-            delay(100);
+            delay(250);
         }
     }
 
@@ -107,28 +182,6 @@ public:
 
     void sendModInfo() {
         this->connector->send(this->modInfo);
-    }
-
-    /**
-     * TODO:: determine how to get the Command casting to work
-     * @param command
-     */
-    void process(Command &command) {
-        //TODO
-        switch (command.getCommand()) {
-            case CommandType::NULL_OP:
-                //Nothing to do.
-                break;
-            case CommandType::REQUEST_ERROR:
-                this->connector->send(
-                        ResponseType::R_ERR,
-                        command.getDetail()
-                );
-                break;
-            case CommandType::GET_MODULE_INFO:
-                this->sendModInfo();
-                break;
-        }
     }
 
     void resetLightPowerState() {

@@ -31,8 +31,8 @@ void setup() {
 
 
 void loop() {
-//    mssEngine.loop();
-    mssEngine.lightTest();
+    mssEngine.loop();
+//    mssEngine.lightTest();
 
 //    if(Serial.available()){
 //        StaticJsonDocument<256> doc;
