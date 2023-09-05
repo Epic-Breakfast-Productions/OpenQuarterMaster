@@ -2,6 +2,7 @@
 #
 # Script to get configuration and replace values
 #
+from lib import ConfigManager
 import json
 from json import JSONDecodeError
 import os
@@ -10,11 +11,14 @@ import re
 import sys
 
 SCRIPT_VERSION = 'SCRIPT_VERSION'
-SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V"+SCRIPT_VERSION
+SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + SCRIPT_VERSION
 CONFIGS_DIR = "/etc/oqm/config"
 MAIN_CONFIG_FILE = CONFIGS_DIR + "/mainConfig.json"
 ADD_CONFIG_DIR = CONFIGS_DIR + "/configs"
 DEFAULT_ADDENDUM_FILE = "99-custom.json"
+
+KEYRING = "/etc/oqm/keyring.SimpleKeyring"
+SECRET_PLACEHOLDER = "<secret>"
 
 EXIT_CANT_READ_FILE = 2
 EXIT_BAD_CONFIG_KEY = 3
@@ -22,7 +26,7 @@ EXIT_CONFIG_READ_ERR = 4
 EXIT_CONFIG_INIT_ERR = 5
 EXIT_CONFIG_SET_ERR = 6
 
-#Setup argument parser
+# Setup argument parser
 argParser = argparse.ArgumentParser(
     prog="oqm-config",
     description="This script is a utility to help manage openQuarterMaster's configuration."
@@ -30,9 +34,11 @@ argParser = argparse.ArgumentParser(
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
 argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-argParser.add_argument('-t', '--template', dest="t", help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
-argParser.add_argument('-s', '--set', dest="s", help="Sets a value. First arg is the key, second id the value to set, third is the file to modify (The file in the "+ADD_CONFIG_DIR+" directory)(empty string for default additional file ("+DEFAULT_ADDENDUM_FILE+")).", nargs=3)
-
+argParser.add_argument('-t', '--template', dest="t",
+                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
+argParser.add_argument('-s', '--set', dest="s",
+                       help="Sets a value. First arg is the key, second id the value to set, third is the file to modify (The file in the " + ADD_CONFIG_DIR + " directory)(empty string for default additional file (" + DEFAULT_ADDENDUM_FILE + ")).",
+                       nargs=3)
 
 # Will contain all data read in from files.
 configData = {}
@@ -54,7 +60,8 @@ try:
 }
 ''')
 except OSError as e:
-    print("Error: failed to setup default configuration. Try running as root, at least for first run. Error: ", e, file=sys.stderr)
+    print("Error: failed to setup default configuration. Try running as root, at least for first run. Error: ", e,
+          file=sys.stderr)
     exit(EXIT_CONFIG_INIT_ERR)
 
 
@@ -85,6 +92,23 @@ for file in os.listdir(ADD_CONFIG_DIR):
 # Exception to throw when config errors occur
 class ConfigKeyNotFoundException(Exception):
     pass
+
+
+def isSecret(configVal: str):
+    return SECRET_PLACEHOLDER == configVal
+
+
+def getSecret(configKey: key):
+    """
+    https://github.com/jaraco/keyring#using-keyring-on-headless-linux-systems-in-a-docker-container
+
+    echo "hello world" | keyring -p "./test.kr" set "testService" "me"
+    keyring -p "test.kr" get "testService" "me"
+    :param configKey:
+    :return:
+    """
+    keyring.set_keyring(KEYRING)
+    return ""
 
 
 def getConfigValRec(configKey: str, data: dict, format) -> str:
@@ -119,6 +143,7 @@ def getConfigValRec(configKey: str, data: dict, format) -> str:
             result = json.dumps(result)
     elif not isinstance(result, str):
         result = str(result)
+        # TODO:: secret dealings
     return result
 
 
@@ -128,6 +153,7 @@ def getConfigVal(configKey: str, data: dict = configData, format=True) -> str:
     except ConfigKeyNotFoundException:
         print("ERROR: Config key not found: " + configKey, file=sys.stderr)
         exit(EXIT_BAD_CONFIG_KEY)
+
 
 
 def setConfigVal(configKey: str, configVal: str, data: dict):
@@ -199,23 +225,26 @@ elif args.s:
 }
 ''')
     except OSError as e:
-        print("Error: failed to set configuration value; can't create new config file. Try running as root. Error: ", e, file=sys.stderr)
+        print("Error: failed to set configuration value; can't create new config file. Try running as root. Error: ", e,
+              file=sys.stderr)
         exit(EXIT_CONFIG_SET_ERR)
 
-    curVals=readFile(configFile)
+    curVals = readFile(configFile)
 
     try:
         setConfigVal(configKeyToSet, configValToSet, curVals)
     except ConfigKeyNotFoundException as e:
-        print("Error: Bad config key given. Possibly trying to overwrite an existing value with a new object.", file=sys.stderr)
+        print("Error: Bad config key given. Possibly trying to overwrite an existing value with a new object.",
+              file=sys.stderr)
         exit(EXIT_BAD_CONFIG_KEY)
 
-    jsonData=json.dumps(curVals, indent=4)
+    jsonData = json.dumps(curVals, indent=4)
     try:
         with open(configFile, 'w') as stream:
             stream.write(jsonData)
     except OSError as e:
-        print("Error: failed to set configuration value; can't write to config file. Try running as root. Error: ", e, file=sys.stderr)
+        print("Error: failed to set configuration value; can't write to config file. Try running as root. Error: ", e,
+              file=sys.stderr)
         exit(EXIT_CONFIG_SET_ERR)
 
     print(jsonData)
