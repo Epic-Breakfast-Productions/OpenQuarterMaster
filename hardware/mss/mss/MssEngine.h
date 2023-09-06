@@ -61,9 +61,9 @@ public:
      */
     void init() {
         // http://fastled.io/docs/group___power.html
-        pinMode(4, OUTPUT);
-        set_max_power_in_volts_and_milliamps(5, 2000);
-        set_max_power_indicator_LED(4);
+//        pinMode(4, OUTPUT);
+//        set_max_power_in_volts_and_milliamps(5, 2000);
+//        set_max_power_indicator_LED(4);
 
 
         pinMode(MSS_SPKR_PIN, OUTPUT);
@@ -168,7 +168,7 @@ public:
                 this->leds[j] = curColor;
             }
         }
-        FastLED.setBrightness(this->brightness);
+//        FastLED.setBrightness(this->brightness);
         FastLED.show();
     }
 
@@ -183,8 +183,24 @@ public:
     }
 
     void highlightBlocks(HighlightBlocksCommand *command) {
-        Serial.println(F("Got command to highlight blocks"));
+//        Serial.println(F("DEBUG:: Got command to highlight blocks"));
 
+        //TODO:: set timer for highlight duration
+
+//        Serial.print(F("DEBUG:: num settings:" ));
+//        Serial.println(command->getNumSettings());
+
+
+        for(int i = 0; i < command->getNumSettings(); i++){
+//            Serial.print(F("DEBUG:: cur blockNum:" ));
+//            Serial.println(command->getSettings()[i].getBlockNum());
+
+            BlockState *curBlock = this->getBlock(command->getSettings()[i].getBlockNum());
+            curBlock->getLightSetting()->turnOn();
+            curBlock->getLightSetting()->setColor(command->getSettings()[i].getColor());
+        }
+
+        this->submitLedState();
     }
 
     void lightTest() {

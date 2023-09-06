@@ -69,8 +69,8 @@ public:
 class HighlightBlocksCommandLightSetting {
 private:
     unsigned int blockNum = 0;
-    PowerState powerState = OFF;
-    CRGB color = CRGB(0, 0, 0);
+    PowerState powerState = PowerState::ON;
+    LightColor color = LightColor::RED;
 public:
     HighlightBlocksCommandLightSetting() {
     }
@@ -78,12 +78,25 @@ public:
     HighlightBlocksCommandLightSetting(
             unsigned int blockNum,
             PowerState powerState,
-            CRGB color
+            LightColor color
     ) {
         this->blockNum = blockNum;
         this->powerState = powerState;
         this->color = color;
     }
+
+    unsigned int getBlockNum() {
+        return this->blockNum;
+    }
+
+    PowerState getPowerState() {
+        return this->powerState;
+    }
+
+    LightColor getColor() {
+        return this->color;
+    }
+
 };
 
 /**
@@ -109,24 +122,45 @@ public:
         this->numSettings = numSettings;
     }
 
-    static HighlightBlocksCommand* parse(JsonDocument &commandJson){
+    int getDuration() {
+        return this->duration;
+    }
+
+    bool isCarry() {
+        return this->carry;
+    }
+
+    int getNumSettings() {
+        return this->numSettings;
+    }
+
+    const HighlightBlocksCommandLightSetting *getSettings() {
+        return this->blockLightSettings;
+    }
+
+    static HighlightBlocksCommand *parse(JsonDocument &commandJson) {
         JsonArray blockArr = commandJson[F("storageBlocks")].as<JsonArray>();
         int numSettings = blockArr.size();
-        HighlightBlocksCommandLightSetting settings[numSettings];
+        HighlightBlocksCommandLightSetting* settings = new HighlightBlocksCommandLightSetting[numSettings];
 
-        //TODO:: fails, presumably due to running out of memory?
+//        Serial.print(F("DEBUG:: num settings gotten:"));
+//        Serial.println(numSettings);
+
         for (int i = 0; i < numSettings; i++) {
             JsonObject v = blockArr[i].as<JsonObject>();
 
             PowerState powerState = PowerState::ON;
-            {
-                if (strcmp_P(v[F("lightPowerState")], (PGM_P) F("FLASHING")) == 0) {
-                    powerState = PowerState::FLASHING;
-                }
+            if (strcmp_P(v[F("lightPowerState")], (PGM_P) F("FLASHING")) == 0) {
+                powerState = PowerState::FLASHING;
             }
 
+            unsigned int blockNum = v[F("blockNum")].as<unsigned int>();
+
+//            Serial.print(F("DEBUG:: block num gotten:" ));
+//            Serial.println(numSettings);
+
             settings[i] = HighlightBlocksCommandLightSetting(
-                    v[F("blockNum")].as<uint16_t>(),
+                    blockNum,
                     powerState,
                     ColorUtils::getColorFromString(v[F("lightColor")].as<const char *>())
             );
