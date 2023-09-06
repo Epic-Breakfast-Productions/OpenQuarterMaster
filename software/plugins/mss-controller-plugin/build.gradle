@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-rest-client-reactive'
@@ -22,8 +23,14 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
     implementation 'io.quarkus:quarkus-micrometer'
     implementation 'io.quarkus:quarkus-arc'
+
+    implementation 'com.fazecast:jSerialComm:2.10.1'
+
+
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'net.datafaker:datafaker:2.0.1'
 }
 
 group 'com.ebp.openQuarterMaster.plugin'

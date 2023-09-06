@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin;
+package com.ebp.openQuarterMaster.plugin.interfaces;
 
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
