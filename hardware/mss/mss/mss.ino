@@ -29,16 +29,16 @@ void setup() {
 }
 
 
-
 void loop() {
     mssEngine.loop();
 //    mssEngine.lightTest();
 
-//    if(Serial.available()){
+//    Serial.print(F("DEBUG:: end of loop. Free ram:"));
+//    Serial.println(MssEngine::freeRam());
+
+//    if(mssEngine.getConnector()->hasCommand()){
 //        StaticJsonDocument<256> doc;
-//
-//
-//        DeserializationError error = deserializeJson(doc, Serial);
+//        DeserializationError error = mssEngine.getConnector()->getCommand(doc);
 //
 //        if (error) {
 //            Serial.print(F("deserializeJson() failed: "));

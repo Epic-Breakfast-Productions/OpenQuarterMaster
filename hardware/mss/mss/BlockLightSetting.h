@@ -6,21 +6,18 @@
 #include "ColorUtils.h"
 
 
-enum PowerState {
-    ON, OFF, FLASHING
-};
 
 class BlockLightSetting {
 private:
     PowerState powerState = OFF;
-    CRGB color = CRGB(0, 255, 0);
+    LightColor color = LightColor::GREEN;
 public:
 
-    CRGB getColor() {
+    LightColor getColor() {
         return this->color;
     }
 
-    void setColor(CRGB newColor) {
+    void setColor(LightColor newColor) {
         this->color = newColor;
     }
 

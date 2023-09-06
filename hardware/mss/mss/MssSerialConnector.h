@@ -11,7 +11,7 @@
  */
 class MssSerialConnector : public MssConnector {
   public:
-    long baud = 9600;
+    long baud = 115200;
 
     MssSerialConnector(){}
     MssSerialConnector(long baud){
@@ -21,6 +21,10 @@ class MssSerialConnector : public MssConnector {
     void init(){
         Serial.begin(this->baud);
         while (!Serial) continue;
+        Serial.setTimeout(1500);
+
+//        Serial.print(F("DEBUG:: start. Size of crgb:"));
+//        Serial.println(sizeof CRGB(0,0,0));
     }
 
     bool hasCommand(){

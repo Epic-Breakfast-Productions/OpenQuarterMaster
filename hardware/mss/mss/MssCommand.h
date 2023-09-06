@@ -38,8 +38,20 @@ public:
         return this->detail;
     }
 
+    static Command *parse(JsonDocument &doc);
+
+    /**
+     * Parses a command from a stream.
+     * @param stream
+     * @return
+     */
+    static Command *parse(Stream &stream);
 };
 
+/**
+ * Example:
+ * <pre>{"command":"GET_MODULE_INFO"}</pre>
+ */
 class GetModuleInfoCommand : public Command {
 public:
     GetModuleInfoCommand() : Command(CommandType::GET_MODULE_INFO) {
@@ -74,6 +86,10 @@ public:
     }
 };
 
+/**
+ * Example:
+ * <pre>{"command":"HIGHLIGHT_BLOCKS", "duration": 5, "carry":false, "storageBlocks": [{"blockNum":1, "lightPowerState": "ON", "lightColor": "RAND"}]}</pre>
+ */
 class HighlightBlocksCommand : public Command {
 private:
     int duration = 30;
@@ -92,6 +108,58 @@ public:
         this->blockLightSettings = blockLightSettings;
         this->numSettings = numSettings;
     }
+
+    static HighlightBlocksCommand* parse(JsonDocument &commandJson){
+        JsonArray blockArr = commandJson[F("storageBlocks")].as<JsonArray>();
+        int numSettings = blockArr.size();
+        HighlightBlocksCommandLightSetting settings[numSettings];
+
+        //TODO:: fails, presumably due to running out of memory?
+        for (int i = 0; i < numSettings; i++) {
+            JsonObject v = blockArr[i].as<JsonObject>();
+
+            PowerState powerState = PowerState::ON;
+            {
+                if (strcmp_P(v[F("lightPowerState")], (PGM_P) F("FLASHING")) == 0) {
+                    powerState = PowerState::FLASHING;
+                }
+            }
+
+            settings[i] = HighlightBlocksCommandLightSetting(
+                    v[F("blockNum")].as<uint16_t>(),
+                    powerState,
+                    ColorUtils::getColorFromString(v[F("lightColor")].as<const char *>())
+            );
+
+        }
+
+        return new HighlightBlocksCommand(
+                commandJson[F("duration")].as<int16_t>(),
+                commandJson[F("carry")].as<bool>(),
+                numSettings,
+                settings
+        );
+    }
 };
+
+static Command *Command::parse(JsonDocument &commandJson) {
+//            Serial.print(F("DEBUG:: input json: "));
+//            serializeJson(commandJson, Serial);
+//            Serial.println();
+
+    const char *commandStr = commandJson[F("command")];
+//            Serial.print(F("DEBUG:: "));
+//            Serial.println(commandStr);
+
+    if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_INFO")) == 0) {
+//                Serial.println(F("DEBUG:: was info command"));
+        return new GetModuleInfoCommand();
+    } else if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_STATE")) == 0) {
+        return new GetModuleStateCommand();
+    } else if (strcmp_P(commandStr, (PGM_P) F("HIGHLIGHT_BLOCKS")) == 0) {
+        return HighlightBlocksCommand::parse(commandJson);
+    }
+    return nullptr;
+}
 
 #endif

@@ -60,6 +60,12 @@ public:
      * Call this to init the engine.
      */
     void init() {
+        // http://fastled.io/docs/group___power.html
+        pinMode(4, OUTPUT);
+        set_max_power_in_volts_and_milliamps(5, 2000);
+        set_max_power_indicator_LED(4);
+
+
         pinMode(MSS_SPKR_PIN, OUTPUT);
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             BlockState newState(i);
@@ -70,6 +76,19 @@ public:
 
         this->connector->init();
 
+
+        Serial.print(F("DEBUG:: start. Free ram:"));
+        Serial.println(MssEngine::freeRam());
+
+        Serial.print(F("DEBUG:: size of block state array:"));
+        Serial.println(sizeof blockStateArr);
+
+        Serial.print(F("DEBUG:: size of mod info:"));
+        Serial.println(sizeof this->modInfo);
+
+        Serial.print(F("DEBUG:: size of led array:"));
+        Serial.println(sizeof this->leds);
+
         tone(MSS_SPKR_PIN, 2093, 250);
     }
 
@@ -79,8 +98,12 @@ public:
             StaticJsonDocument<256> commandJson;
             DeserializationError error = this->connector->getCommand(commandJson);
 
+            Serial.print(F("DEBUG:: after parse json. Free ram:"));
+            Serial.println(MssEngine::freeRam());
+
             if (error) {
-//            Serial.print(F("DEBUG:: deserializeJson() failed: "));Serial.println(error.f_str());
+                Serial.print(F("DEBUG:: deserializeJson() failed: "));
+                Serial.println(error.f_str());
                 if (error == DeserializationError::EmptyInput) {
                     //nothing to do
                     return;
@@ -90,72 +113,40 @@ public:
                 }
             }
 
-            Serial.print(F("DEBUG:: input json: "));
-            serializeJson(commandJson, Serial);
-            Serial.println();
+            command = Command::parse(commandJson);
+//            commandJson.~StaticJsonDocument();
+        }
 
-            const char *commandStr = commandJson[F("command")];
-            Serial.print("DEBUG:: ");
-            Serial.println(commandStr);
+        Serial.print(F("DEBUG:: after parse command. Free ram:"));
+        Serial.println(MssEngine::freeRam());
 
-            if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_INFO")) == 0) {
-//                Serial.println(F("DEBUG:: was info command"));
-                command = new GetModuleInfoCommand();
-            } else if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_STATE")) == 0) {
-                command = new GetModuleStateCommand();
-            } else if (strcmp_P(commandStr, (PGM_P) F("HIGHLIGHT_BLOCKS")) == 0) {
-                JsonArray blockArr = commandJson[F("storageBlocks")].as<JsonArray>();
-                int numSettings = blockArr.size();
-                HighlightBlocksCommandLightSetting settings[numSettings];
-
-                //TODO:: fails, presumably due to running out of memory?
-//                for (int i = 0; i < numSettings; i++) {
-//                    JsonObject v = blockArr[i].as<JsonObject>();
-//
-//                    PowerState powerState = PowerState::ON;
-//                    {
-//                        const char *lightSettingStr = v[F("lightPowerState")];
-//                        if (strcmp_P(commandStr, (PGM_P) F("FLASHING")) == 0) {
-//                            powerState = PowerState::FLASHING;
-//                        }
-//                    }
-//
-//                    settings[i] = HighlightBlocksCommandLightSetting(
-//                        v[F("blockNum")].as<uint16_t>(),
-//                        powerState,
-//                        ColorUtils::getColorFromString(v[F("lightColor")].as<const char*>())
-//                    );
-//
-//                }
-
-                command = new HighlightBlocksCommand(
-                        commandJson[F("duration")].as<int16_t>(),
-                        commandJson[F("carry")].as<bool>(),
-                        numSettings,
-                        settings
-                );
-            } else {
-                this->connector->send(ResponseType::R_ERR, F("Unrecognized command given."));
-                return;
-            }
+        if (command == nullptr) {
+            this->connector->send(ResponseType::R_ERR, F("Could not parse command."));
+            return;
         }
 
         switch (command->getCommand()) {
             case CommandType::GET_MODULE_INFO:
                 this->sendModInfo();
                 break;
+            case CommandType::HIGHLIGHT_BLOCKS:
+                this->highlightBlocks(command);
+                break;
             default:
                 this->connector->send(ResponseType::ERR, F("Unsupported operation."));
         }
+        delete command;
     }
 
     void loop() {
         if (this->connector->hasCommand()) {
+            Serial.print(F("DEBUG:: before process. Free ram:"));
+            Serial.println(MssEngine::freeRam());
             this->processCommand();
         }
-        if (this->loopDelay) {
-            delay(250);
-        }
+//        if (this->loopDelay) {
+//            delay(250);
+//        }
     }
 
 
@@ -164,8 +155,9 @@ public:
     }
 
     void submitLedState() {
+        //TODO:: look into doing leds like this: https://wokwi.com/projects/375153042918769665
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
-            CRGB curColor = this->getBlock(i)->getLightSetting()->getColor();
+            CRGB curColor = ColorUtils::getCRGBFromColor(this->getBlock(i)->getLightSetting()->getColor());
 
             if (this->getBlock(i)->getLightSetting()->getPowerState() == PowerState::OFF) {
                 curColor = CRGB(0, 0, 0);
@@ -188,6 +180,11 @@ public:
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             this->getBlock(i)->getLightSetting()->turnOff();
         }
+    }
+
+    void highlightBlocks(HighlightBlocksCommand *command) {
+        Serial.println(F("Got command to highlight blocks"));
+
     }
 
     void lightTest() {
@@ -213,9 +210,9 @@ public:
         this->resetLightPowerState();
 
         this->getBlock(1)->getLightSetting()->turnOn();
-        this->getBlock(1)->getLightSetting()->setColor(CRGB(255, 0, 0));
+        this->getBlock(1)->getLightSetting()->setColor(LightColor::RED);
         this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->turnOn();
-        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setColor(CRGB(255, 0, 0));
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setColor(LightColor::RED);
         this->submitLedState();
 
         tone(MSS_SPKR_PIN, 130 * 4, DELAY);
@@ -223,6 +220,31 @@ public:
         tone(MSS_SPKR_PIN, 130 * 4, DELAY);
         delay(DELAY);
         delay(DELAY);
+
+        //to see how many lights can be on at once, how things behave at high numbers of lights on
+//        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setRandColor();
+//        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->turnOn();
+//        for (int i = MSS_VAR_NBLOCKS; i >= 1; i--) {
+//            this->getBlock(i)->getLightSetting()->turnOn();
+//            this->submitLedState();
+//            tone(MSS_SPKR_PIN, 130 * i, DELAY / 4);
+//            delay(DELAY * 4);
+//        }
+//
+//        tone(MSS_SPKR_PIN, 130 * 4, DELAY);
+//        delay(DELAY);
+//        tone(MSS_SPKR_PIN, 130 * 4, DELAY);
+//        delay(DELAY);
+//        delay(DELAY);
+
+    }
+
+    static int freeRam() {
+        int size = 2048;
+        byte *buf;
+        while ((buf = (byte *) malloc(--size)) == NULL);
+        free(buf);
+        return size;
     }
 };
 

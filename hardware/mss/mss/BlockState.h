@@ -5,11 +5,11 @@
 #include "BlockLightSetting.h"
 
 class BlockState {
-    unsigned int blockNum;
+    byte blockNum;
     BlockLightSetting lightSetting;
 public:
     BlockState(
-            unsigned int blockNum
+            byte blockNum
     ) {
         this->blockNum = blockNum;
     }
