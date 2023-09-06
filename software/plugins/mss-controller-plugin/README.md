@@ -1,5 +1,39 @@
 # mss-controller-plugin
 
+
+
+
+ - Java:
+   - https://www.geeksforgeeks.org/converting-text-speech-java/#
+   - https://developer.ibm.com/tutorials/embed-speech-to-text-functions-into-your-java-application/
+   - https://cmusphinx.github.io/wiki/tutorialsphinx4/
+ - Other:
+   - http://voice2json.org
+     - http://voice2json.org/install.html#docker-image
+     - http://voice2json.org/commands.html#download-profile
+     - https://shisho.dev/blog/posts/docker-in-docker/
+     - http://voice2json.org/sentences.html
+
+
+## voice2json notes
+
+ - Probably best way to run is docker, docker-in-docker? Most portable
+ - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Quarkus stuff
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
