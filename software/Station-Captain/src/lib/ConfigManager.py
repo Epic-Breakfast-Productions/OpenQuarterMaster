@@ -109,6 +109,11 @@ class SecretManager:
     @staticmethod
     def getSecretPassword() -> bytes:
         """
+        Ideas:
+
+         - File that is readonly for root. Will need to ensure here that that is the case
+            - https://stackoverflow.com/questions/1830618/how-to-find-the-owner-of-a-file-or-directory-in-python
+
         :exception: Exception - when happens
         :return: the ting
         """
