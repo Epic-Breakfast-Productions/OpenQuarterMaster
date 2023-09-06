@@ -178,6 +178,7 @@ class ConfigManager:
             os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
             if not os.path.isfile(CONFIG_MNGR_MAIN_CONFIG_FILE):
                 with open(CONFIG_MNGR_MAIN_CONFIG_FILE, 'x') as stream:
+                    # TODO:: move this default template to another file?
                     stream.write('''
 {
     "captain": {
