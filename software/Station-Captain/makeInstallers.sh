@@ -75,6 +75,9 @@ install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
 sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib/oqm/station-captain"|' "$buildDir/$debDir/bin/oqm-captain"
 
+sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-config"
+sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib/oqm/station-captain/")|' "$buildDir/$debDir/bin/oqm-config"
+
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/control"
@@ -121,7 +124,10 @@ cp -r "src" "$sourcesDir"
 
 sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
 sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
+
 sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-config.py"
+sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib64/oqm/station-captain/")|' "$sourcesDir/oqm-config.py"
+
 cp "$userGuideFile" "$sourcesDir/integration/stationCaptainUserGuide.html"
 
 sourcesBundle="$sourcesDir.tar.gz"

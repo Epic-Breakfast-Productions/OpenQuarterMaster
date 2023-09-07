@@ -2,11 +2,12 @@
 #
 # Script to get configuration and replace values
 #
-from lib.ConfigManager import *
+import sys
+sys.path.append("lib/")
+from ConfigManager import *
 import json
 import argparse
 import re
-import sys
 
 
 SCRIPT_VERSION = 'SCRIPT_VERSION'
