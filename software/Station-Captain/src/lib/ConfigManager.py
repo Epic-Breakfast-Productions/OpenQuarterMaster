@@ -1,5 +1,9 @@
 import base64
+import datetime
 import os
+import uuid
+from pathlib import Path
+
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -21,23 +25,13 @@ SECRET_MNGR_SECRET_PW_HASH_LEN = 32
 SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
 SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
 SECRET_MNGR_SECRETS_FILE = CONFIG_MNGR_CONFIGS_DIR + "/secrets.json"
+SECRET_MNGR_SECRETS_SECRET_FILE = CONFIG_MNGR_CONFIGS_DIR + "/.secretSecret.dat"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
 class SecretManager:
 
     def __init__(self):
-        self.fernet = Fernet(base64.urlsafe_b64encode(
-            PBKDF2HMAC(
-                algorithm=SECRET_MNGR_SECRET_PW_HASH_ALG,
-                length=SECRET_MNGR_SECRET_PW_HASH_LEN,
-                salt=SECRET_MNGR_SECRET_PW_HASH_SALT,
-                iterations=SECRET_MNGR_SECRET_PW_HASH_ITERATIONS,
-                backend=default_backend()  # not required in newer versions of python lib
-            ).derive(
-                self.getSecretPassword()
-            )
-        ))
         # ensure secrets file exists
         try:
             os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
@@ -55,6 +49,17 @@ class SecretManager:
                 file=sys.stderr
             )
             exit(1)
+        self.fernet = Fernet(base64.urlsafe_b64encode(
+            PBKDF2HMAC(
+                algorithm=SECRET_MNGR_SECRET_PW_HASH_ALG,
+                length=SECRET_MNGR_SECRET_PW_HASH_LEN,
+                salt=SECRET_MNGR_SECRET_PW_HASH_SALT,
+                iterations=SECRET_MNGR_SECRET_PW_HASH_ITERATIONS,
+                backend=default_backend()  # not required in newer versions of python lib
+            ).derive(
+                self.getSecretPassword()
+            )
+        ))
 
     def getSecretVal(self, key: str, generateIfNone: bool = True) -> str:
         secretsDict = ConfigManager.readFile(SECRET_MNGR_SECRETS_FILE)
@@ -117,8 +122,24 @@ class SecretManager:
         :exception: Exception - when happens
         :return: the ting
         """
-        # TODO:: this, securely enough
-        return b"password"
+        secretFilePath = Path(SECRET_MNGR_SECRETS_SECRET_FILE)
+        try:
+            if not secretFilePath.exists():
+                with open(SECRET_MNGR_SECRETS_SECRET_FILE, 'x') as stream:
+                    stream.write(secrets.token_hex(64))
+                    stream.write(str(uuid.uuid4()))
+                    stream.write(str(datetime.datetime.now()))
+                    stream.write(secrets.token_hex(64))
+            secretFilePath.chmod(0o400)
+        except OSError as e:
+            # TODO:: throw exception
+            print("Error: failed to write new secret secret file. Error: ",
+                  e,
+                  file=sys.stderr)
+            exit(1)
+
+        with open(SECRET_MNGR_SECRETS_SECRET_FILE, 'r') as stream:
+            return bytes(stream.read(), 'utf-8')
 
     @staticmethod
     def testEncrypt():
