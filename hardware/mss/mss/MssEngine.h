@@ -40,6 +40,10 @@ private:
     CRGB leds[MSS_NUM_LEDS];
     byte brightness = 255;
 
+    bool curHighlighting = false;
+    unsigned long highlightStart = 0;
+    unsigned long highlightDuration = 0;
+
     bool loopDelay = false;
 public:
     MssEngine(
@@ -76,18 +80,18 @@ public:
 
         this->connector->init();
 
-
-        Serial.print(F("DEBUG:: start. Free ram:"));
-        Serial.println(MssEngine::freeRam());
-
-        Serial.print(F("DEBUG:: size of block state array:"));
-        Serial.println(sizeof blockStateArr);
-
-        Serial.print(F("DEBUG:: size of mod info:"));
-        Serial.println(sizeof this->modInfo);
-
-        Serial.print(F("DEBUG:: size of led array:"));
-        Serial.println(sizeof this->leds);
+//
+//        Serial.print(F("DEBUG:: start. Free ram:"));
+//        Serial.println(MssEngine::freeRam());
+//
+//        Serial.print(F("DEBUG:: size of block state array:"));
+//        Serial.println(sizeof blockStateArr);
+//
+//        Serial.print(F("DEBUG:: size of mod info:"));
+//        Serial.println(sizeof this->modInfo);
+//
+//        Serial.print(F("DEBUG:: size of led array:"));
+//        Serial.println(sizeof this->leds);
 
         tone(MSS_SPKR_PIN, 2093, 250);
     }
@@ -98,12 +102,12 @@ public:
             StaticJsonDocument<256> commandJson;
             DeserializationError error = this->connector->getCommand(commandJson);
 
-            Serial.print(F("DEBUG:: after parse json. Free ram:"));
-            Serial.println(MssEngine::freeRam());
+//            Serial.print(F("DEBUG:: after parse json. Free ram:"));
+//            Serial.println(MssEngine::freeRam());
 
             if (error) {
-                Serial.print(F("DEBUG:: deserializeJson() failed: "));
-                Serial.println(error.f_str());
+//                Serial.print(F("DEBUG:: deserializeJson() failed: "));
+//                Serial.println(error.f_str());
                 if (error == DeserializationError::EmptyInput) {
                     //nothing to do
                     return;
@@ -117,8 +121,8 @@ public:
 //            commandJson.~StaticJsonDocument();
         }
 
-        Serial.print(F("DEBUG:: after parse command. Free ram:"));
-        Serial.println(MssEngine::freeRam());
+//        Serial.print(F("DEBUG:: after parse command. Free ram:"));
+//        Serial.println(MssEngine::freeRam());
 
         if (command == nullptr) {
             this->connector->send(ResponseType::R_ERR, F("Could not parse command."));
@@ -140,13 +144,19 @@ public:
 
     void loop() {
         if (this->connector->hasCommand()) {
-            Serial.print(F("DEBUG:: before process. Free ram:"));
-            Serial.println(MssEngine::freeRam());
+//            Serial.print(F("DEBUG:: before process. Free ram:"));
+//            Serial.println(MssEngine::freeRam());
             this->processCommand();
         }
-//        if (this->loopDelay) {
-//            delay(250);
-//        }
+
+        if(this->curHighlighting){
+            if(millis() - this->highlightStart >= this->highlightDuration) {
+                this->curHighlighting = false;
+                this->resetLightPowerState();
+                this->submitLedState();
+            }
+        }
+
     }
 
 
@@ -183,10 +193,16 @@ public:
     }
 
     void highlightBlocks(HighlightBlocksCommand *command) {
+        this->curHighlighting = true;
+        this->highlightStart = millis();
+        this->highlightDuration = command->getDuration();
+
+        if(!command->isCarry()){
+            this->resetLightPowerState();
+        }
 //        Serial.println(F("DEBUG:: Got command to highlight blocks"));
 
         //TODO:: set timer for highlight duration
-
 //        Serial.print(F("DEBUG:: num settings:" ));
 //        Serial.println(command->getNumSettings());
 
@@ -194,6 +210,8 @@ public:
         for(int i = 0; i < command->getNumSettings(); i++){
 //            Serial.print(F("DEBUG:: cur blockNum:" ));
 //            Serial.println(command->getSettings()[i].getBlockNum());
+//            Serial.print(F("DEBUG:: cur blockColor:" ));
+//            Serial.println(command->getSettings()[i].getColor());
 
             BlockState *curBlock = this->getBlock(command->getSettings()[i].getBlockNum());
             curBlock->getLightSetting()->turnOn();
@@ -201,6 +219,7 @@ public:
         }
 
         this->submitLedState();
+        this->connector->send(ResponseType::OK);
     }
 
     void lightTest() {

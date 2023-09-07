@@ -40,7 +40,7 @@ public:
     void send(
             ResponseType status
     ) {
-        StaticJsonDocument<16> doc;
+        StaticJsonDocument<24> doc;
 
         doc[F("status")] = responseTypeFromEnum(status);
         this->send(doc);

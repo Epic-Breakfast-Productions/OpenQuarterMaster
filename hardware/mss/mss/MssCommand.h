@@ -159,16 +159,27 @@ public:
 //            Serial.print(F("DEBUG:: block num gotten:" ));
 //            Serial.println(numSettings);
 
+            const char* colorStr = v[F("lightColor")].as<const char *>();
+
+//            Serial.print(F("DEBUG:: color str gotten:" ));
+//            Serial.println(colorStr);
+
+            LightColor color = ColorUtils::getColorFromString(colorStr);
+
+
+//            Serial.print(F("DEBUG:: color gotten:" ));
+//            Serial.println(color);
+
             settings[i] = HighlightBlocksCommandLightSetting(
                     blockNum,
                     powerState,
-                    ColorUtils::getColorFromString(v[F("lightColor")].as<const char *>())
+                    color
             );
 
         }
 
         return new HighlightBlocksCommand(
-                commandJson[F("duration")].as<int16_t>(),
+                commandJson[F("duration")].as<int>() * 1000,
                 commandJson[F("carry")].as<bool>(),
                 numSettings,
                 settings
