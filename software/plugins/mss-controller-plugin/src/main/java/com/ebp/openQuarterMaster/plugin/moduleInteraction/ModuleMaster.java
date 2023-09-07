@@ -1,8 +1,11 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
+import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,21 +13,45 @@ import java.util.Map;
 /**
  * Is the main bean that contains and handles modules.
  */
+@Slf4j
 @ApplicationScoped
 public class ModuleMaster {
 	
 	@Getter(AccessLevel.PRIVATE)
-	private Map<String, MssModule> moduleMap = new HashMap<>();
+	private final ModuleConfig moduleConfig;
 	
+	@Getter(AccessLevel.PRIVATE)
+	private final Map<String, MssModule> moduleMap = new HashMap<>();
+	
+	@Inject
+	public ModuleMaster(
+		ModuleConfig moduleConfig
+	){
+		this.moduleConfig = moduleConfig;
+		
+		if(this.getModuleConfig().serial().scanSerial()){
+			//TODO:: scan over serial ports for valid modules
+		}
+		
+		for(ModuleConfig.SerialConfig.SerialModuleConfig serialModuleConfig : this.getModuleConfig().serial().modules()){
+			//TODO:: add
+		}
+	}
 	
 	private void addModule(MssModule module){
-		//TODO:: check if module already exists
+		log.info("Adding module {}", module.getModuleInfo().getSerialId());
+		if(this.getModuleMap().containsKey(module.getModuleInfo().getSerialId())){
+			log.warn(
+				"Already have module with SerialId {} over {}. Attempted to add another over {}. Discarding duplicate.",
+				module.getModuleInfo().getSerialId(),
+				this.moduleMap.get(module.getModuleInfo().getSerialId()).getClass().getSimpleName(),
+				module.getClass().getSimpleName()
+			);
+			return;
+		}
 		this.moduleMap.put(module.getModuleInfo().getSerialId(), module);
 	}
 	
-	public ModuleMaster(){
-		//TODO:: populate modules
-	}
 	
 	//TODO:: scheduled method to process updates
 }
