@@ -24,6 +24,10 @@
 			"description": "If this request is a continuation of a previous call. Defaults to 'false'",
 			"type": "boolean"
 		},
+		"beep": {
+			"description": "If you want this to beep when highlighted. Defaults to 'false'",
+			"type": "boolean"
+		},
 		"storageBlocks": {
 			"description": "The array of storage blocks managed by this module.",
 			"type": "array",

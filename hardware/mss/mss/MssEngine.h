@@ -37,23 +37,21 @@ private:
     MssModInfo modInfo;
     MssConnector *connector;
     BlockState blockStateArr[MSS_VAR_NBLOCKS];
-    CRGB leds[MSS_NUM_LEDS];
-    byte brightness = 255;
 
     bool curHighlighting = false;
     unsigned long highlightStart = 0;
     unsigned long highlightDuration = 0;
+    int highlightTone = 262; // C4
+    int highlightToneDuration = 250;
 
-    bool loopDelay = false;
+    bool lightsNeedUpdated = false;
 public:
     MssEngine(
             MssModInfo modInfo,
-            MssConnector *connector,
-            bool loopDelay
+            MssConnector *connector
     ) {
         this->modInfo = modInfo;
         this->connector = connector;
-        this->loopDelay = loopDelay;
     }
 
     MssConnector *getConnector() {
@@ -64,10 +62,11 @@ public:
      * Call this to init the engine.
      */
     void init() {
+        //Prevent too many leds lighting up and damaging things
         // http://fastled.io/docs/group___power.html
-//        pinMode(4, OUTPUT);
-//        set_max_power_in_volts_and_milliamps(5, 2000);
-//        set_max_power_indicator_LED(4);
+        pinMode(4, OUTPUT);
+        set_max_power_in_volts_and_milliamps(5, 2000);
+        set_max_power_indicator_LED(4);
 
 
         pinMode(MSS_SPKR_PIN, OUTPUT);
@@ -75,8 +74,11 @@ public:
             BlockState newState(i);
             this->blockStateArr[i] = newState;
         }
-        FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(this->leds, MSS_NUM_LEDS);
-        this->submitLedState();
+
+        FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(0, 0);
+
+//        FastLED.addLeds<WS2812B, MSS_LED_PIN, GRB>(this->leds, MSS_NUM_LEDS);
+//        this->submitLedState();
 
         this->connector->init();
 
@@ -133,6 +135,9 @@ public:
             case CommandType::GET_MODULE_INFO:
                 this->sendModInfo();
                 break;
+            case CommandType::CLEAR_HIGHLIGHT:
+                this->clearHighlight();
+                break;
             case CommandType::HIGHLIGHT_BLOCKS:
                 this->highlightBlocks(command);
                 break;
@@ -151,12 +156,14 @@ public:
 
         if(this->curHighlighting){
             if(millis() - this->highlightStart >= this->highlightDuration) {
-                this->curHighlighting = false;
-                this->resetLightPowerState();
-                this->submitLedState();
+                this->clearHighlight();
             }
         }
 
+        if(this->lightsNeedUpdated){
+            this->submitLedState();
+            this->lightsNeedUpdated = false;
+        }
     }
 
 
@@ -164,8 +171,16 @@ public:
         return &(this->blockStateArr[blockNum - 1]);
     }
 
+    /**
+     * Submits the LED state that is setup in the BlockState array.
+     *
+     * !Creates the array required for this, can be large! call when memory is relatively clear.
+     */
     void submitLedState() {
-        //TODO:: look into doing leds like this: https://wokwi.com/projects/375153042918769665
+        CRGB tempLeds[MSS_NUM_LEDS];
+        FastLED[0].setLeds(tempLeds, MSS_NUM_LEDS);
+        FastLED.clear();
+
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             CRGB curColor = ColorUtils::getCRGBFromColor(this->getBlock(i)->getLightSetting()->getColor());
 
@@ -175,10 +190,9 @@ public:
 
             unsigned int ledStartInd = (i - 1) * 3;
             for (int j = ledStartInd; j < (ledStartInd + MSS_VAR_NLEDS_PER_BLOCK); j++) {
-                this->leds[j] = curColor;
+                tempLeds[j] = curColor;
             }
         }
-//        FastLED.setBrightness(this->brightness);
         FastLED.show();
     }
 
@@ -190,6 +204,13 @@ public:
         for (int i = 1; i <= MSS_VAR_NBLOCKS; i++) {
             this->getBlock(i)->getLightSetting()->turnOff();
         }
+    }
+
+    void clearHighlight(){
+        this->curHighlighting = false;
+        this->resetLightPowerState();
+        this->lightsNeedUpdated = true;
+        this->connector->send(ResponseType::OK);
     }
 
     void highlightBlocks(HighlightBlocksCommand *command) {
@@ -218,8 +239,11 @@ public:
             curBlock->getLightSetting()->setColor(command->getSettings()[i].getColor());
         }
 
-        this->submitLedState();
+        this->lightsNeedUpdated = true;
         this->connector->send(ResponseType::OK);
+        if(command->doBeep()){
+            tone(MSS_SPKR_PIN, this->highlightTone, this->highlightToneDuration);
+        }
     }
 
     void lightTest() {

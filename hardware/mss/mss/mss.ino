@@ -1,7 +1,7 @@
 #define MSS_VAR_NBLOCKS 64
 #define MSS_VAR_NLEDS_PER_BLOCK 3
 #define MSS_LED_PIN     2
-#define MSS_SPKR_PIN    9
+#define MSS_SPKR_PIN    3
 
 #define DELAY    500
 
@@ -20,8 +20,7 @@ MssEngine mssEngine(
                         false
                 )
         ),
-        new MssSerialConnector(),
-        true
+        new MssSerialConnector()
 );
 
 void setup() {

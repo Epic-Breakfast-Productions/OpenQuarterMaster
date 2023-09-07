@@ -11,6 +11,7 @@ enum CommandType {
     GET_MODULE_STATE,
     GET_BLOCK_STATE,
     HIGHLIGHT_BLOCKS,
+    CLEAR_HIGHLIGHT,
 
     SET_BLOCK_STATE
 };
@@ -55,14 +56,22 @@ public:
 class GetModuleInfoCommand : public Command {
 public:
     GetModuleInfoCommand() : Command(CommandType::GET_MODULE_INFO) {
-
     }
 };
 
 class GetModuleStateCommand : public Command {
 public:
     GetModuleStateCommand() : Command(CommandType::GET_MODULE_STATE) {
+    }
+};
 
+/**
+ * Example:
+ * <pre>{"command":"CLEAR_HIGHLIGHT"}</pre>
+ */
+class ClearHighlightCommand : public Command {
+public:
+    ClearHighlightCommand() : Command(CommandType::CLEAR_HIGHLIGHT) {
     }
 };
 
@@ -101,23 +110,26 @@ public:
 
 /**
  * Example:
- * <pre>{"command":"HIGHLIGHT_BLOCKS", "duration": 5, "carry":false, "storageBlocks": [{"blockNum":1, "lightPowerState": "ON", "lightColor": "RAND"}]}</pre>
+ * <pre>{"command":"HIGHLIGHT_BLOCKS", "duration": 5, "carry":false, "beep":true, "storageBlocks": [{"blockNum":1, "lightPowerState": "ON", "lightColor": "RAND"}]}</pre>
  */
 class HighlightBlocksCommand : public Command {
 private:
     int duration = 30;
     bool carry = false;
+    bool beep = false;
     int numSettings;
     const HighlightBlocksCommandLightSetting *blockLightSettings;
 public:
     HighlightBlocksCommand(
             int duration,
             bool carry,
+            bool beep,
             int numSettings,
             const HighlightBlocksCommandLightSetting *blockLightSettings
     ) : Command(CommandType::HIGHLIGHT_BLOCKS) {
         this->duration = duration;
         this->carry = carry;
+        this->beep = beep;
         this->blockLightSettings = blockLightSettings;
         this->numSettings = numSettings;
     }
@@ -128,6 +140,10 @@ public:
 
     bool isCarry() {
         return this->carry;
+    }
+
+    bool doBeep() {
+        return this->beep;
     }
 
     int getNumSettings() {
@@ -141,7 +157,7 @@ public:
     static HighlightBlocksCommand *parse(JsonDocument &commandJson) {
         JsonArray blockArr = commandJson[F("storageBlocks")].as<JsonArray>();
         int numSettings = blockArr.size();
-        HighlightBlocksCommandLightSetting* settings = new HighlightBlocksCommandLightSetting[numSettings];
+        HighlightBlocksCommandLightSetting *settings = new HighlightBlocksCommandLightSetting[numSettings];
 
 //        Serial.print(F("DEBUG:: num settings gotten:"));
 //        Serial.println(numSettings);
@@ -159,7 +175,7 @@ public:
 //            Serial.print(F("DEBUG:: block num gotten:" ));
 //            Serial.println(numSettings);
 
-            const char* colorStr = v[F("lightColor")].as<const char *>();
+            const char *colorStr = v[F("lightColor")].as<const char *>();
 
 //            Serial.print(F("DEBUG:: color str gotten:" ));
 //            Serial.println(colorStr);
@@ -181,6 +197,7 @@ public:
         return new HighlightBlocksCommand(
                 commandJson[F("duration")].as<int>() * 1000,
                 commandJson[F("carry")].as<bool>(),
+                commandJson[F("beep")].as<bool>(),
                 numSettings,
                 settings
         );
@@ -203,6 +220,8 @@ static Command *Command::parse(JsonDocument &commandJson) {
         return new GetModuleStateCommand();
     } else if (strcmp_P(commandStr, (PGM_P) F("HIGHLIGHT_BLOCKS")) == 0) {
         return HighlightBlocksCommand::parse(commandJson);
+    } else if (strcmp_P(commandStr, (PGM_P) F("CLEAR_HIGHLIGHT")) == 0) {
+        return new ClearHighlightCommand();
     }
     return nullptr;
 }
