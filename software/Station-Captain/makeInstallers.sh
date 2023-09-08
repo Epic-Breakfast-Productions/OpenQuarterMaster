@@ -58,6 +58,7 @@ mkdir -p "$buildDir/$debDir/usr/lib/oqm/station-captain"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
 mkdir -p "$buildDir/$debDir/etc/oqm/backup/scripts/"
+mkdir -p "$buildDir/$debDir/etc/oqm/accountScripts/"
 
 install -m 755 -D src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
 install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
@@ -69,6 +70,7 @@ install -m 755 -D src/integration/oqm-captain.desktop "$buildDir/$debDir/usr/sha
 install -m 755 -D src/integration/oqm-captain-user-guide.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D "$userGuideFile" "$buildDir/$debDir/etc/oqm/static/stationCaptainUserGuide.html"
 install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/backup/"
+install -m 755 -D "src/account-assure-base.sh" "$buildDir/$debDir/etc/oqm/accountScripts/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 
 

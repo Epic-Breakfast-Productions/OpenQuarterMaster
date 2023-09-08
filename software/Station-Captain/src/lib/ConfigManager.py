@@ -267,7 +267,7 @@ class ConfigManager:
             if curConfig not in data:
                 raise ConfigKeyNotFoundException()
 
-            return ConfigManager.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
+            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
         if configKey not in data:
             raise ConfigKeyNotFoundException()
         result = data[configKey]
