@@ -28,10 +28,11 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull postgres:15 || echo 'Could not p
 # TODO: proper admin creds
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name oqm_infra_postgres \
-                                 -p=8080:8120 \
-                                 -e POSTGRES_PASSWORD=mysecretpassword \
-                                 -v /data/oqm/db/postgres/:/usr/local/pgsql/data  \
-                                 postgres:15 start-dev"
+                                 -p=$(oqm-config -g 'infra.postgres.port'):5432 \
+                                 -e POSTGRES_USER=\"$(oqm-config -g 'infra.postgres.adminUser')\" \
+                                 -e POSTGRES_PASSWORD=\"$(oqm-config -g 'infra.postgres.adminPass')\" \
+                                 -v /data/oqm/db/postgres/:/var/lib/postgresql/data/ \
+                                 postgres:15"
 # TODO:: properly determine that postgres is running
 ExecStartPost=/bin/bash -c ""
 

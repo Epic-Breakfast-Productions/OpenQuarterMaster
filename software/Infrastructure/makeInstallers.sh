@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres")
 
 #
 # Clean
@@ -52,7 +52,8 @@ for curPackage in ${packages[@]}; do
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	mkdir -p "$packageDebDir/etc/oqm/config/configs/"
 	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
-	
+	mkdir -p "$packageDebDir/etc/oqm/accountScripts/"
+
 	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 
@@ -60,6 +61,9 @@ for curPackage in ${packages[@]}; do
 
 	if [ -f "$curPackage/$curPackage-snapshot-restore.sh" ]; then
 		cp "$curPackage/$curPackage-snapshot-restore.sh" "$packageDebDir/etc/oqm/snapshots/scripts/"
+	fi
+	if [ -f "$curPackage/$curPackage-assert-account.sh" ]; then
+		cp "$curPackage/$curPackage-assert-account.sh" "$packageDebDir/etc/oqm/accountScripts/"
 	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
