@@ -1,10 +1,14 @@
 {
 	"infra": {
-		"mongodb": {
+		"keycloak": {
 			"host": "host.docker.internal",
 			"port": "8115",
-			"username": "",
-			"password": ""
+			"adminUser": "oqmAdmin",
+			"adminPass": "<secret>",
+			"postgresUser": "oqm_keycloak_main",
+			"postgresPass": "<secret>",
+			"postgresDb": "oqm_keycloak",
+			"oqmRealmClientSecret": "**********"
 		}
 	}
 }
