@@ -2,6 +2,11 @@
 
 
 
+ - https://medium.com/@mihirrajdixit/getting-started-with-service-accounts-in-keycloak-c8f6798a0675
+ - 
+
+
+## Speech to Text
 
  - Java:
    - https://www.geeksforgeeks.org/converting-text-speech-java/#
