@@ -21,5 +21,11 @@ quarkus.mongodb.connection-string=mongodb://{infra.mongodb.host}:{infra.mongodb.
 quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
 quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://host.docker.internal:8096
 
+# Keycloak Config:
+quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
+quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
+quarkus.oidc.auth-server-url=http://localhost:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
+
 # TODO:: use placeholders
 runningInfo.hostname=oqm-dev.local
+

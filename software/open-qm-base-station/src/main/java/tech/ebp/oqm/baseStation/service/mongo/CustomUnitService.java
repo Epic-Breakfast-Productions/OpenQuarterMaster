@@ -60,7 +60,7 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 				UnitUtils.registerAllUnits(curEntry);
 			}
 		}
-		log.info("Done.");
+		log.info("Done reading in custom units.");
 	}
 	
 	@WithSpan

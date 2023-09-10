@@ -216,6 +216,7 @@ smallrye:
       client-id: oqm-app
       credentials:
         secret: "**********"
+#      auth-server-url: http://localhost:8115/realms/oqm
     keycloak:
       devservices:
         # Required to export realm
