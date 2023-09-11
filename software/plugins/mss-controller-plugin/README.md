@@ -23,7 +23,24 @@
 ## voice2json notes
 
  - Probably best way to run is docker, docker-in-docker? Most portable
- - 
+
+### Steps:
+
+
+- needs {v2jhome} to be populated with ".local/share/"
+- using the bash script `voice2jsonTest`, which runs the utility in docker
+
+ 1. `voice2jsonTest -p en download-profile`
+ 1. Modify content in the `sentenctes.ini`, `slot_programs/`, `slots/`
+    - `sentences.ini` - the main setup for intents. references `slots/`, `slot_programs/` dirs
+    - `slot_programs/` - programs that generate values for slots go in this dir
+      - http://voice2json.org/sentences.html#slot-programs
+ 1. Train the profile using: `voice2json train-profile`
+    - Can be run as needed or updated. 
+
+
+
+
 
 
 
