@@ -104,14 +104,16 @@ Files: *
 Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
-cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
+cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
-
+#set -x
 oqm-config -g system.hostname
-RESULT=$?
-if [ $RESULT -eq 1 ]; then
+RESULT="$?"
+if [ "$RESULT" -eq 1 ]; then
   oqm-config -s system.hostname $(hostname).local "."
 fi
+
+# /usr/share/update-notifier/notify-reboot-required
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"
