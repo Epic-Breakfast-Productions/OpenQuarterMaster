@@ -9,6 +9,7 @@
 enum CommandType {
     GET_MODULE_INFO,
     GET_MODULE_STATE,
+    IDENTIFY_MODULE,
     GET_BLOCK_STATE,
     HIGHLIGHT_BLOCKS,
     CLEAR_HIGHLIGHT,
@@ -62,6 +63,19 @@ public:
 class GetModuleStateCommand : public Command {
 public:
     GetModuleStateCommand() : Command(CommandType::GET_MODULE_STATE) {
+    }
+};
+
+class IdentifyModuleCommand : public Command {
+private:
+    long duration = 30;
+public:
+    IdentifyModuleCommand(int duration) : Command(CommandType::IDENTIFY_MODULE) {
+        this->duration = duration;
+    }
+
+    int getDuration() {
+        return this->duration;
     }
 };
 
@@ -216,6 +230,8 @@ static Command *Command::parse(JsonDocument &commandJson) {
     if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_INFO")) == 0) {
 //                Serial.println(F("DEBUG:: was info command"));
         return new GetModuleInfoCommand();
+    } else if (strcmp_P(commandStr, (PGM_P) F("IDENTIFY_MODULE")) == 0) {
+        return new IdentifyModuleCommand(commandJson[F("duration")].as<long>() * 1000);
     } else if (strcmp_P(commandStr, (PGM_P) F("GET_MODULE_STATE")) == 0) {
         return new GetModuleStateCommand();
     } else if (strcmp_P(commandStr, (PGM_P) F("HIGHLIGHT_BLOCKS")) == 0) {

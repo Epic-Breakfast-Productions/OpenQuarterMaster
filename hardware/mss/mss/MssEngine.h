@@ -141,6 +141,9 @@ public:
             case CommandType::HIGHLIGHT_BLOCKS:
                 this->highlightBlocks(command);
                 break;
+            case CommandType::IDENTIFY_MODULE:
+                this->identifyModule(command);
+                break;
             default:
                 this->connector->send(ResponseType::ERR, F("Unsupported operation."));
         }
@@ -249,6 +252,22 @@ public:
         if(command->doBeep()){
             tone(MSS_SPKR_PIN, this->highlightTone, this->highlightToneDuration);
         }
+    }
+
+    void identifyModule(IdentifyModuleCommand *command) {
+        this->curHighlighting = true;
+        this->highlightStart = millis();
+        this->highlightDuration = command->getDuration();
+
+        this->getBlock(1)->getLightSetting()->setRandColor();
+        this->getBlock(1)->getLightSetting()->turnOn();
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->setRandColor();
+        this->getBlock(MSS_VAR_NBLOCKS)->getLightSetting()->turnOn();
+
+        this->lightsNeedUpdated = true;
+        this->connector->send(ResponseType::OK);
+
+        tone(MSS_SPKR_PIN, this->highlightTone, this->highlightToneDuration);
     }
 
     void lightTest() {
