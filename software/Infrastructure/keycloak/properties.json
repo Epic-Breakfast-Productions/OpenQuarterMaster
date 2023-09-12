@@ -11,5 +11,6 @@
 	"configFiles":{
 	},
 	"files":{
+		"/etc/oqm/static/keycloak/import/oqm-realm.json": "oqm-realm.json"
 	}
 }
