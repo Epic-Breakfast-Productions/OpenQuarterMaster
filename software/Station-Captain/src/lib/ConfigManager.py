@@ -220,7 +220,6 @@ class ConfigManager:
                     stream.write('''
 {
     "system": {
-        "hostname": ""
     },
     "captain": {
     },
@@ -250,6 +249,7 @@ class ConfigManager:
 
     def getSecretManager(self) -> SecretManager:
         if self.secretManager is None:
+            # print("DEBUG:: getting new secret manager")
             self.secretManager = SecretManager()
         return self.secretManager
 
