@@ -33,7 +33,7 @@ argParser.add_argument('-s', '--set', dest="s",
                        help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + CONFIG_MNGR_ADD_CONFIG_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
 
-configManager = ConfigManager( SecretManager() )
+configManager = ConfigManager()
 
 args = argParser.parse_args()
 

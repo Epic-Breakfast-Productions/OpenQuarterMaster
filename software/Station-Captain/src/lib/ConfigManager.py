@@ -204,9 +204,9 @@ class ConfigManager:
 
     def __init__(
             self,
-            secretManager: SecretManager,
-            mainConfigFile:str = CONFIG_MNGR_MAIN_CONFIG_FILE,
-            additionalConfigsDir:str = CONFIG_MNGR_ADD_CONFIG_DIR
+            secretManager: SecretManager = None,
+            mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
+            additionalConfigsDir: str = CONFIG_MNGR_ADD_CONFIG_DIR
     ):
         self.secretManager = secretManager
         self.additionalConfigsDir = additionalConfigsDir
@@ -219,6 +219,9 @@ class ConfigManager:
                     # TODO:: move this default template to another file?
                     stream.write('''
 {
+    "system": {
+        "hostname": ""
+    },
     "captain": {
     },
     "snapshots": {
@@ -244,6 +247,11 @@ class ConfigManager:
                 self.configData = ConfigManager.mergeDicts(self.configData, curUpdates)
             else:
                 continue
+
+    def getSecretManager(self) -> SecretManager:
+        if self.secretManager is None:
+            self.secretManager = SecretManager()
+        return self.secretManager
 
     def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, formatData) -> str:
         """
@@ -272,7 +280,7 @@ class ConfigManager:
             raise ConfigKeyNotFoundException()
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
-            result = self.secretManager.updateSecrets(configKeyOrig, result)
+            result = self.getSecretManager().updateSecrets(configKeyOrig, result)
             if not isinstance(result, str):
                 if formatData:
                     result = json.dumps(result, indent=4)
