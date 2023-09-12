@@ -114,7 +114,7 @@ if [ $RESULT -eq 1 ]; then
 fi
 
 EOT
-chmod +x "$packageDebDir/DEBIAN/preinst"
+chmod +x "$buildDir/$debDir/DEBIAN/postinst"
 
 dpkg-deb --build "$buildDir/$debDir" "$outputDir"
 if [ $? -ne 0 ]; then
