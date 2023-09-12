@@ -155,6 +155,7 @@ public:
         }
 
         if(this->curHighlighting){
+            // https://create.arduino.cc/example/builtin/02.Digital%5CBlinkWithoutDelay/BlinkWithoutDelay/preview
             if(millis() - this->highlightStart >= this->highlightDuration) {
                 this->clearHighlight();
             }
@@ -175,6 +176,10 @@ public:
      * Submits the LED state that is setup in the BlockState array.
      *
      * !Creates the array required for this, can be large! call when memory is relatively clear.
+     *
+     * http://fastled.io/docs/class_c_l_e_d_controller.html
+     * http://fastled.io/docs/class_c_fast_l_e_d.html
+     *
      */
     void submitLedState() {
         CRGB tempLeds[MSS_NUM_LEDS];
@@ -296,14 +301,6 @@ public:
 //        delay(DELAY);
 //        delay(DELAY);
 
-    }
-
-    static int freeRam() {
-        int size = 2048;
-        byte *buf;
-        while ((buf = (byte *) malloc(--size)) == NULL);
-        free(buf);
-        return size;
     }
 };
 

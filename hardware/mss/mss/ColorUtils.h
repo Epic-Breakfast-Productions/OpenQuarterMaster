@@ -1,7 +1,8 @@
-//
-// Created by gstewart on 9/5/23.
-//
-
+/**
+ *
+ * http://fastled.io/docs/struct_c_r_g_b.html
+ *
+ */
 #ifndef MSS_COLORUTILS_H
 #define MSS_COLORUTILS_H
 

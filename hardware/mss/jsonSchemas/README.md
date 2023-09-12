@@ -20,4 +20,11 @@ available, and take commands to do specific things, like mark specific storage b
 
 array of which blocks, solid or flashing, duration
 
-### 
+## Sources
+
+ - https://json-schema.org/understanding-json-schema/index.html
+ - https://github.com/json-schema-org/json-schema-spec/issues/348
+ - https://mkyong.com/regular-expressions/how-to-validate-hex-color-code-with-regular-expression/
+ - https://json-schema.org/understanding-json-schema/structuring.html
+ - https://json-schema.org/understanding-json-schema/reference/array.html
+ - 
