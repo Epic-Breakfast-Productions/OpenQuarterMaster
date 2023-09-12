@@ -107,7 +107,7 @@ EOT
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
-oqm-config -s system.hostname
+oqm-config -g system.hostname
 RESULT=$?
 if [ $RESULT -eq 1 ]; then
   oqm-config -s system.hostname $(hostname).local "."
