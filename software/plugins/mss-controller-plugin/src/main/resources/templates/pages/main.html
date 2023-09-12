@@ -1,0 +1,526 @@
+{@com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster moduleMaster}
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="shortcut icon" href="/favicon.ico"/>
+	<title>MSS Controller Plugin - Open Quarter Master</title>
+	
+	<!-- CSS -->
+	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
+	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	<style>
+		.buttonCell {
+			border: 1px solid black;
+			height: 50px;
+			width: 50px;
+		}
+	</style>
+	<script>
+		/**
+		 * Script to handle theme changing. At top in order to prevent flashing
+		 */
+		(() => {
+			'use strict'
+			
+			const getStoredTheme = () => localStorage.getItem('theme');
+			const setStoredTheme = theme => localStorage.setItem('theme', theme);
+			
+			const getPreferredTheme = () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme) {
+					return storedTheme;
+				}
+				return "auto";
+				// return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			}
+			
+			const setTheme = theme => {
+				if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					document.documentElement.setAttribute('data-bs-theme', 'dark');
+				} else {
+					document.documentElement.setAttribute('data-bs-theme', theme);
+				}
+			}
+			
+			setTheme(getPreferredTheme());
+			
+			const showActiveTheme = (theme, focus = false) => {
+				const themePicker = document.querySelector('#theme-picker');
+				const themeSwitcherButton = themePicker.querySelector('#bd-theme');
+				
+				const themeSwitcherText = themePicker.querySelector('#bd-theme-text');
+				const activeThemeIcon = themePicker.querySelector('.theme-icon-active');
+				const btnToActive = themePicker.querySelector(`[data-bs-theme-value="` + theme + `"]`);
+				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML;
+				
+				themePicker.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active');
+					element.setAttribute('aria-pressed', 'false');
+				})
+				
+				btnToActive.classList.add('active');
+				btnToActive.setAttribute('aria-pressed', 'true');
+				activeThemeIcon.innerHTML = svgOfActiveBtn;
+				const themeSwitcherLabel = themeSwitcherText.textContent + ` (` + btnToActive.dataset.bsThemeValue + `)`;
+				themeSwitcherButton.setAttribute('aria-label', themeSwitcherLabel);
+				
+				if (focus) {
+					themeSwitcherButton.focus();
+				}
+				console.log("Set theme to " + theme);
+			}
+			
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme !== 'light' && storedTheme !== 'dark') {
+					setTheme(getPreferredTheme());
+				}
+			})
+			
+			window.addEventListener('DOMContentLoaded', () => {
+				let preferredTheme = getPreferredTheme();
+				console.log("Preferred theme: " + preferredTheme);
+				showActiveTheme(preferredTheme);
+				
+				document.querySelectorAll('[data-bs-theme-value]')
+					.forEach(toggle => {
+						toggle.addEventListener('click', () => {
+							const theme = toggle.getAttribute('data-bs-theme-value')
+							setStoredTheme(theme);
+							setTheme(theme);
+							showActiveTheme(theme, true);
+						})
+					})
+			})
+		})()
+	</script>
+</head>
+<body class="min-vh-100 vstack">
+<span id="pageInfo" data-page-initted="false"></span>
+
+<!-- nav here -->
+<nav class="navbar navbar-expand-lg bg-light top-nav mb-2" data-bs-theme="light" id="top-nav">
+	<div class="container-fluid">
+		<a class="navbar-brand p-0" href="/main">
+			<img src="/media/logoSymbol.svg" alt="" id="topLogo">
+			OQM MSS Controller Plugin
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
+			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarColor03">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['baseStation.baseUrl']}">
+						<i class="bi bi-speedometer2 "></i> Back to Base Station
+					</a>
+				</li>
+				<li class="nav-item">
+					<button class=" btn btn-link nav-link">
+						<i class="bi bi-mic"></i>
+					</button>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+						aria-haspopup="true" aria-expanded="false">
+						<i class="bi bi-person-circle "></i> <span id="userNameDisplay">Greg Stewart</span></a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="{config:['quarkus.oidc.auth-server-url']}/account/"
+							id="youEditLink" target="_blank">
+							<i class="bi bi-pencil-fill "></i> Your Account Settings
+						</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="/logout" id="logoutButton">
+							<i class="bi bi-door-closed "></i> Logout
+						</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div id="mainContainer" class="container flex-grow-1">
+	<div id="messageDiv">
+	</div>
+	
+	<main class="" role="main">
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+					type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+					<i class="bi bi-search"></i> Storage Search
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+					type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+					Modules
+					<span class="badge text-bg-secondary">{moduleMaster.getModuleIds().size()}</span>
+				</button>
+			</li>
+		</ul>
+		<div class="tab-content" id="mainTabContent">
+			<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+				tabindex="0">
+				<h1>
+					Storage Search
+				</h1>
+				<p>
+					Use this tab to find things in your storage
+				</p>
+				<hr/>
+				TODO
+			</div>
+			<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+				<h1>
+					Modules
+				</h1>
+				<p>
+					Use this tab see and manage your modules
+				</p>
+				<hr/>
+				{#if moduleMaster.getModuleIds().isEmpty()}
+					<div class="alert alert-warning" role="alert">
+						No modules!
+					</div>
+				{#else}
+					<div class="accordion" id="moduleAccordion">
+					{#for curModuleId in moduleMaster.getModuleIds()}
+						{#let curModuleInfo = moduleMaster.getModuleInfo(curModuleId)}
+							<div class="accordion-item">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+									data-bs-target="#moduleAccordion-{curModuleInfo.getSerialId()}"
+									aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getSerialId()}">
+									{curModuleInfo.getSerialId()}
+								</button>
+							</h2>
+							<div id="moduleAccordion-{curModuleInfo.getSerialId()}" class="accordion-collapse collapse"
+							data-bs-parent="#moduleAccordion">
+								<div class="accordion-body">
+									<dl class="row">
+										<dt class="col-sm-3 col-md-2">Id:</dt>
+										<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSerialId()}</dd>
+							
+							<dt class="col-sm-3 col-md-2">Spec Version:</dt>
+							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSpecVersion()}</dd>
+							
+							<dt class="col-sm-3 col-md-2">Manufacture Date:</dt>
+							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getManufactureDate()}</dd>
+							
+							<dt class="col-sm-3 col-md-2"># Blocks:</dt>
+							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getNumBlocks()}</dd>
+										
+									</dl>
+									<!-- TODO:: list storage blocks, button to show search, locate button -->
+								</div>
+							</div>
+							</div>
+						{/let}
+					{/for}
+					</div>
+				{/if}
+			</div>
+		</div>
+	</main>
+</div>
+
+<footer id="footer" class="container mb-3" role="contentinfo">
+	<hr/>
+	<div class="row">
+		<div class="col-sm-4">
+			<span class="h5">OQM MSS Controller Plugin</span><br/>
+			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">1.0.30</a>,
+			&copy; 2023 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
+			Released under the <a
+				href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE"
+				target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes" id="theme-picker">
+				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
+					id="bd-theme"
+					type="button"
+					aria-expanded="false"
+					data-bs-toggle="dropdown"
+					data-bs-display="static">
+					<span class="theme-icon-active">
+<i class="bi bi-circle-half ">&nbsp;</i> 					</span>
+					<span id="bd-theme-text">
+					Toggle theme
+					</span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center"
+							data-bs-theme-value="light">
+							<span class="theme-icon">
+<i class="bi bi-brightness-high-fill ">&nbsp;</i> 							</span>
+							Light
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center"
+							data-bs-theme-value="dark">
+							<span class="theme-icon">
+<i class="bi bi-moon-stars-fill ">&nbsp;</i> 							</span>
+							Dark
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center active"
+							data-bs-theme-value="auto">
+							<span class="theme-icon">
+<i class="bi bi-circle-half ">&nbsp;</i> 							</span>
+							Auto
+						</button>
+					</li>
+				</ul>
+			</div>
+			<a href="/help"><i class="bi bi-question-circle "></i> Help & User Guide</a><br/>
+		</div>
+		<div id="serverInfo" class="col-sm-4">
+			<br/>
+		</div>
+		<div class="col-sm-4">
+			Your privacy is important to the original project. It only creates minor cookies, and that is for the login
+			functionality. The project also only collects what you give it, and it is up to the people running the
+			server to ensure it is handled well. Please contact the folks running the server for more information.
+		
+		</div>
+	</div>
+</footer>
+
+
+<!-- Modals -->
+
+<!-- scripts -->
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script src="/lib/spin.js/spin.umd.js"></script>
+<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
+<script src="/res/js/spinnerHelpers.js"></script>
+<script src="/res/js/getParamUtils.js"></script>
+<script src="/res/js/pageMessages.js"></script>
+<script src="/res/js/dselectHelpers.js"></script>
+<script src="/res/js/rest.js"></script>
+<script src="/res/js/timeHelpers.js"></script>
+<script src="/res/js/main.js"></script>
+<script src="/res/js/icons.js"></script>
+<script src="/res/js/links.js"></script>
+<script>
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+		return new bootstrap.Popover(popoverTriggerEl)
+	});
+	Dselect.setupPageDselects();
+</script>
+<script src="/res/js/obj/getters.js"></script>
+<script src="/res/js/obj/units.js"></script>
+
+<script>
+	var created = {};
+	
+	
+	function getInvItemSection(invItemArr, parentId) {
+		if (invItemArr.length === 0) {
+			return $('<p><i class="bi bi-tag "></i> No inventory items held.</p>');
+		}
+		let accordId = "invItemAccord" + parentId;
+		let accordion = $('<div class="accordion " id="' + accordId + '"></div>');
+		
+		invItemArr.forEach(function (invItem) {
+			let accordItemId = accordId + 'AccordItem' + invItem.id;
+			let accordItemHeaderId = accordItemId + "Header";
+			let accordItemCollapseId = accordItemId + "Collapse";
+			let accordItemContentId = accordItemId + "Content";
+			let curAccord = $('<div class="accordion-item" id="' + accordItemId + '" data-item-id="' + invItem.id + '">' +
+				'<h2 class="accordion-header " id="' + accordItemHeaderId + '" onclick="overviewItemAccordionClicked(\'' + invItem.id + '\',\'' + parentId + '\', $(this).parent())">' +
+				'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordItemCollapseId + '" aria-expanded="false" aria-controls="' + accordItemCollapseId + '">' +
+				'</button>' +
+				'</h2>' +
+				'<div id="' + accordItemCollapseId + '" class="accordion-collapse collapse" aria-labelledby="' + accordItemHeaderId + '" data-bs-parent="#' + accordId + '">' +
+				'<div class="accordion-body" id="' + accordItemContentId + '">' +
+				'Loading...' +//TODO
+				'</div>' +
+				'</div>' +
+				'</div>');
+			
+			let accordButt = curAccord.find(".accordion-button");
+			
+			accordButt.append(
+				$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/' + invItem.id + '" alt="">'),
+				$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
+			);
+			
+			accordion = accordion.append(curAccord);
+		});
+		
+		let output = $('<h5><i class="bi bi-tag "></i> Items held (' + invItemArr.length + '):</h5>');
+		output = output.add(accordion);
+		return output;
+	}
+	
+	function getStorageBlockSection(storageBlockArr, parentId) {
+		if (storageBlockArr.length === 0) {
+			return $('<p><i class="bi bi-boxes "></i> No children.</p>');
+		}
+		let accordId = "storageBlockAccord" + parentId;
+		let accordion = $('<div class="accordion " id="' + accordId + '"></div>');
+		
+		storageBlockArr.forEach(function (storageBlock) {
+			let curAccord = $('<div class="accordion-item" id="accordItem' + storageBlock.id + '" data-storage-block-id="' + storageBlock.id + '">' +
+				'<h2 class="accordion-header " id="accordHeader' + storageBlock.id + '" onclick="overviewAccordionClicked(\'' + storageBlock.id + '\', $(this).parent())">' +
+				'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse' + storageBlock.id + '" aria-expanded="false" aria-controls="accordCollapse' + storageBlock.id + '">' +
+				'</button>' +
+				'</h2>' +
+				'<div id="accordCollapse' + storageBlock.id + '" class="accordion-collapse collapse" aria-labelledby="accordHeader' + storageBlock.id + '" data-bs-parent="#' + accordId + '">' +
+				'<div class="accordion-body" id="accordContent' + storageBlock.id + '">' +
+				'Loading...' +
+				'</div>' +
+				'</div>' +
+				'</div>');
+			let accordButt = curAccord.find(".accordion-button");
+			
+			accordButt.append(
+				$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/' + storageBlock.id + '" alt=" image">'),
+				$('<span></span>').text(storageBlock.labelText)
+			);
+			
+			accordion = accordion.append(curAccord);
+		});
+		
+		let output = $('<h5><i class="bi bi-boxes "></i> Storage Blocks (' + storageBlockArr.length + '):</h5>');
+		output = output.add(accordion);
+		return output;
+	}
+	
+	function getBlockDetailsSection(storageBlockData) {
+		let output = $('<div class="row">' +
+			'<div class="col">' +
+			// '<h5>Block details</h5>' + //unnecessary
+			'</div>' +
+			'</div>'
+		);
+		let detailsRow = $(
+			'<div class="row storageBlockDetailsRow">' +
+			'</div>');
+		
+		detailsRow.append('<div class="col-sm-1">' + Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
+		
+		if (storageBlockData.description) {
+			//TODO:: might need better format
+			let locationData = $('<div class="col">' +
+				'Description: <span class="storageBlockDescription"></span>' +
+				'</div>');
+			locationData.find(".storageBlockDescription").text(storageBlockData.description);
+			
+			detailsRow = detailsRow.append(locationData);
+		}
+		if (storageBlockData.location) {
+			let locationData = $('<div class="col">' +
+				'Location: <span class="storageBlockLocation"></span>' +
+				'</div>');
+			locationData.find(".storageBlockLocation").text(storageBlockData.location);
+			
+			detailsRow = detailsRow.append(locationData);
+		}
+		//TODO:: barcode
+		
+		//TODO:: images, attr/keywords?, capacities?
+		
+		output = output.add(detailsRow);
+		return output;
+	}
+	
+	function getInvItemDetailsSection(itemData, storageBlockId) {
+		let output = $('<div class="row"></div>');
+		
+		output.append($('<div class="col-1">' + Links.getItemViewButtonAsHtml(itemData.id, "View") + '</div>'));
+		
+		if (itemData.description) {
+			//TODO
+		}
+		//TODO:: fill with details
+		
+		return output;
+	}
+	
+	async function createNewStorageBlockContent(storageBlockData) {
+		let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
+		let storageBlockChildren = getStorageBlockChildrenData(storageBlockData.id);
+		storageBlockItems = await storageBlockItems;
+		storageBlockChildren = await storageBlockChildren;
+		
+		console.log("Got " + storageBlockItems.length + " items, " + storageBlockChildren.length + " children for storage block " + storageBlockData.id);
+		
+		let output = $();
+		
+		output = output.add(getBlockDetailsSection(storageBlockData));
+		output = output.add($("<hr />"));
+		output = output.add(getInvItemSection(storageBlockItems, storageBlockData.id));
+		output = output.add($("<hr />"));
+		output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
+		return output;
+	}
+	
+	function overviewAccordionClicked(storageBlockId, accordionDivJq) {
+		console.debug("Accordion " + accordionDivJq.attr("id") + " for storage block " + storageBlockId + " clicked.");
+		
+		if (created[storageBlockId]) {
+			console.log("Already clicked on this.");
+			return;
+		}
+		created[storageBlockId] = [];
+		
+		doRestCall({
+			url: "/api/v1/inventory/storage-block/" + storageBlockId,
+			method: "GET",
+			done: async function (data) {
+				let newContent = await createNewStorageBlockContent(data);
+				console.log("Got new content for accordion.");
+				
+				accordionDivJq.find(".accordion-body").html(newContent);
+			},
+			fail: function (data) {
+			
+			}
+		});
+	}
+	
+	function overviewItemAccordionClicked(itemId, storageBlockId, accordionDivJq) {
+		console.debug("Accordion " + accordionDivJq.attr("id") + " for item " + itemId + " in storage block " + storageBlockId + " clicked.");
+		
+		if (created[storageBlockId][itemId]) {
+			console.log("Already clicked on this.");
+			return;
+		}
+		created[storageBlockId][itemId] = true;
+		
+		doRestCall({
+			url: "/api/v1/inventory/item/" + itemId,
+			method: "GET",
+			done: async function (data) {
+				let newContent = await getInvItemDetailsSection(data, storageBlockId);
+				console.log("Got new content for accordion.");
+				
+				accordionDivJq.find(".accordion-body").html(newContent);
+			},
+			fail: function (data) {
+			}
+		});
+	}
+</script>
+
+</body>
+</html>

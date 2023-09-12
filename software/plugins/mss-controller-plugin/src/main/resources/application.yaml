@@ -1,0 +1,51 @@
+
+quarkus:
+  application:
+    name: OQM MSS Controller Plugin
+  rest-client:
+    upc-barcodelookup-com:
+      url: ${baseStation.baseUrl}
+      scope: jakarta.inject.Singleton # TODO:: change this
+  log:
+    level: DEBUG
+    console:
+      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
+  scheduler:
+    metrics:
+      enabled: true
+  http:
+    limits:
+      max-body-size: 95M
+    auth:
+      proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
+    access-log:
+      enabled: true
+#    port: 80
+#    ssl-port: 443
+  oidc:
+    application-type: hybrid
+    token-state-manager:
+      split-tokens: true
+    logout:
+      path: /logout
+      post-logout-path: ${baseStation.baseUrl}/?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+  
+"%dev":
+  baseStation:
+    baseUrl: https://oqm-demo.local
+  quarkus:
+    application:
+      name: ${service.nameShort} - V${service.apiVersion} - DEV
+    http:
+      port: 8080
+    log:
+      level: DEBUG
+    oidc:
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
+      auth-server-url: http://oqm-demo.local:8115/realms/oqm

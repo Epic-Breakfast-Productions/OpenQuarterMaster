@@ -26,7 +26,7 @@ public class MssSerialModule extends MssModule {
 		Optional<Integer> baudRate
 	) {
 		super(objectMapper);
-		this.serialPortWrapper = new SerialPortWrapper(serialPortLocation, baudRate);
+		this.serialPortWrapper = new SerialPortWrapper(objectMapper, serialPortLocation, baudRate);
 		
 		this.postConstructInit();
 	}

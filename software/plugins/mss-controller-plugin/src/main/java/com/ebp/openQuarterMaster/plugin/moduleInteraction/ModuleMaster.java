@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Is the main bean that contains and handles modules.
@@ -50,6 +52,18 @@ public class ModuleMaster {
 			return;
 		}
 		this.moduleMap.put(module.getModuleInfo().getSerialId(), module);
+	}
+	
+	public Set<String> getModuleIds(){
+		return this.getModuleMap().keySet();
+	}
+	
+	public MssModule getModule(String moduleId){
+		return this.getModuleMap().get(moduleId);
+	}
+	
+	public ModuleInfo getModuleInfo(String moduleId){
+		return this.getModule(moduleId).getModuleInfo();
 	}
 	
 	

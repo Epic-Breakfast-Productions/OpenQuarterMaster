@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<link rel="shortcut icon" href="/favicon.ico"/>
+	<title>Login - Open Quarter Master Base Station</title>
+	
+	<!-- CSS -->
+	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
+	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	<style>
+		/* No page css */
+	</style>
+	<script>
+		/**
+		 * Script to handle theme changing. At top in order to prevent flashing
+		 */
+		(() => {
+			'use strict'
+			
+			const getStoredTheme = () => localStorage.getItem('theme');
+			const setStoredTheme = theme => localStorage.setItem('theme', theme);
+			
+			const getPreferredTheme = () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme) {
+					return storedTheme;
+				}
+				return "auto";
+				// return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			}
+			
+			const setTheme = theme => {
+				if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					document.documentElement.setAttribute('data-bs-theme', 'dark');
+				} else {
+					document.documentElement.setAttribute('data-bs-theme', theme);
+				}
+			}
+			
+			setTheme(getPreferredTheme());
+			
+			const showActiveTheme = (theme, focus = false) => {
+				const themePicker = document.querySelector('#theme-picker');
+				const themeSwitcherButton = themePicker.querySelector('#bd-theme');
+				
+				const themeSwitcherText = themePicker.querySelector('#bd-theme-text');
+				const activeThemeIcon = themePicker.querySelector('.theme-icon-active');
+				const btnToActive = themePicker.querySelector(`[data-bs-theme-value="`+theme+`"]`);
+				const svgOfActiveBtn = btnToActive.querySelector('.theme-icon').innerHTML;
+				
+				themePicker.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+					element.classList.remove('active');
+					element.setAttribute('aria-pressed', 'false');
+				})
+				
+				btnToActive.classList.add('active');
+				btnToActive.setAttribute('aria-pressed', 'true');
+				activeThemeIcon.innerHTML = svgOfActiveBtn;
+				const themeSwitcherLabel = themeSwitcherText.textContent+` (`+btnToActive.dataset.bsThemeValue+`)`;
+				themeSwitcherButton.setAttribute('aria-label', themeSwitcherLabel);
+				
+				if (focus) {
+					themeSwitcherButton.focus();
+				}
+				console.log("Set theme to " + theme);
+			}
+			
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const storedTheme = getStoredTheme();
+				if (storedTheme !== 'light' && storedTheme !== 'dark') {
+					setTheme(getPreferredTheme());
+				}
+			})
+			
+			window.addEventListener('DOMContentLoaded', () => {
+				let preferredTheme = getPreferredTheme();
+				console.log("Preferred theme: " + preferredTheme);
+				showActiveTheme(preferredTheme);
+				
+				document.querySelectorAll('[data-bs-theme-value]')
+					.forEach(toggle => {
+						toggle.addEventListener('click', () => {
+							const theme = toggle.getAttribute('data-bs-theme-value')
+							setStoredTheme(theme);
+							setTheme(theme);
+							showActiveTheme(theme, true);
+						})
+					})
+			})
+		})()
+	</script>
+</head>
+<body class="min-vh-100 vstack">
+<span id="pageInfo" data-page-initted="false"></span>
+
+<!-- nav here -->
+
+<div id="mainContainer" class="container flex-grow-1">
+	<div id="messageDiv">
+	</div>
+	
+	<main class="" role="main">
+		<br/>
+		<div class="row justify-content-center ">
+			<form class="col align-self-center col-md-6 card text-center p-0" id="signInForm">
+				<div class="card-header">
+					<img src="/media/logoSymbol.svg" alt="Open QuarterMaster Logo" style="width:300px;max-width: 100%;">
+					<h1>
+						Modular Storage System Controller Plugin
+					</h1>
+				</div>
+				<div class="card-body d-grid gap-2">
+					<a href="/main" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
+						<i class="bi bi-door-open "></i> Continue
+					</a>
+				</div>
+				<div class="card-footer">
+					<p class="mt-3 text-muted">
+						&copy; 2021–2023
+					</p>
+				</div>
+			</form>
+		</div>
+	
+	</main>
+</div>
+
+<footer id="footer" class="container mb-3" role="contentinfo">
+	<hr/>
+	<div class="row">
+		<div class="col-sm-4">
+			<span class="h5">Open QuarterMaster Base Station</span><br/>
+			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">1.0.30</a>, &copy; 2023 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes" id="theme-picker">
+				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
+					id="bd-theme"
+					type="button"
+					aria-expanded="false"
+					data-bs-toggle="dropdown"
+					data-bs-display="static">
+					<span class="theme-icon-active">
+<i class="bi bi-circle-half ">&nbsp;</i> 					</span>
+					<span id="bd-theme-text">
+					Toggle theme
+					</span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+							<span class="theme-icon">
+<i class="bi bi-brightness-high-fill ">&nbsp;</i> 							</span>
+							Light
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+							<span class="theme-icon">
+<i class="bi bi-moon-stars-fill ">&nbsp;</i> 							</span>
+							Dark
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+							<span class="theme-icon">
+<i class="bi bi-circle-half ">&nbsp;</i> 							</span>
+							Auto
+						</button>
+					</li>
+				</ul>
+			</div>
+			<a href="/help"><i class="bi bi-question-circle "></i> Help & User Guide</a><br />
+			<small class="fw-lighter fst-italic text-muted">
+				<div class="d-grid gap-2">
+					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
+						data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
+						aria-controls="pageLoadInfoCollapse">
+						Page Loaded: <span id="pageLoadTimestamp">06:00:38 PM Sep 12, 23 GMT</span>
+						(Server time)
+					</button>
+				</div>
+				<div class="collapse" id="pageLoadInfoCollapse">
+					<div class="card card-body">
+						Service id: <code class="user-select-all"
+							id="traceServiceName">open-qm-base-station</code><br/>
+						Trace id: <code class="user-select-all" id="traceId">2e849b238202b42945ad9be3d5ab9fb7</code>
+						<!-- TODO:: link to Jaeger? -->
+					</div>
+				</div>
+			</small>
+		</div>
+		<div id="serverInfo" class="col-sm-4">
+			<br/>
+		</div>
+		<div class="col-sm-4">
+			Your privacy is important to the original project. It only creates minor cookies, and that is for the login functionality. The project also only collects what you give it, and it is up to the people running the server to ensure it is handled well. Please contact the folks running the server for more information.
+		
+		</div>
+	</div>
+</footer>
+
+
+<!-- Modals -->
+
+<!-- scripts -->
+<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script src="/lib/spin.js/spin.umd.js"></script>
+<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
+<script src="/res/js/spinnerHelpers.js"></script>
+<script src="/res/js/getParamUtils.js"></script>
+<script src="/res/js/pageMessages.js"></script>
+<script src="/res/js/dselectHelpers.js"></script>
+<script src="/res/js/rest.js"></script>
+<script src="/res/js/timeHelpers.js"></script>
+<script src="/res/js/main.js"></script>
+<script src="/res/js/icons.js"></script>
+<script src="/res/js/links.js"></script>
+<script>
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+		return new bootstrap.Popover(popoverTriggerEl)
+	});
+	Dselect.setupPageDselects();
+</script>
+
+<script>
+
+</script>
+
+</body>
+</html>
