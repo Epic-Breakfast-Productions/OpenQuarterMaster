@@ -28,10 +28,11 @@ ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/core/ba
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${version} || echo 'Could not pull image.'"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
-                                        --network=host \
+                                        -p 80:80 -p 443:443 \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --add-host host.docker.internal:host-gateway \
+                                        --add-host $(oqm-config -g system.hostname):host-gateway \
                                         ebprod/open-qm-base-station:${version}"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
