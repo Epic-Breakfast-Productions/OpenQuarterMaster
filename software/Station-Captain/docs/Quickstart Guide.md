@@ -24,12 +24,13 @@ System Requirements:
 Steps:
 
  1. Download the installer for your system [here on the releases page](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases?q=Station+captain&expanded=true).
- 2. Install the package using:
+    - Curl command to download: `curl -ks https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster/releases/latest | grep "browser_download_url.*.deb" | cut -d : -f 2,3 | tr -d \" | xargs wget` 
+ 3. Install the package using:
     - `sudo apt install ./<deb file>.deb`
- 3. Run the main script command: `sudo oqm-captain`
+ 4. Run the main script command: `sudo oqm-captain`
     - The first run should prompt you to do an initial install. Do so.
     - Installation should be complete once this finishes. You can exit the script.
- 4. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster tool.
+ 5. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster tool.
     - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
 
 For usage documentation, see the [User Guide](User%20Guide.adoc)
