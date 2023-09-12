@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# Script to add MongoDb data to snapshots, and restore that data
+# Script to add Postgres data to snapshots, and restore that data
 #
-# https://www.mongodb.com/docs/manual/core/backups/#back-up-with-cp-or-rsync
 #
 source /etc/oqm/snapshot/snapshot-restore-base.sh
 

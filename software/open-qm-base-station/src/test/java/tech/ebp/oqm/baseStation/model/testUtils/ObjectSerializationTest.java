@@ -97,7 +97,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 		}
 		
 		try {
-			log.debug("{} vs {}", object, objectBack);
+//			log.debug("{} vs {}", object, objectBack);
 			assertEquals(object, objectBack, "Deserialized object was not equal to original.");
 		} catch(AssertionError e) {
 			throw e;

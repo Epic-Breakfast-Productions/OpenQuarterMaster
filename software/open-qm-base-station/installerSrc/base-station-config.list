@@ -4,14 +4,15 @@
 #
 
 # Basic configs
+quarkus.http.port=80
+quarkus.http.ssl.port=443
 quarkus.http.insecure-requests=redirect
-runningInfo.protocol=https
 
 # Files brought over in shared volume
 quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
 quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
-mp.jwt.verify.privatekey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
-mp.jwt.verify.publickey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
+#mp.jwt.verify.privatekey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
+#mp.jwt.verify.publickey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
 
 
 # Mongo Config:
@@ -21,5 +22,12 @@ quarkus.mongodb.connection-string=mongodb://{infra.mongodb.host}:{infra.mongodb.
 quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
 quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://host.docker.internal:8096
 
+# Keycloak Config:
+quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
+quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
+quarkus.oidc.auth-server-url=http://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
+
 # TODO:: use placeholders
-runningInfo.hostname=oqm-dev.local
+runningInfo.protocol=https
+runningInfo.hostname={system.hostname}
+
