@@ -9,15 +9,18 @@ class MssModInfo : public AddToJson {
 private:
     const char * specVersion;
     const char * serialId;
+    const char * manufactureDate;
     MssModCapabilities capabilities;
 public:
     MssModInfo(
             const char * specVersion,
             const char * serialId,
+            const char * manufactureDate,
             MssModCapabilities capabilities
     ) {
         this->specVersion = specVersion;
         this->serialId = serialId;
+        this->manufactureDate = manufactureDate;
         this->capabilities = capabilities;
     }
 
@@ -27,6 +30,7 @@ public:
     void addToJson(JsonObject& doc){
         doc[F("specVersion")] = this->specVersion;
         doc[F("serialId")] = this->serialId;
+        doc[F("manufactureDate")] = this->manufactureDate;
         doc[F("numBlocks")] = MSS_VAR_NBLOCKS;
 
         JsonObject capabilities = doc.createNestedObject(F("capabilities"));

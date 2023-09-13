@@ -82,9 +82,9 @@ public:
 
         this->connector->init();
 
-//
+
 //        Serial.print(F("DEBUG:: start. Free ram:"));
-//        Serial.println(MssEngine::freeRam());
+//        Serial.println(this->curHighlighting);
 //
 //        Serial.print(F("DEBUG:: size of block state array:"));
 //        Serial.println(sizeof blockStateArr);
@@ -136,7 +136,7 @@ public:
                 this->sendModInfo();
                 break;
             case CommandType::CLEAR_HIGHLIGHT:
-                this->clearHighlight();
+                this->clearHighlight(true);
                 break;
             case CommandType::HIGHLIGHT_BLOCKS:
                 this->highlightBlocks(command);
@@ -160,7 +160,8 @@ public:
         if(this->curHighlighting){
             // https://create.arduino.cc/example/builtin/02.Digital%5CBlinkWithoutDelay/BlinkWithoutDelay/preview
             if(millis() - this->highlightStart >= this->highlightDuration) {
-                this->clearHighlight();
+//                Serial.println(F("DEBUG:: highlight done."));
+                this->clearHighlight(false);
             }
         }
 
@@ -214,11 +215,14 @@ public:
         }
     }
 
-    void clearHighlight(){
+    void clearHighlight(bool sendOk){
         this->curHighlighting = false;
         this->resetLightPowerState();
         this->lightsNeedUpdated = true;
-        this->connector->send(ResponseType::OK);
+
+        if(sendOk) {
+            this->connector->send(ResponseType::OK);
+        }
     }
 
     void highlightBlocks(HighlightBlocksCommand *command) {
@@ -255,6 +259,7 @@ public:
     }
 
     void identifyModule(IdentifyModuleCommand *command) {
+        Serial.println(F("DEBUG:: Got command to identify module."));
         this->curHighlighting = true;
         this->highlightStart = millis();
         this->highlightDuration = command->getDuration();

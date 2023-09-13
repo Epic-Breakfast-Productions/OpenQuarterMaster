@@ -14,6 +14,7 @@ MssEngine mssEngine(
         MssModInfo(
                 "1.0.0",
                 "test-01",
+                "Sep 2023",
                 MssModCapabilities(
                         true,
                         true,
