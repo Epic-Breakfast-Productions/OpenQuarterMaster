@@ -35,10 +35,7 @@ public class SerialPortWrapper implements Closeable {
 	@Getter(AccessLevel.PRIVATE)
 	private final ObjectMapper objectMapper;
 	
-	@Getter
-	private final LinkedList<MssUpdate> receivedCommands = new LinkedList<>();
-	
-	public SerialPortWrapper(
+	private SerialPortWrapper(
 		ObjectMapper objectMapper,
 		SerialPort port
 	) {
@@ -62,6 +59,11 @@ public class SerialPortWrapper implements Closeable {
 		
 		this.port.openPort();
 		
+		try {
+			Thread.sleep(2_000);
+		} catch(InterruptedException e) {
+			throw new RuntimeException("Failed to wait for serial init.", e);
+		}
 		//TODO:: figure out best place to init? check connection?
 	}
 	
@@ -161,18 +163,26 @@ public class SerialPortWrapper implements Closeable {
 		} while (run);
 		
 		String output = sb.toString();
-		log.info("Got json: \"{}\"", output);
+		log.debug("Got json: \"{}\"", output);
 		return (ObjectNode) this.getObjectMapper().readTree(output);
 	}
 	
 	public boolean messageAvailable(){
 		this.assertHasLock();
-		return this.getPort().bytesAvailable() > 7;//7 being the smallest size of a populated json document
+		int bytesAvailable = this.getPort().bytesAvailable();
+		log.debug("Bytes available: {}", bytesAvailable);
+		return  bytesAvailable >= 7;//7 being the smallest size of a populated json document
 	}
 	
-	public void write(Object object) throws JsonProcessingException {
+	public void write(Object object) {
 		this.assertHasLock();
-		byte[] buff = this.getObjectMapper().writeValueAsBytes(object);
+		byte[] buff = new byte[0];
+		try {
+			buff = this.getObjectMapper().writeValueAsBytes(object);
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Somehow failed to write json of command.", e);
+		}
+		log.debug("Writing command to serial port: {}", new String(buff));
 		this.port.writeBytes(buff, buff.length);
 	}
 	//

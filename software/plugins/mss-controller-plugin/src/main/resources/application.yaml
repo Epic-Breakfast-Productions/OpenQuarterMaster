@@ -37,6 +37,11 @@ quarkus:
 "%dev":
   baseStation:
     baseUrl: https://oqm-demo.local
+  moduleConfig:
+    serial:
+      modules:
+        - portPath: "/dev/ttyACM0"
+          baudRate: 115200
   quarkus:
     application:
       name: ${service.nameShort} - V${service.apiVersion} - DEV

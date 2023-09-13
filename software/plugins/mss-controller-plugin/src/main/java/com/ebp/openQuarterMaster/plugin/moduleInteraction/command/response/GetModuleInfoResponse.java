@@ -12,5 +12,5 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetModuleInfoResponse extends CommandResponse {
-	private ModuleInfo moduleInfo;
+	private ModuleInfo response;
 }

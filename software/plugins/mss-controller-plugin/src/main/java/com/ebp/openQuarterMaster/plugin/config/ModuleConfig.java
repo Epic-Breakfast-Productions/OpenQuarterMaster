@@ -24,7 +24,7 @@ public interface ModuleConfig {
 		
 		interface SerialModuleConfig {
 			@WithName("portPath")
-			boolean scanSerial();
+			String portPath();
 			
 			@WithName("baudRate")
 			Optional<Integer> baudRate();

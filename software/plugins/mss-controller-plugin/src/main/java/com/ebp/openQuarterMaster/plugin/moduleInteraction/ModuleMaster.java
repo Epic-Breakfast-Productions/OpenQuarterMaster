@@ -2,6 +2,10 @@ package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.MssSerialModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.scheduler.Scheduled;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -19,6 +23,11 @@ import java.util.Set;
 @ApplicationScoped
 public class ModuleMaster {
 	
+//	private static final String SERIAL_SCAN_PREFIX = "/dev/"
+	
+	@Getter(AccessLevel.PRIVATE)
+	ObjectMapper objectMapper;
+	
 	@Getter(AccessLevel.PRIVATE)
 	private final ModuleConfig moduleConfig;
 	
@@ -27,16 +36,32 @@ public class ModuleMaster {
 	
 	@Inject
 	public ModuleMaster(
+		ObjectMapper objectMapper,
 		ModuleConfig moduleConfig
 	){
+		this.objectMapper = objectMapper;
 		this.moduleConfig = moduleConfig;
 		
+		
+	}
+	
+	@PostConstruct
+	void init(){
 		if(this.getModuleConfig().serial().scanSerial()){
-			//TODO:: scan over serial ports for valid modules
+			//TODO:: scan over serial ports for valid modules. How to do properly?
 		}
 		
 		for(ModuleConfig.SerialConfig.SerialModuleConfig serialModuleConfig : this.getModuleConfig().serial().modules()){
-			//TODO:: add
+			log.info("Adding MSS module over Serial. Port: {}", serialModuleConfig.portPath());
+			
+			MssSerialModule newModule = new MssSerialModule(
+				this.getObjectMapper(),
+				serialModuleConfig.portPath(),
+				serialModuleConfig.baudRate()
+			);
+			this.addModule(newModule);
+			
+			log.info("Added MSS module over Serial. Port: {} Id: {}", serialModuleConfig.portPath(), newModule.getModuleInfo().getSerialId());
 		}
 	}
 	
@@ -68,4 +93,10 @@ public class ModuleMaster {
 	
 	
 	//TODO:: scheduled method to process updates
+	
+	@Scheduled(every = "P2D")
+	public void processUpdates(){
+		log.info("Processing updates.");
+		//TODO:: this
+	}
 }

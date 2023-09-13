@@ -40,9 +40,8 @@ public abstract class MssModule {
 	
 	protected abstract ObjectNode sendCommand(MssCommand command);
 	
-	
 	protected <T extends CommandResponse> T sendCommand(MssCommand command, Class<T> clazz){
-		ObjectNode node = this.sendCommand(GetModInfoCommand.getInstance());
+		ObjectNode node = this.sendCommand(command);
 		
 		T response = null;
 		try {
@@ -55,7 +54,7 @@ public abstract class MssModule {
 	
 	public GetModuleInfoResponse sendGetInfoCommand(){
 		GetModuleInfoResponse response = this.sendCommand(GetModInfoCommand.getInstance(), GetModuleInfoResponse.class);
-		this.setModuleInfo(response.getModuleInfo());
+		this.setModuleInfo(response.getResponse());
 		return response;
 	}
 }
