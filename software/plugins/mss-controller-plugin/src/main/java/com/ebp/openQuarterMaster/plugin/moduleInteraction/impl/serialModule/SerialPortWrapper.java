@@ -162,8 +162,8 @@ public class SerialPortWrapper implements Closeable {
 			
 		} while (run);
 		
-		String output = sb.toString();
-		log.debug("Got json: \"{}\"", output);
+		String output = sb.toString().trim();
+		log.debug("Got json: {}", output);
 		return (ObjectNode) this.getObjectMapper().readTree(output);
 	}
 	

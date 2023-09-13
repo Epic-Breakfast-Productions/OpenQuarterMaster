@@ -1,3 +1,8 @@
+service:
+  version: ${quarkus.application.version}
+  apiVersion: 1.0.0
+  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+
 
 quarkus:
   application:
@@ -13,6 +18,24 @@ quarkus:
   scheduler:
     metrics:
       enabled: true
+  # https://quarkus.io/guides/openapi-swaggerui
+  smallrye-openapi:
+    info-title: OQM MSS Controller Plugin API
+    info-version: ${service.apiVersion}
+    info-description: API documentation for the Open QuarterMaster Modular Storage System Controller Plugin. Running with service version ${service.version}
+    #    info-terms-of-service: <url>
+    info-contact-email: greg@epic-breakfast-productions.tech
+    info-contact-name: EBP
+    info-contact-url: ${service.gitLink}
+    info-license-name: GNU General Public License v3.0
+    info-license-url: ${service.gitLink}/blob/main/LICENSE
+    security-scheme: jwt
+    security-scheme-name: JwtAuth
+  swagger-ui:
+    always-include: true
+    title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
+    theme: flattop
+    footer: With ❤️, EBP
   http:
     limits:
       max-body-size: 95M

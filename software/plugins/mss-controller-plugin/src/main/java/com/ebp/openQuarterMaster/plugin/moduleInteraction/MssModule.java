@@ -2,6 +2,8 @@ package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.GetModInfoCommand;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.IdentifyModCommand;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.MssCommand;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.GetModuleInfoResponse;
@@ -15,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Queue;
+import java.util.Set;
 
 public abstract class MssModule {
 	
@@ -56,5 +59,16 @@ public abstract class MssModule {
 		GetModuleInfoResponse response = this.sendCommand(GetModInfoCommand.getInstance(), GetModuleInfoResponse.class);
 		this.setModuleInfo(response.getResponse());
 		return response;
+	}
+	
+	public CommandResponse sendModuleIdentifyCommand(){
+		return this.sendCommand(IdentifyModCommand.getInstance(), CommandResponse.class);
+	}
+	
+	public CommandResponse sendBlockHighlightCommand(
+		HighlightBlocksCommand command
+	){
+		//TODO:: check for valid block numbers
+		return this.sendCommand(command, CommandResponse.class);
 	}
 }

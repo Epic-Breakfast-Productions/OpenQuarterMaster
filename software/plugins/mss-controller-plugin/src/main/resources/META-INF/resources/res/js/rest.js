@@ -62,6 +62,8 @@ async function doRestCall(
 		done,
 		fail = function () {
 		},
+		always = function () {
+		},
 		failMessagesDiv = null,
 		failNoResponse = null,
 		failNoResponseCheckStatus = true,
@@ -165,6 +167,7 @@ async function doRestCall(
 			if (spinner != null) {
 				spinner.stop();
 			}
+			always();
 		});
 
 	if (!async) {

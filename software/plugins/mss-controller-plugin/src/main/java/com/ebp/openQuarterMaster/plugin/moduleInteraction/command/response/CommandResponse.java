@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommandResponse {
 	
-	private CommandResponseState state;
+	private CommandResponseStatus status;
 	private String details = null;
 }

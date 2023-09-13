@@ -259,7 +259,7 @@ public:
     }
 
     void identifyModule(IdentifyModuleCommand *command) {
-        Serial.println(F("DEBUG:: Got command to identify module."));
+//        Serial.println(F("DEBUG:: Got command to identify module."));
         this->curHighlighting = true;
         this->highlightStart = millis();
         this->highlightDuration = command->getDuration();

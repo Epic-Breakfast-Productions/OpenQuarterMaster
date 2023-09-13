@@ -11,7 +11,7 @@
 	
 	<!-- CSS -->
 	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.0/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
@@ -120,8 +120,9 @@
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="{config:['baseStation.baseUrl']}">
-						<i class="bi bi-speedometer2 "></i> Back to Base Station
+					<a class="nav-link" href="{config:['baseStation.baseUrl']}" target="_self">
+						<img src="/media/baseStationBack.svg" alt="" style="padding-top: 0;padding-bottom: 0;height: 1.5em;">
+						Back to Base Station
 					</a>
 				</li>
 				<li class="nav-item">
@@ -164,7 +165,7 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
 					type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
-					Modules
+					<i class="bi bi-nvme">&nbsp;</i> Modules
 					<span class="badge text-bg-secondary">{moduleMaster.getModuleIds().size()}</span>
 				</button>
 			</li>
@@ -173,7 +174,7 @@
 			<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
 				tabindex="0">
 				<h1>
-					Storage Search
+					<i class="bi bi-search">&nbsp;</i> Storage Search
 				</h1>
 				<p>
 					Use this tab to find things in your storage
@@ -183,7 +184,7 @@
 			</div>
 			<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 				<h1>
-					Modules
+					<i class="bi bi-nvme">&nbsp;</i> Modules
 				</h1>
 				<p>
 					Use this tab see and manage your modules
@@ -198,33 +199,42 @@
 					{#for curModuleId in moduleMaster.getModuleIds()}
 						{#let curModuleInfo = moduleMaster.getModuleInfo(curModuleId)}
 							<div class="accordion-item">
-							<h2 class="accordion-header">
-								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-									data-bs-target="#moduleAccordion-{curModuleInfo.getSerialId()}"
-									aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getSerialId()}">
-									{curModuleInfo.getSerialId()}
-								</button>
-							</h2>
-							<div id="moduleAccordion-{curModuleInfo.getSerialId()}" class="accordion-collapse collapse"
-							data-bs-parent="#moduleAccordion">
-								<div class="accordion-body">
-									<dl class="row">
-										<dt class="col-sm-3 col-md-2">Id:</dt>
-										<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSerialId()}</dd>
-							
-							<dt class="col-sm-3 col-md-2">Spec Version:</dt>
-							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSpecVersion()}</dd>
-							
-							<dt class="col-sm-3 col-md-2">Manufacture Date:</dt>
-							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getManufactureDate()}</dd>
-							
-							<dt class="col-sm-3 col-md-2"># Blocks:</dt>
-							<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getNumBlocks()}</dd>
-										
-									</dl>
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#moduleAccordion-{curModuleInfo.getSerialId()}"
+										aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getSerialId()}">
+										{curModuleInfo.getSerialId()}
+									</button>
+								</h2>
+								<div id="moduleAccordion-{curModuleInfo.getSerialId()}" class="accordion-collapse collapse"
+								data-bs-parent="#moduleAccordion">
+									<div class="accordion-body">
+										<dl class="row">
+											<dt class="col-sm-3 col-md-2">Id:</dt>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSerialId()}</dd>
+											
+											<dt class="col-sm-3 col-md-2">Spec Version:</dt>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSpecVersion()}</dd>
+											
+											<dt class="col-sm-3 col-md-2">Manufacture Date:</dt>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getManufactureDate()}</dd>
+											
+											<dt class="col-sm-3 col-md-2"># Blocks:</dt>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getNumBlocks()}</dd>
+											
+										</dl>
+										<div class="row">
+											<div class="col">
+												<button class="btn btn-primary" onclick="identifyModule(this, '{curModuleInfo.getSerialId()}')">
+													<i class="bi bi-crosshair">&nbsp;</i>
+													Identify
+													<span class="actionNotify"></span>
+												</button>
+											</div>
+										</div>
 									<!-- TODO:: list storage blocks, button to show search, locate button -->
+									</div>
 								</div>
-							</div>
 							</div>
 						{/let}
 					{/for}
@@ -329,197 +339,42 @@
 <script src="/res/js/obj/units.js"></script>
 
 <script>
-	var created = {};
 	
 	
-	function getInvItemSection(invItemArr, parentId) {
-		if (invItemArr.length === 0) {
-			return $('<p><i class="bi bi-tag "></i> No inventory items held.</p>');
-		}
-		let accordId = "invItemAccord" + parentId;
-		let accordion = $('<div class="accordion " id="' + accordId + '"></div>');
+	function identifyModule(buttonPressed, moduleId){
+		console.log("Sending identify request to module.")
 		
-		invItemArr.forEach(function (invItem) {
-			let accordItemId = accordId + 'AccordItem' + invItem.id;
-			let accordItemHeaderId = accordItemId + "Header";
-			let accordItemCollapseId = accordItemId + "Collapse";
-			let accordItemContentId = accordItemId + "Content";
-			let curAccord = $('<div class="accordion-item" id="' + accordItemId + '" data-item-id="' + invItem.id + '">' +
-				'<h2 class="accordion-header " id="' + accordItemHeaderId + '" onclick="overviewItemAccordionClicked(\'' + invItem.id + '\',\'' + parentId + '\', $(this).parent())">' +
-				'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordItemCollapseId + '" aria-expanded="false" aria-controls="' + accordItemCollapseId + '">' +
-				'</button>' +
-				'</h2>' +
-				'<div id="' + accordItemCollapseId + '" class="accordion-collapse collapse" aria-labelledby="' + accordItemHeaderId + '" data-bs-parent="#' + accordId + '">' +
-				'<div class="accordion-body" id="' + accordItemContentId + '">' +
-				'Loading...' +//TODO
-				'</div>' +
-				'</div>' +
-				'</div>');
-			
-			let accordButt = curAccord.find(".accordion-button");
-			
-			accordButt.append(
-				$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/' + invItem.id + '" alt="">'),
-				$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
-			);
-			
-			accordion = accordion.append(curAccord);
-		});
-		
-		let output = $('<h5><i class="bi bi-tag "></i> Items held (' + invItemArr.length + '):</h5>');
-		output = output.add(accordion);
-		return output;
-	}
-	
-	function getStorageBlockSection(storageBlockArr, parentId) {
-		if (storageBlockArr.length === 0) {
-			return $('<p><i class="bi bi-boxes "></i> No children.</p>');
-		}
-		let accordId = "storageBlockAccord" + parentId;
-		let accordion = $('<div class="accordion " id="' + accordId + '"></div>');
-		
-		storageBlockArr.forEach(function (storageBlock) {
-			let curAccord = $('<div class="accordion-item" id="accordItem' + storageBlock.id + '" data-storage-block-id="' + storageBlock.id + '">' +
-				'<h2 class="accordion-header " id="accordHeader' + storageBlock.id + '" onclick="overviewAccordionClicked(\'' + storageBlock.id + '\', $(this).parent())">' +
-				'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse' + storageBlock.id + '" aria-expanded="false" aria-controls="accordCollapse' + storageBlock.id + '">' +
-				'</button>' +
-				'</h2>' +
-				'<div id="accordCollapse' + storageBlock.id + '" class="accordion-collapse collapse" aria-labelledby="accordHeader' + storageBlock.id + '" data-bs-parent="#' + accordId + '">' +
-				'<div class="accordion-body" id="accordContent' + storageBlock.id + '">' +
-				'Loading...' +
-				'</div>' +
-				'</div>' +
-				'</div>');
-			let accordButt = curAccord.find(".accordion-button");
-			
-			accordButt.append(
-				$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/' + storageBlock.id + '" alt=" image">'),
-				$('<span></span>').text(storageBlock.labelText)
-			);
-			
-			accordion = accordion.append(curAccord);
-		});
-		
-		let output = $('<h5><i class="bi bi-boxes "></i> Storage Blocks (' + storageBlockArr.length + '):</h5>');
-		output = output.add(accordion);
-		return output;
-	}
-	
-	function getBlockDetailsSection(storageBlockData) {
-		let output = $('<div class="row">' +
-			'<div class="col">' +
-			// '<h5>Block details</h5>' + //unnecessary
-			'</div>' +
-			'</div>'
-		);
-		let detailsRow = $(
-			'<div class="row storageBlockDetailsRow">' +
-			'</div>');
-		
-		detailsRow.append('<div class="col-sm-1">' + Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
-		
-		if (storageBlockData.description) {
-			//TODO:: might need better format
-			let locationData = $('<div class="col">' +
-				'Description: <span class="storageBlockDescription"></span>' +
-				'</div>');
-			locationData.find(".storageBlockDescription").text(storageBlockData.description);
-			
-			detailsRow = detailsRow.append(locationData);
-		}
-		if (storageBlockData.location) {
-			let locationData = $('<div class="col">' +
-				'Location: <span class="storageBlockLocation"></span>' +
-				'</div>');
-			locationData.find(".storageBlockLocation").text(storageBlockData.location);
-			
-			detailsRow = detailsRow.append(locationData);
-		}
-		//TODO:: barcode
-		
-		//TODO:: images, attr/keywords?, capacities?
-		
-		output = output.add(detailsRow);
-		return output;
-	}
-	
-	function getInvItemDetailsSection(itemData, storageBlockId) {
-		let output = $('<div class="row"></div>');
-		
-		output.append($('<div class="col-1">' + Links.getItemViewButtonAsHtml(itemData.id, "View") + '</div>'));
-		
-		if (itemData.description) {
-			//TODO
-		}
-		//TODO:: fill with details
-		
-		return output;
-	}
-	
-	async function createNewStorageBlockContent(storageBlockData) {
-		let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
-		let storageBlockChildren = getStorageBlockChildrenData(storageBlockData.id);
-		storageBlockItems = await storageBlockItems;
-		storageBlockChildren = await storageBlockChildren;
-		
-		console.log("Got " + storageBlockItems.length + " items, " + storageBlockChildren.length + " children for storage block " + storageBlockData.id);
-		
-		let output = $();
-		
-		output = output.add(getBlockDetailsSection(storageBlockData));
-		output = output.add($("<hr />"));
-		output = output.add(getInvItemSection(storageBlockItems, storageBlockData.id));
-		output = output.add($("<hr />"));
-		output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
-		return output;
-	}
-	
-	function overviewAccordionClicked(storageBlockId, accordionDivJq) {
-		console.debug("Accordion " + accordionDivJq.attr("id") + " for storage block " + storageBlockId + " clicked.");
-		
-		if (created[storageBlockId]) {
-			console.log("Already clicked on this.");
-			return;
-		}
-		created[storageBlockId] = [];
+		let buttJq = $(buttonPressed);
+		buttJq.attr("disabled", true);
+		let notifySpan = buttJq.find(".actionNotify");
+		notifySpan.html('<div class="spinner-border" role="status" style="height: 1em; width: 1em;"><span class="visually-hidden">Loading...</span></div>');
 		
 		doRestCall({
-			url: "/api/v1/inventory/storage-block/" + storageBlockId,
+			url: "/api/v1/module/" + moduleId + "/identify",
 			method: "GET",
 			done: async function (data) {
-				let newContent = await createNewStorageBlockContent(data);
-				console.log("Got new content for accordion.");
+				console.log("Successfully identified the module.");
+				notifySpan.html('<i class="bi bi-check-circle"></i>');
 				
-				accordionDivJq.find(".accordion-body").html(newContent);
+				setTimeout(function (){
+					buttJq.attr("disabled", false);
+					notifySpan.html('');
+				}, 5_000);
 			},
 			fail: function (data) {
+				console.log("Request to identify module failed.");
+				notifySpan.html('<i class="bi bi-x-circle-fill"></i>');
+				
+				setTimeout(function (){
+					buttJq.attr("disabled", false);
+					notifySpan.html('');
+				}, 10_000);
+			},
 			
-			}
 		});
 	}
 	
-	function overviewItemAccordionClicked(itemId, storageBlockId, accordionDivJq) {
-		console.debug("Accordion " + accordionDivJq.attr("id") + " for item " + itemId + " in storage block " + storageBlockId + " clicked.");
-		
-		if (created[storageBlockId][itemId]) {
-			console.log("Already clicked on this.");
-			return;
-		}
-		created[storageBlockId][itemId] = true;
-		
-		doRestCall({
-			url: "/api/v1/inventory/item/" + itemId,
-			method: "GET",
-			done: async function (data) {
-				let newContent = await getInvItemDetailsSection(data, storageBlockId);
-				console.log("Got new content for accordion.");
-				
-				accordionDivJq.find(".accordion-body").html(newContent);
-			},
-			fail: function (data) {
-			}
-		});
-	}
+	
 </script>
 
 </body>

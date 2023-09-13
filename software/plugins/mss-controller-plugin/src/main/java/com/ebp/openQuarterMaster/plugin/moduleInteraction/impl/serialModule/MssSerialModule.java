@@ -1,7 +1,9 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.MssCommand;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.updates.MssUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -42,10 +45,10 @@ public class MssSerialModule extends MssModule {
 	protected ObjectNode sendCommand(MssCommand command) {
 		try {
 			this.getSerialPortWrapper().acquireLock();
-			try{
+			try {
 				this.getSerialPortWrapper().write(command);
 				
-				while(!this.getSerialPortWrapper().messageAvailable()) {
+				while (!this.getSerialPortWrapper().messageAvailable()) {
 					Thread.sleep(50);
 				}
 				
@@ -62,5 +65,36 @@ public class MssSerialModule extends MssModule {
 		}
 	}
 	
-	
+	@Override
+	public CommandResponse sendBlockHighlightCommand(HighlightBlocksCommand command) {
+		CommandResponse lastCommand = null;
+		boolean first = true;
+		for (HighlightBlocksCommand.BlockHighlightSettings curSetting : command.getStorageBlocks()) {
+			lastCommand = this.sendCommand(
+				new HighlightBlocksCommand(
+					command.getDuration(),
+					command.isCarry() || !first,
+					false,
+					List.of(curSetting)
+				),
+				CommandResponse.class
+			);
+			
+			first = false;
+		}
+		
+		if (command.isBeep()) {
+			lastCommand = this.sendCommand(
+				new HighlightBlocksCommand(
+					command.getDuration(),
+					true,
+					true,
+					List.of()
+				),
+				CommandResponse.class
+			);
+		}
+		
+		return lastCommand;
+	}
 }
