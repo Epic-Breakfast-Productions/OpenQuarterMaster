@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.rest.search;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @ToString
 @Getter
+@Setter
 public abstract class SearchObject<T extends MainObject> {
 	//paging
 	@QueryParam("pageSize") Integer pageSize;
