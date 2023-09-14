@@ -62,11 +62,14 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	public static InteractingEntity createEntity(JsonWebToken jwt){
 		InteractingEntity newEntity;
 		
-		//TODO:: support services better.
+		//TODO:: support services better. Probably should setup keycloak to set some of these values.
 		if(((String)jwt.getClaim(Claims.upn)).startsWith("service-account-")){
 			GeneralService newService = new GeneralService();
 			
 			newService.setName(jwt.getClaim(Claims.upn));
+			newService.setDescription("Service account from OIDC provider.");
+			newService.setDeveloperEmail("foo@bar.com");
+			newService.setDeveloperName("Developers");
 			
 			newEntity = newService;
 		} else {
