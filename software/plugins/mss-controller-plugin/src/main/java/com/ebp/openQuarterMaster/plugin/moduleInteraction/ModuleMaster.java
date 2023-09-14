@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Is the main bean that contains and handles modules.
@@ -40,16 +41,42 @@ public class ModuleMaster {
 	@Getter(AccessLevel.PRIVATE)
 	StorageBlockInteractionService storageBlockInteractionService;
 	
-	
-	
+	/**
+	 * Serial id -> Module map.
+	 *
+	 * Is the master holder of modules
+	 */
 	@Getter(AccessLevel.PRIVATE)
 	private final Map<String, MssModule> moduleMap = new HashMap<>();
+	
+	/**
+	 * Storage block id (from Base station) -> Module map
+	 *
+	 * Calculated to make this conversion easier.
+	 */
+	@Getter(AccessLevel.PRIVATE)
+	private final Map<String, MssModule> storageToModuleMap = new TreeMap<>();
+	
 	
 	
 	@PostConstruct
 	void init(){
 		this.populateModules();
 		this.ensureModuleStorageBlocksExist();
+		this.populateStorageToModuleMap();
+	}
+	
+	private void populateStorageToModuleMap(){
+		log.info("Populating cache of Storage Block Ids to their modules.");
+		for(MssModule curModule : this.getModules()){
+			ModuleInfo curModuleInfo = curModule.getModuleInfo();
+			
+			for(String curStorageBlockId : curModuleInfo.getStorageBlockToModBlockNums().keySet()){
+				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
+			}
+		}
+		log.info("Done populating cache of Storage Block Ids to their modules.");
+		log.debug("Number of storage blocks tracked: {}", this.getStorageToModuleMap().size());
 	}
 	
 	private void ensureModuleStorageBlocksExist(){

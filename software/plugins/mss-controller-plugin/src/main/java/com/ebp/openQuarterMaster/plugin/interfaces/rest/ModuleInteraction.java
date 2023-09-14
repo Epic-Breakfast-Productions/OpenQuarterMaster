@@ -29,10 +29,20 @@ public class ModuleInteraction {
     @Path("identify")
     @RolesAllowed("inventoryView")
     @Produces(MediaType.APPLICATION_JSON)
-    public CommandResponse identify(
+    public CommandResponse identifyModule(
         @PathParam("moduleSerialId") String moduleSerialId
     ) {
         return this.master.getModule(moduleSerialId).sendModuleIdentifyCommand();
+    }
+    @GET
+    @Path("/{blockNum}/identify")
+    @RolesAllowed("inventoryView")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CommandResponse identifyModuleBlock(
+        @PathParam("moduleSerialId") String moduleSerialId,
+        @PathParam("blockNum") int blockNum
+    ) {
+        return this.master.getModule(moduleSerialId).sendModuleBlockIdentifyCommand(blockNum);
     }
     
     @POST
@@ -40,7 +50,7 @@ public class ModuleInteraction {
     @RolesAllowed("inventoryView")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public CommandResponse identify(
+    public CommandResponse highlightBlocks(
         @PathParam("moduleSerialId") String moduleSerialId,
         @RequestBody HighlightBlocksCommand highlightBlocksCommand
     ) {

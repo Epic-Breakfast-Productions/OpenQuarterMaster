@@ -130,17 +130,17 @@ public class StorageBlockInteractionService {
 				module.getModuleInfo().getNumBlocks()
 			);
 			result = this.getBaseStationStorageRestClient().searchBlocks(new StorageBlockSearch(module, curBlockNum));
-			
+			String curId;
 			if (result.isEmpty()) {
 				log.debug("Module block {}[{}] did not exist yet. Creating.", module.getModuleInfo().getSerialId(), curBlockNum);
-				String newId = this.getBaseStationStorageRestClient().postNewStorageBlock(
+				curId = this.getBaseStationStorageRestClient().postNewStorageBlock(
 					this.getNewModuleBlockStorageBlockJson(module, curBlockNum)
 				);
 				log.info(
 					"Module block {}[{}] created, new id: {}",
 					module.getModuleInfo().getSerialId(),
 					curBlockNum,
-					newId
+					curId
 				);
 			} else {
 				if (result.size() > 1) {
@@ -151,13 +151,18 @@ public class StorageBlockInteractionService {
 					);
 				}
 				
+				curId = result.get(0).get("id").asText();
+				
 				log.info(
 					"Module block {}[{}] already existed with id {}",
 					module.getModuleInfo().getSerialId(),
 					curBlockNum,
-					module.getModuleInfo().getAssociatedStorageBlockId()
+					curId
 				);
 			}
+			curId = curId.replaceAll("\"", "");
+			log.debug("Got storage block id {} for module block {}[{}]", curId, module.getModuleInfo().getSerialId(), curBlockNum);
+			module.getModuleInfo().getStorageBlockToModBlockNums().put(curId, curBlockNum);
 		}
 		log.info(
 			"Module {} exists as a block with all {} blocks under it.",

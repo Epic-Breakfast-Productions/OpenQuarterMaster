@@ -65,6 +65,14 @@ public abstract class MssModule {
 		return this.sendCommand(IdentifyModCommand.getInstance(), CommandResponse.class);
 	}
 	
+	public CommandResponse sendModuleBlockIdentifyCommand(int blockNum){
+		//TODO:: make identify command for block
+		HighlightBlocksCommand command = new HighlightBlocksCommand();
+		command.getStorageBlocks().add(new HighlightBlocksCommand.BlockHighlightSettings(blockNum));
+		
+		return this.sendCommand(command, CommandResponse.class);
+	}
+	
 	public CommandResponse sendBlockHighlightCommand(
 		HighlightBlocksCommand command
 	){
