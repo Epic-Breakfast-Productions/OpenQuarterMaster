@@ -13,5 +13,6 @@ public class ModuleInfo {
 	private String serialId;
 	private String manufactureDate;//TODO:: do date appropriately?
 	private int numBlocks;
+	private String associatedStorageBlockId;
 	//TODO:: capabilities
 }

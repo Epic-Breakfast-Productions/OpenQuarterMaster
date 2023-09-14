@@ -8,9 +8,14 @@ quarkus:
   application:
     name: OQM MSS Controller Plugin
   rest-client:
-    upc-barcodelookup-com:
+    "com.ebp.openQuarterMaster.plugin.restClients.KeycloakRestClient":
+      url: ${quarkus.oidc.auth-server-url}
+      scope: jakarta.inject.Singleton
+    "com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient":
       url: ${baseStation.baseUrl}
-      scope: jakarta.inject.Singleton # TODO:: change this
+      scope: jakarta.inject.Singleton
+    logging:
+      
   log:
     level: DEBUG
     console:
@@ -77,3 +82,5 @@ quarkus:
       credentials:
         secret: "**********"
       auth-server-url: http://oqm-demo.local:8115/realms/oqm
+    tls:
+      trust-all: true
