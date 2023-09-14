@@ -157,6 +157,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
+		log.debug("Filters: {}", filters);
 		Bson filter = (filters.isEmpty() ? null : and(filters));
 		PagingOptions pagingOptions = searchObject.getPagingOptions(defaultPageSizeIfNotSet);
 		
