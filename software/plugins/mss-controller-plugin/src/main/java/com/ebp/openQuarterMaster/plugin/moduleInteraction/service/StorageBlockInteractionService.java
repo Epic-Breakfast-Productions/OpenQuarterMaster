@@ -1,5 +1,6 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
 import com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient;
 import com.ebp.openQuarterMaster.plugin.restClients.searchObj.StorageBlockSearch;
 import com.fasterxml.jackson.core.JsonProcessingException;

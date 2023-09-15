@@ -1,5 +1,8 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemSearchResults;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
 import com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient;
 import com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient;

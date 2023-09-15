@@ -1,0 +1,46 @@
+package com.ebp.openQuarterMaster.plugin;
+
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.VoiceSearchService;
+import io.quarkus.runtime.ShutdownEvent;
+import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.Set;
+
+@Singleton
+@Slf4j
+public class LifecycleBean {
+	
+	@Inject
+	ModuleMaster moduleMaster;
+	
+	@Inject
+	VoiceSearchService voiceSearchService;
+	
+	void onStart(
+		@Observes
+		StartupEvent ev
+	) throws IOException {
+		log.info(
+			"Finished initing Module Master. Picked up on modules: {}",
+			moduleMaster.getModuleIds()
+		);
+		
+		log.info(
+			"Speech Search using image: {}",
+			voiceSearchService.getCurImageVersion()
+		);
+	}
+	
+	void onStop(
+		@Observes
+		ShutdownEvent ev
+	) {
+	
+	}
+}

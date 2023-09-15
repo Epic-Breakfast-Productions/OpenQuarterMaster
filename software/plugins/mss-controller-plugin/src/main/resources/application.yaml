@@ -3,6 +3,12 @@ service:
   apiVersion: 1.0.0
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
 
+voiceSearch:
+  container:
+    image: "synesthesiam/voice2json"
+    tag: "latest"
+    volumeLoc: "/tmp/oqm/mss-controller-plugin/voice2jsonHome"
+  
 
 quarkus:
   application:

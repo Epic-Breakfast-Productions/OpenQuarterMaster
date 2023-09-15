@@ -1,13 +1,11 @@
 package com.ebp.openQuarterMaster.plugin.restClients.searchObj;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.StorageBlockInteractionService;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.StorageBlockInteractionService;
 import jakarta.ws.rs.QueryParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 
