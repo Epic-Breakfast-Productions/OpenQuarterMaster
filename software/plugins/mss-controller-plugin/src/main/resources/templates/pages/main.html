@@ -181,6 +181,48 @@
 				</p>
 				<hr/>
 				
+				<div class="row">
+					<div class="col card">
+						[Search form]
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col">
+						<h2>Results:</h2>
+					</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col" id="resultsContainer">
+						[results]
+					</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col" id="notInHeldModulesResultsContainer">
+						<div class="accordion" id="resultsNotInModulesAccordion">
+							<div class="accordion-item">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#resultsNotInModulesAccordionItem"
+										aria-expanded="false" aria-controls="resultsNotInModulesAccordionItem">
+										Results not in any controlled modules
+										<span class="badge text-bg-secondary" id="numResultsNotInModulesBadge"></span>
+									</button>
+								</h2>
+								<div id="resultsNotInModulesAccordionItem" class="accordion-collapse collapse"
+									data-bs-parent="#resultsNotInModulesAccordion">
+									<div class="accordion-body">
+									
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
 				
 				
 				
@@ -245,7 +287,7 @@
 											<div class="col">
 												<button class="btn btn-primary" onclick="identifyModule(this, '{curModuleInfo.getSerialId()}')">
 													<i class="bi bi-crosshair">&nbsp;</i>
-													Identify
+													Identify Module
 													<span class="actionNotify"></span>
 												</button>
 											</div>

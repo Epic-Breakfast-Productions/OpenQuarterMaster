@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.plugin.restClients;
 
+import com.ebp.openQuarterMaster.plugin.restClients.headerFactories.OidcClientAuthHeaderFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.rest.client.reactive.ClientFormParam;
 import jakarta.ws.rs.Consumes;

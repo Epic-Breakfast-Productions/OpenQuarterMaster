@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.restClients;
+package com.ebp.openQuarterMaster.plugin.restClients.searchObj;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.StorageBlockInteractionService;

@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.restClients;
+package com.ebp.openQuarterMaster.plugin.restClients.headerFactories;
 
 
 import jakarta.enterprise.context.ApplicationScoped;

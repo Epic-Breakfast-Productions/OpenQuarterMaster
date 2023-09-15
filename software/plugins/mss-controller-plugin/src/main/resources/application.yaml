@@ -14,6 +14,9 @@ quarkus:
     "com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient":
       url: ${baseStation.baseUrl}
       scope: jakarta.inject.Singleton
+    "com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient":
+      url: ${baseStation.baseUrl}
+      scope: jakarta.inject.Singleton
     logging:
       
   log:

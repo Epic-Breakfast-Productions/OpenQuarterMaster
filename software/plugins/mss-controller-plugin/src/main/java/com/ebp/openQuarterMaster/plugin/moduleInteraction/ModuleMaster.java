@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.MssSerialModule;
 import com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -56,8 +58,6 @@ public class ModuleMaster {
 	 */
 	@Getter(AccessLevel.PRIVATE)
 	private final Map<String, MssModule> storageToModuleMap = new TreeMap<>();
-	
-	
 	
 	@PostConstruct
 	void init(){
@@ -135,8 +135,24 @@ public class ModuleMaster {
 		return this.getModule(moduleId).getModuleInfo();
 	}
 	
+	public Optional<MssModule> getModuleWithStorageBlock(String storageBlockId){
+		return Optional.ofNullable(this.getStorageToModuleMap().get(storageBlockId));
+	}
 	
-	//TODO:: scheduled method to process updates
+	public void highlightResults(Map<String, ItemSearchResults.ModuleResult> resultsToHighlight){
+		
+		for (Map.Entry<String, ItemSearchResults.ModuleResult> resultEntry : resultsToHighlight.entrySet()){
+			MssModule curModule = this.getModule(resultEntry.getKey());
+			
+			HighlightBlocksCommand command = new HighlightBlocksCommand(
+				"RAND",
+				resultEntry.getValue()
+					.getBlockToStorageMap().keySet()
+			);
+			
+			curModule.sendBlockHighlightCommand(command);
+		}
+	}
 	
 	@Scheduled(every = "P2D")
 	public void processUpdates(){

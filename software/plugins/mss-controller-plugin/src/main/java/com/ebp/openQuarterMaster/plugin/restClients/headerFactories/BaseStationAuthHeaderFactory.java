@@ -1,6 +1,7 @@
-package com.ebp.openQuarterMaster.plugin.restClients;
+package com.ebp.openQuarterMaster.plugin.restClients.headerFactories;
 
 
+import com.ebp.openQuarterMaster.plugin.restClients.KeycloakRestClient;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

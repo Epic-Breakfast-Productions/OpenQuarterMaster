@@ -30,6 +30,10 @@ public class ModuleInfo {
 				   .findFirst().get();
 	}
 	
+	public Integer getBlockNumForStorageBlockId(String storageBlockId){
+		return this.getStorageBlockToModBlockNums().get(storageBlockId);
+	}
+	
 	public Stream<Integer> getBlockNumStream(){
 		return IntStream.range(1, this.getNumBlocks() + 1).boxed();
 	}
