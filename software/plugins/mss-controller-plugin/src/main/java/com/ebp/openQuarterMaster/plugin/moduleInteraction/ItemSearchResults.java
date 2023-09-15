@@ -13,6 +13,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemSearchResults {
+	
+	/**
+	 * Module Serial Id -> module result
+	 */
 	private Map<String, ModuleResult> withModuleBlocks = new HashMap<>();
 	private Set<StorageResult> withoutModuleBlocks = new HashSet<>();
 	
@@ -20,7 +24,15 @@ public class ItemSearchResults {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public static class ModuleResult {
-		private Map<Integer, Set<StorageResult>> blockToStorageMap = new HashMap<>();
+		private String moduleStorageBlockId;
+		private String moduleStorageBlockIdLabelText;
+		//TODO:: enhance to include item infos
+		private Map<Integer, StorageResult> blockToStorageMap = new HashMap<>();
+		
+		public ModuleResult(String moduleStorageBlockId, String moduleStorageBlockIdLabelText){
+			this.moduleStorageBlockId = moduleStorageBlockId;
+			this.moduleStorageBlockIdLabelText = moduleStorageBlockIdLabelText;
+		}
 	}
 	
 	

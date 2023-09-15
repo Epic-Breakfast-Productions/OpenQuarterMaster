@@ -53,19 +53,22 @@ public class ItemSearchService {
 					Integer moduleBlockNum = moduleInfo.getBlockNumForStorageBlockId(storageBlockId);
 					
 					if(!output.getWithModuleBlocks().containsKey(moduleInfo.getSerialId())){
-						output.getWithModuleBlocks().put(moduleInfo.getSerialId(), new ItemSearchResults.ModuleResult());
+						output.getWithModuleBlocks().put(
+							moduleInfo.getSerialId(),
+							new ItemSearchResults.ModuleResult(
+								moduleInfo.getAssociatedStorageBlockId(),
+								this.storageBlockRestClient.getBlock(moduleInfo.getAssociatedStorageBlockId())
+									.get("labelText").asText()
+							)
+						);
 					}
 					
 					if(!output.getWithModuleBlocks().get(moduleInfo.getSerialId()).getBlockToStorageMap().containsKey(moduleBlockNum)){
 						output.getWithModuleBlocks().get(moduleInfo.getSerialId()).getBlockToStorageMap().put(
 							moduleBlockNum,
-							new HashSet<>()
+							storageResult
 						);
 					}
-					
-					output.getWithModuleBlocks().get(moduleInfo.getSerialId()).getBlockToStorageMap().get(moduleBlockNum).add(
-						storageResult
-					);
 				} else {
 					output.getWithoutModuleBlocks().add(storageResult);
 				}

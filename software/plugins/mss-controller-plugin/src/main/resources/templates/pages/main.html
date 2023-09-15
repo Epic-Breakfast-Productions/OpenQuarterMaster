@@ -125,11 +125,6 @@
 						Back to Base Station
 					</a>
 				</li>
-				<li class="nav-item">
-					<button class=" btn btn-link nav-link">
-						<i class="bi bi-mic"></i>
-					</button>
-				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
 						aria-haspopup="true" aria-expanded="false">
@@ -177,13 +172,38 @@
 					<i class="bi bi-search">&nbsp;</i> Storage Search
 				</h1>
 				<p>
-					Use this tab to find things in your storage
+					Use this tab to find things in your storage. The results will be where all the results are stored. This search will also kick off highlighting of relevant storage blocks in connected storage modules!
 				</p>
 				<hr/>
-				
 				<div class="row">
-					<div class="col card">
-						[Search form]
+					<div class="col-4 card p-0" style="">
+						<div class="card-header">
+							<h3 class="card-title">Voice Search</h3>
+						</div>
+						<div class="card-body">
+							<button class=" btn btn-lg">
+								<i class="bi bi-mic"></i>
+							</button>
+						</div>
+					</div>
+					<div class="col card p-0">
+						<div class="card-header">
+							<h3 class="card-title">Regular Search</h3>
+						</div>
+						<div class="card-body">
+							<form id="itemSearchForm">
+								<div class="mb-3">
+									<label for="itemSearchFormNameInput" class="form-label">Name</label>
+									<input type="text" class="form-control" id="itemSearchFormNameInput" placeholder="Item name">
+								</div>
+								<div class="">
+									<button type="submit" class="btn btn-success">
+										<i class="bi bi-search">&nbsp;</i>
+										Search
+									</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 				
@@ -193,8 +213,8 @@
 					</div>
 				</div>
 				<div class="row mt-2">
-					<div class="col" id="resultsContainer">
-						[results]
+					<div class="col accordion" id="resultsContainer">
+					
 					</div>
 				</div>
 				<div class="row mt-2">
@@ -211,7 +231,7 @@
 								</h2>
 								<div id="resultsNotInModulesAccordionItem" class="accordion-collapse collapse"
 									data-bs-parent="#resultsNotInModulesAccordion">
-									<div class="accordion-body">
+									<div class="accordion-body" id="resultsNotInModulesAccordionItemContainer">
 									
 									</div>
 								</div>
@@ -445,6 +465,135 @@
 <script src="/res/js/obj/units.js"></script>
 
 <script>
+	let resultsContainer = $("#resultsContainer");
+	let notInHeldModulesResultsContainer = $("#notInHeldModulesResultsContainer");
+	let resultsNotInModulesAccordion = $("#resultsNotInModulesAccordion");
+	let numResultsNotInModulesBadge = $("#numResultsNotInModulesBadge");
+	let resultsNotInModulesAccordionItemContainer = $("#resultsNotInModulesAccordionItemContainer");
+	let itemSearchForm = $("#itemSearchForm");
+	let itemSearchFormNameInput = $("#itemSearchFormNameInput");
+	
+	function clearSearchResults(){
+		resultsContainer.hide();
+		notInHeldModulesResultsContainer.hide();
+		
+		resultsContainer.html('');
+		numResultsNotInModulesBadge.html('');
+		resultsNotInModulesAccordionItemContainer.html('');
+	}
+	
+	function disableSearchInputs(){
+		itemSearchForm.disable();
+	}
+	
+	function enableSearchInputs(){
+		itemSearchForm.enable();
+	}
+	
+	function addStorageResult(addTo, storageResult, blockNum = null){
+		let newResultRow = $('<div class="row m-1 border-1"><div class="col"></div></div>');
+		let newResultCol = newResultRow.find(".col");
+		
+		let storageLink = $('<a class="" target="_self"></a>');
+		storageLink.prop("href", "{config:['baseStation.baseUrl']}/storage?view=" + storageResult.id);
+		storageLink.text(storageResult.labelText);
+		
+		newResultCol.append(storageLink);
+		
+		addTo.append(newResultRow);
+	}
+	
+	function addModuleResult(moduleSerialId, moduleResult) {
+		let accordItemId = "searchResultsAccordItem-" + moduleSerialId;
+		let newRow = $('<div class="accordion-item">' +
+			'				<h2 class="accordion-header">' +
+			'					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" ' +
+			'							data-bs-target="#"' +
+			'							aria-expanded="false" aria-controls="">' +
+			'					</button> ' +
+			'				</h2> ' +
+			'				<div id="" class="accordion-collapse collapse"' +
+			'						data-bs-parent="#resultsContainer"> ' +
+			'					<div class="accordion-body" id=""> ' +
+			'					</div>' +
+			'				</div>' +
+			'			</div>');
+		let curBody = newRow.find(".accordion-body");
+		// curBody.attr("id", accordItemId);
+		
+		{
+			let curItemButton = newRow.find(".accordion-button");
+			curItemButton.attr("aria-controls", accordItemId);
+			curItemButton.attr("data-bs-target", "#" + accordItemId);
+			curItemButton.text("Module " + moduleSerialId + " / Storage Block " + moduleResult.moduleStorageBlockIdLabelText);
+			
+			let curItemCollapse = newRow.find(".accordion-collapse");
+			curItemCollapse.attr("id", accordItemId);
+		}
+		{
+			let moduleInfo = $('<p></p>');
+			
+			let moduleViewButton = $('<a href="" target="_self" class="btn btn-primary">View Block in Base Station</a>');
+			moduleViewButton.attr("href", "{config:['baseStation.baseUrl']}/storage?view=" + moduleResult.moduleStorageBlockId);
+			moduleInfo.append(moduleViewButton);
+			
+			curBody.append(moduleInfo);
+		}
+		
+		for (const [blockNum, storageBlockResults] of Object.entries(moduleResult.blockToStorageMap)) {
+			addStorageResult(curBody, storageBlockResults, blockNum);
+		}
+		
+		resultsContainer.append(newRow);
+	}
+	
+	function populateResults(resultData){
+		if(Object.keys(resultData.withModuleBlocks).length === 0){
+			resultsContainer.html('<p class="h1">No Results in storage blocks managed by modules.</p>');
+		} else {
+			for (const [moduleSerialId, moduleResult] of Object.entries(resultData.withModuleBlocks)) {
+				addModuleResult(moduleSerialId, moduleResult);
+			}
+		}
+		
+		// if(resultData.withoutModuleBlocks.length !== 0){
+		// 	numResultsNotInModulesBadge.text(resultData.withoutModuleBlocks.length);
+		//
+		// 	for (let curBlockResult in resultData.withoutModuleBlocks) {
+		// 		addStorageResult(resultsNotInModulesAccordionItemContainer, storageBlockResults, blockNum);
+		// 	}
+		//
+		// 	notInHeldModulesResultsContainer.show();
+		// }
+		resultsContainer.show();
+	}
+	
+	itemSearchForm.on("submit", function (event){
+		event.preventDefault();
+		console.log("Submitting search form.");
+		clearSearchResults();
+		
+		let params = new URLSearchParams();
+		params.set("name", itemSearchFormNameInput.val());
+		
+		doRestCall({
+			url: "/api/v1/itemSearch?" + params.toString(),
+			method: "GET",
+			done: async function (data) {
+				console.log("Successfully sent request.");
+				
+				populateResults(data);
+				
+				setTimeout(function (){
+					enableSearchInputs();
+				}, 5_000);
+			},
+			fail: function (data) {
+				console.log("Request to identify module failed.");
+				enableSearchInputs();
+			},
+		});
+	});
 	
 	function identifyModule(buttonPressed, moduleId){
 		console.log("Sending identify request to module.")
@@ -508,7 +657,7 @@
 		});
 	}
 	
-	
+	clearSearchResults();
 </script>
 
 </body>
