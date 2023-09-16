@@ -5,9 +5,9 @@ service:
 
 voiceSearch:
   container:
+    engineUri: "unix:///run/user/1000/docker.sock"
     image: "synesthesiam/voice2json"
     tag: "latest"
-    volumeLoc: "/tmp/oqm/mss-controller-plugin/voice2jsonHome"
   
 
 quarkus:
@@ -79,6 +79,9 @@ quarkus:
       modules:
         - portPath: "/dev/ttyACM0"
           baudRate: 115200
+  voiceSearch:
+    container:
+      engineUri: "unix:///run/user/1000/podman/podman.sock"
   quarkus:
     application:
       name: ${service.nameShort} - V${service.apiVersion} - DEV

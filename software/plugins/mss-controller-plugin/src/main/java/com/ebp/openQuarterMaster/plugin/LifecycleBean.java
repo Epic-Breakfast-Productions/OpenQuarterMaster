@@ -10,7 +10,6 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.Set;
 
 @Singleton
 @Slf4j
@@ -27,13 +26,13 @@ public class LifecycleBean {
 		StartupEvent ev
 	) throws IOException {
 		log.info(
-			"Finished initing Module Master. Picked up on modules: {}",
+			"Finished initting Module Master. Picked up on modules: {}",
 			moduleMaster.getModuleIds()
 		);
 		
 		log.info(
 			"Speech Search using image: {}",
-			voiceSearchService.getCurImageVersion()
+			voiceSearchService.getCurImageInformation()
 		);
 	}
 	
