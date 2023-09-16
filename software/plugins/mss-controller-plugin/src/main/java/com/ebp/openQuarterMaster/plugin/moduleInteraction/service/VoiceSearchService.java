@@ -118,6 +118,8 @@ public class VoiceSearchService {
 		//		dockerClient.startContainerCmd(container.getId()).exec();
 		//		dockerClient.logContainerCmd(container.getId()).exec(ResultCall);
 		
+		
+		//TODO:: don't do this, complete the above todo to do this through the lib
 		int resultCode;
 		String stdOut;
 		String errOut;
