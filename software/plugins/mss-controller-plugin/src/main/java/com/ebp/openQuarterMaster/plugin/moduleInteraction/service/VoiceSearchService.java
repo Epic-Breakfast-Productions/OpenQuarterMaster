@@ -1,6 +1,8 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
 import com.ebp.openQuarterMaster.plugin.config.VoiceSearchConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
@@ -23,10 +25,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static java.nio.file.Paths.get;
 
 /**
  * https://www.baeldung.com/docker-java-api
@@ -37,6 +46,8 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class VoiceSearchService {
 	
+	private static final String SPEECH_RESOURCES = "voice2json";
+	
 	private static final String CONTAINER_WORKING_DIR = "/tmp/oqm/v2jhome";
 	private static final String CONTAINER_NAME = "oqm_plugin_mss_controller_plugin_voice2json";
 	private static final String CONTAINER_RESULT_OUTPUT = "/process.out";
@@ -44,6 +55,14 @@ public class VoiceSearchService {
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	VoiceSearchConfig moduleConfig;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	ObjectMapper objectMapper;
+	
+	String sentencesFileLoc;
+	String slotsDirLoc;
+	String slotProgsDirLoc;
 	
 	private DockerClient getDockerClient() {
 		ZerodepDockerHttpClient client = new ZerodepDockerHttpClient.Builder()
@@ -92,7 +111,7 @@ public class VoiceSearchService {
 		log.info("Done removing old containers.");
 	}
 	
-	private void performVoice2JsonCommand(DockerClient dockerClient, String command) throws IOException {
+	private String performVoice2JsonCommand(DockerClient dockerClient, String command) throws IOException {
 		this.removeOldContainers(dockerClient);
 		log.debug("Running new voice2json command \"{}\"", command);
 		
@@ -130,21 +149,27 @@ public class VoiceSearchService {
 					--name ${containerName} \
 					-v ${localV2jDir}:/tmp/oqm/v2jhome/ \
 					-v /dev/shm/:/dev/shm/ \
+					--device /dev/snd:/dev/snd \
 					-w /tmp/oqm/v2jhome \
 					-e HOME=/tmp/oqm/v2jhome \
+					--security-opt label=disable \
 					synesthesiam/voice2json \
-					""" + command)
+					""" + command
+			)
 									 .replaceAll("\\$\\{localV2jDir}", this.moduleConfig.container().volumeLoc())
 									 .replaceAll("\\$\\{containerName}", CONTAINER_NAME);
 			String[] splitCommand = fullCommand.split(" ");
 			log.debug("Full command to run: \n{}", fullCommand);
 			log.debug("Split command to run: \n{}", List.of(splitCommand));
 			
+			log.debug("executing voice2json command.");
 			Process process = Runtime.getRuntime().exec(splitCommand);
+			
 			BufferedReader stdOutReader = process.inputReader();
 			BufferedReader errOutReader = process.errorReader();
-			
+			log.debug("Waiting for command to complete.");
 			resultCode = process.waitFor();
+			log.debug("Done executing voice2json command. Exited with: {}", resultCode);
 			
 			stdOut = stdOutReader.lines().collect(Collectors.joining());
 			errOut = errOutReader.lines().collect(Collectors.joining());
@@ -165,11 +190,49 @@ public class VoiceSearchService {
 		) {
 			os.write(stdOut.getBytes(StandardCharsets.UTF_8));
 		}
+		return stdOut;
 	}
+	
+	private void copyTrainingFile(String resourceFile, String destination) throws URISyntaxException, IOException {
+		Path original = Paths.get(this.getClass().getClassLoader().getResource(SPEECH_RESOURCES + resourceFile).toURI());
+		Path destinationPath = Paths.get(this.moduleConfig.container().volumeLoc() + destination);
+		Files.copy(original, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+	}
+	
+	public void trainVoice2Text(DockerClient dockerClient) throws IOException {
+		log.info("Training voice2text");
+		
+		//TODO:: modify contents of training
+		
+		this.performVoice2JsonCommand(dockerClient, "train-profile");
+		
+		log.info("Done training voice2text");
+	}
+	
 	
 	public void setupVoice2Text(DockerClient dockerClient) throws IOException {
 		log.info("Setting up voice2Text profile.");
 		this.performVoice2JsonCommand(dockerClient, "--help");
+		//TODO:: nuke old profile?
+		this.performVoice2JsonCommand(dockerClient, "-p en download-profile");
+		
+		this.performVoice2JsonCommand(dockerClient, "print-profile");//needs to be run twice, to avoid garbage in the first call
+		ObjectNode profileJson = (ObjectNode) this.getObjectMapper().readTree(
+			this.performVoice2JsonCommand(dockerClient, "print-profile")
+		);
+		
+		this.sentencesFileLoc = profileJson.get("training").get("sentences-file").asText().replace(CONTAINER_WORKING_DIR, "");
+		this.slotsDirLoc = profileJson.get("training").get("slots-directory").asText().replace(CONTAINER_WORKING_DIR, "");
+		this.slotProgsDirLoc = profileJson.get("training").get("slot-programs-directory").asText().replace(CONTAINER_WORKING_DIR, "");
+		
+		log.debug(
+			"Got profile dirs:  sentences file: {},  slots dir: {},  slot progs dir: {}",
+			this.sentencesFileLoc,
+			this.slotsDirLoc,
+			this.slotProgsDirLoc
+		);
+		
+		this.trainVoice2Text(dockerClient);
 		
 		log.info("Done setting up voice2Text profile.");
 	}
@@ -186,5 +249,15 @@ public class VoiceSearchService {
 		}
 	}
 	
+	public ObjectNode listenForIntent() throws IOException {
+		ObjectNode output;
+		try(
+			DockerClient dockerClient = this.getDockerClient()
+			){
+			String listenData =  this.performVoice2JsonCommand(dockerClient, "transcribe-stream");
+			output = (ObjectNode) this.getObjectMapper().readTree(listenData);
+		}
+		return output;
+	}
 	
 }
