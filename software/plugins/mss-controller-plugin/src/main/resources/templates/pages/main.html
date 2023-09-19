@@ -175,25 +175,22 @@
 					Use this tab to find things in your storage. The results will be where all the results are stored. This search will also kick off highlighting of relevant storage blocks in connected storage modules!
 				</p>
 				<hr/>
-				<div class="row">
+				<div class="row" id="searchRow">
 					<div class="col-4 card p-0" style="">
 						<div class="card-header">
 							<h3 class="card-title">Voice Search</h3>
 						</div>
-						<div class="card-body text-center">
-							<p class="card-text" id="voiceSearchStatusText">
-								Ready
-							</p>
-							<p class="card-text" id="voiceSearchStatusIndicator">
-							
-							</p>
-						</div>
 						<div class="card-body">
 							<div class="d-grid gap-2">
-								<button class=" btn btn-outline-success btn-lg">
+								<button class=" btn btn-outline-success btn-lg" id="voiceSearchButton">
 									<i class="bi bi-mic"></i>
 								</button>
 							</div>
+						</div>
+						<div class="card-body text-center">
+							<p class="card-text" id="">
+								Say something like "Locate screws" after the beep!
+							</p>
 						</div>
 					</div>
 					<div class="col card p-0">
@@ -475,6 +472,7 @@
 <script src="/res/js/obj/units.js"></script>
 
 <script>
+	let searchRow = $("#searchRow");
 	let resultsContainer = $("#resultsContainer");
 	let notInHeldModulesResultsContainer = $("#notInHeldModulesResultsContainer");
 	let resultsNotInModulesAccordion = $("#resultsNotInModulesAccordion");
@@ -482,6 +480,10 @@
 	let resultsNotInModulesAccordionItemContainer = $("#resultsNotInModulesAccordionItemContainer");
 	let itemSearchForm = $("#itemSearchForm");
 	let itemSearchFormNameInput = $("#itemSearchFormNameInput");
+	
+	let voiceSearchButton = $("#voiceSearchButton");
+	
+	const bleep = new Audio("/media/bleep.mp3");
 	
 	function clearSearchResults(){
 		resultsContainer.hide();
@@ -493,11 +495,11 @@
 	}
 	
 	function disableSearchInputs(){
-		itemSearchForm.disable();
+		searchRow.find(":input, button").prop("disabled", true);
 	}
 	
 	function enableSearchInputs(){
-		itemSearchForm.enable();
+		searchRow.find("input, button").prop("disabled", false);
 	}
 	
 	function addStorageResult(addTo, storageResult, blockNum = null){
@@ -583,6 +585,8 @@
 		console.log("Submitting search form.");
 		clearSearchResults();
 		
+		disableSearchInputs();
+		
 		let params = new URLSearchParams();
 		params.set("name", itemSearchFormNameInput.val());
 		
@@ -596,13 +600,45 @@
 				
 				setTimeout(function (){
 					enableSearchInputs();
-				}, 5_000);
+				}, 2_000);
 			},
 			fail: function (data) {
 				console.log("Request to identify module failed.");
 				enableSearchInputs();
 			},
 		});
+	});
+	
+	voiceSearchButton.on("click", function (){
+		console.log("Doing voice search.");
+		
+		clearSearchResults();
+		disableSearchInputs();
+		
+		setTimeout(function (){
+			bleep.play();
+		}, 750);
+		
+		doRestCall({
+			url: "/api/v1/voiceInteraction/itemSearch",
+			method: "GET",
+			done: async function (data) {
+				console.log("Successfully sent request.");
+				
+				populateResults(data);
+				
+				setTimeout(function (){
+					enableSearchInputs();
+				}, 2_000);
+			},
+			fail: function (data) {
+				console.log("Request to identify module failed.");
+				enableSearchInputs();
+			},
+		});
+		
+		
+		
 	});
 	
 	function identifyModule(buttonPressed, moduleId){

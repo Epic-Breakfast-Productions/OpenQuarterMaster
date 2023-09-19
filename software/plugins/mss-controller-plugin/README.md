@@ -18,6 +18,7 @@
      - http://voice2json.org/commands.html#download-profile
      - https://shisho.dev/blog/posts/docker-in-docker/
      - http://voice2json.org/sentences.html
+     - http://voice2json.org/recipes.html
 
 
 ## voice2json notes

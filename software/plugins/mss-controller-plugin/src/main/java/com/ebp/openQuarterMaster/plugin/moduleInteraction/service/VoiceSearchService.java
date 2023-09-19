@@ -1,12 +1,16 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
 import com.ebp.openQuarterMaster.plugin.config.VoiceSearchConfig;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemVoiceSearchResults;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
+import com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient;
+import com.ebp.openQuarterMaster.plugin.restClients.searchObj.InventoryItemSearch;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
-import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.core.DockerClientBuilder;
@@ -17,21 +21,23 @@ import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -40,7 +46,7 @@ import static java.nio.file.Paths.get;
 /**
  * https://www.baeldung.com/docker-java-api
  * <p>
- * For podman systems, might need to run systemctl --user start podman.socket
+ * For podman systems, need to run systemctl --user start podman.socket
  */
 @Slf4j
 @ApplicationScoped
@@ -54,11 +60,19 @@ public class VoiceSearchService {
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	VoiceSearchConfig moduleConfig;
+	VoiceSearchConfig voiceSearchConfig;
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ObjectMapper objectMapper;
+	
+	@RestClient
+	@Getter(AccessLevel.PRIVATE)
+	BaseStationInventoryItemRestClient inventoryItemRestClient;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	ItemSearchService itemSearchService;
 	
 	String sentencesFileLoc;
 	String slotsDirLoc;
@@ -66,7 +80,7 @@ public class VoiceSearchService {
 	
 	private DockerClient getDockerClient() {
 		ZerodepDockerHttpClient client = new ZerodepDockerHttpClient.Builder()
-											 .dockerHost(this.moduleConfig.container().engineUri())
+											 .dockerHost(this.voiceSearchConfig.container().engineUri())
 											 .build();
 		
 		return DockerClientBuilder.getInstance()
@@ -75,23 +89,23 @@ public class VoiceSearchService {
 	}
 	
 	@PostConstruct
-	void init() throws IOException, InterruptedException {
+	void init() throws IOException, InterruptedException, URISyntaxException {
 		log.info(
 			"Pulling image for voice search: {}:{}",
-			this.getModuleConfig().container().image(),
-			this.getModuleConfig().container().tag()
+			this.getVoiceSearchConfig().container().image(),
+			this.getVoiceSearchConfig().container().tag()
 		);
 		try (
 			DockerClient dockerClient = this.getDockerClient();
 		) {
 			log.info(
 				"Pulling image for voice search: {}:{}",
-				this.getModuleConfig().container().image(),
-				this.getModuleConfig().container().tag()
+				this.getVoiceSearchConfig().container().image(),
+				this.getVoiceSearchConfig().container().tag()
 			);
 			//pull image
-			dockerClient.pullImageCmd(this.getModuleConfig().container().image())
-				.withTag(this.getModuleConfig().container().tag())
+			dockerClient.pullImageCmd(this.getVoiceSearchConfig().container().image())
+				.withTag(this.getVoiceSearchConfig().container().tag())
 				.exec(new PullImageResultCallback())
 				.awaitCompletion(30, TimeUnit.SECONDS);
 			log.info("Done pulling image for voice search.");
@@ -111,57 +125,12 @@ public class VoiceSearchService {
 		log.info("Done removing old containers.");
 	}
 	
-	private String performVoice2JsonCommand(DockerClient dockerClient, String command) throws IOException {
-		this.removeOldContainers(dockerClient);
-		log.debug("Running new voice2json command \"{}\"", command);
-		
-		//TODO:: this should work, probably not working due to working on podman. Get working with this instead of hand-jamming console commands
-		//		CreateContainerResponse container = dockerClient
-		//												.createContainerCmd(this.moduleConfig.container().getFullImageRef())
-		//												.withName(CONTAINER_NAME)
-		//												.withWorkingDir(CONTAINER_WORKING_DIR)
-		//												.withEnv("HOME=" + CONTAINER_WORKING_DIR)
-		//												.withBinds(Bind.parse("/dev/shm:/dev/shm"))
-		//												.withBinds(Bind.parse(this.moduleConfig.container().volumeLoc() + ":" + CONTAINER_WORKING_DIR))
-		//												//.withUser()
-		//												.withCmd(command)
-		//												.exec();
-		//		log.debug("Created new container, id: {}", container.getId());
-		//		if(container.getWarnings().length != 0){
-		//			log.warn(
-		//				"Got {} warnings from container creation: {}",
-		//				container.getWarnings().length,
-		//				container.getWarnings()
-		//			);
-		//		}
-		//		dockerClient.startContainerCmd(container.getId()).exec();
-		//		dockerClient.logContainerCmd(container.getId()).exec(ResultCall);
-		
-		
-		//TODO:: don't do this, complete the above todo to do this through the lib
+	private String performCommandLineCommand(String... splitCommand) throws IOException {
+		log.debug("Executing command: \n{}", List.of(splitCommand));
 		int resultCode;
 		String stdOut;
 		String errOut;
 		try {
-			String fullCommand = (
-				"""
-					docker run \
-					--name ${containerName} \
-					-v ${localV2jDir}:/tmp/oqm/v2jhome/ \
-					-v /dev/shm/:/dev/shm/ \
-					--device /dev/snd:/dev/snd \
-					-w /tmp/oqm/v2jhome \
-					-e HOME=/tmp/oqm/v2jhome \
-					--security-opt label=disable \
-					synesthesiam/voice2json \
-					""" + command
-			)
-									 .replaceAll("\\$\\{localV2jDir}", this.moduleConfig.container().volumeLoc())
-									 .replaceAll("\\$\\{containerName}", CONTAINER_NAME);
-			String[] splitCommand = fullCommand.split(" ");
-			log.debug("Full command to run: \n{}", fullCommand);
-			log.debug("Split command to run: \n{}", List.of(splitCommand));
-			
 			log.debug("executing voice2json command.");
 			Process process = Runtime.getRuntime().exec(splitCommand);
 			
@@ -185,7 +154,7 @@ public class VoiceSearchService {
 		}
 		try (
 			FileOutputStream os = new FileOutputStream(
-				this.moduleConfig.container().volumeLoc() + CONTAINER_RESULT_OUTPUT
+				this.voiceSearchConfig.container().volumeLoc() + CONTAINER_RESULT_OUTPUT
 			)
 		) {
 			os.write(stdOut.getBytes(StandardCharsets.UTF_8));
@@ -193,16 +162,134 @@ public class VoiceSearchService {
 		return stdOut;
 	}
 	
+	private String command(String command) throws IOException {
+		String[] splitCommand = command.split(" ");
+		log.debug("Full command to run: \n{}", command);
+		log.debug("Split command to run: \n{}", List.of(splitCommand));
+		return this.performCommandLineCommand(splitCommand);
+	}
+	
+	private String performVoice2JsonCommand(DockerClient dockerClient, String... commandArgs) throws IOException {
+		this.removeOldContainers(dockerClient);
+		log.debug("Running new voice2json command \"{}\"", (Object[]) commandArgs);
+		
+		//TODO:: this should work, probably not working due to working on podman. Get working with this instead of hand-jamming console commands
+		//		CreateContainerResponse container = dockerClient
+		//												.createContainerCmd(this.moduleConfig.container().getFullImageRef())
+		//												.withName(CONTAINER_NAME)
+		//												.withWorkingDir(CONTAINER_WORKING_DIR)
+		//												.withEnv("HOME=" + CONTAINER_WORKING_DIR)
+		//												.withBinds(Bind.parse("/dev/shm:/dev/shm"))
+		//												.withBinds(Bind.parse(this.moduleConfig.container().volumeLoc() + ":" + CONTAINER_WORKING_DIR))
+		//												//.withUser()
+		//												.withCmd(command)
+		//												.exec();
+		//		log.debug("Created new container, id: {}", container.getId());
+		//		if(container.getWarnings().length != 0){
+		//			log.warn(
+		//				"Got {} warnings from container creation: {}",
+		//				container.getWarnings().length,
+		//				container.getWarnings()
+		//			);
+		//		}
+		//		dockerClient.startContainerCmd(container.getId()).exec();
+		//		dockerClient.logContainerCmd(container.getId()).exec(ResultCall);
+		
+		List<String> commandArgsList = new ArrayList<>();
+		commandArgsList.add("docker");
+		commandArgsList.add("run");
+		commandArgsList.add("--name");
+		commandArgsList.add(CONTAINER_NAME);
+		commandArgsList.add("-v");
+		commandArgsList.add(this.voiceSearchConfig.container().volumeLoc() + ":/tmp/oqm/v2jhome/");
+		commandArgsList.add("-v");
+		commandArgsList.add("/dev/shm/:/dev/shm/");
+		commandArgsList.add("--device");
+		commandArgsList.add("/dev/snd:/dev/snd");
+		commandArgsList.add("-w");
+		commandArgsList.add(CONTAINER_WORKING_DIR);
+		commandArgsList.add("-e");
+		commandArgsList.add("HOME=" + CONTAINER_WORKING_DIR);
+		commandArgsList.add("--security-opt");
+		commandArgsList.add("label=disable");
+		commandArgsList.add("synesthesiam/voice2json");
+		
+		commandArgsList.addAll(List.of(commandArgs));
+		
+		//		String fullCommand = (
+		//			"""
+		//				docker run \
+		//				--name ${containerName} \
+		//				-v ${localV2jDir}:/tmp/oqm/v2jhome/ \
+		//				-v /dev/shm/:/dev/shm/ \
+		//				--device /dev/snd:/dev/snd \
+		//				-w /tmp/oqm/v2jhome \
+		//				-e HOME=/tmp/oqm/v2jhome \
+		//				--security-opt label=disable \
+		//				synesthesiam/voice2json \
+		//				""" + command
+		//		)
+		//								 .replaceAll("\\$\\{localV2jDir}", this.moduleConfig.container().volumeLoc())
+		//								 .replaceAll("\\$\\{containerName}", CONTAINER_NAME);
+		
+		//TODO:: don't do this, complete the above todo to do this through the lib
+		return this.performCommandLineCommand(commandArgsList.toArray(new String[0]));
+	}
+	
 	private void copyTrainingFile(String resourceFile, String destination) throws URISyntaxException, IOException {
+		
 		Path original = Paths.get(this.getClass().getClassLoader().getResource(SPEECH_RESOURCES + resourceFile).toURI());
-		Path destinationPath = Paths.get(this.moduleConfig.container().volumeLoc() + destination);
+		Path destinationPath = Paths.get(this.voiceSearchConfig.container().volumeLoc() + destination);
 		Files.copy(original, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 	
-	public void trainVoice2Text(DockerClient dockerClient) throws IOException {
+	public void trainVoice2Text(DockerClient dockerClient) throws IOException, URISyntaxException {
 		log.info("Training voice2text");
 		
-		//TODO:: modify contents of training
+		this.copyTrainingFile("/sentences.ini", this.sentencesFileLoc);
+		
+		log.debug("Creating items slot file.");
+		Set<String> nameSet = new HashSet<>();
+		{
+			ArrayNode allItems = this.getInventoryItemRestClient().searchItems(new InventoryItemSearch());
+			for (Iterator<JsonNode> it = allItems.elements(); it.hasNext(); ) {
+				ObjectNode curItem = (ObjectNode) it.next();
+				String curItemName = curItem.get("name").asText();
+				
+				for (String curItemNameSection : curItemName.split(" ")) {
+					curItemNameSection = curItemNameSection
+											 .replaceAll("[^a-zA-Z ]", "")
+											 .toLowerCase()
+											 .strip();
+					if (curItemNameSection.isEmpty()) {
+						continue;
+					}
+					
+					nameSet.add(curItemNameSection);
+					
+					if (!curItemNameSection.endsWith("s")) {
+						nameSet.add(curItemNameSection + "s");
+					} else {
+						curItemNameSection = curItemNameSection.replaceFirst(".$", "");
+						if (!curItemNameSection.isEmpty()) {
+							nameSet.add(curItemNameSection);
+						}
+						
+					}
+				}
+			}
+		}
+		File itemsFile = new File(this.voiceSearchConfig.container().volumeLoc() + this.slotsDirLoc + "/item");
+		log.debug("Creating items list file: {}", itemsFile);
+		itemsFile.getParentFile().mkdirs();
+		itemsFile.createNewFile();
+		try (
+			FileOutputStream os = new FileOutputStream(itemsFile);
+		) {
+			os.write(String.join(System.lineSeparator(), nameSet).getBytes(StandardCharsets.UTF_8));
+			os.flush();
+		}
+		log.debug("Done creating items slot file.");
 		
 		this.performVoice2JsonCommand(dockerClient, "train-profile");
 		
@@ -210,11 +297,18 @@ public class VoiceSearchService {
 	}
 	
 	
-	public void setupVoice2Text(DockerClient dockerClient) throws IOException {
+	public void setupVoice2Text(DockerClient dockerClient) throws IOException, URISyntaxException {
 		log.info("Setting up voice2Text profile.");
+		
+		if (new File(this.voiceSearchConfig.container().volumeLoc() + "/.local/share/").mkdirs()) {
+			log.debug("Made initial dirs for profile.");
+		} else {
+			log.debug("Initial dirs for profile were already present.");
+		}
+		
 		this.performVoice2JsonCommand(dockerClient, "--help");
 		//TODO:: nuke old profile?
-		this.performVoice2JsonCommand(dockerClient, "-p en download-profile");
+		this.performVoice2JsonCommand(dockerClient, "-p", "en", "download-profile");
 		
 		this.performVoice2JsonCommand(dockerClient, "print-profile");//needs to be run twice, to avoid garbage in the first call
 		ObjectNode profileJson = (ObjectNode) this.getObjectMapper().readTree(
@@ -241,7 +335,7 @@ public class VoiceSearchService {
 		try (
 			DockerClient dockerClient = this.getDockerClient();
 		) {
-			List<Image> images = dockerClient.listImagesCmd().withImageNameFilter(this.getModuleConfig().container().image()).exec();
+			List<Image> images = dockerClient.listImagesCmd().withImageNameFilter(this.getVoiceSearchConfig().container().image()).exec();
 			
 			Image image = images.get(0);
 			
@@ -251,13 +345,52 @@ public class VoiceSearchService {
 	
 	public ObjectNode listenForIntent() throws IOException {
 		ObjectNode output;
-		try(
+		
+		//TODO:: we should not need to do this extra component, but docker + audio is a huge PIA.
+		// Not having to do this would enable much faster recognition
+		String voiceRecordOutput = this.performCommandLineCommand(
+			"arecord",
+			"--format=cd",
+			"-d", "4",
+			this.voiceSearchConfig.container().volumeLoc() + "/record.wav"
+		);
+		
+		try (
 			DockerClient dockerClient = this.getDockerClient()
-			){
-			String listenData =  this.performVoice2JsonCommand(dockerClient, "transcribe-stream");
-			output = (ObjectNode) this.getObjectMapper().readTree(listenData);
+		) {
+			//TODO:: see above. Should be able to do "transcribe-stream"
+			String listenData = this.performVoice2JsonCommand(dockerClient, "transcribe-wav", "record.wav");
+			try (
+				FileOutputStream os = new FileOutputStream(this.voiceSearchConfig.container().volumeLoc() + "/record-out.json");
+			) {
+				os.write(listenData.getBytes(StandardCharsets.UTF_8));
+				os.flush();
+			}
+			
+			String intentData = this.performVoice2JsonCommand(dockerClient, "recognize-intent", listenData);
+			
+			output = (ObjectNode) this.getObjectMapper().readTree(intentData);
 		}
 		return output;
+	}
+	
+	public ItemVoiceSearchResults searchForItems() throws IOException {
+		ObjectNode intentResult = this.listenForIntent();
+		
+		//TODO:: ensure intent result is valid
+		
+		
+		InventoryItemSearch search = new InventoryItemSearch();
+		search.setName(intentResult.get("slots").get("item_name").asText());
+		
+		return ItemVoiceSearchResults.from(
+			this.getItemSearchService().searchForItemLocations(
+				search,
+				true
+			),
+			intentResult,
+			search
+		);
 	}
 	
 }
