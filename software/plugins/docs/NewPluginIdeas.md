@@ -25,3 +25,14 @@ Users create a custom workflow for items to come into and work through, and fini
 ## "Power user" interface
 
 ## Grounds keeper tools
+
+## Chat integrator
+
+ - Major chat providers
+   - slack
+   - rocket chat
+   - irc
+   - zulip
+   - teams
+ - Relay messages from AMQ
+ - Custom messages based on type
