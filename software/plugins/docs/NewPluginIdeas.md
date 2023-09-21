@@ -6,14 +6,6 @@ TODO:: where to go to vote for the next one
 
 ## Point of Sale
 
-## Storage Interaction
-
-https://github.com/LAION-AI/Open-Assistant
-
-https://cmusphinx.github.io/wiki/tutorial/
-
-https://github.com/openai/whisper
-
 ## Fridge Integration
 
 ## Workflow manager

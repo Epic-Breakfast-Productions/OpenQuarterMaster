@@ -1,9 +1,14 @@
 # mss-controller-plugin
 
+This plugin interacts with [MSS Modules](../../../hardware/mss), bringing their functionality into the OQM system.
+
+Currently a proof of concept, much duct tape in certain areas holding things together.
+
+https://github.com/openai/whisper
 
 
  - https://medium.com/@mihirrajdixit/getting-started-with-service-accounts-in-keycloak-c8f6798a0675
- - 
+ - https://github.com/LAION-AI/Open-Assistant
 
 
 ## Speech to Text
