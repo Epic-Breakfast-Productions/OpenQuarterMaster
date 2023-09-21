@@ -348,6 +348,7 @@ public class VoiceSearchService {
 		
 		//TODO:: we should not need to do this extra component, but docker + audio is a huge PIA.
 		// Not having to do this would enable much faster recognition
+		//TODO:: think about taking recording from web/having the option?
 		String voiceRecordOutput = this.performCommandLineCommand(
 			"arecord",
 			"--format=cd",

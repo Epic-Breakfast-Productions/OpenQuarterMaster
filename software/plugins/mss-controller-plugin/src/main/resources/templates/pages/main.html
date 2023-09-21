@@ -184,6 +184,7 @@
 							<div class="d-grid gap-2">
 								<button class=" btn btn-outline-success btn-lg" id="voiceSearchButton">
 									<i class="bi bi-mic"></i>
+									<span id="voiceSearchActivityText"></span>
 								</button>
 							</div>
 						</div>
@@ -480,6 +481,7 @@
 	let resultsNotInModulesAccordionItemContainer = $("#resultsNotInModulesAccordionItemContainer");
 	let itemSearchForm = $("#itemSearchForm");
 	let itemSearchFormNameInput = $("#itemSearchFormNameInput");
+	let voiceSearchActivityText = $("#voiceSearchActivityText");
 	
 	let voiceSearchButton = $("#voiceSearchButton");
 	
@@ -615,8 +617,11 @@
 		clearSearchResults();
 		disableSearchInputs();
 		
+		voiceSearchActivityText.html('Please wait... <div class="spinner-border" role="status" style="height: 1em; width: 1em;"><span class="visually-hidden">Loading...</span></div>');
+		
 		setTimeout(function (){
 			bleep.play();
+			voiceSearchActivityText.text('Speak now!');
 		}, 750);
 		
 		doRestCall({
@@ -626,6 +631,7 @@
 				console.log("Successfully sent request.");
 				
 				populateResults(data);
+				voiceSearchActivityText.text('');
 				
 				setTimeout(function (){
 					enableSearchInputs();
@@ -634,6 +640,10 @@
 			fail: function (data) {
 				console.log("Request to identify module failed.");
 				enableSearchInputs();
+				voiceSearchActivityText.text('');
+				setTimeout(function (){
+					enableSearchInputs();
+				}, 3_000);
 			},
 		});
 		
