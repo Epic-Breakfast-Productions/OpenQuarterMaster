@@ -8,6 +8,8 @@ TODO:: where to go to vote for the next one
 
 ## Storage Interaction
 
+Inspiration: https://www.instructables.com/FindyBot3000-a-Voice-Controlled-Organizer/
+
 https://github.com/LAION-AI/Open-Assistant
 
 https://cmusphinx.github.io/wiki/tutorial/
@@ -23,3 +25,14 @@ Users create a custom workflow for items to come into and work through, and fini
 ## "Power user" interface
 
 ## Grounds keeper tools
+
+## Chat integrator
+
+ - Major chat providers
+   - slack
+   - rocket chat
+   - irc
+   - zulip
+   - teams
+ - Relay messages from AMQ
+ - Custom messages based on type
