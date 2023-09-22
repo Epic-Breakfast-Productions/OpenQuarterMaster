@@ -1,0 +1,10 @@
+{
+	"core": {
+		"baseStation": {
+			"mongodb": {
+				"user": "base_station_user",
+				"pass": "<secret>"
+			}
+		}
+	}
+}
