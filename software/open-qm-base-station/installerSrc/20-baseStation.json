@@ -3,7 +3,8 @@
 		"baseStation": {
 			"mongodb": {
 				"user": "base_station_user",
-				"pass": "<secret>"
+				"pass": "<secret>",
+				"database": "oqmBaseStationMain"
 			}
 		}
 	}
