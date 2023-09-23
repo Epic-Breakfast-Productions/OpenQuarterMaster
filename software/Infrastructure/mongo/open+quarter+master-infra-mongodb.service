@@ -20,18 +20,22 @@ Requires=docker.socket
 Type=simple
 Restart=always
 TimeoutSec=5m
+Environment="CONTAINER_NAME=oqm_infra_mongo"
+Environment="IMAGE_NAME=mongo"
+Environment="IMAGE_VERSION=4"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_mongo || echo 'Could not remove mongo container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull mongo:4 || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove mongo container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/mongodb"
-ExecStartPre=/bin/bash -c "touch /tmp/oqm/serviceConfig/infra/mongodb/env.list"
-ExecStartPre=/bin/bash -c "chmod 600 /tmp/oqm/serviceConfig/infra/mongodb/env.list"
-ExecStartPre=/bin/bash -c "truncate -s 0 /tmp/oqm/serviceConfig/infra/mongodb/env.list"
-ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> /tmp/oqm/serviceConfig/infra/mongodb/env.list"
-ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> /tmp/oqm/serviceConfig/infra/mongodb/env.list"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> $ENV_CONFIG_FILE"
 #ExecStartPre=/bin/bash -c "printf \"Test! MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\""
 ExecStartPre=/bin/bash -c "mkdir -p /data/oqm/db/mongo/"
 ExecStartPre=/bin/bash -c "touch /data/oqm/db/mongo/keyfile"
@@ -39,25 +43,25 @@ ExecStartPre=/bin/bash -c "chmod 600 /data/oqm/db/mongo/keyfile"
 ExecStartPre=/bin/bash -c "printf \"%s\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\" > /data/oqm/db/mongo/keyfile"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
-                                 --name oqm_infra_mongo \
+                                 --name $CONTAINER_NAME \
                                  -p=27017:27017 \
                                  -v /data/oqm/db/mongo/:/data/db  \
                                  --env-file /tmp/oqm/serviceConfig/infra/mongodb/env.list \
-                                 mongo:4 mongod --keyFile /data/db/keyfile --replSet rs0"
+                                 $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                /usr/bin/docker exec oqm_infra_mongo mongo --eval \"\"; \
+                                /usr/bin/docker exec $CONTAINER_NAME mongo --eval \"\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Mongo container running and available!\"; \
                                     running=\"true\"; \
                                 fi \
                             done \
                             "
-ExecStartPost=/bin/bash -c "/usr/bin/docker exec oqm_infra_mongo mongo -u \"$(oqm-config -g 'infra.mongodb.adminUser')\" -p \"$(oqm-config -g 'infra.mongodb.adminPass')\" --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
+ExecStartPost=/bin/bash -c "/usr/bin/docker exec $CONTAINER_NAME mongo -u \"$(oqm-config -g 'infra.mongodb.adminUser')\" -p \"$(oqm-config -g 'infra.mongodb.adminPass')\" --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_mongo || echo 'Could not stop mongo container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_infra_mongo || echo 'Could not remove mongo container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove mongo container'"
 
 [Install]
 WantedBy=multi-user.target
