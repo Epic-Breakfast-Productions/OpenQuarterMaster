@@ -205,7 +205,7 @@ smallrye:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
       database: openQuarterMasterDev
-      connection-string: mongodb://test:test@localhost:27017
+#      connection-string: mongodb://test:test@localhost:27017
     http:
       port: 8080
       ssl-port: 8443
