@@ -2,7 +2,7 @@
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
+#  Keycloak tags: https://quay.io/repository/keycloak/keycloak?tab=tags
 #
 # - https://www.keycloak.org/server/containers
 # - https://www.keycloak.org/getting-started/getting-started-docker
@@ -13,36 +13,48 @@
 Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "22.0.1".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
-Wants=network-online.target docker.socket
-Requires=docker.socket open\x2bquarter\x2bmaster\x2dinfra\x2dpostgres.service
+Wants=network-online.target
+Requires=docker.socket
+Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dpostgres.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
+# setup operating variables
+Environment="CONTAINER_NAME=oqm_infra_keycloak"
+Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
+Environment="IMAGE_VERSION=22.0"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_keycloak || echo 'Could not stop keycloak container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_keycloak || echo 'Could not remove keycloak container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/keycloak/keycloak:22.0.1 || echo 'Could not pull keycloak image.'"
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/keycloak"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB=postgres\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_USERNAME=$(oqm-config -g 'infra.keycloak.postgresUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_PASSWORD=$(oqm-config -g 'infra.keycloak.postgresPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_HOST=host.docker.internal\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_PORT=$(oqm-config -g 'infra.postgres.port')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_DATABASE=$(oqm-config -g 'infra.keycloak.postgresDb')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
+
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull keycloak image.'"
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -p \"$(oqm-config -g 'infra.keycloak.postgresPass')\""
-ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q 1 || /usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
-                                 --name oqm_infra_keycloak \
+                                 --name $CONTAINER_NAME \
                                  --add-host host.docker.internal:host-gateway \
                                  -p=$(oqm-config -g 'infra.keycloak.port'):8080 \
-                                 -e KEYCLOAK_ADMIN=\"$(oqm-config -g 'infra.keycloak.adminUser')\" \
-                                 -e KEYCLOAK_ADMIN_PASSWORD=\"$(oqm-config -g 'infra.keycloak.adminPass')\" \
-                                 -e KC_DB=postgres \
-                                 -e KC_DB_USERNAME=\"$(oqm-config -g 'infra.keycloak.postgresUser')\" \
-                                 -e KC_DB_PASSWORD=\"$(oqm-config -g 'infra.keycloak.postgresPass')\" \
-                                 -e KC_DB_URL_HOST=\"host.docker.internal\" \
-                                 -e KC_DB_URL_PORT=$(oqm-config -g 'infra.postgres.port') \
-                                 -e KC_DB_URL_DATABASE=$(oqm-config -g 'infra.keycloak.postgresDb') \
-                                 -e KC_HEALTH_ENABLED=true \
+                                 --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import \
-                                 quay.io/keycloak/keycloak:22.0.1 start-dev --import-realm"
+                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
 
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
@@ -60,8 +72,8 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done \
                             "
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_keycloak || echo 'Could not stop keycloak container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_infra_keycloak || echo 'Could not remove keycloak container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
 [Install]
 WantedBy=multi-user.target

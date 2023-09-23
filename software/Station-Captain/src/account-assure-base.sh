@@ -3,12 +3,12 @@
 
 HELPTEXT="Usage:"
 
-ARGS_SHORT="hu:p:"
-ARGS_LONG="help,username:,password:"
+ARGS_SHORT="hu:p:d:"
+ARGS_LONG="help,username:,password:,database:"
 OPTS=$(getopt -a -n account-assure-base.sh --options $ARGS_SHORT --longoptions $ARGS_LONG -- "$@")
 
 VALID_ARGUMENTS=$# # Returns the count of arguments that are in short or long options
-if [ "$VALID_ARGUMENTS" -ne 4 ]; then
+if [ "$VALID_ARGUMENTS" -ne 4 ] &&  [ "$VALID_ARGUMENTS" -ne 6 ]; then
 	echo "$HELPTEXT";
 	exit 1;
 fi
@@ -16,6 +16,7 @@ fi
 
 usernameToAssert=""
 passwordToAssert=""
+databaseToAssert=""
 
 eval set -- "$OPTS"
 while :
@@ -33,6 +34,11 @@ do
 		;;
 		-p | --password)
 			passwordToAssert="$2"
+#			echo "got password: $passwordToAssert"
+			shift 2
+		;;
+		-d | --database)
+			databaseToAssert="$2"
 #			echo "got password: $passwordToAssert"
 			shift 2
 		;;
@@ -57,3 +63,4 @@ fi
 #echo "$targetDir"
 export usernameToAssert
 export passwordToAssert
+export databaseToAssert
