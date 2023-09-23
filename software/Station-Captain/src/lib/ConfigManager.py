@@ -30,6 +30,12 @@ SECRET_MNGR_SECRETS_SECRET_FILE = CONFIG_MNGR_CONFIGS_DIR + "/.secretSecret.dat"
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
 class SecretManager:
+    """
+    References:
+        - https://www.geeksforgeeks.org/how-to-encrypt-and-decrypt-strings-in-python/#
+        - https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
+        - https://docs.python.org/3/library/secrets.html
+    """
 
     def __init__(
             self,
@@ -393,6 +399,12 @@ class ConfigManager:
 
     @staticmethod
     def mergeDicts(d, u):
+        """
+        https://stackoverflow.com/a/3233356/3015723
+        :param d:
+        :param u:
+        :return:
+        """
         for k, v in u.items():
             if isinstance(v, collections.abc.Mapping):
                 d[k] = ConfigManager.mergeDicts(d.get(k, {}), v)

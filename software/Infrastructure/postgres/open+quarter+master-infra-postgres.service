@@ -2,7 +2,7 @@
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
+#  Postgres tags: https://hub.docker.com/_/postgres/tags
 #
 #  TODO:: figure out better username/password situation
 #  https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
