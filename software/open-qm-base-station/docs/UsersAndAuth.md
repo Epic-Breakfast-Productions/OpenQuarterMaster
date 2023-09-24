@@ -122,8 +122,19 @@ For the service to work with `service.authMode` set to `EXTERNAL`:
 10. Clients -> oqm-app -> Settings -> Logout Settings. Turn off "Front Channel Logout"
 11. Clients -> oqm-app -> Client Scopes, set `microprofile-jwt` to "default"
 12. Client Scopes -> Set `microprofile-jwt` to "default"
-13. Realm Settings -> Tokens
-    - Set "Access Tokens" -> "Access Token Lifespan" to 25 Minutes
+13. Setup Service Account Roles
+    1. Clients -> oqm-app -> Service Accounts Roles
+    2. Add all appropriate roles
+14. Set appropriate timeouts
+    1. Realm Settings -> Sessions
+       - `SSO Session Idle` = `1 hours`
+       - `SSO Session Max` = `10 hours`
+       - `SSO Session Idle Remember Me` = `8 days`
+       - `SSO Session Max Remember Me` = `30 days`
+       - `Client Session Idle` = `0 minutes`
+       - `Client Session Max` = `0 minutes`
+    2. Realm Settings -> Tokens
+       - Set "Access Tokens" -> "Access Token Lifespan" to 25 Minutes
 
 
 ## User Roles
