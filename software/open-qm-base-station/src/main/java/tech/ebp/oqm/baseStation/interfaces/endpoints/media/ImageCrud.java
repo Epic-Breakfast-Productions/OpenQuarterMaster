@@ -1,13 +1,20 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -17,9 +24,14 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.media.ImageCreateRequest;
+import tech.ebp.oqm.baseStation.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
@@ -27,23 +39,7 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.ImagedMainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
-import tech.ebp.oqm.lib.core.rest.storage.IMAGED_OBJ_TYPE_NAME;
 
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
@@ -66,34 +62,24 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		}
 	}
 	
+	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
 	InventoryItemService itemService;
+	@Inject
 	ItemCategoryService itemCategoryService;
+	@Inject
+	@Location("tags/search/image/imageSearchResults.html")
 	Template imageSearchResultsTemplate;
+	@Inject
 	Validator validator;
 	
 	@Inject
-	public ImageCrud(
-		ImageService imageService,
-		InteractingEntityService interactingEntityService,
-		JsonWebToken jwt,
-		@Location("tags/objView/history/searchResults.html")
-		Template historyRowsTemplate,
-		StorageBlockService storageBlockService,
-		InventoryItemService itemService,
-		ItemCategoryService itemCategoryService,
-		@Location("tags/search/image/imageSearchResults.html")
-		Template imageSearchResultsTemplate,
-		Validator validator
-	) {
-		super(Image.class, imageService, interactingEntityService, jwt, historyRowsTemplate);
-		this.storageBlockService = storageBlockService;
-		this.itemService = itemService;
-		this.itemCategoryService = itemCategoryService;
-		this.validator = validator;
-		this.imageSearchResultsTemplate = imageSearchResultsTemplate;
-	}
+	@Getter
+	ImageService objectService;
 	
+	@Getter
+	Class<Image> objectClass =  Image.class;
 	
 	//<editor-fold desc="CRUD operations">
 	
@@ -120,13 +106,12 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid ImageCreateRequest icr
 	) {
 		Image image = new Image(icr);
 		
 		this.validator.validate(image);
-		return super.create(securityContext, image);
+		return super.create(image);
 	}
 	
 	@GET
@@ -157,10 +142,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
-		@Context SecurityContext securityContext,
 		@BeanParam ImageSearch searchObject
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(securityContext, searchObject);
+		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(searchObject);
 		Response.ResponseBuilder rb = tuple.getItem1();
 		
 		log.debug("Accept header value: \"{}\"", searchObject.getAcceptHeaderVal());
@@ -248,10 +232,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Image get(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.get(securityContext, id);
+		return super.get(id);
 	}
 	
 	@PUT
@@ -288,12 +271,11 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image update(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
 		//TODO:: handle updates, json given is icr
-		return super.update(securityContext, id, updates);
+		return super.update(id, updates);
 	}
 	
 	@DELETE
@@ -329,10 +311,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Image delete(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		return super.delete(securityContext, id);
+		return super.delete(id);
 	}
 	
 	@GET
@@ -367,13 +348,12 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return super.getHistoryForObject(securityContext, id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
 	}
 	
 	@GET
@@ -401,10 +381,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		return super.searchHistory(securityContext, searchObject);
+		return super.searchHistory(searchObject);
 	}
 	
 	@GET
@@ -426,10 +405,8 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	//    @Produces(MediaType.)//TODO
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageData(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image with id \"{}\"'s data", id);
 		Image output = this.getObjectService().get(id);
 		
@@ -440,7 +417,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 				   .build();
 	}
 	
-	@WithSpan
 	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?> service, String id) {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
@@ -488,11 +464,9 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("object") IMAGED_OBJ_TYPE_NAME object,
 		@PathParam("id") String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving image for {} of id \"{}\"", object, id);
 		
 		switch (object) {

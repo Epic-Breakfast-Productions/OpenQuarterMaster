@@ -46,6 +46,8 @@ jobs:
           name: Code Coverage Report
           path: "software/open-qm-base-station/build/jacoco-report"
       - name: Archive Test Report
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
@@ -53,6 +55,8 @@ jobs:
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
         uses: dorny/test-reporter@v1
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test Report            # Name of the check run which will be created

@@ -3,20 +3,18 @@ package tech.ebp.oqm.baseStation.service.productLookup.searchServices.api.produc
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
 import tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api.UpcItemDbLookupClient;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;

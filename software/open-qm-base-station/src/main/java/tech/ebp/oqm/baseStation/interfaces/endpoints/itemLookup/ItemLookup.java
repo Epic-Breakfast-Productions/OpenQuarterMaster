@@ -1,6 +1,14 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.itemLookup;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -11,21 +19,10 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResults;
 import tech.ebp.oqm.baseStation.service.productLookup.ProductLookupService;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResults;
 
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
@@ -66,11 +63,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response providerInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response providerInfo() {
 		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
 	}
 	
@@ -92,11 +85,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response enabledProviderInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response enabledProviderInfo() {
 		return Response.ok(
 			this.productLookupService.getProductProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
 		).build();
@@ -120,11 +109,8 @@ public class ItemLookup extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchBarcode(
-		@Context SecurityContext securityContext,
 		@PathParam("barcode") String barcode
 	) {
-		logRequestContext(this.jwt, securityContext);
-		
 		return Response.ok(this.productLookupService.searchBarcode(barcode)).build();
 	}
 	
@@ -146,11 +132,8 @@ public class ItemLookup extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response scanWebpage(
-		@Context SecurityContext securityContext,
 		@PathParam("webpage") String page
 	) throws MalformedURLException, ExecutionException, InterruptedException {
-		logRequestContext(this.jwt, securityContext);
-		
 		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
 	}
 	
@@ -172,11 +155,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response webScrapeProviderInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response webScrapeProviderInfo() {
 		return Response.ok(this.productLookupService.getSupportedPageScanInfo()).build();
 	}
 	
@@ -198,11 +177,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response enablesWebScrapeProviderInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response enablesWebScrapeProviderInfo() {
 		return Response.ok(
 			this.productLookupService.getSupportedPageScanInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
 		).build();
@@ -226,11 +201,8 @@ public class ItemLookup extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchLegoPart(
-		@Context SecurityContext securityContext,
 		@PathParam("partNo") String partNo
 	) {
-		logRequestContext(this.jwt, securityContext);
-		
 		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
 	}
 	
@@ -252,11 +224,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response legoProviderInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response legoProviderInfo() {
 		return Response.ok(this.productLookupService.getLegoProviderInfo()).build();
 	}
 	
@@ -278,11 +246,7 @@ public class ItemLookup extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response enabledLegoProviderInfo(
-		@Context SecurityContext securityContext
-	) {
-		logRequestContext(this.jwt, securityContext);
-		
+	public Response enabledLegoProviderInfo() {
 		return Response.ok(
 			this.productLookupService.getLegoProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
 		).build();

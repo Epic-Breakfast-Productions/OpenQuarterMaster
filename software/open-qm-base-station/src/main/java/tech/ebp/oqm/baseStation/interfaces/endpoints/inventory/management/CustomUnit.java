@@ -1,10 +1,16 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.management;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import lombok.Getter;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -12,24 +18,12 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-import tech.ebp.oqm.lib.core.rest.unit.custom.NewCustomUnitRequest;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
-
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -47,10 +41,6 @@ public class CustomUnit extends EndpointProvider {
 	
 	@Inject
 	InteractingEntityService interactingEntityService;
-	
-	@Inject
-	@Getter
-	JsonWebToken jwt;
 	
 	@POST
 	@Operation(
@@ -75,18 +65,15 @@ public class CustomUnit extends EndpointProvider {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId createCustomUnit(
-		@Context SecurityContext securityContext,
 		@Valid NewCustomUnitRequest ncur
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.customUnitService.getNextOrderValue());
 		
 		UnitUtils.registerAllUnits(newUnit);
 		
 		ObjectId id = this.customUnitService.add(
 			newUnit,
-			this.interactingEntityService.getEntity(this.getJwt())
+			this.interactingEntityService.getEntity(this.getIdToken())
 		);
 		
 		return id;

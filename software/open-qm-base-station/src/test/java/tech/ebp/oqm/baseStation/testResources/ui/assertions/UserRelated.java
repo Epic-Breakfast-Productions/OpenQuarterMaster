@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
 import tech.ebp.oqm.baseStation.testResources.ui.WebDriverWrapper;
 import tech.ebp.oqm.baseStation.testResources.ui.pages.General;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 
 import static org.junit.Assert.assertEquals;
 import static tech.ebp.oqm.baseStation.testResources.ui.pages.General.USER_ADMIN_LINK;

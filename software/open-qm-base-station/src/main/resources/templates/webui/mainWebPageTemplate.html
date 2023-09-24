@@ -1,4 +1,4 @@
-{@tech.ebp.oqm.lib.core.rest.user.UserGetResponse userInfo}
+{@tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity userInfo}
 {! @com.gjs.taskTimekeeper.webServer.server.config.ServerInfoBean serverInfo !}
 {!
 Main webpage template
@@ -117,13 +117,13 @@ Ingests:
 	</script>
 </head>
 <body class="min-vh-100 vstack">
-<span id="pageInfo" data-page-initted="false" data-auth-type="{config:['service.authMode']}"></span>
+<span id="pageInfo" data-page-initted="false"></span>
 
 <!-- nav here -->
-
-{#if navbar == "full"}
+{#if navbar == "full" || navbar == "toLogin"}
 {! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
-<nav class="navbar navbar-expand-lg bg-light top-nav" data-bs-theme="light">
+<nav class="navbar navbar-expand-lg bg-light top-nav mb-2" data-bs-theme="light" id="top-nav">
+	{#if navbar == "full"}
 	<div class="container-fluid">
 		<a class="navbar-brand p-0" href="/overview">
 			<img src="/media/logo.svg" alt=""  id="topLogo">
@@ -231,11 +231,14 @@ Ingests:
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
-						<span id="userNameDisplay">{userInfo.getUsername()}</span></a>
+						<span id="userNameDisplay">{userInfo.getName()}</span></a>
 					<div class="dropdown-menu">
-					<a class="dropdown-item" href="/you" id="youLink">
-						{#icons/you}{/icons/you} You
-					</a>
+						<a class="dropdown-item" href="/you" id="youLink">
+							{#icons/you}{/icons/you} You
+						</a>
+						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
+							{#icons/edit}{/icons/edit} Your Account Settings
+						</a>
 					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
 					<div class="dropdown-divider"></div>
 					{/if}
@@ -250,7 +253,7 @@ Ingests:
 					</a>
 					{/if}
 					<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#" id="logoutButton">
+						<a class="dropdown-item" href="{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout
 						</a>
 					</div>
@@ -258,16 +261,13 @@ Ingests:
 			</ul>
 		</div>
 	</div>
-</nav>
-{#else if navbar == "toLogin"}
-{! https://stackoverflow.com/questions/19733447/bootstrap-navbar-with-left-center-or-right-aligned-items !}
-<nav class="navbar navbar-expand-lg navbar-light bg-light top-nav fw-bold">
+	{#else if navbar == "toLogin"}
 	<div class="container-fluid">
 		<a class="navbar-brand" href="/">
 			<img src="/media/logo.svg" alt="" height="40" width="97" id="topLogo">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		
@@ -279,11 +279,13 @@ Ingests:
 					</a>
 				</li>
 			</ul>
-			
+		
 		</div>
 	</div>
+	{/if}
 </nav>
 {/if}
+
 <div id="mainContainer" class="container flex-grow-1">
 	{#if showTitle}
 		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon}{title}</h1>
@@ -407,7 +409,6 @@ Ingests:
 <script src="/res/js/pageMessages.js"></script>
 <script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
-<script src="/res/js/login.js"></script>
 <script src="/res/js/timeHelpers.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>

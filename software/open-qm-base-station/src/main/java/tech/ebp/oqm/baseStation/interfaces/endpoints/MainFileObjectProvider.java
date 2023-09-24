@@ -3,30 +3,24 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 /**
  * Main abstract method to handle standard CRUD operations for MainObjects
@@ -42,39 +36,13 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	@Getter
 	private MongoHistoriedFileService<T, S> fileService;
 	@Getter
-	private InteractingEntityService interactingEntityService;
-	@Getter
-	private JsonWebToken jwt;
-	private InteractingEntity interactingEntityFromJwt = null;
-	@Getter
 	private Template historyRowsTemplate;
 	
-	protected MainFileObjectProvider(
-		MongoHistoriedFileService<T, S> fileService,
-		InteractingEntityService interactingEntityService,
-		JsonWebToken jwt,
-		Template historyRowsTemplate
-	) {
-		this.fileService = fileService;
-		this.interactingEntityService = interactingEntityService;
-		this.jwt = jwt;
-		this.historyRowsTemplate = historyRowsTemplate;
-	}
-	
-	protected InteractingEntity getInteractingEntityFromJwt() {
-		if (this.interactingEntityFromJwt == null) {
-			this.interactingEntityFromJwt = this.getInteractingEntityService().getEntity(this.getJwt());
-		}
-		return this.interactingEntityFromJwt;
-	}
 	
 	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
-		@Context SecurityContext securityContext,
 		@BeanParam S searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, false);
 		
 		return Tuple2.of(
@@ -151,13 +119,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject,
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
@@ -214,10 +180,8 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@Context SecurityContext securityContext,
 		@BeanParam HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
 		return this.getFileService().getFileObjectService().searchHistory(searchObject, false);

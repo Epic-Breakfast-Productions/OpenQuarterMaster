@@ -4,12 +4,12 @@ package tech.ebp.oqm.baseStation.testResources.data;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.lang3.time.StopWatch;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.rest.media.ImageCreateRequest;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.baseStation.model.rest.media.ImageCreateRequest;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

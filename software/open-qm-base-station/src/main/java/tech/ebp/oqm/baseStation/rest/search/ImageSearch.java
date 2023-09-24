@@ -1,13 +1,13 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
 import com.mongodb.client.model.Filters;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
-import tech.ebp.oqm.lib.core.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
 
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @ToString(callSuper = true)

@@ -4,18 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.lib.core.object.media.file.FileAttachment;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 /**
  * TODO:: figure out how to do this with gridfs https://www.mongodb.com/docs/drivers/java/sync/v4.3/fundamentals/gridfs/

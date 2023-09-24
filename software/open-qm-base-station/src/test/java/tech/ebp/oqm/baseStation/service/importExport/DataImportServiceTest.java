@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
@@ -17,31 +18,31 @@ import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.checkout.ItemCheckout;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.LossCheckin;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkinDetails.ReturnCheckin;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForExtUser;
-import tech.ebp.oqm.lib.core.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.lib.core.object.storage.items.stored.TrackedStored;
-import tech.ebp.oqm.lib.core.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.rest.storage.itemCheckout.ItemCheckoutRequest;
-import tech.ebp.oqm.lib.core.rest.unit.custom.NewBaseCustomUnitRequest;
-import tech.ebp.oqm.lib.core.rest.unit.custom.NewDerivedCustomUnitRequest;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.UnitCategory;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
-import tech.ebp.oqm.lib.core.units.ValidUnitDimension;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.LossCheckin;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.ReturnCheckin;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForExtUser;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
+import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
+import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.rest.storage.itemCheckout.ItemCheckoutRequest;
+import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewBaseCustomUnitRequest;
+import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewDerivedCustomUnitRequest;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.UnitCategory;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,6 +78,8 @@ class DataImportServiceTest extends RunningServerTest {
 	TestUserService testUserService;
 	
 	@Inject
+	InteractingEntityService interactingEntityService;
+	@Inject
 	CustomUnitService customUnitService;
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -95,7 +98,8 @@ class DataImportServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testImportService() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser(true);
+		this.interactingEntityService.add(testUser);
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
@@ -271,7 +275,7 @@ class DataImportServiceTest extends RunningServerTest {
 						.item(checkingOutItem.getId())
 						.checkedOutFrom(checkingOutEntry.getKey())
 						.toCheckout(checkingOutEntry.getValue().getStored())
-						.checkedOutFor(new CheckoutForOqmEntity(testUser.getReference()))
+						.checkedOutFor(new CheckoutForOqmEntity(testUser.getId()))
 						.reason(FAKER.lorem().paragraph())
 						.notes(FAKER.lorem().paragraph())
 						.build(),

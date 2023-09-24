@@ -1,14 +1,14 @@
 package tech.ebp.oqm.baseStation.service.productLookup.searchServices.webPage;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.lib.core.rest.externalItemLookup.ExtItemLookupResult;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupResult;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;

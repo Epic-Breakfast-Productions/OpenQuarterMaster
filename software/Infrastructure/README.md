@@ -27,6 +27,7 @@ sudo systemctl daemon-reload
 | 5672  | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    |
 | 61616 | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
 | 8110  | Grafana          | Grafana UI port                   |
+| 8115  | Keycloak         | Keycloak port                     |
 
 ## NEW, proposed Host Ports used by the various infra pieces
 
@@ -44,6 +45,8 @@ TODO:: move to these
 | 8106  | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    |
 | 8107  | ActiveMQ Artemis | Artemis broker port (Artemis JMS) |
 | 8110  | Grafana          | Grafana UI port                   |
+| 8115  | Keycloak         | Keycloak port                     |
+| 8120  | Postgres         | Postgres port                     |
 
 ## TODO's
 

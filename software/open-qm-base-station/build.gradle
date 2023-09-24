@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.29'
+version '1.0.31'
 
 repositories {
 	mavenCentral()
@@ -20,30 +20,36 @@ dependencies {
 	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
-	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
+//	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
 	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
 	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
-	implementation 'io.quarkus:quarkus-mongodb-panache'
+	implementation 'io.quarkus:quarkus-mongodb-client'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
-	implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
 	implementation 'io.quarkus:quarkus-container-image-jib'
 	implementation 'io.quarkus:quarkus-rest-client-reactive'
 	implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
+	implementation 'io.quarkus:quarkus-oidc'
+//	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
+//	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
+
 	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
-
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
-
-	implementation 'com.itextpdf:html2pdf:5.0.0'
-
 	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
+
+
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
+	implementation 'org.passay:passay:1.6.3'
+	implementation 'com.itextpdf:html2pdf:5.0.0'
 
 	//webjars
 	implementation 'org.webjars:jquery:3.6.4'
@@ -52,7 +58,7 @@ dependencies {
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
 //    implementation 'org.webjars:spin-js:2.1.0'
 
-	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.62'
+//	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.62'
 	implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-moduleDriver:1.0.2-DEV'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -66,11 +72,10 @@ dependencies {
 	implementation 'org.apache.commons:commons-compress:1.23.0'
 	implementation 'org.apache.commons:commons-csv:1.10.0'
 	implementation 'org.apache.commons:commons-io:1.3.2'
+	implementation 'commons-codec:commons-codec:1.16.0'
+	implementation 'org.apache.tika:tika-core:2.8.0'
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.4.0'
-
-	// TODO:: remove to resolve #344
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 
 	/*
 	Test Dependencies
@@ -78,17 +83,19 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
+	testImplementation 'net.datafaker:datafaker:2.0.1'
+	testImplementation 'org.assertj:assertj-core:3.24.2'
 
-	testImplementation 'org.testcontainers:mongodb:1.18.3'
-	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
+//	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
+//	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
+
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.10.0'
 	testImplementation 'org.testcontainers:selenium:1.18.3'
 	testImplementation 'com.deque:axe-selenium:3.0'
-	testImplementation 'net.datafaker:datafaker:2.0.1'
 }
 
 java {
@@ -110,13 +117,14 @@ compileTestJava {
 
 test {
 	minHeapSize = "128m" // initial heap size
-	maxHeapSize = "1g" // maximum heap size
+	maxHeapSize = "2g" // maximum heap size
 	jvmArgs(
 		"--add-opens", "java.base/java.lang=ALL-UNNAMED",
 		"--add-opens", "java.base/java.io=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
+	testLogging.showStandardStreams = true
 }
 
 /**

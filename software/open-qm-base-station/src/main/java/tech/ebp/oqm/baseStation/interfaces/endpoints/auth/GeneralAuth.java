@@ -1,8 +1,15 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.auth;
 
 import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -12,19 +19,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.jboss.resteasy.reactive.NoCache;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.auth.TokenCheckResponse;
 import tech.ebp.oqm.baseStation.utils.TimeUtils;
-import tech.ebp.oqm.lib.core.rest.auth.TokenCheckResponse;
 
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Date;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
@@ -35,8 +32,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 @NoCache
 public class GeneralAuth extends EndpointProvider {
-	@Inject
-	JsonWebToken jwt;
 	@Inject
 	SecurityIdentity identity;
 	
@@ -56,19 +51,18 @@ public class GeneralAuth extends EndpointProvider {
 	@SecurityRequirement(name = "JwtAuth")
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response tokenCheck(@Context SecurityContext ctx) {
-		logRequestContext(this.jwt, ctx);
+	public Response tokenCheck() {
 		log.info("Checking user's token.");
 		
 		TokenCheckResponse response = new TokenCheckResponse();
-		if (jwt.getRawToken() != null) {
+		if (this.getIdToken().getRawToken() != null) {
 			log.info("User roles: {}", this.identity.getRoles());
-			log.info("User JWT claims: {}", this.jwt.getClaimNames());
+			log.info("User JWT claims: {}", this.getIdToken().getClaimNames());
 			
 			response.setHadToken(true);
-			response.setTokenSecure(ctx.isSecure());
-			response.setExpired(jwt.getExpirationTime() <= TimeUtils.currentTimeInSecs());
-			response.setExpirationDate(new Date(jwt.getExpirationTime()));
+			response.setTokenSecure(this.getSecurityContext().isSecure());
+			response.setExpired(this.getIdToken().getExpirationTime() <= TimeUtils.currentTimeInSecs());
+			response.setExpirationDate(new Date(this.getIdToken().getExpirationTime()));
 		} else {
 			log.info("User had no jwt");
 		}

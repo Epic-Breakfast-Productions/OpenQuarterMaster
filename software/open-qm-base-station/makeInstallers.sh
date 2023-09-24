@@ -40,9 +40,11 @@ mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
+mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
 install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
+install -m 755 -D "$srcDir/20-baseStation.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
 
 serviceFile="open+quarter+master-core-base+station.service"

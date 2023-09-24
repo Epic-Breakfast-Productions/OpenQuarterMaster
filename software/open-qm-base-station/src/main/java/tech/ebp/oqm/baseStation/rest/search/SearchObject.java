@@ -1,14 +1,14 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.baseStation.service.mongo.search.SortType;
-import tech.ebp.oqm.lib.core.object.MainObject;
 
-import javax.ws.rs.QueryParam;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -15,70 +15,54 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.PasswordService;
-import tech.ebp.oqm.baseStation.service.mongo.UserService;
-import tech.ebp.oqm.baseStation.utils.AuthMode;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static tech.ebp.oqm.baseStation.testResources.lifecycleManagers.Utils.HOST_TESTCONTAINERS_INTERNAL;
-import static tech.ebp.oqm.baseStation.utils.AuthMode.EXTERNAL;
-import static tech.ebp.oqm.baseStation.utils.AuthMode.SELF;
-
+/**
+ *
+ */
 @ApplicationScoped
 @Slf4j
 public class TestUserService {
 	private final static Faker FAKER = new Faker();
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
-	public static final String TEST_EXTERN_ID_ATT_KEY = "TEST_EXTERNAL_KEY";
+	public static final String TEST_JWT_ATT_KEY = "TEST_JWT";
+	private static final String TEST_EXTERN_ID_ATT_KEY = "TEST_KEYCLOAK_ID";
 	
-	private final UserService userService;
 	private final MongoTestConnector mongoTestConnector = new MongoTestConnector();
 	private final PasswordService passwordService = new PasswordService();
 	
-	private final JwtService jwtService;
+	private final String keycloakAdminName = ConfigProvider.getConfig().getValue("quarkus.keycloak.admin-client.username", String.class);
+	private final String keycloakAdminPass = ConfigProvider.getConfig().getValue("quarkus.keycloak.admin-client.password", String.class);
+	private final String keycloakRealm = ConfigProvider.getConfig().getValue("quarkus.keycloak.devservices.realm-name", String.class);
+	private final String keycloakUrl = ConfigProvider.getConfig().getValue("quarkus.oidc.auth-server-url", String.class).replace("realms/"+keycloakRealm, "");
+	private final String keycloakClientId = ConfigProvider.getConfig().getValue("quarkus.oidc.client-id", String.class);
+	private final String keycloakClientSecret = ConfigProvider.getConfig().getValue("quarkus.oidc.credentials.secret", String.class);
 	
-	private final AuthMode authMode = ConfigProvider.getConfig().getValue("service.authMode", AuthMode.class);
-	
-	private final String keycloakAdminName = ConfigProvider.getConfig().getValue("test.keycloak.adminName", String.class);
-	private final String keycloakAdminPass = ConfigProvider.getConfig().getValue("test.keycloak.adminPass", String.class);
-	private final String keycloakRealm = ConfigProvider.getConfig().getValue("service.externalAuth.realm", String.class);
-	private final String keycloakClientId = ConfigProvider.getConfig().getValue("service.externalAuth.clientId", String.class);
-	private final String keycloakClientSecret = ConfigProvider.getConfig().getValue("service.externalAuth.clientSecret", String.class);
+//	quarkus.oidc.application-type=hybrid
+//	quarkus.oidc.auth-server-url=http://localhost:32769/realms/oqm
+//	quarkus.oidc.client-id=oqm-app
+//	quarkus.oidc.credentials.secret=**********
+//	quarkus.oidc.logout.path=/logout
+//	quarkus.oidc.logout.post-logout-path=/
+//	quarkus.oidc.token-state-manager.split-tokens=true
 	
 	public TestUserService(){
-		try {
-			this.jwtService = new JwtService(
-				ConfigProvider.getConfig().getValue("mp.jwt.verify.privatekey.location", String.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.expiration.default", Long.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.expiration.extended", Long.class),
-				ConfigProvider.getConfig().getValue("externalService.serviceTokenExpires", Long.class),
-				ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class)
-			);
-		} catch(Exception e) {
-			throw new IllegalStateException("Failed to setup jwt service.", e);
-		}
-		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-			this.userService = new UserService(
-				validatorFactory.getValidator(),
-				ObjectUtils.OBJECT_MAPPER,
-				this.mongoTestConnector.getClient(),
-				this.mongoTestConnector.mongoDatabaseName,
-				this.authMode
-			);
-		}
+	
 	}
 	
 	private static String getRandomPassword() {
@@ -94,15 +78,14 @@ public class TestUserService {
 	
 	private static UserRepresentation userToRepresentation(User testUser) {
 		UserRepresentation rep = new UserRepresentation();
-		
+
 		rep.setEnabled(true);
 		rep.setUsername(testUser.getUsername());
-		rep.setFirstName(testUser.getFirstName());
-		rep.setLastName(testUser.getLastName());
+		rep.setFirstName(testUser.getName().split(" ")[0]);
+		rep.setLastName(testUser.getName().split(" ")[1]);
 		rep.setEmail(testUser.getEmail());
 		rep.setEmailVerified(true);
 		rep.setOrigin("tests");
-		
 		
 		{
 			//            rep.setGroups(testUser.getRoles());
@@ -111,50 +94,28 @@ public class TestUserService {
 				new ArrayList<>(testUser.getRoles())
 			));
 		}
-		
+
 		return rep;
 	}
 	
-	public void persistTestUser(User testUser) {
-		if (SELF.equals(this.authMode)) {
-			this.persistTestUserInternal(testUser);
-		} else if (EXTERNAL.equals(this.authMode)) {
-			this.persistTestUserKeycloak(testUser);
-		}
+	private Keycloak getAdminClient(String realm){
+		return KeycloakBuilder.builder()
+								.serverUrl(this.keycloakUrl)
+								.realm(realm)
+								.grantType(OAuth2Constants.PASSWORD)
+								.clientId("admin-cli")
+								.username(this.keycloakAdminName)
+								.password(this.keycloakAdminPass)
+								.build();
 	}
 	
-	private void persistTestUserInternal(User testUser) {
-//		this.userService.add(testUser, null);
-		
-		this.userService.add(testUser);
-		
-//		try(MongoClient client = this.mongoTestConnector.getClient()){
-//
-//			MongoDatabase db = client.getDatabase(this.mongoTestConnector.mongoDatabaseName);
-//			MongoCollection<User> userCollection = db.getCollection(MongoService.getCollectionName(User.class), User.class);
-//
-//			userCollection.insertOne(testUser);
-//		}
-	}
-	
-	private void persistTestUserKeycloak(User testUser) {
+	private void persistTestUser(User testUser) {
 		try (
-			Keycloak keycloak = KeycloakBuilder.builder()
-											   .serverUrl(
-												   ConfigProvider.getConfig()
-																 .getValue("test.keycloak.authUrl", String.class)
-																 .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
-											   )
-											   .realm("master")
-											   .grantType(OAuth2Constants.PASSWORD)
-											   .clientId("admin-cli")
-											   .username(this.keycloakAdminName)
-											   .password(this.keycloakAdminPass)
-											   .build();
+			Keycloak keycloak = this.getAdminClient("master");
 		) {
-			
+
 			UserRepresentation userRep = userToRepresentation(testUser);
-			
+
 			RealmResource realmResource = keycloak.realm(this.keycloakRealm);
 			ClientRepresentation
 				clientRepresentation =
@@ -166,7 +127,7 @@ public class TestUserService {
 							 .get(0);
 			ClientResource clientResource = realmResource.clients().get(clientRepresentation.getId());
 			UsersResource usersResource = realmResource.users();
-			
+
 			String userId;
 			try (Response response = usersResource.create(userRep);) {
 				log.info("Response from creating test user: {} {}", response.getStatus(), response.getStatusInfo());
@@ -174,112 +135,68 @@ public class TestUserService {
 				testUser.getAttributes().put(TEST_EXTERN_ID_ATT_KEY, userId);
 				log.info("ID of user in keycloak: {}", testUser.getAttributes().get(TEST_EXTERN_ID_ATT_KEY));
 			}
-			
+
 			if (usersResource.search(testUser.getUsername()).size() != 1) {
 				throw new IllegalStateException("Test user cannot be found after creation!");
 			}
 			UserResource testUserResource = usersResource.get(userId);
-			
+			testUser.setIdFromAuthProvider(userId);
+			testUser.setAuthProvider(testUserResource.toRepresentation().getId());
 			{
 				CredentialRepresentation passwordCred = new CredentialRepresentation();
 				passwordCred.setTemporary(false);
 				passwordCred.setType(CredentialRepresentation.PASSWORD);
 				passwordCred.setValue(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY));
-				
+
 				testUserResource.resetPassword(passwordCred);
 			}
 			{
 				//                    UserRepresentation testUserRepresentation = testUserResource.toRepresentation();
 				//                    RoleRepresentation roleRepresentation =;
 				
-				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
+				
+				testUserResource.roles().realmLevel().add(
 					testUser.getRoles().stream().map((String role)->{
-						return clientResource.roles().list().stream()
-											 .filter(element->element.getName().equals(role))
-											 .collect(Collectors.toList())
-											 .get(0);
-					}).collect(Collectors.toList())
+						List<RoleRepresentation> representationList = realmResource.roles().list().stream()
+								   .filter(element->element.getName().equals(role))
+								   .collect(Collectors.toList());
+						
+						if(representationList.isEmpty()){
+							return null;
+						}
+						return representationList.get(0);
+					})
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList())
 				);
+				
+//				testUserResource.roles().clientLevel(clientRepresentation.getId()).add(
+//					testUser.getRoles().stream().map((String role)->{
+//						return clientResource.roles().list().stream()
+//											 .filter(element->element.getName().equals(role))
+//											 .collect(Collectors.toList())
+//											 .get(0);
+//					}).collect(Collectors.toList())
+//				);
 			}
-			
+
 		}
 		
-	}
-	
-	public User getTestUser(boolean admin, boolean persisted) {
-		User.Builder builder = User.builder();
-		
-		builder.username(FAKER.name().username());
-		builder.firstName(FAKER.name().firstName());
-		builder.lastName(FAKER.name().lastName());
-		builder.email(FAKER.internet().emailAddress());
-		builder.title(FAKER.company().profession());
-		builder.disabled(false);
-		builder.roles(new HashSet<>() {{
-			add(Roles.USER);
-			add(Roles.INVENTORY_EDIT);
-			add(Roles.INVENTORY_VIEW);
-			if (admin) {
-				add(Roles.USER_ADMIN);
-				add(Roles.INVENTORY_ADMIN);
-				add(Roles.EXT_SERVICE_ADMIN);
-			}
-		}});
-		
-		String password = getRandomPassword();
-		builder.pwHash(this.passwordService.createPasswordHash(password));
-		
-		User testUser = builder.build();
-		
-		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, password);
-		
-		if (persisted) {
-			this.persistTestUser(testUser);
-		}
-		log.debug("Done creating new user: {} - {} {}", testUser.getUsername(), testUser.getFirstName(), testUser.getLastName());
-		
-		return testUser;
-	}
-	
-	public User getTestUser(boolean admin) {
-		return this.getTestUser(admin, true);
-	}
-	
-	public User getTestUser() {
-		return this.getTestUser(false, false);
-	}
-	
-	public String getTestUserToken(User testUser) {
-		if (SELF.equals(this.authMode)) {
-			return this.getTestUserTokenInternal(testUser);
-		} else if (EXTERNAL.equals(this.authMode)) {
-			return this.getTestUserTokenKeycloak(testUser);
-		}
-		throw new IllegalStateException("Should not get here");
-	}
-	
-	private String getTestUserTokenInternal(User testUser) {
-		return this.jwtService.getUserJwt(testUser, true).getToken();
 	}
 	
 	private String getTestUserTokenKeycloak(User testUser) {
 		try (
 			Keycloak keycloak = KeycloakBuilder.builder()
-											   .serverUrl(
-												   ConfigProvider.getConfig().getValue("test.keycloak.authUrl", String.class)
-												   //														   .replace(HOST_TESTCONTAINERS_INTERNAL, "localhost")
-											   )
-											   .realm(this.keycloakRealm)
-											   .clientId(this.keycloakClientId)
-											   .clientSecret(this.keycloakClientSecret)
-											   .grantType(OAuth2Constants.PASSWORD)
-											   .username(testUser.getUsername())
-											   .password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
-											   .build()
+									.serverUrl(this.keycloakUrl)
+									.realm(this.keycloakRealm)
+									.clientId(this.keycloakClientId)
+									.clientSecret(this.keycloakClientSecret)
+									.grantType(OAuth2Constants.PASSWORD)
+									.username(testUser.getUsername())
+									.password(testUser.getAttributes().get(TEST_PASSWORD_ATT_KEY))
+									.build()
 		) {
-			//				keycloak.realms();
-			
-			//Issuer (iss) claim value (http://localhost:49649/auth/realms/apps) doesn't match expected value of http://host.testcontainers.internal:49649/auth/realms/apps]
+			keycloak.realms();
 			
 			AccessTokenResponse response = keycloak
 											   .tokenManager()
@@ -296,4 +213,38 @@ public class TestUserService {
 		}
 	}
 	
+	public User getTestUser(Set<String> roles) {
+		User.Builder builder = User.builder();
+		
+		builder.username(FAKER.name().username());
+		builder.email(FAKER.internet().emailAddress());
+		builder.name(FAKER.name().fullName());
+		builder.roles(roles);
+		User testUser = builder.build();
+		
+		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
+		
+		this.persistTestUser(testUser);
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserTokenKeycloak(testUser));
+		
+		return testUser;
+	}
+	
+	public User getTestUser(String ... roles) {
+		return this.getTestUser(Set.of(roles));
+	}
+	
+	public User getTestUser(boolean admin) {
+		Set<String> roles = new HashSet<>(Roles.NON_ADMIN_ROLES);
+		
+		if(admin){
+			roles.addAll(Roles.ADMIN_ROLES);
+		}
+		
+		return this.getTestUser(roles);
+	}
+	
+	public User getTestUser(){
+		return this.getTestUser(true);
+	}
 }

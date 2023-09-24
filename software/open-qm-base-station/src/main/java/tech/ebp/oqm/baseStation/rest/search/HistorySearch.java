@@ -1,14 +1,14 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.history.EventType;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.history.EventType;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
-import javax.ws.rs.QueryParam;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;

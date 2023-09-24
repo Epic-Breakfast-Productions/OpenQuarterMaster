@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import tech.ebp.oqm.lib.core.Utils;
-import tech.ebp.oqm.lib.core.rest.ErrorMessage;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
+import tech.ebp.oqm.baseStation.model.Utils;
+import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
+import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;

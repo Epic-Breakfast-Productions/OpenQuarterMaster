@@ -1,14 +1,14 @@
 package tech.ebp.oqm.baseStation.service.mongo.utils.codecs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.inject.Singleton;
 import org.bson.BsonReader;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
-import javax.inject.Singleton;
 import javax.measure.Unit;
 
 
