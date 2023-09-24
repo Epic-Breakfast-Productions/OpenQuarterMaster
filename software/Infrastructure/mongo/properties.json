@@ -1,12 +1,9 @@
 {
 	"packageName":"open+quarter+master-infra-mongodb",
-	"version":"1.0.10",
+	"version":"1.0.11",
 	"description":"MongoDb instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo",
-	"configs": [
-		"# Mongo Config:",
-		"quarkus.mongodb.connection-string=mongodb://host.docker.internal:27017"
-	],
+	"configs": [],
 	"dependencies": {
 		"deb": ""
 	},

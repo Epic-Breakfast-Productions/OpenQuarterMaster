@@ -204,7 +204,8 @@ smallrye:
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     mongodb:
-#      connection-string: mongodb://localhost:27017
+      database: openQuarterMasterDev
+#      connection-string: mongodb://test:test@localhost:27017
     http:
       port: 8080
       ssl-port: 8443
@@ -216,6 +217,7 @@ smallrye:
       client-id: oqm-app
       credentials:
         secret: "**********"
+#      auth-server-url: http://localhost:8115/realms/oqm
     keycloak:
       devservices:
         # Required to export realm
