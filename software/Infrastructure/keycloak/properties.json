@@ -1,6 +1,6 @@
 {
 	"packageName":"open+quarter+master-infra-keycloak",
-	"version":"1.0.1",
+	"version":"1.0.3",
 	"description":"Keycloak instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak",
 	"configs": [

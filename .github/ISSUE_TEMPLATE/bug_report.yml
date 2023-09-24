@@ -23,6 +23,7 @@ body:
         - Station Captain
         - Infra - Mongo
         - Plugins- *
+        - MSS Hardware
         
   - type: textarea
     id: what-happened

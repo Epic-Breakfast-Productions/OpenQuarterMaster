@@ -1,6 +1,6 @@
 #
 # The Main config for Base Station. Do not edit. To adjust configuration, edit:
-# /etc/oqm/serviceConfig/core/base-station/user-config.list
+# /etc/oqm/serviceConfig/core/base+station/user-config.list
 #
 
 # Basic configs
@@ -16,7 +16,8 @@ quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/
 
 
 # Mongo Config:
-quarkus.mongodb.connection-string=mongodb://{infra.mongodb.host}:{infra.mongodb.port}
+quarkus.mongodb.connection-string=mongodb://{core.baseStation.mongodb.user}:{core.baseStation.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
+quarkus.mongodb.database={core.baseStation.mongodb.database}
 
 # Jaeger Config: TODO:: use placeholders
 quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
@@ -27,7 +28,6 @@ quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
 quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
 quarkus.oidc.auth-server-url=http://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
 
-# TODO:: use placeholders
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
 
