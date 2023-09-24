@@ -8,32 +8,47 @@
 Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
-Wants=network-online.target docker.socket
-Requires=docker.socket open\x2bquarter\x2bmaster\x2dinfra\x2dmongodb.service open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
+Wants=network-online.target
+Requires=docker.socket
+Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dmongodb.service
+Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
+# Setup operating variables
+Environment="CONTAINER_NAME=oqm_core_base_station"
+Environment="IMAGE_NAME=ebprod/open-qm-base-station"
+Environment="IMAGE_VERSION=${version}"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/base-station-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/base-station-config.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/user-config.list"
 
 # Ensure previous runs gone
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_core_base_station || echo 'Could not stop base station container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_core_base_station || echo 'Could not remove base station container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+
+ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config -g 'core.baseStation.mongodb.user')\" -p \"$(oqm-config -g 'core.baseStation.mongodb.pass')\" -d \"$(oqm-config -g 'core.baseStation.mongodb.database')\""
+
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/base+station/"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/core/base+station/base-station-config.list > /tmp/oqm/serviceConfig/core/base+station/base-station-config.list"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/core/base+station/user-config.list >> /tmp/oqm/serviceConfig/core/base+station/base-station-config.list"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Pull image as separate task
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull ebprod/open-qm-base-station:${version} || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
-ExecStart=/bin/bash -c "/usr/bin/docker run --name oqm_core_base_station \
+ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
                                         -p 80:80 -p 443:443 \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --add-host host.docker.internal:host-gateway \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
-                                        ebprod/open-qm-base-station:${version}"
+                                        $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
@@ -49,8 +64,8 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done \
                             "
 # Remove from docker
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_core_base_station || echo 'Could not stop base station container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_core_base_station || echo 'Could not remove base station container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
 
 [Install]
 WantedBy=multi-user.target

@@ -2,7 +2,7 @@
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
+#  Postgres tags: https://hub.docker.com/_/postgres/tags
 #
 #  TODO:: figure out better username/password situation
 #  https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
@@ -19,25 +19,43 @@ Requires=docker.socket
 Type=simple
 Restart=always
 TimeoutSec=5m
+Environment="CONTAINER_NAME=oqm_infra_postgres"
+Environment="IMAGE_NAME=postgres"
+Environment="IMAGE_VERSION=15"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/postgres/env.list"
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_postgres || echo 'Could not stop postgres container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_postgres || echo 'Could not remove postgres container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull postgres:15 || echo 'Could not pull postgres image.'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop postgres container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove postgres container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull postgres image.'"
+# setup env list file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/postgres"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"POSTGRES_USER=$(oqm-config -g 'infra.postgres.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"POSTGRES_PASSWORD=$(oqm-config -g 'infra.postgres.adminPass')\n\" >> $ENV_CONFIG_FILE"
 
-# TODO: proper admin creds
 ExecStart=/bin/bash -c "/usr/bin/docker run \
-                                 --name oqm_infra_postgres \
+                                 --name $CONTAINER_NAME \
                                  -p=$(oqm-config -g 'infra.postgres.port'):5432 \
-                                 -e POSTGRES_USER=\"$(oqm-config -g 'infra.postgres.adminUser')\" \
-                                 -e POSTGRES_PASSWORD=\"$(oqm-config -g 'infra.postgres.adminPass')\" \
+                                 --env-file $ENV_CONFIG_FILE \
                                  -v /data/oqm/db/postgres/:/var/lib/postgresql/data/ \
-                                 postgres:15"
-# TODO:: properly determine that postgres is running
-ExecStartPost=/bin/bash -c ""
+                                 $IMAGE_NAME:$IMAGE_VERSION"
+# determine is running
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                sleep 1s; \
+                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1\"; \
+                                if [ \"$?\" = \"0\" ]; then \
+                                    echo \"Postgres container running and available!\"; \
+                                    running=\"true\"; \
+                                fi \
+                            done \
+                            "
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_postgres || echo 'Could not stop postgres container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm_infra_postgres || echo 'Could not remove postgres container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop postgres container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove postgres container'"
 
 [Install]
 WantedBy=multi-user.target

@@ -15,7 +15,7 @@ System Requirements:
 - A Modern Linux OS
   - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems.
 - 4gb of RAM
-- Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8
+- Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8. The CPU should have at least 4 cores.
   - Proven arm boards:
     - Raspberry Pi 4B
 
