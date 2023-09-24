@@ -3,6 +3,8 @@ package tech.ebp.oqm.baseStation.model.object.storage.items;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,8 +28,6 @@ import tech.ebp.oqm.baseStation.model.quantities.QuantitiesUtils;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;

@@ -1,13 +1,12 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.roles;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import tech.ebp.oqm.baseStation.model.validation.annotations.ValidServiceRole;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor

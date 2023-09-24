@@ -1,16 +1,14 @@
 package tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForType;
-
-import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -21,7 +19,11 @@ public class CheckoutForOqmEntity extends CheckoutFor {
 	
 	@NonNull
 	@NotNull
-	private InteractingEntityReference entity;
+	private ObjectId entity;
+	
+	public CheckoutForOqmEntity(InteractingEntity entity){
+		this(entity.getId());
+	}
 	
 	@Override
 	public CheckoutForType getType() {

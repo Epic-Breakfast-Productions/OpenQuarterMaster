@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
+import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
@@ -41,7 +42,7 @@ import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,6 +78,8 @@ class DataImportServiceTest extends RunningServerTest {
 	TestUserService testUserService;
 	
 	@Inject
+	InteractingEntityService interactingEntityService;
+	@Inject
 	CustomUnitService customUnitService;
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -95,7 +98,8 @@ class DataImportServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testImportService() throws IOException {
-		User testUser = testUserService.getTestUser(true, true);
+		User testUser = testUserService.getTestUser(true);
+		this.interactingEntityService.add(testUser);
 		Random rand = new SecureRandom();
 		
 		//TODO:: refactor
@@ -271,7 +275,7 @@ class DataImportServiceTest extends RunningServerTest {
 						.item(checkingOutItem.getId())
 						.checkedOutFrom(checkingOutEntry.getKey())
 						.toCheckout(checkingOutEntry.getValue().getStored())
-						.checkedOutFor(new CheckoutForOqmEntity(testUser.getReference()))
+						.checkedOutFor(new CheckoutForOqmEntity(testUser.getId()))
 						.reason(FAKER.lorem().paragraph())
 						.notes(FAKER.lorem().paragraph())
 						.build(),

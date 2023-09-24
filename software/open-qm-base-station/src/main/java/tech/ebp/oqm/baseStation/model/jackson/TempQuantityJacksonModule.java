@@ -30,7 +30,6 @@
 package tech.ebp.oqm.baseStation.model.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import tech.ebp.oqm.baseStation.model.jackson.QuantityJsonDeserializer;
 
 import javax.measure.Quantity;
 

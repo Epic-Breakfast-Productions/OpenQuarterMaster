@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,6 @@ import tech.ebp.oqm.baseStation.model.validation.annotations.ValidUnit;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

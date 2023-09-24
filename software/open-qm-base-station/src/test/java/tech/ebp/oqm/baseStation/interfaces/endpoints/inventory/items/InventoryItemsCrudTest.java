@@ -19,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
-import tech.ebp.oqm.baseStation.service.JwtService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -35,8 +34,8 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -64,9 +63,6 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	InventoryItemService inventoryItemService;
 	
 	@Inject
-	JwtService jwtService;
-	
-	@Inject
 	TestUserService testUserService;
 	
 	@Inject
@@ -74,7 +70,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	Template itemsCsv;
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()
@@ -92,7 +88,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	}
 	
 	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(updateData))
 										   .when()
@@ -123,7 +119,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@ParameterizedTest
 	@MethodSource("getSimpleAmountItems")
 	public void testCreateSimpleAmountItem(SimpleAmountItem item) throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		
 		ObjectId returned = create(user, item);
 		
@@ -139,7 +135,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateListAmountItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
@@ -155,7 +151,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -173,7 +169,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testUpdateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -186,7 +182,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testAddFromCsv() throws IOException {
-		User user = this.testUserService.getTestUser(false, true);
+		User user = this.testUserService.getTestUser();
 		
 		String csvData = this.itemsCsv.render();
 		
@@ -200,7 +196,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		body.fileName = "test.csv";
 		
 		
-		ValidatableResponse response = setupJwtCall(given(), this.jwtService.getUserJwt(user, false).getToken())
+		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.MULTIPART)
 										   .multiPart("file", csvData)
 										   .multiPart("fileName", "test.csv")

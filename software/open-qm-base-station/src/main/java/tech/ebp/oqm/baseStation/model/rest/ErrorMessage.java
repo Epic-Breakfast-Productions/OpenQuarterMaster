@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.model.rest;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ErrorMessage {
 	
-	@Builder.Default
+	@lombok.Builder.Default
 	private String displayMessage = "Unspecified error.";
 	
 	@JsonTypeInfo(
@@ -25,7 +24,7 @@ public class ErrorMessage {
 		property = "causeType"
 	)
 	
-	@Builder.Default
+	@lombok.Builder.Default
 	private Object cause = null;
 	
 	public ErrorMessage(String errorMessage) {

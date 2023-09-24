@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.checkout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,6 @@ import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkinDetails.Che
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**

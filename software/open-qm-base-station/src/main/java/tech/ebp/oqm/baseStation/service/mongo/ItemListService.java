@@ -4,19 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
-import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.itemList.ItemListActionAddEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemListAction;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.json.JsonObject;
+import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 
 @Slf4j
 @ApplicationScoped

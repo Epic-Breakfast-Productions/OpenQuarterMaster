@@ -1,17 +1,18 @@
 package tech.ebp.oqm.baseStation.model.object.history.events;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.DescriptiveEvent;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 //@SuperBuilder
+@BsonDiscriminator
 public class UpdateEvent extends DescriptiveEvent {
 	
 	public UpdateEvent(ObjectId objectId, InteractingEntity entity) {

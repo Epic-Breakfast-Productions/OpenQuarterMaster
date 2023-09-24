@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.29'
+version '1.0.31'
 
 repositories {
 	mavenCentral()
@@ -20,22 +20,25 @@ dependencies {
 	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
-	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
+//	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
 	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-amqp'
 	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
-	implementation 'io.quarkus:quarkus-mongodb-panache'
+	implementation 'io.quarkus:quarkus-mongodb-client'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
-	implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
 	implementation 'io.quarkus:quarkus-container-image-jib'
 	implementation 'io.quarkus:quarkus-rest-client-reactive'
 	implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
+	implementation 'io.quarkus:quarkus-oidc'
+//	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
+//	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
+
 	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
 	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
@@ -49,7 +52,7 @@ dependencies {
 	implementation 'com.itextpdf:html2pdf:5.0.0'
 
 	//webjars
-	implementation 'org.webjars:jquery:3.6.4'
+	implementation 'org.webjars:jquery:3.7.1'
 	implementation 'org.webjars:bootstrap:5.3.0'
 //	implementation 'org.webjars.npm:bootstrap-icons:1.10.2' //doesn't contain everything needed
 //    implementation 'org.webjars:js-cookie:2.2.1' //out of date
@@ -74,26 +77,25 @@ dependencies {
 
 	implementation 'uk.org.okapibarcode:okapibarcode:0.4.0'
 
-	// TODO:: remove to resolve #344
-	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
-
 	/*
 	Test Dependencies
 	 */
 	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
+	testImplementation 'net.datafaker:datafaker:2.0.1'
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 
-	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
+//	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
-	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
+//	testImplementation 'org.keycloak:keycloak-admin-client:21.1.1'
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.10.0'
+
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.12.1'
 	testImplementation 'org.testcontainers:selenium:1.18.3'
 	testImplementation 'com.deque:axe-selenium:3.0'
-	testImplementation 'net.datafaker:datafaker:2.0.1'
 }
 
 java {
@@ -122,6 +124,7 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
+	testLogging.showStandardStreams = true
 }
 
 /**

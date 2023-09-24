@@ -12,7 +12,7 @@ import tech.ebp.oqm.baseStation.model.Utils;
 import tech.ebp.oqm.baseStation.model.rest.ErrorMessage;
 import tech.ebp.oqm.baseStation.model.rest.auth.user.UserLoginRequest;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;

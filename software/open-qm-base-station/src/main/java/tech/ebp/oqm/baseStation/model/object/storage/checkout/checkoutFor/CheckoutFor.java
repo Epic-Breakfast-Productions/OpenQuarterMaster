@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForExtUser;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
-import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutForType;
 
 @Data
 @NoArgsConstructor

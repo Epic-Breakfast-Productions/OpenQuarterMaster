@@ -1,9 +1,9 @@
 package tech.ebp.oqm.baseStation.model.validation.annotations;
 
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import tech.ebp.oqm.baseStation.model.validation.validators.InteractingEntityReferenceValidator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -19,7 +19,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

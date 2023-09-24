@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
@@ -18,6 +19,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 //@SuperBuilder
+@BsonDiscriminator
 public class UserDisabledEvent extends ObjectHistoryEvent {
 	
 	public UserDisabledEvent(ObjectId objectId, InteractingEntity entity) {

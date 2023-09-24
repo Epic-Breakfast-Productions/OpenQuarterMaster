@@ -2,11 +2,11 @@ package tech.ebp.oqm.baseStation.rest.restCalls.productLookup.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import java.util.concurrent.CompletionStage;
 
 @Path("/v3/products")

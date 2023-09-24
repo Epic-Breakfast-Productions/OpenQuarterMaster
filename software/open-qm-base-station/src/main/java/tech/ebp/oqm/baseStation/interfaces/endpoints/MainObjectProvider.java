@@ -2,30 +2,27 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.baseStation.model.object.MainObject;
-import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
-import javax.validation.Valid;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 /**
@@ -39,38 +36,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
 	
+	@Inject
+	@Location("tags/objView/history/searchResults.html")
 	@Getter
-	private Class<T> objectClass;
-	@Getter
-	private MongoHistoriedObjectService<T, S> objectService;
-	@Getter
-	private InteractingEntityService interactingEntityService;
-	@Getter
-	private JsonWebToken jwt;
-	private InteractingEntity interactingEntityFromJwt = null;
-	@Getter
-	private Template historyRowsTemplate;
+	Template historyRowsTemplate;
 	
-	protected MainObjectProvider(
-		Class<T> objectClass,
-		MongoHistoriedObjectService<T, S> objectService,
-		InteractingEntityService interactingEntityService,
-		JsonWebToken jwt,
-		Template historyRowsTemplate
-	) {
-		this.objectClass = objectClass;
-		this.objectService = objectService;
-		this.interactingEntityService = interactingEntityService;
-		this.jwt = jwt;
-		this.historyRowsTemplate = historyRowsTemplate;
-	}
-	
-	protected InteractingEntity getInteractingEntityFromJwt() {
-		if (this.interactingEntityFromJwt == null) {
-			this.interactingEntityFromJwt = this.getInteractingEntityService().getEntity(this.getJwt());
-		}
-		return this.interactingEntityFromJwt;
-	}
+	public abstract Class<T> getObjectClass();
+	public abstract MongoHistoriedObjectService<T, S> getObjectService();
 	
 	//<editor-fold desc="CRUD operations">
 	
@@ -98,20 +70,18 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
 	public ObjectId create(
-		@Context SecurityContext securityContext,
 		@Valid T object
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
 		ObjectId output;
-		if(
+		if (
 			this.getObjectService().isAllowNullEntityForCreate()
-			&& this.getJwt().getRawToken() == null
-		){
+			&& this.getIdToken().getRawToken() == null
+		) {
 			output = this.getObjectService().add(object, null);
 		} else {
-			output = this.getObjectService().add(object, this.getInteractingEntityFromJwt());
+			output = this.getObjectService().add(object, this.getInteractingEntity());
 		}
 		
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
@@ -120,24 +90,19 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	@WithSpan
 	public List<ObjectId> createBulk(
-		@Context SecurityContext securityContext,
 		@Valid List<T> objects
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntityFromJwt());
+		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
 	
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
-		@Context SecurityContext securityContext,
-//		@BeanParam
+		//		@BeanParam
 		S searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
-		
 		SearchResult<T> searchResult = this.getObjectService().search(searchObject, false);
 		
 		return Tuple2.of(
@@ -175,11 +140,10 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public Response search(
-		@Context SecurityContext securityContext,
-//		@BeanParam
+		//		@BeanParam
 		S searchObject
 	) {
-		return this.getSearchResponseBuilder(securityContext, searchObject).getItem1().build();
+		return this.getSearchResponseBuilder(searchObject).getItem1().build();
 	}
 	
 	//	@Path("{id}")
@@ -216,11 +180,9 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public T get(
-		@Context SecurityContext securityContext,
-//		@PathParam("id")
+		//		@PathParam("id")
 		String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
 		log.info("Retrieving object with id {}", id);
@@ -265,15 +227,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
 	public T update(
-		@Context SecurityContext securityContext,
-//		@PathParam("id")
+		//		@PathParam("id")
 		String id,
 		ObjectNode updates
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
-		T updated = this.getObjectService().update(id, updates, this.getInteractingEntityFromJwt());
+		T updated = this.getObjectService().update(id, updates, this.getInteractingEntity());
 		
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;
@@ -313,13 +273,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
 	public T delete(
-		@Context SecurityContext securityContext,
-//		@PathParam("id")
+		//		@PathParam("id")
 		String id
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
-		T output = this.getObjectService().remove(id, this.getInteractingEntityFromJwt());
+		T output = this.getObjectService().remove(id, this.getInteractingEntity());
 		
 		log.info("{} found, deleted.", output.getClass().getSimpleName());
 		return output;
@@ -328,49 +286,47 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	
 	//<editor-fold desc="History">
 	
-//	@GET
-//	@Path("{id}/history")
-//	@Operation(
-//		summary = "Gets a particular object's history."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Object retrieved.",
-//		content = {
-//			@Content(
-//				mediaType = "application/json",
-//				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-//			),
-//			@Content(
-//				mediaType = "text/html",
-//				schema = @Schema(type = SchemaType.STRING)
-//			)
-//		}
-//	)
-//	@APIResponse(
-//		responseCode = "400",
-//		description = "Bad request given. Data given could not pass validation.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@APIResponse(
-//		responseCode = "404",
-//		description = "No history found for object with that id.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-//	@RolesAllowed(Roles.INVENTORY_VIEW)
+	//	@GET
+	//	@Path("{id}/history")
+	//	@Operation(
+	//		summary = "Gets a particular object's history."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object retrieved.",
+	//		content = {
+	//			@Content(
+	//				mediaType = "application/json",
+	//				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
+	//			),
+	//			@Content(
+	//				mediaType = "text/html",
+	//				schema = @Schema(type = SchemaType.STRING)
+	//			)
+	//		}
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "No history found for object with that id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		//@BeanParam
 		HistorySearch searchObject,
-//		@HeaderParam("accept")
+		//		@HeaderParam("accept")
 		String acceptHeaderVal,
-//		@HeaderParam("searchFormId")
+		//		@HeaderParam("searchFormId")
 		String searchFormId
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
@@ -386,13 +342,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 			case MediaType.TEXT_HTML:
 				log.debug("Requestor wanted html.");
 				rb = rb.entity(
-						   this.getHistoryRowsTemplate()
-							   .data("searchFormId", searchFormId)
-							   .data("searchResults", searchResult)
-							   .data("interactingEntityService", this.getInteractingEntityService())
-							   .data("pagingCalculations", new PagingCalculations(searchResult))
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
+						this.getHistoryRowsTemplate()
+							.data("searchFormId", searchFormId)
+							.data("searchResults", searchResult)
+							.data("interactingEntityService", this.getInteractingEntityService())
+							.data("pagingCalculations", new PagingCalculations(searchResult))
+					)
+						 .type(MediaType.TEXT_HTML_TYPE);
 				break;
 			case MediaType.APPLICATION_JSON:
 			default:
@@ -427,12 +383,9 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		//@Context
-		SecurityContext securityContext,
 		//@BeanParam
 		HistorySearch searchObject
 	) {
-		logRequestContext(this.getJwt(), securityContext);
 		log.info("Searching for objects with: {}", searchObject);
 		
 		return this.getObjectService().searchHistory(searchObject, false);

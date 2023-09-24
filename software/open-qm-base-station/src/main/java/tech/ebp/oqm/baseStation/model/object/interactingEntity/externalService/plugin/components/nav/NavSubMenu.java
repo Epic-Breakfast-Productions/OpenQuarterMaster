@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,10 +11,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.Plugin;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.PluginType;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.externalService.plugin.components.nav.NavItem;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

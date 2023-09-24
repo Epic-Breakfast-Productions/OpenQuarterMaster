@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.units;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,10 +10,6 @@ import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
-import tech.ebp.oqm.baseStation.model.units.UnitCategory;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.rest.storage.itemCheckout;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,6 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Data
