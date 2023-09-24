@@ -36,11 +36,11 @@ ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> $ENV_CONFIG_FILE"
-#ExecStartPre=/bin/bash -c "printf \"Test! MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\""
+#ExecStartPre=/bin/bash -c "printf printf \"%s\n\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\""
 ExecStartPre=/bin/bash -c "mkdir -p /data/oqm/db/mongo/"
 ExecStartPre=/bin/bash -c "touch /data/oqm/db/mongo/keyfile"
 ExecStartPre=/bin/bash -c "chmod 600 /data/oqm/db/mongo/keyfile"
-ExecStartPre=/bin/bash -c "printf \"%s\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\" > /data/oqm/db/mongo/keyfile"
+ExecStartPre=/bin/bash -c "printf \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\" > /data/oqm/db/mongo/keyfile"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
