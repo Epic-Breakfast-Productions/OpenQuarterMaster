@@ -11,6 +11,7 @@ import json
 from json import JSONDecodeError
 import os
 import sys
+import collections.abc
 
 CONFIG_MNGR_CONFIGS_DIR = "/etc/oqm/config"
 CONFIG_MNGR_MAIN_CONFIG_FILE = CONFIG_MNGR_CONFIGS_DIR + "/mainConfig.json"
@@ -22,14 +23,27 @@ SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
 SECRET_MNGR_SECRET_PW_HASH_LEN = 32
 SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
 SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
+
 SECRET_MNGR_SECRETS_FILE = CONFIG_MNGR_CONFIGS_DIR + "/secrets.json"
 SECRET_MNGR_SECRETS_SECRET_FILE = CONFIG_MNGR_CONFIGS_DIR + "/.secretSecret.dat"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
 class SecretManager:
+    """
+    References:
+        - https://www.geeksforgeeks.org/how-to-encrypt-and-decrypt-strings-in-python/#
+        - https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
+        - https://docs.python.org/3/library/secrets.html
+    """
 
-    def __init__(self):
+    def __init__(
+            self,
+            secretsFile: str = SECRET_MNGR_SECRETS_FILE,
+            secretSecretFile: str = SECRET_MNGR_SECRETS_SECRET_FILE,
+    ):
+        self.secretsFile = secretsFile
+        self.secretSecretFile = secretSecretFile
         # ensure secrets file exists
         try:
             os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
@@ -60,7 +74,7 @@ class SecretManager:
         ))
 
     def getSecretVal(self, key: str, generateIfNone: bool = True) -> str:
-        secretsDict = ConfigManager.readFile(SECRET_MNGR_SECRETS_FILE)
+        secretsDict = ConfigManager.readFile(self.secretsFile)
         output = SECRET_MNGR_SECRET_PLACEHOLDER
         if key in secretsDict.keys():
             output = secretsDict[key]
@@ -70,7 +84,7 @@ class SecretManager:
             secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8')).decode('utf-8')
             jsonData = json.dumps(secretsDict, indent=4)
             try:
-                with open(SECRET_MNGR_SECRETS_FILE, 'w') as stream:
+                with open(self.secretsFile, 'w') as stream:
                     stream.write(jsonData)
             except OSError as e:
                 # TODO:: throw exception
@@ -109,8 +123,7 @@ class SecretManager:
     def newSecret():
         return secrets.token_urlsafe(24)
 
-    @staticmethod
-    def getSecretPassword() -> bytes:
+    def getSecretPassword(self) -> bytes:
         """
         Ideas:
 
@@ -120,10 +133,10 @@ class SecretManager:
         :exception: Exception - when happens
         :return: the ting
         """
-        secretFilePath = Path(SECRET_MNGR_SECRETS_SECRET_FILE)
+        secretFilePath = Path(self.secretSecretFile)
         try:
             if not secretFilePath.exists():
-                with open(SECRET_MNGR_SECRETS_SECRET_FILE, 'x') as stream:
+                with open(self.secretSecretFile, 'x') as stream:
                     stream.write(secrets.token_hex(64))
                     stream.write(str(uuid.uuid4()))
                     stream.write(str(datetime.datetime.now()))
@@ -136,7 +149,7 @@ class SecretManager:
                   file=sys.stderr)
             exit(1)
 
-        with open(SECRET_MNGR_SECRETS_SECRET_FILE, 'r') as stream:
+        with open(self.secretSecretFile, 'r') as stream:
             return bytes(stream.read(), 'utf-8')
 
     @staticmethod
@@ -193,18 +206,27 @@ class ConfigKeyNotFoundException(Exception):
 
 
 class ConfigManager:
-    secretManager = SecretManager()
     configData = {}
 
-    def __init__(self):
+    def __init__(
+            self,
+            secretManager: SecretManager = None,
+            mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
+            additionalConfigsDir: str = CONFIG_MNGR_ADD_CONFIG_DIR
+    ):
+        self.secretManager = secretManager
+        self.additionalConfigsDir = additionalConfigsDir
+        self.mainConfigFile = mainConfigFile
         # Ensure main config, additional configs dir exist
         try:
-            os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
-            if not os.path.isfile(CONFIG_MNGR_MAIN_CONFIG_FILE):
-                with open(CONFIG_MNGR_MAIN_CONFIG_FILE, 'x') as stream:
+            os.makedirs(self.additionalConfigsDir, exist_ok=True)
+            if not os.path.isfile(self.mainConfigFile):
+                with open(self.mainConfigFile, 'x') as stream:
                     # TODO:: move this default template to another file?
                     stream.write('''
 {
+    "system": {
+    },
     "captain": {
     },
     "snapshots": {
@@ -223,13 +245,19 @@ class ConfigManager:
             )
             exit(1)
         # Read in configuration
-        self.configData = self.readFile(CONFIG_MNGR_MAIN_CONFIG_FILE)
-        for file in os.listdir(CONFIG_MNGR_ADD_CONFIG_DIR):
+        self.configData = self.readFile(self.mainConfigFile)
+        for file in os.listdir(self.additionalConfigsDir):
             if file.endswith(".json"):
-                curUpdates = self.readFile(CONFIG_MNGR_ADD_CONFIG_DIR + "/" + file)
-                self.configData.update(curUpdates)
+                curUpdates = self.readFile(self.additionalConfigsDir + "/" + file)
+                self.configData = ConfigManager.mergeDicts(self.configData, curUpdates)
             else:
                 continue
+
+    def getSecretManager(self) -> SecretManager:
+        if self.secretManager is None:
+            # print("DEBUG:: getting new secret manager")
+            self.secretManager = SecretManager()
+        return self.secretManager
 
     def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, formatData) -> str:
         """
@@ -253,12 +281,12 @@ class ConfigManager:
             if curConfig not in data:
                 raise ConfigKeyNotFoundException()
 
-            return ConfigManager.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
+            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
         if configKey not in data:
             raise ConfigKeyNotFoundException()
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
-            result = self.secretManager.updateSecrets(configKeyOrig, result)
+            result = self.getSecretManager().updateSecrets(configKeyOrig, result)
             if not isinstance(result, str):
                 if formatData:
                     result = json.dumps(result, indent=4)
@@ -304,14 +332,17 @@ class ConfigManager:
     def setConfigValInFile(
             configKeyToSet: str,
             configValToSet: str,
-            configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE
+            configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
+            mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
+            additionalConfigDir: str = CONFIG_MNGR_ADD_CONFIG_DIR,
+            defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
     ) -> str:
         if configFile == ".":
-            configFile = CONFIG_MNGR_MAIN_CONFIG_FILE
+            configFile = mainConfigFile
         elif configFile == "":
-            configFile = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE
+            configFile = defaultAddendumFile
         else:
-            configFile = CONFIG_MNGR_ADD_CONFIG_DIR + "/" + configFile
+            configFile = additionalConfigDir + "/" + configFile
 
         try:
             if not os.path.isfile(configFile):
@@ -365,3 +396,18 @@ class ConfigManager:
             # TODO:: just throw error
             print("Error: failed to read file " + file + " into configuration: ", e, file=sys.stderr)
             exit(1)
+
+    @staticmethod
+    def mergeDicts(d, u):
+        """
+        https://stackoverflow.com/a/3233356/3015723
+        :param d:
+        :param u:
+        :return:
+        """
+        for k, v in u.items():
+            if isinstance(v, collections.abc.Mapping):
+                d[k] = ConfigManager.mergeDicts(d.get(k, {}), v)
+            else:
+                d[k] = v
+        return d

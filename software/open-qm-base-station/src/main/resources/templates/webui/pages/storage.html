@@ -491,8 +491,8 @@ function setupAddEditForEdit(blockId){
     	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
             addEditLabelInput.val(data.label);
-            addEditNicknameInput.text(data.nickname)
-            addEditDescriptionInput.text(data.description)
+            addEditNicknameInput.val(data.nickname);
+            addEditDescriptionInput.text(data.description);
             addEditLocationInput.val(data.location);
             Dselect.setValues(addEditCategoriesInput, data.storedCategories);
             if(data.parent){
