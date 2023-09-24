@@ -36,3 +36,7 @@ Users create a custom workflow for items to come into and work through, and fini
    - teams
  - Relay messages from AMQ
  - Custom messages based on type
+
+## Compliance Enforcing plugin
+
+ - Plugin to ensure system is up to some spec (fips, hepa, etc)
