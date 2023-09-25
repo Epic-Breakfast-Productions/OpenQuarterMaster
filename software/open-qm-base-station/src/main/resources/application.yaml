@@ -172,6 +172,7 @@ quarkus:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   
+# TODO:: can probably remove
 mp:
   jwt:
     verify:
