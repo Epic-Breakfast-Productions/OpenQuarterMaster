@@ -59,7 +59,7 @@ dependencies {
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1' //matched to quarkus version
 
-	implementation 'org.passay:passay:1.6.3'
+	implementation 'org.passay:passay:1.6.4'
 	implementation 'commons-io:commons-io:2.13.0'
 	implementation 'commons-codec:commons-codec:1.16.0'
 	implementation 'org.apache.tika:tika-core:2.8.0'
