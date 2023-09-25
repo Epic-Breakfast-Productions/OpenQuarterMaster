@@ -34,3 +34,13 @@ Steps:
     - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
 
 For usage documentation, see the [User Guide](User%20Guide.adoc)
+
+Or, IF YOU DARE:
+
+Run the following commands:
+
+- `curl -s --compressed "https://deployment.openquartermaster.com/deb-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null`
+- `sudo curl -s --compressed -o /etc/apt/sources.list.d/oqm_file.list "https://deployment.openquartermaster.com/deb-ppa/deb_list_file.list"`
+- `sudo apt update && sudo apt install oqm-captain`
+
+
