@@ -247,28 +247,6 @@
 						</div>
 					</div>
 				</div>
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 			</div>
 			<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 				<h1>
@@ -285,12 +263,16 @@
 				{#else}
 					<div class="accordion" id="moduleAccordion">
 					{#for curModuleId in moduleMaster.getModuleIds()}
-						{#let curModuleInfo = moduleMaster.getModuleInfo(curModuleId)}
+						{#let curModuleInfo = moduleMaster.getModuleInfo(curModuleId) curModule = moduleMaster.getModule(curModuleId)}
 							<div class="accordion-item">
 								<h2 class="accordion-header">
 									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
 										data-bs-target="#moduleAccordion-{curModuleInfo.getSerialId()}"
 										aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getSerialId()}">
+										{#if curModule.getInterfaceType() == 'serialOverUSB' }
+											<i class="bi bi-usb-symbol">&nbsp;</i>
+										{/if}
+										
 										{curModuleInfo.getSerialId()}
 									</button>
 								</h2>
@@ -310,6 +292,12 @@
 											<dt class="col-sm-3 col-md-2"># Blocks:</dt>
 											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getNumBlocks()}</dd>
 											
+											<dt class="col-sm-3 col-md-2">Interface:</dt>
+											<dd class="col-sm-9 col-md-10 user-select-all">
+												{#if curModule.getInterfaceType() == 'serialOverUSB' }
+													<i class="bi bi-usb-symbol">&nbsp;</i> Serial over USB
+												{/if}
+											</dd>
 										</dl>
 										<div class="row">
 											<div class="col">

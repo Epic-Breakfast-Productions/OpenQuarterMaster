@@ -21,6 +21,8 @@ import java.util.Set;
 
 public abstract class MssModule {
 	
+	public abstract String getInterfaceType();
+	
 	@Getter(AccessLevel.PROTECTED)
 	private final ObjectMapper objectMapper;
 	@Getter
