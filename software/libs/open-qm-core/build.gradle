@@ -62,7 +62,7 @@ dependencies {
 	implementation 'org.passay:passay:1.6.3'
 	implementation 'commons-io:commons-io:2.13.0'
 	implementation 'commons-codec:commons-codec:1.16.0'
-	implementation 'org.apache.tika:tika-core:2.8.0'
+	implementation 'org.apache.tika:tika-core:2.9.0'
 //	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20220608.1'//https://search.maven.org/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
 
 	testImplementation 'org.hibernate:hibernate-validator:6.0.11.Final'
