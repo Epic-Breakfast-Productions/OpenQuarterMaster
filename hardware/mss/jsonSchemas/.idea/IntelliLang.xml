@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="LanguageInjectionConfiguration">
+    <injection language="junit-tag" injector-id="java">
+      <display-name>JUnit Tag (org.junit)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("value").definedInClass("org.junit.jupiter.api.Tag")]]></place>
+      <place><![CDATA[psiMethod().withName("value").definedInClass("org.junit.platform.suite.api.ExcludeTags")]]></place>
+      <place><![CDATA[psiMethod().withName("value").definedInClass("org.junit.platform.suite.api.IncludeTags")]]></place>
+    </injection>
+    <injection language="JQuery-CSS" injector-id="java">
+      <display-name>Selenium CSS (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("ancestor").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("byCssSelector").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("closest").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("dragAndDropTo").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("element").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("element").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("elements").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("findAll").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("org.openqa.selenium.WebElement", "java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("org.openqa.selenium.WebElement", "java.lang.String", "int").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$$").withParameters("org.openqa.selenium.WebElement", "java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("cssSelector").definedInClass("com.codeborne.selenide.selector.ByShadow"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("shadowCss").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+    </injection>
+    <injection language="CSS" injector-id="java">
+      <display-name>Selenium CSS (com.epam.jdi.light)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("css").withParameters().definedInClass("com.epam.jdi.light.elements.pageobjects.annotations.FindBy")]]></place>
+      <place><![CDATA[psiMethod().withName("value").withParameters().definedInClass("com.epam.jdi.light.elements.pageobjects.annotations.locators.Css")]]></place>
+    </injection>
+    <injection language="CSS" injector-id="java">
+      <display-name>Selenium CSS (geb)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$").withParameters("java.lang.String", "int").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find").withParameters("java.lang.String", "int").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "has", "filter", "not", "hasNot", "add", "next", "nextAll", "nextUntil", "previous", "prevAll", "prevUntil", "parent", "parents", "parentsUntil", "closest", "children", "siblings").withParameters("java.lang.String").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.Module"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.Page"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.content.NavigableSupport"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.navigator.Locator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("$", "find", "has", "filter", "not", "hasNot", "next", "nextAll", "nextUntil", "previous", "prevAll", "prevUntil", "parent", "parents", "parentsUntil", "closest", "children", "siblings").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.navigator.Navigator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("find").withParameters("java.util.Map", "java.lang.String").definedInClass("geb.navigator.BasicLocator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("find").withParameters("java.util.Map", "java.lang.String", "groovy.lang.Range").definedInClass("geb.navigator.BasicLocator"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("find").withParameters("java.util.Map", "java.lang.String", "int").definedInClass("geb.navigator.BasicLocator"))]]></place>
+    </injection>
+    <injection language="CSS" injector-id="java">
+      <display-name>Selenium CSS (org.fluentlenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "$", "el").withParameters("java.lang.String", "org.fluentlenium.core.search.SearchFilter...").definedInClass("org.fluentlenium.core.FluentControlImpl"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "$", "el").withParameters("java.lang.String", "org.fluentlenium.core.search.SearchFilter...").definedInClass("org.fluentlenium.core.domain.FluentList"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "$", "el").withParameters("java.lang.String", "org.fluentlenium.core.search.SearchFilter...").definedInClass("org.fluentlenium.core.domain.FluentWebElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "$", "el").withParameters("java.lang.String", "org.fluentlenium.core.search.SearchFilter...").definedInClass("org.fluentlenium.core.inject.ContainerFluentControl"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("find", "$", "el").withParameters("java.lang.String", "org.fluentlenium.core.search.SearchFilter...").definedInClass("org.fluentlenium.core.search.SearchControl"))]]></place>
+    </injection>
+    <injection language="CSS" injector-id="java">
+      <display-name>Selenium CSS (org.openqa.selenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("css").withParameters().definedInClass("org.openqa.selenium.support.FindBy")]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("cssSelector").withParameters("java.lang.String").definedInClass("org.openqa.selenium.By"))]]></place>
+    </injection>
+    <injection language="selenium-class" injector-id="java">
+      <display-name>Selenium CSS Class (com.epam.jdi.light)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("className").withParameters().definedInClass("com.epam.jdi.light.elements.pageobjects.annotations.FindBy")]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("hasClass").definedInClass("com.epam.jdi.light.asserts.generic.UIAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("hasClass").withParameters("java.lang.String").definedInClass("com.epam.jdi.light.elements.interfaces.base.ICoreElement"))]]></place>
+    </injection>
+    <injection language="selenium-class" injector-id="java">
+      <display-name>Selenium CSS Class List (com.epam.jdi.light)</display-name>
+      <value-pattern>([^\s]+)</value-pattern>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("hasClass").definedInClass("com.epam.jdi.light.asserts.generic.CommonAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("hasClass", "cssClass").withParameters("java.lang.String").definedInClass("com.epam.jdi.light.asserts.core.IsAssert"))]]></place>
+    </injection>
+    <injection language="selenium-css-property" injector-id="java">
+      <display-name>Selenium CSS Property (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("cssValue").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("pseudo").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("pseudo").withParameters("java.lang.String", "java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+    </injection>
+    <injection language="selenium-css-property" injector-id="java">
+      <display-name>Selenium CSS Property (com.epam.jdi.light)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("css").definedInClass("com.epam.jdi.light.asserts.core.IsAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("css").definedInClass("com.epam.jdi.light.asserts.generic.CommonAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("css").definedInClass("com.epam.jdi.light.asserts.generic.UIAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("css").withParameters("java.lang.String").definedInClass("com.epam.jdi.light.elements.common.UIElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("css").withParameters("java.lang.String").definedInClass("com.epam.jdi.light.elements.interfaces.base.ICoreElement"))]]></place>
+    </injection>
+    <injection language="selenium-class" injector-id="java">
+      <display-name>Selenium Element Class (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("byClassName").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("cssClass").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+    </injection>
+    <injection language="selenium-id" injector-id="java">
+      <display-name>Selenium Element ID (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("byId").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("id").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+    </injection>
+    <injection language="selenium-name" injector-id="java">
+      <display-name>Selenium Element Name (com.haulmont.masquerade)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("path").withParameters().definedInClass("com.haulmont.masquerade.Wire")]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("getTab").definedInClass("com.haulmont.masquerade.components.TabSheet"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("trigger").definedInClass("com.haulmont.masquerade.components.PopupButton.PopupContent"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("$c").withParameters("java.lang.Class", "java.lang.String...").definedInClass("com.haulmont.masquerade.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("$c").withParameters("java.lang.String").definedInClass("com.haulmont.masquerade.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("$c").withParameters("java.lang.String...").definedInClass("com.haulmont.masquerade.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("Menu").withParameters("java.lang.Class", "java.lang.String...").definedInClass("com.haulmont.masquerade.components.AppMenu.Menu"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("byPath", "byCubaId").definedInClass("com.haulmont.masquerade.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("child").withParameters("java.lang.Class", "java.lang.String...").definedInClass("com.haulmont.masquerade.components.Container"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(psiMethod().withName("openItem").definedInClass("com.haulmont.masquerade.components.AppMenu"))]]></place>
+    </injection>
+    <injection language="selenium-html-attribute" injector-id="java">
+      <display-name>Selenium HTML Attribute (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attr").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attribute").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attribute").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attributeMatching").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Condition"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("by").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("byAttribute").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+    </injection>
+    <injection language="selenium-html-attribute" injector-id="java">
+      <display-name>Selenium HTML Attribute (com.epam.jdi.light)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attr").definedInClass("com.epam.jdi.light.asserts.core.IsAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attr", "hasAttribute").definedInClass("com.epam.jdi.light.asserts.generic.CommonAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attr", "hasAttribute").definedInClass("com.epam.jdi.light.asserts.generic.UIAssert"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("attr", "setAttribute").definedInClass("com.epam.jdi.light.elements.common.UIElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("hasAttribute", "attr").withParameters("java.lang.String").definedInClass("com.epam.jdi.light.elements.interfaces.base.ICoreElement"))]]></place>
+    </injection>
+    <injection language="selenium-html-attribute-value" injector-id="java">
+      <display-name>Selenium HTML Attribute Value (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("by").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(1, psiMethod().withName("byAttribute").withParameters("java.lang.String", "java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+    </injection>
+    <injection language="selenium-html-tag" injector-id="java">
+      <display-name>Selenium HTML Tag (org.openqa.selenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("tagName").withParameters().definedInClass("org.openqa.selenium.support.FindBy")]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("tagName").withParameters("java.lang.String").definedInClass("org.openqa.selenium.By"))]]></place>
+    </injection>
+    <injection language="JavaScript" injector-id="java">
+      <display-name>Selenium JavaScript (org.fluentlenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeScript", "executeAsyncScript").definedInClass("org.fluentlenium.core.FluentControlImpl"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeScript", "executeAsyncScript").definedInClass("org.fluentlenium.core.FluentDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeScript", "executeAsyncScript").definedInClass("org.fluentlenium.core.domain.FluentWebElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeScript", "executeAsyncScript").definedInClass("org.fluentlenium.core.script.JavascriptControl"))]]></place>
+    </injection>
+    <injection language="JavaScript" injector-id="java">
+      <display-name>Selenium JavaScript (org.openqa.selenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeAsyncScript").definedInClass("org.openqa.selenium.JavascriptExecutor"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("executeScript").definedInClass("org.openqa.selenium.JavascriptExecutor"))]]></place>
+    </injection>
+    <injection language="XPath" injector-id="java">
+      <display-name>Selenium XPath (com.codeborne.selenide)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideDriver"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$x").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$x").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.Selenide"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("$x").withParameters("java.lang.String", "int").definedInClass("com.codeborne.selenide.SelenideElement"))]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("byXpath").withParameters("java.lang.String").definedInClass("com.codeborne.selenide.Selectors"))]]></place>
+    </injection>
+    <injection language="XPath" injector-id="java">
+      <display-name>Selenium XPath (io.appium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.AndroidBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.AndroidFindBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.WindowsBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.WindowsFindBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.iOSBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.iOSXCUITBy")]]></place>
+      <place><![CDATA[psiMethod().withName("xpath").definedInClass("io.appium.java_client.pagefactory.iOSXCUITFindBy")]]></place>
+    </injection>
+    <injection language="XPath" injector-id="java">
+      <display-name>Selenium XPath (org.openqa.selenium)</display-name>
+      <single-file value="true" />
+      <place><![CDATA[psiMethod().withName("xpath").withParameters().definedInClass("org.openqa.selenium.support.FindBy")]]></place>
+      <place><![CDATA[psiParameter().ofMethod(0, psiMethod().withName("xpath").withParameters("java.lang.String").definedInClass("org.openqa.selenium.By"))]]></place>
+    </injection>
+  </component>
+</project>

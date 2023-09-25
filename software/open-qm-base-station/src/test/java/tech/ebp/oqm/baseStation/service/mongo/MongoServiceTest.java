@@ -12,7 +12,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
+import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.testResources.data.TestMainObject;
+import tech.ebp.oqm.baseStation.testResources.data.TestMainObjectSearch;
 import tech.ebp.oqm.baseStation.testResources.data.TestMongoService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
@@ -20,6 +22,7 @@ import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 
 import jakarta.inject.Inject;
 import jakarta.validation.ValidationException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +103,72 @@ class MongoServiceTest extends RunningServerTest {
 			assertEquals("" + i, result.get(0).getTestField());
 		}
 	}
+	
+	@Test
+	public void testSearchSingleAtt() {
+		for (int i = 4; i >= 0; i--) {
+			this.testMongoService.add(
+				(TestMainObject) new TestMainObject()
+									 .setTestField("" + i)
+									 .setAttributes(Map.of("key", "" + i))
+									 .setKeywords(List.of("" + i))
+			);
+		}
+		//test single attribute
+		SearchResult<TestMainObject> result = this.testMongoService.search(
+			(TestMainObjectSearch) new TestMainObjectSearch()
+									   .setAttributeKeys(List.of("key"))
+									   .setAttributeValues(List.of("" + 3))
+			,
+			true
+		);
+		assertEquals(1, result.getNumResultsForEntireQuery());
+		assertEquals("" + 3, result.getResults().get(0).getTestField());
+	}
+	
+	@Test
+	public void testSearchKeyword() {
+		for (int i = 4; i >= 0; i--) {
+			this.testMongoService.add(
+				(TestMainObject) new TestMainObject()
+									 .setTestField("" + i)
+									 .setAttributes(Map.of("key", "" + i))
+									 .setKeywords(List.of("" + i))
+			);
+		}
+		
+		SearchResult<TestMainObject> result = this.testMongoService.search(
+			(TestMainObjectSearch) new TestMainObjectSearch()
+									   .setKeywords(List.of("" + 3))
+			,
+			true
+		);
+		assertEquals(1, result.getNumResultsForEntireQuery());
+		assertEquals("" + 3, result.getResults().get(0).getTestField());
+	}
+	
+	@Test
+	public void testSearchSingleAttSingleKeyword() {
+		for (int i = 4; i >= 0; i--) {
+			this.testMongoService.add(
+				(TestMainObject) new TestMainObject()
+									 .setTestField("" + i)
+									 .setAttributes(Map.of("key", "" + i))
+									 .setKeywords(List.of("" + i))
+			);
+		}
+		//test single attribute
+		SearchResult<TestMainObject> result = this.testMongoService.search(
+			(TestMainObjectSearch) new TestMainObjectSearch()
+									   .setAttributeKeys(List.of("key"))
+									   .setAttributeValues(List.of("" + 3))
+									   .setKeywords(List.of("" + 3))
+			,
+			true
+		);
+		assertEquals(1, result.getNumResultsForEntireQuery());
+		assertEquals("" + 3, result.getResults().get(0).getTestField());
+	}
 	// </editor-fold>
 	
 	// <editor-fold desc="Adding">
@@ -131,7 +200,7 @@ class MongoServiceTest extends RunningServerTest {
 	public void testAddBulk() {
 		List<TestMainObject> originals = new ArrayList<>();
 		
-		for(int i = 1; i <= 5; i++){
+		for (int i = 1; i <= 5; i++) {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
@@ -139,7 +208,7 @@ class MongoServiceTest extends RunningServerTest {
 		
 		assertEquals(originals.size(), this.testMongoService.count());
 		
-		for(TestMainObject original : originals) {
+		for (TestMainObject original : originals) {
 			assertNotNull(original.getId());
 			
 			assertTrue(returned.contains(original.getId()));
@@ -154,7 +223,7 @@ class MongoServiceTest extends RunningServerTest {
 	public void testAddBulkError() {
 		List<TestMainObject> originals = new ArrayList<>();
 		
-		for(int i = 1; i <= 5; i++){
+		for (int i = 1; i <= 5; i++) {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		originals.add(new TestMainObject());
@@ -171,7 +240,7 @@ class MongoServiceTest extends RunningServerTest {
 		List<TestMainObject> originals = new ArrayList<>();
 		
 		originals.add(new TestMainObject());
-		for(int i = 1; i <= 5; i++){
+		for (int i = 1; i <= 5; i++) {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
@@ -409,6 +478,7 @@ class MongoServiceTest extends RunningServerTest {
 		
 		assertEquals(15L, this.testMongoService.getSumOfIntField("intValue"));
 	}
+	
 	@Test
 	public void testSumIntFieldIntegerLarge() {
 		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
@@ -416,7 +486,7 @@ class MongoServiceTest extends RunningServerTest {
 		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
 		
 		assertEquals(
-			(long)Integer.MAX_VALUE * 3L,
+			(long) Integer.MAX_VALUE * 3L,
 			this.testMongoService.getSumOfIntField("intValue")
 		);
 	}
@@ -428,7 +498,7 @@ class MongoServiceTest extends RunningServerTest {
 		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
 		
 		assertEquals(
-			(long)Integer.MAX_VALUE * 3L,
+			(long) Integer.MAX_VALUE * 3L,
 			this.testMongoService.getSumOfIntField("longValue")
 		);
 	}
