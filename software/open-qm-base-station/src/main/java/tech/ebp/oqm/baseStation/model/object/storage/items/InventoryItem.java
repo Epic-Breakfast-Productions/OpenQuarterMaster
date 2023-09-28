@@ -20,6 +20,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEve
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
@@ -35,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -398,6 +400,61 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
+	 * Gets a stream of all stored items held
+	 *
+	 * @return a stream of all stored items held
+	 */
+	public Stream<S> storedStream() {
+		return this.storageMap.values().stream().flatMap(StoredWrapper::storedStream);
+	}
+	
+	/**
+	 * Gets a stream of all stored items held in the given storage block.
+	 *
+	 * If this item does not store anything at the given block, an empty stream is returned.
+	 *
+	 * @param storageId The id of the block to get the stored objects for
+	 * @return
+	 */
+	public Stream<S> storedStream(ObjectId storageId) {
+		W wrapperGotten = this.getStoredWrapperForStorage(storageId, false);
+		
+		if(wrapperGotten == null){
+			return Stream.of();
+		}
+		
+		return wrapperGotten.storedStream();
+	}
+	
+	/**
+	 * Gets a stored object with the particular id.
+	 * @param storedId The id of the stored object to get
+	 * @throws StoredNotFoundException If a stored object with the given id did not exist
+	 * @return
+	 */
+	public S getStoredWithId(UUID storedId) throws StoredNotFoundException {
+		return this.storedStream()
+				   .filter((S stored)->stored.getStoredId().equals(storedId))
+				   .findFirst()
+				   .orElseThrow(()->new StoredNotFoundException("No stored found with id " + storedId + " in item " + this.getId()));
+	}
+	
+	/**
+	 * Gets a stored object with the particular id in the given storage block.
+	 * @param storageId The id of the storage block to pull the stored object from
+	 * @param storedId The id of the stored object to get
+	 * @throws StoredNotFoundException If a stored object with the given id did not exist
+	 * @return
+	 */
+	public S getStoredWithId(ObjectId storageId, UUID storedId) throws StoredNotFoundException {
+		return this.storedStream(storageId)
+				   .filter((S stored)->stored.getStoredId().equals(storedId))
+				   .findFirst()
+				   .orElseThrow(()->new StoredNotFoundException("No stored found with id " + storedId + " in item " + this.getId() + " Stored in block " + storageId));
+	}
+	
+	
+	/**
 	 * Adds a stored to the set held at the storage block id given.
 	 * <p>
 	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
@@ -417,6 +474,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NoStorageBlockException If no storage held at storage block, and addStorageBlockIdIfNone is false
 	 */
+	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
@@ -436,6 +494,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 *
 	 * @return This object
 	 */
+	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd) {
 		return this.add(storageId, toAdd, true);
 	}
@@ -459,6 +518,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract, or if the stored object does not exist
 	 */
+	@Deprecated(forRemoval = true)
 	public S subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
@@ -482,19 +542,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException
 	 */
+	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S toTransfer) throws NotEnoughStoredException {
 		this.subtract(storageIdFrom, toTransfer);
 		this.add(storageIdTo, toTransfer);
 		
 		return this;
-	}
-	
-	/**
-	 * Gets a stream of all stored items held
-	 *
-	 * @return a stream of all stored items held
-	 */
-	public Stream<S> storedStream() {
-		return this.storageMap.values().stream().flatMap(StoredWrapper::storedStream);
 	}
 }
