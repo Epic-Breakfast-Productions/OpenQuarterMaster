@@ -22,8 +22,6 @@ in the [unitTests](unitTests) folder.
 
 ## TODO::
 
- - make python ui to interact with script
-
 ## dev Notes
 
 https://www.redhat.com/sysadmin/create-rpm-package

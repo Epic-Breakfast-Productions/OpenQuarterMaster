@@ -33,38 +33,32 @@ This is a quick explanation of the menus in interactive mode.
 
 (main menu)
 
-* Info / Status
-** Installation Status; shows status, versions of OQM software running TODO
-** Host Information
-* Manage Installation
-** Select OQM major version TODO
-** Core? TODO
-** Plugins TODO
-*** add plugin repo list
-*** remove plugin repo list
-*** enable plugin
-*** disable plugin
-** Cleanup
-*** Docker
-**** Run cleanup
-**** Set to do automatically TODO
-*** Reset data
-** Uninstall All
-* Backups TODO
-** Choose backup location
-** Run backups now
-** Automatic backup settings
-*** Enable/disable automatic backups
-*** Frequency
-* Updates TODO
-** Host Updates
-*** Enable/disable automatic updates
-*** Update now
-** OQM Updates
-*** Enable/disable automatic updates
-*** Update now
-* Captain Settings
-** allow pre-release versions
+. Info / Status TODO
+.. Installation Status; shows status, versions of OQM software running TODO
+.. Host Information TODO
+. Manage Installation TODO
+.. Select OQM major version TODO
+.. SSL/HTTPS Certs TODO
+... Cert mode (self, Let's Encrypt, provided)
+... Cert info TODO
+.. Core? TODO
+.. Plugins TODO
+.. Uninstall All TODO
+. Snapshots TODO
+.. Restore from Snapshot TODO
+.. Enable/disable automatic snapshots TODO
+.. Set Snapshot location TODO
+.. Set number of snapshots to keep TODO
+.. Set automatic snapshot frequency TODO
+. Updates TODO
+.. Perform Updates (OS and OQM) TODO
+.. Enable/disable automatic updates TODO
+. Cleanup TODO
+.. Docker TODO
+... Run cleanup TODO
+... Set to do automatically TODO
+.. Reset data TODO
+. Captain Settings TODO
 
 === Python UI (Planned/TODO)
 
