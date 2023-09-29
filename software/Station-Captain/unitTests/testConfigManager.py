@@ -4,9 +4,8 @@ from utils import *
 import os
 import shutil
 
-sys.path.append("../")
-from src.lib.ConfigManager import *
-
+sys.path.append("../src/lib")
+from ConfigManager import *
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:

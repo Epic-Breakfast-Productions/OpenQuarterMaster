@@ -5,6 +5,7 @@
 import sys
 sys.path.append("lib/")
 from ConfigManager import *
+from ScriptInfos import *
 import json
 import argparse
 import re
@@ -30,20 +31,18 @@ argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", n
 argParser.add_argument('-t', '--template', dest="t",
                        help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
 argParser.add_argument('-s', '--set', dest="s",
-                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + CONFIG_MNGR_ADD_CONFIG_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
-
-configManager = ConfigManager()
 
 args = argParser.parse_args()
 
 if args.v:
     print(SCRIPT_TITLE)
 elif args.l:
-    print(json.dumps(configManager.configData, indent=4))
+    print(json.dumps(mainCM.configData, indent=4))
 elif args.g:
     configToGet = args.g[0]
-    configValue = configManager.getConfigVal(configToGet, configManager.configData)
+    configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
     print(configValue)
 elif args.t:
     configFileToGet = args.t[0]
@@ -60,12 +59,12 @@ elif args.t:
         # print("debug: resolving placeholder: " + curPlaceholder)
         output = output.replace(
             "{" + curPlaceholder + "}",
-            configManager.getConfigVal(curPlaceholder, configManager.configData, formatData=False)
+            mainCM.getConfigVal(curPlaceholder, mainCM.configData, formatData=False)
         )
 
     print(output)
 elif args.s:
-    json = ConfigManager.setConfigValInFile(
+    json = mainCM.setConfigValInFile(
         configKeyToSet=args.s[0],
         configValToSet=args.s[1],
         configFile=args.s[2]

@@ -12,11 +12,10 @@ from json import JSONDecodeError
 import os
 import sys
 import collections.abc
+from ScriptInfos import *
 
-CONFIG_MNGR_CONFIGS_DIR = "/etc/oqm/config"
-CONFIG_MNGR_MAIN_CONFIG_FILE = CONFIG_MNGR_CONFIGS_DIR + "/mainConfig.json"
-CONFIG_MNGR_ADD_CONFIG_DIR = CONFIG_MNGR_CONFIGS_DIR + "/configs"
-CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = CONFIG_MNGR_CONFIGS_DIR + "/99-custom.json"
+CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
 
 SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
 SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
@@ -24,8 +23,8 @@ SECRET_MNGR_SECRET_PW_HASH_LEN = 32
 SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
 SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
 
-SECRET_MNGR_SECRETS_FILE = CONFIG_MNGR_CONFIGS_DIR + "/secrets.json"
-SECRET_MNGR_SECRETS_SECRET_FILE = CONFIG_MNGR_CONFIGS_DIR + "/.secretSecret.dat"
+SECRET_MNGR_SECRETS_FILE = ScriptInfo.CONFIG_DIR + "/secrets.json"
+SECRET_MNGR_SECRETS_SECRET_FILE = ScriptInfo.CONFIG_DIR + "/.secretSecret.dat"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
@@ -46,7 +45,7 @@ class SecretManager:
         self.secretSecretFile = secretSecretFile
         # ensure secrets file exists
         try:
-            os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
+            os.makedirs(ScriptInfo.CONFIG_VALUES_DIR, exist_ok=True)
             if not os.path.isfile(SECRET_MNGR_SECRETS_FILE):
                 with open(SECRET_MNGR_SECRETS_FILE, 'x') as stream:
                     stream.write('''
@@ -212,7 +211,7 @@ class ConfigManager:
             self,
             secretManager: SecretManager = None,
             mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
-            additionalConfigsDir: str = CONFIG_MNGR_ADD_CONFIG_DIR
+            additionalConfigsDir: str = ScriptInfo.CONFIG_VALUES_DIR
     ):
         self.secretManager = secretManager
         self.additionalConfigsDir = additionalConfigsDir
@@ -334,7 +333,7 @@ class ConfigManager:
             configValToSet: str,
             configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
             mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
-            additionalConfigDir: str = CONFIG_MNGR_ADD_CONFIG_DIR,
+            additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
             defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
     ) -> str:
         if configFile == ".":
@@ -411,3 +410,6 @@ class ConfigManager:
             else:
                 d[k] = v
         return d
+
+
+mainCM = ConfigManager()
