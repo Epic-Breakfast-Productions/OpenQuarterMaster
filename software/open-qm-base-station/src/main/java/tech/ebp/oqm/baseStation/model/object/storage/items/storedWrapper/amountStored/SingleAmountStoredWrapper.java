@@ -11,6 +11,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.SingleStoredWrapper;
 
 import javax.measure.Quantity;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -44,5 +45,23 @@ public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored>
 	@Override
 	public AmountStored subtractStored(AmountStored stored) throws NotEnoughStoredException {
 		return this.getStored().subtract(stored);
+	}
+	
+	/**
+	 * Removes all of the amount held.
+	 *
+	 * @param stored Ignored.
+	 * @return
+	 * @throws NotEnoughStoredException
+	 */
+	@Override
+	public AmountStored subtractStored(UUID stored) throws NotEnoughStoredException {
+		AmountStored output = new AmountStored();
+		
+		output.setAmount(this.getStored().getAmount());
+		
+		this.getStored().setAmount(0, this.getStored().getAmount().getUnit());
+		
+		return this.getStored();
 	}
 }

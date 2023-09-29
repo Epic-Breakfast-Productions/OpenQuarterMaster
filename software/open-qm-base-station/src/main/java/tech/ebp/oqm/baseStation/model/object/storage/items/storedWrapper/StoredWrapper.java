@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
@@ -229,4 +230,6 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 * @throws NotEnoughStoredException When there is not enough stored to remove
 	 */
 	public abstract S subtractStored(S stored) throws NotEnoughStoredException;
+	
+	public abstract S subtractStored(UUID stored) throws NotEnoughStoredException;
 }

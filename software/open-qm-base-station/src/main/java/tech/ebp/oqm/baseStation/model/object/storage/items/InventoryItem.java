@@ -21,6 +21,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NoStorageBlockException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.StorageType;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.StoredWrapper;
@@ -410,16 +411,17 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Gets a stream of all stored items held in the given storage block.
-	 *
+	 * <p>
 	 * If this item does not store anything at the given block, an empty stream is returned.
 	 *
 	 * @param storageId The id of the block to get the stored objects for
+	 *
 	 * @return
 	 */
 	public Stream<S> storedStream(ObjectId storageId) {
 		W wrapperGotten = this.getStoredWrapperForStorage(storageId, false);
 		
-		if(wrapperGotten == null){
+		if (wrapperGotten == null) {
 			return Stream.of();
 		}
 		
@@ -428,9 +430,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Gets a stored object with the particular id.
+	 *
 	 * @param storedId The id of the stored object to get
-	 * @throws StoredNotFoundException If a stored object with the given id did not exist
+	 *
 	 * @return
+	 * @throws StoredNotFoundException If a stored object with the given id did not exist
 	 */
 	public S getStoredWithId(UUID storedId) throws StoredNotFoundException {
 		return this.storedStream()
@@ -441,10 +445,12 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Gets a stored object with the particular id in the given storage block.
+	 *
 	 * @param storageId The id of the storage block to pull the stored object from
 	 * @param storedId The id of the stored object to get
-	 * @throws StoredNotFoundException If a stored object with the given id did not exist
+	 *
 	 * @return
+	 * @throws StoredNotFoundException If a stored object with the given id did not exist
 	 */
 	public S getStoredWithId(ObjectId storageId, UUID storedId) throws StoredNotFoundException {
 		return this.storedStream(storageId)
@@ -453,28 +459,30 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 				   .orElseThrow(()->new StoredNotFoundException("No stored found with id " + storedId + " in item " + this.getId() + " Stored in block " + storageId));
 	}
 	
+	//TODO:: make methods that utilize the stored object's id
 	
 	/**
-	 * Adds a stored to the set held at the storage block id given.
+	 * Adds a stored to this item at the storage block specified.
 	 * <p>
 	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
 	 * <ul>
 	 *     <li>
 	 *         <strong>Single Amount</strong>- The amount of the parameter is added to the amount held.
-	 *     </li>
-	 *     <li>
-	 *         <strong>Any collection</strong>- The Stored object given is added to the set alongside the others already stored
+	 *         The toAdd's id and other fields are ignored.
+	 *      </li>
+	 *    <li>
+	 *         <strong>Any collection</strong>- The Stored object given is added to the set alongside the others already stored.
+	 *         The toAdd's id must not exist in the item already.
 	 *     </li>
 	 * </ul>
 	 *
 	 * @param storageId The id of the storage block we are dealing with.
 	 * @param toAdd The stored object to add/ add with
-	 * @param addStorageBlockIdIfNone True if when the storage is not associated, add it.
+	 * @param addStorageBlockIdIfNone If true, if storageId not found, add it. If false, throw exception
 	 *
 	 * @return This object
 	 * @throws NoStorageBlockException If no storage held at storage block, and addStorageBlockIdIfNone is false
 	 */
-	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
@@ -487,6 +495,44 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
+	 * Adds a stored to an existing stored.
+	 * <p>
+	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
+	 * <ul>
+	 *     <li>
+	 *         <strong>Single Amount</strong>- The amount of the parameter is added to the amount held.
+	 *      </li>
+	 *    <li>
+	 *         <strong>Any collection</strong>- The Stored object given is added to the stored with the id given.
+	 *         The toAdd's id must not exist in the item already.
+	 *     </li>
+	 * </ul>
+	 *
+	 * @param storedId The id of the stored object to add to
+	 * @param toAdd The stored to add
+	 *
+	 * @return
+	 * @throws NoStorageBlockException
+	 * @throws StoredNotFoundException
+	 * @throws UnsupportedStoredOperationException If this action is not supported by the specific implementation.
+	 */
+	public InventoryItem<S, C, W> add(UUID storedId, S toAdd) throws NoStorageBlockException, StoredNotFoundException, UnsupportedStoredOperationException {
+		//TODO
+		return this;
+	}
+	
+	/**
+	 * Wrapper for {@link #add(UUID, Stored)}, getting the uuid from the stored object given.
+	 * @param toAdd The stored to add
+	 * @return This item.
+	 * @throws NoStorageBlockException
+	 * @throws StoredNotFoundException
+	 */
+	public InventoryItem<S, C, W> add(S toAdd) throws NoStorageBlockException, StoredNotFoundException {
+		return this.add(toAdd.getStoredId(), toAdd);
+	}
+	
+	/**
 	 * Wrapper for {@link #add(ObjectId, Stored, boolean)}, with true passed to storageBlockStrict
 	 *
 	 * @param storageId The id of the storage block we are dealing with.
@@ -494,7 +540,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 *
 	 * @return This object
 	 */
-	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> add(ObjectId storageId, S toAdd) {
 		return this.add(storageId, toAdd, true);
 	}
@@ -506,9 +551,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * <ul>
 	 *     <li>
 	 *         <strong>Single Amount</strong>- The amount of the parameter is subtracted from the amount held.
+	 *         The toSubtract's id and other fields are ignored.
 	 *     </li>
 	 *     <li>
 	 *         <strong>Any collection</strong>- The Stored object given is removed from the set alongside the others already stored
+	 *         Stored object identified by the Stored object's id.
 	 *     </li>
 	 * </ul>
 	 *
@@ -518,8 +565,18 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract, or if the stored object does not exist
 	 */
-	@Deprecated(forRemoval = true)
 	public S subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+		W wrapper = this.getStoredWrapperForStorage(storageId, false);
+		
+		if (wrapper == null) {
+			throw new NoStorageBlockException();
+		}
+		
+		S subtracted = wrapper.subtractStored(toSubtract);
+		return subtracted;
+	}
+	
+	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
 		if (wrapper == null) {
@@ -542,8 +599,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException
 	 */
-	@Deprecated(forRemoval = true)
 	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S toTransfer) throws NotEnoughStoredException {
+		//TODO:: need to rework subtraction to match new uuid modes
 		this.subtract(storageIdFrom, toTransfer);
 		this.add(storageIdTo, toTransfer);
 		
