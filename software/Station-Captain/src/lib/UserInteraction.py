@@ -15,6 +15,7 @@ class UserInteraction:
     References:
         - https://pythondialog.sourceforge.io
     """
+    WIDE_WIDTH = 200
 
     def __init__(self):
         self.dialog = Dialog(
@@ -67,6 +68,8 @@ class UserInteraction:
             logging.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
+            if choice == "(1)":
+                self.showSystemStatus()
             if choice == "(2)":
                 self.showHostInfo()
 
@@ -81,10 +84,10 @@ class UserInteraction:
             ipAddrs = subprocess.run(["hostname", "-I"], shell=False, capture_output=True, text=True, check=True).stdout
             ipAddrs = (subprocess.run(["hostname"], shell=False, capture_output=True, text=True,
                                       check=True).stdout.replace("\n", "") + ".local " + ipAddrs)
-            ipAddrs = ipAddrs.replace(" ", "\n    ")
-            textToShow += "Hostname and IP addresses:\n    " + ipAddrs
-            textToShow += "    Hostname set in configuration:\n        " + mainCM.getConfigVal("system.hostname",
-                                                                                               mainCM.configData)
+            ipAddrs = ipAddrs.replace(" ", "\n\t")
+            textToShow += "Hostname and IP addresses:\n\t" + ipAddrs
+            textToShow += "\tHostname set in configuration:\n\t\t" + mainCM.getConfigVal("system.hostname",
+                                                                                         mainCM.configData)
             textToShow += "\n\n\n"
 
             self.dialog.gauge_update(20, "Getting OS info...", True)
@@ -94,7 +97,8 @@ class UserInteraction:
             textToShow += "OS Info:\n" + osInfo + "\n\n\n"
 
             self.dialog.gauge_update(40, "Getting Hardware info...", True)
-            hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True, check=True).stdout
+            hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
+                                    check=True).stdout
             hwinfo += "\n\nUSB Devices: \n\n"
             hwinfo += subprocess.run(["lsusb"], shell=False, capture_output=True, text=True, check=True).stdout
             hwinfo += "\n\nStorage Devices: \n\n"
@@ -115,7 +119,17 @@ class UserInteraction:
         time.sleep(1)
         self.dialog.gauge_stop()
         logging.debug("Done compiling host info.")
-        self.dialog.msgbox(textToShow, title="Host Information", height=50, width=100)
+        self.dialog.msgbox(textToShow, title="Host Information", height=50, width=UserInteraction.WIDE_WIDTH, tab_correct=True, trim=False,
+                           cr_wrap=True)
+
+    def showSystemStatus(self):
+        logging.debug("Showing system status.")
+
+        self.dialog.infobox("Gathering status info...")
+        systemdStatus = subprocess.run(["systemctl", "list-units", "--all", "open\\x2bquarter\\x2bmaster\\x2d*"],
+                                       shell=False, capture_output=True, text=True, check=True).stdout
+
+        self.dialog.msgbox(systemdStatus, title="System Status", height=50, width=UserInteraction.WIDE_WIDTH)
 
 
 ui = UserInteraction()

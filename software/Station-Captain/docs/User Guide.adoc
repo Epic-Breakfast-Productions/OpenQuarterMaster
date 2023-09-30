@@ -33,9 +33,16 @@ This is a quick explanation of the menus in interactive mode.
 
 (main menu)
 
-. Info / Status TODO
-.. Installation Status; shows status, versions of OQM software running TODO
+. Info / Status
+.. Installation Status
+*** Shows how the installed services are running
+*** Shows what versions of the software are running (TODO)
 .. Host Information
+*** Shows information about the host, including:
+**** IP addresses
+**** Hardware information
+**** Storage usage
+**** RAM usage
 . Manage Installation TODO
 .. Select OQM major version TODO
 .. SSL/HTTPS Certs TODO
