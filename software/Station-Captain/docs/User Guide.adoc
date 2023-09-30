@@ -49,6 +49,8 @@ This is a quick explanation of the menus in interactive mode.
 ... Cert mode (self, Let's Encrypt, provided)
 ... Cert info TODO
 .. Core? TODO
+... Ensure installed? (TODO)
+... Common config options (TODO)
 .. Plugins TODO
 .. Uninstall All TODO
 . Snapshots TODO

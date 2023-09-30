@@ -22,4 +22,4 @@ import UserInteraction
 
 logging.basicConfig(level=logging.DEBUG)
 
-UserInteraction.ui.mainMenu()
+UserInteraction.ui.startUserInteraction()

@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 from ConfigManager import *
+from PackageManagement import *
 import time
 
 
@@ -27,6 +28,20 @@ class UserInteraction:
     @staticmethod
     def clearScreen():
         os.system('clear')
+
+    def startUserInteraction(self):
+        self.userInteractionSetupCheck()
+        self.mainMenu()
+
+    def userInteractionSetupCheck(self):
+        logging.info("Checking system is setup")
+        if not PackageManagement.coreInstalled():
+            logging.info("Core setup not installed")
+            code = self.dialog.yesno("Core components are not installed. Install now?", title="Setup")
+            if code == self.dialog.OK:
+                PackageManagement.installCore()
+        else:
+            logging.info("Core components already installed.")
 
     def mainMenu(self):
         logging.debug("Running main menu.")
