@@ -27,6 +27,13 @@ To confirm an action, hit `enter`.
 
 To select/deselect an option, press `space`.
 
+You can also navigate by clicking on the menu items you want to select.
+
+==== Flow
+
+When starting up, the script performs a quick check to ensure the core system is installed.
+If the core components are not installed, it will prompt you to install them.
+
 ==== Menu System
 
 This is a quick explanation of the menus in interactive mode.
@@ -51,6 +58,10 @@ This is a quick explanation of the menus in interactive mode.
 .. Core? TODO
 ... Ensure installed? (TODO)
 ... Common config options (TODO)
+.. Set Email Settings (TODO)
+.. User Administration (TODO)
+... Goto keycloak admin console (TODO)
+... Toggle self-register (TODO)
 .. Plugins TODO
 .. Uninstall All TODO
 . Snapshots TODO
