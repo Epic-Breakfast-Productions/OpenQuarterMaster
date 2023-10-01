@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.quantities.QuantitiesUtils;
@@ -216,7 +217,10 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	public abstract void addStored(UUID storedId, S stored) throws UnsupportedStoredOperationException;
 	
 	/**
-	 * Removes from the stored. Semantics based on implementation:
+	 *
+	 * Subtracts the stored object.
+	 *
+	 * Semantics based on implementation:
 	 * <ul>
 	 *     <li>
 	 *         <strong>Single Amount</strong>- The amount of the parameter is subtracted from the amount held.
@@ -233,5 +237,14 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 */
 	public abstract S subtractStored(S stored) throws NotEnoughStoredException;
 	
-//	public abstract S subtractStored(UUID stored) throws NotEnoughStoredException;
+	/**
+	 * Subtracts from the stored object identified by the id.
+	 * @param storedId
+	 * @param stored
+	 * @return
+	 * @throws NotEnoughStoredException
+	 * @throws StoredNotFoundException
+	 */
+	public abstract S subtractStored(UUID storedId, S stored) throws NotEnoughStoredException, StoredNotFoundException;
+	
 }

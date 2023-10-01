@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.ListStoredWrapper;
 import tech.ebp.oqm.baseStation.model.object.storage.items.utils.QuantitySumHelper;
@@ -58,5 +60,14 @@ public class ListAmountStoredWrapper
 	public void addStored(UUID storedId, AmountStored stored) {
 		this.getStoredWithId(storedId).add(stored);
 		this.recalcDerived();
+	}
+	
+	@Override
+	public AmountStored subtractStored(UUID storedId, AmountStored stored) throws NotEnoughStoredException, StoredNotFoundException {
+		AmountStored output = this.getStoredWithId(storedId);
+		output.subtract(stored);
+		this.recalcDerived();
+		
+		return output;
 	}
 }

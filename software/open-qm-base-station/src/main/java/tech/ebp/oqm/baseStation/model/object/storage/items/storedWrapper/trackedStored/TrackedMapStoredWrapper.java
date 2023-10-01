@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.MapStoredWrapper;
@@ -55,5 +56,10 @@ public class TrackedMapStoredWrapper extends MapStoredWrapper<TrackedStored> {
 	@Override
 	public TrackedStored subtractStored(TrackedStored stored) throws NotEnoughStoredException {
 		return this.subtractStored(stored.getIdentifier());
+	}
+	
+	@Override
+	public TrackedStored subtractStored(UUID storedId, TrackedStored stored) throws NotEnoughStoredException, StoredNotFoundException {
+		throw new UnsupportedStoredOperationException("Cannot subtract from a unique tracked item.");
 	}
 }

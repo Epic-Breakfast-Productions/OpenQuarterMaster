@@ -560,7 +560,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract, or if the stored object does not exist
 	 */
-	public S subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+	public S subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException, StoredNotFoundException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
 		if (wrapper == null) {
@@ -571,16 +571,20 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return subtracted;
 	}
 	
-//	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
-//		W wrapper = this.getStoredWrapperForStorage(storageId, false);
-//
-//		if (wrapper == null) {
-//			throw new NoStorageBlockException();
-//		}
-//
-//		S subtracted = wrapper.subtractStored(toSubtract);
-//		return subtracted;
-//	}
+	public S subtract(ObjectId storageId, UUID toSubtractFrom, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException, StoredNotFoundException {
+		W wrapper = this.getStoredWrapperForStorage(storageId, false);
+		
+		if (wrapper == null) {
+			throw new NoStorageBlockException();
+		}
+		
+		S subtracted = wrapper.subtractStored(toSubtract);
+		return subtracted;
+	}
+	
+	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException, StoredNotFoundException {
+		return this.subtract(storageId, this.getStoredWithId(storageId, toSubtract));
+	}
 	
 	/**
 	 * Transfers a stored item from one storage block to another.
@@ -595,7 +599,6 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @throws NotEnoughStoredException
 	 */
 	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S toTransfer) throws NotEnoughStoredException {
-		//TODO:: need to rework subtraction to match new uuid modes
 		this.subtract(storageIdFrom, toTransfer);
 		this.add(storageIdTo, toTransfer);
 		
