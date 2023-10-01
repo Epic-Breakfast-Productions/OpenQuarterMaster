@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.SingleStoredWrapper;
 
@@ -43,6 +44,15 @@ public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored>
 	}
 	
 	@Override
+	public void addStored(UUID storedId, AmountStored stored) throws UnsupportedStoredOperationException {
+		if(!this.getStored().getStoredId().equals(storedId)){
+			throw new UnsupportedStoredOperationException("Cannot add amount to a different stored in a plain amount. (Stored id given was != the id of the stored held at this "
+														  + "storage block)");
+		}
+		this.addStored(stored);
+	}
+	
+	@Override
 	public AmountStored subtractStored(AmountStored stored) throws NotEnoughStoredException {
 		return this.getStored().subtract(stored);
 	}
@@ -54,7 +64,7 @@ public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored>
 	 * @return
 	 * @throws NotEnoughStoredException
 	 */
-	@Override
+//	@Override
 	public AmountStored subtractStored(UUID stored) throws NotEnoughStoredException {
 		AmountStored output = new AmountStored();
 		

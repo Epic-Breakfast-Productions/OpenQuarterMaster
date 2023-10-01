@@ -15,6 +15,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * TODO:: figure out validator to ensure unit validity
@@ -51,5 +52,11 @@ public class ListAmountStoredWrapper
 		
 		this.setTotal(helper.getTotal());
 		return this.getTotal();
+	}
+	
+	@Override
+	public void addStored(UUID storedId, AmountStored stored) {
+		this.getStoredWithId(storedId).add(stored);
+		this.recalcDerived();
 	}
 }

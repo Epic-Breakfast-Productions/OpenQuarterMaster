@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.quantities.QuantitiesUtils;
 
@@ -212,6 +213,7 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 * @param stored
 	 */
 	public abstract void addStored(S stored);
+	public abstract void addStored(UUID storedId, S stored) throws UnsupportedStoredOperationException;
 	
 	/**
 	 * Removes from the stored. Semantics based on implementation:
@@ -231,5 +233,5 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 */
 	public abstract S subtractStored(S stored) throws NotEnoughStoredException;
 	
-	public abstract S subtractStored(UUID stored) throws NotEnoughStoredException;
+//	public abstract S subtractStored(UUID stored) throws NotEnoughStoredException;
 }

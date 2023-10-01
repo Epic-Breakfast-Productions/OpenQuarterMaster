@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Describes an item stored in the system.
@@ -97,4 +98,8 @@ public abstract class Stored {
 	@NotNull
 	@NonNull
 	private List<@NotBlank String> keywords = new ArrayList<>();
+	
+	public static Predicate<Stored> getHasIdPredicate(UUID storedId) {
+		return (Stored stored)->stored.getStoredId().equals(storedId);
+	}
 }

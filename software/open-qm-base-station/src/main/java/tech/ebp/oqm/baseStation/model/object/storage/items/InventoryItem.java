@@ -438,7 +438,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 */
 	public S getStoredWithId(UUID storedId) throws StoredNotFoundException {
 		return this.storedStream()
-				   .filter((S stored)->stored.getStoredId().equals(storedId))
+				   .filter(Stored.getHasIdPredicate(storedId))
 				   .findFirst()
 				   .orElseThrow(()->new StoredNotFoundException("No stored found with id " + storedId + " in item " + this.getId()));
 	}
@@ -454,7 +454,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 */
 	public S getStoredWithId(ObjectId storageId, UUID storedId) throws StoredNotFoundException {
 		return this.storedStream(storageId)
-				   .filter((S stored)->stored.getStoredId().equals(storedId))
+				   .filter(Stored.getHasIdPredicate(storedId))
 				   .findFirst()
 				   .orElseThrow(()->new StoredNotFoundException("No stored found with id " + storedId + " in item " + this.getId() + " Stored in block " + storageId));
 	}
@@ -516,20 +516,15 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @throws StoredNotFoundException
 	 * @throws UnsupportedStoredOperationException If this action is not supported by the specific implementation.
 	 */
-	public InventoryItem<S, C, W> add(UUID storedId, S toAdd) throws NoStorageBlockException, StoredNotFoundException, UnsupportedStoredOperationException {
-		//TODO
+	public InventoryItem<S, C, W> add(ObjectId storageId, UUID storedId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException, StoredNotFoundException, UnsupportedStoredOperationException {
+		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
+		
+		if (wrapper == null) {
+			throw new NoStorageBlockException();
+		}
+		
+		wrapper.addStored(storedId, toAdd);
 		return this;
-	}
-	
-	/**
-	 * Wrapper for {@link #add(UUID, Stored)}, getting the uuid from the stored object given.
-	 * @param toAdd The stored to add
-	 * @return This item.
-	 * @throws NoStorageBlockException
-	 * @throws StoredNotFoundException
-	 */
-	public InventoryItem<S, C, W> add(S toAdd) throws NoStorageBlockException, StoredNotFoundException {
-		return this.add(toAdd.getStoredId(), toAdd);
 	}
 	
 	/**
@@ -576,16 +571,16 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return subtracted;
 	}
 	
-	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
-		W wrapper = this.getStoredWrapperForStorage(storageId, false);
-		
-		if (wrapper == null) {
-			throw new NoStorageBlockException();
-		}
-		
-		S subtracted = wrapper.subtractStored(toSubtract);
-		return subtracted;
-	}
+//	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+//		W wrapper = this.getStoredWrapperForStorage(storageId, false);
+//
+//		if (wrapper == null) {
+//			throw new NoStorageBlockException();
+//		}
+//
+//		S subtracted = wrapper.subtractStored(toSubtract);
+//		return subtracted;
+//	}
 	
 	/**
 	 * Transfers a stored item from one storage block to another.

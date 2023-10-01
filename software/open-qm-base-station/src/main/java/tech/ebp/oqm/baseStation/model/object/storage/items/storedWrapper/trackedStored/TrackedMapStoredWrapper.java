@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.MapStoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
@@ -16,7 +17,11 @@ import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * TODO:: validator to ensure identifiers == stored identifiers
@@ -40,6 +45,11 @@ public class TrackedMapStoredWrapper extends MapStoredWrapper<TrackedStored> {
 	@Override
 	public void addStored(TrackedStored stored) throws AlreadyStoredException {
 		super.addStored(stored.getIdentifier(), stored);
+	}
+	
+	@Override
+	public void addStored(UUID storedId, TrackedStored stored) {
+		throw new UnsupportedStoredOperationException("Cannot add to a unique tracked item.");
 	}
 	
 	@Override
