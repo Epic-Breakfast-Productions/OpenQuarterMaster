@@ -10,6 +10,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 
 import java.time.Duration;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.Spliterator;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -37,7 +39,7 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class ListStoredWrapper<S extends Stored>
-	extends StoredWrapper<List<@Valid @NotNull S>, S>
+	extends MultiStoredWrapper<List<@Valid @NotNull S>, S>
 	//	implements List<S> //only uncomment to get/override methods
 {
 	
@@ -56,6 +58,12 @@ public abstract class ListStoredWrapper<S extends Stored>
 	public void addStored(S stored) {
 		this.add(stored);
 	}
+	
+	//should be implemented where we know what S is
+//	@Override
+//	public void addStored(UUID storedId, S stored) {
+//		this.getStoredWithId(storedId);
+//	}
 	
 	@Override
 	public S subtractStored(S stored) throws NotEnoughStoredException {
@@ -100,7 +108,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 		return this.getStored().contains(o);
 	}
 	
-	//	@Override
+	@Override
 	public Iterator<S> iterator() {
 		return this.getStored().iterator();
 	}
