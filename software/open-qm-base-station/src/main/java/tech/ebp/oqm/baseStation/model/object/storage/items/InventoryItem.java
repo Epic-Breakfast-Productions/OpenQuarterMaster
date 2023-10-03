@@ -635,7 +635,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return
 	 * @throws NotEnoughStoredException
 	 */
-	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, UUID storedIdFrom, UUID storedIdTo, S toTransfer) throws NotEnoughStoredException {
+	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, UUID storedIdFrom, ObjectId storageIdTo, UUID storedIdTo, S toTransfer) throws NotEnoughStoredException {
 		this.subtract(storageIdFrom, storedIdFrom, toTransfer);
 		this.add(storageIdTo, storedIdTo, toTransfer, true);
 		
