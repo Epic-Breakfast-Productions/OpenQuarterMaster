@@ -462,7 +462,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	//TODO:: make methods that utilize the stored object's id
 	
 	/**
-	 * Adds a stored to this item at the storage block specified.
+	 * Adds a stored to the storage block specified.
 	 * <p>
 	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
 	 * <ul>
@@ -540,7 +540,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	/**
-	 * Subtracts a stored from the set held at the storage block id given.
+	 * Subtracts a stored from a storage block
 	 * <p>
 	 * Semantics differ based on the general type of how things are stored for this item (C), but described below:
 	 * <ul>
@@ -571,6 +571,16 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		return subtracted;
 	}
 	
+	/**
+	 * Subtracts a stored from an existing stored object.
+	 * @param storageId
+	 * @param toSubtractFrom
+	 * @param toSubtract
+	 * @return
+	 * @throws NotEnoughStoredException
+	 * @throws NoStorageBlockException
+	 * @throws StoredNotFoundException
+	 */
 	public S subtract(ObjectId storageId, UUID toSubtractFrom, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException, StoredNotFoundException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
@@ -578,10 +588,20 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 			throw new NoStorageBlockException();
 		}
 		
-		S subtracted = wrapper.subtractStored(toSubtract);
+		S subtracted = wrapper.subtractStored(toSubtractFrom, toSubtract);
 		return subtracted;
 	}
 	
+	/**
+	 * Subtracts a whole stored from an existing stored object.
+	 * @param storageId
+	 * @param toSubtractFrom
+	 * @param toSubtract
+	 * @return
+	 * @throws NotEnoughStoredException
+	 * @throws NoStorageBlockException
+	 * @throws StoredNotFoundException
+	 */
 	public S subtract(ObjectId storageId, UUID toSubtract) throws NotEnoughStoredException, NoStorageBlockException, StoredNotFoundException {
 		return this.subtract(storageId, this.getStoredWithId(storageId, toSubtract));
 	}
@@ -601,6 +621,23 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, S toTransfer) throws NotEnoughStoredException {
 		this.subtract(storageIdFrom, toTransfer);
 		this.add(storageIdTo, toTransfer);
+		
+		return this;
+	}
+	
+	/**
+	 * Transfers a stored from one to another.
+	 * @param storageIdFrom
+	 * @param storageIdTo
+	 * @param storedIdFrom
+	 * @param storedIdTo
+	 * @param toTransfer
+	 * @return
+	 * @throws NotEnoughStoredException
+	 */
+	public InventoryItem<S, C, W> transfer(ObjectId storageIdFrom, ObjectId storageIdTo, UUID storedIdFrom, UUID storedIdTo, S toTransfer) throws NotEnoughStoredException {
+		this.subtract(storageIdFrom, storedIdFrom, toTransfer);
+		this.add(storageIdTo, storedIdTo, toTransfer, true);
 		
 		return this;
 	}
