@@ -1,3 +1,4 @@
+//TODO:: remove, move functionality to new
 var itemAddSubtractTransferModal = $("#itemAddSubtractTransferModal");
 var itemAddSubtractTransferFormMessages = $("#itemAddSubtractTransferFormMessages");
 var itemAddSubtractTransferForm = $("#itemAddSubtractTransferForm");
