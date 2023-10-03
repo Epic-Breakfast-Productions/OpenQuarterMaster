@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -153,6 +154,33 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return item;
 	}
 	
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		InventoryItem<T, C, W> item,
+		ObjectId storageBlockId,
+		UUID storedId,
+		T toAdd,
+		InteractingEntity entity
+	) {
+		this.get(item.getId());//ensure exists
+		try {
+			item.add(storageBlockId, storedId, toAdd, true);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		
+		this.update(
+			item,
+			entity,
+			new ItemAddEvent(item, entity)
+				.setStorageBlockId(storageBlockId)//TODO:: add quantity?
+		);
+		
+		return item;
+	}
+	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
 		ObjectId itemId,
@@ -175,6 +203,30 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		ObjectId itemId,
+		ObjectId storageBlockId,
+		UUID storedId,
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.add(this.get(itemId), storageBlockId, storedId, toAdd, entity);
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String itemId,
+		String storageBlockId,
+		String storedId,
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
+	}
+	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
@@ -184,6 +236,32 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		this.get(item.getId());//ensure exists
 		try {
 			item.subtract(storageBlockId, toSubtract);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		this.update(
+			item,
+			entity,
+			new ItemSubEvent(item, entity)
+				.setStorageBlockId(storageBlockId)//TODO:: add quantity?
+		);
+		
+		return item;
+	}
+	
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		InventoryItem<T, C, W> item,
+		ObjectId storageBlockId,
+		UUID storedId,
+		T toSubtract,
+		InteractingEntity entity
+	) {
+		this.get(item.getId());//ensure exists
+		try {
+			item.subtract(storageBlockId, storedId, toSubtract);
 		} catch(ClassCastException e) {
 			//not given proper stored type
 			//TODO:: custom exception
@@ -222,6 +300,30 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		ObjectId itemId,
+		ObjectId storageBlockId,
+		UUID storedId,
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.subtract(this.get(itemId), storageBlockId, storedId, toAdd, entity);
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String itemId,
+		String storageBlockId,
+		String storedId,
+		T toAdd,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
+	}
+	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
@@ -232,6 +334,35 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		this.get(item.getId());//ensure exists
 		try {
 			item.transfer(storageBlockIdFrom, storageBlockIdTo, toTransfer);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		this.update(
+			item,
+			entity,
+			new ItemTransferEvent(item, entity)
+				.setStorageBlockFromId(storageBlockIdFrom)
+				.setStorageBlockToId(storageBlockIdTo)//TODO:: add quantity?
+		);
+		
+		return item;
+	}
+	
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		InventoryItem<T, C, W> item,
+		ObjectId storageBlockIdFrom,
+		UUID storedIdFrom,
+		ObjectId storageBlockIdTo,
+		UUID storedIdTo,
+		T toTransfer,
+		InteractingEntity entity
+	) {
+		this.get(item.getId());//ensure exists
+		try {
+			item.transfer(storageBlockIdFrom, storedIdFrom, storageBlockIdTo, storedIdTo, toTransfer);
 		} catch(ClassCastException e) {
 			//not given proper stored type
 			//TODO:: custom exception
@@ -280,6 +411,50 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			new ObjectId(itemId),
 			new ObjectId(storageBlockIdFrom),
 			new ObjectId(storageBlockIdTo),
+			toTransfer,
+			entity
+		);
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		ObjectId itemId,
+		ObjectId storageBlockIdFrom,
+		UUID storedIdFrom,
+		ObjectId storageBlockIdTo,
+		UUID storedIdTo,
+		T toTransfer,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.transfer(
+			this.get(itemId),
+			storageBlockIdFrom,
+			storedIdFrom,
+			storageBlockIdTo,
+			storedIdTo,
+			toTransfer,
+			entity
+		);
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String itemId,
+		String storageBlockIdFrom,
+		String storedIdFrom,
+		String storageBlockIdTo,
+		String storedIdTo,
+		T toTransfer,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.transfer(
+			new ObjectId(itemId),
+			new ObjectId(storageBlockIdFrom),
+			UUID.fromString(storedIdFrom),
+			new ObjectId(storageBlockIdTo),
+			UUID.fromString(storedIdTo),
 			toTransfer,
 			entity
 		);
