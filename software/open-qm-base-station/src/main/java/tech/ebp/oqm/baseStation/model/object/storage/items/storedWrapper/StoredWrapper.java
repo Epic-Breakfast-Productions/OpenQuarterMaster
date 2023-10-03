@@ -15,6 +15,8 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.quantities.QuantitiesUtils;
 
@@ -23,6 +25,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
@@ -211,9 +214,13 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 * @param stored
 	 */
 	public abstract void addStored(S stored);
+	public abstract void addStored(UUID storedId, S stored) throws UnsupportedStoredOperationException;
 	
 	/**
-	 * Removes from the stored. Semantics based on implementation:
+	 *
+	 * Subtracts the stored object.
+	 *
+	 * Semantics based on implementation:
 	 * <ul>
 	 *     <li>
 	 *         <strong>Single Amount</strong>- The amount of the parameter is subtracted from the amount held.
@@ -229,4 +236,15 @@ public abstract class StoredWrapper<T, S extends Stored> {
 	 * @throws NotEnoughStoredException When there is not enough stored to remove
 	 */
 	public abstract S subtractStored(S stored) throws NotEnoughStoredException;
+	
+	/**
+	 * Subtracts from the stored object identified by the id.
+	 * @param storedId
+	 * @param stored
+	 * @return
+	 * @throws NotEnoughStoredException
+	 * @throws StoredNotFoundException
+	 */
+	public abstract S subtractStored(UUID storedId, S stored) throws NotEnoughStoredException, StoredNotFoundException;
+	
 }

@@ -11,16 +11,20 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpi
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.AlreadyStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -28,7 +32,7 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class MapStoredWrapper<S extends Stored>
-	extends StoredWrapper<Map<String, @NotNull S>, S>
+	extends MultiStoredWrapper<Map<String, @NotNull S>, S>
 	//	implements Map<String, S> //Used for overriding passthrough methods
 {
 	
@@ -196,4 +200,26 @@ public abstract class MapStoredWrapper<S extends Stored>
 		return this.getStored().merge(key, value, remappingFunction);
 	}
 	// </editor-fold>
+	
+	
+	@Override
+	public Iterator<S> iterator() {
+		return this.getStored().values().iterator();
+	}
+	
+	@Override
+	public Stream<S> stream() {
+		return this.getStored().values().stream();
+	}
+	
+	@Override
+	public Stream<S> parallelStream() {
+		return this.getStored().values().stream();
+	}
+	
+	@Override
+	public void forEach(Consumer<? super S> action) {
+		((Collection<S>) this.getStored()).stream();
+		this.getStored().values().forEach(action);
+	}
 }

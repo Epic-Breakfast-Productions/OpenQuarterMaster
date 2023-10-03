@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items;
 
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -234,6 +236,37 @@ class SimpleAmountItemTest extends InventoryItemTest {
 	}
 	
 	@Test
+	public void testAddSimpleWithId() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		UUID storedId = item.getStoredWrapperForStorage(storageId, true).getStored().getStoredId();
+		
+		item.add(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+		
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testAddSimpleWithWrongId() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStoredWrapperForStorage(storageId, true);
+		
+		assertThrows(
+			UnsupportedStoredOperationException.class,
+			()->item.add(storageId, UUID.randomUUID(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true)
+		);
+		
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
 	public void testAddTwo() {
 		SimpleAmountItem item = new SimpleAmountItem();
 		
@@ -260,6 +293,38 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
 		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testSubtractWithId() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+		UUID storedId = item.getStoredForStorage(storageId).getStoredId();
+		
+		item.subtract(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+		
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
+	}
+	
+	@Test
+	public void testSubtractWithWrongId() {
+		SimpleAmountItem item = new SimpleAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+		
+		assertThrows(
+			UnsupportedStoredOperationException.class,
+			()->item.subtract(storageId, UUID.randomUUID(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)))
+		);
+		
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getStoredForStorage(storageId).getAmount());
 	}
 	
 	@Test
