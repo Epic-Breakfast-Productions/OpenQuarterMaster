@@ -36,6 +36,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
 	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-redis-client'
 //	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 //	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
 
