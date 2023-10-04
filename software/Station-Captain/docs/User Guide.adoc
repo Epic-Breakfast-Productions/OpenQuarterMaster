@@ -51,7 +51,7 @@ This is a quick explanation of the menus in interactive mode.
 **** Storage usage
 **** RAM usage
 . Manage Installation TODO
-.. Select OQM major version TODO
+.. Select OQM major version? TODO
 .. SSL/HTTPS Certs TODO
 ... Cert mode (self, Let's Encrypt, provided)
 ... Cert info TODO

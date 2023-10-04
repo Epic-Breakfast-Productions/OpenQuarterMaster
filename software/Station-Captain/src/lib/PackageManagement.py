@@ -25,7 +25,7 @@ class PackageManagement:
         #     return "apt"
 
         if "Ubuntu" in platform.version():
-            return "apt-get"
+            return "apt"
 
     @staticmethod
     def runPackageCommand(command: str, package: str = None, *options: str) -> subprocess.CompletedProcess:
