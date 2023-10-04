@@ -65,7 +65,7 @@
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemAddSubtractTransferModal" onclick="setupAddSubTransForm('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
         {#icons/addSubTrans}{/icons/addSubTrans}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
