@@ -23,7 +23,7 @@ public abstract class ObjectSerializationTest<T> extends BasicTest {
 	/** The max amount of time in seconds we want de/serialization to take (triggers warning if over this) */
 	private static final int SERIALIZATION_TIME_THRESHOLD = 3;
 	/** The threshold for logging out the json string representation of the data */
-	private static final int SERIALIZED_SIZE_LOG_THRESHOLD = 1_000;
+	private static final int SERIALIZED_SIZE_LOG_THRESHOLD = 1_500;
 	
 	
 	/** The speed of the theoretical connection. Used to calculate {@link #SERIALIZED_SIZE_THRESHOLD}. In bytes per second. */

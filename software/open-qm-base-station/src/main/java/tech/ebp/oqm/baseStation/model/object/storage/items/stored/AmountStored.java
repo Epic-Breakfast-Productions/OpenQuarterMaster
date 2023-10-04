@@ -53,6 +53,12 @@ public class AmountStored extends Stored {
 		return this;
 	}
 	
+	/**
+	 *
+	 * @param amount
+	 * @return The resulting amount stored (this)
+	 * @throws NotEnoughStoredException
+	 */
 	public AmountStored subtract(AmountStored amount) throws NotEnoughStoredException {
 		Quantity result = this.getAmount().subtract(amount.getAmount());
 		

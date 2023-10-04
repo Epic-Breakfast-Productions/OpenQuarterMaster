@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Describes an item stored in the system.
@@ -39,6 +41,13 @@ import java.util.Map;
 public abstract class Stored {
 	
 	public abstract StoredType getStoredType();
+	
+	/**
+	 * The identifier used to identify this particular stored. Needs to be unique within a single inventory item.
+	 */
+	@NonNull
+	@NotNull
+	private UUID storedId = UUID.randomUUID();
 	
 	/**
 	 * The barcode for this particular stored object.
@@ -89,4 +98,8 @@ public abstract class Stored {
 	@NotNull
 	@NonNull
 	private List<@NotBlank String> keywords = new ArrayList<>();
+	
+	public static Predicate<Stored> getHasIdPredicate(UUID storedId) {
+		return (Stored stored)->stored.getStoredId().equals(storedId);
+	}
 }
