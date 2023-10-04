@@ -18,7 +18,7 @@
 		<div class="row">
 			<div class="col-4">
 				<label for="itemStoredAddSubTransFormOpSelect" class="form-label">Action:</label>
-				<select id="itemStoredAddSubTransFormOpSelect" class="form-select" aria-label="Action to take" onchange="setupAddSubTransFormFromToControls();">
+				<select id="itemStoredAddSubTransFormOpSelect" class="form-select" aria-label="Action to take" onchange="ItemStoredAddSubTransfer.refreshStoredToFromInputs();">
 					<option value="add" selected>Add</option>
 					<option value="subtract">Subtract</option>
 					<option value="transfer">Transfer</option>
@@ -26,7 +26,7 @@
 			</div>
 			<div class="col">
 				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="itemStoredAddSubTransFormToFromExistingStoredCheckbox">
+					<input class="form-check-input" type="checkbox" value="" id="itemStoredAddSubTransFormToFromExistingStoredCheckbox"  onchange="ItemStoredAddSubTransfer.refreshStoredToFromInputs();">
 					<label class="form-check-label" for="itemStoredAddSubTransFormToFromExistingStoredCheckbox">
 					To/From existing stored
 					</label>
@@ -34,20 +34,20 @@
 			</div>
 		</div>
 		<hr />
-		<div id="itemStoredAddSubTransFormToSelectContainer">
+		<div id="itemStoredAddSubTransFormFromContainer">
 			<div class="row">
-				<div class="col" id="itemStoredAddSubTransFormFromSelectContainer">
+				<div class="col">
 					<label for="itemStoredAddSubTransFormFromSelect" class="form-label">From:</label>
 					<select id="itemStoredAddSubTransFormFromSelect" class="form-select" aria-label="Storage block to take from">
 					</select>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row toFromStoredFormContainer" id="itemStoredAddSubTransFormFromFormContainer">
 			
 			</div>
 			<hr />
 		</div>
-		<div id="itemStoredAddSubTransFormToSelectContainer">
+		<div id="itemStoredAddSubTransFormToContainer">
 			<div class="row">
 				<div class="col">
 					<label for="itemStoredAddSubTransFormToSelect" class="form-label">To:</label>
@@ -55,7 +55,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="row">
+			<div class="toFromStoredFormContainer" id="itemStoredAddSubTransFormToFormContainer">
 			
 			</div>
 			<hr />
