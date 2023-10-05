@@ -50,4 +50,13 @@ public class TrackedStored extends Stored {
 	public tech.ebp.oqm.baseStation.model.object.storage.items.stored.StoredType getStoredType() {
 		return StoredType.TRACKED;
 	}
+	
+	@Override
+	public String getLabelText() {
+		StringBuilder sb = new StringBuilder(this.getIdentifier());
+		
+		//TODO:: add more attributes
+		
+		return sb.toString();
+	}
 }
