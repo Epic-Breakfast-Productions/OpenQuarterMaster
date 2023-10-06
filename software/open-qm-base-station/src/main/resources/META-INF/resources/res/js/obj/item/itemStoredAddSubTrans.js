@@ -29,6 +29,24 @@ const ItemStoredAddSubTransfer = {
 
 	},
 
+	getStoredSelectBox(storedObj){
+		let output = $('<div class="col-1">' +
+			'<div class="card" style="">\n' +
+			'  <ul class="list-group list-group-flush">\n' +
+			'    <li class="list-group-item text-center"><input type="checkbox" class="selectedStored" /></li>\n' +
+			'    <li class="list-group-item storedInfo"></li>\n' +
+			'  </ul>\n' +
+			'</div></div>');
+
+		output.find(".selectedStored").val(storedObj.id);
+		output.find(".storedInfo").val(storedObj.labelText);
+		return output;
+	},
+
+	/**
+	 * TODO:: probably need to rethink this. Need to have more controld from caller.
+	 * @param storedInputContainerJq
+	 */
 	updateSelectedStoredInput(storedInputContainerJq){
 		console.log("Updating to or from form elements in " + storedInputContainerJq.attr("id") + ". ");
 		storedInputContainerJq.text("");
@@ -62,11 +80,18 @@ const ItemStoredAddSubTransfer = {
 			console.log("Showing stored list inputs");
 			let storedListInputContent = $('<div class="row mt-1">List</div>');
 
+			//TODO
 			storedInputContainerJq.append(storedListInputContent);
 		}
 		if(showStoredForm){
 			console.log("Showing stored inputs");
 			let storedInputContent = $('<div class="row mt-1">Stored</div>');
+			//TODO
+			// if(
+			// 	itemData.storageType === "AMOUNT_SIMPLE" ||
+			// ){
+			//
+			// }
 
 			storedInputContainerJq.append(storedInputContent);
 		}

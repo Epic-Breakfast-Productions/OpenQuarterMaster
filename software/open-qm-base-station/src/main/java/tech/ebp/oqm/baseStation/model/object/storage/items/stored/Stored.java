@@ -48,7 +48,7 @@ public abstract class Stored {
 	 */
 	@NonNull
 	@NotNull
-	private UUID storedId = UUID.randomUUID();
+	private UUID id = UUID.randomUUID();
 	
 	/**
 	 * The barcode for this particular stored object.
@@ -101,7 +101,7 @@ public abstract class Stored {
 	private List<@NotBlank String> keywords = new ArrayList<>();
 	
 	public static Predicate<Stored> getHasIdPredicate(UUID storedId) {
-		return (Stored stored)->stored.getStoredId().equals(storedId);
+		return (Stored stored)->stored.getId().equals(storedId);
 	}
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
