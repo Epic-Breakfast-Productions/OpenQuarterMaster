@@ -318,6 +318,9 @@ class ConfigManager:
             curConfig = parts[0]
             keyLeft = parts[1]
 
+            # TODO:: add array stuff here
+
+
             if curConfig not in data:
                 data[curConfig] = {}
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])

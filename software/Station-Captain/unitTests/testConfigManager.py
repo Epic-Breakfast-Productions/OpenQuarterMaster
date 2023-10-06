@@ -83,6 +83,108 @@ class MyTestCase(unittest.TestCase):
             data
         )
 
+    def test_configSetSimple(self):
+        data = {}
+        ConfigManager.setConfigVal("simple", "val", data)
+        self.assertEqual(
+            {
+                "simple": "val"
+            },
+            data
+        )
+
+    def test_configSetDeeper(self):
+        data = {}
+        ConfigManager.setConfigVal("simple.sub", "val", data)
+        self.assertEqual(
+            {
+                "simple": {
+                    "sub": "val"
+                }
+            },
+            data
+        )
+
+    def test_configSetSimpleInt(self):
+        data = {}
+        ConfigManager.setConfigVal("simple", 1, data)
+        self.assertEqual(
+            {
+                "simple": 1
+            },
+            data
+        )
+
+    def test_configSetSimpleFloat(self):
+        data = {}
+        ConfigManager.setConfigVal("simple", 1.1, data)
+        self.assertEqual(
+            {
+                "simple": 1.1
+            },
+            data
+        )
+
+    def test_configSetSimpleBool(self):
+        data = {}
+        ConfigManager.setConfigVal("simple", True, data)
+        self.assertEqual(
+            {
+                "simple": True
+            },
+            data
+        )
+
+    # def test_configSetSimpleArrayNew(self):
+    #     data = {}
+    #     ConfigManager.setConfigVal("simple[]", "val", data)
+    #     self.assertEqual(
+    #         {
+    #             "simple": ["val"]
+    #         },
+    #         data
+    #     )
+    #
+    # def test_configSetSimpleArrayPushExisting(self):
+    #     data = {"simple": ["val"]}
+    #     ConfigManager.setConfigVal("simple[]", "val2", data)
+    #     self.assertEqual(
+    #         {
+    #             "simple": ["val", "val2"]
+    #         },
+    #         data
+    #     )
+    #
+    # def test_configSetSimpleArrayReplaceAllExistingWithEmpty(self):
+    #     data = {"simple": ["val"]}
+    #     ConfigManager.setConfigVal("simple[-]", "", data)
+    #     self.assertEqual(
+    #         {
+    #             "simple": ["val2", "val3", "val4"]
+    #         },
+    #         data
+    #     )
+    #
+    # def test_configSetSimpleArrayReplaceAllExisting(self):
+    #     data = {"simple": ["val"]}
+    #     ConfigManager.setConfigVal("simple[-]", "val2,val3,val4", data)
+    #     self.assertEqual(
+    #         {
+    #             "simple": ["val2", "val3", "val4"]
+    #         },
+    #         data
+    #     )
+    #
+    # def test_configSetSimpleArrayReplaceExisting(self):
+    #     data = {"simple": ["val"]}
+    #     ConfigManager.setConfigVal("simple[0]", "val2", data)
+    #     self.assertEqual(
+    #         {
+    #             "simple": ["val2"]
+    #         },
+    #         data
+    #     )
+
     # TODO:: finish tests
 
 
