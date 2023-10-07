@@ -73,7 +73,7 @@ class SecretManager:
             )
         ))
 
-    def setSecret(self, key: str, plainVal: str, secretsDict:dict = None):
+    def setSecret(self, key: str, plainVal: str, secretsDict: dict = None):
         if secretsDict is None:
             secretsDict = ConfigManager.readFile(self.secretsFile)
 
@@ -345,7 +345,6 @@ class ConfigManager:
             # TODO:: add array stuff here
             logging.warn("err")
 
-
     @staticmethod
     def setConfigValInFile(
             configKeyToSet: str,
@@ -409,12 +408,12 @@ class ConfigManager:
             additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
             defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
     ) -> str:
-        output = ConfigManager.setConfigValInFile(
-            configKeyToSet, SECRET_MNGR_SECRET_PLACEHOLDER, configFile, mainConfigFile, additionalConfigDir, defaultAddendumFile
-        )
         self.getSecretManager().setSecret(configKeyToSet, configValToSet)
+        output = ConfigManager.setConfigValInFile(
+            configKeyToSet, SECRET_MNGR_SECRET_PLACEHOLDER, configFile, mainConfigFile, additionalConfigDir,
+            defaultAddendumFile
+        )
         return output
-
 
     @staticmethod
     def readFile(file: str) -> dict:
