@@ -1,5 +1,6 @@
 import base64
 import datetime
+import logging
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -304,6 +305,10 @@ class ConfigManager:
             exit(1)
 
     @staticmethod
+    def getArrRef(configKey: str):
+        logging.debug('todo')
+
+    @staticmethod
     def setConfigVal(configKey: str, configVal: str, data: dict):
         """
         Updates the dict in place. Recursive
@@ -313,22 +318,27 @@ class ConfigManager:
         """
         if not isinstance(data, dict):
             raise ConfigKeyNotFoundException()
+
+        if "." not in configKey and "[" not in configKey:
+            data[configKey] = configVal
+            return
+
         if "." in configKey:
             parts = configKey.split(".", 1)
             curConfig = parts[0]
             keyLeft = parts[1]
 
             # TODO:: add array stuff here
-
-
+            # if "[" in keyLeft:
+            #
+            # else:
             if curConfig not in data:
                 data[curConfig] = {}
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])
         else:
-            # print("Debug: key: " + configKey)
-            # print("Debug: val: " + configVal)
-            # print("Debug: data: " + data)
-            data[configKey] = configVal
+            # TODO:: add array stuff here
+            logging.warn("err")
+
 
     @staticmethod
     def setConfigValInFile(

@@ -20,7 +20,8 @@ class MyTestCase(unittest.TestCase):
     "overwrittenVal": "old",
     "testObj": {
         "nestedOne": "test"
-    }
+    },
+    "testArr" : ["1", "2", "3"]
 }
     ''')
         with open(TEST_CONFIG_ADDENDUM_CONFIG_ONE, 'x') as stream:
@@ -61,7 +62,8 @@ class MyTestCase(unittest.TestCase):
                 "overwrittenVal": "old",
                 "testObj": {
                     "nestedOne": "test"
-                }
+                },
+                "testArr": ["1", "2", "3"]
             },
             data
         )
@@ -78,7 +80,8 @@ class MyTestCase(unittest.TestCase):
                 "testObj": {
                     "nestedOne": "test",
                     "nestedTwo": "test"
-                }
+                },
+                "testArr": ["1", "2", "3"]
             },
             data
         )
@@ -134,6 +137,8 @@ class MyTestCase(unittest.TestCase):
             },
             data
         )
+
+    # TODO:: test get arrays
 
     # def test_configSetSimpleArrayNew(self):
     #     data = {}
