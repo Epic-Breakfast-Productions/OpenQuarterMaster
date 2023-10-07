@@ -303,12 +303,7 @@ class ConfigManager:
         return result
 
     def getConfigVal(self, configKey: str, data: dict, formatData=True) -> str:
-        try:
-            return self.getConfigValRec(configKey, configKey, data, formatData)
-        except ConfigKeyNotFoundException:
-            # TODO:: throw exception
-            print("ERROR: Config key not found: " + configKey, file=sys.stderr)
-            exit(1)
+        return self.getConfigValRec(configKey, configKey, data, formatData)
 
     @staticmethod
     def getArrRef(configKey: str):

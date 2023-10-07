@@ -3,6 +3,7 @@
 # Script to get configuration and replace values
 #
 import sys
+
 sys.path.append("lib/")
 from ConfigManager import *
 from ScriptInfos import *
@@ -45,7 +46,11 @@ elif args.l:
     print(json.dumps(mainCM.configData, indent=4))
 elif args.g:
     configToGet = args.g[0]
-    configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
+    try:
+        configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
+    except ConfigKeyNotFoundException:
+        print("ERROR: Config key not found: " + configToGet, file=sys.stderr)
+        exit(1)
     print(configValue)
 elif args.t:
     configFileToGet = args.t[0]

@@ -1,8 +1,4 @@
-from ScriptInfos import ScriptInfo
 from dialog import Dialog
-import logging
-import os
-import subprocess
 from ConfigManager import *
 from PackageManagement import *
 import time
@@ -65,6 +61,8 @@ class UserInteraction:
 
             if choice == "(1)":
                 self.infoStatusMenu()
+            if choice == "(2)":
+                self.manageInstallationMenu()
 
         logging.debug("Done running main menu.")
 
@@ -145,6 +143,35 @@ class UserInteraction:
                                        shell=False, capture_output=True, text=True, check=True).stdout
 
         self.dialog.msgbox(systemdStatus, title="System Status", height=50, width=UserInteraction.WIDE_WIDTH)
+
+    def manageInstallationMenu(self):
+        logging.debug("Running Manage Installation menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Manage Installation Menu",
+                choices=[
+                    ("(1)", "SSL/HTTPS Certs (TODO) "),
+                    ("(2)", "Set E-mail Settings"),
+                    ("(3)", "User Administration (TODO)"),
+                    ("(4)", "Plugins")
+                ]
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(2)":
+                self.manageEmailSettings()
+
+        logging.debug("Done running manage install menu.")
+
+    def manageEmailSettings(self):
+        # Show current email settings. Ask if want to change
+        logging.info("Entering flow for managing E-mail settings.")
+        # TODO
+
 
 
 ui = UserInteraction()

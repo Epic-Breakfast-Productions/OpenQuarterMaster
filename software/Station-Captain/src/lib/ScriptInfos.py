@@ -18,3 +18,16 @@ class ScriptInfo:
     CONFIG_VALUES_DIR = CONFIG_DIR + "/configs"
     SERVICE_CONFIG_DIR = SHARED_CONFIG_DIR + "/serviceConfig"
     SNAPSHOT_SCRIPTS_LOC = SHARED_CONFIG_DIR + "/snapshot/scripts"
+
+    CONFIG_DEFAULT_UPDATE_FILE = "00-main.json"
+
+
+class ConfigKeys:
+    # Email
+    CONFIG_KEY_EMAIL_PREFIX = "system.emailSend"
+    CONFIG_KEY_EMAIL_FROM = CONFIG_KEY_EMAIL_PREFIX + ".fromAddress"
+    CONFIG_KEY_EMAIL_HOST = CONFIG_KEY_EMAIL_PREFIX + ".host"
+    CONFIG_KEY_EMAIL_PORT = CONFIG_KEY_EMAIL_PREFIX + ".sslPort"
+    CONFIG_KEY_EMAIL_USER = CONFIG_KEY_EMAIL_PREFIX + ".username"
+    CONFIG_KEY_EMAIL_PASS = CONFIG_KEY_EMAIL_PREFIX + ".password"
+
