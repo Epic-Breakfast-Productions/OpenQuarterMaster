@@ -73,6 +73,22 @@ class SecretManager:
             )
         ))
 
+    def setSecret(self, key: str, plainVal: str, secretsDict:dict = None):
+        if secretsDict is None:
+            secretsDict = ConfigManager.readFile(self.secretsFile)
+
+        secretsDict[key] = self.fernet.encrypt(bytes(plainVal, 'utf-8')).decode('utf-8')
+        jsonData = json.dumps(secretsDict, indent=4)
+        try:
+            with open(self.secretsFile, 'w') as stream:
+                stream.write(jsonData)
+        except OSError as e:
+            # TODO:: throw exception
+            print("Error: failed to write new secret to secrets file. Error: ",
+                  e,
+                  file=sys.stderr)
+            exit(1)
+
     def getSecretVal(self, key: str, generateIfNone: bool = True) -> str:
         secretsDict = ConfigManager.readFile(self.secretsFile)
         output = SECRET_MNGR_SECRET_PLACEHOLDER
@@ -81,17 +97,7 @@ class SecretManager:
             output = self.fernet.decrypt(bytes(output, 'utf-8')).decode('utf-8')
         elif generateIfNone:
             output = SecretManager.newSecret()
-            secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8')).decode('utf-8')
-            jsonData = json.dumps(secretsDict, indent=4)
-            try:
-                with open(self.secretsFile, 'w') as stream:
-                    stream.write(jsonData)
-            except OSError as e:
-                # TODO:: throw exception
-                print("Error: failed to write new secret to secrets file. Error: ",
-                      e,
-                      file=sys.stderr)
-                exit(1)
+            self.setSecret(key, output, secretsDict)
 
         return output
 
@@ -393,6 +399,22 @@ class ConfigManager:
             exit(1)
 
         return jsonData
+
+    def setSecretValInFile(
+            self,
+            configKeyToSet: str,
+            configValToSet: str,
+            configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
+            mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
+            additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
+            defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
+    ) -> str:
+        output = ConfigManager.setConfigValInFile(
+            configKeyToSet, SECRET_MNGR_SECRET_PLACEHOLDER, configFile, mainConfigFile, additionalConfigDir, defaultAddendumFile
+        )
+        self.getSecretManager().setSecret(configKeyToSet, configValToSet)
+        return output
+
 
     @staticmethod
     def readFile(file: str) -> dict:

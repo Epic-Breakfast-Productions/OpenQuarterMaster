@@ -33,6 +33,9 @@ argParser.add_argument('-t', '--template', dest="t",
 argParser.add_argument('-s', '--set', dest="s",
                        help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
+argParser.add_argument('-S', '--setSecret', dest="setSecret",
+                       help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       nargs=3)
 
 args = argParser.parse_args()
 
@@ -68,6 +71,14 @@ elif args.s:
         configKeyToSet=args.s[0],
         configValToSet=args.s[1],
         configFile=args.s[2]
+    )
+    # TODO: error check
+    print(json)
+elif args.setSecret:
+    json = mainCM.setSecretValInFile(
+        configKeyToSet=args.setSecret[0],
+        configValToSet=args.setSecret[1],
+        configFile=args.setSecret[2]
     )
     # TODO: error check
     print(json)
