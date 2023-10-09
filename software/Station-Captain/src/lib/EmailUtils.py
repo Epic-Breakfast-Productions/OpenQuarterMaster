@@ -8,6 +8,10 @@ class EmailUtils:
     """
     Class to encapsulate methods that deal with emails
 
+    https://docs.python.org/3.8/library/email.html#module-email
+    https://docs.python.org/3.8/library/email.examples.html
+    https://docs.python.org/3.8/library/smtplib.html#module-smtplib
+
     """
 
     @staticmethod
