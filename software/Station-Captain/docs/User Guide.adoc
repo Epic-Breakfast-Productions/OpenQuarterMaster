@@ -51,33 +51,58 @@ This is a quick explanation of the menus in interactive mode.
 **** Storage usage
 **** RAM usage
 . Manage Installation TODO
+
 .. Select OQM major version? TODO
+
 .. SSL/HTTPS Certs TODO
 ... Cert mode (self, Let's Encrypt, provided)
 ... Cert info TODO
+
 .. Core? TODO
 ... Ensure installed? (TODO)
 ... Common config options (TODO)
-.. Set Email Settings (TODO)
+
+.. Set Email Settings
+*** This menu sets email settings used to send emails from the system
+*** These settings are used by various services as well as the system itself
+*** Also supports testing these settings
+
 .. User Administration (TODO)
 ... Goto keycloak admin console (TODO)
 ... Toggle self-register (TODO)
+
 .. Plugins TODO
+
 .. Uninstall All TODO
+
 . Snapshots TODO
+
 .. Restore from Snapshot TODO
+
 .. Enable/disable automatic snapshots TODO
+
 .. Set Snapshot location TODO
+
 .. Set number of snapshots to keep TODO
+
 .. Set automatic snapshot frequency TODO
+
 . Updates TODO
+
 .. Perform Updates (OS and OQM) TODO
+
 .. Enable/disable automatic updates TODO
+
 . Cleanup TODO
+
 .. Docker TODO
+
 ... Run cleanup TODO
+
 ... Set to do automatically TODO
+
 .. Reset data TODO
+
 . Captain Settings TODO
 
 === Python UI (Planned/TODO)

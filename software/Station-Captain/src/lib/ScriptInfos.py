@@ -19,7 +19,7 @@ class ScriptInfo:
     SERVICE_CONFIG_DIR = SHARED_CONFIG_DIR + "/serviceConfig"
     SNAPSHOT_SCRIPTS_LOC = SHARED_CONFIG_DIR + "/snapshot/scripts"
 
-    CONFIG_DEFAULT_UPDATE_FILE = "00-main.json"
+    CONFIG_DEFAULT_UPDATE_FILE = "99-main.json"
 
 
 class ConfigKeys:

@@ -47,7 +47,10 @@ elif args.l:
 elif args.g:
     configToGet = args.g[0]
     try:
-        configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
+        configValue = json.dumps(
+            mainCM.getConfigVal(configToGet, mainCM.configData),
+            indent=4
+        )
     except ConfigKeyNotFoundException:
         print("ERROR: Config key not found: " + configToGet, file=sys.stderr)
         exit(1)

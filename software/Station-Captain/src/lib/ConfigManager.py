@@ -251,6 +251,9 @@ class ConfigManager:
             )
             exit(1)
         # Read in configuration
+        self.rereadConfigData()
+
+    def rereadConfigData(self):
         self.configData = self.readFile(self.mainConfigFile)
         for file in os.listdir(self.additionalConfigsDir):
             if file.endswith(".json"):
@@ -265,9 +268,12 @@ class ConfigManager:
             self.secretManager = SecretManager()
         return self.secretManager
 
-    def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, formatData) -> str:
+    def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, processSecret=True,
+                        exceptOnNotPresent=True):
         """
         Recursive function to get a particular value in the data
+        :param exceptOnNotPresent:
+        :param processSecret:
         :param configKeyOrig: The configuration to get, dot notation I.E. "test.value"
         :param configKey: At first call, same as configKeyOrig. Is whittled down until reaching final segment in dot notation.
         :param data: The dict to find the configuration in
@@ -278,32 +284,39 @@ class ConfigManager:
         # print("debug:: configKey: " + configKey)
         # print("debug:: data: " + json.dumps(data, indent=4))
         if not isinstance(data, dict):
-            raise ConfigKeyNotFoundException()
+            if exceptOnNotPresent:
+                raise ConfigKeyNotFoundException()
+            return ""
         if "." in configKey:
             parts = configKey.split(".", 1)
             curConfig = parts[0]
             keyLeft = parts[1]
 
             if curConfig not in data:
-                raise ConfigKeyNotFoundException()
+                if exceptOnNotPresent:
+                    raise ConfigKeyNotFoundException()
+                return ""
 
-            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
+            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], processSecret, exceptOnNotPresent)
         if configKey not in data:
-            raise ConfigKeyNotFoundException()
+            if exceptOnNotPresent:
+                raise ConfigKeyNotFoundException()
+            return ""
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
-            result = self.getSecretManager().updateSecrets(configKeyOrig, result)
-            if not isinstance(result, str):
-                if formatData:
-                    result = json.dumps(result, indent=4)
-                else:
-                    result = json.dumps(result)
+            result = self.getSecretManager().updateSecrets(configKeyOrig, result) if processSecret else result
         else:
             result = str(result)
         return result
 
-    def getConfigVal(self, configKey: str, data: dict, formatData=True) -> str:
-        return self.getConfigValRec(configKey, configKey, data, formatData)
+    def getConfigVal(self, configKey: str, data: dict = None, processSecret=True, exceptOnNotPresent=True):
+        return self.getConfigValRec(
+            configKey,
+            configKey,
+            (data if data is not None else self.configData),
+            processSecret,
+            exceptOnNotPresent
+        )
 
     @staticmethod
     def getArrRef(configKey: str):

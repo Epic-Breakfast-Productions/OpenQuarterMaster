@@ -1,7 +1,13 @@
+import logging
+from typing import Optional
+
 from dialog import Dialog
 from ConfigManager import *
+from EmailUtils import *
 from PackageManagement import *
 import time
+import re
+
 
 
 class UserInteraction:
@@ -10,9 +16,10 @@ class UserInteraction:
     User interaction functions.
 
     References:
-        - https://pythondialog.sourceforge.io
+        - https://pythondialog.sourceforge.io/doc/
     """
     WIDE_WIDTH = 200
+    TALL_HEIGHT = 50
 
     def __init__(self):
         self.dialog = Dialog(
@@ -24,6 +31,75 @@ class UserInteraction:
     @staticmethod
     def clearScreen():
         os.system('clear')
+
+    @staticmethod
+    def configValidatorEmail(val: str) -> Optional[str]:
+        # I know this looks dumb, but fullmatch returns an obj and not a straight bool so this makes the linter happy
+        if re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b', val):
+            return None
+        return "Was not an email."
+
+    @staticmethod
+    def configValidatorNotEmpty(val: str) -> Optional[str]:
+        if not bool(val and val.strip()):
+            return "Value given was blank"
+        return None
+
+    @staticmethod
+    def configValidatorIsDigit(val: str) -> Optional[str]:
+        if not val.isdigit():
+            return "Value given was not a number"
+        return None
+
+    def promptForConfigChange(self,
+                              text: str,
+                              title: str,
+                              configKey: str,
+                              secret: bool = False,
+                              validators: list = []
+                              ):
+        """
+        Prompts the user for a particular config value, and sets it
+        :param validators:
+        :param text: The text to display to the user
+        :param title: The title of the message box
+        :param configKey: The config key we are tweaking
+        :param secret: If the config to set is a secret or not
+        :return: None
+        """
+        logging.info("Prompting to change config key " + configKey)
+
+        if secret:
+            code, value = self.dialog.passwordbox(text, title=title)
+        else:
+            code, value = self.dialog.inputbox(text + "\n\n(No input will be shown when typing)", title=title,
+                                               init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False))
+
+        if code != self.dialog.OK:
+            self.dialog.msgbox("Canceled Setting value.")
+            return
+
+        for validator in validators:
+            validationErr = validator(value)
+            if validationErr is not None:
+                logging.warning("Got validation error from value given from user.")
+                self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
+                return
+
+        try:
+            if secret:
+                mainCM.setSecretValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+            else:
+                mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+        except Exception:
+            logging.error("FAILED to set config value.")
+            self.dialog.msgbox("FAILED Setting value. Please try again.")
+            return
+
+        mainCM.rereadConfigData()
+        self.dialog.msgbox("Set new value")
+
+        logging.info("Done prompting to change config key " + configKey)
 
     def startUserInteraction(self):
         self.userInteractionSetupCheck()
@@ -132,8 +208,12 @@ class UserInteraction:
         time.sleep(1)
         self.dialog.gauge_stop()
         logging.debug("Done compiling host info.")
-        self.dialog.msgbox(textToShow, title="Host Information", height=50, width=UserInteraction.WIDE_WIDTH, tab_correct=True, trim=False,
-                           cr_wrap=True)
+        self.dialog.scrollbox(textToShow, title="Host Information",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
     def showSystemStatus(self):
         logging.debug("Showing system status.")
@@ -168,10 +248,91 @@ class UserInteraction:
         logging.debug("Done running manage install menu.")
 
     def manageEmailSettings(self):
-        # Show current email settings. Ask if want to change
         logging.info("Entering flow for managing E-mail settings.")
-        # TODO
+        # TODO:: add option to test email settings: https://docs.python.org/3.8/library/email.examples.html
+        # Show current email settings. Ask if want to change
+        while True:
+            code, choice = self.dialog.menu(
+                "Current Email Settings:\n" +
+                "\tSystem Alert Destination: " + mainCM.getConfigVal("system.email.sysAlertDest", processSecret=False,
+                                                      exceptOnNotPresent=False) + "\n" +
+                "\tSend From: " + mainCM.getConfigVal("system.email.addressFrom", processSecret=False,
+                                                      exceptOnNotPresent=False) + "\n" +
+                "\tSMTP Host: " + mainCM.getConfigVal("system.email.smtpHost", processSecret=False,
+                                                      exceptOnNotPresent=False) + "\n" +
+                "\tSMTP Port: " + mainCM.getConfigVal("system.email.smtpPort", processSecret=False,
+                                                      exceptOnNotPresent=False) + "\n" +
+                "\tUsername: " + mainCM.getConfigVal("system.email.username", processSecret=False,
+                                                     exceptOnNotPresent=False) + "\n" +
+                "\tPassword: " + mainCM.getConfigVal("system.email.password", processSecret=False,
+                                                     exceptOnNotPresent=False) + "\n" +
+                "\n\nChoose a config to change:",
+                title="Manage Installation Menu",
+                choices=[
+                    ("(1)", "System Alert Destination"),
+                    ("(2)", "Send from"),
+                    ("(3)", "SMTP Host"),
+                    ("(4)", "SMTP Port"),
+                    ("(5)", "Username"),
+                    ("(6)", "Password"),
+                    ("(7)", "Test Email Settings")
+                ],
+                height=UserInteraction.TALL_HEIGHT
+            )
+            UserInteraction.clearScreen()
+            if code != self.dialog.OK:
+                break
 
+            if choice == "(1)":
+                self.promptForConfigChange(
+                    "The email used to send system alert emails:",
+                    "Set Alert Email",
+                    "system.email.sysAlertDest",
+                    validators=[UserInteraction.configValidatorEmail]
+                )
+            if choice == "(2)":
+                self.promptForConfigChange(
+                    "The email used as a \"from\" address on sent emails:",
+                    "Set Send From Email",
+                    "system.email.addressFrom",
+                    validators=[UserInteraction.configValidatorEmail]
+                )
+            if choice == "(3)":
+                self.promptForConfigChange(
+                    "The host of the SMTP Email Server:",
+                    "SMTP Host",
+                    "system.email.smtpHost",
+                    validators=[UserInteraction.configValidatorNotEmpty]
+                )
+            if choice == "(4)":
+                self.promptForConfigChange(
+                    "The port of the SMTP Email Server:",
+                    "SMTP Port",
+                    "system.email.smtpPort",
+                    validators=[UserInteraction.configValidatorIsDigit]
+                )
+            if choice == "(5)":
+                self.promptForConfigChange(
+                    "The username to connect to the email server with:",
+                    "SMTP Username",
+                    "system.email.username",
+                    validators=[UserInteraction.configValidatorNotEmpty]
+                )
+            if choice == "(6)":
+                self.promptForConfigChange(
+                    "The port of the SMTP Email Server:",
+                    "SMTP Host",
+                    "system.email.password",
+                    secret=True,
+                    validators=[UserInteraction.configValidatorNotEmpty]
+                )
+            if choice == "(7)":
+                if EmailUtils.testEmailSettings():
+                    self.dialog.msgbox("Test email sent to alert address.\nPlease check your email.")
+                else:
+                    self.dialog.msgbox("FAILED to send test message.\nPlease check settings and try again.")
+
+    logging.debug("Done running manage email settings menu.")
 
 
 ui = UserInteraction()
