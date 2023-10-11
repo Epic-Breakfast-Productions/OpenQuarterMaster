@@ -158,6 +158,8 @@ class UserInteraction:
                 self.infoStatusMenu()
             if choice == "(2)":
                 self.manageInstallationMenu()
+            if choice == "(3)":
+                self.snapshotsMenu()
             if choice == "(4)":
                 self.cleanMaintUpdatesMenu()
 
@@ -383,6 +385,31 @@ class UserInteraction:
                     logging.info("User chose to reboot the device.")
                     self.dialog.infobox("Rebooting device. Please wait.")
                     os.system('reboot')
+
+        logging.debug("Done Cleanup, Maintenance, and Updates menu.")
+
+    def snapshotsMenu(self):
+        logging.debug("Running snapshots menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Snapshots",
+                choices=[
+                    ("(1)", "Restore from Snapshot"),
+                    ("(2)", "Perform Snapshot Now"),
+                    ("(3)", "Enable/Disable automatic snapshots"),
+                    ("(4)", "Set snapshot location"),
+                    ("(5)", "Set number of snapshots to keep"),
+                    ("(6)", "Set auto snapshot frequency"),
+                ]
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+
+            if choice == "()":
+                self.promptForServiceRestart()
 
         logging.debug("Done Cleanup, Maintenance, and Updates menu.")
 

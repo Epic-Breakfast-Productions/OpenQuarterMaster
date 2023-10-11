@@ -75,7 +75,7 @@ This is a quick explanation of the menus in interactive mode.
 
 .. Uninstall All TODO
 
-. Snapshots TODO
+. Snapshots
 
 .. Restore from Snapshot TODO
 
@@ -106,8 +106,12 @@ This is a quick explanation of the menus in interactive mode.
 ... Reset Data TODO
 
 .. Restart all services
+*** Restarts all services related to OQM
+*** Recommended do after config changes and during low usage times.
 
 .. Restart Device
+*** Does as advertises. Restarts the system that this all runs on.
+*** Recommended when weirder issues occur, and after updates.
 
 . Captain Settings TODO
 
