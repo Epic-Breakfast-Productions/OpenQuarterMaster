@@ -87,13 +87,13 @@ This is a quick explanation of the menus in interactive mode.
 
 .. Set automatic snapshot frequency TODO
 
-. Updates TODO
+. Cleanup, Maintenance, and Updates
 
-.. Perform Updates (OS and OQM) TODO
+.. Updates TODO
 
-.. Enable/disable automatic updates TODO
+... Perform Updates (OS and OQM) TODO
 
-. Cleanup TODO
+... Enable/disable automatic updates TODO
 
 .. Docker TODO
 
@@ -101,7 +101,13 @@ This is a quick explanation of the menus in interactive mode.
 
 ... Set to do automatically TODO
 
-.. Reset data TODO
+.. Data TODO
+
+... Reset Data TODO
+
+.. Restart all services
+
+.. Restart Device
 
 . Captain Settings TODO
 

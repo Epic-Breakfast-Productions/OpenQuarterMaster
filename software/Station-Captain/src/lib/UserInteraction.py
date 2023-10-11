@@ -3,6 +3,7 @@ from typing import Optional
 
 from dialog import Dialog
 from ConfigManager import *
+from ServiceUtils import *
 from EmailUtils import *
 from PackageManagement import *
 import time
@@ -101,6 +102,25 @@ class UserInteraction:
 
         logging.info("Done prompting to change config key " + configKey)
 
+    def promptForServiceRestart(self, configChanged:bool=False):
+        logging.info("Prompting user to see if they want to restart services.")
+        code = self.dialog.yesno("Restart all services?", title="Restart Services?")
+        if code != self.dialog.OK:
+            logging.info("User chose not to restart services.")
+            return
+        self.dialog.infobox("Restarting services. Please wait.")
+
+        result = ServiceUtils.doServiceCommand(
+            ServiceStateCommand.restart,
+            ServiceUtils.SERVICE_ALL
+        )
+
+        if not result:
+            self.dialog.msgbox("Service restart FAILED.\nPlease check logs for reasoning.")
+            return
+
+        self.dialog.msgbox("Service restart complete.")
+
     def startUserInteraction(self):
         self.userInteractionSetupCheck()
         self.mainMenu()
@@ -125,9 +145,8 @@ class UserInteraction:
                     ("(1)", "Info / Status"),
                     ("(2)", "Manage Installation"),
                     ("(3)", "Snapshots"),
-                    ("(4)", "Updates"),
-                    ("(5)", "Cleanup"),
-                    ("(6)", "Captain Settings"),
+                    ("(4)", "Cleanup, Maintenance, and Updates"),
+                    ("(5)", "Captain Settings"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -139,6 +158,8 @@ class UserInteraction:
                 self.infoStatusMenu()
             if choice == "(2)":
                 self.manageInstallationMenu()
+            if choice == "(4)":
+                self.cleanMaintUpdatesMenu()
 
         logging.debug("Done running main menu.")
 
@@ -332,7 +353,38 @@ class UserInteraction:
                 else:
                     self.dialog.msgbox("FAILED to send test message.\nPlease check settings and try again.")
 
-    logging.debug("Done running manage email settings menu.")
+        logging.debug("Done running manage email settings menu.")
+        self.promptForServiceRestart(True)
+
+    def cleanMaintUpdatesMenu(self):
+        logging.debug("Running Cleanup, Maintenance, and Updates menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Cleanup, Maintenance, and Updates",
+                choices=[
+                    ("(1)", "Updates"),
+                    ("(2)", "Docker"),
+                    ("(3)", "Data"),
+                    ("(4)", "Restart Services"),
+                    ("(5)", "Restart Device"),
+                ]
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(4)":
+                self.promptForServiceRestart()
+            if choice == "(5)":
+                code = self.dialog.yesno("Restart device?", title="Restart Device?")
+                if code == self.dialog.OK:
+                    logging.info("User chose to reboot the device.")
+                    self.dialog.infobox("Rebooting device. Please wait.")
+                    os.system('reboot')
+
+        logging.debug("Done Cleanup, Maintenance, and Updates menu.")
 
 
 ui = UserInteraction()
