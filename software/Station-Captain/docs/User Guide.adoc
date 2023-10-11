@@ -50,7 +50,7 @@ This is a quick explanation of the menus in interactive mode.
 **** Hardware information
 **** Storage usage
 **** RAM usage
-. Manage Installation TODO
+. Manage Installation
 
 .. Select OQM major version? TODO
 
@@ -67,8 +67,8 @@ This is a quick explanation of the menus in interactive mode.
 *** These settings are used by various services as well as the system itself
 *** Also supports testing these settings
 
-.. User Administration (TODO)
-... Goto keycloak admin console (TODO)
+.. User Administration
+... Goto keycloak admin console
 ... Toggle self-register (TODO)
 
 .. Plugins TODO

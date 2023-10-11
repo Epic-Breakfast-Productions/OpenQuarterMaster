@@ -256,7 +256,7 @@ class UserInteraction:
                 choices=[
                     ("(1)", "SSL/HTTPS Certs (TODO) "),
                     ("(2)", "Set E-mail Settings"),
-                    ("(3)", "User Administration (TODO)"),
+                    ("(3)", "User Administration"),
                     ("(4)", "Plugins")
                 ]
             )
@@ -267,6 +267,8 @@ class UserInteraction:
 
             if choice == "(2)":
                 self.manageEmailSettings()
+            if choice == "(3)":
+                self.userAdminMenu()
 
         logging.debug("Done running manage install menu.")
 
@@ -357,6 +359,34 @@ class UserInteraction:
 
         logging.debug("Done running manage email settings menu.")
         self.promptForServiceRestart(True)
+
+    def userAdminMenu(self):
+        logging.debug("Running User Admin menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "System Users are managed via Keycloak.\nPlease choose an option:",
+                title="User Admin Menu",
+                choices=[
+                    ("(1)", "Go to Keycloak"),
+                    # ("(2)", "Set E-mail Settings")
+                ]
+            )
+            UserInteraction.clearScreen()
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+
+                self.dialog.msgbox(
+                    "Keycloak access information:\n\n"+
+                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal("infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
+                    "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
+                    title="Keycloak Access",
+                    width=UserInteraction.WIDE_WIDTH
+                )
+
+        logging.debug("Done running user admin menu.")
 
     def cleanMaintUpdatesMenu(self):
         logging.debug("Running Cleanup, Maintenance, and Updates menu.")
