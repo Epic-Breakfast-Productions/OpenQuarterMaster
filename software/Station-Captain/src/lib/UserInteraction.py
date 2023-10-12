@@ -6,9 +6,40 @@ from ConfigManager import *
 from ServiceUtils import *
 from EmailUtils import *
 from PackageManagement import *
+from CronUtils import *
+from SnapshotUtils import *
 import time
 import re
 
+
+class InputValidators:
+    @staticmethod
+    def isEmail(val: str) -> Optional[str]:
+        # I know this looks dumb, but fullmatch returns an obj and not a straight bool so this makes the linter happy
+        if re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b', val):
+            return None
+        return "Was not an email."
+
+    @staticmethod
+    def isNotEmpty(val: str) -> Optional[str]:
+        if not bool(val and val.strip()):
+            return "Value given was blank"
+        return None
+
+    @staticmethod
+    def isDigit(val: str) -> Optional[str]:
+        if not val.isdigit():
+            return "Value given was not a number"
+        return None
+
+    @staticmethod
+    def isCronKeyword(val: str) -> Optional[str]:
+        try:
+            CronFrequency(val)
+        except ValueError:
+            freqList = ", ".join(CronFrequency)
+            return "Value given was not a valid option (" + freqList + ")"
+        return None
 
 
 class UserInteraction:
@@ -32,25 +63,6 @@ class UserInteraction:
     @staticmethod
     def clearScreen():
         os.system('clear')
-
-    @staticmethod
-    def configValidatorEmail(val: str) -> Optional[str]:
-        # I know this looks dumb, but fullmatch returns an obj and not a straight bool so this makes the linter happy
-        if re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b', val):
-            return None
-        return "Was not an email."
-
-    @staticmethod
-    def configValidatorNotEmpty(val: str) -> Optional[str]:
-        if not bool(val and val.strip()):
-            return "Value given was blank"
-        return None
-
-    @staticmethod
-    def configValidatorIsDigit(val: str) -> Optional[str]:
-        if not val.isdigit():
-            return "Value given was not a number"
-        return None
 
     def promptForConfigChange(self,
                               text: str,
@@ -313,35 +325,35 @@ class UserInteraction:
                     "The email used to send system alert emails:",
                     "Set Alert Email",
                     "system.email.sysAlertDest",
-                    validators=[UserInteraction.configValidatorEmail]
+                    validators=[InputValidators.isEmail]
                 )
             if choice == "(2)":
                 self.promptForConfigChange(
                     "The email used as a \"from\" address on sent emails:",
                     "Set Send From Email",
                     "system.email.addressFrom",
-                    validators=[UserInteraction.configValidatorEmail]
+                    validators=[InputValidators.isEmail]
                 )
             if choice == "(3)":
                 self.promptForConfigChange(
                     "The host of the SMTP Email Server:",
                     "SMTP Host",
                     "system.email.smtpHost",
-                    validators=[UserInteraction.configValidatorNotEmpty]
+                    validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(4)":
                 self.promptForConfigChange(
                     "The port of the SMTP Email Server:",
                     "SMTP Port",
                     "system.email.smtpPort",
-                    validators=[UserInteraction.configValidatorIsDigit]
+                    validators=[InputValidators.isDigit]
                 )
             if choice == "(5)":
                 self.promptForConfigChange(
                     "The username to connect to the email server with:",
                     "SMTP Username",
                     "system.email.username",
-                    validators=[UserInteraction.configValidatorNotEmpty]
+                    validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(6)":
                 self.promptForConfigChange(
@@ -349,7 +361,7 @@ class UserInteraction:
                     "SMTP Host",
                     "system.email.password",
                     secret=True,
-                    validators=[UserInteraction.configValidatorNotEmpty]
+                    validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(7)":
                 if EmailUtils.testEmailSettings():
@@ -427,7 +439,7 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Restore from Snapshot"),
                     ("(2)", "Perform Snapshot Now"),
-                    ("(3)", "Enable/Disable automatic snapshots"),
+                    ("(3)", "Enable" if CronUtils.isCronEnabled(SnapshotUtils.CRON_NAME) else "Disable" + " automatic snapshots"),
                     ("(4)", "Set snapshot location"),
                     ("(5)", "Set number of snapshots to keep"),
                     ("(6)", "Set auto snapshot frequency"),
@@ -438,8 +450,42 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
 
-            if choice == "()":
-                self.promptForServiceRestart()
+            if choice == "(2)":
+                SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
+            if choice == "(3)":
+                if CronUtils.isCronEnabled(SnapshotUtils.CRON_NAME):
+                    CronUtils.disableCron(SnapshotUtils.CRON_NAME)
+                    self.dialog.msgbox("Disabled automatic snapshots.")
+                else:
+                    CronUtils.enableCron(
+                        SnapshotUtils.CRON_NAME,
+                        "oqm-captain --take-snapshot " + SnapshotTrigger.scheduled.name,
+                        CronFrequency(mainCM.getConfigVal("snapshots.frequency"))
+                    )
+                    self.dialog.msgbox("Enabled automatic snapshots.")
+            if choice == "(4)":
+                self.promptForConfigChange(
+                    "The location that snapshots are placed:",
+                    "Snapshot Location",
+                    "snapshots.location",
+                    validators=[InputValidators.isNotEmpty]
+                    # TODO:: file path dir validator
+                )
+            if choice == "(5)":
+                self.promptForConfigChange(
+                    "The number of snapshots to keep:",
+                    "Number of snapshots",
+                    "snapshots.numToKeep",
+                    validators=[InputValidators.isDigit]
+                )
+            if choice == "(6)":
+                freqList = ", ".join(CronFrequency)
+                self.promptForConfigChange(
+                    "The frequency that snapshots are taken:\n\n(Options: " + freqList + ")",
+                    "Auto Snapshot Frequency",
+                    "snapshots.frequency",
+                    validators=[InputValidators.isCronKeyword]
+                )
 
         logging.debug("Done Cleanup, Maintenance, and Updates menu.")
 

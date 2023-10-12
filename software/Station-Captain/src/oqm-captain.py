@@ -19,7 +19,24 @@ import logging
 sys.path.append("lib/")
 from ScriptInfos import ScriptInfo
 import UserInteraction
+from SnapshotUtils import *
+import argparse
 
 logging.basicConfig(level=logging.DEBUG)
+argParser = argparse.ArgumentParser(
+    prog="oqm-captain",
+    description="This script is a utility to help manage an installation of Open QuarterMaster."
+)
+argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_true", help="Takes a snapshot. Will pause and restart services.")
+args = argParser.parse_args()
 
-UserInteraction.ui.startUserInteraction()
+if args.v:
+    print(ScriptInfo.SCRIPT_VERSION)
+if args.takeSnapshot:
+    trigger = SnapshotTrigger.manual
+    if args.takeSnapshot[0]:
+        trigger = SnapshotTrigger(args.takeSnapshot[0])
+    SnapshotUtils.performSnapshot(trigger)
+else:
+    UserInteraction.ui.startUserInteraction()

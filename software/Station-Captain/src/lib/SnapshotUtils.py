@@ -5,13 +5,19 @@ import logging
 import subprocess
 
 
+class SnapshotTrigger(Enum):
+    manual = 1
+    scheduled = 2
+
+
 class SnapshotUtils:
     """
 
     """
+    CRON_NAME = "take-snapshot"
 
     @staticmethod
-    def performSnapshot() -> bool:
+    def performSnapshot(snapshotTrigger: SnapshotTrigger) -> bool:
         logging.info("Performing snapshot.")
         ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
@@ -21,16 +27,12 @@ class SnapshotUtils:
         logging.info("Done Performing snapshot.")
 
     @staticmethod
-    def restoreFromSnapshot(snapshotFile:str) -> bool:
+    def restoreFromSnapshot(snapshotFile: str) -> bool:
         logging.info("Performing snapshot Restore.")
         ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
-        # TODO:: run snapshot
+        # TODO:: run snapshot restore
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         logging.info("Done Performing snapshot Restore.")
-
-
-
-
 

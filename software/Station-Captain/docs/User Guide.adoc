@@ -79,7 +79,7 @@ This is a quick explanation of the menus in interactive mode.
 
 .. Restore from Snapshot TODO
 
-.. Enable/disable automatic snapshots TODO
+.. Enable/disable automatic snapshots
 
 .. Set Snapshot location TODO
 

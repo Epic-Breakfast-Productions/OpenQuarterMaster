@@ -1,6 +1,7 @@
 import logging
 import os
 from enum import Enum
+from ConfigManager import *
 
 
 class CronFrequency(Enum):
@@ -46,11 +47,22 @@ class CronUtils:
         CronUtils.disableCron(name)
         logging.info("Enabling cron %s", name)
         fileName = CronUtils.getFileName(name)
+        filePath = CronUtils.getFileDir(frequency, fileName)
         fileContent = """
 #!/bin/bash
 # Cron """ + name + """
 # This script placed here by oqm-captain.
 """ + script
-        with open(fileName, "w") as cronFile:
+        with open(filePath, "w") as cronFile:
             cronFile.write(fileContent)
-        logging.info("Enabled cron %s at file %s", name, fileName)
+        logging.info("Enabled cron %s at file %s", name, filePath)
+
+    @staticmethod
+    def isCronEnabled(name: str) -> bool:
+        fileName = CronUtils.getFileName(name)
+
+        for curFrequency in CronFrequency:
+            curFile = CronUtils.getFileDir(curFrequency, fileName)
+            if os.path.exists(curFile):
+                return True
+        return False
