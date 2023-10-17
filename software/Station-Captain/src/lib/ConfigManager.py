@@ -226,22 +226,6 @@ class ConfigManager:
         # Ensure main config, additional configs dir exist
         try:
             os.makedirs(self.additionalConfigsDir, exist_ok=True)
-            if not os.path.isfile(self.mainConfigFile):
-                with open(self.mainConfigFile, 'x') as stream:
-                    # TODO:: move this default template to another file?
-                    stream.write('''
-{
-    "system": {
-    },
-    "captain": {
-    },
-    "snapshots": {
-        "location": "/data/oqm-snapshots/",
-        "numToKeep": 5,
-        "frequency": "weekly"
-    }
-}
-        ''')
         except OSError as e:
             # TODO:: just throw error
             print(

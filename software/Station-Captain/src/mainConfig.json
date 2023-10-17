@@ -1,0 +1,12 @@
+{
+	"system": {
+		"dataDir": "/data/oqm"
+	},
+	"captain": {
+	},
+	"snapshots": {
+		"location": "/data/oqm-snapshots/",
+		"numToKeep": 5,
+		"frequency": "weekly"
+	}
+}
