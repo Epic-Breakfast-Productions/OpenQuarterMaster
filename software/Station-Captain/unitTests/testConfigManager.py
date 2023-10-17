@@ -7,6 +7,7 @@ import shutil
 sys.path.append("../src/lib")
 from ConfigManager import *
 
+
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -15,6 +16,7 @@ class MyTestCase(unittest.TestCase):
             stream.write('''
 {
     "testStr":"config file",
+    "testSecret":"<secret>",
     "testInt":1,
     "testFloat":1.1,
     "overwrittenVal": "old",
@@ -57,6 +59,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(
             {
                 "testStr": "config file",
+                "testSecret": "<secret>",
                 "testInt": 1,
                 "testFloat": 1.1,
                 "overwrittenVal": "old",
@@ -73,6 +76,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(
             {
                 "testStr": "config file",
+                "testSecret": "<secret>",
                 "testInt": 1,
                 "testFloat": 1.1,
                 "overwrittenVal": "new",
@@ -85,6 +89,40 @@ class MyTestCase(unittest.TestCase):
             },
             data
         )
+
+    def test_getStr(self):
+        data = self.configManager.getConfigVal("testStr")
+        self.assertEqual(type(data), str)
+        self.assertEqual(data, "config file")
+
+    def test_getInt(self):
+        data = self.configManager.getConfigVal("testInt")
+        self.assertEqual(type(data), int)
+        self.assertEqual(data, 1)
+
+    def test_getFloat(self):
+        data = self.configManager.getConfigVal("testFloat")
+        self.assertEqual(type(data), float)
+        self.assertEqual(data, 1.1)
+
+    def test_getDict(self):
+        data = self.configManager.getConfigVal("testObj")
+        self.assertEqual(type(data), dict)
+        self.assertEqual(data, {
+            "nestedOne": "test",
+            "nestedTwo": "test"
+        })
+
+    def test_getArray(self):
+        data = self.configManager.getConfigVal("testArr")
+        self.assertEqual(type(data), list)
+        self.assertEqual(data, ["1", "2", "3"])
+
+    def test_getSecret(self):
+        data = self.configManager.getConfigVal("testSecret")
+        self.assertEqual(type(data), str)
+        self.assertNotEquals(len(data), 0)
+        self.assertNotEquals(data, "<secret>")
 
     def test_configSetSimple(self):
         data = {}

@@ -46,9 +46,8 @@ class SecretManager:
         self.secretSecretFile = secretSecretFile
         # ensure secrets file exists
         try:
-            os.makedirs(ScriptInfo.CONFIG_VALUES_DIR, exist_ok=True)
-            if not os.path.isfile(SECRET_MNGR_SECRETS_FILE):
-                with open(SECRET_MNGR_SECRETS_FILE, 'x') as stream:
+            if not os.path.isfile(self.secretsFile):
+                with open(self.secretsFile, 'x') as stream:
                     stream.write('''
 {
 }
@@ -108,7 +107,7 @@ class SecretManager:
         elif isinstance(val, list):
             for i, s in enumerate(val):
                 val[i] = self.updateSecrets(
-                    key + ".[" + i + "]",
+                    key + ".[" + str(i) + "]",
                     s,
                     generateIfNone
                 )
@@ -289,8 +288,6 @@ class ConfigManager:
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
             result = self.getSecretManager().updateSecrets(configKeyOrig, result) if processSecret else result
-        else:
-            result = str(result)
         return result
 
     def getConfigVal(self, configKey: str, data: dict = None, processSecret=True, exceptOnNotPresent=True):
