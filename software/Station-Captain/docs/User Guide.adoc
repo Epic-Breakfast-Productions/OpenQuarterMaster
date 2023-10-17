@@ -81,11 +81,11 @@ This is a quick explanation of the menus in interactive mode.
 
 .. Enable/disable automatic snapshots
 
-.. Set Snapshot location TODO
+.. Set Snapshot location
 
-.. Set number of snapshots to keep TODO
+.. Set number of snapshots to keep
 
-.. Set automatic snapshot frequency TODO
+.. Set automatic snapshot frequency
 
 . Cleanup, Maintenance, and Updates
 
@@ -103,7 +103,8 @@ This is a quick explanation of the menus in interactive mode.
 
 .. Data TODO
 
-... Reset Data TODO
+... Reset ALL Data TODO
+... Reset OQM Data TODO
 
 .. Restart all services
 *** Restarts all services related to OQM

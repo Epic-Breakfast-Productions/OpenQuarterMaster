@@ -5,6 +5,7 @@ from dialog import Dialog
 from ConfigManager import *
 from ServiceUtils import *
 from EmailUtils import *
+from DataUtils import *
 from PackageManagement import *
 from CronUtils import *
 from SnapshotUtils import *
@@ -419,6 +420,8 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
 
+            if choice == "(3)":
+                self.dataManagementMenu()
             if choice == "(4)":
                 self.promptForServiceRestart()
             if choice == "(5)":
@@ -489,5 +492,32 @@ class UserInteraction:
 
         logging.debug("Done Cleanup, Maintenance, and Updates menu.")
 
+    def dataManagementMenu(self):
+        logging.debug("Running data management menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Manage the system's data:",
+                title="Data Management Menu",
+                choices=[
+                    ("(1)", "Clear ALL Data"),
+                    # ("(2)", "Set E-mail Settings")
+                ]
+            )
+            UserInteraction.clearScreen()
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+                code = self.dialog.yesno(
+                    "This will remove ALL data, including users.\nAre you sure?",
+                    title="Confirm"
+                )
+
+                if code != self.dialog.OK:
+                    logging.info("User chose not to clear data.")
+                else:
+                    DataUtils.clearAllData()
+
+        logging.debug("Done running data management menu.")
 
 ui = UserInteraction()
