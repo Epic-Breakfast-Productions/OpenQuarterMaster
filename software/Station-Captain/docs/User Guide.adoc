@@ -101,10 +101,12 @@ This is a quick explanation of the menus in interactive mode.
 
 ... Set to do automatically TODO
 
-.. Data TODO
+.. Data Management
 
-... Reset ALL Data TODO
+... Reset ALL Data
 ... Reset OQM Data TODO
+... Reset User Data TODO
+... Reset Plugin Data TODO
 
 .. Restart all services
 *** Restarts all services related to OQM
