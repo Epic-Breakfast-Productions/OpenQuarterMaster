@@ -12,6 +12,7 @@ import json
 from json import JSONDecodeError
 import os
 import sys
+import re
 import collections.abc
 from ScriptInfos import *
 
@@ -99,26 +100,6 @@ class SecretManager:
             self.setSecret(key, output, secretsDict)
 
         return output
-
-    def updateSecrets(self, key: str, val, generateIfNone: bool = True):
-        if isinstance(val, str):
-            if self.valIsSecret(val):
-                val = self.getSecretVal(key, generateIfNone)
-        elif isinstance(val, list):
-            for i, s in enumerate(val):
-                val[i] = self.updateSecrets(
-                    key + ".[" + str(i) + "]",
-                    s,
-                    generateIfNone
-                )
-        elif isinstance(val, dict):
-            for k, v in val.items():
-                val[k] = self.updateSecrets(
-                    key + "." + k,
-                    v,
-                    generateIfNone
-                )
-        return val
 
     @staticmethod
     def valIsSecret(value: str) -> bool:
@@ -251,6 +232,38 @@ class ConfigManager:
             self.secretManager = SecretManager()
         return self.secretManager
 
+    def updateReplacements(self, key: str, val, generateSecretIfNone: bool = True):
+        if isinstance(val, str):
+            if self.getSecretManager().valIsSecret(val):
+                val = self.getSecretManager().getSecretVal(key, generateSecretIfNone)
+            else:
+                replacementSearch = re.findall('#\\{[^}]+}', val, re.MULTILINE | re.IGNORECASE)
+                if replacementSearch:
+                    replacements = {}
+                    for curConfig in replacementSearch:
+                        curConfig = curConfig.replace("#{","")
+                        curConfig = curConfig.replace("}","")
+                        replacements[curConfig] = self.getConfigVal(curConfig)
+                    for curConfig, curNewVal in replacements.items():
+                        if not isinstance(curNewVal, (str)):
+                            curNewVal = str(curNewVal)
+                        val = val.replace("#{"+curConfig+"}", curNewVal)
+        elif isinstance(val, list):
+            for i, s in enumerate(val):
+                val[i] = self.updateReplacements(
+                    key + ".[" + str(i) + "]",
+                    s,
+                    generateSecretIfNone
+                )
+        elif isinstance(val, dict):
+            for k, v in val.items():
+                val[k] = self.updateReplacements(
+                    key + "." + k,
+                    v,
+                    generateSecretIfNone
+                )
+        return val
+
     def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, processSecret=True,
                         exceptOnNotPresent=True):
         """
@@ -287,7 +300,7 @@ class ConfigManager:
             return ""
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
-            result = self.getSecretManager().updateSecrets(configKeyOrig, result) if processSecret else result
+            result = self.updateReplacements(configKeyOrig, result) if processSecret else result
         return result
 
     def getConfigVal(self, configKey: str, data: dict = None, processSecret=True, exceptOnNotPresent=True):

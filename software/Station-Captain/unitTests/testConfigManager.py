@@ -23,7 +23,8 @@ class MyTestCase(unittest.TestCase):
     "testObj": {
         "nestedOne": "test"
     },
-    "testArr" : ["1", "2", "3"]
+    "testArr" : ["1", "2", "3"],
+    "testReplacement" : "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
 }
     ''')
         with open(TEST_CONFIG_ADDENDUM_CONFIG_ONE, 'x') as stream:
@@ -66,7 +67,8 @@ class MyTestCase(unittest.TestCase):
                 "testObj": {
                     "nestedOne": "test"
                 },
-                "testArr": ["1", "2", "3"]
+                "testArr": ["1", "2", "3"],
+                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
             },
             data
         )
@@ -85,7 +87,8 @@ class MyTestCase(unittest.TestCase):
                     "nestedOne": "test",
                     "nestedTwo": "test"
                 },
-                "testArr": ["1", "2", "3"]
+                "testArr": ["1", "2", "3"],
+                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
             },
             data
         )
@@ -122,7 +125,12 @@ class MyTestCase(unittest.TestCase):
         data = self.configManager.getConfigVal("testSecret")
         self.assertEqual(type(data), str)
         self.assertNotEquals(len(data), 0)
-        self.assertNotEquals(data, "<secret>")
+        self.assertNotEquals("<secret>", data)
+
+    def test_getPlaceholder(self):
+        data = self.configManager.getConfigVal("testReplacement")
+        self.assertEqual(type(data), str)
+        self.assertEqual("config file - 1 - 1.1 - test", data)
 
     def test_configSetSimple(self):
         data = {}
