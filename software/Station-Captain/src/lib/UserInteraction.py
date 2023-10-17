@@ -500,7 +500,10 @@ class UserInteraction:
                 title="Data Management Menu",
                 choices=[
                     ("(1)", "Clear ALL Data"),
-                    # ("(2)", "Set E-mail Settings")
+                    # TODO
+                    # ("(2)", "Clear OQM Data"),
+                    # ("(2)", "Clear User Data"),
+                    # ("(2)", "Clear Plugin Data"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -516,8 +519,12 @@ class UserInteraction:
                 if code != self.dialog.OK:
                     logging.info("User chose not to clear data.")
                 else:
-                    DataUtils.clearAllData()
+                    if DataUtils.clearAllData():
+                        self.dialog.msgbox("Data was cleared.")
+                    else:
+                        self.dialog.msgbox("Clearing of data FAILED.")
 
         logging.debug("Done running data management menu.")
+
 
 ui = UserInteraction()

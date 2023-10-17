@@ -13,7 +13,7 @@ class DataToRemove(StrEnum):
 class DataUtils:
 
     @staticmethod
-    def clearAllData():
+    def clearAllData() -> bool:
         ServiceUtils.doServiceCommand(
             ServiceStateCommand.stop,
             ServiceUtils.SERVICE_ALL
@@ -21,8 +21,11 @@ class DataUtils:
 
         logging.info("Clearing ALL Data.")
 
-        # TODO
-        # shutil.rmtree(mainCM.getConfigVal(""))
+        try:
+            shutil.rmtree(mainCM.getConfigVal("system.dataDir"))
+        except Exception as e:
+            logging.error("FAILED to clear data: %s", e)
+            return False
 
         logging.info("Done Clearing ALL Data.")
 
@@ -30,3 +33,4 @@ class DataUtils:
             ServiceStateCommand.start,
             ServiceUtils.SERVICE_ALL
         )
+        return True
