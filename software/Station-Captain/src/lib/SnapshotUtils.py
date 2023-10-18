@@ -1,6 +1,7 @@
 from enum import Enum
 from ConfigManager import *
 from ServiceUtils import *
+from CronUtils import *
 import logging
 import subprocess
 import datetime
@@ -75,7 +76,6 @@ class SnapshotUtils:
 
         logging.info("Done Performing snapshot.")
 
-
     @staticmethod
     def restoreFromSnapshot(snapshotFile: str) -> bool:
         logging.info("Performing snapshot Restore.")
@@ -85,3 +85,19 @@ class SnapshotUtils:
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         logging.info("Done Performing snapshot Restore.")
+
+    @staticmethod
+    def enableAutomatic():
+        CronUtils.enableCron(
+            SnapshotUtils.CRON_NAME,
+            "oqm-captain --take-snapshot " + SnapshotTrigger.scheduled.name,
+            CronFrequency[mainCM.getConfigVal("snapshots.frequency")]
+        )
+
+    @staticmethod
+    def disableAutomatic():
+        CronUtils.disableCron(SnapshotUtils.CRON_NAME)
+
+    @staticmethod
+    def isAutomaticEnabled() -> bool:
+        return CronUtils.isCronEnabled(SnapshotUtils.CRON_NAME)

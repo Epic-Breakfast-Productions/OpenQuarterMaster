@@ -3,6 +3,7 @@ from typing import Optional
 
 from dialog import Dialog
 from ConfigManager import *
+from ContainerUtils import *
 from ServiceUtils import *
 from EmailUtils import *
 from DataUtils import *
@@ -36,10 +37,9 @@ class InputValidators:
     @staticmethod
     def isCronKeyword(val: str) -> Optional[str]:
         try:
-            CronFrequency(val)
+            CronFrequency[val]
         except ValueError:
-            freqList = ", ".join(CronFrequency)
-            return "Value given was not a valid option (" + freqList + ")"
+            return "Value given was not a valid option (" + CronFrequency.getFreqListStr() + ")"
         return None
 
 
@@ -84,10 +84,14 @@ class UserInteraction:
         logging.info("Prompting to change config key " + configKey)
 
         if secret:
-            code, value = self.dialog.passwordbox(text, title=title)
+            code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
         else:
-            code, value = self.dialog.inputbox(text + "\n\n(No input will be shown when typing)", title=title,
-                                               init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False))
+            code, value = self.dialog.inputbox(
+                text,
+                title=title,
+                init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False),
+                width=75
+            )
 
         if code != self.dialog.OK:
             self.dialog.msgbox("Canceled Setting value.")
@@ -115,7 +119,7 @@ class UserInteraction:
 
         logging.info("Done prompting to change config key " + configKey)
 
-    def promptForServiceRestart(self, configChanged:bool=False):
+    def promptForServiceRestart(self, configChanged: bool = False):
         logging.info("Prompting user to see if they want to restart services.")
         code = self.dialog.yesno("Restart all services?", title="Restart Services?")
         if code != self.dialog.OK:
@@ -293,7 +297,7 @@ class UserInteraction:
             code, choice = self.dialog.menu(
                 "Current Email Settings:\n" +
                 "\tSystem Alert Destination: " + mainCM.getConfigVal("system.email.sysAlertDest", processSecret=False,
-                                                      exceptOnNotPresent=False) + "\n" +
+                                                                     exceptOnNotPresent=False) + "\n" +
                 "\tSend From: " + mainCM.getConfigVal("system.email.addressFrom", processSecret=False,
                                                       exceptOnNotPresent=False) + "\n" +
                 "\tSMTP Host: " + mainCM.getConfigVal("system.email.smtpHost", processSecret=False,
@@ -389,10 +393,10 @@ class UserInteraction:
                 break
 
             if choice == "(1)":
-
                 self.dialog.msgbox(
-                    "Keycloak access information:\n\n"+
-                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal("infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "Keycloak access information:\n\n" +
+                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal(
+                        "infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
                     "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
                     "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
                     title="Keycloak Access",
@@ -409,7 +413,7 @@ class UserInteraction:
                 title="Cleanup, Maintenance, and Updates",
                 choices=[
                     ("(1)", "Updates"),
-                    ("(2)", "Docker"),
+                    ("(2)", "Containers"),
                     ("(3)", "Data"),
                     ("(4)", "Restart Services"),
                     ("(5)", "Restart Device"),
@@ -420,6 +424,8 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
 
+            if choice == "(2)":
+                self.containerManagementMenu()
             if choice == "(3)":
                 self.dataManagementMenu()
             if choice == "(4)":
@@ -442,7 +448,7 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Restore from Snapshot"),
                     ("(2)", "Perform Snapshot Now"),
-                    ("(3)", "Enable" if CronUtils.isCronEnabled(SnapshotUtils.CRON_NAME) else "Disable" + " automatic snapshots"),
+                    ("(3)", ("Disable" if SnapshotUtils.isAutomaticEnabled() else "Enable") + " automatic snapshots"),
                     ("(4)", "Set snapshot location"),
                     ("(5)", "Set number of snapshots to keep"),
                     ("(6)", "Set auto snapshot frequency"),
@@ -456,15 +462,11 @@ class UserInteraction:
             if choice == "(2)":
                 SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
             if choice == "(3)":
-                if CronUtils.isCronEnabled(SnapshotUtils.CRON_NAME):
-                    CronUtils.disableCron(SnapshotUtils.CRON_NAME)
+                if SnapshotUtils.isAutomaticEnabled():
+                    SnapshotUtils.disableAutomatic()
                     self.dialog.msgbox("Disabled automatic snapshots.")
                 else:
-                    CronUtils.enableCron(
-                        SnapshotUtils.CRON_NAME,
-                        "oqm-captain --take-snapshot " + SnapshotTrigger.scheduled.name,
-                        CronFrequency(mainCM.getConfigVal("snapshots.frequency"))
-                    )
+                    SnapshotUtils.enableAutomatic()
                     self.dialog.msgbox("Enabled automatic snapshots.")
             if choice == "(4)":
                 self.promptForConfigChange(
@@ -482,15 +484,16 @@ class UserInteraction:
                     validators=[InputValidators.isDigit]
                 )
             if choice == "(6)":
-                freqList = ", ".join(CronFrequency)
                 self.promptForConfigChange(
-                    "The frequency that snapshots are taken:\n\n(Options: " + freqList + ")",
+                    "The frequency that snapshots are taken:\n\n(Options: " + CronFrequency.getFreqListStr() + ")",
                     "Auto Snapshot Frequency",
                     "snapshots.frequency",
                     validators=[InputValidators.isCronKeyword]
                 )
+                if SnapshotUtils.isAutomaticEnabled():
+                    SnapshotUtils.enableAutomatic()
 
-        logging.debug("Done Cleanup, Maintenance, and Updates menu.")
+        logging.debug("Done snapshots menu.")
 
     def dataManagementMenu(self):
         logging.debug("Running data management menu.")
@@ -525,6 +528,46 @@ class UserInteraction:
                         self.dialog.msgbox("Clearing of data FAILED.")
 
         logging.debug("Done running data management menu.")
+
+    def containerManagementMenu(self):
+        logging.debug("Running container management menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Manage the system's containers:",
+                title="Container Management Menu",
+                choices=[
+                    ("(1)", "Prune unused container resources"),
+                    ("(2)",
+                     ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
+                    ("(3)", "Set prune frequency"),
+                ]
+            )
+            UserInteraction.clearScreen()
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+                self.dialog.infobox("Pruning container resources. Please wait.")
+                freed = ContainerUtils.pruneContainerResources()
+                self.dialog.msgbox("Finished pruning container resources.\n\nFreed " + freed)
+            if choice == "(2)":
+                if ContainerUtils.isAutomaticEnabled():
+                    ContainerUtils.disableAutomatic()
+                    self.dialog.msgbox("Disabled automatic pruning of container resources.")
+                else:
+                    ContainerUtils.enableAutomatic()
+                    self.dialog.msgbox("Enabled automatic pruning of container resources.")
+            if choice == "(3)":
+                self.promptForConfigChange(
+                    "The frequency that pruning of container resources is performed:\n\n(Options: " + CronFrequency.getFreqListStr() + ")\n(Recommend Monthly)",
+                    "Auto Pruning Frequency",
+                    "system.automaticContainerPruneFrequency",
+                    validators=[InputValidators.isCronKeyword]
+                )
+                if ContainerUtils.isAutomaticEnabled():
+                    ContainerUtils.enableAutomatic()
+
+        logging.debug("Done running container management menu.")
 
 
 ui = UserInteraction()

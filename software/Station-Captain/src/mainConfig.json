@@ -1,7 +1,8 @@
 {
 	"system": {
 		"systemDataDir": "/data",
-		"dataDir": "#{system.systemDataDir}/oqm"
+		"dataDir": "#{system.systemDataDir}/oqm",
+		"automaticContainerPruneFrequency": "monthly"
 	},
 	"captain": {
 	},

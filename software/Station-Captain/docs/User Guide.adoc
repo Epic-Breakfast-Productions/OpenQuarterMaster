@@ -95,11 +95,13 @@ This is a quick explanation of the menus in interactive mode.
 
 ... Enable/disable automatic updates TODO
 
-.. Docker TODO
+.. Containers
 
-... Run cleanup TODO
+... Prune unused container resources
 
-... Set to do automatically TODO
+... Enable/disable automatic prune
+
+... Set prune frequency
 
 .. Data Management
 

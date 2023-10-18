@@ -1,13 +1,8 @@
 import logging
 import os
 import shutil
-from enum import Enum, StrEnum
 from ConfigManager import *
 from ServiceUtils import *
-
-
-class DataToRemove(StrEnum):
-    CORE = 'core'
 
 
 class DataUtils:

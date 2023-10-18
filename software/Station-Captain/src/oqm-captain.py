@@ -20,6 +20,7 @@ sys.path.append("lib/")
 from ScriptInfos import ScriptInfo
 import UserInteraction
 from SnapshotUtils import *
+from ContainerUtils import *
 import argparse
 
 logging.basicConfig(level=logging.DEBUG)
@@ -29,6 +30,7 @@ argParser = argparse.ArgumentParser(
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_true", help="Takes a snapshot. Will pause and restart services.")
+argParser.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
 args = argParser.parse_args()
 
 if args.v:
@@ -38,5 +40,7 @@ if args.takeSnapshot:
     if args.takeSnapshot[0]:
         trigger = SnapshotTrigger(args.takeSnapshot[0])
     SnapshotUtils.performSnapshot(trigger)
+if args.pruneContainerResources:
+    ContainerUtils.pruneContainerResources()
 else:
     UserInteraction.ui.startUserInteraction()

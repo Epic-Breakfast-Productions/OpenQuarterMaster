@@ -10,6 +10,10 @@ class CronFrequency(Enum):
     weekly = 3
     monthly = 4
 
+    @staticmethod
+    def getFreqListStr()->str:
+        return ", ".join(CronFrequency._member_names_)
+
 
 class CronUtils:
 
@@ -19,7 +23,7 @@ class CronUtils:
 
     @staticmethod
     def getFileDir(frequency: CronFrequency, fileName: str = None):
-        output = "/etc/cron.%s".format(frequency.name)
+        output = "/etc/cron.{}".format(frequency.name)
 
         if fileName is not None:
             output += "/" + fileName
@@ -60,9 +64,9 @@ class CronUtils:
     @staticmethod
     def isCronEnabled(name: str) -> bool:
         fileName = CronUtils.getFileName(name)
-
         for curFrequency in CronFrequency:
             curFile = CronUtils.getFileDir(curFrequency, fileName)
             if os.path.exists(curFile):
+                logging.debug("Found cron file %s, indicating is enabled.", curFile)
                 return True
         return False
