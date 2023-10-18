@@ -72,7 +72,7 @@ class SnapshotUtils:
 
         # https://docs.python.org/3.8/library/tarfile.html#tarfile.TarFile.add
         with tarfile.open(snapshotArchiveName, "w:gz") as tar:
-            tar.add(compilingConfigsDir, arcname=os.path.basename(compilingConfigsDir))
+            tar.add(compilingDir, arcname=os.path.basename(compilingDir))
 
         logging.info("Done Performing snapshot.")
 
@@ -81,7 +81,11 @@ class SnapshotUtils:
         logging.info("Performing snapshot Restore.")
         ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
-        # TODO:: run snapshot restore
+        extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + os.path.basename(snapshotFile).split('.')[0]
+
+        with tarfile.open(snapshotFile, "w:gz") as tar:
+            tar.extractall(extractionDir)
+        # TODO:: move files to relevant locations
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         logging.info("Done Performing snapshot Restore.")

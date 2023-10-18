@@ -12,6 +12,7 @@ from CronUtils import *
 from SnapshotUtils import *
 import time
 import re
+import os
 
 
 class InputValidators:
@@ -57,9 +58,19 @@ class UserInteraction:
     def __init__(self):
         self.dialog = Dialog(
             dialog="dialog",
-            # autowidgetsize=True
+            autowidgetsize=True,
+
         )
         self.dialog.set_background_title(ScriptInfo.SCRIPT_TITLE)
+        self.dialog.__setattr__("hfile", "oqm-station-captain-help.txt")
+
+        self.dialog.setup_debug(
+            True,
+            open("dialogDebug.log", 'w'),
+            always_flush=True,
+            expand_file_opt=True
+        )
+
 
     @staticmethod
     def clearScreen():
@@ -412,7 +423,7 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Cleanup, Maintenance, and Updates",
                 choices=[
-                    ("(1)", "Updates"),
+                    # ("(1)", "Updates"),
                     ("(2)", "Containers"),
                     ("(3)", "Data"),
                     ("(4)", "Restart Services"),
@@ -424,6 +435,8 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
 
+            # if choice == "(1)":
+                # self.updatesManagementMenu()
             if choice == "(2)":
                 self.containerManagementMenu()
             if choice == "(3)":
@@ -438,6 +451,27 @@ class UserInteraction:
                     os.system('reboot')
 
         logging.debug("Done Cleanup, Maintenance, and Updates menu.")
+
+    def updatesManagementMenu(self):
+        logging.debug("Running Updates menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Manage the system's updates:",
+                title="Updates Management Menu",
+                choices=[
+                    ("(1)", "Run updates now"),
+                    ("(2)", ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic updates (recommend enabled)"),
+                ]
+            )
+            UserInteraction.clearScreen()
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+                self.dialog.infobox("Running updates. Please wait.")
+                #TODO
+
+        logging.debug("Done running container management menu.")
 
     def snapshotsMenu(self):
         logging.debug("Running snapshots menu.")
@@ -458,6 +492,26 @@ class UserInteraction:
             logging.debug('Menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
+
+            if choice == "(1)":
+                logging.info("Choosing snapshot file to restore from")
+
+                # /usr/bin/dialog --backtitle 'Open QuarterMaster Station Captain VSCRIPT_VERSION' --title 'Choose Snapshot file to restore from.' --fselect '/data/oqm-snapshots/*' 50 200
+                code, snapshotFile = self.dialog.fselect(
+                    mainCM.getConfigVal("snapshots.location") + "/*",
+                    title="Choose Snapshot file to restore from.",
+                    width=100,
+                    height=15
+                )
+
+                if code != self.dialog.OK:
+                    logging.info("User chose not to restore snapshot after all.")
+                else:
+                    logging.info("User chose snapshot file %s", snapshotFile)
+                    # TODO:: ensure file exists
+                    # TODO:: ask to take preemptive snapshots
+                    # TODO:: final confirmation
+                    SnapshotUtils.restoreFromSnapshot(snapshotFile)
 
             if choice == "(2)":
                 SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
