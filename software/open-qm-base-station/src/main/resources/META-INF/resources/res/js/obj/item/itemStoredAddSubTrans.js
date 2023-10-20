@@ -8,28 +8,41 @@ const ItemStoredAddSubTransfer = {
 	toFromExistingStoredCheckbox: $("#itemStoredAddSubTransFormToFromExistingStoredCheckbox"),
 	toContainer: $("#itemStoredAddSubTransFormToContainer"),
 	toSelect: $("#itemStoredAddSubTransFormToSelect"),
-	toFormContainer: $("#itemStoredAddSubTransFormToFormContainer"),
+	toListFormContainer: $("#itemStoredAddSubTransFormToListFormContainer"),
+	toStoredFormContainer: $("#itemStoredAddSubTransFormToAmountFormContainer"),
 	fromContainer: $("#itemStoredAddSubTransFormFromContainer"),
 	fromSelect: $("#itemStoredAddSubTransFormFromSelect"),
-	fromFormContainer: $("#itemStoredAddSubTransFormFromFormContainer"),
+	fromListFormContainer: $("#itemStoredAddSubTransFormFromListFormContainer"),
+	fromAmountFormContainer: $("#itemStoredAddSubTransFormFromAmountFormContainer"),
 
-	resetForms(){
+
+	resetToFromForms() {
+		this.fromListFormContainer.text("");
+		this.fromAmountFormContainer.text("");
+		this.toListFormContainer.text("");
+		this.toStoredFormContainer.text("");
+	},
+	resetForms() {
 		this.formItemImg.attr("src", "");
 		this.formMessages.text("");
 		this.formItemNameLabel.text("");
-		this.fromFormContainer.text("");
+		this.resetToFromForms();
 	},
 
-	disableExistingStoredOption(){
+	disableExistingStoredOption() {
 		this.toFromExistingStoredCheckbox.prop('checked', false);
 		this.toFromExistingStoredCheckbox.prop('disabled', true);
 	},
-	enableExistingStoredOption(){
+	enableExistingStoredOption() {
 		this.toFromExistingStoredCheckbox.prop('disabled', false);
 
 	},
 
-	getStoredSelectBox(storedObj){
+	toFromExistingStoredCheckboxChecked() {
+		return this.toFromExistingStoredCheckbox.is(":checked");
+	},
+
+	getStoredSelectBox(storedObj) {
 		let output = $('<div class="col-1">' +
 			'<div class="card" style="">\n' +
 			'  <ul class="list-group list-group-flush">\n' +
@@ -42,105 +55,123 @@ const ItemStoredAddSubTransfer = {
 		output.find(".storedInfo").val(storedObj.labelText);
 		return output;
 	},
+	addStoredSelectBoxes(storedList, containerJq) {
+		//TODO:: handle none scenario
+		storedList.forEach(function (curStored) {
+			containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored));
+		});
+	},
+	addStoredForm(storageType, containerJq) {
+		containerJq.text(storageType + " form")
+	},
+
+	setupForAdd() {
+		console.log("Setting up add/sub/transfer for Add")
+		let itemData = jQuery.data(ItemStoredAddSubTransfer.form, "curItem");
+		this.toContainer.show();
+		this.fromContainer.hide();
+
+		StoredTypeUtils.foreachStoredType(
+			itemData.storageType,
+			function () {
+				ItemStoredAddSubTransfer.addStoredForm(
+					itemData.storageType,
+					ItemStoredAddSubTransfer.toStoredFormContainer
+				)
+			},
+			function () {
+				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+					ItemStoredAddSubTransfer.addStoredSelectBoxes(
+						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
+						ItemStoredAddSubTransfer.toListFormContainer
+					)
+				}
+				ItemStoredAddSubTransfer.addStoredForm(
+					itemData.storageType,
+					ItemStoredAddSubTransfer.toStoredFormContainer
+				)
+			},
+			function () {
+				ItemStoredAddSubTransfer.addStoredForm(
+					itemData.storageType,
+					ItemStoredAddSubTransfer.toStoredFormContainer
+				)
+			}
+		);
+	},
+	setupForSubtract() {
+		console.log("Setting up add/sub/transfer for Subtract")
+		let itemData = jQuery.data(ItemStoredAddSubTransfer.form, "curItem");
+		this.toContainer.hide();
+		this.fromContainer.show();
+
+		StoredTypeUtils.foreachStoredType(
+			itemData.storageType,
+			function () {
+				//TODO show amount form in from
+			},
+			function () {
+				//TODO:: show amount form in from
+				//TODO:: if to/from existing, show existing stored list as well
+			},
+			function () {
+				//TODO show tracked list in from
+			}
+		);
+
+	},
+	setupForTransfer() {
+		console.log("Setting up add/sub/transfer for Transfer")
+		let itemData = jQuery.data(ItemStoredAddSubTransfer.form, "curItem");
+		this.toContainer.show();
+		this.fromContainer.show();
+
+		StoredTypeUtils.foreachStoredType(
+			itemData.storageType,
+			function () {
+				//TODO show amount form in from
+			},
+			function () {
+				//TODO show existing stored list in from
+				//TODO:: if to/from existing, show list in to, amount form in from
+				//TODO:: allow selecting the same storage block
+			},
+			function () {
+				//TODO show tracked list in from
+			}
+		);
+	},
 
 	/**
-	 * TODO:: probably need to rethink this. Need to have more controld from caller.
-	 * @param storedInputContainerJq
+	 * Sets up the to/from forms based on item and current form options
+	 *
+	 * Call when:
+	 *   - Initial setup
+	 *   - Action form item changes
+	 *   - to/from existing stored form item changes
 	 */
-	updateSelectedStoredInput(storedInputContainerJq){
-		console.log("Updating to or from form elements in " + storedInputContainerJq.attr("id") + ". ");
-		storedInputContainerJq.text("");
-		if(!storedInputContainerJq.is(":visible")){
-			console.log("Container not visible");
-			return;
-		}
-		console.log("Container visible");
-		let itemData = jQuery.data(ItemStoredAddSubTransfer.form, "curItem");
-
-		let showStoredList = false;
-		let showStoredForm = false;
-
-		//TODO:: account for being in the to or from
-		StoredTypeUtils.foreachStoredType(
-			itemData.storageType,
-			function (){
-				showStoredList = false;
-				showStoredForm = true;
-			},
-			function (){
-				showStoredList = true;
-				showStoredForm = ItemStoredAddSubTransfer.toFromExistingStoredCheckbox.is(":checked");
-			},
-			function (){
-				showStoredList = true;
-				showStoredForm = false;
-			}
-		);
-		if(showStoredList){
-			console.log("Showing stored list inputs");
-			let storedListInputContent = $('<div class="row mt-1">List</div>');
-
-			//TODO
-			storedInputContainerJq.append(storedListInputContent);
-		}
-		if(showStoredForm){
-			console.log("Showing stored inputs");
-			let storedInputContent = $('<div class="row mt-1">Stored</div>');
-			//TODO
-			// if(
-			// 	itemData.storageType === "AMOUNT_SIMPLE" ||
-			// ){
-			//
-			// }
-
-			storedInputContainerJq.append(storedInputContent);
-		}
-
-	},
-
-	updateAllSelectedStoredInput(){
-		this.updateSelectedStoredInput(this.toFormContainer);
-		this.updateSelectedStoredInput(this.fromFormContainer);
-	},
-
-	refreshStoredToFromInputs(){
-		let itemData = jQuery.data(ItemStoredAddSubTransfer.form, "curItem");
-		console.log("Updating add/sub/transfer form elements")
-
-		switch (this.opSelect.val()){
+	setupToFromForm() {
+		this.resetToFromForms();
+		switch (this.opSelect.val()) {
 			case "add":
-				this.toContainer.show();
-				this.fromContainer.hide();
+				this.setupForAdd();
 				break;
 			case "subtract":
-				this.toContainer.hide();
-				this.fromContainer.show();
+				this.setupForSubtract();
 				break;
 			case "transfer":
-				this.toContainer.show();
-				this.fromContainer.show();
+				this.setupForTransfer();
 				break;
 		}
 
-		StoredTypeUtils.foreachStoredType(
-			itemData.storageType,
-			function (){
-				ItemStoredAddSubTransfer.disableExistingStoredOption();
-				//TODO
-			},
-			function (){
-				ItemStoredAddSubTransfer.enableExistingStoredOption();
-				//TODO
-			},
-			function (){
-				ItemStoredAddSubTransfer.disableExistingStoredOption();
-				//TODO
-			}
-		);
-
-		this.updateAllSelectedStoredInput();
+		// console.log("To container visible? " + this.toContainer.is(":hidden"))
 	},
-	setupForItem(itemId){
+
+	/**
+	 * Sets up the form for a given item.
+	 * @param itemId
+	 */
+	setupForItem(itemId) {
 		this.resetForms();
 		this.formItemImg.attr("src", "/api/v1/media/image/for/item/" + itemId);
 		doRestCall({
@@ -153,51 +184,61 @@ const ItemStoredAddSubTransfer = {
 				console.log("Storage block ids: " + storageBLockIds);
 				//TODO:: check for no block ids
 
-				ItemStoredAddSubTransfer.setupFromToSelects(storageBLockIds);
+				ItemStoredAddSubTransfer.setupFromToSelects(storageBLockIds).then(r => {
+				});
 
 				StoredTypeUtils.foreachStoredType(
 					itemData.storageType,
-					function (){
+					function () {
 						ItemStoredAddSubTransfer.disableExistingStoredOption();
-						//TODO
 					},
-					function (){
+					function () {
 						ItemStoredAddSubTransfer.enableExistingStoredOption();
-						//TODO
 					},
-					function (){
+					function () {
 						ItemStoredAddSubTransfer.disableExistingStoredOption();
-						//TODO
 					}
 				);
-				ItemStoredAddSubTransfer.refreshStoredToFromInputs();
+				ItemStoredAddSubTransfer.setupToFromForm();
 			}
 		});
 	},
 
-	setupFromToSelects(storageBlockIds, allowSelectSame = false){
+	/**
+	 * Sets up the select elements with the given storage block ids.
+	 * @param storageBlockIds
+	 * @param allowSelectSame
+	 * @returns {Promise<void>}
+	 */
+	async setupFromToSelects(storageBlockIds, allowSelectSame = false) {
 		ItemStoredAddSubTransfer.fromSelect.text("");
 		ItemStoredAddSubTransfer.toSelect.text("");
 
 		//TODO:: add to promises, wait for promises to complete
 		let promises = [];
 
-		storageBlockIds.forEach(function(curStorageBlockId){
-			getStorageBlockLabel(curStorageBlockId, function (blockLabel){
-				let newOptionTo = $('<option></option>');
-				newOptionTo.attr("id", curStorageBlockId);
-				newOptionTo.text(blockLabel);
+		storageBlockIds.forEach(function (curStorageBlockId) {
+			promises.push(
+				Promise.resolve(getStorageBlockLabel(curStorageBlockId, function (blockLabel) {
+						let newOptionTo = $('<option></option>');
+						newOptionTo.attr("id", curStorageBlockId);
+						newOptionTo.text(blockLabel);
 
-				let newOptionFrom = newOptionTo.clone(true, true);
+						let newOptionFrom = newOptionTo.clone(true, true);
 
-				ItemStoredAddSubTransfer.fromSelect.append(newOptionFrom);
-				ItemStoredAddSubTransfer.toSelect.append(newOptionTo);
-			});
+						ItemStoredAddSubTransfer.fromSelect.append(newOptionFrom);
+						ItemStoredAddSubTransfer.toSelect.append(newOptionTo);
+					})
+				)
+			);
 		});
 
-		if(!allowSelectSame){
+		await Promise.all(promises);
+
+		if (!allowSelectSame) {
 			//TODO:: this
 			//TODO:: check if only one block associated
+			// probably doesn't go here, need code to handle not here
 		}
 	}
 

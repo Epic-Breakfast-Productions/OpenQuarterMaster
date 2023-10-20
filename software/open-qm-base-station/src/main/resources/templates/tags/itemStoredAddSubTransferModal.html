@@ -18,15 +18,15 @@
 		<div class="row">
 			<div class="col-4">
 				<label for="itemStoredAddSubTransFormOpSelect" class="form-label">Action:</label>
-				<select id="itemStoredAddSubTransFormOpSelect" class="form-select" aria-label="Action to take" onchange="ItemStoredAddSubTransfer.refreshStoredToFromInputs();">
+				<select id="itemStoredAddSubTransFormOpSelect" class="form-select" aria-label="Action to take" onchange="ItemStoredAddSubTransfer.setupToFromForm();">
 					<option value="add" selected>Add</option>
 					<option value="subtract">Subtract</option>
 					<option value="transfer">Transfer</option>
 				</select>
 			</div>
 			<div class="col">
-				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="itemStoredAddSubTransFormToFromExistingStoredCheckbox"  onchange="ItemStoredAddSubTransfer.refreshStoredToFromInputs();">
+				<div class="form-check form-control-lg">
+					<input class="form-check-input" type="checkbox" value="" id="itemStoredAddSubTransFormToFromExistingStoredCheckbox"  onchange="ItemStoredAddSubTransfer.setupToFromForm();">
 					<label class="form-check-label" for="itemStoredAddSubTransFormToFromExistingStoredCheckbox">
 					To/From existing stored
 					</label>
@@ -42,8 +42,9 @@
 					</select>
 				</div>
 			</div>
-			<div class="row toFromStoredFormContainer" id="itemStoredAddSubTransFormFromFormContainer">
-			
+			<div class="row toFromStoredFormContainer" id="itemStoredAddSubTransFormFromListFormContainer">
+			</div>
+			<div class="row toFromStoredFormContainer" id="itemStoredAddSubTransFormFromAmountFormContainer">
 			</div>
 			<hr />
 		</div>
@@ -55,8 +56,9 @@
 					</select>
 				</div>
 			</div>
-			<div class="toFromStoredFormContainer" id="itemStoredAddSubTransFormToFormContainer">
-			
+			<div class="toFromStoredFormContainer" id="itemStoredAddSubTransFormToListFormContainer">
+			</div>
+			<div class="toFromStoredFormContainer" id="itemStoredAddSubTransFormToAmountFormContainer">
 			</div>
 			<hr />
 		</div>
