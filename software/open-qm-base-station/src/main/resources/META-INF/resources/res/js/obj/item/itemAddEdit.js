@@ -306,70 +306,6 @@ function removeStored(toRemoveId){
 	$(toRemoveId).remove();
 }
 
-function getCommonStoredFormElements(headerId, toRemoveId) {
-	return  '<div class="mb-3 ">\n'+
-		'    <label class="form-label">Barcode</label>\n' +
-		'    <div class="input-group">\n'+
-		'        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n'+
-		'    </div>\n'+
-		'</div>\n' +
-		'<div class="mb-3 ">\n'+
-		'    <label class="form-label">Condition Percentage</label>\n' +
-		'    <div class="input-group">\n'+
-		'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: better label of better to worse
-		'        <span class="input-group-text" id="addon-wrapping">%</span>\n'+ //TODO:: better label of better to worse
-		'    </div>\n'+
-		'</div>\n' +
-		'<div class="mb-3">\n'+
-		'    <label class="form-label">Condition Details</label>\n' +
-		'    <textarea class="form-control" name="conditionDetails"></textarea>\n'+
-		'</div>\n' +
-		'<div class="mb-3">\n'+
-		'    <label class="form-label">Expires</label>\n' +
-		'    <input type="date" class="form-control storedExpiredInput" name="expires" ' + (headerId == null?'':'onchange="addEditUpdateStoredHeader(\''+headerId+'\')"')+'>\n'+ //TODO:: enforce future date?
-		//TODO:: note to leave blank if not applicable
-		'</div>\n' +
-		imageInputTemplate.html() +
-		keywordInputTemplate.html() +
-		attInputTemplate.html() +
-		'<div class="mb-3 ">\n'+
-		'    <button type="button" class="btn btn-danger" onclick="removeStored(\'#'+toRemoveId+'\');">'+Icons.remove+' Remove Stored</button> '+
-		'</div>\n'
-		;
-}
-
-/**
- *
- * @param headerId
- * @param toRemoveId
- * @returns \{string}
- */
-function getAmountStoredFormElements(headerId, toRemoveId) {
-	return '<div class="input-group mt-2 mb-3">\n'+
-		'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="addEditUpdateStoredHeader(\''+headerId+'\')">\n'+
-		'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\''+headerId+'\')">'+ItemAddEdit.compatibleUnitOptions+'</select>\n'+ //TODO:: populate
-		'</div>\n'+
-		getCommonStoredFormElements(headerId, toRemoveId);
-}
-
-/**
- *
- * @param headerId
- * @param toRemoveId
- * @returns \{string}
- */
-function getTrackedStoredFormElements(headerId, toRemoveId) {
-	return '<div class="mb-3">\n'+
-		'    <label class="form-label">Identifier:</label>\n' +
-		'    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(\''+headerId+'\')" required>\n'+ // TODO:: populate
-		'</div>\n' +
-		'<div class="mb-3">\n'+
-		'    <label class="form-label">Identifying Details</label>\n' +
-		'    <textarea class="form-control" name="identifyingDetails"></textarea>\n'+
-		'</div>\n' +
-		getCommonStoredFormElements(headerId, toRemoveId);
-}
-
 function addEditUpdateStoredHeader(containerOrHeaderId){
 	let parentElem;
 	let header;
@@ -445,7 +381,7 @@ function createNewAmountStored(formContentId, parentId, add=true){
 		'    </h2>\n'+
 		'    <div id="'+collapseId+'" class="accordion-collapse collapse storage-list-entry" aria-labelledby="'+id+'" data-bs-parent="#'+parentId+'">\n'+
 		'        <div class="accordion-body addEditItemStoredContainer">\n'+
-		'            ' + getAmountStoredFormElements(headerId, id) +
+		'            ' + StoredEdit.getAmountStoredFormElements(headerId, id).prop('outerHTML') +
 		'        </div>\n'+
 		'    </div>\n'+
 		'</div>'
@@ -502,7 +438,7 @@ function createNewTrackedStored(formContentId, caller, add = true){
 		'    </h2>\n'+
 		'    <div id="'+collapseId+'" class="accordion-collapse collapse storage-list-entry" aria-labelledby="'+id+'" data-bs-parent="#'+formContentId+'">\n'+
 		'        <div class="accordion-body addEditItemStoredContainer">\n'+
-		'            ' + getTrackedStoredFormElements(headerId, id) +
+		'            ' + StoredEdit.getTrackedStoredFormElements(headerId, id) +
 		'        </div>\n'+
 		'    </div>\n'+
 		'</div>'
@@ -571,9 +507,7 @@ function createStorageBlockAccord(blockName, blockId, add = true){
 		function(){
 			console.log("Setting up storage for AMOUNT_SIMPLE");
 
-			accordBodyFormContentWrapper.append($(
-				getAmountStoredFormElements(accordHeaderId, accordId)
-			));
+			accordBodyFormContentWrapper.append(StoredEdit.getAmountStoredFormElements(accordHeaderId, accordId));
 		},
 		function(){
 			console.log("Setting up storage for AMOUNT_LIST");

@@ -58,11 +58,26 @@ const ItemStoredAddSubTransfer = {
 	addStoredSelectBoxes(storedWrapper, itemType, containerJq) {
 		let storedList = [];
 
+		StoredTypeUtils.foreachStoredType(
+			itemType,
+			function (){
+				console.log("Somehow got to where we tried to show a list for simple.")
+			},
+			function () {
+				//TODO
+			},
+			function () {
+				//TODO
+			}
+		);
 
-		//TODO:: handle none scenario
-		storedList.forEach(function (curStored) {
-			containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored));
-		});
+		if(!storedList.length){
+			containerJq.html('<div class="col-12 text-center">No Stored to select!</div>');
+		} else {
+			storedList.forEach(function (curStored) {
+				containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored));
+			});
+		}
 	},
 	addStoredForm(storageType, containerJq, fullAmountForm = true) {
 		containerJq.text(storageType + " form")
