@@ -55,14 +55,18 @@ const ItemStoredAddSubTransfer = {
 		output.find(".storedInfo").val(storedObj.labelText);
 		return output;
 	},
-	addStoredSelectBoxes(storedList, containerJq) {
+	addStoredSelectBoxes(storedWrapper, itemType, containerJq) {
+		let storedList = [];
+
+
 		//TODO:: handle none scenario
 		storedList.forEach(function (curStored) {
 			containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored));
 		});
 	},
-	addStoredForm(storageType, containerJq) {
+	addStoredForm(storageType, containerJq, fullAmountForm = true) {
 		containerJq.text(storageType + " form")
+		//TODO
 	},
 
 	setupForAdd() {
@@ -83,12 +87,14 @@ const ItemStoredAddSubTransfer = {
 				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
 					ItemStoredAddSubTransfer.addStoredSelectBoxes(
 						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
+						itemData.storageType,
 						ItemStoredAddSubTransfer.toListFormContainer
 					)
 				}
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.toStoredFormContainer
+					ItemStoredAddSubTransfer.toStoredFormContainer,
+					!ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()
 				)
 			},
 			function () {
@@ -108,17 +114,33 @@ const ItemStoredAddSubTransfer = {
 		StoredTypeUtils.foreachStoredType(
 			itemData.storageType,
 			function () {
-				//TODO show amount form in from
+				ItemStoredAddSubTransfer.addStoredForm(
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromAmountFormContainer
+				)
 			},
 			function () {
-				//TODO:: show amount form in from
-				//TODO:: if to/from existing, show existing stored list as well
+				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+					ItemStoredAddSubTransfer.addStoredForm(
+						itemData.storageType,
+						ItemStoredAddSubTransfer.fromAmountFormContainer,
+						false
+					)
+				}
+				ItemStoredAddSubTransfer.addStoredSelectBoxes(
+					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromListFormContainer
+				)
 			},
 			function () {
-				//TODO show tracked list in from
+				ItemStoredAddSubTransfer.addStoredSelectBoxes(
+					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromListFormContainer
+				)
 			}
 		);
-
 	},
 	setupForTransfer() {
 		console.log("Setting up add/sub/transfer for Transfer")
@@ -129,15 +151,36 @@ const ItemStoredAddSubTransfer = {
 		StoredTypeUtils.foreachStoredType(
 			itemData.storageType,
 			function () {
-				//TODO show amount form in from
+				ItemStoredAddSubTransfer.addStoredForm(
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromAmountFormContainer
+				)
 			},
 			function () {
-				//TODO show existing stored list in from
-				//TODO:: if to/from existing, show list in to, amount form in from
-				//TODO:: allow selecting the same storage block
+				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+					ItemStoredAddSubTransfer.addStoredForm(
+						itemData.storageType,
+						ItemStoredAddSubTransfer.fromAmountFormContainer,
+						true
+					);
+					ItemStoredAddSubTransfer.addStoredSelectBoxes(
+						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
+						itemData.storageType,
+						ItemStoredAddSubTransfer.toListFormContainer
+					);
+				}
+				ItemStoredAddSubTransfer.addStoredSelectBoxes(
+					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromListFormContainer
+				);
 			},
 			function () {
-				//TODO show tracked list in from
+				ItemStoredAddSubTransfer.addStoredSelectBoxes(
+					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
+					itemData.storageType,
+					ItemStoredAddSubTransfer.fromListFormContainer
+				)
 			}
 		);
 	},
