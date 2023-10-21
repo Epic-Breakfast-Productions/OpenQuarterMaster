@@ -1,5 +1,6 @@
 const StoredEdit = {
 	getCommonStoredFormElements(headerId = null, toRemoveId = null) {
+		//TODO:: add elements from params in a safe way
 		return $('<div class="storedEditCommonFields">' +
 			'<div class="mb-3 ">\n' +
 			'    <label class="form-label">Barcode</label>\n' +
@@ -46,6 +47,7 @@ const StoredEdit = {
 	 * @returns jQuery
 	 */
 	getAmountStoredFormElements(headerId, toRemoveId) {
+		//TODO:: add elements from params in a safe way
 		let output = $('<div class="amountStoredFormElements">' +
 			'<div class="input-group mt-2 mb-3">\n' +
 			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="addEditUpdateStoredHeader(\'' + headerId + '\')">\n' +
@@ -63,6 +65,7 @@ const StoredEdit = {
 	 * @returns jQuery
 	 */
 	getTrackedStoredFormElements(headerId, toRemoveId) {
+		//TODO:: add elements from params in a safe way
 		let output = $('<div class="mb-3">\n' +
 			'    <label class="form-label">Identifier:</label>\n' +
 			'    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(\'' + headerId + '\')" required>\n' + // TODO:: populate

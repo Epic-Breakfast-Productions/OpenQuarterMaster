@@ -1,21 +1,15 @@
-
 //TODO:: move others into here
 const UnitUtils = {
-
-    /**
-     * Example input: {"unit":{"string":"units","name":"Units","symbol":"units"},"scale":"ABSOLUTE","value":8}
-     * @param quantityObj
-     */
-    quantityToDisplayStr(quantityObj){
-        return quantityObj.value + quantityObj.unit.symbol;
-    }
-};
-
-
-var unitOptions = $("#unitSelectOptions").children();
-
-function getUnitOptions(selectedVal){
-    var output = unitOptions.clone();
+	unitOptions: $("#unitSelectOptions").children(),
+	/**
+	 * Example input: {"unit":{"string":"units","name":"Units","symbol":"units"},"scale":"ABSOLUTE","value":8}
+	 * @param quantityObj
+	 */
+	quantityToDisplayStr(quantityObj) {
+		return quantityObj.value + quantityObj.unit.symbol;
+	},
+	getUnitOptions(selectedVal) {
+		let output = UnitUtils.unitOptions.clone();
 
 //    if(selectedVal){
 //        output.each(function(i, curOptGrp){
@@ -26,41 +20,39 @@ function getUnitOptions(selectedVal){
 //            });
 //        });
 //    }
-    return output;
-}
+		return output;
+	},
+	//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
+	updateCompatibleUnits(unitToCompatWith, containerToSearch) {
+		doRestCall({
+			url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
+			extraHeaders: {accept: "text/html"},
+			async: false,
+			done: function (data) {
+				ItemAddEdit.compatibleUnitOptions = data;
 
-//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
-function updateCompatibleUnits(unitToCompatWith, containerToSearch){
-    doRestCall({
-        url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
-        extraHeaders: { accept:"text/html" },
-        async: false,
-        done: function (data){
-            ItemAddEdit.compatibleUnitOptions = data;
+				containerToSearch.find(".unitInput").each(function (i, selectInput) {
+					var selectInputJq = $(selectInput);
+					selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
+					selectInputJq.change();
+				});
+			}
+		});
+	},
+	getUnitObj(unitStr) {
+		let output = {
+			string: unitStr
+		};
 
-            containerToSearch.find(".unitInput").each(function (i, selectInput){
-                var selectInputJq = $(selectInput);
-                selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
-                selectInputJq.change();
-            });
-        }
-    });
-}
+		return output;
+	},
+	getQuantityObj(value, unit) {
+		let output = {
+			unit: UnitUtils.getUnitObj(unit),
+			scale: "ABSOLUTE",
+			value: value
+		};
 
-function getUnitObj(unitStr){
-    let output = {
-            string: unitStr
-        };
-
-    return output;
-}
-
-function getQuantityObj(value, unit){
-    let output = {
-        unit: getUnitObj(unit),
-        scale: "ABSOLUTE",
-        value: value
-    };
-
-    return output;
-}
+		return output;
+	}
+};

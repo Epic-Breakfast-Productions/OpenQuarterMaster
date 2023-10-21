@@ -283,7 +283,7 @@
 					newUnitRequest.dimension = unitAddBaseDimensionInput.val();
 				} else if (newUnitRequest.requestType === "DERIVED") {
 					console.log("New derived unit");
-					newUnitRequest.baseUnit = getUnitObj(unitAddDerivedFromInput.val());
+					newUnitRequest.baseUnit = UnitUtils.getUnitObj(unitAddDerivedFromInput.val());
 					newUnitRequest.numPerBaseUnit = unitAddDerivedValueInput.val();
 					newUnitRequest.deriveType = unitAddDerivedTypeInput.val();
 				} else {

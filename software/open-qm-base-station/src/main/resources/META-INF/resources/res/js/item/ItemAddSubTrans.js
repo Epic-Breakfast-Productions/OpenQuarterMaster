@@ -67,7 +67,7 @@ function addAmountFormControls(container) {
 function fillAddSubTransFormControlsForAmountSimple() {
 	console.log("Setting up addSubTransForm controls for AMOUNT_SIMPLE");
 	let controls = addAmountFormControls(itemAddSubtractTransferFromControls);
-	updateCompatibleUnits(itemAddSubtractTransferFormItemData.unit.string, itemAddSubtractTransferFromControls);
+	UnitUtils.updateCompatibleUnits(itemAddSubtractTransferFormItemData.unit.string, itemAddSubtractTransferFromControls);
 }
 
 function fillAddSubTransFormControlsForAmountList() {
@@ -167,7 +167,7 @@ function getStoredDataFromItemAddSubtractTransferForm() {
 		case "AMOUNT_SIMPLE":
 			data = {
 				storedType: "AMOUNT",
-				amount: getQuantityObj(
+				amount: UnitUtils.getQuantityObj(
 					itemAddSubtractTransferFromControls.find("input[name=amountStored]").val(),
 					itemAddSubtractTransferFromControls.find("select[name=amountStoredUnit]").val()
 				)
