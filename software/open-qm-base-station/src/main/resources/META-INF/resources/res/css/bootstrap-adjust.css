@@ -8,9 +8,9 @@ a.active,button.active {
 	font-weight: bold;
 }
 
-.nav-link:hover {
+.navbar .nav-link:hover {
 	border: 1px dotted black !important;
 }
-.nav-link {
-	border: 1px dotted #eeeeee !important;
+.navbar .nav-link {
+	border: 1px dotted rgba(0,0,0, 0) !important;
 }
