@@ -76,5 +76,55 @@ const StoredEdit = {
 			'</div>');
 		output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
 		return output;
+	},
+	buildStoredObj(addEditItemStoredContainer, type) {
+		let output = {
+			storedType: type
+		};
+
+		//TODO:: check this func for completeness of diff types
+		if (type == "TRACKED") {
+			output['identifier'] = addEditItemStoredContainer.find("[name=identifier]").val()
+		}
+
+		{
+			let amountInput = addEditItemStoredContainer.find("[name=amountStored]");
+			if (amountInput.length) {
+				output["amount"] = UnitUtils.getQuantityObj(
+					parseFloat(amountInput.get(0).value),
+					addEditItemStoredContainer.find("[name=amountStoredUnit]").get(0).value
+				);
+			}
+		}
+
+		{
+			let input = addEditItemStoredContainer.find("[name=barcode]");
+			if (input.length) {
+				output["barcode"] = input.get(0).value;
+			}
+		}
+
+		{
+			let input = addEditItemStoredContainer.find("[name=condition]");
+			if (input.length) {
+				parseFloat(output["condition"] = input.get(0).value);
+			}
+		}
+		{
+			let input = addEditItemStoredContainer.find("[name=conditionDetails]");
+			if (input.length) {
+				output["conditionNotes"] = input.get(0).value;
+			}
+		}
+		{
+			let input = addEditItemStoredContainer.find("[name=expires]");
+			if (input.length) {
+				output["expires"] = input.get(0).value;
+			}
+		}
+		addKeywordAttData(output, $(addEditItemStoredContainer.find(".keywordInputDiv").get(0)), $(addEditItemStoredContainer.find(".attInputDiv").get(0)));
+		addImagesToData(output, $(addEditItemStoredContainer.find(".imagesSelected").get(0)));
+
+		return output;
 	}
 };
