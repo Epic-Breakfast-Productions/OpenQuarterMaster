@@ -11,7 +11,7 @@ const StoredEdit = {
 			'<div class="mb-3 ">\n' +
 			'    <label class="form-label">Condition Percentage</label>\n' +
 			'    <div class="input-group">\n' +
-			'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null ? '' : 'onchange="addEditUpdateStoredHeader(\'' + headerId + '\')"') + '>\n' + //TODO:: better label of better to worse
+			'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition" ' + (headerId == null ? '' : 'onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')"') + '>\n' + //TODO:: better label of better to worse
 			'        <span class="input-group-text" id="addon-wrapping">%</span>\n' + //TODO:: better label of better to worse
 			'    </div>\n' +
 			'</div>\n' +
@@ -21,7 +21,7 @@ const StoredEdit = {
 			'</div>\n' +
 			'<div class="mb-3">\n' +
 			'    <label class="form-label">Expires</label>\n' +
-			'    <input type="date" class="form-control storedExpiredInput" name="expires" ' + (headerId == null ? '' : 'onchange="addEditUpdateStoredHeader(\'' + headerId + '\')"') + '>\n' + //TODO:: enforce future date?
+			'    <input type="date" class="form-control storedExpiredInput" name="expires" ' + (headerId == null ? '' : 'onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')"') + '>\n' + //TODO:: enforce future date?
 			//TODO:: note to leave blank if not applicable
 			'</div>\n' +
 			//TODO:: move these templates to js calls
@@ -32,7 +32,7 @@ const StoredEdit = {
 			(
 				toRemoveId != null ?
 			'<div class="mb-3 ">\n' +
-			'    <button type="button" class="btn btn-danger" onclick="removeStored(\'#' + toRemoveId + '\');">' + Icons.remove + ' Remove Stored</button> ' +
+			'    <button type="button" class="btn btn-danger" onclick="ItemAddEdit.removeStored(\'#' + toRemoveId + '\');">' + Icons.remove + ' Remove Stored</button> ' +
 			'</div>' :
 					""
 			) +
@@ -50,8 +50,8 @@ const StoredEdit = {
 		//TODO:: add elements from params in a safe way
 		let output = $('<div class="amountStoredFormElements">' +
 			'<div class="input-group mt-2 mb-3">\n' +
-			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="addEditUpdateStoredHeader(\'' + headerId + '\')">\n' +
-			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="addEditUpdateStoredHeader(\'' + headerId + '\')">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
+			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">\n' +
+			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
 			'</div>' +
 			'</div>');
 		output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
@@ -68,7 +68,7 @@ const StoredEdit = {
 		//TODO:: add elements from params in a safe way
 		let output = $('<div class="mb-3">\n' +
 			'    <label class="form-label">Identifier:</label>\n' +
-			'    <input class="form-control" type="text" name="identifier" onchange="addEditUpdateStoredHeader(\'' + headerId + '\')" required>\n' + // TODO:: populate
+			'    <input class="form-control" type="text" name="identifier" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')" required>\n' + // TODO:: populate
 			'</div>\n' +
 			'<div class="mb-3">\n' +
 			'    <label class="form-label">Identifying Details</label>\n' +
