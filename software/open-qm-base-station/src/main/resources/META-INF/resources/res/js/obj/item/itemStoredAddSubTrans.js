@@ -43,7 +43,7 @@ const ItemStoredAddSubTransfer = {
 	},
 
 	getStoredSelectBox(storedObj) {
-		let output = $('<div class="col-1">' +
+		let output = $('<div class="col-2">' +
 			'<div class="card" style="">\n' +
 			'  <ul class="list-group list-group-flush">\n' +
 			'    <li class="list-group-item text-center"><input type="checkbox" class="selectedStored" /></li>\n' +
@@ -52,7 +52,7 @@ const ItemStoredAddSubTransfer = {
 			'</div></div>');
 
 		output.find(".selectedStored").val(storedObj.id);
-		output.find(".storedInfo").val(storedObj.labelText);
+		output.find(".storedInfo").text(storedObj.labelText);
 		return output;
 	},
 	addStoredSelectBoxes(storedWrapper, itemType, containerJq) {
@@ -60,18 +60,18 @@ const ItemStoredAddSubTransfer = {
 
 		StoredTypeUtils.foreachStoredType(
 			itemType,
-			function (){
+			function () {
 				console.log("Somehow got to where we tried to show a list for simple.")
 			},
 			function () {
-				//TODO
+				storedList = storedWrapper.stored;
 			},
 			function () {
 				//TODO
 			}
 		);
 
-		if(!storedList.length){
+		if (!storedList.length) {
 			containerJq.html('<div class="col-12 text-center">No Stored to select!</div>');
 		} else {
 			storedList.forEach(function (curStored) {
@@ -80,8 +80,26 @@ const ItemStoredAddSubTransfer = {
 		}
 	},
 	addStoredForm(storageType, containerJq, fullAmountForm = true) {
-		containerJq.text(storageType + " form")
-		//TODO
+		let content = "";
+		StoredTypeUtils.foreachStoredType(
+			storageType,
+			function () {
+				content = StoredEdit.getAmountStoredFormElements(
+					null, null, fullAmountForm
+				);
+			},
+			function () {
+				content = StoredEdit.getAmountStoredFormElements(
+					null, null, fullAmountForm
+				);
+			},
+			function () {
+				content = StoredEdit.getTrackedStoredFormElements(
+					null, null
+				);
+			}
+		);
+		containerJq.append(content);
 	},
 
 	setupForAdd() {
@@ -95,7 +113,8 @@ const ItemStoredAddSubTransfer = {
 			function () {
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.toStoredFormContainer
+					ItemStoredAddSubTransfer.toStoredFormContainer,
+					false
 				)
 			},
 			function () {
@@ -131,7 +150,8 @@ const ItemStoredAddSubTransfer = {
 			function () {
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromAmountFormContainer
+					ItemStoredAddSubTransfer.fromAmountFormContainer,
+					false
 				)
 			},
 			function () {
@@ -168,7 +188,8 @@ const ItemStoredAddSubTransfer = {
 			function () {
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromAmountFormContainer
+					ItemStoredAddSubTransfer.fromAmountFormContainer,
+					false
 				)
 			},
 			function () {
@@ -176,7 +197,7 @@ const ItemStoredAddSubTransfer = {
 					ItemStoredAddSubTransfer.addStoredForm(
 						itemData.storageType,
 						ItemStoredAddSubTransfer.fromAmountFormContainer,
-						true
+						false
 					);
 					ItemStoredAddSubTransfer.addStoredSelectBoxes(
 						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
@@ -235,15 +256,14 @@ const ItemStoredAddSubTransfer = {
 		doRestCall({
 			// spinnerContainer: null,
 			url: "/api/v1/inventory/item/" + itemId,
-			done: function (itemData) {
+			done: async function (itemData) {
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
 				ItemStoredAddSubTransfer.formItemNameLabel.text(itemData.name);
 				let storageBLockIds = Object.keys(itemData.storageMap);
 				console.log("Storage block ids: " + storageBLockIds);
 				//TODO:: check for no block ids
 
-				ItemStoredAddSubTransfer.setupFromToSelects(storageBLockIds).then(r => {
-				});
+				await ItemStoredAddSubTransfer.setupFromToSelects(storageBLockIds);
 
 				StoredTypeUtils.foreachStoredType(
 					itemData.storageType,
@@ -279,7 +299,7 @@ const ItemStoredAddSubTransfer = {
 			promises.push(
 				Promise.resolve(getStorageBlockLabel(curStorageBlockId, function (blockLabel) {
 						let newOptionTo = $('<option></option>');
-						newOptionTo.attr("id", curStorageBlockId);
+						newOptionTo.attr("value", curStorageBlockId);
 						newOptionTo.text(blockLabel);
 
 						let newOptionFrom = newOptionTo.clone(true, true);

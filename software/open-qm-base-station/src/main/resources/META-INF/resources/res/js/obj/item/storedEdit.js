@@ -31,13 +31,13 @@ const StoredEdit = {
 			attInputTemplate.html() +
 			(
 				toRemoveId != null ?
-			'<div class="mb-3 ">\n' +
-			'    <button type="button" class="btn btn-danger" onclick="ItemAddEdit.removeStored(\'#' + toRemoveId + '\');">' + Icons.remove + ' Remove Stored</button> ' +
-			'</div>' :
+					'<div class="mb-3 ">\n' +
+					'    <button type="button" class="btn btn-danger" onclick="ItemAddEdit.removeStored(\'#' + toRemoveId + '\');">' + Icons.remove + ' Remove Stored</button> ' +
+					'</div>' :
 					""
 			) +
-			'</div>\n')
-			;
+			'</div>\n'
+		);
 	},
 
 	/**
@@ -46,7 +46,7 @@ const StoredEdit = {
 	 * @param toRemoveId
 	 * @returns jQuery
 	 */
-	getAmountStoredFormElements(headerId, toRemoveId) {
+	getAmountStoredFormElements(headerId = null, toRemoveId = null, fullForm = true) {
 		//TODO:: add elements from params in a safe way
 		let output = $('<div class="amountStoredFormElements">' +
 			'<div class="input-group mt-2 mb-3">\n' +
@@ -54,10 +54,11 @@ const StoredEdit = {
 			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
 			'</div>' +
 			'</div>');
-		output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
+		if(fullForm) {
+			output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
+		}
 		return output;
 	},
-
 	/**
 	 *
 	 * @param headerId
@@ -66,13 +67,15 @@ const StoredEdit = {
 	 */
 	getTrackedStoredFormElements(headerId, toRemoveId) {
 		//TODO:: add elements from params in a safe way
-		let output = $('<div class="mb-3">\n' +
+		let output = $('<div class="trackedStoredFormElements">' +
+			'<div class="mb-3">\n' +
 			'    <label class="form-label">Identifier:</label>\n' +
 			'    <input class="form-control" type="text" name="identifier" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')" required>\n' + // TODO:: populate
 			'</div>\n' +
 			'<div class="mb-3">\n' +
 			'    <label class="form-label">Identifying Details</label>\n' +
 			'    <textarea class="form-control" name="identifyingDetails"></textarea>\n' +
+			'</div>' +
 			'</div>');
 		output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
 		return output;

@@ -366,7 +366,7 @@ const ItemAddEdit = {
 			ItemAddEdit.addNewAmountStored(output, formContentId);
 		}
 		ItemAddEdit.addEditUpdateStoredHeader(id);
-		updateStorageNumHeld(output);
+		ItemAddEdit.updateStorageNumHeld(output);
 		return output;
 	},
 	createNewTrackedStored(formContentId, caller, add = true) {
@@ -396,6 +396,7 @@ const ItemAddEdit = {
 		let headerId = id + "-header";
 		let collapseId = id + "-collapse";
 
+		//TODO:: this properly
 		let output = $(
 			'<div class="accordion-item storedItem" id="' + id + '">\n' +
 			'    <h2 class="accordion-header" id="' + headerId + '">\n' +
@@ -405,7 +406,7 @@ const ItemAddEdit = {
 			'    </h2>\n' +
 			'    <div id="' + collapseId + '" class="accordion-collapse collapse storage-list-entry" aria-labelledby="' + id + '" data-bs-parent="#' + formContentId + '">\n' +
 			'        <div class="accordion-body addEditItemStoredContainer">\n' +
-			'            ' + StoredEdit.getTrackedStoredFormElements(headerId, id) +
+			'            ' + StoredEdit.getTrackedStoredFormElements(headerId, id).prop('outerHTML') +
 			'        </div>\n' +
 			'    </div>\n' +
 			'</div>'
