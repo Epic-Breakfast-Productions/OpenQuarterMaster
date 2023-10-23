@@ -47,7 +47,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.2'
 	implementation 'org.passay:passay:1.6.4'
 	implementation 'com.itextpdf:html2pdf:5.0.1'
 
