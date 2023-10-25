@@ -1,3 +1,5 @@
+
+
 const ItemStoredAddSubTransfer = {
 	//TODO:: move things here
 	formMessages: $("#itemStoredAddSubTransFormMessages"),
@@ -318,7 +320,14 @@ const ItemStoredAddSubTransfer = {
 			//TODO:: check if only one block associated
 			// probably doesn't go here, need code to handle not here
 		}
+	},
+
+	submitAddSubTransForm(){
+		console.log("Submitting add/sub/trans form")
 	}
-
-
 };
+
+ItemStoredAddSubTransfer.form.on("submit", function (event){
+	event.preventDefault();
+	ItemStoredAddSubTransfer.submitAddSubTransForm();
+});
