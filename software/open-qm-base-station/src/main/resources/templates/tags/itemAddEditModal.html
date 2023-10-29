@@ -100,7 +100,7 @@
                 <div class="mb-3 row">
                     <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
                     <div class="col-sm-10">
-                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="addEditStoredTypeInputChanged()">
+                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="ItemAddEdit.addEditStoredTypeInputChanged()">
                             <option value="AMOUNT_SIMPLE" title="hello world" selected>Amount</option>
                             <option value="AMOUNT_LIST">Amount List</option>
                             <option value="TRACKED">Tracked</option>
@@ -117,7 +117,7 @@
                 <div class="mb-3 row" id="addEditItemUnitNameRow">
                     <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
                     <div class="col-sm-10">
-                        <select class="form-select dselect-select" id="addEditItemUnitInput" onchange="handleItemUnitChange();">
+                        <select class="form-select dselect-select" id="addEditItemUnitInput" onchange="ItemAddEdit.handleItemUnitChange();">
                             {#inputs/units/unitOptionsGroups}
                             {/inputs/units/unitOptionsGroups}
                         </select>
