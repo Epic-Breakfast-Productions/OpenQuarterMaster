@@ -15,12 +15,12 @@ const ItemStoredAddSubTransfer = {
 	fromContainer: $("#itemStoredAddSubTransFormFromContainer"),
 	fromSelect: $("#itemStoredAddSubTransFormFromSelect"),
 	fromListFormContainer: $("#itemStoredAddSubTransFormFromListFormContainer"),
-	fromAmountFormContainer: $("#itemStoredAddSubTransFormFromAmountFormContainer"),
+	fromStoredFormContainer: $("#itemStoredAddSubTransFormFromAmountFormContainer"),
 
 
 	resetToFromForms() {
 		this.fromListFormContainer.text("");
-		this.fromAmountFormContainer.text("");
+		this.fromStoredFormContainer.text("");
 		this.toListFormContainer.text("");
 		this.toStoredFormContainer.text("");
 	},
@@ -44,20 +44,20 @@ const ItemStoredAddSubTransfer = {
 		return this.toFromExistingStoredCheckbox.is(":checked");
 	},
 
-	getStoredSelectBox(storedObj) {
+	getStoredSelectBox(storedObj, name) {
 		let output = $('<div class="col-2">' +
 			'<div class="card" style="">\n' +
 			'  <ul class="list-group list-group-flush">\n' +
-			'    <li class="list-group-item text-center"><input type="checkbox" class="selectedStored" /></li>\n' +
+			'    <li class="list-group-item text-center"><input type="radio" class="selectedStored" required /></li>\n' +
 			'    <li class="list-group-item storedInfo"></li>\n' +
 			'  </ul>\n' +
 			'</div></div>');
 
-		output.find(".selectedStored").val(storedObj.id);
+		output.find(".selectedStored").val(storedObj.id).prop("name", name);
 		output.find(".storedInfo").text(storedObj.labelText);
 		return output;
 	},
-	addStoredSelectBoxes(storedWrapper, itemType, containerJq) {
+	addStoredSelectBoxes(storedWrapper, itemType, containerJq, name) {
 		let storedList = [];
 
 		StoredTypeUtils.foreachStoredType(
@@ -77,7 +77,7 @@ const ItemStoredAddSubTransfer = {
 			containerJq.html('<div class="col-12 text-center">No Stored to select!</div>');
 		} else {
 			storedList.forEach(function (curStored) {
-				containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored));
+				containerJq.append(ItemStoredAddSubTransfer.getStoredSelectBox(curStored, name));
 			});
 		}
 	},
@@ -124,7 +124,8 @@ const ItemStoredAddSubTransfer = {
 					ItemStoredAddSubTransfer.addStoredSelectBoxes(
 						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
 						itemData.storageType,
-						ItemStoredAddSubTransfer.toListFormContainer
+						ItemStoredAddSubTransfer.toListFormContainer,
+						"toStored"
 					)
 				}
 				ItemStoredAddSubTransfer.addStoredForm(
@@ -152,7 +153,7 @@ const ItemStoredAddSubTransfer = {
 			function () {
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromAmountFormContainer,
+					ItemStoredAddSubTransfer.fromStoredFormContainer,
 					false
 				)
 			},
@@ -160,21 +161,23 @@ const ItemStoredAddSubTransfer = {
 				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
 					ItemStoredAddSubTransfer.addStoredForm(
 						itemData.storageType,
-						ItemStoredAddSubTransfer.fromAmountFormContainer,
+						ItemStoredAddSubTransfer.fromStoredFormContainer,
 						false
 					)
 				}
 				ItemStoredAddSubTransfer.addStoredSelectBoxes(
 					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromListFormContainer
+					ItemStoredAddSubTransfer.fromListFormContainer,
+					"fromStored"
 				)
 			},
 			function () {
 				ItemStoredAddSubTransfer.addStoredSelectBoxes(
 					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromListFormContainer
+					ItemStoredAddSubTransfer.fromListFormContainer,
+					"fromStored"
 				)
 			}
 		);
@@ -190,7 +193,7 @@ const ItemStoredAddSubTransfer = {
 			function () {
 				ItemStoredAddSubTransfer.addStoredForm(
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromAmountFormContainer,
+					ItemStoredAddSubTransfer.fromStoredFormContainer,
 					false
 				)
 			},
@@ -198,26 +201,29 @@ const ItemStoredAddSubTransfer = {
 				if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
 					ItemStoredAddSubTransfer.addStoredForm(
 						itemData.storageType,
-						ItemStoredAddSubTransfer.fromAmountFormContainer,
+						ItemStoredAddSubTransfer.fromStoredFormContainer,
 						false
 					);
 					ItemStoredAddSubTransfer.addStoredSelectBoxes(
 						itemData.storageMap[ItemStoredAddSubTransfer.toSelect.val()],
 						itemData.storageType,
-						ItemStoredAddSubTransfer.toListFormContainer
+						ItemStoredAddSubTransfer.toListFormContainer,
+						"toStored"
 					);
 				}
 				ItemStoredAddSubTransfer.addStoredSelectBoxes(
 					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromListFormContainer
+					ItemStoredAddSubTransfer.fromListFormContainer,
+					"fromStored"
 				);
 			},
 			function () {
 				ItemStoredAddSubTransfer.addStoredSelectBoxes(
 					itemData.storageMap[ItemStoredAddSubTransfer.fromSelect.val()],
 					itemData.storageType,
-					ItemStoredAddSubTransfer.fromListFormContainer
+					ItemStoredAddSubTransfer.fromListFormContainer,
+					"fromStored"
 				)
 			}
 		);
@@ -260,6 +266,7 @@ const ItemStoredAddSubTransfer = {
 			url: "/api/v1/inventory/item/" + itemId,
 			done: async function (itemData) {
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
+				jQuery.data(ItemStoredAddSubTransfer.form, "curItemType", itemData.storageType);
 				ItemStoredAddSubTransfer.formItemNameLabel.text(itemData.name);
 				let storageBLockIds = Object.keys(itemData.storageMap);
 				console.log("Storage block ids: " + storageBLockIds);
@@ -322,8 +329,103 @@ const ItemStoredAddSubTransfer = {
 		}
 	},
 
+	/**
+	 *
+	 * @returns {({actionType: string}|*|string|jQuery)[]}
+	 */
+	buildAddSubTransActionObject(){
+		console.log("Creating add sub trans apply object from form.")
+		let output = {
+			"actionType": this.opSelect.val().toUpperCase()
+		};
+
+		let fromStorageBlock = false;
+		let toStorageBlock = false;
+
+		let fromStorageId = false;
+		let toStorageId = false;
+
+		let fromStoredObj = false;
+		let toStoredObj = false;
+
+		let itemType = jQuery.data(ItemStoredAddSubTransfer.form, "curItemType");
+
+		switch (this.opSelect.val()) {
+			case "add":
+				toStorageBlock = true;
+				toStoredObj = true;
+				StoredTypeUtils.foreachStoredType(
+					itemType,
+					function () {},
+					function () {
+						if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+							toStorageId = true;
+						}
+					},
+					function () {}
+				);
+				break;
+			case "subtract":
+				fromStorageBlock = true;
+
+				StoredTypeUtils.foreachStoredType(
+					itemType,
+					function () {fromStoredObj = true;},
+					function () {
+						fromStorageId = true;
+						if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+							fromStoredObj = true;
+						}
+					},
+					function () {fromStorageId = true;}
+				);
+				break;
+			case "transfer":
+				toStorageBlock = true;
+				fromStorageBlock = true;
+				StoredTypeUtils.foreachStoredType(
+					itemType,
+					function () {fromStoredObj = true;},
+					function () {
+						fromStorageId = true;
+						if (ItemStoredAddSubTransfer.toFromExistingStoredCheckboxChecked()) {
+							fromStoredObj = true;
+							toStorageId = true;
+						}
+					},
+					function () {fromStorageId = true;}
+				);
+				break;
+		}
+
+		if(fromStorageBlock){
+			output['storageBlockFrom'] = this.fromSelect.val();
+		}
+		if(toStorageBlock){
+			output['storageBlockTo'] = this.toSelect.val();
+		}
+
+		if(fromStorageId){
+			output['storedIdFrom'] =  this.fromListFormContainer.find('input[name="fromStored"]:checked').val();
+		}
+		if(toStorageId){
+			output['storedIdTo'] =  this.toListFormContainer.find('input[name="toStored"]:checked').val();
+		}
+
+		if(toStoredObj){
+			output['toMove'] = StoredEdit.buildStoredObj(this.toStoredFormContainer, itemType);
+		}
+		if(fromStoredObj){
+			output['toMove'] = StoredEdit.buildStoredObj(this.fromStoredFormContainer, itemType);
+		}
+
+		console.log("Apply object: ", output);
+		return [output, jQuery.data(ItemStoredAddSubTransfer.form, "curItem")['id']];
+	},
+
 	submitAddSubTransForm(){
 		console.log("Submitting add/sub/trans form")
+		let [applyObject, itemId] = this.buildAddSubTransActionObject();
 	}
 };
 
