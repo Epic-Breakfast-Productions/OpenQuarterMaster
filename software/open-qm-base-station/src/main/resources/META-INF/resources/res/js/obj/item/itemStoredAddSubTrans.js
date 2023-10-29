@@ -264,6 +264,7 @@ const ItemStoredAddSubTransfer = {
 		doRestCall({
 			// spinnerContainer: null,
 			url: "/api/v1/inventory/item/" + itemId,
+			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
 			done: async function (itemData) {
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItemType", itemData.storageType);
@@ -423,13 +424,30 @@ const ItemStoredAddSubTransfer = {
 		return [output, jQuery.data(ItemStoredAddSubTransfer.form, "curItem")['id']];
 	},
 
-	submitAddSubTransForm(){
-		console.log("Submitting add/sub/trans form")
-		let [applyObject, itemId] = this.buildAddSubTransActionObject();
+	addSubTransFormSubmitAction(applyObject, itemId){
+		console.log("Applying item add/sub/transfer object.")
+		doRestCall({
+			// spinnerContainer: null,
+			url: "/api/v1/inventory/item/" + itemId + "/stored/applyAddSubtractTransfer",
+			method: "PUT",
+			data: applyObject,
+			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
+			done: async function (itemData) {
+				PageMessages.addMessageToDiv(
+					ItemStoredAddSubTransfer.formMessages,
+					"success",
+					"Successfully performed action!",
+					"Success"
+				);
+			}
+		});
 	}
 };
 
 ItemStoredAddSubTransfer.form.on("submit", function (event){
 	event.preventDefault();
-	ItemStoredAddSubTransfer.submitAddSubTransForm();
+	console.log("Add/sub/trans form submitted")
+	let [applyObject, itemId] = ItemStoredAddSubTransfer.buildAddSubTransActionObject();
+	ItemStoredAddSubTransfer.addSubTransFormSubmitAction(applyObject, itemId);
+	console.log("Done handling Add/sub/trans form submission handling.");
 });

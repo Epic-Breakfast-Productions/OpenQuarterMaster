@@ -1,3 +1,8 @@
+const StoredTypes = {
+	amount: "AMOUNT",
+	tracked: "TRACKED"
+}
+
 const StoredEdit = {
 	getCommonStoredFormElements(headerId = null, toRemoveId = null) {
 		//TODO:: add elements from params in a safe way
@@ -49,6 +54,7 @@ const StoredEdit = {
 	getAmountStoredFormElements(headerId = null, toRemoveId = null, fullForm = true) {
 		//TODO:: add elements from params in a safe way
 		let output = $('<div class="amountStoredFormElements">' +
+			'<input type="hidden" name="storedType" value="AMOUNT"/>'+
 			'<div class="input-group mt-2 mb-3">\n' +
 			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">\n' +
 			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
@@ -68,6 +74,7 @@ const StoredEdit = {
 	getTrackedStoredFormElements(headerId, toRemoveId) {
 		//TODO:: add elements from params in a safe way
 		let output = $('<div class="trackedStoredFormElements">' +
+			'<input type="hidden" name="storedType" value="TRACKED"/>'+
 			'<div class="mb-3">\n' +
 			'    <label class="form-label">Identifier:</label>\n' +
 			'    <input class="form-control" type="text" name="identifier" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')" required>\n' + // TODO:: populate
@@ -77,17 +84,19 @@ const StoredEdit = {
 			'    <textarea class="form-control" name="identifyingDetails"></textarea>\n' +
 			'</div>' +
 			'</div>');
-		output.append(this.getCommonStoredFormElements(headerId, toRemoveId));
+		output.append(this.getCommonStoredFormElements(StoredTypes.tracked, headerId, toRemoveId));
 		return output;
 	},
-	buildStoredObj(addEditItemStoredContainer, type) {
+	buildStoredObj(addEditItemStoredContainer) {
+		let type = addEditItemStoredContainer.find("[name=storedType]").val();
+
 		let output = {
 			storedType: type
 		};
 
 		//TODO:: check this func for completeness of diff types
-		if (type == "TRACKED") {
-			output['identifier'] = addEditItemStoredContainer.find("[name=identifier]").val()
+		if (type === "TRACKED") {
+			output['identifier'] = addEditItemStoredContainer.find("[name=identifier]").val();
 		}
 
 		{
