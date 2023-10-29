@@ -1,4 +1,3 @@
-//TODO:: move others into here
 const UnitUtils = {
 	unitOptions: $("#unitSelectOptions").children(),
 	/**
