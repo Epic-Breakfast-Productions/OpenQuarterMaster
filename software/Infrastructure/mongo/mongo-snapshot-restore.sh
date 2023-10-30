@@ -4,7 +4,7 @@
 #
 # https://www.mongodb.com/docs/manual/core/backups/#back-up-with-cp-or-rsync
 #
-source /etc/oqm/snapshot/snapshot-restore-base.sh
+source /etc/oqm/snapshots/snapshot-restore-base.sh
 
 #echo "$mode"
 #echo "$targetDir"
