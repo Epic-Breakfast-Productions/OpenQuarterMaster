@@ -108,15 +108,21 @@ class SnapshotUtils:
     @staticmethod
     def restoreFromSnapshot(snapshotFile: str) -> bool:
         logging.info("Performing snapshot Restore.")
-        ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
-
         extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + os.path.basename(snapshotFile).split('.')[0]
 
-        with tarfile.open(snapshotFile, "w:gz") as tar:
+        logging.info("Extracting files from archive.")
+        with tarfile.open(snapshotFile, "r:*") as tar:
             tar.extractall(extractionDir)
+        logging.info("Files extracted successfully.")
+
+        ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
+
         # TODO:: move files to relevant locations
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
+
+        # TODO:: remove extracted files in temp
+
         logging.info("Done Performing snapshot Restore.")
         return True
 
