@@ -37,7 +37,8 @@ class SnapshotUtils:
         )
         logging.debug("Snapshot name: %s", snapshotName)
         compilingDir = ScriptInfo.TMP_DIR + "/snapshots/" + snapshotName
-        compilingConfigsDir = os.path.join(compilingDir, "config")
+        compilingConfigsDir = os.path.join(compilingDir, "config/configs")
+        compilingSecretsDir = os.path.join(compilingDir, "config/secrets")
         compilingServiceConfigsDir = os.path.join(compilingDir, "serviceConfigs")
         dataDir = os.path.join(compilingDir, "data")
 
@@ -49,6 +50,7 @@ class SnapshotUtils:
 
         try:
             os.makedirs(compilingConfigsDir)
+            os.makedirs(compilingSecretsDir)
             os.makedirs(compilingServiceConfigsDir)
             os.makedirs(dataDir)
             os.makedirs(snapshotLocation, exist_ok=True)
@@ -60,17 +62,17 @@ class SnapshotUtils:
 
         try:
             # https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
-            shutil.copytree(ScriptInfo.CONFIG_DIR, compilingConfigsDir, dirs_exist_ok=True)
+            shutil.copytree(ScriptInfo.CONFIG_DIR + "/configs", compilingConfigsDir, dirs_exist_ok=True)
+            shutil.copytree(ScriptInfo.CONFIG_DIR + "/secrets", compilingSecretsDir, dirs_exist_ok=True)
             shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
 
-            # TODO:: run
             logging.info("Running individual snapshots.")
             for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
                 file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
                 logging.info("Running script %s", file)
                 result = subprocess.run([file, "--snapshot", "-d", compilingDir], shell=False, capture_output=True, text=True, check=True)
                 if result.returncode != 0:
-                    logging.error("FAILED to run snapshot script, returned %d. Erring script: %s", result.returncode, file)
+                    logging.error("FAILED to run snapshot script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
                     logging.debug("Erring script err output: %s", result.stderr)
                     break
         except Exception as e:

@@ -25,8 +25,8 @@ SECRET_MNGR_SECRET_PW_HASH_LEN = 32
 SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
 SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
 
-SECRET_MNGR_SECRETS_FILE = ScriptInfo.CONFIG_DIR + "/secrets.json"
-SECRET_MNGR_SECRETS_SECRET_FILE = ScriptInfo.CONFIG_DIR + "/.secretSecret.dat"
+SECRET_MNGR_SECRETS_FILE = ScriptInfo.CONFIG_DIR + "/secrets/secrets.json"
+SECRET_MNGR_SECRETS_SECRET_FILE = ScriptInfo.CONFIG_DIR + "/secrets/.secretSecret.dat"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
@@ -48,6 +48,7 @@ class SecretManager:
         # ensure secrets file exists
         try:
             if not os.path.isfile(self.secretsFile):
+                os.makedirs(os.path.dirname(self.secretsFile), exist_ok=True)
                 with open(self.secretsFile, 'x') as stream:
                     stream.write('''
 {
