@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items.stored;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
@@ -47,7 +48,7 @@ public abstract class Stored {
 	 */
 	@NonNull
 	@NotNull
-	private UUID storedId = UUID.randomUUID();
+	private UUID id = UUID.randomUUID();
 	
 	/**
 	 * The barcode for this particular stored object.
@@ -100,6 +101,9 @@ public abstract class Stored {
 	private List<@NotBlank String> keywords = new ArrayList<>();
 	
 	public static Predicate<Stored> getHasIdPredicate(UUID storedId) {
-		return (Stored stored)->stored.getStoredId().equals(storedId);
+		return (Stored stored)->stored.getId().equals(storedId);
 	}
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public abstract String getLabelText();
 }

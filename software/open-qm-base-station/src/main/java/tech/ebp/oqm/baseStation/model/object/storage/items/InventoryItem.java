@@ -641,4 +641,63 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 		
 		return this;
 	}
+	
+	/**
+	 * Applies an {@link AddSubtractTransferAction} action to this object.
+	 * @param action The action to apply
+	 * @return This item object
+	 */
+	public InventoryItem<S, C, W> apply(AddSubtractTransferAction action){
+		switch (action.getActionType()){
+			case ADD -> {
+				if(action.toStored()){
+					this.add(
+						action.getStorageBlockTo(),
+						action.getStoredIdTo(),
+						(S) action.getToMove(),
+						false
+					);
+				} else {
+					this.add(
+						action.getStorageBlockTo(),
+						(S) action.getToMove(),
+						false
+					);
+				}
+			}
+			case SUBTRACT -> {
+				if(action.fromStored()){
+					this.subtract(
+						action.getStorageBlockFrom(),
+						action.getStoredIdFrom(),
+						(S) action.getToMove()
+					);
+				} else {
+					this.subtract(
+						action.getStorageBlockFrom(),
+						(S) action.getToMove()
+					);
+				}
+			}
+			case TRANSFER -> {
+				if(action.fromToStored()){
+					this.transfer(
+						action.getStorageBlockFrom(),
+						action.getStoredIdFrom(),
+						action.getStorageBlockTo(),
+						action.getStoredIdTo(),
+						(S) action.getToMove()
+					);
+				} else {
+					this.transfer(
+						action.getStorageBlockFrom(),
+						action.getStorageBlockTo(),
+						(S) action.getToMove()
+					);
+				}
+			}
+		}
+		
+		return this;
+	}
 }
