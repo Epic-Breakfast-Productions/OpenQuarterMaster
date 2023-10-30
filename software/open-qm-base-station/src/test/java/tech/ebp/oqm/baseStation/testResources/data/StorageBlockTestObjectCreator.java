@@ -15,7 +15,7 @@ public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBloc
 			faker.name().fullName(),
 			faker.name().fullName(),
 			faker.lorem().paragraph(),
-			faker.locality().localeString(),
+			faker.theRoom().locations(),
 			null,
 			new ArrayList<>(),
 			new ArrayList<>()

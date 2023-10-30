@@ -31,6 +31,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
@@ -439,7 +440,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@GET
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Gets the stored amount or tracked item to the storage block specified."
 	)
@@ -469,7 +470,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Adds a stored amount or tracked item to the storage block specified."
 	)
@@ -512,7 +513,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{itemId}/{storageBlockId}/{storedId}")
+	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
 	@Operation(
 		summary = "Adds a stored amount or tracked item to the storage block specified."
 	)
@@ -557,7 +558,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@DELETE
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Subtracts a stored amount or tracked item from the storage block specified."
 	)
@@ -599,7 +600,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@DELETE
-	@Path("{itemId}/{storageBlockId}/{storedId}")
+	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
 	@Operation(
 		summary = "Subtracts a stored amount or tracked item from the storage block specified."
 	)
@@ -643,7 +644,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{itemId}/{storageBlockIdFrom}/{storageBlockIdTo}")
+	@Path("{itemId}/stored/{storageBlockIdFrom}/{storageBlockIdTo}")
 	@Operation(
 		summary = "Transfers a stored amount or tracked item to the storage block specified."
 	)
@@ -687,7 +688,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{itemId}/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
+	@Path("{itemId}/stored/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
 	@Operation(
 		summary = "Transfers a stored amount or tracked item to the storage block specified."
 	)
@@ -734,10 +735,54 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
+	/**
+	 * TODO:: add endpoint to support list of actions
+	 * @param itemId
+	 * @param action
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@PUT
+	@Path("{itemId}/stored/applyAddSubtractTransfer")
+	@Operation(
+		summary = "Transfers a stored amount or tracked item to the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public Response applyAddSubtractTransfer(
+		@PathParam("itemId") String itemId,
+		AddSubtractTransferAction action
+	) throws JsonProcessingException {
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item = ((InventoryItemService) this.getObjectService()).apply(
+			itemId,
+			action,
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(item).build();
+	}
+	
 	@GET
 	@Path("inStorageBlock/{storageBlockId}")
 	@Operation(
-		summary = "Gets items that ."
+		summary = "Gets items that are stored in the given block."
 	)
 	@APIResponse(
 		responseCode = "200",
