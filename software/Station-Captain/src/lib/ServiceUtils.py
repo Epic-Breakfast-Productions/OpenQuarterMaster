@@ -27,7 +27,7 @@ class ServiceUtils:
             logging.warning("Command was unsuccessful. Error code: {0}", result.returncode)
             logging.debug("Erring command stderr: {0}", result.stderr)
             return False
-        logging.info("Command was successful.")
+        logging.info("%s Command was successful on %s", command, service)
         return True
 
 

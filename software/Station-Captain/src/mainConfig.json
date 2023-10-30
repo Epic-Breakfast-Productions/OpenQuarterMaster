@@ -9,6 +9,7 @@
 	"snapshots": {
 		"location": "#{system.systemDataDir}/oqm-snapshots",
 		"numToKeep": 5,
-		"frequency": "weekly"
+		"frequency": "weekly",
+		"compressionAlg": "xz"
 	}
 }

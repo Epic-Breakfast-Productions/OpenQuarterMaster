@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 from ConfigManager import *
 from ServiceUtils import *
@@ -22,10 +23,15 @@ class SnapshotUtils:
     CRON_NAME = "take-snapshot"
 
     @staticmethod
-    def performSnapshot(snapshotTrigger: SnapshotTrigger) -> bool:
+    def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
         logging.info("Performing snapshot.")
 
-        snapshotName = "snapshot-%s-%s".format(
+        compressionAlg = mainCM.getConfigVal("snapshots.compressionAlg")
+
+        if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
+            return False, "Configured compression algorithm was invalid."
+
+        snapshotName = "OQM-snapshot-{}-{}".format(
             datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"),
             snapshotTrigger.name
         )
@@ -33,26 +39,29 @@ class SnapshotUtils:
         compilingDir = ScriptInfo.TMP_DIR + "/snapshots/" + snapshotName
         compilingConfigsDir = os.path.join(compilingDir, "config")
         compilingServiceConfigsDir = os.path.join(compilingDir, "serviceConfigs")
-        dataDir = os.path.join(compilingDir, "/data")
+        dataDir = os.path.join(compilingDir, "data")
+
+        logging.debug("Snapshot compiling dir: %s", compilingDir)
+        logging.debug("Snapshot configs compiling dir: %s", compilingConfigsDir)
 
         snapshotLocation = mainCM.getConfigVal("snapshots.location")
-        snapshotArchiveName = "%s/%s.tar.gz".format(snapshotLocation, snapshotName)
+        snapshotArchiveName = "{}/{}.tar.{}".format(snapshotLocation, snapshotName, compressionAlg)
 
         try:
             os.makedirs(compilingConfigsDir)
             os.makedirs(compilingServiceConfigsDir)
             os.makedirs(dataDir)
-            os.makedirs(snapshotLocation)
-        except:
-            logging.error("Failed to create directories necessary for snapshot taking.")
-            return False
+            os.makedirs(snapshotLocation, exist_ok=True)
+        except Exception as e:
+            logging.error("Failed to create directories necessary for snapshot taking: %s", e)
+            return False, str(e)
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
         try:
             # https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
-            shutil.copytree(ScriptInfo.CONFIG_DIR, compilingConfigsDir)
-            shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir)
+            shutil.copytree(ScriptInfo.CONFIG_DIR, compilingConfigsDir, dirs_exist_ok=True)
+            shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
 
             # TODO:: run
             logging.info("Running individual snapshots.")
@@ -66,15 +75,35 @@ class SnapshotUtils:
                     break
         except Exception as e:
             logging.error("FAILED to compile files for snapshot: %s", e)
-            return False
+            return False, str(e)
         finally:
             ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
 
         # https://docs.python.org/3.8/library/tarfile.html#tarfile.TarFile.add
-        with tarfile.open(snapshotArchiveName, "w:gz") as tar:
-            tar.add(compilingDir, arcname=os.path.basename(compilingDir))
+        logging.info("Archiving snapshot bundle.")
+        start = time.time()
+        try:
+            with tarfile.open(snapshotArchiveName, "x:" + compressionAlg) as tar:
+                tar.add(compilingDir, arcname="")
+        except Exception as e:
+            logging.error("FAILED to write files to archive: %s", e)
+            # TODO:: remove archive, if exists
+            return False, str(e)
+        logging.info("Completed archiving snapshot bundle. Took %s seconds", time.time() - start)
+        # TODO:: remove compiling dir
+
+        # remove extra files
+        filenames = [entry.name for entry in sorted(os.scandir(snapshotLocation),
+                                                    key=lambda x: x.stat().st_mtime, reverse=True)]
+        filenames = list(filter(lambda curFile: not os.path.isdir(snapshotLocation + "/" + curFile), filenames))
+
+        logging.info("Current files in snapshot dir (%s): %s", len(filenames), ", ".join(filenames))
+        for curFile in filenames[5:]:
+            logging.info("REMOVING excess file %s", curFile)
+            os.remove(snapshotLocation + "/" + curFile)
 
         logging.info("Done Performing snapshot.")
+        return True, snapshotArchiveName
 
     @staticmethod
     def restoreFromSnapshot(snapshotFile: str) -> bool:
@@ -89,6 +118,7 @@ class SnapshotUtils:
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         logging.info("Done Performing snapshot Restore.")
+        return True
 
     @staticmethod
     def enableAutomatic():

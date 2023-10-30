@@ -514,7 +514,12 @@ class UserInteraction:
                     SnapshotUtils.restoreFromSnapshot(snapshotFile)
 
             if choice == "(2)":
-                SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
+                self.dialog.infobox("Performing snapshot. Please wait.")
+                result, report = SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
+                if not result:
+                    self.dialog.msgbox(report, title="Error taking Snapshot")
+                else:
+                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report, title="Snapshot successful")
             if choice == "(3)":
                 if SnapshotUtils.isAutomaticEnabled():
                     SnapshotUtils.disableAutomatic()
