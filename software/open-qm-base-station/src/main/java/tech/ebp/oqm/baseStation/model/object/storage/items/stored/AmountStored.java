@@ -73,4 +73,13 @@ public class AmountStored extends Stored {
 	public tech.ebp.oqm.baseStation.model.object.storage.items.stored.StoredType getStoredType() {
 		return StoredType.AMOUNT;
 	}
+	
+	@Override
+	public String getLabelText() {
+		StringBuilder sb = new StringBuilder(this.getAmount().toString());
+		
+		//TODO:: add more attributes
+		
+		return sb.toString();
+	}
 }
