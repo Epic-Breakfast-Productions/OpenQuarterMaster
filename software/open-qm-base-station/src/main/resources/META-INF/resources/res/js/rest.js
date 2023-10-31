@@ -87,7 +87,7 @@ async function doRestCall(
 			ajaxOps.contentType = "application/json; charset=UTF-8";
 			ajaxOps.dataType = 'json';
 			ajaxOps.data = JSON.stringify(data);
-			console.log("Sending json data: " + ajaxOps.data);
+			console.log("Sending json data: ", data);
 		}
 	}
 	if(returnType){
@@ -114,12 +114,12 @@ async function doRestCall(
 
 	ajaxOps.headers = extraHeaders;
 
-	console.log("Calling with headers: " + JSON.stringify(ajaxOps.headers));
-	console.debug("Full request object: " + JSON.stringify(ajaxOps));
+	console.log("Calling with headers: ", ajaxOps.headers);
+	console.debug("Full request object: ", ajaxOps);
 
 	let ajaxPromise = $.ajax(ajaxOps)
 		.done(function (data, status, xhr) {
-			console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): " + JSON.stringify(data));
+			console.log("Got successful response from " + url + " (trace id: " + xhr.getResponseHeader("traceId") + "): ", data);
 			try{
 				done(data, status, xhr);
 			} catch (e){
@@ -127,7 +127,7 @@ async function doRestCall(
 				throw e;
 			}
 		}).fail(function (data, status, statusStr) {
-			console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): " + JSON.stringify(data));
+			console.warn("Request failed to " + url + " (trace id: " + data.getResponseHeader("traceId") + ")(status: "+status+", message: "+statusStr+"): ",  data);
 
 			if(failMessagesDiv != null){
 				if(String(failMessagesDiv) === failMessagesDiv){
