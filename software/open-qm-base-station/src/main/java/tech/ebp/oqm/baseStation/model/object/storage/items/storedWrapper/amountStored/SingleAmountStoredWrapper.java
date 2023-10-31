@@ -46,7 +46,7 @@ public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored>
 	
 	@Override
 	public void addStored(UUID storedId, AmountStored stored) throws UnsupportedStoredOperationException {
-		if(!this.getStored().getStoredId().equals(storedId)){
+		if(!this.getStored().getId().equals(storedId)){
 			throw new UnsupportedStoredOperationException("Cannot add amount to a different stored in a plain amount. (Stored id given was != the id of the stored held at this "
 														  + "storage block)");
 		}
@@ -60,7 +60,7 @@ public class SingleAmountStoredWrapper extends SingleStoredWrapper<AmountStored>
 	
 	@Override
 	public AmountStored subtractStored(UUID storedId, AmountStored stored) throws NotEnoughStoredException, StoredNotFoundException {
-		if(!this.getStored().getStoredId().equals(storedId)){
+		if(!this.getStored().getId().equals(storedId)){
 			throw new UnsupportedStoredOperationException("Cannot subtract amount to a different stored in a plain amount. (Stored id given was != the id of the stored held at "
 														  + "this storage block)");
 		}

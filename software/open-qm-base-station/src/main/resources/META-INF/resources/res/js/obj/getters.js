@@ -1,13 +1,23 @@
 
 const Getters = {
 	InventoryItem: {
+		get(itemId, doneFunc) {
+			console.log("Getting name for inventory item \"" + itemId + "\"");
+			return doRestCall({
+				spinnerContainer: null,
+				url: "/api/v1/inventory/item/" + itemId,
+				done: function (data) {
+					doneFunc(data);
+				}
+			});
+		},
 		getItemName(itemId, doneFunc) {
 			console.log("Getting name for inventory item \"" + itemId + "\"");
 			return doRestCall({
 				spinnerContainer: null,
 				url: "/api/v1/inventory/item/" + itemId,
 				done: function (data) {
-					console.log("Got label: " + data.name);
+					console.log("Got item name: " + data.name);
 					doneFunc(data.name);
 				}
 			});
@@ -50,8 +60,8 @@ function getStorageBlockLabel(blockId, doneFunc) {
 		spinnerContainer: null,
 		url: "/api/v1/inventory/storage-block/" + blockId,
 		done: function (data) {
-			console.log("Got label: " + data.label);
-			doneFunc(data.label);
+			console.log("Got label: " + data.labelText);
+			doneFunc(data.labelText);
 		}
 	});
 }

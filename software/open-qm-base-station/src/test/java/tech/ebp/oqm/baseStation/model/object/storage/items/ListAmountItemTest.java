@@ -2,7 +2,6 @@ package tech.ebp.oqm.baseStation.model.object.storage.items;
 
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
-import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
@@ -276,7 +275,7 @@ class ListAmountItemTest extends BasicTest {
 		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		
 		ListAmountStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId, true);
-		UUID storedId = wrapper.getStored().get(0).getStoredId();
+		UUID storedId = wrapper.getStored().get(0).getId();
 
 		item.add(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
 
@@ -347,7 +346,7 @@ class ListAmountItemTest extends BasicTest {
 		ObjectId storageId = ObjectId.get();
 
 		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
-		UUID storedId = item.getStoredForStorage(storageId).get(0).getStoredId();
+		UUID storedId = item.getStoredForStorage(storageId).get(0).getId();
 
 		item.subtract(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 

@@ -1,9 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items;
 
-import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
 import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
-import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
@@ -191,7 +188,7 @@ class TrackedItemTest extends BasicTest {
 		assertThrows(
 			UnsupportedStoredOperationException.class,
 			()->{
-				item.add(storageId, stored.getStoredId(), stored, true);
+				item.add(storageId, stored.getId(), stored, true);
 			}
 		);
 		
@@ -232,7 +229,7 @@ class TrackedItemTest extends BasicTest {
 		assertThrows(
 			UnsupportedStoredOperationException.class,
 			()->{
-				item.subtract(storageId, stored.getStoredId(), stored);
+				item.subtract(storageId, stored.getId(), stored);
 			}
 		);
 		

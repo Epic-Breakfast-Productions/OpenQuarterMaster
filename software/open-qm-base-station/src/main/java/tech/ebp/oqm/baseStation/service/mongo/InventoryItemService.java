@@ -8,6 +8,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -20,6 +21,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemTransferEve
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
+import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
@@ -456,6 +458,62 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			new ObjectId(storageBlockIdTo),
 			UUID.fromString(storedIdTo),
 			toTransfer,
+			entity
+		);
+	}
+	
+	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		InventoryItem<T, C, W> item,
+		AddSubtractTransferAction action,
+		InteractingEntity entity
+	) {
+		this.get(item.getId());//ensure exists
+		try {
+			item.apply(action);
+		} catch(ClassCastException e) {
+			//not given proper stored type
+			//TODO:: custom exception
+			throw e;
+		}
+		
+		this.update(
+			item,
+			entity,
+			new ItemTransferEvent(item, entity)
+				//TODO:: add action
+		);
+		
+		return item;
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		ObjectId itemId,
+		@NotNull
+		@Valid
+		AddSubtractTransferAction action,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.apply(
+			this.get(itemId),
+			action,
+			entity
+		);
+	}
+	
+	@WithSpan
+	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		String itemId,
+		@NotNull
+		@Valid
+		AddSubtractTransferAction action,
+		@NotNull
+		InteractingEntity entity
+	) {
+		return this.apply(
+			new ObjectId(itemId),
+			action,
 			entity
 		);
 	}

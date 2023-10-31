@@ -207,7 +207,7 @@ const ItemView = {
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.on("click", function () {
-				setupAddEditForEdit(itemId);
+				ItemAddEdit.setupAddEditForEdit(itemId);
 			});
 		}
 

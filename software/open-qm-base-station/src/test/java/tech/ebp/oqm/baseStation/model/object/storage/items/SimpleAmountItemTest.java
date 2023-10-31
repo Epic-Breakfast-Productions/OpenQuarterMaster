@@ -241,7 +241,7 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		
 		ObjectId storageId = ObjectId.get();
 		
-		UUID storedId = item.getStoredWrapperForStorage(storageId, true).getStored().getStoredId();
+		UUID storedId = item.getStoredWrapperForStorage(storageId, true).getStored().getId();
 		
 		item.add(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
 		
@@ -302,7 +302,7 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		ObjectId storageId = ObjectId.get();
 		
 		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
-		UUID storedId = item.getStoredForStorage(storageId).getStoredId();
+		UUID storedId = item.getStoredForStorage(storageId).getId();
 		
 		item.subtract(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
 		
