@@ -40,7 +40,7 @@ class SnapshotUtils:
         compilingConfigsDir = os.path.join(compilingDir, "config/configs")
         compilingSecretsDir = os.path.join(compilingDir, "config/secrets")
         compilingServiceConfigsDir = os.path.join(compilingDir, "serviceConfigs")
-        dataDir = os.path.join(compilingDir, "data")
+        compilingDataDir = os.path.join(compilingDir, "data")
 
         logging.debug("Snapshot compiling dir: %s", compilingDir)
         logging.debug("Snapshot configs compiling dir: %s", compilingConfigsDir)
@@ -49,63 +49,83 @@ class SnapshotUtils:
         snapshotArchiveName = "{}/{}.tar.{}".format(snapshotLocation, snapshotName, compressionAlg)
 
         try:
-            os.makedirs(compilingConfigsDir)
-            os.makedirs(compilingSecretsDir)
-            os.makedirs(compilingServiceConfigsDir)
-            os.makedirs(dataDir)
-            os.makedirs(snapshotLocation, exist_ok=True)
-        except Exception as e:
-            logging.error("Failed to create directories necessary for snapshot taking: %s", e)
-            return False, str(e)
+            try:
+                os.makedirs(compilingConfigsDir)
+                os.makedirs(compilingSecretsDir)
+                os.makedirs(compilingServiceConfigsDir)
+                os.makedirs(compilingDataDir)
+                os.makedirs(snapshotLocation, exist_ok=True)
+            except Exception as e:
+                logging.error("Failed to create directories necessary for snapshot taking: %s", e)
+                return False, str(e)
 
-        ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
+            ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
-        try:
-            # https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
-            shutil.copytree(ScriptInfo.CONFIG_DIR + "/configs", compilingConfigsDir, dirs_exist_ok=True)
-            shutil.copytree(ScriptInfo.CONFIG_DIR + "/secrets", compilingSecretsDir, dirs_exist_ok=True)
-            shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
+            success = False
+            try:
+                # https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
+                shutil.copytree(ScriptInfo.CONFIG_DIR + "/configs", compilingConfigsDir, dirs_exist_ok=True)
+                shutil.copytree(ScriptInfo.CONFIG_DIR + "/secrets", compilingSecretsDir, dirs_exist_ok=True)
+                shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
 
-            logging.info("Running individual snapshots.")
-            for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
-                file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
-                logging.info("Running script %s", file)
-                result = subprocess.run([file, "--snapshot", "-d", compilingDir], shell=False, capture_output=True, text=True, check=True)
-                if result.returncode != 0:
-                    logging.error("FAILED to run snapshot script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
-                    logging.debug("Erring script err output: %s", result.stderr)
-                    break
-        except Exception as e:
-            logging.error("FAILED to compile files for snapshot: %s", e)
-            return False, str(e)
+                logging.info("Running individual snapshots.")
+                for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
+                    file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
+                    logging.info("Running script %s", file)
+                    result = subprocess.run([file, "--snapshot", "-d", compilingDir], shell=False, capture_output=True, text=True, check=True)
+                    if result.returncode != 0:
+                        logging.error("FAILED to run snapshot script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
+                        logging.debug("Erring script err output: %s", result.stderr)
+                        break
+            except Exception as e:
+                logging.error("FAILED to compile files for snapshot: %s", e)
+                return False, str(e)
+            finally:
+                ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
+
+            # https://docs.python.org/3.8/library/tarfile.html#tarfile.TarFile.add
+            logging.info("Archiving snapshot bundle.")
+            start = time.time()
+            try:
+                with tarfile.open(snapshotArchiveName, "x:" + compressionAlg) as tar:
+                    tar.add(compilingDir, arcname="")
+            except Exception as e:
+                logging.error("FAILED to write files to archive: %s", e)
+                return False, str(e)
+            logging.info("Completed archiving snapshot bundle. Took %s seconds", time.time() - start)
+            success = True
+
+            # remove extra files
+            numToKeep = mainCM.getConfigVal("snapshots.numToKeep")
+            if not numToKeep.isdigit():
+                logging.warning("snapshots.numToKeep was an invalid value (%s), defaulting to 5.", numToKeep)
+                numToKeep = 5
+            if numToKeep > 0:
+                logging.info("Pairing down number of files in snapshot destination to %s", numToKeep)
+                filenames = [entry.name for entry in sorted(os.scandir(snapshotLocation),
+                                                            key=lambda x: x.stat().st_mtime, reverse=True)]
+                filenames = list(filter(lambda curFile: not os.path.isdir(snapshotLocation + "/" + curFile), filenames))
+                logging.debug("Current files in snapshot dir (%s): %s", len(filenames), ", ".join(filenames))
+                for curFile in filenames[5:]:
+                    logging.info("REMOVING excess file %s", curFile)
+                    os.remove(snapshotLocation + "/" + curFile)
+            else:
+                logging.info("Skipping pairing down number of files in snapshot destination.")
+            logging.info("Done Performing snapshot.")
+            return True, snapshotArchiveName
         finally:
-            ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
+            logging.info("Cleaning up after snapshot operations")
 
-        # https://docs.python.org/3.8/library/tarfile.html#tarfile.TarFile.add
-        logging.info("Archiving snapshot bundle.")
-        start = time.time()
-        try:
-            with tarfile.open(snapshotArchiveName, "x:" + compressionAlg) as tar:
-                tar.add(compilingDir, arcname="")
-        except Exception as e:
-            logging.error("FAILED to write files to archive: %s", e)
-            # TODO:: remove archive, if exists
-            return False, str(e)
-        logging.info("Completed archiving snapshot bundle. Took %s seconds", time.time() - start)
-        # TODO:: remove compiling dir
-
-        # remove extra files
-        filenames = [entry.name for entry in sorted(os.scandir(snapshotLocation),
-                                                    key=lambda x: x.stat().st_mtime, reverse=True)]
-        filenames = list(filter(lambda curFile: not os.path.isdir(snapshotLocation + "/" + curFile), filenames))
-
-        logging.info("Current files in snapshot dir (%s): %s", len(filenames), ", ".join(filenames))
-        for curFile in filenames[5:]:
-            logging.info("REMOVING excess file %s", curFile)
-            os.remove(snapshotLocation + "/" + curFile)
-
-        logging.info("Done Performing snapshot.")
-        return True, snapshotArchiveName
+            try:
+                if not success:
+                    logging.debug("Removing archive file.")
+                    if os.path.exists(snapshotArchiveName):
+                        os.remove(snapshotArchiveName)
+                logging.debug("Removing compiling dir.")
+                shutil.rmtree(compilingDir)
+                logging.info("Finished cleaning up after snapshot.")
+            except Exception as e:
+                logging.error("Failed to clean up after performing snapshot operation: %s", e)
 
     @staticmethod
     def restoreFromSnapshot(snapshotFile: str) -> bool:
