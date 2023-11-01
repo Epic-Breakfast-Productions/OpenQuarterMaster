@@ -130,20 +130,36 @@ class SnapshotUtils:
     @staticmethod
     def restoreFromSnapshot(snapshotFile: str) -> bool:
         logging.info("Performing snapshot Restore.")
-        extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + os.path.basename(snapshotFile).split('.')[0]
+        snapshotName = os.path.basename(snapshotFile).split('.')[0]
+        extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + snapshotName
 
-        logging.info("Extracting files from archive.")
-        with tarfile.open(snapshotFile, "r:*") as tar:
-            tar.extractall(extractionDir)
-        logging.info("Files extracted successfully.")
+        try:
+            logging.info("Extracting files from archive.")
+            with tarfile.open(snapshotFile, "r:*") as tar:
+                tar.extractall(extractionDir)
+            logging.info("Files extracted successfully.")
 
-        ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
+            ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
-        # TODO:: move files to relevant locations
+            shutil.copytree(extractionDir + "/config/configs", ScriptInfo.CONFIG_DIR + "/configs", dirs_exist_ok=True)
+            shutil.copytree(extractionDir + "/config/secrets", ScriptInfo.CONFIG_DIR + "/secrets", dirs_exist_ok=True)
 
-        ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
+            shutil.copytree(extractionDir + "/serviceConfig", ScriptInfo.SERVICE_CONFIG_DIR, dirs_exist_ok=True)
 
-        # TODO:: remove extracted files in temp
+            logging.info("Running individual restore.")
+            for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
+                file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
+                logging.info("Running script %s", file)
+                result = subprocess.run([file, "--restore", "-d", compilingDir], shell=False, capture_output=True, text=True, check=True)
+                if result.returncode != 0:
+                    logging.error("FAILED to run snapshot restore script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
+                    logging.debug("Erring script err output: %s", result.stderr)
+
+            ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
+        finally:
+            logging.info("Cleaning up after snapshot restore.")
+            if os.path.exists(extractionDir):
+                shutil.rmtree(extractionDir)
 
         logging.info("Done Performing snapshot Restore.")
         return True
