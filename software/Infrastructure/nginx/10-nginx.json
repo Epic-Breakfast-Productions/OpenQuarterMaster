@@ -1,0 +1,11 @@
+{
+	"infra": {
+		"nginx": {
+			"host": "host.docker.internal",
+			"port": "8085",
+			"adminUser": "oqm_admin",
+			"adminPass": "<secret>",
+			"keyFileContent": "<secret>"
+		}
+	}
+}
