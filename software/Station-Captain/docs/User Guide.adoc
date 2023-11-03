@@ -11,11 +11,13 @@ More information available on link:https://github.com/Epic-Breakfast-Productions
 
 == Introduction
 
-This script exists to manage your instance of Open QuarterMaster.
+This document is a guide to using the `oqm-captain` utility. This script exists to manage your instance of Open QuarterMaster.
 
 Due to the administrative tasks this script performs, it must be run as root, or with `sudo`.
 
 == Modes
+
+This script supports several methods (modes) of interaction.
 
 === Interactive
 
@@ -34,9 +36,11 @@ You can also navigate by clicking on the menu items you want to select.
 When starting up, the script performs a quick check to ensure the core system is installed.
 If the core components are not installed, it will prompt you to install them.
 
+TODO more to say here? Update at least?
+
 ==== Menu System
 
-This is a quick explanation of the menus in interactive mode.
+This is a quick explanation of the menus in interactive mode, and what the tool allows you to do.
 
 (main menu)
 
@@ -69,8 +73,11 @@ TODO- document better
 *** These settings are used by various services as well as the system itself
 *** Also supports testing these settings
 
-.. *User Administration*
-... *Goto keycloak admin console*
+.. *User Administration* +
+   Utilities to manage users in the system, and high level setup of how users are treated in the system. +
+   TODO- explain Keycloak and how it works. Links to additional resources.
+... *Goto keycloak admin console* +
+    Shows the link to the admin console, and the credentials to login as the admin.
 ... *Toggle self-register* (TODO)
 .. *Plugins* TODO
 .. *Uninstall All* TODO
@@ -117,10 +124,10 @@ Sets how often the automatic snapshots will occur.
 
 .. *Data Management*
 
-... *Reset ALL Data*
-... *Reset OQM Data* TODO
-... *Reset User Data* TODO
-... *Reset Plugin Data* TODO
+... *Clear ALL Data*
+... *Clear OQM Data* TODO
+... *Clear User Data* TODO
+... *Clear Plugin Data* TODO
 
 .. *Restart all services*
 *** Restarts all services related to OQM
