@@ -43,6 +43,14 @@ class InputValidators:
             return "Value given was not a valid option (" + CronFrequency.getFreqListStr() + ")"
         return None
 
+    @staticmethod
+    def isWritableDirectory(val: str) -> Optional[str]:
+        if not os.path.exists(val):
+            return "Path given does not exist"
+        if not os.path.isdir(val):
+            return "Path given is not a directory"
+        return None
+
 
 class UserInteraction:
     """
@@ -508,11 +516,32 @@ class UserInteraction:
                     logging.info("User chose not to restore snapshot after all.")
                 else:
                     logging.info("User chose snapshot file %s", snapshotFile)
-                    # TODO:: ensure file exists
-                    # TODO:: ask to take preemptive snapshots
-                    # TODO:: final confirmation
-                    SnapshotUtils.restoreFromSnapshot(snapshotFile)
+                    if not os.path.exists(snapshotFile):
+                        logging.error("File chosen by user does not exist.")
+                        self.dialog.msgbox("File chosen does not exist.")
+                        continue
+                    if not os.path.isfile(snapshotFile):
+                        logging.error("File chosen by user not a file.")
+                        self.dialog.msgbox("File chosen was not a file.")
+                        continue
+                    if not snapshotFile.endswith((".tar.gz", ".tar.xz", ".tar.bz")):
+                        logging.error("File chosen by user not a valid type.")
+                        self.dialog.msgbox("File chosen was not a supported type.")
+                        continue
 
+                    code = self.dialog.yesno("Take a preemptive snapshot, just in case?")
+                    if code == self.dialog.OK:
+                        logging.info("User chose to take a preemptive snapshot.")
+                        SnapshotUtils.performSnapshot(SnapshotTrigger.preemptive)
+                    else:
+                        logging.info("User chose not to take a preemptive snapshot.")
+
+                    code = self.dialog.yesno("Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
+                    if code != self.dialog.OK:
+                        logging.info("User chose not to do the restore after all.")
+                        continue
+
+                    SnapshotUtils.restoreFromSnapshot(snapshotFile)
             if choice == "(2)":
                 self.dialog.infobox("Performing snapshot. Please wait.")
                 result, report = SnapshotUtils.performSnapshot(SnapshotTrigger.manual)
@@ -532,8 +561,7 @@ class UserInteraction:
                     "The location that snapshots are placed:",
                     "Snapshot Location",
                     "snapshots.location",
-                    validators=[InputValidators.isNotEmpty]
-                    # TODO:: file path dir validator
+                    validators=[InputValidators.isWritableDirectory]
                 )
             if choice == "(5)":
                 self.promptForConfigChange(

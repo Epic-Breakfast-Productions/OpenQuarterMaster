@@ -14,6 +14,7 @@ import tarfile
 class SnapshotTrigger(Enum):
     manual = 1
     scheduled = 2
+    preemptive = 3
 
 
 class SnapshotUtils:
@@ -24,6 +25,10 @@ class SnapshotUtils:
 
     @staticmethod
     def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
+        """
+        :param snapshotTrigger:
+        :return:
+        """
         logging.info("Performing snapshot.")
 
         compressionAlg = mainCM.getConfigVal("snapshots.compressionAlg")
