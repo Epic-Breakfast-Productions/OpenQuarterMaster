@@ -37,11 +37,12 @@ ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
-                                 -p=8085:80 \
+                                 -p=80:80 \
                                  --env-file $ENV_CONFIG_FILE \
                                  --add-host host.docker.internal:host-gateway \
-                                 -v /etc/oqm/serviceConfig/infra/nginx/sites-available/:/etc/nginx/sites-enabled/\
-                                 nginx "
+                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.d/:/etc/nginx/conf.d/\
+                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.other.d/:/etc/nginx/conf.other.d/\
+                                 $IMAGE_NAME:$IMAGE_VERSION"
 #ExecStartPost=/bin/bash -c "running=\"false\"; \
 #                            while [ \"$running\" != \"true\" ]; do \
 #                                sleep 1s; \
