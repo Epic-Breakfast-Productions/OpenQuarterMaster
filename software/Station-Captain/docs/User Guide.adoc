@@ -40,85 +40,97 @@ This is a quick explanation of the menus in interactive mode.
 
 (main menu)
 
-. Info / Status
-.. Installation Status
+. *Info / Status*
+.. *Installation Status*
 *** Shows how the installed services are running
 *** Shows what versions of the software are running (TODO)
-.. Host Information
+.. *Host Information*
 *** Shows information about the host, including:
 **** IP addresses
 **** Hardware information
 **** Storage usage
 **** RAM usage
-. Manage Installation
+. *Manage Installation*
 
-.. Select OQM major version? TODO
+.. *Select OQM major version? TODO*
 
-.. SSL/HTTPS Certs TODO
-... Cert mode (self, Let's Encrypt, provided)
-... Cert info TODO
+.. *SSL/HTTPS Certs TODO*
+... *Cert mode (self, Let's Encrypt, provided)*
+... *Cert info TODO*
 
-.. Core? TODO
-... Ensure installed? (TODO)
-... Common config options (TODO)
+.. *Core? TODO*
+... *Ensure installed? (TODO)*
+... *Common config options (TODO)*
 
-.. Set Email Settings
+.. *Set Email Settings* +
+TODO- document better
+
 *** This menu sets email settings used to send emails from the system
 *** These settings are used by various services as well as the system itself
 *** Also supports testing these settings
 
-.. User Administration
-... Goto keycloak admin console
-... Toggle self-register (TODO)
+.. *User Administration*
+... *Goto keycloak admin console*
+... *Toggle self-register* (TODO)
+.. *Plugins* TODO
+.. *Uninstall All* TODO
 
-.. Plugins TODO
+. *Snapshots* +
+  Snapshots allow you to take a current state of you system, and save it or back it up for later.
 
-.. Uninstall All TODO
+.. *Restore from Snapshot* +
+   Restores your system to the state from a given snapshot. Will bring down services momentarily while the restore occurs.
 
-. Snapshots
+.. *Perform snapshot now*
+   Performs a snapshot. Will bring down services momentarily while the snapshot occurs.
 
-.. Restore from Snapshot TODO
+.. *Enable/disable automatic snapshots*
 
-.. Enable/disable automatic snapshots
+Enables or disables snapshots from automatically taking place.
 
-.. Set Snapshot location
+.. *Set Snapshot location*
+   Sets the location the resulting snapshots are placed.
 
-.. Set number of snapshots to keep
+.. *Set number of snapshots to keep*
 
-.. Set automatic snapshot frequency
+Sets the number of snapshots to keep around. This is meant to preserve disk space.
 
-. Cleanup, Maintenance, and Updates
+.. *Set automatic snapshot frequency*
 
-.. Updates TODO
+Sets how often the automatic snapshots will occur.
 
-... Perform Updates (OS and OQM) TODO
+. *Cleanup, Maintenance, and Updates*
 
-... Enable/disable automatic updates TODO
+.. *Updates* TODO
 
-.. Containers
+... *Perform Updates (OS and OQM)* TODO
 
-... Prune unused container resources
+... *Enable/disable automatic updates* TODO
 
-... Enable/disable automatic prune
+.. *Containers*
 
-... Set prune frequency
+... *Prune unused container resources*
 
-.. Data Management
+... *Enable/disable automatic prune*
 
-... Reset ALL Data
-... Reset OQM Data TODO
-... Reset User Data TODO
-... Reset Plugin Data TODO
+... *Set prune frequency*
 
-.. Restart all services
+.. *Data Management*
+
+... *Reset ALL Data*
+... *Reset OQM Data* TODO
+... *Reset User Data* TODO
+... *Reset Plugin Data* TODO
+
+.. *Restart all services*
 *** Restarts all services related to OQM
 *** Recommended do after config changes and during low usage times.
 
-.. Restart Device
+.. *Restart Device*
 *** Does as advertises. Restarts the system that this all runs on.
 *** Recommended when weirder issues occur, and after updates.
 
-. Captain Settings TODO
+. *Captain Settings* TODO
 
 === Python UI (Planned/TODO)
 
@@ -131,6 +143,12 @@ This is a planned feature, so stay tuned.
 A command line interface is available for performing operations with a single action.
 
 Use `oqm-captain -h` for information in the available options.
+
+== OQM Config
+
+OQM Config is a secondary utility that sits alongside `oqm-captain`, and helps facilitate a smooth operation. Specifically, like it's name implies, it handles the configuration for the system.
+
+More guide to come in the future.
 
 == Other
 
