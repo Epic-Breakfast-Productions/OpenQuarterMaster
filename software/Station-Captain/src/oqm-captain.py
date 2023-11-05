@@ -26,7 +26,8 @@ import argparse
 logging.basicConfig(level=logging.DEBUG)
 argParser = argparse.ArgumentParser(
     prog="oqm-captain",
-    description="This script is a utility to help manage an installation of Open QuarterMaster."
+    description="This script is a utility to help manage an installation of Open QuarterMaster.",
+    epilog="Script version "+ScriptInfo.SCRIPT_VERSION+". With <3, EBP"
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_true", help="Takes a snapshot. Will pause and restart services.")
@@ -35,6 +36,7 @@ args = argParser.parse_args()
 
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
+    exit(1)
 if args.takeSnapshot:
     trigger = SnapshotTrigger.manual
     if args.takeSnapshot[0]:

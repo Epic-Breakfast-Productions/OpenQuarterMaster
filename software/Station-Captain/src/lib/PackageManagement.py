@@ -55,7 +55,7 @@ class PackageManagement:
 
     @staticmethod
     def updateSystem() -> (bool, str):
-        if PackageManagement.getSystemPackageManager() is "apt":
+        if PackageManagement.getSystemPackageManager() == "apt":
             logging.debug("Updating apt cache.")
             result = subprocess.run(["apt-get", "update"], shell=False, capture_output=True, text=True, check=False)
             if result.returncode != 0:
@@ -67,7 +67,7 @@ class PackageManagement:
             if result.returncode != 0:
                 logging.error("Failed to run upgrade command: %s", result.stderr)
                 return False, result.stderr
-        if PackageManagement.getSystemPackageManager() is "yum":
+        if PackageManagement.getSystemPackageManager() == "yum":
             logging.debug("Upgrading yum packages.")
             subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
             result = subprocess.run(["yum", "update"], shell=False, capture_output=False, text=True, check=False)
