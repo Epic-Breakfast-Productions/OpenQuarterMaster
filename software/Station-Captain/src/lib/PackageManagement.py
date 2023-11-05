@@ -54,8 +54,36 @@ class PackageManagement:
         logging.debug("Result of install: " + result.stdout)
 
     @staticmethod
-    def updateSystem():
-        logging.debug("Updating the system.")
-        result = PackageManagement.runPackageCommand("update")
-        result = PackageManagement.runPackageCommand("dist-upgrade", None, "-y")
-        logging.info("Result of update: " + result.stdout)
+    def updateSystem() -> (bool, str):
+        if PackageManagement.getSystemPackageManager() is "apt":
+            logging.debug("Updating apt cache.")
+            result = subprocess.run(["apt-get", "update"], shell=False, capture_output=True, text=True, check=False)
+            if result.returncode != 0:
+                logging.error("Failed to run update command: %s", result.stderr)
+                return False, result.stderr
+            logging.debug("Upgrading apt packages.")
+            subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
+            result = subprocess.run(["apt-get", "dist-upgrade"], shell=False, capture_output=False, text=True, check=False)
+            if result.returncode != 0:
+                logging.error("Failed to run upgrade command: %s", result.stderr)
+                return False, result.stderr
+        if PackageManagement.getSystemPackageManager() is "yum":
+            logging.debug("Upgrading yum packages.")
+            subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
+            result = subprocess.run(["yum", "update"], shell=False, capture_output=False, text=True, check=False)
+            if result.returncode != 0:
+                logging.error("Failed to run upgrade command: %s", result.stderr)
+                return False, result.stderr
+        logging.info("Done updating.")
+        return True, None
+
+    @staticmethod
+    def promptForAutoUpdates() -> (bool, str):
+        if "Ubuntu" in platform.version():
+            logging.debug("Prompting user through unattended-upgrades.")
+            subprocess.run(["dpkg-reconfigure", "-plow", "unattended-upgrades"], shell=False, capture_output=False, text=True, check=True)
+            logging.info("Done.")
+            # TODO:: doublecheck automatic restart, setting alert email
+        else:
+            return False, "Unsupported OS to setup auto updates on."
+        return True, None

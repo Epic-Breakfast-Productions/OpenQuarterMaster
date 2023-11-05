@@ -431,7 +431,7 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Cleanup, Maintenance, and Updates",
                 choices=[
-                    # ("(1)", "Updates"),
+                    ("(1)", "Updates"),
                     ("(2)", "Containers"),
                     ("(3)", "Data"),
                     ("(4)", "Restart Services"),
@@ -443,8 +443,8 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
 
-            # if choice == "(1)":
-                # self.updatesManagementMenu()
+            if choice == "(1)":
+                self.updatesManagementMenu()
             if choice == "(2)":
                 self.containerManagementMenu()
             if choice == "(3)":
@@ -468,7 +468,7 @@ class UserInteraction:
                 title="Updates Management Menu",
                 choices=[
                     ("(1)", "Run updates now"),
-                    ("(2)", ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic updates (recommend enabled)"),
+                    ("(2)", "Enable/Disable automatic updates (recommend enabled)"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -477,8 +477,21 @@ class UserInteraction:
 
             if choice == "(1)":
                 self.dialog.infobox("Running updates. Please wait.")
-                #TODO
+                result, output = PackageManagement.updateSystem()
 
+                if not result:
+                    self.dialog.msgbox("Failed to run updates:\n\n" + output, title="Updates Failed")
+                    continue
+
+                code = self.dialog.yesno("Updates complete. Restart?", title="Restart?")
+                if code == self.dialog.OK:
+                    logging.info("User chose to restart after updates.")
+                    os.system('reboot')
+                else:
+                    logging.info("User chose not to restart after updates.")
+
+            if choice == "(2)":
+                PackageManagement.promptForAutoUpdates()
         logging.debug("Done running container management menu.")
 
     def snapshotsMenu(self):

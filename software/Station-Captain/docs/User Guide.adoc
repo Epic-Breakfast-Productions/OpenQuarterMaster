@@ -56,7 +56,7 @@ This is a quick explanation of the menus in interactive mode, and what the tool 
 **** RAM usage
 . *Manage Installation*
 
-.. *Select OQM major version? TODO*
+.. *Select OQM major version* TODO, later
 
 .. *SSL/HTTPS Certs TODO*
 ... *Cert mode (self, Let's Encrypt, provided)*
@@ -108,11 +108,16 @@ Sets how often the automatic snapshots will occur.
 
 . *Cleanup, Maintenance, and Updates*
 
-.. *Updates* TODO
+.. *Updates* +
+   This lets you update your system and change your automatic update settings
 
-... *Perform Updates (OS and OQM)* TODO
+... *Perform Updates (OS and OQM)* +
+   This will update your system. +
+   Currently supports both `apt` and `yum` based systems; Debian/Ubuntu, Fedora/RHEL
 
-... *Enable/disable automatic updates* TODO
+... *Enable/disable automatic updates* +
+    This will prompt you on your os-specific menu to set automatic updates as enabled or not. +
+    Currently only supports Ubuntu, probably also Debian systems.
 
 .. *Containers*
 
