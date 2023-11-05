@@ -40,8 +40,8 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -p=80:80 \
                                  --env-file $ENV_CONFIG_FILE \
                                  --add-host host.docker.internal:host-gateway \
-                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.d/:/etc/nginx/conf.d/\
-                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.other.d/:/etc/nginx/conf.other.d/\
+                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.d/:/etc/nginx/conf.d/:ro\
+                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.other.d/:/etc/nginx/conf.other.d/:ro\
                                  $IMAGE_NAME:$IMAGE_VERSION"
 #ExecStartPost=/bin/bash -c "running=\"false\"; \
 #                            while [ \"$running\" != \"true\" ]; do \
