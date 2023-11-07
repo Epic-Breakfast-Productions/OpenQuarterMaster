@@ -29,6 +29,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                         --name oqm_infra_jaeger \
+                                        --network=oqm-internal \
                                         -e COLLECTOR_OTLP_ENABLED=true \
                                         jaegertracing/all-in-one:1.42"
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop jaeger container'"

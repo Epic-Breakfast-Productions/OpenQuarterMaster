@@ -73,11 +73,10 @@ install -m 755 -D "$userGuideFile" "$buildDir/$debDir/etc/oqm/static/stationCapt
 install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/snapshots/"
 install -m 755 -D "src/account-assure-base.sh" "$buildDir/$debDir/etc/oqm/accountScripts/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
-install -m 755 -D src/mainConfig.sh "$buildDir/$debDir/etc/oqm/config/"
+install -m 755 -D src/mainConfig.json "$buildDir/$debDir/etc/oqm/config/"
 
 
-sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
-sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib/oqm/station-captain"|' "$buildDir/$debDir/bin/oqm-captain"
+sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/usr/lib/oqm/station-captain/ScriptInfos.py"
 
 sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-config"
 sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib/oqm/station-captain/")|' "$buildDir/$debDir/bin/oqm-config"

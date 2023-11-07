@@ -8,7 +8,9 @@
 		"deb": ""
 	},
 	"configFiles":{
+		"/etc/oqm/serviceConfig/infra/nginx/default.conf.template": "default.conf"
 	},
 	"files":{
+		"/etc/oqm/serviceConfig/infra/nginx/setup-proxy-config.py": "setup-proxy-config.py"
 	}
 }
