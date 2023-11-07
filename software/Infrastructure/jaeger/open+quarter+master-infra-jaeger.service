@@ -9,7 +9,7 @@
 # TODO:: connect to prometheus: https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml#L595
 
 [Unit]
-Description=Jaeger server for Open Quartermaster. Version ${version}, using Jaeger all-in-one tagged to "1.42".
+Description=Jaeger server for Open Quartermaster. Version ${version}, using Jaeger all-in-one tagged to "1.51".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -18,17 +18,21 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_jaeger || echo 'Could not stop jaeger container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_jaeger || echo 'Could not remove jaeger container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_jaeger 2> /dev/null || /usr/bin/docker run \
-                                                                                                 --name oqm_infra_jaeger \
-                                                                                                 -p 8090:16686 \
-                                                                                                 -p 8091:14268 \
-                                                                                                 -p 8096:4317 \
-                                                                                                 -e COLLECTOR_OTLP_ENABLED=true \
-                                                                                                 -d jaegertracing/all-in-one:1.42"
-ExecStart=/usr/bin/docker start -a oqm_infra_jaeger
-ExecStop=/usr/bin/docker stop -t 10 oqm_infra_jaeger
+Environment="CONTAINER_NAME=oqm_infra_jaeger"
+Environment="IMAGE_NAME=jaegertracing/all-in-one"
+Environment="IMAGE_VERSION=1.51"
+#Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
+
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop jaeger container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove jaeger container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull jaeger image.'"
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                        --name oqm_infra_jaeger \
+                                        -e COLLECTOR_OTLP_ENABLED=true \
+                                        jaegertracing/all-in-one:1.42"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop jaeger container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove jaeger container'"
 
 [Install]
 WantedBy=multi-user.target

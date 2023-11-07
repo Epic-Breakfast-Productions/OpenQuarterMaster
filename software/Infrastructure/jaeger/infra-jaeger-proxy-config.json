@@ -1,0 +1,6 @@
+{
+	"type": "infra",
+	"name": "jaeger",
+	"hostConfig": "infra.jaeger.host",
+	"portConfig": "infra.jaeger.uiPort"
+}

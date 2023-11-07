@@ -65,6 +65,10 @@ for curPackage in ${packages[@]}; do
 	if [ -f "$curPackage/$curPackage-assert-account.sh" ]; then
 		cp "$curPackage/$curPackage-assert-account.sh" "$packageDebDir/etc/oqm/accountScripts/"
 	fi
+	if [ -f "$curPackage/infra-$curPackage-proxy-config.json" ]; then
+		mkdir -p "$packageDebDir/etc/oqm/proxyConfig.d/"
+		cp "$curPackage/infra-$curPackage-proxy-config.json" "$packageDebDir/etc/oqm/proxyConfig.d/"
+	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
