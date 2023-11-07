@@ -61,7 +61,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/snapshots/scripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/accountScripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/"
 
-install -m 755 -D src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
+install -m 755 -D src/oqm-captain.py "$buildDir/$debDir/bin/oqm-captain"
 install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
 install -m 755 -D src/oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
 install -m 755 -D src/integration/oqm-icon.svg "$buildDir/$debDir/etc/oqm/static/"
@@ -124,6 +124,9 @@ dpkg-deb --build "$buildDir/$debDir" "$outputDir"
 if [ $? -ne 0 ]; then
 	exit 1;
 fi
+
+exit 0;
+#TODO:: fix the following
 
 #
 # RPM build
