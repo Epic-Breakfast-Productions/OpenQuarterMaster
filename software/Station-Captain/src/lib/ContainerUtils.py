@@ -13,6 +13,7 @@ class ContainerUtils:
     https://docker-py.readthedocs.io/en/stable/index.html
     """
     CRON_NAME = "prune-container-resources"
+    DOCKER_NW_NAME = "oqm-internal"
 
     @staticmethod
     def pruneContainerResources() -> str:
@@ -47,3 +48,19 @@ class ContainerUtils:
     @staticmethod
     def isAutomaticEnabled() -> bool:
         return CronUtils.isCronEnabled(ContainerUtils.CRON_NAME)
+
+    @staticmethod
+    def ensureSharedDockerResources():
+        logging.info("Ensuring docker network exists.")
+        client = docker.from_env()
+
+        try:
+            client.networks.get(ContainerUtils.DOCKER_NW_NAME)
+            logging.info("Network already present!")
+        except Exception as e:
+            # TODO:: narrow exception
+            logging.info("Need to create network.")
+            client.networks.create(ContainerUtils.DOCKER_NW_NAME)
+            logging.info("Created network.")
+
+

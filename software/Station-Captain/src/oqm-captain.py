@@ -32,6 +32,7 @@ argParser = argparse.ArgumentParser(
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_true", help="Takes a snapshot. Will pause and restart services.")
 argParser.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
+argParser.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
 args = argParser.parse_args()
 
 if args.v:
@@ -44,5 +45,7 @@ if args.takeSnapshot:
     SnapshotUtils.performSnapshot(trigger)
 if args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
+if args.ensureContainerSetup:
+    ContainerUtils.ensureSharedDockerResources()
 else:
     UserInteraction.ui.startUserInteraction()
