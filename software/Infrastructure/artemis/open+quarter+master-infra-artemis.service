@@ -16,9 +16,22 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_artemis 2> /dev/null || /usr/bin/docker run --name oqm_infra_artemis -p 8095:8161 -p 61616:61616 -p 5672:5672 -e AMQ_USER=quarkus -e AMQ_PASSWORD=quarkus quay.io/artemiscloud/activemq-artemis-broker:1.0.11"
-ExecStart=/usr/bin/docker start -a oqm_infra_artemis
-ExecStop=/usr/bin/docker stop -t 10 oqm_infra_artemis
+Environment="CONTAINER_NAME=oqm_infra_artemis"
+Environment="IMAGE_NAME=quay.io/artemiscloud/activemq-artemis-broker"
+Environment="IMAGE_VERSION=1.0.11"
+#Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
+#todo:: ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop artemis container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove artemis container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                        --name $CONTAINER_NAME \
+                                        -e AMQ_USER=quarkus \
+                                        -e AMQ_PASSWORD=quarkus \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop artemis container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove artemis container'"
 
 [Install]
 WantedBy=multi-user.target
