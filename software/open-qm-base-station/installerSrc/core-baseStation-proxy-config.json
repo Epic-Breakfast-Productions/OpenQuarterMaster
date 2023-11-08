@@ -1,4 +1,5 @@
 {
+	"title": "Base Station (Main UI)",
 	"type": "core",
 	"name": "base-station",
 	"hostConfig": "core.baseStation.host",
