@@ -109,7 +109,7 @@ EOT
 
 systemctl daemon-reload
 # restart proxy after we add config
-systemctl restart open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service
+systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 
@@ -117,10 +117,7 @@ systemctl start "$serviceFileEscaped"
 mkdir -p /etc/oqm/serviceConfig
 touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
-	if [ -f "$curPackage/infra-$curPackage-proxy-config.json" ]; then
-				cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
-EOT
-	fi
+
 
 
 	# TODO:: remove
@@ -186,8 +183,9 @@ else
 	echo "Docker image was already gone."
 fi
 
-
+systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 EOT
+
 	chmod +x "$packageDebDir/DEBIAN/postrm"
 
 	configFileKeys=($(jq -r '.configFiles | keys[]'  "$packageConfigFile"))
