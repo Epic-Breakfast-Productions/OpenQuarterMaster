@@ -9,6 +9,7 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
 Wants=network-online.target
+Wants=open\x2bquarter\x2bmaster\x2dinfra\x2djaeger.service
 Requires=docker.socket
 Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dmongodb.service
 Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
@@ -43,10 +44,9 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
-                                        -p 80:80 -p 443:443 \
+                                        --network=oqm-internal \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
-                                        --add-host host.docker.internal:host-gateway \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
