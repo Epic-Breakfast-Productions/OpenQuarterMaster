@@ -208,7 +208,7 @@ EOT
 		fileInSrc="$(jq -r ".files.\"$fileKey\""  "$packageConfigFile")"
 #		echo "Config file content: $curConfigFileContent"
 		echo "Adding file: $fileInSrc to directory $fileKey";
-		cp "$curPackage/$fileInSrc" "$curFile"
+		cp -r "$curPackage/$fileInSrc" "$curFile"
 	done;
 
 	dpkg-deb --build "$packageDebDir" "$buildDir"
