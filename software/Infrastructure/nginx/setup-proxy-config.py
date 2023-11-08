@@ -80,20 +80,21 @@ upstream {upstreamName} {{
             path=curProxyConfig["path"],
             upstreamName=curProxyConfig["upstreamName"]
         )
-        if curProxyConfig["type"] == "infra":
-            infraLinks += """
-            <li><a href="{path}">{title}</a></li>            
-            """.format(
-                path=curProxyConfig["path"],
-                title=curProxyConfig["title"]
-            )
-        if curProxyConfig["type"] == "core":
-            coreLinks += """
-            <li><a href="{path}">{title}</a></li>            
-            """.format(
-                path=curProxyConfig["path"],
-                title=curProxyConfig["title"]
-            )
+        if "showInProxyRoot" not in curProxyConfig or curProxyConfig["showInProxyRoot"]:
+            if curProxyConfig["type"] == "infra":
+                infraLinks += """
+                <li><a href="{path}">{title}</a></li>            
+                """.format(
+                    path=curProxyConfig["path"],
+                    title=curProxyConfig["title"]
+                )
+            if curProxyConfig["type"] == "core":
+                coreLinks += """
+                <li><a href="{path}">{title}</a></li>            
+                """.format(
+                    path=curProxyConfig["path"],
+                    title=curProxyConfig["title"]
+                )
     else:
         continue
 

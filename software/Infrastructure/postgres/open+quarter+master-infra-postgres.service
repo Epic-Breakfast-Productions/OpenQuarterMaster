@@ -38,7 +38,7 @@ ExecStartPre=/bin/bash -c "printf \"POSTGRES_PASSWORD=$(oqm-config -g 'infra.pos
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
-                                 -p=$(oqm-config -g 'infra.postgres.port'):5432 \
+                                 --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /data/oqm/db/postgres/:/var/lib/postgresql/data/ \
                                  $IMAGE_NAME:$IMAGE_VERSION"
