@@ -4,13 +4,9 @@
 #
 #  Mongo tags: https://hub.docker.com/_/mongo?tab=tags
 #
-#  TODO:: figure out better username/password situation
-#    - https://lzone.de/blog/Using-Linux-keyring-secrets-from-your-scripts
-#
-# TODO:: Figure out what's wrong on first run to cause issues with base station complaining about not being primary or secondary
 
 [Unit]
-Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "4".
+Description=Mongo server for Open Quartermaster. Version ${version}, using MongoDB tagged to "7".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -22,7 +18,7 @@ Restart=always
 TimeoutSec=5m
 Environment="CONTAINER_NAME=oqm_infra_mongo"
 Environment="IMAGE_NAME=mongo"
-Environment="IMAGE_VERSION=4"
+Environment="IMAGE_VERSION=7"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
@@ -51,14 +47,14 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                /usr/bin/docker exec $CONTAINER_NAME mongo --eval \"\"; \
+                                /usr/bin/docker exec $CONTAINER_NAME mongosh --eval \"\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Mongo container running and available!\"; \
                                     running=\"true\"; \
                                 fi \
                             done \
                             "
-ExecStartPost=/bin/bash -c "/usr/bin/docker exec $CONTAINER_NAME mongo -u \"$(oqm-config -g 'infra.mongodb.adminUser')\" -p \"$(oqm-config -g 'infra.mongodb.adminPass')\" --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
+ExecStartPost=/bin/bash -c "/usr/bin/docker exec $CONTAINER_NAME mongosh -u \"$(oqm-config -g 'infra.mongodb.adminUser')\" -p \"$(oqm-config -g 'infra.mongodb.adminPass')\" --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove mongo container'"

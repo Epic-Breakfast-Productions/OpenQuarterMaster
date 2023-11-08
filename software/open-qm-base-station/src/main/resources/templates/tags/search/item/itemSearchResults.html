@@ -38,7 +38,7 @@
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                data-bs-target="#addEditItemModal" onclick="setupAddEditForAdd();">
+                data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
           {#icons/add}{/icons/add} Add Item
         </button>
       </div>
@@ -62,10 +62,10 @@
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemAddSubtractTransferModal" onclick="setupAddSubTransForm('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
         {#icons/addSubTrans}{/icons/addSubTrans}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"

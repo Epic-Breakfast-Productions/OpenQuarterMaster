@@ -1,5 +1,7 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items;
 
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.UnsupportedStoredOperationException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
 import tech.ebp.oqm.baseStation.model.testUtils.BasicTest;
@@ -22,6 +24,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
@@ -151,4 +155,87 @@ class TrackedItemTest extends BasicTest {
 		
 		log.info("Recalculating totals took {}", sw);
 	}
+	
+	@Test
+	public void testAddSimple() {
+		TrackedItem item = new TrackedItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStoredWrapperForStorage(storageId, true);
+		
+		String identifier = FAKER.name().name();
+		item.add(storageId, new TrackedStored(identifier));
+		
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		
+		TrackedMapStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId);
+		
+		assertEquals(1, wrapper.size());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), wrapper.getTotal());
+		assertNotNull(wrapper.get(identifier));
+	}
+	
+	@Test
+	public void testAddSimpleWithId() {
+		TrackedItem item = new TrackedItem();
+
+		ObjectId storageId = ObjectId.get();
+		
+		String identifier = FAKER.name().name();
+		TrackedStored stored = new TrackedStored(identifier);
+		
+		assertThrows(
+			UnsupportedStoredOperationException.class,
+			()->{
+				item.add(storageId, stored.getId(), stored, true);
+			}
+		);
+		
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		TrackedMapStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId, false);
+		assertEquals(0, wrapper.size());
+	}
+
+	@Test
+	public void testSubtract() {
+		TrackedItem item = new TrackedItem();
+
+		ObjectId storageId = ObjectId.get();
+
+		TrackedStored stored = new TrackedStored(FAKER.name().name());
+
+		item.add(storageId, stored, true);
+		
+		TrackedStored returned = item.subtract(storageId, stored);
+
+		assertEquals(stored, returned);
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(0, item.getStoredWrapperForStorage(storageId, false).size());
+
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getStoredWrapperForStorage(storageId).getTotal());
+	}
+
+	@Test
+	public void testSubtractWithId() {
+		TrackedItem item = new TrackedItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		String identifier = FAKER.name().name();
+		TrackedStored stored = new TrackedStored(identifier);
+		item.add(storageId, stored, true);
+		
+		assertThrows(
+			UnsupportedStoredOperationException.class,
+			()->{
+				item.subtract(storageId, stored.getId(), stored);
+			}
+		);
+		
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		TrackedMapStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId, false);
+		assertEquals(1, wrapper.size());
+	}
+
 }

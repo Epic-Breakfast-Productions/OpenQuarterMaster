@@ -31,6 +31,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -438,7 +440,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@GET
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Gets the stored amount or tracked item to the storage block specified."
 	)
@@ -468,7 +470,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Adds a stored amount or tracked item to the storage block specified."
 	)
@@ -510,8 +512,53 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
+	@PUT
+	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
+	@Operation(
+		summary = "Adds a stored amount or tracked item to the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added to.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public Response addStoredInventoryItemToStored(
+		@PathParam("itemId") String itemId,
+		@PathParam("storedId") String storedId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode addObject
+	) throws JsonProcessingException {
+		log.info("Adding to item");
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item = ((InventoryItemService) this.getObjectService()).add(
+			itemId,
+			storageBlockId,
+			storedId,
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
+				addObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			),
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(item).build();
+	}
+	
 	@DELETE
-	@Path("{itemId}/{storageBlockId}")
+	@Path("{itemId}/stored/{storageBlockId}")
 	@Operation(
 		summary = "Subtracts a stored amount or tracked item from the storage block specified."
 	)
@@ -552,8 +599,52 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
+	@DELETE
+	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
+	@Operation(
+		summary = "Subtracts a stored amount or tracked item from the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item subtracted from.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public Response subtractStoredInventoryItem(
+		@PathParam("itemId") String itemId,
+		@PathParam("storedId") String storedId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode subtractObject
+	) throws JsonProcessingException {
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item = ((InventoryItemService) this.getObjectService()).subtract(
+			itemId,
+			storageBlockId,
+			storedId,
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
+				subtractObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			),
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(item).build();
+	}
+	
 	@PUT
-	@Path("{itemId}/{storageBlockIdFrom}/{storageBlockIdTo}")
+	@Path("{itemId}/stored/{storageBlockIdFrom}/{storageBlockIdTo}")
 	@Operation(
 		summary = "Transfers a stored amount or tracked item to the storage block specified."
 	)
@@ -596,10 +687,102 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return Response.ok(item).build();
 	}
 	
+	@PUT
+	@Path("{itemId}/stored/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
+	@Operation(
+		summary = "Transfers a stored amount or tracked item to the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public Response transferStoredInventoryItem(
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
+		@PathParam("storedIdFrom") String storedIdFrom,
+		@PathParam("storageBlockIdTo") String storageBlockIdTo,
+		@PathParam("storedIdTo") String storedIdTo,
+		JsonNode transferObject
+	) throws JsonProcessingException {
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item = ((InventoryItemService) this.getObjectService()).transfer(
+			itemId,
+			storageBlockIdFrom,
+			storedIdFrom,
+			storageBlockIdTo,
+			storedIdTo,
+			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
+				transferObject,
+				((Class) ((ParameterizedType) item.getClass().getGenericSuperclass()).getActualTypeArguments()[0])
+			),
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(item).build();
+	}
+	
+	/**
+	 * TODO:: add endpoint to support list of actions
+	 * @param itemId
+	 * @param action
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	@PUT
+	@Path("{itemId}/stored/applyAddSubtractTransfer")
+	@Operation(
+		summary = "Transfers a stored amount or tracked item to the storage block specified."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to delete.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	public Response applyAddSubtractTransfer(
+		@PathParam("itemId") String itemId,
+		AddSubtractTransferAction action
+	) throws JsonProcessingException {
+		InventoryItem item = this.getObjectService().get(itemId);
+		
+		item = ((InventoryItemService) this.getObjectService()).apply(
+			itemId,
+			action,
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(item).build();
+	}
+	
 	@GET
 	@Path("inStorageBlock/{storageBlockId}")
 	@Operation(
-		summary = "Gets items that ."
+		summary = "Gets items that are stored in the given block."
 	)
 	@APIResponse(
 		responseCode = "200",

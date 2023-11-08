@@ -1,5 +1,8 @@
 package tech.ebp.oqm.baseStation.model.object.storage.items;
 
+import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.model.object.storage.items.exception.StoredNotFoundException;
+import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.amountStored.ListAmountStoredWrapper;
 import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.baseStation.model.testUtils.BasicTest;
@@ -16,6 +19,7 @@ import tech.units.indriya.quantity.Quantities;
 import javax.measure.Quantity;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -241,5 +245,130 @@ class ListAmountItemTest extends BasicTest {
 		);
 	}
 	
+	
+	@Test
+	public void testAddSimple() {
+		ListAmountItem item = new ListAmountItem();
+		
+		ObjectId storageId = ObjectId.get();
+		
+		item.getStoredWrapperForStorage(storageId, true);
+		
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+		
+		
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		
+		ListAmountStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId);
+		
+		assertEquals(1, wrapper.size());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), wrapper.getTotal());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), wrapper.get(0).getAmount());
+	}
+
+	@Test
+	public void testAddSimpleWithId() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+		
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+		
+		ListAmountStoredWrapper wrapper = item.getStoredWrapperForStorage(storageId, true);
+		UUID storedId = wrapper.getStored().get(0).getId();
+
+		item.add(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+
+		assertEquals(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), item.getTotal());
+		
+		wrapper = item.getStoredWrapperForStorage(storageId, false);
+		assertEquals(1, wrapper.size());
+		assertEquals(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), wrapper.get(0).getAmount());
+	}
+
+	@Test
+	public void testAddSimpleWithWrongId() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+
+		item.getStoredWrapperForStorage(storageId, true);
+
+		assertThrows(
+			StoredNotFoundException.class,
+			()->item.add(storageId, UUID.randomUUID(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true)
+		);
+
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(0, item.getStoredForStorage(storageId).size());
+	}
+
+	@Test
+	public void testAddTwo() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+
+		item.getStoredWrapperForStorage(storageId, true);
+
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+
+		assertEquals(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(2, item.getStoredWrapperForStorage(storageId, false).size());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getStoredWrapperForStorage(storageId, false).get(0).getAmount());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getStoredWrapperForStorage(storageId, false).get(1).getAmount());
+	}
+
+	@Test
+	public void testSubtract() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+	
+		AmountStored stored = new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT));
+		
+		item.add(storageId, stored, true);
+
+		AmountStored returned = item.subtract(storageId, stored);
+	
+		assertEquals(stored, returned);
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(0, item.getStoredWrapperForStorage(storageId, false).size());
+		
+		assertEquals(Quantities.getQuantity(0.0, OqmProvidedUnits.UNIT), item.getStoredWrapperForStorage(storageId).getTotal());
+	}
+
+	@Test
+	public void testSubtractWithId() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+		UUID storedId = item.getStoredForStorage(storageId).get(0).getId();
+
+		item.subtract(storageId, storedId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)));
+
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(1, item.getStoredWrapperForStorage(storageId, false).size());
+	}
+
+	@Test
+	public void testSubtractWithWrongId() {
+		ListAmountItem item = new ListAmountItem();
+
+		ObjectId storageId = ObjectId.get();
+
+		item.add(storageId, new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)), true);
+
+		assertThrows(
+			StoredNotFoundException.class,
+			()->item.subtract(storageId, UUID.randomUUID(), new AmountStored(Quantities.getQuantity(1, OqmProvidedUnits.UNIT)))
+		);
+
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), item.getTotal());
+		assertEquals(1, item.getStoredWrapperForStorage(storageId, false).size());
+	}
 	
 }
