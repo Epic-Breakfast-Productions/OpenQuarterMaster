@@ -108,6 +108,8 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
+# restart proxy after we add config
+systemctl restart open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 
@@ -117,8 +119,6 @@ touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
 	if [ -f "$curPackage/infra-$curPackage-proxy-config.json" ]; then
 				cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
-# restart proxy after we add config
-systemctl restart open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service
 EOT
 	fi
 

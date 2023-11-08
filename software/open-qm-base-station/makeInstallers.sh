@@ -41,11 +41,13 @@ mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
+mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
 install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 install -m 755 -D "$srcDir/20-baseStation.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
+install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 
 serviceFile="open+quarter+master-core-base+station.service"
 serviceFileEscaped="$(systemd-escape "$serviceFile")"
@@ -118,6 +120,8 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
 systemctl daemon-reload
+# restart proxy after we add config
+systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT

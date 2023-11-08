@@ -53,7 +53,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                hcGet=\"$(/usr/bin/curl -k \"https://localhost/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl -k \"http://localhost/core/base-station/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

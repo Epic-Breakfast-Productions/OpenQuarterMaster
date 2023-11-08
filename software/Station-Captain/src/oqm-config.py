@@ -72,7 +72,7 @@ elif args.t:
         # print("debug: resolving placeholder: " + curPlaceholder)
         output = output.replace(
             "{" + curPlaceholder + "}",
-            mainCM.getConfigVal(curPlaceholder, mainCM.configData, formatData=False)
+            mainCM.getConfigVal(curPlaceholder)
         )
 
     print(output)
