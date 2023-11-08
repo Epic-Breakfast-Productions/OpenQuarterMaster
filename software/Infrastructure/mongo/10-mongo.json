@@ -1,7 +1,7 @@
 {
 	"infra": {
 		"mongodb": {
-			"host": "host.docker.internal",
+			"host": "oqm_infra_mongo",
 			"port": "27017",
 			"adminUser": "oqm_admin",
 			"adminPass": "<secret>",
