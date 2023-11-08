@@ -115,12 +115,19 @@ systemctl start "$serviceFileEscaped"
 mkdir -p /etc/oqm/serviceConfig
 touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
+	if [ -f "$curPackage/infra-$curPackage-proxy-config.json" ]; then
+				cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
+# restart proxy after we add config
+systemctl restart open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service
+EOT
+	fi
 
 
 	# TODO:: remove
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
 		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
+		cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
+#!/bin/bash
 if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
 	then
 		echo "Config value already present: $curConfig"
@@ -162,8 +169,6 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
-
-
 
 # Remove docker image
 docker stop oqm_$curPackage || echo "Docker container stopped previously."

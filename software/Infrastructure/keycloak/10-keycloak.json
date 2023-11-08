@@ -1,8 +1,8 @@
 {
 	"infra": {
 		"keycloak": {
-			"host": "host.docker.internal",
-			"port": "8115",
+			"host": "oqm_infra_keycloak",
+			"port": "8080",
 			"adminUser": "oqmAdmin",
 			"adminPass": "<secret>",
 			"postgresUser": "oqm_keycloak_main",

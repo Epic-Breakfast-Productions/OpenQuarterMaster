@@ -37,7 +37,7 @@ ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN_PASSWORD=$(oqm-config -g 'inf
 ExecStartPre=/bin/bash -c "printf \"KC_DB=postgres\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_USERNAME=$(oqm-config -g 'infra.keycloak.postgresUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_PASSWORD=$(oqm-config -g 'infra.keycloak.postgresPass')\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_HOST=host.docker.internal\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_HOST=$(oqm-config -g 'infra.postgres.host')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_PORT=$(oqm-config -g 'infra.postgres.port')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_DATABASE=$(oqm-config -g 'infra.keycloak.postgresDb')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
@@ -51,7 +51,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm_infra_postgres psql postgres
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
                                  --add-host host.docker.internal:host-gateway \
-                                 -p=$(oqm-config -g 'infra.keycloak.port'):8080 \
+                                 --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import \
                                  $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
@@ -61,7 +61,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:$servicePort/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:/infra/keycloak/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

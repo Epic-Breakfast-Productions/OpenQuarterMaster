@@ -6,7 +6,7 @@
 	"description": "Base Station instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station",
 	"dependencies": {
-		"deb": "curl, jq, docker.io, docker, open+quarter+master-infra-jaeger, open+quarter+master-infra-mongodb"
+		"deb": "curl, jq, docker.io, docker, open+quarter+master-infra-jaeger, open+quarter+master-infra-mongodb, open+quarter+master-infra-keycloak, open+quarter+master-infra-nginx"
 	},
 	"copyright": {
 		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
