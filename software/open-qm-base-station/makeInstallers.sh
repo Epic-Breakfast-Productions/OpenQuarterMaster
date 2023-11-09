@@ -121,7 +121,7 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 
 systemctl daemon-reload
 # restart proxy after we add config
-systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
+#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
@@ -152,7 +152,7 @@ if [ $( docker ps -a | grep oqm_base_station | wc -l ) -gt 0 ]; then
 else
         echo "Docker container was already gone."
 fi
-systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
+#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"

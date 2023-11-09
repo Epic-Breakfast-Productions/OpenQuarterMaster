@@ -52,16 +52,18 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
                                  --add-host host.docker.internal:host-gateway \
                                  --network=oqm-internal \
+                                 -p 8115:8080 \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import \
-                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm --proxy edge --hostname-path=/infra/keycloak/"
+                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
+#  --proxy edge --hostname-path=/infra/keycloak/
 
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:/infra/keycloak/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:8115/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

@@ -2,7 +2,7 @@
 	"infra": {
 		"keycloak": {
 			"host": "oqm_infra_keycloak",
-			"port": "8080",
+			"port": "8115",
 			"adminUser": "oqmAdmin",
 			"adminPass": "<secret>",
 			"postgresUser": "oqm_keycloak_main",

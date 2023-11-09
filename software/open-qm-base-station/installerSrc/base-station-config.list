@@ -28,6 +28,6 @@ quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
 quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
 quarkus.oidc.auth-server-url=http://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
 
-runningInfo.protocol=https
+runningInfo.protocol=http
 runningInfo.hostname={system.hostname}
 
