@@ -54,7 +54,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import \
-                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
+                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm --proxy edge --hostname-path=/infra/keycloak/"
 
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
