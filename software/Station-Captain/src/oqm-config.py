@@ -11,9 +11,7 @@ import json
 import argparse
 import re
 
-
-SCRIPT_VERSION = 'SCRIPT_VERSION'
-SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + SCRIPT_VERSION
+SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
 EXIT_CANT_READ_FILE = 2
 EXIT_BAD_CONFIG_KEY = 3
