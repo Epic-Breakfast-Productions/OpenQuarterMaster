@@ -6,7 +6,7 @@
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", open+quarter+master-infra-postgres"
+		"deb": ", open+quarter+master-infra-postgres (>= 1.1.0)"
 	},
 	"configFiles":{
 	},

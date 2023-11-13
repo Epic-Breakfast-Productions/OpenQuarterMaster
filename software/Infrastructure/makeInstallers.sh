@@ -81,7 +81,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
