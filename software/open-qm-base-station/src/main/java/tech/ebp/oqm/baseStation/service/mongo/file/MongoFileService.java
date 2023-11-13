@@ -79,7 +79,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	}
 	
 	@PostConstruct
-	public void setup(){
+	public void setupBucket(){
 		// should probably be a TODO to remove this, but unsure how we ever might be able to.
 		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.
 		if(this.getGridFSBucket().find().limit(1).first() == null){
