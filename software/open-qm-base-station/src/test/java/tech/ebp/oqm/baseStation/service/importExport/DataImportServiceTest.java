@@ -6,6 +6,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
@@ -48,6 +50,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -138,24 +141,24 @@ class DataImportServiceTest extends RunningServerTest {
 		UnitUtils.registerAllUnits(customUnits);
 		
 		//TODO:: once we have shit figured out for files
-//		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
-//		for (int i = 0; i < 5; i++) {
-//			FileAttachment attachment = new FileAttachment();
-//			attachment.setDescription(FAKER.lorem().paragraph());
-//
-//			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
-//
-//			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-//
-//
-//			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
-//
-//			for(int j = 1; j <= 3; j++){
-//				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
-//				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-//				this.fileAttachmentService.updateFile(id, curFile, testUser);
-//			}
-//		}
+		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
+		for (int i = 0; i < 5; i++) {
+			FileAttachment attachment = new FileAttachment();
+			attachment.setDescription(FAKER.lorem().paragraph());
+
+			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
+
+			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+
+
+			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
+
+			for(int j = 1; j <= 3; j++){
+				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
+				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+				this.fileAttachmentService.updateFile(id, curFile, testUser);
+			}
+		}
 		
 		//Add images
 		for (int i = 0; i < 5; i++) {
