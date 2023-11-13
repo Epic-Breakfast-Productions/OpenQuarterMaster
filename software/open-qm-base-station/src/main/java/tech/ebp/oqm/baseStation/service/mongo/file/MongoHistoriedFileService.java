@@ -121,7 +121,9 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	
 	@PostConstruct
 	public void setup(){
-		if(this.count() < 1){
+		// should probably be a TODO to remove this, but unsure how we ever might be able to.
+		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.
+		if(this.getGridFSBucket().find().limit(1).first() == null){
 			FileMetadata metadata = new FileMetadata(
 				"init file, disregard",
 				0,
@@ -129,11 +131,11 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 				FileMetadata.TIKA.detect("plain"),
 				ZonedDateTime.now()
 			);
-			
+
 			GridFSUploadOptions ops = this.getUploadOps(metadata);
 			GridFSBucket bucket = this.getGridFSBucket();
 			String filename = "init";
-			
+
 			bucket.uploadFromStream(filename, new ByteArrayInputStream("".getBytes()), ops);
 		}
 		
@@ -244,7 +246,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	}
 	
 	/**
-	 * @param clientSession
+	 * @param givenSession
 	 * @param id
 	 * @param metadata
 	 * @param is
@@ -253,35 +255,27 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	 * @return
 	 */
 	@WithSpan
-	protected int updateFile(ClientSession clientSession, ObjectId id, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
+	protected int updateFile(ClientSession givenSession, ObjectId id, FileMetadata metadata, InputStream is, InteractingEntity interactingEntity) {
 		T object = this.getFileObjectService().get(id);
 		GridFSBucket bucket = this.getGridFSBucket();
 		
-		boolean sessionGiven = clientSession != null;
-		try (
-			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
-		) {
-			if (!sessionGiven) {
-				clientSession = session;
-			}
-			
-			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			String filename = object.getFileName();
-			
-			if (clientSession == null) {
-				bucket.uploadFromStream(filename, is, ops);
-			} else {
-				bucket.uploadFromStream(clientSession, filename, is, ops);
-			}
-			
-			this.getFileObjectService().addHistoryFor(object, interactingEntity, new NewFileVersionEvent());
-			
-			if (!sessionGiven) {
-				clientSession.commitTransaction();
+		GridFSUploadOptions ops = this.getUploadOps(metadata);
+		String filename = object.getFileName();
+		boolean sessionGiven = givenSession != null;
+		if(sessionGiven){
+			bucket.uploadFromStream(givenSession, filename, is, ops);
+			this.getFileObjectService().addHistoryFor(givenSession, object, interactingEntity, new NewFileVersionEvent());
+			return this.getRevisions(givenSession, id).size() - 1;
+		} else {
+			try (
+				ClientSession ourSession = this.getNewClientSession(true);
+			) {
+				bucket.uploadFromStream(ourSession, filename, is, ops);
+				this.getFileObjectService().addHistoryFor(ourSession, object, interactingEntity, new NewFileVersionEvent());
+				ourSession.commitTransaction();
+				return this.getRevisions(ourSession, id).size() - 1;
 			}
 		}
-		
-		return this.getRevisions(clientSession, id).size() - 1;
 	}
 	
 	@WithSpan
