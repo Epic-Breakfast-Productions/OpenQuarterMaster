@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class FileMetadata {
 	
-	private static final Tika TIKA = new Tika();
+	public static final Tika TIKA = new Tika();
 	
 	public FileMetadata(File file) throws IOException {
 		this(

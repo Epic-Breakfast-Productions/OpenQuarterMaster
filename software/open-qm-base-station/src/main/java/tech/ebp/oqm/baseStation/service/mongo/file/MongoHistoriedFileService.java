@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -15,16 +16,19 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.media.FileHashes;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -113,6 +117,26 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			tempFileService
 		);
 		this.fileObjectService = historiedObjectService;
+	}
+	
+	@PostConstruct
+	public void setup(){
+		if(this.count() < 1){
+			FileMetadata metadata = new FileMetadata(
+				"init file, disregard",
+				0,
+				FileHashes.builder().md5("").sha1("").sha256("").build(),
+				FileMetadata.TIKA.detect("plain"),
+				ZonedDateTime.now()
+			);
+			
+			GridFSUploadOptions ops = this.getUploadOps(metadata);
+			GridFSBucket bucket = this.getGridFSBucket();
+			String filename = "init";
+			
+			bucket.uploadFromStream(filename, new ByteArrayInputStream("".getBytes()), ops);
+		}
+		
 	}
 	
 	
