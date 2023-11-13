@@ -3,40 +3,42 @@ package tech.ebp.oqm.baseStation.service.importExport;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.time.StopWatch;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
+import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.baseStation.service.importExport.importer.GenericObjectImporter;
+import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.HasParentImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
-import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
-import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.itemList.ItemList;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -117,6 +119,9 @@ public class DataImportService {
 	@Inject
 	FileAttachmentService fileAttachmentService;
 	
+	@Inject
+	ItemCheckoutService itemCheckoutService;
+	
 	private UnitImporter unitImporter;
 	private GenericObjectImporter<Image, ImageSearch> imageImporter;
 	
@@ -124,6 +129,9 @@ public class DataImportService {
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericObjectImporter<InventoryItem, InventoryItemSearch> itemImporter;
 	private GenericObjectImporter<ItemList, ItemListSearch> itemListImporter;
+	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
+	private GenericImporter<ItemList, ItemListSearch> itemListImporter;
+	private GenericImporter<ItemCheckout, ItemCheckoutSearch> itemCheckoutImporter;
 	
 	@PostConstruct
 	public void setup(){
@@ -133,6 +141,10 @@ public class DataImportService {
 		this.imageImporter = new GenericObjectImporter<>(this.imageService);
 		this.itemImporter = new GenericObjectImporter<>(this.inventoryItemService);
 		this.itemListImporter = new GenericObjectImporter<>(this.itemListService);
+		this.imageImporter = new GenericImporter<>(this.imageService);
+		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
+		this.itemListImporter = new GenericImporter<>(this.itemListService);
+		this.itemCheckoutImporter = new GenericImporter<>(this.itemCheckoutService);
 	}
 	
 	@WithSpan
@@ -187,7 +199,7 @@ public class DataImportService {
 		
 		log.info("Reading in objects.");
 		sw = StopWatch.createStarted();
-		DataImportResult.DataImportResultBuilder<?, ?> resultBuilder = DataImportResult.builder();
+		DataImportResult.Builder<?, ?> resultBuilder = DataImportResult.builder();
 		
 		try(
 			ClientSession session = this.imageService.getNewClientSession();//shouldn't matter which mongo service to grab session from
@@ -200,6 +212,7 @@ public class DataImportService {
 					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numInventoryItems(this.itemImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numItemLists(this.itemListImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(session, tempDirPath, importingEntity));
 					//TODO:: history
 				} catch(Throwable e){
 					session.abortTransaction();

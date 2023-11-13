@@ -25,14 +25,10 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	/**
 	 * https://www.testcontainers.org/modules/webdriver_containers/
 	 */
-	public static final MongoDbServerManager MONGO_DB_SERVER_MANAGER = new MongoDbServerManager();
-	public static final KeycloakServerManager KEYCLOAK_CONTAINER = new KeycloakServerManager();
 	public static final SeleniumGridServerManager BROWSER_CONTAINER = new SeleniumGridServerManager();
 	private static final JaegerServerManager JAEGER_SERVER_MANAGER = new JaegerServerManager();
 	
 	private static final Collection<QuarkusTestResourceLifecycleManager> managersAsList = new ArrayList<>(){{
-//		add(MONGO_DB_SERVER_MANAGER);
-		add(KEYCLOAK_CONTAINER);
 		add(BROWSER_CONTAINER);
 		add(JAEGER_SERVER_MANAGER);
 	}};

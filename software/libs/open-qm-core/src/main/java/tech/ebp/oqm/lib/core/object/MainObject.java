@@ -20,11 +20,15 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public class MainObject {
+public abstract class MainObject {
 	
 	/**
 	 * The id of this object in the Mongodb.
+	 * TODO:: make a string in openapi docs
 	 */
-	@Schema(example = "ObjectId hex string")
+	@Schema(
+		description = "ObjectId hex string",
+		example = ""
+	)
 	private ObjectId id;
 }

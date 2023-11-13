@@ -7,10 +7,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
+import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
+import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.stream.Stream;
 
 

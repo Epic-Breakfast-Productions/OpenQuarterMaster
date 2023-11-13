@@ -1,31 +1,27 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.common.annotation.Blocking;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
-import tech.ebp.oqm.baseStation.service.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.printouts.StorageBlockInventorySheetService;
-import tech.ebp.oqm.lib.core.rest.auth.roles.Roles;
-
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -35,17 +31,11 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class InventorySheets extends EndpointProvider {
 	
-	@javax.ws.rs.PathParam("id")
+	@jakarta.ws.rs.PathParam("id")
 	private String id;
 	
 	@Inject
-	JsonWebToken jwt;
-	
-	@Inject
 	StorageBlockInventorySheetService storageSheetService;
-	
-	@Inject
-	InteractingEntityService interactingEntityService;
 	
 	@Blocking
 	@GET
@@ -70,11 +60,9 @@ public class InventorySheets extends EndpointProvider {
 		@Context SecurityContext securityContext,
 		@BeanParam InventorySheetsOptions options
 	) throws Throwable {
-		logRequestContext(this.jwt, securityContext);
-		
 		Response.ResponseBuilder response = Response.ok(
 			this.storageSheetService.getPdfInventorySheet(
-				this.interactingEntityService.getEntity(this.jwt),
+				this.getInteractingEntity(),
 				new ObjectId(this.id),
 				options
 			)

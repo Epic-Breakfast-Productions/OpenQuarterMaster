@@ -9,9 +9,17 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.ListAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
+import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
+import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.rest.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.baseStation.rest.printouts.PageOrientation;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
@@ -19,15 +27,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
-import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.lib.core.object.storage.items.InventoryItem;
-import tech.ebp.oqm.lib.core.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.lib.core.object.storage.items.TrackedItem;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -67,7 +67,6 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	@Location("printouts/storageBlockInvSheet/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
 	
-	@WithSpan
 	private File getTempPdfFile(String name) throws IOException {
 		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
 		File tempDir = tempDirPath.toFile();
@@ -77,7 +76,6 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		return new File(tempDir, exportFileName);
 	}
 	
-	@WithSpan
 	private TemplateInstance getHtmlInventorySheet(
 		StorageBlock storageBlock,
 		StorageBlockSearch storageBlockSearch,

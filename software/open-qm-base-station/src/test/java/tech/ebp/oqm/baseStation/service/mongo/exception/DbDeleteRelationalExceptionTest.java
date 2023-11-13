@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.testResources.testClasses.WebServerTest;
-import tech.ebp.oqm.lib.core.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
 
 import java.util.List;
 import java.util.Map;

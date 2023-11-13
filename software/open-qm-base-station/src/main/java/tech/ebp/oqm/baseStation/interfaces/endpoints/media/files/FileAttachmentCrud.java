@@ -53,7 +53,6 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.media.files;
 //	@Produces(MediaType.APPLICATION_JSON)
 //	//	@Override
 //	public Response add(
-//		@Context SecurityContext securityContext,
 //		@BeanParam FileAttachmentUploadBody body
 //	) throws IOException {
 //		FileAttachment newAttachmentObj = new FileAttachment();

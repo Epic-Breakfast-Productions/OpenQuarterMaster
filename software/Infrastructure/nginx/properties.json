@@ -1,0 +1,14 @@
+{
+	"packageName":"open+quarter+master-infra-nginx",
+	"version":"1.0.0",
+	"description":"Nginx Reverse Proxy instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/nginx",
+	"configs": [],
+	"dependencies": {
+		"deb": ""
+	},
+	"configFiles":{
+	},
+	"files":{
+	}
+}

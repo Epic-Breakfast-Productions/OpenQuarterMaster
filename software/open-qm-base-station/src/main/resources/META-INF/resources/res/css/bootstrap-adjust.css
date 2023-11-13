@@ -7,3 +7,10 @@ a.active,button.active {
 .badge {
 	font-weight: bold;
 }
+
+.navbar .nav-link:hover {
+	border: 1px dotted black !important;
+}
+.navbar .nav-link {
+	border: 1px dotted rgba(0,0,0, 0) !important;
+}

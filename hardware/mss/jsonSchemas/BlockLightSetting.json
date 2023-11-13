@@ -1,0 +1,28 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockLightSetting.json",
+    "title": "Block Light Setting",
+    "description": "Outlines the current settings for the lights of a given storage block.",
+    "type": "object",
+    "properties": {
+        "powerState": {
+            "description": "The power state of the lights.",
+            "type": "string",
+            "enum": [ "OFF", "ON", "FLASHING" ]
+        },
+        "color": {
+            "description": "The color of the lights. Must be valid hex color string. I.e, '#FFFFFF'. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command.",
+            "type": "string",
+            "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+        },
+        "brightness": {
+            "description": "The brightness setting of this light. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command."
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+        }
+    },
+    "required": [
+        "powerState"
+    ]
+}

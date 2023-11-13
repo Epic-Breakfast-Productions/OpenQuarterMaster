@@ -1,6 +1,5 @@
 package tech.ebp.oqm.lib.core.object.storage.items;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -114,24 +113,13 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
-	 * The total amount of that item in storage, in the {@link #getUnit()} unit.
+	 * The total amount of this item in storage, in the {@link #getUnit()} unit.
 	 * <p>
 	 * Calculated in {@link #recalculateDerived()}
 	 */
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PROTECTED)
 	private Quantity<?> total = null;
-	
-	//	/**
-	//	 * Don't call this method
-	//	 * @param total
-	//	 * @return
-	//	 */
-	//	@Deprecated(forRemoval = false)
-	//	public InventoryItem<S, C, W> setTotal(Quantity<?> total){
-	//		this.total = total;
-	//		return this;
-	//	}
 	
 	/**
 	 * The total value of everything stored.
@@ -243,7 +231,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	}
 	
 	public Quantity<?> getTotal() {
-		if (total == null) {
+		if (this.total == null) {
 			this.recalculateDerived();
 		}
 		return this.total;
@@ -331,6 +319,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 */
 	public InventoryItem<S, C, W> recalculateDerived() {
+		//TODO:: do these at the same time
 		this.getStorageMap().values().parallelStream().forEach(StoredWrapper::recalcDerived);
 		
 		this.recalcTotal();
@@ -402,7 +391,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 *
 	 * @param storageId The id of the storage block we are dealing with.
 	 *
-	 * @return The collection at the storage block held
+	 * @return The collection at the storage block held.
 	 */
 	public C getStoredForStorage(ObjectId storageId) {
 		return this.getStoredForStorage(storageId, true);
@@ -470,15 +459,15 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @return This object
 	 * @throws NotEnoughStoredException If there isn't enough held to subtract, or if the stored object does not exist
 	 */
-	public InventoryItem<S, C, W> subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
+	public S subtract(ObjectId storageId, S toSubtract) throws NotEnoughStoredException, NoStorageBlockException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, false);
 		
 		if (wrapper == null) {
 			throw new NoStorageBlockException();
 		}
 		
-		wrapper.subtractStored(toSubtract);
-		return this;
+		S subtracted = wrapper.subtractStored(toSubtract);
+		return subtracted;
 	}
 	
 	/**

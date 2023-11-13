@@ -180,7 +180,6 @@ source "$LIB_DIR/cron-utils.sh"
 if [ $? -ne 0 ]; then exitProg 255 "Unable to source lib cron-utils"; fi;
 
 
-
 ##################################################
 # Functionality starts here
 ######################################

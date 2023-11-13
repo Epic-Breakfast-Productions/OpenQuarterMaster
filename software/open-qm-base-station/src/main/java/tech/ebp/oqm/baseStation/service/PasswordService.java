@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.wildfly.common.codec.DecodeException;
 import org.wildfly.security.password.PasswordFactory;
@@ -9,12 +10,7 @@ import org.wildfly.security.password.interfaces.BCryptPassword;
 import org.wildfly.security.password.spec.EncryptablePasswordSpec;
 import org.wildfly.security.password.spec.IteratedSaltedPasswordAlgorithmSpec;
 import org.wildfly.security.password.util.ModularCrypt;
-import tech.ebp.oqm.lib.core.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.lib.core.object.interactingEntity.user.User;
-import tech.ebp.oqm.lib.core.rest.auth.externalService.ExternalServiceLoginRequest;
-import tech.ebp.oqm.lib.core.rest.auth.user.UserLoginRequest;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -125,24 +121,6 @@ public class PasswordService {
 			log.error("Somehow got an invalid key. This probably shouldn't happen? Error: ", e);
 			throw new IllegalStateException("Somehow got an invalid key. This should not happen.", e);
 		}
-	}
-	
-	/**
-	 * Checks to see if the password given in the login request matches the hashed pasword of the user.
-	 * <p>
-	 * Wrapper for {@link #passwordMatchesHash(String, String)}.
-	 *
-	 * @param user The user to get the pw hash from
-	 * @param loginRequest The request sent to try to authenticate a user
-	 *
-	 * @return If the request contained the correct password for the user.
-	 */
-	public boolean passwordMatchesHash(User user, UserLoginRequest loginRequest) {
-		return this.passwordMatchesHash(user.getPwHash(), loginRequest.getPassword());
-	}
-	
-	public boolean passwordMatchesHash(ExternalService service, ExternalServiceLoginRequest loginRequest) {
-		return this.passwordMatchesHash(service.getSetupTokenHash(), loginRequest.getSetupToken());
 	}
 	
 	/**

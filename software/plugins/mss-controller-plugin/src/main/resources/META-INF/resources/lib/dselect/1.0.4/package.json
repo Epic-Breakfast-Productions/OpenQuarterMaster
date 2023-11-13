@@ -1,0 +1,46 @@
+{
+  "name": "@jarstone/dselect",
+  "version": "1.0.4",
+  "description": "Dropdown select box for bootstrap 5",
+  "repository": {
+    "type": "git",
+    "url": "git+https://jarstone@github.com/jarstone/dselect.git"
+  },
+  "keywords": [
+    "dropdown-select",
+    "bootstrap-select",
+    "bootstrap-select2"
+  ],
+  "author": "jarstone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jarstone/dselect/issues"
+  },
+  "homepage": "https://github.com/jarstone/dselect#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.3.1",
+    "bootstrap": "^5.0.2",
+    "esbuild": "^0.12.17",
+    "fs-extra": "^10.0.0",
+    "gulp": "^4.0.2",
+    "gulp-rename": "^2.0.0",
+    "postcss": "^8.3.6",
+    "postcss-cli": "^8.3.1",
+    "through2": "^4.0.2"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "dev": "gulp dev"
+  },
+  "browserslist": [
+    ">= 0.5%",
+    "last 2 major versions",
+    "not dead",
+    "Chrome >= 60",
+    "Firefox >= 60",
+    "Firefox ESR",
+    "iOS >= 12",
+    "Safari >= 12",
+    "not Explorer <= 11"
+  ]
+}

@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal"
-                onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
+                onclick="ItemAddEdit.setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
         </button>
     </div>
     <div class="col d-grid gap-2">
@@ -45,7 +45,7 @@
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResult actionType='full' searchFormId='mainStorageSearch' pagingCalculations=pagingCalculations}
+            {#search/item/itemSearchResults searchResults=searchResult actionType='full' searchFormId='mainItemSearch' pagingCalculations=pagingCalculations}
             {/search/item/itemSearchResults}
         </table>
     </div>
@@ -68,7 +68,8 @@
             </button>
         {/footerButtons}
     {/objView/itemViewModal}
-    {#itemAddEditModal}{/itemAddEditModal}
+	{#itemAddEditModal}{/itemAddEditModal}
+	{#itemStoredAddSubTransferModal}{/itemStoredAddSubTransferModal}
 {#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
     {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
     <div class="row">
@@ -80,7 +81,10 @@
         <div class="col">
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
-                    <label for="importBulkFileInput" class="form-label"><a href="/api/v1/templates/itemsCsv" target="_blank" title="Get CSV Template file">CSV</a>, or JSON file:</label>
+                    <label for="importBulkFileInput" class="form-label">
+                        <a href="/api/v1/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        or {#icons/fileJson}{/icons/fileJson} JSON file:
+                    </label>
                     <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
                 </div>
             </form>
@@ -91,8 +95,8 @@
 {/search/storage/StorageSearchSelectModal}
 {#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
 {/search/image/imageSearchSelectModal}
-{#inputs/item/itemAddSubTransModal otherModalId=""}
-{/inputs/item/itemAddSubTransModal}
+{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
+{/itemCheckout/itemCheckoutModal}
 {#CodeScannerModal}{/CodeScannerModal}
 {/modals}
 
@@ -112,14 +116,17 @@
     <script src="/res/js/obj/getters.js"></script>
     <script src="/res/js/obj/storageBlock/capacities.js"></script>
     <script src="/res/js/carousel.js"></script>
-    <script src="/res/js/item/ItemAddSubTrans.js"></script>
+    <script src="/res/js/obj/item/itemStoredAddSubTrans.js"></script>
     <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
     <script src="/res/js/obj/itemCategoryView.js"></script>
     <script src="/res/js/textCopy.js"></script>
     <script src="/res/js/item/extItemSearch.js"></script>
     <script src="/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="/res/js/obj/item/storedView.js"></script>
+    <script src="/res/js/obj/item/storedEdit.js"></script>
     <script src="/res/js/obj/item/itemView.js"></script>
     <script src="/res/js/CodeScanning.js"></script>
+    <script src="/res/js/obj/itemCheckout/itemCheckout.js"></script>
 {/scripts}
 {#pageScript}
 <script>

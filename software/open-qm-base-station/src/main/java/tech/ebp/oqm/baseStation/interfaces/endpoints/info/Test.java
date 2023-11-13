@@ -1,6 +1,15 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -9,25 +18,12 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
 @Slf4j
 @Path(ROOT_API_ENDPOINT_V1 + "/test")
 @Tags({@Tag(name = "Test")})
-@ApplicationScoped
+@RequestScoped
 public class Test extends EndpointProvider {
 	
 	@GET
@@ -41,7 +37,7 @@ public class Test extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response illegalArgException(@Context SecurityContext ctx) {
+	public Response illegalArgException() {
 		throw new IllegalArgumentException("bad");
 	}
 	
@@ -56,12 +52,13 @@ public class Test extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response illegalStateException(@Context SecurityContext ctx) {
+	public Response illegalStateException() {
 		throw new IllegalStateException("bad");
 	}
 	
 	@NoArgsConstructor
-	public static class TestClass{
+	public static class TestClass {
+		
 		@NotBlank
 		public String field;
 	}
@@ -78,9 +75,8 @@ public class Test extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validationException(
-		@Context SecurityContext ctx,
 		@Valid TestClass test
-		) {
+	) {
 		return Response.ok().build();
 	}
 	

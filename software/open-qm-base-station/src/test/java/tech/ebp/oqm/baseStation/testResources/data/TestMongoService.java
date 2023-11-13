@@ -5,8 +5,8 @@ import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class TestMongoService extends MongoObjectService<TestMainObject, TestMainObjectSearch> {

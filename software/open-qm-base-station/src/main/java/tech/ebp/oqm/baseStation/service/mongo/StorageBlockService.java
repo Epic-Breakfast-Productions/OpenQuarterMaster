@@ -4,22 +4,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
+import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
+import tech.ebp.oqm.baseStation.model.rest.tree.storageBlock.StorageBlockTree;
+import tech.ebp.oqm.baseStation.model.rest.tree.storageBlock.StorageBlockTreeNode;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.lib.core.object.media.Image;
-import tech.ebp.oqm.lib.core.object.storage.ItemCategory;
-import tech.ebp.oqm.lib.core.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.lib.core.rest.tree.ParentedMainObjectTree;
-import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTree;
-import tech.ebp.oqm.lib.core.rest.tree.storageBlock.StorageBlockTreeNode;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,12 +29,14 @@ import java.util.TreeSet;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+@Named("StorageBlockService")
 @Slf4j
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
 	
 	
 	private InventoryItemService inventoryItemService;
+	private ItemCheckoutService itemCheckoutService;
 	
 	StorageBlockService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -45,7 +48,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
-		InventoryItemService inventoryItemService
+		InventoryItemService inventoryItemService,
+		ItemCheckoutService itemCheckoutService
 	) {
 		super(
 			objectMapper,
@@ -55,6 +59,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			false
 		);
 		this.inventoryItemService = inventoryItemService;
+		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@WithSpan
@@ -173,6 +178,11 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
+		}
+		
+		refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, storageBlock);
+		if(!refs.isEmpty()){
+			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}
 		
 		return objsWithRefs;

@@ -18,7 +18,8 @@ public class UserRoles {
 		Roles.INVENTORY_ADMIN,
 		
 		Roles.INVENTORY_VIEW,
-		Roles.INVENTORY_EDIT
+		Roles.INVENTORY_EDIT,
+		Roles.INVENTORY_CHECKOUT
 	);
 	
 	@Deprecated()
@@ -45,7 +46,8 @@ public class UserRoles {
 		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		Roles.INVENTORY_VIEW,
-		Roles.INVENTORY_EDIT
+		Roles.INVENTORY_EDIT,
+		Roles.INVENTORY_CHECKOUT
 	);
 	
 	/**

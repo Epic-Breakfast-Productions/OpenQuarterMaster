@@ -1,7 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo.exception;
 
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.lib.core.object.history.events.DeleteEvent;
+import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
 
 /**
  * TODO:: rest mapping

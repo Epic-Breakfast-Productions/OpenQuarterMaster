@@ -9,7 +9,7 @@ function addCapacityInput(container, value, selectedUnit){
   <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);" title="Remove Capacity">'+Icons.remove +'</button> \
 </div>');
 
-    newInputDiv.find(".unitSelect").append(getUnitOptions(selectedUnit));
+    newInputDiv.find(".unitSelect").append(UnitUtils.getUnitOptions(selectedUnit));
     newInputDiv.find(":input.capacityInput").val(value);
     newInputDiv.find(".unitSelect").val(selectedUnit);
     container.append(

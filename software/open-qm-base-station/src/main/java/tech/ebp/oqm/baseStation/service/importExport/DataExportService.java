@@ -1,6 +1,8 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -9,12 +11,17 @@ import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
-import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
+import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
@@ -22,13 +29,7 @@ import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoFileService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
-import tech.ebp.oqm.lib.core.object.FileMainObject;
-import tech.ebp.oqm.lib.core.object.MainObject;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
-import tech.ebp.oqm.lib.core.object.history.ObjectHistoryEvent;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -187,8 +188,9 @@ public class DataExportService {
 	
 	@Inject
 	CustomUnitService customUnitService;
+	
 	@Inject
-	ItemCategoryService itemItemCategoryService;
+	ItemCategoryService itemCategoryService;
 	
 	@Inject
 	FileAttachmentService fileAttachmentService;
@@ -203,6 +205,9 @@ public class DataExportService {
 	
 	@Inject
 	ItemListService itemListService;
+	
+	@Inject
+	ItemCheckoutService itemCheckoutService;
 	
 	@WithSpan
 	public File exportDataToBundle(boolean excludeHistory) throws IOException {
@@ -225,10 +230,11 @@ public class DataExportService {
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.customUnitService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemItemCategoryService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemCategoryService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
 				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemListService, !excludeHistory); return null;})
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemListService, !excludeHistory); return null;}),
+				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemCheckoutService, !excludeHistory); return null;})
 			);
 			try {
 				future.get();

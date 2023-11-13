@@ -1,15 +1,17 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import tech.ebp.oqm.baseStation.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
-import tech.ebp.oqm.lib.core.object.AttKeywordMainObject;
 
-import javax.ws.rs.QueryParam;
 import java.util.List;
 
 @ToString(callSuper = true)
+@Setter
 @Getter
 public abstract class SearchKeyAttObject<T extends AttKeywordMainObject> extends SearchObject<T> {
 	//attKeywords
@@ -33,5 +35,9 @@ public abstract class SearchKeyAttObject<T extends AttKeywordMainObject> extends
 	
 	protected boolean hasValue(String val){
 		return val != null && !val.isBlank();
+	}
+	
+	protected boolean hasValue(Boolean val){
+		return val != null;
 	}
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.Max;
@@ -35,6 +36,7 @@ import java.util.Map;
 	@JsonSubTypes.Type(value = TrackedStored.class, name = "TRACKED")
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
+@BsonDiscriminator
 public abstract class Stored {
 	
 	public abstract StoredType getStoredType();

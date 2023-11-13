@@ -1,0 +1,22 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ClearHighlightCommand.json",
+	"title": "Resets highlights; stops all highlighting from happening.",
+	"description": "Command to highlight a set of blocks to the user. ",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "CLEAR_BLOCK_HIGHLIGHT"
+		}
+	},
+	"required": [
+		"command"
+	]
+}

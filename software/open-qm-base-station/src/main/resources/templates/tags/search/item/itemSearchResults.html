@@ -1,4 +1,4 @@
-{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.lib.core.object.storage.items.InventoryItem> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> searchResults}
 {@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
 {!
   Template to show storage search results. Gives the contents of a table, but not the main table tag
@@ -38,7 +38,7 @@
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
-                data-bs-target="#addEditItemModal" onclick="setupAddEditForAdd();">
+                data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
           {#icons/add}{/icons/add} Add Item
         </button>
       </div>
@@ -59,13 +59,13 @@
     <td>{result.getStorageMap().size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForEdit('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemAddSubtractTransferModal" onclick="setupAddSubTransForm('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
         {#icons/addSubTrans}{/icons/addSubTrans}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
@@ -73,7 +73,7 @@
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
-              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+              data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
               onclick="ItemSearchSelect.selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>

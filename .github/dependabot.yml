@@ -6,23 +6,23 @@
 version: 2
 updates:
   # Lib core
-  - package-ecosystem: "gradle"
-    directory: "/software/libs/open-qm-core"
-    target-branch: "dev"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "area-dependencies"
-      - "project-lib-core"
-  # Module Driver
-  - package-ecosystem: "gradle"
-    directory: "/software/libs/open-qm-moduleDriver"
-    target-branch: "dev"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "area-dependencies"
-      - "project-lib-moduleDriver"
+  # - package-ecosystem: "gradle"
+  #   directory: "/software/libs/open-qm-core"
+  #   target-branch: "dev"
+  #   schedule:
+  #     interval: "weekly"
+  #   labels:
+  #     - "area-dependencies"
+  #     - "project-lib-core"
+  # # Module Driver
+  # - package-ecosystem: "gradle"
+  #   directory: "/software/libs/open-qm-moduleDriver"
+  #   target-branch: "dev"
+  #   schedule:
+  #     interval: "weekly"
+  #   labels:
+  #     - "area-dependencies"
+  #     - "project-lib-moduleDriver"
   # Base Station
   - package-ecosystem: "gradle"
     directory: "/software/open-qm-base-station"

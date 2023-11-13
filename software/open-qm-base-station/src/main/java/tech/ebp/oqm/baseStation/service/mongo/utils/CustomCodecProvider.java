@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.service.mongo.utils;
 
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.codecs.Codec;
 import org.bson.codecs.MapCodec;
 import org.bson.codecs.configuration.CodecProvider;
@@ -12,7 +13,6 @@ import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.UUIDCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.UnitCodec;
 import tech.ebp.oqm.baseStation.service.mongo.utils.codecs.ZonedDateTimeCodec;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped

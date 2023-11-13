@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.ClassDescriptor;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.ClassOrdererContext;
-import tech.ebp.oqm.baseStation.testResources.profiles.ExternalAuthTestProfile;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -46,9 +45,6 @@ public class TestTypeOrder implements ClassOrderer {
 		
 		Optional<TestProfile> testProfileAnnotation = classDescriptor.findAnnotation(TestProfile.class);
 		if (testProfileAnnotation.isPresent()) {
-			if (ExternalAuthTestProfile.class.equals(testProfileAnnotation.get().value())) {
-				return ORDER_VAL_TEST_PROFILE_EXTERNAL_AUTH;
-			}
 			return ORDER_VAL_TEST_PROFILE_OTHER;
 		}
 		return ORDER_VAL_DEFAULT;

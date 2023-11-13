@@ -1,10 +1,15 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.info;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -12,16 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
 
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,9 +28,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RequestScoped
 public class RunByUtils extends EndpointProvider {
-	
-	@Inject
-	JsonWebToken jwt;
 	
 	@ConfigProperty(name = "service.runBy.logo", defaultValue = "/")
 	File runByLogo;
@@ -83,10 +75,8 @@ public class RunByUtils extends EndpointProvider {
 	@PermitAll
 	@Produces({"image/*", "text/plain"})
 	public Response getImageData(
-		@Context SecurityContext securityContext,
 		@PathParam("image") String runByImage
 	) throws FileNotFoundException {
-		logRequestContext(this.jwt, securityContext);
 		log.info("Getting image data for {}", runByImage);
 		
 		switch (runByImage) {

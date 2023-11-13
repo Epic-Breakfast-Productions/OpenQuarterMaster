@@ -13,7 +13,8 @@ public class ServiceRoles {
 		Roles.INVENTORY_ADMIN,
 		
 		Roles.INVENTORY_VIEW,
-		Roles.INVENTORY_EDIT
+		Roles.INVENTORY_EDIT,
+		Roles.INVENTORY_CHECKOUT
 	);
 	
 	public static List<String> allowedRoles() {
@@ -29,7 +30,8 @@ public class ServiceRoles {
 		Roles.EXT_SERVICE_ADMIN,
 		Roles.INVENTORY_ADMIN,
 		Roles.INVENTORY_VIEW,
-		Roles.INVENTORY_EDIT
+		Roles.INVENTORY_EDIT,
+		Roles.INVENTORY_CHECKOUT
 	);
 	
 	public static final Map<String, String> SELECTABLE_ROLES_DESC_MAP = Roles.ROLE_DESCRIPTION_MAP.entrySet().stream().filter(

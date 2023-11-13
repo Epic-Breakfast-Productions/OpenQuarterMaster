@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+docker run -i \
+       --init \
+       -v "/tmp/oqm/mss-controller-plugin/voice2jsonHome/:/tmp/oqm/v2jhome" \
+       -v "/dev/shm/:/dev/shm/" \
+       -v /run/dbus/:/run/dbus/ \
+       --device /dev/snd:/dev/snd \
+       -w "/tmp/oqm/v2jhome" \
+       -e "HOME=/tmp/oqm/v2jhome" \
+       -e "PULSE_SERVER=unix:/run/user/1000/pulse/native" \
+       --user "$(id -u):$(id -g)" \
+       --security-opt label=disable \
+       synesthesiam/voice2json "$@"

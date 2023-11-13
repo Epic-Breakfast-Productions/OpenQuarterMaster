@@ -1,0 +1,19 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ModuleState.json",
+    "title": "Module Info",
+    "description": "The current state of the module.",
+    "type": "object",
+    "properties": {
+        "storageBlocks": {
+            "description": "The array of storage blocks managed by this module. Actual storage block number determined by the object's held value.",
+            "type": "array",
+            "items": {
+                "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json"
+            }
+        }
+    },
+    "required": [
+        "storageBlocks"
+    ]
+}

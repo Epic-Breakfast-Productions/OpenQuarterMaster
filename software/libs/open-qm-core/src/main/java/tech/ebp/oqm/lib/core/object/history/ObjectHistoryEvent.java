@@ -11,6 +11,8 @@ import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceAut
 import tech.ebp.oqm.lib.core.object.history.events.externalService.ExtServiceSetupEvent;
 import tech.ebp.oqm.lib.core.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemAddEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckinEvent;
+import tech.ebp.oqm.lib.core.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.lib.core.object.history.events.item.ItemTransferEvent;
@@ -35,6 +37,8 @@ import tech.ebp.oqm.lib.core.object.interactingEntity.InteractingEntityReference
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+
+import static tech.ebp.oqm.lib.core.object.history.EventType.ITEM_CHECKIN;
 
 /**
  * Describes an object's history.
@@ -62,6 +66,8 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemAddEvent.class, name = "ITEM_ADD"),
 	@JsonSubTypes.Type(value = ItemSubEvent.class, name = "ITEM_SUBTRACT"),
 	@JsonSubTypes.Type(value = ItemTransferEvent.class, name = "ITEM_TRANSFER"),
+	@JsonSubTypes.Type(value = ItemCheckoutEvent.class, name = "ITEM_CHECKOUT"),
+	@JsonSubTypes.Type(value = ItemCheckinEvent.class, name = "ITEM_CHECKIN"),
 	
 	@JsonSubTypes.Type(value = ItemListActionAddEvent.class, name = "ITEM_LIST_ACTION_ADD"),
 	@JsonSubTypes.Type(value = ItemListActionUpdateEvent.class, name = "ITEM_LIST_ACTION_UPDATE"),

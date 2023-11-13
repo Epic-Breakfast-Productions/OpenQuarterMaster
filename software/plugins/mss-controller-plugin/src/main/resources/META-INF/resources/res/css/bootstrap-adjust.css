@@ -1,0 +1,9 @@
+
+/* Make active links, buttons used for navs actually visibly obvious of the fact */
+a.active,button.active {
+	font-weight: bold !important;
+}
+
+.badge {
+	font-weight: bold;
+}

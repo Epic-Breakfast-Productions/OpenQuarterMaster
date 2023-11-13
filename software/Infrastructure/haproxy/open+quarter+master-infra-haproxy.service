@@ -1,0 +1,61 @@
+# Service file for running an instance of HAProxy.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  HAProxy tags: https://hub.docker.com/r/haproxytech/haproxy-alpine
+#
+
+[Unit]
+Description=HAProxy server for Open Quartermaster. Version ${version}, using HAProxy (alpine) tagged to "2.9".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+Environment="CONTAINER_NAME=oqm_infra_haproxy"
+Environment="IMAGE_NAME=haproxytech/haproxy-alpine"
+Environment="IMAGE_VERSION=2.9"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/haproxy/env.list"
+
+#ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop haproxy container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove haproxy container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# setup env list file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/haproxy"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+#ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> $ENV_CONFIG_FILE"
+#ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> $ENV_CONFIG_FILE"
+#ExecStartPre=/bin/bash -c "printf printf \"%s\n\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\""
+
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --name $CONTAINER_NAME \
+                                 -p 80:80 \
+                                 -p 8404:8404 \
+                                 --env-file $ENV_CONFIG_FILE \
+                                 --add-host host.docker.internal:host-gateway \
+                                 -v /etc/oqm/serviceConfig/infra/haproxy/conf.d/:/usr/local/etc/haproxy:ro \
+                                 $IMAGE_NAME:$IMAGE_VERSION"
+#ExecStartPost=/bin/bash -c "running=\"false\"; \
+#                            while [ \"$running\" != \"true\" ]; do \
+#                                sleep 1s; \
+#                                /usr/bin/docker exec $CONTAINER_NAME mongosh --eval \"\"; \
+#                                if [ \"$?\" = \"0\" ]; then \
+#                                    echo \"Mongo container running and available!\"; \
+#                                    running=\"true\"; \
+#                                fi \
+#                            done \
+#                            "
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop nginx container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove nginx container'"
+
+[Install]
+WantedBy=multi-user.target

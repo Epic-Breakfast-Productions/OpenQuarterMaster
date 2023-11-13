@@ -5,7 +5,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
-import tech.ebp.oqm.lib.core.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;

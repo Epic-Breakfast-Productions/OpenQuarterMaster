@@ -18,7 +18,6 @@ import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -30,7 +29,6 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 	public StorageType getStorageType() {
 		return StorageType.AMOUNT_LIST;
 	}
-	
 	
 	@Override
 	protected ListAmountStoredWrapper newWrapperInstance() {

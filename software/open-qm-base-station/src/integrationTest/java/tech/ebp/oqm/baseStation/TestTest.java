@@ -12,6 +12,6 @@ public class TestTest extends RunningServerTest {
 
 	@Test
 	public void testGetConfig(){
-		log.info("Auth mode: {}", ConfigProvider.getConfig().getValue("service.authMode", String.class));
+		log.info("Auth mode: {}", ConfigProvider.getConfig().getValue("service.version", String.class));
 	}
 }

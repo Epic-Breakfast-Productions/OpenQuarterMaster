@@ -1,23 +1,20 @@
 package tech.ebp.oqm.baseStation.scheduled;
 
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Sorts;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.lib.core.units.CustomUnitEntry;
-import tech.ebp.oqm.lib.core.units.UnitUtils;
 
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 @Singleton
 @Slf4j
@@ -32,10 +29,7 @@ public class LifecycleBean {
 	
 	private ZonedDateTime startDateTime;
 	
-	void onStart(
-		@Observes
-		StartupEvent ev
-	) {
+	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster Web Server starting.");
 		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
@@ -49,38 +43,38 @@ public class LifecycleBean {
 		log.info(this.startTemplate.render());
 		
 		if (log.isDebugEnabled()) {
-			StringBuilder sb = new StringBuilder();
-			for (String curProp : ConfigProvider.getConfig().getPropertyNames()) {
+			TreeMap<String, String> configMap = new TreeMap<>();
+			
+			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
 				String value;
 				try {
 					value = ConfigProvider.getConfig().getValue(curProp, String.class);
 				} catch(NoSuchElementException e) {
 					value = "";
 				}
+				configMap.put(curProp, value);
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			for (String curProp : configMap.keySet()) {
+				
 				sb.append('\t');
 				sb.append(curProp);
 				sb.append('=');
-				sb.append(value);
+				sb.append(configMap.get(curProp));
 				sb.append(System.lineSeparator());
 			}
 			log.debug("Configuration: \n{}", sb);
 		}
-		
-		log.info("Reading existing custom units from database...");
-		
-		try (
-			MongoCursor<CustomUnitEntry> it = this.customUnitService
-												  .listIterator(null, Sorts.ascending("order"), null)
-												  .batchSize(1)
-												  .iterator()
-		) {
-			while (it.hasNext()){
-				CustomUnitEntry curEntry = it.next();
-				log.debug("Registering unit {}", curEntry);
-				UnitUtils.registerAllUnits(curEntry);
-			}
-		}
-		log.info("Done.");
+	}
+	
+	void onStart(
+		@Observes
+		StartupEvent ev
+	) {
+		this.startLogAnnounce();
+		//ensures the unit service bean is initialized, and by extension had existing custom units read in
+		this.customUnitService.count();
 	}
 	
 	void onStop(

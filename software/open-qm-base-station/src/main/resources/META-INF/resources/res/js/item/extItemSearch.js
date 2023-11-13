@@ -1,3 +1,4 @@
+//TODO:: move to class
 function toDataURL(src, callback, outputFormat) {
 	let image = new Image();
 	image.crossOrigin = 'Anonymous';

@@ -1,11 +1,10 @@
 package tech.ebp.oqm.baseStation.utils;
 
 import io.quarkus.mailer.MailTemplate;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.lib.core.rest.user.UserGetResponse;
-
-import javax.enterprise.context.ApplicationScoped;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
 @Slf4j
 @ApplicationScoped
@@ -16,15 +15,15 @@ public class EmailUtils {
 	
 	public MailTemplate.MailTemplateInstance setupDefaultEmailData(
 		MailTemplate template,
-		UserGetResponse userTo,
+		InteractingEntity entityTo,
 		String subject
 	) {
 		//TODO:: add logo image data
 		return template
-				   .to(userTo.getEmail())
+				   .to(entityTo.getEmail())
 				   .from(this.fromEmail)
 				   .subject(subject + " - Open QuarterMaster")
-				   .data("user", userTo)
+				   .data("user", entityTo)
 				   .data("subject", subject);
 	}
 	
