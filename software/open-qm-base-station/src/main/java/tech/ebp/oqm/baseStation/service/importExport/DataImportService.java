@@ -11,15 +11,12 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.time.StopWatch;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.baseStation.model.units.UnitUtils;
-import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
@@ -27,7 +24,7 @@ import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
+import tech.ebp.oqm.baseStation.service.importExport.importer.GenericObjectImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.HasParentImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
@@ -38,6 +35,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -129,9 +127,6 @@ public class DataImportService {
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericObjectImporter<InventoryItem, InventoryItemSearch> itemImporter;
 	private GenericObjectImporter<ItemList, ItemListSearch> itemListImporter;
-	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
-	private GenericImporter<ItemList, ItemListSearch> itemListImporter;
-	private GenericImporter<ItemCheckout, ItemCheckoutSearch> itemCheckoutImporter;
 	
 	@PostConstruct
 	public void setup(){
