@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
@@ -140,7 +141,6 @@ class DataImportServiceTest extends RunningServerTest {
 		customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
 		
-		//TODO:: once we have shit figured out for files
 		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
 		for (int i = 0; i < 5; i++) {
 			FileAttachment attachment = new FileAttachment();
@@ -149,8 +149,7 @@ class DataImportServiceTest extends RunningServerTest {
 			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
 
 			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-
-
+			
 			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
 
 			for(int j = 1; j <= 3; j++){
@@ -288,6 +287,8 @@ class DataImportServiceTest extends RunningServerTest {
 			//TODO:: rest of item types
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
+		
+		FileUtils.copyFile(bundle, new File("build/export.tar.gz"));
 		
 		
 		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null);

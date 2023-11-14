@@ -41,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,7 +51,7 @@ import java.util.List;
 public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
 	
 	GridFSBucket gridFSBucket = null;
-	@Getter(AccessLevel.PRIVATE)
+	@Getter(AccessLevel.PUBLIC)
 	Codec<FileMetadata> fileMetadataCodec;
 	@Getter(AccessLevel.PROTECTED)
 	private TempFileService tempFileService;
@@ -82,9 +83,11 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public void setupBucket(){
 		// should probably be a TODO to remove this, but unsure how we ever might be able to.
 		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.
+		this.getFileObjectService();
 		if(this.getGridFSBucket().find().limit(1).first() == null){
 			FileMetadata metadata = new FileMetadata(
 				"disregard_init_file_disregard",
+				"txt",
 				0,
 				FileHashes.builder().md5("").sha1("").sha256("").build(),
 				FileMetadata.TIKA.detect("plain.txt"),
@@ -102,27 +105,18 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	@Override
 	public String getCollectionName() {
-		return super.getCollectionName() + "-grid";
+		return super.getCollectionName();
+	}
+	
+	public String getBucketName(){
+		return this.getCollectionName() + "-grid";
 	}
 	
 	protected GridFSBucket getGridFSBucket() {
 		if (this.gridFSBucket == null) {
-			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getCollectionName());
+			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getBucketName());
 		}
 		return this.gridFSBucket;
-	}
-	
-	protected Document metadataToDocument(FileMetadata object) {
-		BsonDocument outDoc = new BsonDocument();
-		BsonWriter writer = new BsonDocumentWriter(outDoc);
-		
-		this.getFileMetadataCodec().encode(
-			writer,
-			object,
-			EncoderContext.builder().build()
-		);
-		
-		return new Document(outDoc);
 	}
 	
 	protected FileMetadata documentToMetadata(Document doc) {
@@ -137,11 +131,13 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	protected GridFSUploadOptions getUploadOps(FileMetadata metadata) {
 		return new GridFSUploadOptions()
 				   .chunkSizeBytes(1048576)
-				   .metadata(
-					   this.metadataToDocument(metadata)
-				   );
+				   .metadata(metadata.toDocument(this.getFileMetadataCodec()));
 	}
 	
+	/**
+	 * Gets the mongo service responsible for handling the associated data objects
+	 * @return
+	 */
 	public abstract MongoObjectService<T, S> getFileObjectService();
 	
 	public long count(ClientSession clientSession) {
@@ -152,8 +148,12 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.count(null);
 	}
 	
-	public Iterator<T> iterator() {
+	public Iterator<T> objectIterator() {
 		return this.getFileObjectService().iterator();
+	}
+	
+	public Iterator<GridFSFile> fileIterator() {
+		return this.getGridFSBucket().find().iterator();
 	}
 	
 	public T getObject(ClientSession clientSession, ObjectId id) {
@@ -276,6 +276,16 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public FileContentsGet getLatestFile(String id) throws IOException {
 		return this.getLatestFile(null, new ObjectId(id));
+	}
+	
+	/**
+	 * Gets a file with a specific ObjectId. This id is _not_ the object't id, but the actual id of the revision.
+	 * @param id
+	 * @return
+	 * @throws IOException
+	 */
+	public void getFileContents(ObjectId id, OutputStream os) throws IOException {
+		this.getGridFSBucket().downloadToStream(id, os);
 	}
 	
 	

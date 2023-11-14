@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.media;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ import java.io.IOException;
 @SuperBuilder
 public class FileHashes {
 	
+	@Min(0)
+	private long len;
 	@NonNull
 	@NotNull
 	@NotBlank
@@ -42,6 +45,8 @@ public class FileHashes {
 	 */
 	public static FileHashes fromFile(File file) {
 		FileHashes.Builder<?, ?> builder = FileHashes.builder();
+		
+		builder.len(file.length());
 		
 		try (FileInputStream is = new FileInputStream(file)) {
 			builder.md5(DigestUtils.md5Hex(is));
