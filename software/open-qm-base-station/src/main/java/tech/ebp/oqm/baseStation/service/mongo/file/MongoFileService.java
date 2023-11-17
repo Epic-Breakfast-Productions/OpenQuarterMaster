@@ -112,7 +112,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getCollectionName() + "-grid";
 	}
 	
-	protected GridFSBucket getGridFSBucket() {
+	public GridFSBucket getGridFSBucket() {
 		if (this.gridFSBucket == null) {
 			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getBucketName());
 		}
@@ -128,7 +128,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		);
 	}
 	
-	protected GridFSUploadOptions getUploadOps(FileMetadata metadata) {
+	public GridFSUploadOptions getUploadOps(FileMetadata metadata) {
 		return new GridFSUploadOptions()
 				   .chunkSizeBytes(1048576)
 				   .metadata(metadata.toDocument(this.getFileMetadataCodec()));

@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, M extends MongoHistoriedFileService<T, S>> {
-	
-	
+public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, M extends MongoHistoriedFileService<T, S>> extends Importer {
 	
 	@Getter
 	private final M fileService;
