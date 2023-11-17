@@ -250,11 +250,18 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@WithSpan
-	//TODO:: change to interacting entity
-	public long removeAll(User user) {
-		//TODO:: client session
+	public long removeAll(ClientSession session, InteractingEntity entity) {
 		//TODO:: add history event to each
-		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
+		if(session == null) {
+			return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
+		} else {
+			return this.getCollection().deleteMany(session, new BsonDocument()).getDeletedCount();
+		}
+	}
+	
+	@WithSpan
+	public long removeAll(InteractingEntity entity) {
+		return this.removeAll(null, entity);
 	}
 	
 	/**

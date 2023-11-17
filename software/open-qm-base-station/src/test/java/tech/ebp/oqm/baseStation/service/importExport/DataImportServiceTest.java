@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
@@ -307,15 +308,15 @@ class DataImportServiceTest extends RunningServerTest {
 		this.itemCategoryService.removeAll(testUser);
 		this.itemCategoryService.getHistoryService().removeAll();
 		//TODO:: once we have shit figured out for files
-//		List<FileAttachmentGet> fileAttachments =
-//			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
-//				.stream()
-//				.map((FileAttachment a)->{
-//					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
-//				})
-//				.toList();
-//		this.fileAttachmentService.removeAll(null, testUser);
-//		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
+		List<FileAttachmentGet> fileAttachments =
+			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+				.stream()
+				.map((FileAttachment a)->{
+					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+				})
+				.toList();
+		this.fileAttachmentService.removeAll(null, testUser);
+		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
 		
 		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
 		this.customUnitService.removeAll(testUser);

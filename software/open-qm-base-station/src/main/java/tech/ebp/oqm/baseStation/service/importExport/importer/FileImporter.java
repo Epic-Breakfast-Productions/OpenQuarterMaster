@@ -19,32 +19,21 @@ import java.util.stream.Stream;
 @Slf4j
 public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, M extends MongoHistoriedFileService<T, S>> {
 	
-	protected static List<File> getObjectFiles(Path directory) throws IOException {
-		try (
-			Stream<Path> paths = Files.walk(
-				directory,
-				1
-			)
-		) {
-			return paths
-					   .filter(Files::isRegularFile)
-					   .filter((Path path)->{
-						   return path.toString().endsWith(".json");
-					   })
-					   .map(Path::toFile)
-					   .collect(Collectors.toList());
-		}
-	}
+	
 	
 	@Getter
-	private final M objectService;
+	private final M fileService;
 	
-	protected FileImporter(M mongoService){
-		this.objectService = mongoService;
+	@Getter
+	private final ObjectImporter<T, S, ?> objectImporter;
+	
+	protected FileImporter(M fileService){
+		this.fileService = fileService;
+		this.objectImporter = new GenericImporter<T, S>(fileService.getFileObjectService());
 	}
 	
-	protected Path getObjDirPath(Path directory){
-		return directory.resolve(this.getObjectService().getCollectionName());
+	protected Path getFileObjDirPath(Path directory){
+		return directory.resolve(this.getFileService().getCollectionName());
 	}
 	
 	public abstract long readInObjects(

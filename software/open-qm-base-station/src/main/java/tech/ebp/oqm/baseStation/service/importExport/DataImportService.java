@@ -14,6 +14,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
@@ -22,11 +23,13 @@ import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
+import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.baseStation.service.importExport.importer.GenericFileImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.HasParentImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
@@ -38,6 +41,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -119,7 +123,11 @@ public class DataImportService {
 	@Inject
 	ItemCheckoutService itemCheckoutService;
 	
+	@Inject
+	FileAttachmentService fileAttachmentService;
+	
 	private UnitImporter unitImporter;
+	private GenericFileImporter<FileAttachment, FileAttachmentSearch> fileImporter;
 	private GenericImporter<Image, ImageSearch> imageImporter;
 	private HasParentImporter<ItemCategory, CategoriesSearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
@@ -132,6 +140,7 @@ public class DataImportService {
 		this.unitImporter = new UnitImporter(this.customUnitService);
 		this.itemCategoryImporter = new HasParentImporter<>(this.itemItemCategoryService);
 		this.storageBlockImporter = new HasParentImporter<>(this.storageBlockService);
+		this.fileImporter = new GenericFileImporter<>(this.fileAttachmentService);
 		this.imageImporter = new GenericImporter<>(this.imageService);
 		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
 		this.itemListImporter = new GenericImporter<>(this.itemListService);
@@ -198,6 +207,7 @@ public class DataImportService {
 			session.withTransaction(()->{
 				try {
 					resultBuilder.numUnits(this.unitImporter.readInObjects(session, tempDirPath, importingEntity));
+					resultBuilder.numFileAttachments(this.fileImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numImages(this.imageImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(session, tempDirPath, importingEntity));
 					resultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(session, tempDirPath, importingEntity));

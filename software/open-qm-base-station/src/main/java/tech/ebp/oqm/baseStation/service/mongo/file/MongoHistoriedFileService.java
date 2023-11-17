@@ -5,6 +5,7 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
@@ -239,7 +240,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		GridFSUploadOptions ops = this.getUploadOps(metadata);
 		String filename = object.getFileName();
 		boolean sessionGiven = givenSession != null;
-		if(sessionGiven){
+		if (sessionGiven) {
 			bucket.uploadFromStream(givenSession, filename, is, ops);
 			this.getFileObjectService().addHistoryFor(givenSession, object, interactingEntity, new NewFileVersionEvent());
 			return this.getRevisions(givenSession, id).size() - 1;
@@ -280,25 +281,24 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	public long removeAll(ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;
-		try (
-			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
-		) {
-			if (!sessionGiven) {
-				clientSession = session;
-			}
-			ClientSession finalClientSession = clientSession;
-			this.fileObjectService.listIterator(null, null, null).forEach((T object)->{
-				this.getFileObjectService().remove(finalClientSession, object.getId(), entity);
-				numRemoved.getAndIncrement();
+		if (sessionGiven) {
+			this.getFileObjectService().removeAll(clientSession, entity);
+			GridFSBucket bucket = this.getGridFSBucket();
+			bucket.find(clientSession).forEach((GridFSFile curFile)->{
+				bucket.delete(clientSession, curFile.getId());
 			});
-			if (finalClientSession != null) {
-				this.getGridFSBucket().drop(clientSession);
-			} else {
-				this.getGridFSBucket().drop();
-			}
-			
-			if (!sessionGiven) {
-				clientSession.commitTransaction();
+			this.getFileObjectService().removeAll(clientSession, entity);
+		} else {
+			try (
+				ClientSession innerSession = this.getNewClientSession(true)
+			) {
+				this.getFileObjectService().removeAll(innerSession, entity);
+				GridFSBucket bucket = this.getGridFSBucket();
+				bucket.find(innerSession).forEach((GridFSFile curFile)->{
+					bucket.delete(innerSession, curFile.getId());
+				});
+				this.getFileObjectService().removeAll(innerSession, entity);
+				innerSession.commitTransaction();
 			}
 		}
 		
