@@ -10,11 +10,20 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.rest.file.FileAttachmentUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * TODO:: figure out how to do this with gridfs https://www.mongodb.com/docs/drivers/java/sync/v4.3/fundamentals/gridfs/
@@ -93,5 +102,18 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 //				}
 //			);
 //		}
+	}
+	
+	@WithSpan
+	public int updateFile(ClientSession clientSession, ObjectId fileId, FileAttachmentUploadBody uploadBody, InteractingEntity interactingEntity) throws IOException {
+		FileAttachment attachmentObj = this.getObject(fileId);
+		attachmentObj.setFileName(uploadBody.fileName);
+		attachmentObj.setDescription(uploadBody.description);
+		
+		return super.updateFile(clientSession, attachmentObj, uploadBody, interactingEntity);
+	}
+	@WithSpan
+	public int updateFile(ObjectId fileId, FileAttachmentUploadBody uploadBody, InteractingEntity interactingEntity) throws IOException {
+		return this.updateFile(null, fileId, uploadBody, interactingEntity);
 	}
 }

@@ -26,7 +26,7 @@ service:
       cron: 0 0 * ? * * # Every Hour
   display:
     datetimeFormat: "" #TODO:: determine good time format, use wherever datetimes are displayed
-  tempDir: "/tmp/oqm/baseStation"
+  tempDir: "/tmp/oqm-baseStation"
     
 productLookup:
   providers:

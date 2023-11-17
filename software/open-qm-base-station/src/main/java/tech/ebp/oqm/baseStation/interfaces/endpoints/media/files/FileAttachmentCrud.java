@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.interfaces.endpoints.media.files;
 
 // TODO:: reenable once working #51
 
+import com.mongodb.client.ClientSession;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -11,7 +12,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -59,7 +62,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Getter
 	@Inject
 	FileAttachmentService fileObjectService;
-
+	
 	@POST
 	@Operation(
 		summary = "Adds a new file attachment."
@@ -88,16 +91,17 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	) throws IOException {
 		FileAttachment newAttachmentObj = new FileAttachment();
 		newAttachmentObj.setFileName(body.fileName);
-
+		newAttachmentObj.setDescription(body.description);
+		
 		this.getFileObjectService().add(
 			newAttachmentObj,
 			body,
 			this.getInteractingEntity()
 		);
-
+		
 		return Response.ok(newAttachmentObj.getId()).build();
 	}
-
+	
 	@GET
 	@Operation(
 		summary = "Searches for file attachments."
@@ -127,7 +131,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	) throws IOException {
 		Tuple2<Response.ResponseBuilder, SearchResult<FileAttachment>> results = this.getSearchResponseBuilder(search);
 		SearchResult<FileAttachment> originalResult = results.getItem2();
-
+		
 		SearchResult<FileAttachmentGet> output = new SearchResult<>(
 			results.getItem2().getResults()
 				.stream()
@@ -139,10 +143,11 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			originalResult.isHadSearchQuery(),
 			originalResult.getPagingOptions()
 		);
-
-
-		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(output);;
-
+		
+		
+		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(output);
+		;
+		
 		log.debug("Accept header value: \"{}\"", search.getAcceptHeaderVal());
 		switch (search.getAcceptHeaderVal()) {
 			case MediaType.TEXT_HTML:
@@ -187,10 +192,10 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			default:
 				log.debug("Requestor wanted json, or any other form");
 		}
-
+		
 		return rb.build();
 	}
-
+	
 	@GET
 	@Path("{id}")
 	@Operation(
@@ -226,7 +231,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			)
 		).build();
 	}
-
+	
 	@GET
 	@Path("{id}/data")
 	@Operation(
@@ -248,8 +253,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
 	//	@Override
 	public Response getLatestData(
 		@PathParam("id")
@@ -259,11 +262,55 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		Response.ResponseBuilder response = Response.ok(
 			fileContentsGet.getContents()
 		);
-		response.header("Content-Disposition", "attachment;filename="+fileContentsGet.getMetadata().getOrigName());
+		response.header("Content-Type", fileContentsGet.getMetadata().getMimeType());
+		response.header("Content-Disposition", "attachment;filename=" + fileContentsGet.getMetadata().getOrigName());
 		response.header("hash-md5", fileContentsGet.getMetadata().getHashes().getMd5());
 		response.header("hash-sha1", fileContentsGet.getMetadata().getHashes().getSha1());
 		response.header("hash-sha256", fileContentsGet.getMetadata().getHashes().getSha256());
 		response.header("upload-datetime", fileContentsGet.getMetadata().getUploadDateTime());
 		return response.build();
+	}
+	
+	@PUT
+	@Path("{id}")
+	@Operation(
+		summary = "Adds a new revision to the file."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "File updated.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				implementation = FileAttachmentGet.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	//	@Override
+	public Response update(
+		@PathParam("id")
+		String id,
+		@BeanParam FileAttachmentUploadBody body
+	) throws IOException {
+		this.getFileObjectService().updateFile(
+			new ObjectId(id),
+			body,
+			this.getInteractingEntity()
+		);
+		
+		return Response.ok(
+			FileAttachmentGet.fromFileAttachment(
+				this.getFileObjectService().getFileObjectService().get(id),
+				this.getFileObjectService().getRevisions(new ObjectId(id))
+			)
+		).build();
 	}
 }

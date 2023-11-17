@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
+import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 
 import java.time.Duration;
@@ -26,6 +27,9 @@ public class LifecycleBean {
 	
 	@Inject
 	CustomUnitService customUnitService;
+	
+	@Inject
+	TempFileService tempFileService;
 	
 	private ZonedDateTime startDateTime;
 	
@@ -75,6 +79,7 @@ public class LifecycleBean {
 		this.startLogAnnounce();
 		//ensures the unit service bean is initialized, and by extension had existing custom units read in
 		this.customUnitService.count();
+		this.tempFileService.getTempDir("test", "dir");
 	}
 	
 	void onStop(

@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
@@ -274,6 +275,35 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	
 	public int updateFile(ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.updateFile(null, id, file, interactingEntity);
+	}
+	
+	@WithSpan
+	public int updateFile(ClientSession clientSession, T fileObject, FileUploadBody uploadBody, InteractingEntity interactingEntity) throws IOException {
+		File tempFile = this.getTempFileService().getTempFile(
+			FilenameUtils.removeExtension(fileObject.getFileName()),
+			FilenameUtils.getExtension(fileObject.getFileName()),
+			"uploads"
+		);
+		FileUtils.copyInputStreamToFile(uploadBody.file, tempFile);
+		
+		int output;
+		if(clientSession == null){
+			try (
+				ClientSession session = this.getFileObjectService().getNewClientSession(true);
+			) {
+				output = this.updateFile(session, fileObject.getId(), tempFile, interactingEntity);
+				this.getFileObjectService().update(session, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
+			}
+		} else {
+			output = this.updateFile(clientSession, fileObject.getId(), tempFile, interactingEntity);
+			this.getFileObjectService().update(clientSession, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
+		}
+		
+		if (!tempFile.delete()) {
+			log.warn("Failed to delete temporary upload file: {}", tempFile);
+		}
+		
+		return output;
 	}
 	
 	@WithSpan
