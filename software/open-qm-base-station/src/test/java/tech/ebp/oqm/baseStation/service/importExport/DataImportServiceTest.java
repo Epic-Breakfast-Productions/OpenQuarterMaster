@@ -307,7 +307,6 @@ class DataImportServiceTest extends RunningServerTest {
 		List<ItemCategory> oldItemCategories = this.itemCategoryService.list(null, Sorts.ascending("name"), null);
 		this.itemCategoryService.removeAll(testUser);
 		this.itemCategoryService.getHistoryService().removeAll();
-		//TODO:: once we have shit figured out for files
 		List<FileAttachmentGet> fileAttachments =
 			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
 				.stream()
@@ -347,7 +346,13 @@ class DataImportServiceTest extends RunningServerTest {
 		assertEquals(oldCheckedout.size(), this.itemCheckoutService.list().size());
 		assertEquals(oldCheckedout, this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null));
 		
-		//TODO:: verify file attachments once we got that going
+		//TODO:: verify file attachments
+//		assertEquals(fileAttachments, this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+//										  .stream()
+//										  .map((FileAttachment a)->{
+//											  return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+//										  })
+//										  .toList());
 	}
 	
 	//TODO:: test failed import doesn't break things

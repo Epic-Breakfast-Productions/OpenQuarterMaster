@@ -8,7 +8,6 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -17,19 +16,16 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.media.FileHashes;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -92,7 +88,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.fileObjectService =
-			new FileMetadataService(
+			new FileObjectService(
 				objectMapper,
 				mongoClient,
 				database,
@@ -120,13 +116,16 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		this.fileObjectService = historiedObjectService;
 	}
 	
-	private class FileMetadataService extends MongoHistoriedObjectService<T, S> {
+	/**
+	 * This is the standard impl of the MongoHistoriedObjectService used to store T.
+	 */
+	private class FileObjectService extends MongoHistoriedObjectService<T, S> {
 		
-		FileMetadataService() {//required for DI
+		FileObjectService() {//required for DI
 			super(null, null, null, null, null, null, false, null);
 		}
 		
-		FileMetadataService(
+		FileObjectService(
 			ObjectMapper objectMapper,
 			MongoClient mongoClient,
 			String database,
