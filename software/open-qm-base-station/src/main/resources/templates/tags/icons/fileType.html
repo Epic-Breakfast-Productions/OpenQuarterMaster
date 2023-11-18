@@ -1,3 +1,4 @@
+{! https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types !}
 {#if mimeType.startsWith("audio/")}
 	{#icons/icon icon='file-earmark-music' titleText=(mimeType.split('/')[1].toUpperCase() + " audio")}{/icons/icon}
 {#else if mimeType.startsWith("image/")}
@@ -22,14 +23,14 @@
 	{#icons/icon icon='file-earmark-slides' titleText='Microsoft PowerPoint'}{/icons/icon}
 {#else if mimeType is "application/vnd.ms-excel" || mimeType is "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
 	{#icons/icon icon='file-earmark-spreadsheet' titleText='Microsoft Excel'}{/icons/icon}
-{#else if mimeType is "application/vnd.oasis.opendocument.presentation"}
-	{#icons/icon icon='file-earmark-slides' titleText='Open Document Presentation'}{/icons/icon}
 {#else if mimeType is "application/rtf"}
 	{#icons/icon icon='file-earmark-richtext' titleText='Rich Text'}{/icons/icon}
-{#else if mimeType is "application/vnd.oasis.opendocument.spreadsheet"}
-	{#icons/icon icon='file-earmark-spreadsheet' titleText='Open Document Spreadsheet'}{/icons/icon}
 {#else if mimeType is "application/vnd.oasis.opendocument.text"}
 	{#icons/icon icon='file-earmark-richtext' titleText='Open Document Text'}{/icons/icon}
+{#else if mimeType is "application/vnd.oasis.opendocument.spreadsheet"}
+	{#icons/icon icon='file-earmark-spreadsheet' titleText='Open Document Spreadsheet'}{/icons/icon}
+{#else if mimeType is "application/vnd.oasis.opendocument.presentation"}
+	{#icons/icon icon='file-earmark-slides' titleText='Open Document Presentation'}{/icons/icon}
 {#else if mimeType is "application/pdf"}
 	{#icons/icon icon='file-earmark-pdf' titleText='PDF'}{/icons/icon}
 {#else}
