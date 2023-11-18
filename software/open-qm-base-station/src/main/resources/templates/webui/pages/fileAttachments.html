@@ -1,0 +1,73 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Files' page='files'}
+{#styleSheets}
+<link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+{/styleSheets}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+<div class="row mb-2">
+    <div class="col-6 d-grid gap-2 text-center">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+            {#icons/add}{/icons/add} Add File
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    {#icons/search}{/icons/search}
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    {#search/image/imageSearchForm id='mainImageSearch'}
+                    {/search/image/imageSearchForm}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="imageSearchresults">
+    {!{#search/image/imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch' pagingCalculations=pagingCalculations}!}
+    {!{/search/image/imageSearchResults}!}
+					{#icons/fileType mimeType="text/plain"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="text/csv"}{/icons/fileType} <br />
+	{#icons/fileType mimeType="application/octet-stream"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="audio/aac"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="video/webm"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="image/svg"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="font/woff"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="application/x-bzip2"}{/icons/fileType} <br />
+	{#icons/fileType mimeType="application/msword"}{/icons/fileType} <br />
+	{#icons/fileType mimeType="application/vnd.ms-powerpoint"}{/icons/fileType} <br />
+	{#icons/fileType mimeType="application/vnd.ms-excel"}{/icons/fileType} <br />
+	{#icons/fileType mimeType="application/pdf"}{/icons/fileType} <br />
+					{#icons/fileType mimeType="foo"}{/icons/fileType} <br />
+</div>
+
+{/pageContent}
+{#modals}
+
+{/modals}
+{#scripts}
+    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="/res/js/search.js"></script>
+    <script src="/res/js/historySearch.js"></script>
+    <script src="/res/js/obj/objEdit.js"></script>
+    <script src="/res/js/obj/objView.js"></script>
+{/scripts}
+{#pageScript}
+<script>
+
+</script>
+{/pageScript}
+
+{/include}
