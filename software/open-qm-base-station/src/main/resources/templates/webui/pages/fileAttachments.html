@@ -9,7 +9,7 @@
 <div class="row mb-2">
     <div class="col-6 d-grid gap-2 text-center">
         <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+                data-bs-target="#fileAttachmentAddEditModal" onclick="">
             {#icons/add}{/icons/add} Add File
         </button>
     </div>
@@ -55,6 +55,9 @@
 
 {/pageContent}
 {#modals}
+	
+	{#fileAttachment/FileAttachmentAddEditModal}
+	{/fileAttachment/FileAttachmentAddEditModal}
 
 {/modals}
 {#scripts}
@@ -63,6 +66,8 @@
     <script src="/res/js/historySearch.js"></script>
     <script src="/res/js/obj/objEdit.js"></script>
     <script src="/res/js/obj/objView.js"></script>
+    <script src="/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+    <script src="/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
 {/scripts}
 {#pageScript}
 <script>
