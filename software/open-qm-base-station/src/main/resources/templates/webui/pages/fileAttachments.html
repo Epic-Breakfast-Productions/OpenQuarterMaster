@@ -9,7 +9,7 @@
 <div class="row mb-2">
     <div class="col-6 d-grid gap-2 text-center">
         <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                data-bs-target="#fileAttachmentAddEditModal" onclick="">
+                data-bs-target="#fileAttachmentAddEditModal" onclick="FileAttachmentAddEdit.setupForAdd();">
             {#icons/add}{/icons/add} Add File
         </button>
     </div>
@@ -28,16 +28,21 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/image/imageSearchForm id='mainImageSearch'}
-                    {/search/image/imageSearchForm}
+                    {#fileAttachment/fileAttachmentSearchForm id='fileAttachmentSearchForm'}
+                    {/fileAttachment/fileAttachmentSearchForm}
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div id="imageSearchresults">
-    {!{#search/image/imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch' pagingCalculations=pagingCalculations}!}
-    {!{/search/image/imageSearchResults}!}
+<div class="row">
+    <div class="col table-responsive">
+        <table class=" table table-bordered table-striped table-hover table-sm">
+			{#fileAttachment/fileAttachmentSearchResults searchResults=searchResult actionType='full' searchFormId='fileAttachmentSearchForm' pagingCalculations=pagingCalculations}
+			{/fileAttachment/fileAttachmentSearchResults}
+        </table>
+    </div>
+</div>
 					{#icons/fileType mimeType="text/plain"}{/icons/fileType} <br />
 					{#icons/fileType mimeType="text/csv"}{/icons/fileType} <br />
 	{#icons/fileType mimeType="application/octet-stream"}{/icons/fileType} <br />
@@ -51,7 +56,6 @@
 	{#icons/fileType mimeType="application/vnd.ms-excel"}{/icons/fileType} <br />
 	{#icons/fileType mimeType="application/pdf"}{/icons/fileType} <br />
 					{#icons/fileType mimeType="foo"}{/icons/fileType} <br />
-</div>
 
 {/pageContent}
 {#modals}

@@ -1,0 +1,82 @@
+{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet> searchResults}
+{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - itemService - the service to get items
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
+!}
+  <thead>
+  <tr>
+    <td colspan="6" class="text-center searchResultsContainer">
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    </td>
+  </tr>
+  <tr>
+    <th scope="col" style="width: 25px;">Type</th>
+    <th scope="col">File Name</th>
+    <th scope="col" style="width: 150px;">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {#if searchResults.getResults().isEmpty()}
+  <tr>
+    <td colspan="6" class="text-center">
+      <h2>
+        No Files
+      </h2>
+      {#if actionType == 'full'}
+      <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+			data-bs-target="#fileAttachmentAddEditModal" onclick="FileAttachmentAddEdit.setupForAdd();">
+          {#icons/add}{/icons/add} Add File
+        </button>
+      </div>
+      {/if}
+    </td>
+  </tr>
+  {#else}
+  {#for result in searchResults.getResults()}
+  <tr class="fileAttachmentResultRow align-middle">
+    <td>{#icons/fileType mimeType=result.getLatestRevision().getMimeType()}{/icons/fileType}</td>
+    <td>{result.getLatestRevision().getOrigName()}</td>
+    {#if actionType == 'full'}
+    <td>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
+        {#icons/view}{/icons/view}
+      </button>
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
+        {#icons/edit}{/icons/edit}
+      </button>
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
+        {#icons/addSubTrans}{/icons/addSubTrans}
+      </button>
+      <button type="button" class="btn btn-sm btn-danger" title="Remove"
+              onclick="removeItem('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
+    {#else if actionType == 'select'}
+    <td class="d-grid gap-2">
+      <button type="button" class="btn btn-sm btn-success" title="Select {result.getFileName()}"
+              data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
+              onclick="">
+        {#icons/select}{/icons/select} Select
+      </button>
+      {/if}
+    </td>
+  </tr>
+  {/for}
+  {/if}
+  </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="6" class="text-center searchResultsContainer">
+      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    </td>
+  </tr>
+  </tfoot>
