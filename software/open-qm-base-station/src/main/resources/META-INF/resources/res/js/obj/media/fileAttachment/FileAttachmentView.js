@@ -1,3 +1,6 @@
 const FileAttachmentView = {
 
+	setupView(fileId){
+
+	}
 };

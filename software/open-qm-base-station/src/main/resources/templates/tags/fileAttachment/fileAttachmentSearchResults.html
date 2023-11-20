@@ -15,20 +15,21 @@
 !}
   <thead>
   <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
+    <td colspan="4" class="text-center searchResultsContainer">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
   <tr>
     <th scope="col" style="width: 25px;" class="text-center">Type</th>
     <th scope="col">File Name</th>
-    <th scope="col" style="width: 150px;">Actions</th>
+    <th scope="col" class="text-center" style="width: 70px;"># Revisions</th>
+    <th scope="col" style="width: 200px;">Actions</th>
   </tr>
   </thead>
   <tbody>
   {#if searchResults.getResults().isEmpty()}
   <tr>
-    <td colspan="6" class="text-center">
+    <td colspan="4" class="text-center">
       <h2>
         No Files
       </h2>
@@ -47,18 +48,23 @@
   <tr class="fileAttachmentResultRow align-middle">
     <td class="text-center" style="font-size: 1.5em;">{#icons/fileType mimeType=result.getLatestRevision().getMimeType()}{/icons/fileType}</td>
     <td>{result.getLatestRevision().getOrigName()}</td>
+    <td class="text-center">{result.getRevisions().size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
+		
+		<button type="button" class="btn btn-sm btn-info" title="View Content" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{result.getId()}');">
+			{#icons/view}{/icons/view}<sup>{#icons/icon icon='body-text'}{/icons/icon}</sup>
+		</button>
+		<a href="/api/v1/media/fileAttachments/{result.getId()}/data" class="btn btn-sm btn-success" title="Download" target="_blank">
+			{#icons/download}{/icons/download}
+		</a>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
-        {#icons/addSubTrans}{/icons/addSubTrans}
-      </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
+      <button type="button" class="btn btn-sm btn-danger" title="Remove File"
               onclick="removeItem('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
@@ -75,7 +81,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
+    <td colspan="4" class="text-center searchResultsContainer">
       {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
     </td>
   </tr>
