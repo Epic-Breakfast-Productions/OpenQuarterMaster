@@ -9,6 +9,8 @@
 	{#icons/icon icon='file-earmark-font' titleText=(mimeType.split('/')[1].toUpperCase() + " font")}{/icons/icon}
 {#else if mimeType is "text/plain"}
 	{#icons/icon icon='file-earmark-text' titleText='Plain Text'}{/icons/icon}
+{#else if mimeType is "text/x-web-markdown"}
+	{#icons/icon icon='filetype-md' titleText='Markdown'}{/icons/icon}
 {#else if mimeType is "text/csv"}
 	{#icons/icon icon='filetype-csv' titleText='CSV'}{/icons/icon}
 {#else if mimeType is "application/json"}

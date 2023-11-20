@@ -3,12 +3,17 @@
 	</div>
 </div>
 <form id="fileAttachmentAddEditForm">
+	<input type="hidden" id="fileAttachmentAddEditFormAction">
 	<div class="row">
 		<div class="col" id="">
-			<div>
+			<div class="mb-3">
 				<label for="fileAttachmentAddEditFormFileInput" class="form-label">File:</label>
-				<input class="form-control form-control-lg" id="fileAttachmentAddEditFormFileInput" type="file" aria-describedby="fileAttachmentAddEditFormFileInputHelp">
+				<input class="form-control form-control-lg" id="fileAttachmentAddEditFormFileInput" type="file" aria-describedby="fileAttachmentAddEditFormFileInputHelp" required>
 				<div id="fileAttachmentAddEditFormFileInputHelp" class="form-text">The file attachment to add. Can drag and drop onto the input.</div>
+			</div>
+			<div class="mb-3">
+				<label for="fileAttachmentAddEditFormDescriptionInput" class="form-label">File Description</label>
+				<textarea class="form-control" id="fileAttachmentAddEditFormDescriptionInput" rows="3" required></textarea>
 			</div>
 		</div>
 	</div>

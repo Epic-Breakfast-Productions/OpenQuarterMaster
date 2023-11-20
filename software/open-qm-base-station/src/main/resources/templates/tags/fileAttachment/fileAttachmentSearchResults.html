@@ -20,7 +20,7 @@
     </td>
   </tr>
   <tr>
-    <th scope="col" style="width: 25px;">Type</th>
+    <th scope="col" style="width: 25px;" class="text-center">Type</th>
     <th scope="col">File Name</th>
     <th scope="col" style="width: 150px;">Actions</th>
   </tr>
@@ -45,7 +45,7 @@
   {#else}
   {#for result in searchResults.getResults()}
   <tr class="fileAttachmentResultRow align-middle">
-    <td>{#icons/fileType mimeType=result.getLatestRevision().getMimeType()}{/icons/fileType}</td>
+    <td class="text-center" style="font-size: 1.5em;">{#icons/fileType mimeType=result.getLatestRevision().getMimeType()}{/icons/fileType}</td>
     <td>{result.getLatestRevision().getOrigName()}</td>
     {#if actionType == 'full'}
     <td>
