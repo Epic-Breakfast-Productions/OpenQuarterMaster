@@ -35,6 +35,7 @@
 	{#icons/icon icon='file-earmark-slides' titleText='Open Document Presentation'}{/icons/icon}
 {#else if mimeType is "application/pdf"}
 	{#icons/icon icon='file-earmark-pdf' titleText='PDF'}{/icons/icon}
+{! TODO:: pem; "application/x-x509-cert; format=pem" !}
 {#else}
 	{#icons/icon icon='file-earmark' titleText=mimeType}{/icons/icon}
 {/if}
