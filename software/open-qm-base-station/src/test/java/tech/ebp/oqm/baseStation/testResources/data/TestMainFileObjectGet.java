@@ -1,29 +1,32 @@
-package tech.ebp.oqm.baseStation.model.rest.media.file;
+package tech.ebp.oqm.baseStation.testResources.data;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
+import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 @ToString(callSuper = true)
-public class FileAttachmentGet extends FileAttachment implements FileGet {
+public class TestMainFileObjectGet extends TestMainFileObject implements FileGet {
 	
-	public static FileAttachmentGet fromFileAttachment(
-		FileAttachment a,
+	public static TestMainFileObjectGet fromTestFileObject(
+		TestMainFileObject a,
 		List<FileMetadata> revisions
 	) {
-		return (FileAttachmentGet) (
-			(FileAttachmentGet) new FileAttachmentGet()
-									.setDescription(a.getDescription())
-		)
+		return (TestMainFileObjectGet) new TestMainFileObjectGet()
 									   .setRevisions(revisions)
 									   .setFileName(a.getFileName())
 									   .setAttributes(a.getAttributes())
@@ -32,5 +35,4 @@ public class FileAttachmentGet extends FileAttachment implements FileGet {
 	}
 	
 	private List<FileMetadata> revisions;
-	
 }

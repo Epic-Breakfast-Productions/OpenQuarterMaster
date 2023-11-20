@@ -14,6 +14,7 @@ import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
@@ -125,9 +126,9 @@ public class DataExportService {
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
 	
-	private static <T extends FileMainObject, S extends SearchObject<T>> void recordRecords(
+	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
 		File tempDir,
-		MongoFileService<T, S> fileService,
+		MongoFileService<T, S, G> fileService,
 		boolean includeHistory
 	) {
 		String dataTypeName = fileService.getCollectionName();

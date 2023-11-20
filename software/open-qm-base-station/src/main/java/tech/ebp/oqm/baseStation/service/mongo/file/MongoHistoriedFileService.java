@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
+public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoFileService<T, S, G> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	

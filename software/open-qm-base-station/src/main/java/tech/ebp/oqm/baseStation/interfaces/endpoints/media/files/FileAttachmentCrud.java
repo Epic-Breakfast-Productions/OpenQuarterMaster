@@ -18,10 +18,8 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -38,7 +36,6 @@ import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.rest.file.FileAttachmentUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -53,7 +50,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/media/fileAttachments")
 @Tags({@Tag(name = "File Attachments", description = "Endpoints for File Attachments.")})
 @RequestScoped
-public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileAttachmentSearch, FileAttachmentUploadBody> {
+public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileAttachmentSearch, FileAttachmentGet, FileAttachmentUploadBody> {
 	
 	@Inject
 	@Location("tags/search/item/itemSearchResults.html")
@@ -132,17 +129,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		Tuple2<Response.ResponseBuilder, SearchResult<FileAttachment>> results = this.getSearchResponseBuilder(search);
 		SearchResult<FileAttachment> originalResult = results.getItem2();
 		
-		SearchResult<FileAttachmentGet> output = new SearchResult<>(
-			results.getItem2().getResults()
-				.stream()
-				.map((FileAttachment a)->{
-					return FileAttachmentGet.fromFileAttachment(a, this.getFileObjectService().getRevisions(a.getId()));
-				})
-				.collect(Collectors.toList()),
-			originalResult.getNumResultsForEntireQuery(),
-			originalResult.isHadSearchQuery(),
-			originalResult.getPagingOptions()
-		);
+		SearchResult<FileAttachmentGet> output = this.fileObjectService.searchToGet(originalResult);
 		
 		
 		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(output);

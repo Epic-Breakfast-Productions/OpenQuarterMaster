@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
@@ -32,12 +33,12 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
  */
 @Slf4j
 @NoArgsConstructor
-public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, F extends FileUploadBody> extends ObjectProvider {
+public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, F extends FileUploadBody> extends ObjectProvider {
 	
 	@Getter
 	private Template historyRowsTemplate;
 	
-	public abstract MongoHistoriedFileService<T, S> getFileObjectService();
+	public abstract MongoHistoriedFileService<T, S, G> getFileObjectService();
 	
 	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(

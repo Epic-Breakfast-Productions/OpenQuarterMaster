@@ -20,7 +20,6 @@ import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;

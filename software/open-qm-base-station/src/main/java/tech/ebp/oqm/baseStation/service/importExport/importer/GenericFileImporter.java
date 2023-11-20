@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
@@ -32,10 +33,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public class GenericFileImporter<T extends FileMainObject, S extends SearchObject<T>> extends FileImporter<T, S, MongoHistoriedFileService<T, S>> {
+public class GenericFileImporter<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends FileImporter<T, S, G, MongoHistoriedFileService<T, S, G>> {
 	
 	
-	public GenericFileImporter(MongoHistoriedFileService<T, S> fileService) {
+	public GenericFileImporter(MongoHistoriedFileService<T, S, G> fileService) {
 		super(fileService);
 	}
 	

@@ -3,6 +3,7 @@ package tech.ebp.oqm.baseStation.service.importExport.importer;
 import com.mongodb.client.ClientSession;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, M extends MongoHistoriedFileService<T, S>> extends Importer {
+public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, M extends MongoHistoriedFileService<T, S, G>> extends Importer {
 	
 	@Getter
 	private final M fileService;

@@ -28,13 +28,17 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.media.FileHashes;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
+import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 
 import java.io.ByteArrayInputStream;
@@ -46,9 +50,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoService<T, S> {
+public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoService<T, S> {
 	
 	GridFSBucket gridFSBucket = null;
 	@Getter(AccessLevel.PUBLIC)
@@ -139,6 +144,21 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 * @return
 	 */
 	public abstract MongoObjectService<T, S> getFileObjectService();
+	
+	public abstract G fileObjToGet(T obj);
+	
+	public SearchResult<G> searchToGet(SearchResult<T> results){
+		SearchResult<G> output = new SearchResult<>(
+			results.getResults()
+				.stream()
+				.map(this::fileObjToGet)
+				.collect(Collectors.toList()),
+			results.getNumResultsForEntireQuery(),
+			results.isHadSearchQuery(),
+			results.getPagingOptions()
+		);
+		return output;
+	}
 	
 	public long count(ClientSession clientSession) {
 		return this.getFileObjectService().count(clientSession);

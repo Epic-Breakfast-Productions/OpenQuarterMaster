@@ -15,6 +15,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.rest.file.FileAttachmentUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
@@ -30,7 +31,7 @@ import java.io.InputStream;
  */
 @Slf4j
 @ApplicationScoped
-public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch> {
+public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileAttachmentSearch, FileAttachmentGet> {
 	
 	FileAttachmentService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -66,6 +67,10 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 	}
 	
+	@Override
+	public FileAttachmentGet fileObjToGet(FileAttachment obj) {
+		return FileAttachmentGet.fromFileAttachment(obj, this.getRevisions(obj.getId()));
+	}
 	
 	private static class FileAttachmentObjectService extends MongoHistoriedObjectService<FileAttachment, FileAttachmentSearch> {
 		

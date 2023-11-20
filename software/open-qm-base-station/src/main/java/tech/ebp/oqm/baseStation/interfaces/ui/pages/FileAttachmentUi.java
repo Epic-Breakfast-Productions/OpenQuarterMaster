@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
@@ -46,15 +48,16 @@ public class FileAttachmentUi extends UiProvider {
 	public Response images(
 		@BeanParam FileAttachmentSearch fileAttachmentSearch
 	) {
-//		SearchResult<Image> searchResults = this.fileAttachmentService.search(fileAttachmentSearch, true);
+		SearchResult<FileAttachmentGet> searchResults = this.fileAttachmentService.searchToGet(
+			this.fileAttachmentService.getFileObjectService().search(fileAttachmentSearch, true)
+		);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(
 					images,
-					this.getInteractingEntity()
-//					,					searchResults
+					this.getInteractingEntity(),
+					searchResults
 				)
-				.data("showSearch", false)//TODO:: temporary
 				.data("searchObject", fileAttachmentSearch)
 				.data("historySearchObject", new HistorySearch()),
 			MediaType.TEXT_HTML_TYPE

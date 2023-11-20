@@ -11,6 +11,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang3.time.StopWatch;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
@@ -19,6 +20,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
@@ -127,7 +129,7 @@ public class DataImportService {
 	FileAttachmentService fileAttachmentService;
 	
 	private UnitImporter unitImporter;
-	private GenericFileImporter<FileAttachment, FileAttachmentSearch> fileImporter;
+	private GenericFileImporter<FileAttachment, FileAttachmentSearch, FileAttachmentGet> fileImporter;
 	private GenericImporter<Image, ImageSearch> imageImporter;
 	private HasParentImporter<ItemCategory, CategoriesSearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
