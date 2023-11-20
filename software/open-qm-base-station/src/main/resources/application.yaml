@@ -142,8 +142,10 @@ quarkus:
     theme: flattop
     footer: With ❤️, EBP
   http:
+    body:
+      preallocate-body-buffer: true
     limits:
-      max-body-size: 95M
+      max-body-size: 500M
     auth:
       proactive: false
       permission:
