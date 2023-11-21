@@ -48,8 +48,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -308,5 +311,12 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		this.getGridFSBucket().downloadToStream(id, os);
 	}
 	
-	
+	/**
+	 * Extend this to provide validation of removal objects; checking dependencies, etc.
+	 * @param clientSession The client session, null if none
+	 * @param objectToRemove The object being removed
+	 */
+	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession clientSession, T objectToRemove){
+		return new HashMap<>();
+	}
 }

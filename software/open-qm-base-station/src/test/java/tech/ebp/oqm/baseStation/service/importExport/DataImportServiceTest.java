@@ -5,6 +5,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
@@ -19,6 +20,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.baseStation.testResources.RetryRule;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
@@ -100,6 +102,9 @@ class DataImportServiceTest extends RunningServerTest {
 	ItemCheckoutService itemCheckoutService;
 	@Inject
 	TempFileService tempFileService;
+	
+	@Rule
+	RetryRule retryRule = new RetryRule(3);
 	
 	@Test
 	public void testImportService() throws IOException {
