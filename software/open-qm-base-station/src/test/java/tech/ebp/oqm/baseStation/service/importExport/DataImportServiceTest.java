@@ -8,7 +8,6 @@ import org.bson.types.ObjectId;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
-import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.service.TempFileService;

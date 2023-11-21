@@ -120,8 +120,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	//	@Override
 	public Response search(
 		@BeanParam FileAttachmentSearch search

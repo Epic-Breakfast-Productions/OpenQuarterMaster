@@ -1,0 +1,24 @@
+<div class="mb-3 row">
+	<label class="col-sm-2 col-form-label">Files</label>
+	<div class="col-sm-10">
+		<table class="table table-sm table-bordered fileAttachmentSelectInputTable">
+			<thead>
+				<tr>
+					<th>File</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody class="fileAttachmentSelectInputTableContent">
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="2">
+						<button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#fileAttachmentSearchSelectModal" title="Add File" onclick="FileAttachmentSearchSelect.setup($(this).parent('table').find('.fileAttachmentSelectInputTableContent'));">
+							{#icons/add}{/icons/add} Add File
+						</button>
+					</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
