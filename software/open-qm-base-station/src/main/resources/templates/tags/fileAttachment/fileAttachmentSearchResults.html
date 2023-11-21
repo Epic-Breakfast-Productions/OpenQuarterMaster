@@ -54,10 +54,6 @@
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{result.getId()}');">
         {#icons/view}{/icons/view}
       </button>
-		
-		<button type="button" class="btn btn-sm btn-info" title="View Content" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{result.getId()}');">
-			{#icons/view}{/icons/view}<sup>{#icons/icon icon='body-text'}{/icons/icon}</sup>
-		</button>
 		<a href="/api/v1/media/fileAttachments/{result.getId()}/data" class="btn btn-sm btn-success" title="Download" target="_blank">
 			{#icons/download}{/icons/download}
 		</a>
