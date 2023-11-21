@@ -138,12 +138,12 @@ const FileAttachmentView = {
 						'        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fileAttachmentViewRevisionsAccord-' + i + '" aria-expanded="false" aria-controls="fileAttachmentViewRevisionsAccord-' + i + '">\n' +
 						'            ' + i + (i === 0 ? " (Latest)" : "") + '\n' +
 						'        </button>\n' +
-						'\t\t\t\t</h2>\n' +
-						'\t\t\t\t<div id="fileAttachmentViewRevisionsAccord-' + i + '" class="accordion-collapse collapse" data-bs-parent="#fileAttachmentViewRevisionsAccord">\n' +
-						'\t\t\t\t\t<div class="accordion-body" id="fileAttachmentViewRevisionsAccordBody-' + i + '">\n' +
-						'\t\t\t\t\t</div>\n' +
-						'\t\t\t\t</div>\n' +
-						'\t\t\t</div>');
+						'    </h2>\n' +
+						'    <div id="fileAttachmentViewRevisionsAccord-' + i + '" class="accordion-collapse collapse" data-bs-parent="#fileAttachmentViewRevisionsAccord">\n' +
+						'        <div class="accordion-body" id="fileAttachmentViewRevisionsAccordBody-' + i + '">\n' +
+						'        </div>\n' +
+						'    </div>\n' +
+						'</div>');
 					newAccordItem.find("#fileAttachmentViewRevisionsAccordBody-" + i).append(FileAttachmentView.createFileMetadataView(curMetadata));
 					FileAttachmentView.revisionsAccord.append(newAccordItem);
 				})
