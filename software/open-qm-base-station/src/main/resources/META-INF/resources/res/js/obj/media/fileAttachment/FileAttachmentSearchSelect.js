@@ -27,6 +27,30 @@ const FileAttachmentSearchSelect = {
 
 	resetInput(inputContainerJq){
 		inputContainerJq.find(".fileAttachmentSelectInputTableContent").text("");
+	},
+	getFileListFromInput(inputContainerJq){
+		let output = [];
+		inputContainerJq.find(".selectedFile").each(function (i, selectedFileRow){
+			output.push($(selectedFileRow).data("id"));
+		});
+		console.log("Got the following file ids: ", output);
+
+		return output;
+	},
+	populateFileInputFromObject(inputContainerJq, fileIdList, spinnerContainer, failMessagesDiv){
+		console.log("Populating file attachment input.");
+		this.curResultContainer = inputContainerJq.find(".fileAttachmentSelectInputTableContent");
+
+		fileIdList.forEach(function (curId){
+			doRestCall({
+				spinnerContainer: null,
+				url: "/api/v1/media/fileAttachments/" + curId,
+				failMessagesDiv: failMessagesDiv,
+				done: async function (data) {
+					FileAttachmentSearchSelect.selectFile(curId, data.revisions[0].origName);
+				}
+			});
+		});
 	}
 };
 

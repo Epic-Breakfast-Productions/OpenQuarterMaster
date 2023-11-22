@@ -136,6 +136,12 @@ const ItemAddEdit = {
 				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
 				addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
 				addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
+				FileAttachmentSearchSelect.populateFileInputFromObject(
+					ItemAddEdit.fileInput,
+					data.attachedFiles,
+					ItemAddEdit.addEditItemModal,
+					ItemAddEdit.addEditItemFormMessages
+				);
 
 				ItemAddEdit.addEditItemIdInput.val(data.id);
 				ItemAddEdit.addEditItemNameInput.val(data.name);
@@ -541,7 +547,8 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
 		categories: ItemAddEdit.addEditItemCategoriesInput.val(),
-		storageMap: {}
+		storageMap: {},
+		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
 	};
 
 	let setAmountStoredVars = function () {
