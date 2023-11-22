@@ -66,7 +66,7 @@
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getFileName()}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="">
+              onclick="FileAttachmentSearchSelect.selectFile('{result.getId()}', '{result.getLatestRevision().getOrigName()}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}

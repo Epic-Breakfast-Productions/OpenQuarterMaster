@@ -13,7 +13,7 @@
 			<tfoot>
 				<tr>
 					<th colspan="2">
-						<button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#fileAttachmentSearchSelectModal" title="Add File" onclick="FileAttachmentSearchSelect.setup($(this).parent('table').find('.fileAttachmentSelectInputTableContent'));">
+						<button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#fileAttachmentSearchSelectModal" title="Add File" onclick="FileAttachmentSearchSelect.setup($(this).parent().parent().parent().parent().find('.fileAttachmentSelectInputTableContent'));">
 							{#icons/add}{/icons/add} Add File
 						</button>
 					</th>

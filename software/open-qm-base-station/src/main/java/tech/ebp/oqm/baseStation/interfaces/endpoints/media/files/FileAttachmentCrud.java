@@ -53,7 +53,7 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileAttachmentSearch, FileAttachmentGet, FileAttachmentUploadBody> {
 	
 	@Inject
-	@Location("tags/search/item/itemSearchResults.html")
+	@Location("tags/fileAttachment/fileAttachmentSearchResults.html")
 	Template fileAttachmentSearchResultsTemplate;
 	
 	@Getter
@@ -96,7 +96,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			this.getInteractingEntity()
 		);
 		
-		return Response.ok(newAttachmentObj.getId()).build();
+		return Response.ok(this.getFileObjectService().fileObjToGet(newAttachmentObj)).build();
 	}
 	
 	@GET

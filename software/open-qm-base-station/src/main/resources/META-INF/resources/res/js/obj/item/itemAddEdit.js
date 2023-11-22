@@ -22,6 +22,7 @@ const ItemAddEdit = {
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
+	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
 	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
 	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
 	addEditItemImagesSelected: $('#addEditItemForm').find(".imagesSelected"),
@@ -30,6 +31,7 @@ const ItemAddEdit = {
 	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
 	addEditItemPricePerUnitNameRow: $('#addEditItemPricePerUnitNameRow'),
 	compatibleUnitOptions: "",
+
 
 	numAmountStoredClicked: 0,
 	numTrackedStoredClicked: 0,
@@ -78,6 +80,7 @@ const ItemAddEdit = {
 		Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
 		ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
+		FileAttachmentSearchSelect.resetInput(this.fileInput);
 
 		ItemAddEdit.setIdAttField();
 		UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);

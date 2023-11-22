@@ -1,27 +1,32 @@
 const FileAttachmentSearchSelect = {
 	curResultContainer: null,
 	selectSearch: $("#fileAttachmentSearchSelectForm"),
-	fileAttachmentSearchSelectModal: $("#fileAttachmentSearchSelectModal"),
+	modal: $("#fileAttachmentSearchSelectModal"),
+	modalCloseButton: $("#fileAttachmentSearchSelectModalLabelCloseButton"),
+	modalBs: new bootstrap.Modal("#fileAttachmentSearchSelectModal"),
 	fileSearchResults: $("#fileAttachmentSearchSelectResults"),
-
-	/**
-	 * Creates the result html to add to the results
-	 */
-	addResult(){
-		let output = $('<tr></tr>');
-		//TODO:: add id info to row
-
-		output.append($('<td></td>').text("filename TODO"));
-		output.append($('<td></td>').text("deleteButton TODO"));
-
-		this.curResultContainer.append(output);
-	},
 
 	setup(resultContainerJq){
 		console.log("Setting up for file attachment search select.");
 		FileAttachmentAddEdit.setupForAdd();
 		this.curResultContainer = resultContainerJq;
 		this.selectSearch.submit();
+	},
+
+	selectFile(fileId, fileName){
+		console.log("User selected file ", fileId);
+
+		let output = $('<tr class="selectedFile"></tr>');
+		output.data("id", fileId);
+
+		output.append($('<td></td>').text(fileName));
+		output.append($('<td><button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().remove();" title="Remove">'+Icons.remove+'</button></td>'));
+
+		this.curResultContainer.append(output);
+	},
+
+	resetInput(inputContainerJq){
+		inputContainerJq.find(".fileAttachmentSelectInputTableContent").text("");
 	}
 };
 
@@ -42,8 +47,8 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 			"accept": "text/html",
 			"actionType": "select",
 			"searchFormId": "imageSearchSelectForm",
-			"inputIdPrepend": FileAttachmentSearchSelect.fileAttachmentSearchSelectModal.attr("data-bs-inputIdPrepend"),
-			"otherModalId": FileAttachmentSearchSelect.fileAttachmentSearchSelectModal.attr("data-bs-otherModalId")
+			"inputIdPrepend": FileAttachmentSearchSelect.modal.attr("data-bs-inputIdPrepend"),
+			"otherModalId": FileAttachmentSearchSelect.modal.attr("data-bs-otherModalId")
 		},
 		async: false,
 		done: function (data) {
@@ -51,4 +56,10 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 			FileAttachmentSearchSelect.fileSearchResults.html(data);
 		}
 	});
-})
+});
+
+FileAttachmentAddEdit.fileAttachmentAdded = function (data){
+	console.log("Selecting newly addd file attachment: ", data);
+	FileAttachmentSearchSelect.selectFile(data.id, data.revisions[0].origName);
+	FileAttachmentSearchSelect.modalCloseButton.click();
+}
