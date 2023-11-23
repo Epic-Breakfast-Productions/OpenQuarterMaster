@@ -149,5 +149,35 @@ const FileAttachmentView = {
 				})
 			}
 		});
+	},
+	resetObjectView(fileObjViewContainerJq){
+		fileObjViewContainerJq.find("#fileAttachmentListTableContent").text("");
+		fileObjViewContainerJq.hide();
+	},
+	setupObjectView(fileObjViewContainerJq, fileList, failMessagesDiv){
+		this.resetObjectView(fileObjViewContainerJq);
+		if(fileList.length === 0){
+			console.log("No files to show.");
+			return;
+		}
+
+		let fileShowContent = fileObjViewContainerJq.find(".fileAttachmentListTableContent");
+
+		fileList.forEach(function (curFileId, i){
+			doRestCall({
+				spinnerContainer: null,
+				url: "/api/v1/media/fileAttachments/" + curFileId,
+				failMessagesDiv: failMessagesDiv,
+				done: async function (data) {
+					let nextRow = $('<tr></tr>');
+					nextRow.append($('<td></td>').text(data.revisions[0].origName));
+					nextRow.append($('<td>TODO:: view</td>'));
+					fileShowContent.append(nextRow);
+				}
+			});
+		});
+
+		fileObjViewContainerJq.show();
+
 	}
 };
