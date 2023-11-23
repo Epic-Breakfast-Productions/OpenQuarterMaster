@@ -17,6 +17,7 @@ const Icons = {
 	storageBlock: '{#icons/storageBlock}{/icons/storageBlock}',
 	storageBlocks: '{#icons/storageBlocks}{/icons/storageBlocks}',
 	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}',
+	view: '{#icons/view}{/icons/view}',
 
 	iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';

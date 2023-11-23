@@ -171,7 +171,7 @@ const FileAttachmentView = {
 				done: async function (data) {
 					let nextRow = $('<tr></tr>');
 					nextRow.append($('<td></td>').text(data.revisions[0].origName));
-					nextRow.append($('<td>TODO:: view</td>'));
+					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\''+curFileId+'\');">'+Icons.view+'</button></td>'));
 					fileShowContent.append(nextRow);
 				}
 			});
