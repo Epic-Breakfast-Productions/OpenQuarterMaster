@@ -1,6 +1,5 @@
 package tech.ebp.oqm.baseStation.model.object.media;
 
-import com.google.rpc.Code;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

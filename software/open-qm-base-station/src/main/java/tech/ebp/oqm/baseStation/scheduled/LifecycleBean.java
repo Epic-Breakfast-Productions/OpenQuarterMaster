@@ -79,6 +79,7 @@ public class LifecycleBean {
 		this.startLogAnnounce();
 		//ensures the unit service bean is initialized, and by extension had existing custom units read in
 		this.customUnitService.count();
+		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
 	}
 	

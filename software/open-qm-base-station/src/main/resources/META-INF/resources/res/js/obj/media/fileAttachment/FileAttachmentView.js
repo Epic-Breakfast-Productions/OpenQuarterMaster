@@ -2,9 +2,11 @@ const FileAttachmentView = {
 	viewModal: $("#fileAttachmentViewModal"),
 	viewModalMessages: $("#fileAttachmentViewMessages"),
 	previewContainer: $("#fileAttachmentViewPreviewContainer"),
+	fullViewTitle: $("#fileAttachmentViewContentModalLabel"),
 	fullViewContainer: $("#fileAttachmentViewFullContainer"),
 	fileViewDownloadButton: $("#fileAttachmentViewDownloadButton"),
 	contentViewDownloadButton: $("#fileAttachmentViewContentDownloadButton"),
+	fileName: $("#fileAttachmentViewFileName"),
 	description: $("#fileAttachmentViewDescription"),
 	keywords: $("#fileAttachmentViewKeywordsSection"),
 	atts: $("#fileAttachmentViewAttsSection"),
@@ -14,6 +16,9 @@ const FileAttachmentView = {
 	resetView() {
 		this.previewContainer.text("");
 		this.fullViewContainer.text("");
+
+		this.fileName.text("");
+		this.fullViewTitle.text("");
 		this.fileViewDownloadButton.prop("href", "");
 		this.contentViewDownloadButton.prop("href", "");
 		this.description.text("");
@@ -125,6 +130,9 @@ const FileAttachmentView = {
 			failMessagesDiv: FileAttachmentView.viewModalMessages,
 			done: async function (data) {
 				console.log("Got file info: ", data);
+				let latestMetadata = data.revisions[0];
+				FileAttachmentView.fileName.text(latestMetadata.origName);
+				FileAttachmentView.fullViewTitle.text(latestMetadata.origName);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.previewContainer);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.fullViewContainer, false);
 				processKeywordDisplay(FileAttachmentView.keywords, data.keywords);
@@ -151,7 +159,7 @@ const FileAttachmentView = {
 		});
 	},
 	resetObjectView(fileObjViewContainerJq){
-		fileObjViewContainerJq.find("#fileAttachmentListTableContent").text("");
+		fileObjViewContainerJq.find(".fileAttachmentListTableContent").text("");
 		fileObjViewContainerJq.hide();
 	},
 	setupObjectView(fileObjViewContainerJq, fileList, failMessagesDiv){
