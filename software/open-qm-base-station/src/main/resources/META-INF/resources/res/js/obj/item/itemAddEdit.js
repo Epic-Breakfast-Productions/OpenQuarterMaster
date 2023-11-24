@@ -22,6 +22,7 @@ const ItemAddEdit = {
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
+	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
 	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
 	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
 	addEditItemImagesSelected: $('#addEditItemForm').find(".imagesSelected"),
@@ -30,6 +31,7 @@ const ItemAddEdit = {
 	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
 	addEditItemPricePerUnitNameRow: $('#addEditItemPricePerUnitNameRow'),
 	compatibleUnitOptions: "",
+
 
 	numAmountStoredClicked: 0,
 	numTrackedStoredClicked: 0,
@@ -78,6 +80,7 @@ const ItemAddEdit = {
 		Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
 		ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
+		FileAttachmentSearchSelect.resetInput(this.fileInput);
 
 		ItemAddEdit.setIdAttField();
 		UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
@@ -133,6 +136,12 @@ const ItemAddEdit = {
 				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
 				addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
 				addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
+				FileAttachmentSearchSelect.populateFileInputFromObject(
+					ItemAddEdit.fileInput,
+					data.attachedFiles,
+					ItemAddEdit.addEditItemModal,
+					ItemAddEdit.addEditItemFormMessages
+				);
 
 				ItemAddEdit.addEditItemIdInput.val(data.id);
 				ItemAddEdit.addEditItemNameInput.val(data.name);
@@ -538,7 +547,8 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
 		categories: ItemAddEdit.addEditItemCategoriesInput.val(),
-		storageMap: {}
+		storageMap: {},
+		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
 	};
 
 	let setAmountStoredVars = function () {
