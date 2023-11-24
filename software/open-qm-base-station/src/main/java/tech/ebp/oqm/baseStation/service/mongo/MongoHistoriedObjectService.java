@@ -20,7 +20,6 @@ import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;
@@ -250,11 +249,18 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@WithSpan
-	//TODO:: change to interacting entity
-	public long removeAll(User user) {
-		//TODO:: client session
+	public long removeAll(ClientSession session, InteractingEntity entity) {
 		//TODO:: add history event to each
-		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
+		if(session == null) {
+			return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
+		} else {
+			return this.getCollection().deleteMany(session, new BsonDocument()).getDeletedCount();
+		}
+	}
+	
+	@WithSpan
+	public long removeAll(InteractingEntity entity) {
+		return this.removeAll(null, entity);
 	}
 	
 	/**

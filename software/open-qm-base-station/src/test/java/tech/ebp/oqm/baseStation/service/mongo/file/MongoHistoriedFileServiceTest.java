@@ -27,12 +27,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled("Waiting on file transaction support")//TODO::  #51
+//@Disabled("Waiting on file transaction support")//TODO::  #51
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
@@ -66,7 +63,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		assertEquals(1, this.testMongoService.count());
 		assertNotNull(testMainObject.getId());
 		assertEquals(objectId, testMainObject.getId());
-		assertEquals(objectId + "." + FileNameUtils.getExtension(testFileOne.getName()), testMainObject.getFileName());
+		assertEquals(objectId.toHexString(), testMainObject.getFileName());
 		
 		String fileNameWoExt = FilenameUtils.removeExtension( testMainObject.getFileName());
 		assertEquals(objectId, new ObjectId(fileNameWoExt));
@@ -103,6 +100,80 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		);
 		
 		assertThrows(DbNotFoundException.class, ()->this.testMongoService.getObject(new ObjectId()));
+	}
+	
+	
+	@Test
+	public void testUpdateFile() throws IOException {
+		User testUser = testUserService.getTestUser();
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		FileMetadata expected = new FileMetadata(this.testFileTwo);
+		
+		this.testMongoService.add(
+			mainFileObject,
+			this.testFileOne,
+			testUser
+		);
+		
+		this.testMongoService.updateFile(
+			mainFileObject.getId(),
+			this.testFileTwo,
+			testUser
+		);
+		
+		FileMetadata gotten = this.testMongoService.getLatestMetadata(mainFileObject.getId());
+		
+		Comparator<ZonedDateTime> comparator = Comparator.comparing(
+			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
+		);
+		assertEquals(0, comparator.compare(expected.getUploadDateTime(), gotten.getUploadDateTime()), "Unexpected upload datetime");
+		
+		gotten.setUploadDateTime(expected.getUploadDateTime());
+		
+		assertEquals(expected, gotten);
+	}
+	
+	@Test
+	public void testGetRevisions() throws IOException {
+		User testUser = testUserService.getTestUser();
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		
+		this.testMongoService.add(
+			mainFileObject,
+			this.testFileOne,
+			testUser
+		);
+		
+		this.testMongoService.updateFile(
+			mainFileObject.getId(),
+			this.testFileTwo,
+			testUser
+		);
+		
+		List<FileMetadata> metadataList = this.testMongoService.getRevisions(mainFileObject.getId());
+		log.info("Metadata list: {}", metadataList);
+		
+		assertEquals(2, metadataList.size());
+	}
+	
+	@Test
+	public void testGetRevisionsMulti() throws IOException {
+		User testUser = testUserService.getTestUser();
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		
+		this.testMongoService.add(
+			mainFileObject,
+			this.testFileOne,
+			testUser
+		);
+		
+		List<FileMetadata> metadataList = this.testMongoService.getRevisions(mainFileObject.getId());
+		log.info("Metadata list: {}", metadataList);
+		
+		assertEquals(1, metadataList.size());
 	}
 	
 	@Test
@@ -299,5 +370,33 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		FileContentsGet fileGet = this.testMongoService.getLatestFile(mainFileObject.getId());
 		
 		assertTrue(FileUtils.contentEquals(testFileNoExt, fileGet.getContents()), "File contents were not identical");
+	}
+	
+	@Test
+	public void testRemove() throws IOException {
+		User testUser = testUserService.getTestUser();
+		
+		TestMainFileObject mainFileObject = new TestMainFileObject(FAKER.lorem().paragraph());
+		
+		this.testMongoService.add(
+			mainFileObject,
+			this.testFileOne,
+			testUser
+		);
+		
+		this.testMongoService.updateFile(
+			mainFileObject.getId(),
+			this.testFileTwo,
+			testUser
+		);
+		
+		List<FileMetadata> metadataList = this.testMongoService.getRevisions(mainFileObject.getId());
+		log.info("Metadata list: {}", metadataList);
+		
+		TestMainFileObject result = this.testMongoService.removeFile(null, mainFileObject.getId(), testUser);
+		
+		assertEquals(mainFileObject, result);
+		assertEquals(0, this.testMongoService.getFileObjectService().count());
+		assertNull(this.testMongoService.getGridFSBucket().find().first());
 	}
 }

@@ -1,5 +1,8 @@
 package tech.ebp.oqm.baseStation.service.importExport;
 
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -11,10 +14,12 @@ import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.exception.DataExportException;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
@@ -28,10 +33,10 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoFileService;
-import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,7 +45,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.Deflater;
 
@@ -52,6 +61,7 @@ public class DataExportService {
 	public static final String TEMP_FOLDER = "export";
 	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
 	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
+	private static final DateFormat fileRevisionTimestampFormat = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss-SSS");
 	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
@@ -108,7 +118,7 @@ public class DataExportService {
 					ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
 				}
 			}
-		} catch(Throwable e){
+		} catch(Throwable e) {
 			throw new DataExportException("Failed to export data for " + service.getClazz().getName() + ": " + e.getMessage(), e);
 		}
 		
@@ -116,66 +126,74 @@ public class DataExportService {
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
 	
-	private static <T extends FileMainObject, S extends SearchObject<T>> void recordRecords(
+	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
 		File tempDir,
-		MongoFileService<T, S> service,
+		MongoFileService<T, S, G> fileService,
 		boolean includeHistory
 	) {
-		String dataTypeName = service.getCollectionName();
+		String dataTypeName = fileService.getCollectionName();
 		log.info("Writing {} data to archive folder.", dataTypeName);
 		
 		StopWatch sw = StopWatch.createStarted();
-		File objectDataDir = new File(tempDir, dataTypeName);
+		File mainDir = new File(tempDir, dataTypeName);
+		File fileDataDir = new File(mainDir, "files");
 		
 		try {
-			//TODO:: adjust to: (once we figure out files #51)
-			//  - Create folder for objects and their files
-			//  - in each folder, write object json and one folder for each file, named 0-however many revisions. write file with original name in folders.
+			if (!mainDir.mkdir()) {
+				log.error("Failed to create export of data. Failed to create directory: {}", mainDir);
+				throw new IOException("Failed to create directory for file collection " + fileService.getCollectionName());
+			}
+			if (!fileDataDir.mkdir()) {
+				log.error("Failed to create export of data. Failed to create directory: {}", fileDataDir);
+				throw new IOException("Failed to create directory for collection " + fileService.getCollectionName());
+			}
 			
-//			if (!objectDataDir.mkdir()) {
-//				log.error("Failed to create export of data. Failed to create directory: {}", objectDataDir);
-//				throw new IOException("Failed to create directory for collection " + service.getCollectionName());
-//			}
-//
-//			Iterator<T> it = service.iterator();
-//			while (it.hasNext()) {
-//				T curObj = it.next();
-//				ObjectId curId = curObj.getId();
-//				File curObjectFile = new File(objectDataDir, curId.toHexString() + ".json");
-//
-//				if (!curObjectFile.createNewFile()) {
-//					log.error("Failed to create data file for object.");
-//					throw new IOException("Failed to create data file for object.");
-//				}
-//
-//				ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-//			}
-			
-			//TODO:: refactor
-			if (service instanceof MongoHistoriedFileService<T,S> && includeHistory) {
-				File objectHistoryDataDir = new File(objectDataDir, DataImportExportUtils.OBJECT_HISTORY_DIR_NAME);
-				
-				if (!objectHistoryDataDir.mkdir()) {
-					log.error("Failed to create export of data. Failed to create directory for object history.");
-					throw new IOException("Failed to create directory for object history.");
-				}
-				
-				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedFileService<T, S>) service).getFileObjectService().historyIterator();
-				while (hIt.hasNext()) {
-					ObjectHistoryEvent curObj = hIt.next();
-					ObjectId curId = curObj.getId();
-					File curObjectFile = new File(objectHistoryDataDir, curId.toHexString() + ".json");
+			CompletableFuture<Void> future = CompletableFuture.allOf(
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(
+						mainDir,
+						fileService.getFileObjectService(),
+						includeHistory
+					);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					Iterator<GridFSFile> it = fileService.fileIterator();
 					
-					if (!curObjectFile.createNewFile()) {
-						log.error("Failed to create data file for object history.");
-						throw new IOException("Failed to create data file for object history.");
+					while (it.hasNext()) {
+						GridFSFile curGridFile = it.next();
+						FileMetadata metadata = FileMetadata.fromDocument(curGridFile.getMetadata(), fileService.getFileMetadataCodec());
+						String curFileName = curGridFile.getFilename();
+						String curRevisionName = fileRevisionTimestampFormat.format(curGridFile.getUploadDate());
+						File curFileDir = new File(fileDataDir, curFileName);
+						File curFileRevisionDir = new File(curFileDir, curRevisionName);
+						File curRevisionFile = new File(curFileRevisionDir, "file." + metadata.getFileExtension());
+						File curRevisionMetadata = new File(curFileRevisionDir, "metadata.json");
+						
+						curFileDir.mkdir();
+						curFileRevisionDir.mkdir();
+						
+						try (
+							FileOutputStream os = new FileOutputStream(curRevisionFile);
+						) {
+							ObjectUtils.OBJECT_MAPPER.writeValue(curRevisionMetadata, metadata);
+							fileService.getFileContents(curGridFile.getObjectId(), os);
+						} catch(IOException e) {
+							log.error("FAILED to write files: ", e);
+							throw new RuntimeException(e);
+						}
 					}
 					
-					ObjectUtils.OBJECT_MAPPER.writeValue(curObjectFile, curObj);
-				}
+					return null;
+				})
+			);
+			try {
+				future.get();
+			} catch(Throwable e) {
+				throw new DataExportException("Failed to export service(s) data.", e);
 			}
-		} catch(Throwable e){
-			throw new DataExportException("Failed to export data for " + service.getClazz().getName() + ": " + e.getMessage(), e);
+		} catch(Throwable e) {
+			throw new DataExportException("Failed to export data for " + fileService.getClazz().getName() + ": " + e.getMessage(), e);
 		}
 		
 		sw.stop();
@@ -194,6 +212,7 @@ public class DataExportService {
 	
 	@Inject
 	FileAttachmentService fileAttachmentService;
+	
 	@Inject
 	ImageService imageService;
 	
@@ -227,15 +246,38 @@ public class DataExportService {
 			StopWatch sw = StopWatch.createStarted();
 			
 			CompletableFuture<Void> future = CompletableFuture.allOf(
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.customUnitService, !excludeHistory); return null;}),
-				//TODO:: once we figure out file nonsense #51
-//				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.imageService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemCategoryService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.storageBlockService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemListService, !excludeHistory); return null;}),
-				CompletableFuture.supplyAsync(()->{recordRecords(dirToArchive, this.itemCheckoutService, !excludeHistory); return null;})
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.customUnitService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.imageService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.itemCategoryService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.storageBlockService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.itemListService, !excludeHistory);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(()->{
+					recordRecords(dirToArchive, this.itemCheckoutService, !excludeHistory);
+					return null;
+				})
 			);
 			try {
 				future.get();

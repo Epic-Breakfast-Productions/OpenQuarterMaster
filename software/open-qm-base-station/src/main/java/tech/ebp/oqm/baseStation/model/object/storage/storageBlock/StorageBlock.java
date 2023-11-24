@@ -10,12 +10,15 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.baseStation.model.object.HasParent;
 import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
 
 import javax.measure.Quantity;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Describes an area for storage.
@@ -25,7 +28,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
-public class StorageBlock extends ImagedMainObject implements HasParent {
+public class StorageBlock extends ImagedMainObject implements HasParent, FileAttachmentContaining {
 	
 	/**
 	 * The label for this storage block
@@ -74,6 +77,13 @@ public class StorageBlock extends ImagedMainObject implements HasParent {
 	@NonNull
 	@NotNull
 	private List<@NotNull ObjectId> storedCategories = new ArrayList<>();
+	
+	/**
+	 * Files that have been attached to the item.
+	 */
+	@NonNull
+	@NotNull
+	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public String getLabelText() {
