@@ -48,7 +48,7 @@ public class CategoriesUi extends UiProvider {
 		@BeanParam CategoriesSearch categoriesSearch
 	) {
 		SearchResult<ItemCategory> searchResults = this.itemItemCategoryService.search(categoriesSearch, true);
-		this.itemItemCategoryService.listIterator();
+		//this.itemItemCategoryService.listIterator();
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(categories, this.getInteractingEntity(), searchResults)
 				.data("allowedUnitsMap", UnitUtils.UNIT_CATEGORY_MAP)

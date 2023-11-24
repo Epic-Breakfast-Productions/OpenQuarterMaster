@@ -1,4 +1,5 @@
 
+const KeywordAttUtils = {};
 
 function displayKeywordsIn(container, keywords){
     keywords.forEach(function(keyword){

@@ -5,7 +5,11 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
 import tech.ebp.oqm.baseStation.service.mongo.ImageService;
@@ -15,6 +19,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.baseStation.testResources.RetryRule;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.baseStation.testResources.testClasses.RunningServerTest;
@@ -48,6 +53,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -96,6 +102,9 @@ class DataImportServiceTest extends RunningServerTest {
 	@Inject
 	TempFileService tempFileService;
 	
+	@Rule
+	RetryRule retryRule = new RetryRule(3);
+	
 	@Test
 	public void testImportService() throws IOException {
 		User testUser = testUserService.getTestUser(true);
@@ -137,25 +146,23 @@ class DataImportServiceTest extends RunningServerTest {
 		customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
 		
-		//TODO:: once we have shit figured out for files
-//		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
-//		for (int i = 0; i < 5; i++) {
-//			FileAttachment attachment = new FileAttachment();
-//			attachment.setDescription(FAKER.lorem().paragraph());
-//
-//			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
-//
-//			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-//
-//
-//			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
-//
-//			for(int j = 1; j <= 3; j++){
-//				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
-//				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-//				this.fileAttachmentService.updateFile(id, curFile, testUser);
-//			}
-//		}
+		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
+		for (int i = 0; i < 5; i++) {
+			FileAttachment attachment = new FileAttachment();
+			attachment.setDescription(FAKER.lorem().paragraph());
+
+			File curFile = new File(tempFilesDir, i + "-" + 0 + ".txt");
+
+			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+			
+			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
+
+			for(int j = 1; j <= 3; j++){
+				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
+				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
+				this.fileAttachmentService.updateFile(id, curFile, testUser);
+			}
+		}
 		
 		//Add images
 		for (int i = 0; i < 5; i++) {
@@ -286,6 +293,8 @@ class DataImportServiceTest extends RunningServerTest {
 		}
 		File bundle = this.dataExportService.exportDataToBundle(false);
 		
+		FileUtils.copyFile(bundle, new File("build/export.tar.gz"));
+		
 		
 		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null);
 		this.itemCheckoutService.removeAll(testUser);
@@ -302,16 +311,15 @@ class DataImportServiceTest extends RunningServerTest {
 		List<ItemCategory> oldItemCategories = this.itemCategoryService.list(null, Sorts.ascending("name"), null);
 		this.itemCategoryService.removeAll(testUser);
 		this.itemCategoryService.getHistoryService().removeAll();
-		//TODO:: once we have shit figured out for files
-//		List<FileAttachmentGet> fileAttachments =
-//			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
-//				.stream()
-//				.map((FileAttachment a)->{
-//					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
-//				})
-//				.toList();
-//		this.fileAttachmentService.removeAll(null, testUser);
-//		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
+		List<FileAttachmentGet> fileAttachments =
+			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+				.stream()
+				.map((FileAttachment a)->{
+					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+				})
+				.toList();
+		this.fileAttachmentService.removeAll(null, testUser);
+		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
 		
 		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
 		this.customUnitService.removeAll(testUser);
@@ -342,7 +350,13 @@ class DataImportServiceTest extends RunningServerTest {
 		assertEquals(oldCheckedout.size(), this.itemCheckoutService.list().size());
 		assertEquals(oldCheckedout, this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null));
 		
-		//TODO:: verify file attachments once we got that going
+		//TODO:: verify file attachments
+//		assertEquals(fileAttachments, this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+//										  .stream()
+//										  .map((FileAttachment a)->{
+//											  return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+//										  })
+//										  .toList());
 	}
 	
 	//TODO:: test failed import doesn't break things

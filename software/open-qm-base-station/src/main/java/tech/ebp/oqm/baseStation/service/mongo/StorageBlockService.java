@@ -12,6 +12,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
@@ -150,6 +151,18 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		this.listIterator(
 			clientSession,
 			eq("storedCategories", itemCategory.getId()),
+			null,
+			null
+		).map(StorageBlock::getId).into(list);
+		return list;
+	}
+	
+	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, FileAttachment fileAttachment){
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("attachedFiles", fileAttachment.getId()),
 			null,
 			null
 		).map(StorageBlock::getId).into(list);

@@ -35,6 +35,7 @@ const ItemView = {
 	checkoutSearchFormItemIdInput: $("#itemViewCheckoutSearchForm-itemInputId"),
 	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
 	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
+	itemViewFiles: $("#itemViewFilesContainer"),
 
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
@@ -66,6 +67,7 @@ const ItemView = {
 		ItemView.checkoutSearchFormItemNameInput.val("");
 		ItemView.checkoutSearchFormItemIdInput.val("");
 		ItemView.checkoutSearchForm.trigger("reset");
+		FileAttachmentView.resetObjectView(ItemView.itemViewFiles);
 
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
@@ -233,6 +235,7 @@ const ItemView = {
 				ItemView.itemViewStorageType.text(itemData.storageType);
 				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
 				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
+				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
 
 				if (itemData.description) {
 					ItemView.itemViewDescription.text(itemData.description);
