@@ -20,6 +20,7 @@ import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
+import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
@@ -601,6 +602,18 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		this.listIterator(
 			clientSession,
 			eq("categories", itemCategory.getId()),
+			null,
+			null
+		).map(InventoryItem::getId).into(list);
+		return list;
+	}
+	
+	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, FileAttachment fileAttachment){
+		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
+		Set<ObjectId> list = new TreeSet<>();
+		this.listIterator(
+			clientSession,
+			eq("attachedFiles", fileAttachment.getId()),
 			null,
 			null
 		).map(InventoryItem::getId).into(list);

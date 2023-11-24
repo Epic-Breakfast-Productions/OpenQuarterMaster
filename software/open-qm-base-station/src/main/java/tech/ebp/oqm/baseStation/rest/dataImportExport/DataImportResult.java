@@ -19,6 +19,8 @@ public class DataImportResult {
 	@lombok.Builder.Default
 	private long numImages = 0;
 	@lombok.Builder.Default
+	private long numFileAttachments = 0;
+	@lombok.Builder.Default
 	private long numItemCategories = 0;
 	@lombok.Builder.Default
 	private long numStorageBlocks = 0;

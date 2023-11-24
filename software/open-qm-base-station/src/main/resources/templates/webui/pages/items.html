@@ -98,6 +98,10 @@
 {#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
 {/itemCheckout/itemCheckoutModal}
 {#CodeScannerModal}{/CodeScannerModal}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}
+	{/fileAttachment/FileAttachmentSearchSelectModal}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal'}
+	{/fileAttachment/FileAttachmentViewModal}
 {/modals}
 
 {#scripts}
@@ -106,6 +110,7 @@
     <script src="/res/js/obj/media/imageAdd.js"></script>
     <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
     <script src="/res/js/search.js"></script>
+    <script src="/res/js/other.js"></script>
     <script src="/res/js/historySearch.js"></script>
     <script src="/res/js/obj/objEdit.js"></script>
     <script src="/res/js/obj/objView.js"></script>
@@ -121,6 +126,9 @@
     <script src="/res/js/obj/itemCategoryView.js"></script>
     <script src="/res/js/textCopy.js"></script>
     <script src="/res/js/item/extItemSearch.js"></script>
+	<script src="/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
     <script src="/res/js/obj/item/itemAddEdit.js"></script>
     <script src="/res/js/obj/item/storedView.js"></script>
     <script src="/res/js/obj/item/storedEdit.js"></script>

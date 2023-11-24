@@ -12,6 +12,7 @@ import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,8 @@ class StorageBlockTest extends BasicTest {
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
 					}},
-					new ArrayList<>()
+					new ArrayList<>(),
+					new LinkedHashSet<>()
 				)
 			),
 			Arguments.of(
@@ -45,7 +47,8 @@ class StorageBlockTest extends BasicTest {
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, Units.KILOGRAM));
 					}},
-					new ArrayList<>()
+					new ArrayList<>(),
+					new LinkedHashSet<>()
 				)
 			)
 		);

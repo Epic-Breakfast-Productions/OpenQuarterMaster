@@ -4,6 +4,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 @ApplicationScoped
 public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBlock> {
@@ -18,7 +19,8 @@ public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBloc
 			faker.theRoom().locations(),
 			null,
 			new ArrayList<>(),
-			new ArrayList<>()
+			new ArrayList<>(),
+			new LinkedHashSet<>()
 		);
 		
 		return block;
