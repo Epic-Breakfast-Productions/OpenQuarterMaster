@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -209,7 +210,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			newId = this.getFileObjectService().add(clientSession, fileObject, interactingEntity);
 			
 			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			String filename = newId.toHexString() + "." + FilenameUtils.getExtension(metadata.getOrigName());
+			String filename = newId.toHexString();
 			
 			fileObject.setFileName(filename);
 			this.getFileObjectService().update(clientSession, fileObject);
@@ -333,5 +334,33 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		}
 		
 		return numRemoved.get();
+	}
+	
+	public T removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity){
+		T toRemove = this.getFileObjectService().get(cs, objectId);
+		
+		this.assertNotReferenced(cs, toRemove);
+		GridFSBucket bucket = this.getGridFSBucket();
+		
+		if(cs == null){
+			try(ClientSession clientSession = this.getNewClientSession(true)){
+				bucket.find(clientSession, Filters.eq("filename", toRemove.getFileName())).forEach(
+					(GridFSFile file)->{
+						bucket.delete(clientSession, file.getId());
+					}
+				);
+				this.getFileObjectService().remove(clientSession, toRemove.getId(), entity);
+				clientSession.commitTransaction();
+			}
+		}else {
+			bucket.find(cs, Filters.eq("filename", toRemove.getFileName())).forEach(
+				(GridFSFile file)->{
+					bucket.delete(cs, file.getId());
+				}
+			);
+			this.getFileObjectService().remove(cs, toRemove.getId(), entity);
+		}
+		
+		return toRemove;
 	}
 }

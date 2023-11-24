@@ -38,6 +38,7 @@ import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoService;
+import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 
@@ -318,5 +319,17 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 */
 	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession clientSession, T objectToRemove){
 		return new HashMap<>();
+	}
+	
+	/**
+	 * Asserts that the given object is not referenced by any other object.
+	 * @param clientSession The client session, null if none
+	 * @param objectToRemove The object being removed
+	 */
+	protected void assertNotReferenced(ClientSession clientSession, T objectToRemove){
+		Map<String, Set<ObjectId>> objsWithRefs = this.getReferencingObjects(clientSession, objectToRemove);
+		if(!objsWithRefs.isEmpty()){
+			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
+		}
 	}
 }

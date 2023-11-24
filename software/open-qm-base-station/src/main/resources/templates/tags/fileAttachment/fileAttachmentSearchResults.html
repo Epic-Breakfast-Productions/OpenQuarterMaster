@@ -61,7 +61,7 @@
         {#icons/edit}{/icons/edit}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove File"
-              onclick="removeItem('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
+              onclick="FileAttachmentAddEdit.removeFile('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {result.getFileName()}"

@@ -9,15 +9,7 @@ import io.smallrye.mutiny.tuples.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
@@ -42,7 +34,6 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -297,6 +288,39 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 				this.getFileObjectService().getFileObjectService().get(id),
 				this.getFileObjectService().getRevisions(new ObjectId(id))
 			)
+		).build();
+	}
+	
+	@DELETE
+	@Path("{id}")
+	@Operation(
+		summary = "Deletes a particular file attachment."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "File information retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				implementation = FileAttachment.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	//	@Override
+	public Response delete(
+		@PathParam("id")
+		String id
+	) throws IOException {
+		return Response.ok(
+			this.getFileObjectService().removeFile(null, new ObjectId(id), this.getInteractingEntity())
 		).build();
 	}
 }

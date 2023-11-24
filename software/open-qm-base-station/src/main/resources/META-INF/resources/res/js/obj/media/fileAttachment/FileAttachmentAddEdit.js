@@ -36,7 +36,23 @@ const FileAttachmentAddEdit = {
 		});
 	},
 	fileAttachmentAdded(data) {
-		PageMessages.reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
+		PageMessages.reloadPageWithMessage("Added file successfully!", "success", "Success!");
+	},
+	removeFile(fileId){
+		console.log("Attempting to remove file: ", fileId);
+		if(!confirm("Are you sure? This cannot be undone.")){
+			console.log("User chose not to delete after all.");
+			return;
+		}
+		doRestCall({
+			url: '/api/v1/media/fileAttachments/' + fileId,
+			method: "delete",
+			done: function (data){
+				console.log("Successfully removed file attachment.");
+				PageMessages.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
+			},
+			failMessagesDiv: PageMessages.mainMessageDiv
+		});
 	}
 };
 
