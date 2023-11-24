@@ -57,9 +57,9 @@
 		<a href="/api/v1/media/fileAttachments/{result.getId()}/data" class="btn btn-sm btn-success" title="Download" target="_blank">
 			{#icons/download}{/icons/download}
 		</a>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
-        {#icons/edit}{/icons/edit}
-      </button>
+      {!<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">!}
+        {!{#icons/edit}{/icons/edit}!}
+      {!</button>!}
       <button type="button" class="btn btn-sm btn-danger" title="Remove File"
               onclick="FileAttachmentAddEdit.removeFile('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
