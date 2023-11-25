@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "zookeeper")
 
 #
 # Clean
