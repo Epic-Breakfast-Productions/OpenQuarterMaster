@@ -113,10 +113,12 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * The map of where the items are stored.
 	 * <p>
 	 * The key is the id of the storage block being stored in, the value the storage wrapper actually holding stored item information.
+	 * <p>
+	 * `null` key is intended as a 'not stored anywhere in particular'
 	 */
 	@NonNull
 	@NotNull
-	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
+	private Map<ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
 	 * Files that have been attached to the item.
@@ -526,7 +528,8 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * @throws StoredNotFoundException
 	 * @throws UnsupportedStoredOperationException If this action is not supported by the specific implementation.
 	 */
-	public InventoryItem<S, C, W> add(ObjectId storageId, UUID storedId, S toAdd, boolean addStorageBlockIdIfNone) throws NoStorageBlockException, StoredNotFoundException, UnsupportedStoredOperationException {
+	public InventoryItem<S, C, W> add(ObjectId storageId, UUID storedId, S toAdd, boolean addStorageBlockIdIfNone)
+		throws NoStorageBlockException, StoredNotFoundException, UnsupportedStoredOperationException {
 		W wrapper = this.getStoredWrapperForStorage(storageId, addStorageBlockIdIfNone);
 		
 		if (wrapper == null) {
@@ -583,9 +586,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Subtracts a stored from an existing stored object.
+	 *
 	 * @param storageId
 	 * @param toSubtractFrom
 	 * @param toSubtract
+	 *
 	 * @return
 	 * @throws NotEnoughStoredException
 	 * @throws NoStorageBlockException
@@ -604,9 +609,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Subtracts a whole stored from an existing stored object.
+	 *
 	 * @param storageId
 	 * @param toSubtractFrom
 	 * @param toSubtract
+	 *
 	 * @return
 	 * @throws NotEnoughStoredException
 	 * @throws NoStorageBlockException
@@ -637,11 +644,13 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Transfers a stored from one to another.
+	 *
 	 * @param storageIdFrom
 	 * @param storageIdTo
 	 * @param storedIdFrom
 	 * @param storedIdTo
 	 * @param toTransfer
+	 *
 	 * @return
 	 * @throws NotEnoughStoredException
 	 */
@@ -654,13 +663,15 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	
 	/**
 	 * Applies an {@link AddSubtractTransferAction} action to this object.
+	 *
 	 * @param action The action to apply
+	 *
 	 * @return This item object
 	 */
-	public InventoryItem<S, C, W> apply(AddSubtractTransferAction action){
-		switch (action.getActionType()){
+	public InventoryItem<S, C, W> apply(AddSubtractTransferAction action) {
+		switch (action.getActionType()) {
 			case ADD -> {
-				if(action.toStored()){
+				if (action.toStored()) {
 					this.add(
 						action.getStorageBlockTo(),
 						action.getStoredIdTo(),
@@ -676,7 +687,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 				}
 			}
 			case SUBTRACT -> {
-				if(action.fromStored()){
+				if (action.fromStored()) {
 					this.subtract(
 						action.getStorageBlockFrom(),
 						action.getStoredIdFrom(),
@@ -690,7 +701,7 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 				}
 			}
 			case TRANSFER -> {
-				if(action.fromToStored()){
+				if (action.fromToStored()) {
 					this.transfer(
 						action.getStorageBlockFrom(),
 						action.getStoredIdFrom(),
