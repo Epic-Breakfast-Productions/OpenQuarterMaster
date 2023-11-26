@@ -22,6 +22,9 @@ const ItemAddEdit = {
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
+	itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
+	itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
+
 	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
 	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
 	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
@@ -84,6 +87,10 @@ const ItemAddEdit = {
 
 		ItemAddEdit.setIdAttField();
 		UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
+
+		this.itemNotStoredCheck.attr("checked", false);
+		this.updateItemNotStored();
+		this.itemNotStoredInputContainer.text("");
 
 		ItemAddEdit.addEditItemImagesSelected.text("");
 		ItemAddEdit.addEditKeywordDiv.text("");
@@ -515,8 +522,18 @@ const ItemAddEdit = {
 			ItemAddEdit.addStorageBlockAccord(newStorage);
 		}
 		return newStorage;
+	},
+
+	updateItemNotStored(){
+		if(this.itemNotStoredCheck.is(":checked")){
+			console.log("Showing items not stored form inputs");
+			this.itemNotStoredInputContainer.show();
+		} else {
+			console.log("Hiding items not stored form inputs");
+			this.itemNotStoredInputContainer.hide();
+		}
 	}
-}
+};
 
 //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
 ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {

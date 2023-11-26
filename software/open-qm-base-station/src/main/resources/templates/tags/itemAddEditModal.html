@@ -174,6 +174,23 @@
                 </div>
                 <hr />
                 <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Not Stored</label>
+                    <div class="col-sm-10">
+                        <div>
+							<input class="form-check-input" type="checkbox" value="" id="addEditItemNotStoredCheck" aria-describedby="addEditItemNotStoredCheckHelp" onchange="ItemAddEdit.updateItemNotStored()">
+							<label class="form-check-label" for="addEditItemNotStoredCheck">
+								Have unstored items
+							</label>
+							<div id="addEditItemNotStoredCheckHelp" class="form-text">
+								Check this to specify items you have, but aren't stored in any particular location. To specify items stored somewhere, hit the "Add Associated Storage" below.
+							</div>
+                        </div>
+                        <div id="addEditItemNotStoredInputContainer">
+						</div>
+                    </div>
+                </div>
+                <hr />
+                <div class="mb-3 row">
                     <div class="col-sm-2 col-form-label">Stored</div>
                     <div class="col-sm-10">
                         <div class="accordion mt-2" id="addEditItemStoredContainer">
