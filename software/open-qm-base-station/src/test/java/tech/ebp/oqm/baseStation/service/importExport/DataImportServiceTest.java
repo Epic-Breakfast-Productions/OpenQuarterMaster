@@ -103,7 +103,7 @@ class DataImportServiceTest extends RunningServerTest {
 	TempFileService tempFileService;
 	
 	@Rule
-	RetryRule retryRule = new RetryRule(3);
+	public RetryRule retryRule = new RetryRule(3);
 	
 	@Test
 	public void testImportService() throws IOException {
