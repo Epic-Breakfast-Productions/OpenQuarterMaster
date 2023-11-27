@@ -250,6 +250,9 @@ const ItemAddEdit = {
 			}
 		});
 	},
+	/**
+	 * When the type of the item is changed
+	 */
 	setIdAttField() {
 		ItemAddEdit.addEditItemStoredContainer.html("");
 		let value = ItemAddEdit.addEditItemStorageTypeInput[0].value;
