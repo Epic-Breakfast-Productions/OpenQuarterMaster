@@ -92,19 +92,16 @@ TODO- document better
    Performs a snapshot. Will bring down services momentarily while the snapshot occurs.
 
 .. *Enable/disable automatic snapshots*
-
-Enables or disables snapshots from automatically taking place.
+   Enables or disables snapshots from automatically taking place.
 
 .. *Set Snapshot location*
    Sets the location the resulting snapshots are placed.
 
 .. *Set number of snapshots to keep*
-
-Sets the number of snapshots to keep around. This is meant to preserve disk space.
+   Sets the number of snapshots to keep around. This is meant to preserve disk space.
 
 .. *Set automatic snapshot frequency*
-
-Sets how often the automatic snapshots will occur.
+   Sets how often the automatic snapshots will occur.
 
 . *Cleanup, Maintenance, and Updates*
 
@@ -133,6 +130,9 @@ Sets how often the automatic snapshots will occur.
 ... *Clear OQM Data* TODO
 ... *Clear User Data* TODO
 ... *Clear Plugin Data* TODO
+
+.. *Dump Logs* +
+   Dumps logs to an archive, intent to be able to send that file for debugging. Puts them in a subdirectory under where snapshots are placed.
 
 .. *Restart all services*
 *** Restarts all services related to OQM

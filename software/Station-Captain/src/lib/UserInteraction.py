@@ -10,6 +10,7 @@ from DataUtils import *
 from PackageManagement import *
 from CronUtils import *
 from SnapshotUtils import *
+from LogManagement import *
 import time
 import re
 import os
@@ -434,8 +435,9 @@ class UserInteraction:
                     ("(1)", "Updates"),
                     ("(2)", "Containers"),
                     ("(3)", "Data"),
-                    ("(4)", "Restart Services"),
-                    ("(5)", "Restart Device"),
+                    ("(4)", "Package logs"),
+                    ("(5)", "Restart Services"),
+                    ("(6)", "Restart Device"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -450,8 +452,11 @@ class UserInteraction:
             if choice == "(3)":
                 self.dataManagementMenu()
             if choice == "(4)":
-                self.promptForServiceRestart()
+                self.dialog.infobox("Packaging logs. Please wait.")
+                LogManagement.packageLogs()
             if choice == "(5)":
+                self.promptForServiceRestart()
+            if choice == "(6)":
                 code = self.dialog.yesno("Restart device?", title="Restart Device?")
                 if code == self.dialog.OK:
                     logging.info("User chose to reboot the device.")

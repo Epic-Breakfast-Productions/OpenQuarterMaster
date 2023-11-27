@@ -30,6 +30,7 @@ class ServiceUtils:
         logging.info("%s Command was successful on %s", command, service)
         return True
 
-
-
-
+    @staticmethod
+    def getServiceNames(serviceFilter: str = SERVICE_ALL) -> [str]:
+        # TODO:: this
+        return ["open\\x2bquarter\\x2bmaster\\x2dcore\\x2dbase\\x2bstation.service"]
