@@ -5,7 +5,9 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -13,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
+import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileHashes;
@@ -37,7 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>> extends MongoFileService<T, S> {
+public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoFileService<T, S, G> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -91,7 +95,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.fileObjectService =
-			new FileMetadataService(
+			new FileObjectService(
 				objectMapper,
 				mongoClient,
 				database,
@@ -141,14 +145,15 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		
 	}
 	
-	
-	private class FileMetadataService extends MongoHistoriedObjectService<T, S> {
-		
-		FileMetadataService() {//required for DI
+	/**
+	 * This is the standard impl of the MongoHistoriedObjectService used to store T.
+	 */
+	private class FileObjectService extends MongoHistoriedObjectService<T, S> {
+		FileObjectService() {//required for DI
 			super(null, null, null, null, null, null, false, null);
 		}
 		
-		FileMetadataService(
+		FileObjectService(
 			ObjectMapper objectMapper,
 			MongoClient mongoClient,
 			String database,
@@ -230,7 +235,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			newId = this.getFileObjectService().add(clientSession, fileObject, interactingEntity);
 			
 			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			String filename = newId.toHexString() + "." + FilenameUtils.getExtension(metadata.getOrigName());
+			String filename = newId.toHexString();
 			
 			fileObject.setFileName(filename);
 			this.getFileObjectService().update(clientSession, fileObject);
@@ -262,7 +267,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		GridFSUploadOptions ops = this.getUploadOps(metadata);
 		String filename = object.getFileName();
 		boolean sessionGiven = givenSession != null;
-		if(sessionGiven){
+		if (sessionGiven) {
 			bucket.uploadFromStream(givenSession, filename, is, ops);
 			this.getFileObjectService().addHistoryFor(givenSession, object, interactingEntity, new NewFileVersionEvent());
 			return this.getRevisions(givenSession, id).size() - 1;
@@ -300,31 +305,87 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	}
 	
 	@WithSpan
+	public int updateFile(ClientSession clientSession, T fileObject, FileUploadBody uploadBody, InteractingEntity interactingEntity) throws IOException {
+		File tempFile = this.getTempFileService().getTempFile(
+			FilenameUtils.removeExtension(fileObject.getFileName()),
+			FilenameUtils.getExtension(fileObject.getFileName()),
+			"uploads"
+		);
+		FileUtils.copyInputStreamToFile(uploadBody.file, tempFile);
+		
+		int output;
+		if(clientSession == null){
+			try (
+				ClientSession session = this.getFileObjectService().getNewClientSession(true);
+			) {
+				output = this.updateFile(session, fileObject.getId(), tempFile, interactingEntity);
+				this.getFileObjectService().update(session, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
+			}
+		} else {
+			output = this.updateFile(clientSession, fileObject.getId(), tempFile, interactingEntity);
+			this.getFileObjectService().update(clientSession, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
+		}
+		
+		if (!tempFile.delete()) {
+			log.warn("Failed to delete temporary upload file: {}", tempFile);
+		}
+		
+		return output;
+	}
+	
+	@WithSpan
 	public long removeAll(ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;
-		try (
-			ClientSession session = (sessionGiven ? null : this.getNewClientSession(true));
-		) {
-			if (!sessionGiven) {
-				clientSession = session;
-			}
-			ClientSession finalClientSession = clientSession;
-			this.fileObjectService.listIterator(null, null, null).forEach((T object)->{
-				this.getFileObjectService().remove(finalClientSession, object.getId(), entity);
-				numRemoved.getAndIncrement();
+		if (sessionGiven) {
+			this.getFileObjectService().removeAll(clientSession, entity);
+			GridFSBucket bucket = this.getGridFSBucket();
+			bucket.find(clientSession).forEach((GridFSFile curFile)->{
+				bucket.delete(clientSession, curFile.getId());
 			});
-			if (finalClientSession != null) {
-				this.getGridFSBucket().drop(clientSession);
-			} else {
-				this.getGridFSBucket().drop();
-			}
-			
-			if (!sessionGiven) {
-				clientSession.commitTransaction();
+			this.getFileObjectService().removeAll(clientSession, entity);
+		} else {
+			try (
+				ClientSession innerSession = this.getNewClientSession(true)
+			) {
+				this.getFileObjectService().removeAll(innerSession, entity);
+				GridFSBucket bucket = this.getGridFSBucket();
+				bucket.find(innerSession).forEach((GridFSFile curFile)->{
+					bucket.delete(innerSession, curFile.getId());
+				});
+				this.getFileObjectService().removeAll(innerSession, entity);
+				innerSession.commitTransaction();
 			}
 		}
 		
 		return numRemoved.get();
+	}
+	
+	public T removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity){
+		T toRemove = this.getFileObjectService().get(cs, objectId);
+		
+		this.assertNotReferenced(cs, toRemove);
+		GridFSBucket bucket = this.getGridFSBucket();
+		
+		if(cs == null){
+			try(ClientSession clientSession = this.getNewClientSession(true)){
+				bucket.find(clientSession, Filters.eq("filename", toRemove.getFileName())).forEach(
+					(GridFSFile file)->{
+						bucket.delete(clientSession, file.getId());
+					}
+				);
+				this.getFileObjectService().remove(clientSession, toRemove.getId(), entity);
+				clientSession.commitTransaction();
+			}
+		}else {
+			bucket.find(cs, Filters.eq("filename", toRemove.getFileName())).forEach(
+				(GridFSFile file)->{
+					bucket.delete(cs, file.getId());
+				}
+			);
+			this.getFileObjectService().remove(cs, toRemove.getId(), entity);
+		}
+		
+		return toRemove;
 	}
 }

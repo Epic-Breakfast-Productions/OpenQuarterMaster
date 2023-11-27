@@ -26,7 +26,7 @@ Ingests:
 	
 	<!-- CSS -->
 	<link href="/lib/bootstrap/5.3.2/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.0/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
@@ -191,13 +191,19 @@ Ingests:
 					</div>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
+					<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'files' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
 							aria-haspopup="true" aria-expanded="false">
 						{#icons/icon icon='infinity'}{/icons/icon} Other</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
 							{#icons/pageIcon page='images'}{/icons/pageIcon} Images
 							{#if page is 'images'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
+						<a class="dropdown-item {#if page is 'files'}active{/if}" href="/files">
+							{#icons/pageIcon page='files'}{/icons/pageIcon} Files
+							{#if page is 'files'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
@@ -305,7 +311,7 @@ Ingests:
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
+			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/media/EBP-logo-icon.svg" style="max-height:1em;" alt="EBP Logo"/></a><br/>
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"

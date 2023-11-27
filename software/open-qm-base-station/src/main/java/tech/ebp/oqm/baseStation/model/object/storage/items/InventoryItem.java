@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.baseStation.model.object.ImagedMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
@@ -34,9 +35,11 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -64,7 +67,7 @@ import java.util.stream.Stream;
 	@JsonSubTypes.Type(value = TrackedItem.class, name = "TRACKED")
 })
 @BsonDiscriminator(key = "storedType_mongo")
-public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper<C, S>> extends ImagedMainObject {
+public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper<C, S>> extends ImagedMainObject implements FileAttachmentContaining {
 	
 	/**
 	 * The name of this inventory item
@@ -114,6 +117,13 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	@NonNull
 	@NotNull
 	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
+	
+	/**
+	 * Files that have been attached to the item.
+	 */
+	@NonNull
+	@NotNull
+	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 	
 	/**
 	 * The total amount of this item in storage, in the {@link #getUnit()} unit.
