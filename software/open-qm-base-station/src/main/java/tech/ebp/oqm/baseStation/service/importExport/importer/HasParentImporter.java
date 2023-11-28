@@ -15,6 +15,7 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,8 +83,7 @@ public class HasParentImporter<T extends MainObject & HasParent, S extends Searc
 	
 	
 	@Override
-	public long readInObjects(ClientSession clientSession, Path directory, InteractingEntity importingEntity) throws IOException {
-		Path objectDirPath = this.getObjDirPath(directory);
+	protected long readInObjectsImpl(ClientSession clientSession, Path objectDirPath, InteractingEntity importingEntity) throws IOException {
 		List<File> filesForObject = getObjectFiles(objectDirPath);
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);

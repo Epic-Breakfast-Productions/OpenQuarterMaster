@@ -35,9 +35,28 @@ public abstract class FileImporter<T extends FileMainObject, S extends SearchObj
 		return directory.resolve(this.getFileService().getCollectionName());
 	}
 	
-	public abstract long readInObjects(
+	protected abstract long readInObjectsImpl(
 		ClientSession clientSession,
 		Path directory,
 		InteractingEntity importingEntity
 	) throws IOException;
+	
+	@Override
+	public long readInObjects(
+		ClientSession clientSession,
+		Path directory,
+		InteractingEntity importingEntity
+	) throws IOException{
+		Path objectDirPath = this.getFileObjDirPath(directory);
+		
+		if(!Files.exists(objectDirPath)){
+			return 0;
+		}
+		return this.readInObjectsImpl(
+			clientSession,
+			objectDirPath,
+			importingEntity
+		);
+	}
+	
 }
