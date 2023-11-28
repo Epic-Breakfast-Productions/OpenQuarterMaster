@@ -623,10 +623,10 @@ class UserInteraction:
                     "This will remove ALL data, including users.\nAre you sure?",
                     title="Confirm"
                 )
-
                 if code != self.dialog.OK:
                     logging.info("User chose not to clear data.")
                 else:
+                    self.dialog.infobox("Clearing ALL data. Please wait.")
                     if DataUtils.clearAllData():
                         self.dialog.msgbox("Data was cleared.")
                     else:
