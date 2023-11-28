@@ -123,28 +123,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		this.fileObjectService = historiedObjectService;
 	}
 	
-	@PostConstruct
-	public void setup(){
-		// should probably be a TODO to remove this, but unsure how we ever might be able to.
-		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.
-		if(this.getGridFSBucket().find().limit(1).first() == null){
-			FileMetadata metadata = new FileMetadata(
-				"init file, disregard",
-				0,
-				FileHashes.builder().md5("").sha1("").sha256("").build(),
-				FileMetadata.TIKA.detect("plain"),
-				ZonedDateTime.now()
-			);
-
-			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			GridFSBucket bucket = this.getGridFSBucket();
-			String filename = "init";
-
-			bucket.uploadFromStream(filename, new ByteArrayInputStream("".getBytes()), ops);
-		}
-		
-	}
-	
 	/**
 	 * This is the standard impl of the MongoHistoriedObjectService used to store T.
 	 */
