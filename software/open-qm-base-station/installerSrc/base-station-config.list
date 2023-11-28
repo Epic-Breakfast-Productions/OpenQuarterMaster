@@ -21,7 +21,7 @@ quarkus.mongodb.database={core.baseStation.mongodb.database}
 
 # Jaeger Config:
 quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
 
 # Keycloak Config:
 quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
