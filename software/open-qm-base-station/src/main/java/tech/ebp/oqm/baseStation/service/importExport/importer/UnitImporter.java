@@ -96,12 +96,11 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 	}
 	
 	@Override
-	public long readInObjects(
+	protected long readInObjectsImpl(
 		ClientSession clientSession,
-		Path directory,
+		Path objectDirPath,
 		InteractingEntity importingEntity
 	) throws IOException {
-		Path objectDirPath = this.getObjDirPath(directory);
 		List<File> filesForObject = getObjectFiles(objectDirPath);
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);
@@ -141,9 +140,6 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 			
 			needParentMap = newNeedParentMap;
 		}
-		
-		
-		
 		
 		sw.stop();
 		log.info(

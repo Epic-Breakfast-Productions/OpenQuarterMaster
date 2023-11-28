@@ -1,5 +1,8 @@
 package tech.ebp.oqm.baseStation.service.importExport.importer;
 
+import com.mongodb.client.ClientSession;
+import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,4 +35,10 @@ public abstract class Importer {
 					   .collect(Collectors.toList());
 		}
 	}
+	
+	public abstract long readInObjects(
+		ClientSession clientSession,
+		Path directory,
+		InteractingEntity importingEntity
+	) throws IOException;
 }
