@@ -4,7 +4,7 @@
 
 This software installs and manages an instance of Open QuarterMaster. It is designed to make the process easier and streamlined for everyday users, running on their own hardware.
 
-Note: this is not a tool meant for a cloud environment such as Kubernetes. All software (Base Station, plugins) are designed on their own to be deployable on a Docker environment, so if you are running such an environment, this is not the tool for you!
+Note: this is not a tool meant for a distributed cloud environment such as Kubernetes. This sets up the Open QuarterMaster system 
 
 ## Requirements
 
@@ -27,10 +27,8 @@ This is a set of requirements for the entire system, not necessarily just the st
 
 Steps:
 
- 1. Download the installer for your system [here on the releases page](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases?q=Station+captain&expanded=true).
-    - Curl command to download: `curl -ks https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster/releases/latest | grep "browser_download_url.*.deb" | cut -d : -f 2,3 | tr -d \" | xargs wget` 
- 3. Install the package using:
-    - `sudo apt install ./<deb file>.deb`
+ 1. Run the following command: `bash <(curl -s https://deployment.openquartermaster.com/deb-ppa/setup-repo.sh)`
+    - This will setup the OQM repo, and install `oqm-captain` for you.
  4. Run the main script command: `sudo oqm-captain`
     - The first run should prompt you to do an initial install. Do so.
     - Installation should be complete once this finishes. You can exit the script.
@@ -38,13 +36,3 @@ Steps:
     - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
 
 For usage documentation, see the [User Guide](User%20Guide.adoc)
-
-Or, IF YOU DARE:
-
-Run the following commands:
-
-- `curl -s --compressed "https://deployment.openquartermaster.com/deb-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null`
-- `sudo curl -s --compressed -o /etc/apt/sources.list.d/oqm_file.list "https://deployment.openquartermaster.com/deb-ppa/deb_list_file.list"`
-- `sudo apt update && sudo apt install open+quarter+master-manager-station+captain`
-
-
