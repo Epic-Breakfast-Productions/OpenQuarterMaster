@@ -21,6 +21,7 @@ Environment="IMAGE_NAME=haproxytech/haproxy-alpine"
 Environment="IMAGE_VERSION=2.9"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/haproxy/env.list"
 
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop haproxy container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove haproxy container'"

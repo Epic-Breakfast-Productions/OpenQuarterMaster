@@ -20,7 +20,7 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "zookeeper")
 
 #
 # Clean
@@ -65,6 +65,10 @@ for curPackage in ${packages[@]}; do
 	if [ -f "$curPackage/$curPackage-assert-account.sh" ]; then
 		cp "$curPackage/$curPackage-assert-account.sh" "$packageDebDir/etc/oqm/accountScripts/"
 	fi
+	if [ -f "$curPackage/infra-$curPackage-proxy-config.json" ]; then
+		mkdir -p "$packageDebDir/etc/oqm/proxyConfig.d/"
+		cp "$curPackage/infra-$curPackage-proxy-config.json" "$packageDebDir/etc/oqm/proxyConfig.d/"
+	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -77,7 +81,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
@@ -104,6 +108,10 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
+# restart proxy after we add config
+#if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
+#	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
+#fi
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 
@@ -113,10 +121,12 @@ touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
 
 
+
 	# TODO:: remove
 	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
 		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
+		cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
+#!/bin/bash
 if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
 	then
 		echo "Config value already present: $curConfig"
@@ -159,8 +169,6 @@ EOT
 
 systemctl daemon-reload
 
-
-
 # Remove docker image
 docker stop oqm_$curPackage || echo "Docker container stopped previously."
 
@@ -177,8 +185,11 @@ else
 	echo "Docker image was already gone."
 fi
 
-
+#if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
+#	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
+#fi
 EOT
+
 	chmod +x "$packageDebDir/DEBIAN/postrm"
 
 	configFileKeys=($(jq -r '.configFiles | keys[]'  "$packageConfigFile"))
@@ -204,7 +215,7 @@ EOT
 		fileInSrc="$(jq -r ".files.\"$fileKey\""  "$packageConfigFile")"
 #		echo "Config file content: $curConfigFileContent"
 		echo "Adding file: $fileInSrc to directory $fileKey";
-		cp "$curPackage/$fileInSrc" "$curFile"
+		cp -r "$curPackage/$fileInSrc" "$curFile"
 	done;
 
 	dpkg-deb --build "$packageDebDir" "$buildDir"

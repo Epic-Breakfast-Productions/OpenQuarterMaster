@@ -1,8 +1,8 @@
 {
 	"infra": {
 		"postgres": {
-			"host": "host.docker.internal",
-			"port": "8120",
+			"host": "oqm_infra_postgres",
+			"port": "5432",
 			"adminUser": "oqm_admin",
 			"adminPass": "<secret>"
 		}

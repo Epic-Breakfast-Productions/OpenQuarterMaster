@@ -1,0 +1,15 @@
+{
+	"system": {
+		"systemDataDir": "/data",
+		"dataDir": "#{system.systemDataDir}/oqm",
+		"automaticContainerPruneFrequency": "monthly"
+	},
+	"captain": {
+	},
+	"snapshots": {
+		"location": "#{system.systemDataDir}/oqm-snapshots",
+		"numToKeep": 5,
+		"frequency": "weekly",
+		"compressionAlg": "xz"
+	}
+}

@@ -16,6 +16,7 @@ Requires=docker.socket
 Type=simple
 Restart=always
 
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm_infra_prometheus || echo 'Could not stop prometheus container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm_infra_prometheus || echo 'Could not remove prometheus container'"
 

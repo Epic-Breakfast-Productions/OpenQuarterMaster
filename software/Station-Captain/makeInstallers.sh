@@ -57,10 +57,11 @@ mkdir "$buildDir/$debDir/bin"
 mkdir -p "$buildDir/$debDir/usr/lib/oqm/station-captain"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 mkdir -p "$buildDir/$debDir/etc/oqm/static"
-mkdir -p "$buildDir/$debDir/etc/oqm/backup/scripts/"
+mkdir -p "$buildDir/$debDir/etc/oqm/snapshots/scripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/accountScripts/"
+mkdir -p "$buildDir/$debDir/etc/oqm/config/"
 
-install -m 755 -D src/oqm-captain.sh "$buildDir/$debDir/bin/oqm-captain"
+install -m 755 -D src/oqm-captain.py "$buildDir/$debDir/bin/oqm-captain"
 install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
 install -m 755 -D src/oqm-station-captain-help.txt "$buildDir/$debDir/etc/oqm/static/"
 install -m 755 -D src/integration/oqm-icon.svg "$buildDir/$debDir/etc/oqm/static/"
@@ -69,16 +70,14 @@ install -m 755 -D src/integration/oqm-sc-guide-icon.svg "$buildDir/$debDir/etc/o
 install -m 755 -D src/integration/oqm-captain.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D src/integration/oqm-captain-user-guide.desktop "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D "$userGuideFile" "$buildDir/$debDir/etc/oqm/static/stationCaptainUserGuide.html"
-install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/backup/"
+install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/snapshots/"
 install -m 755 -D "src/account-assure-base.sh" "$buildDir/$debDir/etc/oqm/accountScripts/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
+install -m 755 -D src/mainConfig.json "$buildDir/$debDir/etc/oqm/config/"
 
-
-sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-captain"
-sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib/oqm/station-captain"|' "$buildDir/$debDir/bin/oqm-captain"
-
-sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/bin/oqm-config"
+sed -i "s/    SCRIPT_VERSION = 'SCRIPT_VERSION'/    SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/usr/lib/oqm/station-captain/ScriptInfos.py"
 sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib/oqm/station-captain/")|' "$buildDir/$debDir/bin/oqm-config"
+sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib/oqm/station-captain/")|' "$buildDir/$debDir/bin/oqm-captain"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
@@ -123,6 +122,9 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
+exit 0;
+#TODO:: fix the following
+
 #
 # RPM build
 #
@@ -136,9 +138,6 @@ mkdir "$buildDir/$rpmDir/SRPMS"
 # make tar gz
 
 cp -r "src" "$sourcesDir"
-
-sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
-sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
 
 sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-config.py"
 sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib64/oqm/station-captain/")|' "$sourcesDir/oqm-config.py"
@@ -177,7 +176,7 @@ mkdir -p %{buildroot}/etc/oqm/static
 mkdir -p %{buildroot}/etc/oqm/snapshot/scripts
 mkdir -p %{buildroot}/usr/share/applications
 
-install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
+install -m 755 -D oqm-captain.py %{buildroot}/%{_bindir}/oqm-captain
 install -m 755 -D oqm-config.py %{buildroot}/%{_bindir}/oqm-config
 install -m 755 -D lib/* %{buildroot}%{_libdir}/oqm/station-captain/
 

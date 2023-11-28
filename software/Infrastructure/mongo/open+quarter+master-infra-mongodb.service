@@ -21,6 +21,7 @@ Environment="IMAGE_NAME=mongo"
 Environment="IMAGE_VERSION=7"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove mongo container'"
@@ -40,7 +41,7 @@ ExecStartPre=/bin/bash -c "printf \"$(oqm-config -g 'infra.mongodb.keyFileConten
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
-                                 -p=27017:27017 \
+                                 --network=oqm-internal \
                                  -v /data/oqm/db/mongo/:/data/db  \
                                  --env-file /tmp/oqm/serviceConfig/infra/mongodb/env.list \
                                  $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"

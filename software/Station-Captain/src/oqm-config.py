@@ -3,15 +3,15 @@
 # Script to get configuration and replace values
 #
 import sys
+
 sys.path.append("lib/")
 from ConfigManager import *
+from ScriptInfos import *
 import json
 import argparse
 import re
 
-
-SCRIPT_VERSION = 'SCRIPT_VERSION'
-SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + SCRIPT_VERSION
+SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
 EXIT_CANT_READ_FILE = 2
 EXIT_BAD_CONFIG_KEY = 3
@@ -30,20 +30,30 @@ argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", n
 argParser.add_argument('-t', '--template', dest="t",
                        help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
 argParser.add_argument('-s', '--set', dest="s",
-                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + CONFIG_MNGR_ADD_CONFIG_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
-
-configManager = ConfigManager()
+argParser.add_argument('-S', '--setSecret', dest="setSecret",
+                       help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       nargs=3)
 
 args = argParser.parse_args()
 
 if args.v:
     print(SCRIPT_TITLE)
 elif args.l:
-    print(json.dumps(configManager.configData, indent=4))
+    print(json.dumps(mainCM.configData, indent=4))
 elif args.g:
     configToGet = args.g[0]
-    configValue = configManager.getConfigVal(configToGet, configManager.configData)
+    try:
+        configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
+        if isinstance(configValue, (dict, list)):
+            configValue = json.dumps(
+                configValue,
+                indent=4
+            )
+    except ConfigKeyNotFoundException:
+        print("ERROR: Config key not found: " + configToGet, file=sys.stderr)
+        exit(1)
     print(configValue)
 elif args.t:
     configFileToGet = args.t[0]
@@ -60,15 +70,23 @@ elif args.t:
         # print("debug: resolving placeholder: " + curPlaceholder)
         output = output.replace(
             "{" + curPlaceholder + "}",
-            configManager.getConfigVal(curPlaceholder, configManager.configData, formatData=False)
+            mainCM.getConfigVal(curPlaceholder)
         )
 
     print(output)
 elif args.s:
-    json = ConfigManager.setConfigValInFile(
+    json = mainCM.setConfigValInFile(
         configKeyToSet=args.s[0],
         configValToSet=args.s[1],
         configFile=args.s[2]
+    )
+    # TODO: error check
+    print(json)
+elif args.setSecret:
+    json = mainCM.setSecretValInFile(
+        configKeyToSet=args.setSecret[0],
+        configValToSet=args.setSecret[1],
+        configFile=args.setSecret[2]
     )
     # TODO: error check
     print(json)

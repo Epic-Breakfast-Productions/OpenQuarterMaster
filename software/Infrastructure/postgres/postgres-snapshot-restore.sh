@@ -3,7 +3,7 @@
 # Script to add Postgres data to snapshots, and restore that data
 #
 #
-source /etc/oqm/snapshot/snapshot-restore-base.sh
+source /etc/oqm/snapshots/snapshot-restore-base.sh
 
 #echo "$mode"
 #echo "$targetDir"

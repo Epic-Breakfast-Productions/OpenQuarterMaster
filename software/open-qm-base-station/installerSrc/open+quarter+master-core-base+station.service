@@ -9,6 +9,7 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
 Wants=network-online.target
+Wants=open\x2bquarter\x2bmaster\x2dinfra\x2djaeger.service
 Requires=docker.socket
 Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dmongodb.service
 Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
@@ -26,6 +27,7 @@ Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/base-stat
 Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/user-config.list"
 
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
@@ -43,17 +45,17 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
                                         -p 80:80 -p 443:443 \
-                                        -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files \
+                                        -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
-                                        --add-host host.docker.internal:host-gateway \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-                                hcGet=\"$(/usr/bin/curl -k \"https://localhost/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:80/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

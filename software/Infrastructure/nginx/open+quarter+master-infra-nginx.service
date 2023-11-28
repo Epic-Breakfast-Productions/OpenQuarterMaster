@@ -21,10 +21,12 @@ Environment="IMAGE_NAME=nginx"
 Environment="IMAGE_VERSION=1.25"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/nginx/env.list"
 
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop nginx container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove nginx container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "/etc/oqm/serviceConfig/infra/nginx/setup-proxy-config.py"
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/nginx"
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
@@ -40,8 +42,10 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -p=80:80 \
                                  --env-file $ENV_CONFIG_FILE \
                                  --add-host host.docker.internal:host-gateway \
-                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.d/:/etc/nginx/conf.d/:ro\
-                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.other.d/:/etc/nginx/conf.other.d/:ro\
+                                 --network=oqm-internal \
+                                 -v /tmp/oqm/serviceConfig/infra/nginx/config.d/:/etc/nginx/conf.d/:ro \
+                                 -v /etc/oqm/serviceConfig/infra/nginx/conf.other.d/:/etc/nginx/conf.other.d/:ro \
+                                 -v /etc/oqm/serviceConfig/infra/nginx/webroot/:/usr/share/nginx/html/:ro \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 #ExecStartPost=/bin/bash -c "running=\"false\"; \
 #                            while [ \"$running\" != \"true\" ]; do \
