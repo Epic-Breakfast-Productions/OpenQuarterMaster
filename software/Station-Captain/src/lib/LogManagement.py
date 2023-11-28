@@ -1,6 +1,7 @@
 import logging
 import datetime
 import select
+import concurrent.futures
 import time
 import tarfile
 from ConfigManager import *
@@ -10,6 +11,18 @@ from systemd import journal
 
 
 class LogManagement:
+
+    @staticmethod
+    def packageServiceLogs(service:str, compilingDir:str):
+        outFileName = compilingDir + "/" + service + ".log"
+        logging.info("Logging events for %s to file %s", service, outFileName)
+        start = time.time()
+        with open(outFileName, "w") as outfile:
+            result = subprocess.run(["journalctl", "-r", "-u", service], shell=False, text=True, check=False, stdout=outfile)
+            if result.returncode != 0:
+                logging.error("Failed to get logs for %s: %s", service, result.stderr)
+                return False, result.stderr
+        logging.info("Finished getting log events in %s seconds for %s", time.time() - start, service)
 
     @staticmethod
     def packageLogs() -> (bool, str):
@@ -35,29 +48,16 @@ class LogManagement:
                 return False, str(e)
 
             logging.info("Writing log messages.")
-            services = ServiceUtils.getServiceNames()
-            for service in services:
-                outFileName = compilingDir + "/" + service + ".log"
-                logging.info("Logging events for %s to file %s", service, outFileName)
-                # TODO:: tis no worky
-                with journal.Reader() as j:
-                    j.add_match(_SYSTEMD_UNIT=service)
-                    # j.seek_head()
-                    j.seek_tail()
-                    j.get_next()
-                    with open(outFileName, "w") as outfile:
-                        p = select.poll()
-                        p.register(j, j.get_events())
-                        while p.poll(5_000):
-                            if j.process() != journal.APPEND:
-                                continue
-                            logging.debug("Got line")
-                            for entry in j:
-                                if entry['MESSAGE'] != "":
-                                    outfile.write(str(entry['__REALTIME_TIMESTAMP']) + ' ' + entry['MESSAGE'] + "\n")
+            result, services = ServiceUtils.getServiceNames()
+            if not result:
+                return False, "Failed to get service names: " + services
+
+            executor = concurrent.futures.ProcessPoolExecutor(3)
+            futures = [executor.submit(LogManagement.packageServiceLogs, service, compilingDir) for service in services]
+            concurrent.futures.wait(futures)
             logging.info("Done writing log messages.")
 
-            logging.info("Archiving snapshot bundle.")
+            logging.info("Archiving log bundle.")
             start = time.time()
             try:
                 with tarfile.open(logArchiveName, "x:" + compressionAlg) as tar:
@@ -65,7 +65,7 @@ class LogManagement:
             except Exception as e:
                 logging.error("FAILED to write files to archive: %s", e)
                 return False, str(e)
-            logging.info("Completed archiving snapshot bundle. Took %s seconds", time.time() - start)
+            logging.info("Completed archiving log bundle. Took %s seconds", time.time() - start)
             success = True
             logging.info("Done Performing snapshot.")
             return True, logArchiveName

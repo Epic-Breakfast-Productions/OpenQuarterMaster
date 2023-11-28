@@ -1,4 +1,7 @@
+import re
 from enum import Enum
+from typing import Union
+
 from ConfigManager import *
 import logging
 import subprocess
@@ -31,6 +34,24 @@ class ServiceUtils:
         return True
 
     @staticmethod
-    def getServiceNames(serviceFilter: str = SERVICE_ALL) -> [str]:
-        # TODO:: this
-        return ["open\\x2bquarter\\x2bmaster\\x2dcore\\x2dbase\\x2bstation.service"]
+    def getServiceNames(serviceFilter: str = SERVICE_ALL) -> (bool, [str]):
+        logging.info("Getting service names based on filter: %s", serviceFilter)
+        result = subprocess.run(["systemctl", "list-units", "--no-legend", serviceFilter], shell=False, capture_output=True, text=True, check=False)
+
+        if result.returncode != 0:
+            logging.warning("Command was unsuccessful. Error code: {0}", result.returncode)
+            logging.debug("Erring command stderr: {0}", result.stderr)
+            return False, result.stderr
+
+        output = []
+        for curRawService in re.split(r'\n', result.stdout):
+            curService = re.split(r' ', curRawService)[0].strip()
+            if len(curService):
+                output.append(curService)
+        logging.debug("Got OQM services: %s", output)
+
+        return True, output
+
+    # -q
+    # --no-legend
+    #
