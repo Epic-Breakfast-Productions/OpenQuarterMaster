@@ -81,6 +81,12 @@
                     <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
                 </div>
             </div>
+			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
+				<div class="card-body" style="padding: 2px 0;">
+					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles'}
+					{/fileAttachment/FileAttachmentObjectView}
+				</div>
+			</div>
         </div>
         <!-- TODO:: add expiry warning duration -->
     </div>

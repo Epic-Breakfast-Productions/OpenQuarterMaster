@@ -17,24 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class ObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoHistoriedObjectService<T, S>> {
-	
-	protected static List<File> getObjectFiles(Path directory) throws IOException {
-		try (
-			Stream<Path> paths = Files.walk(
-				directory,
-				1
-			)
-		) {
-			return paths
-					   .filter(Files::isRegularFile)
-					   .filter((Path path)->{
-						   return path.toString().endsWith(".json");
-					   })
-					   .map(Path::toFile)
-					   .collect(Collectors.toList());
-		}
-	}
+public abstract class ObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoHistoriedObjectService<T, S>> extends Importer {
 	
 	@Getter
 	private final M objectService;

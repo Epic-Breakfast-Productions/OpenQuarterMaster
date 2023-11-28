@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 
@@ -13,13 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class FileAttachmentGet extends FileAttachment {
+public class FileAttachmentGet extends FileAttachment implements FileGet {
 	
 	public static FileAttachmentGet fromFileAttachment(
 		FileAttachment a,
 		List<FileMetadata> revisions
 	) {
-		return (FileAttachmentGet) new FileAttachmentGet()
+		return (FileAttachmentGet) (
+			(FileAttachmentGet) new FileAttachmentGet()
+									.setDescription(a.getDescription())
+		)
 									   .setRevisions(revisions)
 									   .setFileName(a.getFileName())
 									   .setAttributes(a.getAttributes())

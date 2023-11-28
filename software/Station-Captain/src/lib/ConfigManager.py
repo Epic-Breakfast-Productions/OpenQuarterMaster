@@ -1,5 +1,6 @@
 import base64
 import datetime
+import logging
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -11,12 +12,12 @@ import json
 from json import JSONDecodeError
 import os
 import sys
+import re
 import collections.abc
+from ScriptInfos import *
 
-CONFIG_MNGR_CONFIGS_DIR = "/etc/oqm/config"
-CONFIG_MNGR_MAIN_CONFIG_FILE = CONFIG_MNGR_CONFIGS_DIR + "/mainConfig.json"
-CONFIG_MNGR_ADD_CONFIG_DIR = CONFIG_MNGR_CONFIGS_DIR + "/configs"
-CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = CONFIG_MNGR_CONFIGS_DIR + "/99-custom.json"
+CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
 
 SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
 SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
@@ -24,8 +25,8 @@ SECRET_MNGR_SECRET_PW_HASH_LEN = 32
 SECRET_MNGR_SECRET_PW_HASH_ALG = hashes.SHA3_512()
 SECRET_MNGR_SECRET_PLACEHOLDER = "<secret>"
 
-SECRET_MNGR_SECRETS_FILE = CONFIG_MNGR_CONFIGS_DIR + "/secrets.json"
-SECRET_MNGR_SECRETS_SECRET_FILE = CONFIG_MNGR_CONFIGS_DIR + "/.secretSecret.dat"
+SECRET_MNGR_SECRETS_FILE = ScriptInfo.CONFIG_DIR + "/secrets/secrets.json"
+SECRET_MNGR_SECRETS_SECRET_FILE = ScriptInfo.CONFIG_DIR + "/secrets/.secretSecret.dat"
 
 
 # https://cryptography.io/en/latest/fernet/#cryptography.fernet.Fernet
@@ -46,9 +47,9 @@ class SecretManager:
         self.secretSecretFile = secretSecretFile
         # ensure secrets file exists
         try:
-            os.makedirs(CONFIG_MNGR_ADD_CONFIG_DIR, exist_ok=True)
-            if not os.path.isfile(SECRET_MNGR_SECRETS_FILE):
-                with open(SECRET_MNGR_SECRETS_FILE, 'x') as stream:
+            if not os.path.isfile(self.secretsFile):
+                os.makedirs(os.path.dirname(self.secretsFile), exist_ok=True)
+                with open(self.secretsFile, 'x') as stream:
                     stream.write('''
 {
 }
@@ -73,6 +74,22 @@ class SecretManager:
             )
         ))
 
+    def setSecret(self, key: str, plainVal: str, secretsDict: dict = None):
+        if secretsDict is None:
+            secretsDict = ConfigManager.readFile(self.secretsFile)
+
+        secretsDict[key] = self.fernet.encrypt(bytes(plainVal, 'utf-8')).decode('utf-8')
+        jsonData = json.dumps(secretsDict, indent=4)
+        try:
+            with open(self.secretsFile, 'w') as stream:
+                stream.write(jsonData)
+        except OSError as e:
+            # TODO:: throw exception
+            print("Error: failed to write new secret to secrets file. Error: ",
+                  e,
+                  file=sys.stderr)
+            exit(1)
+
     def getSecretVal(self, key: str, generateIfNone: bool = True) -> str:
         secretsDict = ConfigManager.readFile(self.secretsFile)
         output = SECRET_MNGR_SECRET_PLACEHOLDER
@@ -81,39 +98,9 @@ class SecretManager:
             output = self.fernet.decrypt(bytes(output, 'utf-8')).decode('utf-8')
         elif generateIfNone:
             output = SecretManager.newSecret()
-            secretsDict[key] = self.fernet.encrypt(bytes(output, 'utf-8')).decode('utf-8')
-            jsonData = json.dumps(secretsDict, indent=4)
-            try:
-                with open(self.secretsFile, 'w') as stream:
-                    stream.write(jsonData)
-            except OSError as e:
-                # TODO:: throw exception
-                print("Error: failed to write new secret to secrets file. Error: ",
-                      e,
-                      file=sys.stderr)
-                exit(1)
+            self.setSecret(key, output, secretsDict)
 
         return output
-
-    def updateSecrets(self, key: str, val, generateIfNone: bool = True):
-        if isinstance(val, str):
-            if self.valIsSecret(val):
-                val = self.getSecretVal(key, generateIfNone)
-        elif isinstance(val, list):
-            for i, s in enumerate(val):
-                val[i] = self.updateSecrets(
-                    key + ".[" + i + "]",
-                    s,
-                    generateIfNone
-                )
-        elif isinstance(val, dict):
-            for k, v in val.items():
-                val[k] = self.updateSecrets(
-                    key + "." + k,
-                    v,
-                    generateIfNone
-                )
-        return val
 
     @staticmethod
     def valIsSecret(value: str) -> bool:
@@ -212,7 +199,7 @@ class ConfigManager:
             self,
             secretManager: SecretManager = None,
             mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
-            additionalConfigsDir: str = CONFIG_MNGR_ADD_CONFIG_DIR
+            additionalConfigsDir: str = ScriptInfo.CONFIG_VALUES_DIR
     ):
         self.secretManager = secretManager
         self.additionalConfigsDir = additionalConfigsDir
@@ -220,22 +207,6 @@ class ConfigManager:
         # Ensure main config, additional configs dir exist
         try:
             os.makedirs(self.additionalConfigsDir, exist_ok=True)
-            if not os.path.isfile(self.mainConfigFile):
-                with open(self.mainConfigFile, 'x') as stream:
-                    # TODO:: move this default template to another file?
-                    stream.write('''
-{
-    "system": {
-    },
-    "captain": {
-    },
-    "snapshots": {
-        "location": "/data/oqm-snapshots/",
-        "numToKeep": 5,
-        "frequency": "weekly"
-    }
-}
-        ''')
         except OSError as e:
             # TODO:: just throw error
             print(
@@ -245,6 +216,9 @@ class ConfigManager:
             )
             exit(1)
         # Read in configuration
+        self.rereadConfigData()
+
+    def rereadConfigData(self):
         self.configData = self.readFile(self.mainConfigFile)
         for file in os.listdir(self.additionalConfigsDir):
             if file.endswith(".json"):
@@ -259,9 +233,44 @@ class ConfigManager:
             self.secretManager = SecretManager()
         return self.secretManager
 
-    def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, formatData) -> str:
+    def updateReplacements(self, key: str, val, generateSecretIfNone: bool = True):
+        if isinstance(val, str):
+            if self.getSecretManager().valIsSecret(val):
+                val = self.getSecretManager().getSecretVal(key, generateSecretIfNone)
+            else:
+                replacementSearch = re.findall('#\\{[^}]+}', val, re.MULTILINE | re.IGNORECASE)
+                if replacementSearch:
+                    replacements = {}
+                    for curConfig in replacementSearch:
+                        curConfig = curConfig.replace("#{","")
+                        curConfig = curConfig.replace("}","")
+                        replacements[curConfig] = self.getConfigVal(curConfig)
+                    for curConfig, curNewVal in replacements.items():
+                        if not isinstance(curNewVal, (str)):
+                            curNewVal = str(curNewVal)
+                        val = val.replace("#{"+curConfig+"}", curNewVal)
+        elif isinstance(val, list):
+            for i, s in enumerate(val):
+                val[i] = self.updateReplacements(
+                    key + ".[" + str(i) + "]",
+                    s,
+                    generateSecretIfNone
+                )
+        elif isinstance(val, dict):
+            for k, v in val.items():
+                val[k] = self.updateReplacements(
+                    key + "." + k,
+                    v,
+                    generateSecretIfNone
+                )
+        return val
+
+    def getConfigValRec(self, configKeyOrig: str, configKey: str, data: dict, processSecret=True,
+                        exceptOnNotPresent=True):
         """
         Recursive function to get a particular value in the data
+        :param exceptOnNotPresent:
+        :param processSecret:
         :param configKeyOrig: The configuration to get, dot notation I.E. "test.value"
         :param configKey: At first call, same as configKeyOrig. Is whittled down until reaching final segment in dot notation.
         :param data: The dict to find the configuration in
@@ -272,37 +281,41 @@ class ConfigManager:
         # print("debug:: configKey: " + configKey)
         # print("debug:: data: " + json.dumps(data, indent=4))
         if not isinstance(data, dict):
-            raise ConfigKeyNotFoundException()
+            if exceptOnNotPresent:
+                raise ConfigKeyNotFoundException()
+            return ""
         if "." in configKey:
             parts = configKey.split(".", 1)
             curConfig = parts[0]
             keyLeft = parts[1]
 
             if curConfig not in data:
-                raise ConfigKeyNotFoundException()
+                if exceptOnNotPresent:
+                    raise ConfigKeyNotFoundException()
+                return ""
 
-            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], formatData)
+            return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], processSecret, exceptOnNotPresent)
         if configKey not in data:
-            raise ConfigKeyNotFoundException()
+            if exceptOnNotPresent:
+                raise ConfigKeyNotFoundException()
+            return ""
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
-            result = self.getSecretManager().updateSecrets(configKeyOrig, result)
-            if not isinstance(result, str):
-                if formatData:
-                    result = json.dumps(result, indent=4)
-                else:
-                    result = json.dumps(result)
-        else:
-            result = str(result)
+            result = self.updateReplacements(configKeyOrig, result) if processSecret else result
         return result
 
-    def getConfigVal(self, configKey: str, data: dict, formatData=True) -> str:
-        try:
-            return self.getConfigValRec(configKey, configKey, data, formatData)
-        except ConfigKeyNotFoundException:
-            # TODO:: throw exception
-            print("ERROR: Config key not found: " + configKey, file=sys.stderr)
-            exit(1)
+    def getConfigVal(self, configKey: str, data: dict = None, processSecret=True, exceptOnNotPresent=True):
+        return self.getConfigValRec(
+            configKey,
+            configKey,
+            (data if data is not None else self.configData),
+            processSecret,
+            exceptOnNotPresent
+        )
+
+    @staticmethod
+    def getArrRef(configKey: str):
+        logging.debug('todo')
 
     @staticmethod
     def setConfigVal(configKey: str, configVal: str, data: dict):
@@ -314,19 +327,26 @@ class ConfigManager:
         """
         if not isinstance(data, dict):
             raise ConfigKeyNotFoundException()
+
+        if "." not in configKey and "[" not in configKey:
+            data[configKey] = configVal
+            return
+
         if "." in configKey:
             parts = configKey.split(".", 1)
             curConfig = parts[0]
             keyLeft = parts[1]
 
+            # TODO:: add array stuff here
+            # if "[" in keyLeft:
+            #
+            # else:
             if curConfig not in data:
                 data[curConfig] = {}
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])
         else:
-            # print("Debug: key: " + configKey)
-            # print("Debug: val: " + configVal)
-            # print("Debug: data: " + data)
-            data[configKey] = configVal
+            # TODO:: add array stuff here
+            logging.warn("err")
 
     @staticmethod
     def setConfigValInFile(
@@ -334,7 +354,7 @@ class ConfigManager:
             configValToSet: str,
             configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
             mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
-            additionalConfigDir: str = CONFIG_MNGR_ADD_CONFIG_DIR,
+            additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
             defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
     ) -> str:
         if configFile == ".":
@@ -382,6 +402,22 @@ class ConfigManager:
 
         return jsonData
 
+    def setSecretValInFile(
+            self,
+            configKeyToSet: str,
+            configValToSet: str,
+            configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
+            mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
+            additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
+            defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
+    ) -> str:
+        self.getSecretManager().setSecret(configKeyToSet, configValToSet)
+        output = ConfigManager.setConfigValInFile(
+            configKeyToSet, SECRET_MNGR_SECRET_PLACEHOLDER, configFile, mainConfigFile, additionalConfigDir,
+            defaultAddendumFile
+        )
+        return output
+
     @staticmethod
     def readFile(file: str) -> dict:
         """
@@ -411,3 +447,6 @@ class ConfigManager:
             else:
                 d[k] = v
         return d
+
+
+mainCM = ConfigManager()

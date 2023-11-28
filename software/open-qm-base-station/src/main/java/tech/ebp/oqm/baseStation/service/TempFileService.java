@@ -30,7 +30,7 @@ public class TempFileService {
 			try{
 				dir = Files.createDirectories(dir);
 			} catch(IOException e) {
-				throw new InvalidConfigException("Temp directory could not be created. Dir: " + dir);
+				throw new InvalidConfigException("Temp directory could not be created. Dir: " + dir, e);
 			}
 		}
 		

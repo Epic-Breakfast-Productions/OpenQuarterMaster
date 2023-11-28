@@ -13,11 +13,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -30,20 +32,19 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
  * @param <S>
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, F extends FileUploadBody> extends ObjectProvider {
+@NoArgsConstructor
+public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, F extends FileUploadBody> extends ObjectProvider {
 	
-	@Getter
-	private MongoHistoriedFileService<T, S> fileService;
 	@Getter
 	private Template historyRowsTemplate;
 	
+	public abstract MongoHistoriedFileService<T, S, G> getFileObjectService();
 	
 	@WithSpan
 	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
 		@BeanParam S searchObject
 	) {
-		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, false);
+		SearchResult<T> searchResult = this.getFileObjectService().getFileObjectService().search(searchObject, false);
 		
 		return Tuple2.of(
 			this.getSearchResultResponseBuilder(searchResult),
@@ -124,11 +125,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
+		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileObjectService().getClazz().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
 		
-		SearchResult<ObjectHistoryEvent> searchResult = this.getFileService().getFileObjectService().searchHistory(searchObject, false);
+		SearchResult<ObjectHistoryEvent> searchResult = this.getFileObjectService().getFileObjectService().searchHistory(searchObject, false);
 		
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
@@ -184,7 +185,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	) {
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getFileService().getFileObjectService().searchHistory(searchObject, false);
+		return this.getFileObjectService().getFileObjectService().searchHistory(searchObject, false);
 	}
 	//</editor-fold>
 }

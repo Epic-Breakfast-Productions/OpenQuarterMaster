@@ -1,4 +1,4 @@
-var defaultCroppieImage = "/media/logoSymbol.svg";
+var defaultCroppieImage = "/media/logoSymbolSquare.svg";
 
 $uploadCrop = $('#imageUploadCroppieDiv').croppie({
 	enableExif: true,

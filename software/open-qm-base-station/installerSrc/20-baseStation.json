@@ -1,6 +1,8 @@
 {
 	"core": {
 		"baseStation": {
+			"host": "oqm_core_base_station",
+			"port": 80,
 			"mongodb": {
 				"user": "base_station_user",
 				"pass": "<secret>",

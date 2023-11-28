@@ -1,13 +1,9 @@
 {
 	"packageName":"open+quarter+master-infra-jaeger",
-	"version":"1.0.6",
+	"version":"1.1.0",
 	"description":"Jaeger instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger",
-	"configs": [
-		"# Jaeger Config:",
-		"quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces",
-		"quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://host.docker.internal:8096"
-	],
+	"configs": [],
 	"dependencies": {
 		"deb": ""
 	},

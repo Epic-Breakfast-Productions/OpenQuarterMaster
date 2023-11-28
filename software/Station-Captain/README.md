@@ -8,9 +8,19 @@ The quickstart guide is available [here](docs/Quickstart%20Guide.md).
 
 Additional Documentation available [here](docs/)
 
-## TODO::
+## Tests
 
- - make python ui to interact with script
+### Unit
+
+To run unit tests, simply run:
+
+`python3 -m unittest`
+
+in the [unitTests](unitTests) folder.
+
+### Deployment
+
+## TODO::
 
 ## dev Notes
 

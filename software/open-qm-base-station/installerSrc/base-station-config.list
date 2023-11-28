@@ -5,12 +5,12 @@
 
 # Basic configs
 quarkus.http.port=80
-quarkus.http.ssl.port=443
-quarkus.http.insecure-requests=redirect
+#quarkus.http.ssl.port=443
+#quarkus.http.insecure-requests=redirect
 
 # Files brought over in shared volume
-quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
-quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
+#quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
+#quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
 #mp.jwt.verify.privatekey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
 #mp.jwt.verify.publickey.location=/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem
 
@@ -28,6 +28,6 @@ quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
 quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
 quarkus.oidc.auth-server-url=http://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
 
-runningInfo.protocol=https
+runningInfo.protocol=http
 runningInfo.hostname={system.hostname}
 
