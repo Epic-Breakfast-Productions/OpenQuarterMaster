@@ -19,9 +19,9 @@ quarkus.http.port=80
 quarkus.mongodb.connection-string=mongodb://{core.baseStation.mongodb.user}:{core.baseStation.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
 quarkus.mongodb.database={core.baseStation.mongodb.database}
 
-# Jaeger Config: TODO:: use placeholders
-quarkus.jaeger.endpoint=http://host.docker.internal:8091/api/traces
-quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://host.docker.internal:8096
+# Jaeger Config:
+quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
 
 # Keycloak Config:
 quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
