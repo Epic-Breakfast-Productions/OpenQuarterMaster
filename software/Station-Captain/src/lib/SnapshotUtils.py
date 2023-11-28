@@ -146,16 +146,17 @@ class SnapshotUtils:
 
             ServiceUtils.doServiceCommand(ServiceStateCommand.stop, ServiceUtils.SERVICE_ALL)
 
+            logging.info("Copying in secrets and configs.")
             shutil.copytree(extractionDir + "/config/configs", ScriptInfo.CONFIG_DIR + "/configs", dirs_exist_ok=True)
             shutil.copytree(extractionDir + "/config/secrets", ScriptInfo.CONFIG_DIR + "/secrets", dirs_exist_ok=True)
+            shutil.copytree(extractionDir + "/serviceConfigs", ScriptInfo.SERVICE_CONFIG_DIR, dirs_exist_ok=True)
 
-            shutil.copytree(extractionDir + "/serviceConfig", ScriptInfo.SERVICE_CONFIG_DIR, dirs_exist_ok=True)
 
             logging.info("Running individual restore.")
             for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
                 file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
                 logging.info("Running script %s", file)
-                result = subprocess.run([file, "--restore", "-d", compilingDir], shell=False, capture_output=True, text=True, check=True)
+                result = subprocess.run([file, "--restore", "-d", extractionDir], shell=False, capture_output=True, text=True, check=True)
                 if result.returncode != 0:
                     logging.error("FAILED to run snapshot restore script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
                     logging.debug("Erring script err output: %s", result.stderr)
