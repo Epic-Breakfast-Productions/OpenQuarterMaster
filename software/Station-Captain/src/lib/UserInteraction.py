@@ -168,7 +168,7 @@ class UserInteraction:
             logging.info("Core setup not installed")
             code = self.dialog.yesno("Core components are not installed. Install now?", title="Setup")
             if code == self.dialog.OK:
-                self.dialog.infobox("Installing core components. Please Wait.")
+                self.dialog.infobox("Installing core components. Please Wait. This can take a few moments.")
                 PackageManagement.installCore()
         else:
             logging.info("Core components already installed.")
