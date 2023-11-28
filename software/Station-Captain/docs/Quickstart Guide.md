@@ -10,14 +10,18 @@ Note: this is not a tool meant for a cloud environment such as Kubernetes. All s
 
 This is a set of requirements for the entire system, not necessarily just the station captain.
 
-System Requirements:
+### System Requirements:
 
 - A Modern Linux OS
   - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems.
-- 4gb of RAM
-- Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8. The CPU should have at least 4 cores.
-  - Proven arm boards:
-    - Raspberry Pi 4B
+- 4(quad) cores
+- 8gb of RAM
+- Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8.
+
+### Proven SBC's and other 'specialty' hardware:
+
+ - ARM:
+   - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/) (to be proven, but should work)
 
 ## Installation
 
