@@ -139,9 +139,6 @@ mkdir "$buildDir/$rpmDir/SRPMS"
 
 cp -r "src" "$sourcesDir"
 
-sed -i "s/SCRIPT_VERSION='SCRIPT_VERSION'/SCRIPT_VERSION='$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-captain.sh"
-sed -i 's|LIB_DIR="lib"|LIB_DIR="/usr/lib64/oqm/station-captain"|' "$sourcesDir/oqm-captain.sh"
-
 sed -i "s/SCRIPT_VERSION = 'SCRIPT_VERSION'/SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$sourcesDir/oqm-config.py"
 sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib64/oqm/station-captain/")|' "$sourcesDir/oqm-config.py"
 
@@ -179,7 +176,7 @@ mkdir -p %{buildroot}/etc/oqm/static
 mkdir -p %{buildroot}/etc/oqm/snapshot/scripts
 mkdir -p %{buildroot}/usr/share/applications
 
-install -m 755 -D oqm-captain.sh %{buildroot}/%{_bindir}/oqm-captain
+install -m 755 -D oqm-captain.py %{buildroot}/%{_bindir}/oqm-captain
 install -m 755 -D oqm-config.py %{buildroot}/%{_bindir}/oqm-config
 install -m 755 -D lib/* %{buildroot}%{_libdir}/oqm/station-captain/
 

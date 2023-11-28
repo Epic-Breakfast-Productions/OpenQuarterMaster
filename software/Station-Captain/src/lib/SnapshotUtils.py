@@ -101,7 +101,8 @@ class SnapshotUtils:
 
             # remove extra files
             numToKeep = mainCM.getConfigVal("snapshots.numToKeep")
-            if not numToKeep.isdigit():
+            logging.debug("Value for number of snapshots to keep: %s (%s)", numToKeep, type(numToKeep))
+            if type(numToKeep) is not int:
                 logging.warning("snapshots.numToKeep was an invalid value (%s), defaulting to 5.", numToKeep)
                 numToKeep = 5
             if numToKeep > 0:
