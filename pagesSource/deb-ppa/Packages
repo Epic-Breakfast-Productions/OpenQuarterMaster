@@ -494,6 +494,21 @@ Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: open+quarter+master-core-base+station
+Version: 1.0.36
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, docker, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-jaeger (>= 1.1.0), open+quarter+master-infra-mongodb (>= 1.1.0), open+quarter+master-infra-keycloak (>= 1.1.0)
+Filename: ./open+quarter+master-core-base+station_1.0.36_all.deb
+Size: 4064
+MD5sum: 5205810cab5f81c1111c62f2815cee3f
+SHA1: 2712ac86d6ce36a1088aa0a24431bdddf4d0a2ce
+SHA256: ee47bdfa458ad0d74ea8fc8f77cb589cd3e41bdbd93d60069821dbbd67ce2b3f
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: open+quarter+master-core-base+station
 Version: 1.0.4-DEV
 Architecture: all
 Maintainer: EBP <contact@gjstewart.net>
@@ -1283,6 +1298,21 @@ Size: 31156
 MD5sum: 7730115416bfeb66c6ddb4a7dae48e21
 SHA1: 8f771e0850b5ef406a8725059a2147033fbf19c8
 SHA256: 19a811bb1b4f674bc906aa71f15201fb460e8ea81ed153e4faf3dcc0d02bce8e
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
+Package: open+quarter+master-manager-station+captain
+Version: 2.0.1
+Architecture: all
+Maintainer: EBP
+Depends: bash, curl, jq, hwinfo, moreutils, dialog, docker, docker.io, python3, unattended-upgrades, python3-dialog, python3-docker
+Filename: ./open+quarter+master-manager-station+captain_2.0.1_all.deb
+Size: 31192
+MD5sum: 5f55568a1212ce7bf019e5844a01e7e7
+SHA1: 539935df37214004fddeafc933bcdb18768c49a7
+SHA256: fdb35e5cdda4540ce38b78a585359fcf1324a6f3303490f2815df24b74b778a4
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
