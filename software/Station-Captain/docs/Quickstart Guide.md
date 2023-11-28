@@ -45,6 +45,6 @@ Run the following commands:
 
 - `curl -s --compressed "https://deployment.openquartermaster.com/deb-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null`
 - `sudo curl -s --compressed -o /etc/apt/sources.list.d/oqm_file.list "https://deployment.openquartermaster.com/deb-ppa/deb_list_file.list"`
-- `sudo apt update && sudo apt install oqm-captain`
+- `sudo apt update && sudo apt install open+quarter+master-manager-station+captain`
 
 
