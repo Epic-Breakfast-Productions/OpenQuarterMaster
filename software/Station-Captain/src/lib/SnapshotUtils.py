@@ -151,7 +151,6 @@ class SnapshotUtils:
             shutil.copytree(extractionDir + "/config/secrets", ScriptInfo.CONFIG_DIR + "/secrets", dirs_exist_ok=True)
             shutil.copytree(extractionDir + "/serviceConfigs", ScriptInfo.SERVICE_CONFIG_DIR, dirs_exist_ok=True)
 
-
             logging.info("Running individual restore.")
             for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
                 file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
