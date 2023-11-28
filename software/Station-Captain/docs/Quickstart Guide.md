@@ -13,7 +13,7 @@ This is a set of requirements for the entire system, not necessarily just the st
 ### System Requirements:
 
 - A Modern Linux OS
-  - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems.
+  - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems. (Tested on Ubuntu 22.04)
 - 4(quad) cores
 - 8gb of RAM
 - Any amdx64-bit architecture (any modern Intel or AMD cpu), or Arm v8.
