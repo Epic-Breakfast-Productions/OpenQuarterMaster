@@ -1,13 +1,13 @@
 {
 	"packageName":"open+quarter+master-manager-station+captain",
-	"version":"2.0.1",
+	"version":"2.0.2",
 	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
 	"maintainer": {
 		"name":"EBP"
 	},
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain",
 	"dependencies": {
-		"deb":"bash, curl, jq, hwinfo, moreutils, dialog, docker, docker.io, python3, unattended-upgrades, python3-dialog, python3-docker",
+		"deb":"bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, python3, unattended-upgrades, python3-dialog, python3-docker",
 		"deb-maybe":"unattended-upgrades, apt-listchanges, bsd-mailx",
 		"rpm":"bash, curl, jq, hwinfo, moreutils, dialog, docker, python3"
 	},

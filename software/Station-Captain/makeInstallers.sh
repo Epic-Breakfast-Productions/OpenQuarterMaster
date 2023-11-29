@@ -109,7 +109,12 @@ cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 oqm-config -g system.hostname
 RESULT="$?"
 if [ "$RESULT" -eq 1 ]; then
-  oqm-config -s system.hostname $(hostname).local "."
+  hostnameRaw="$(hostname)"
+  if [[ "$hostnameRaw" == *.local ]]; then
+    oqm-config -s system.hostname $(hostname) "."
+  else
+    oqm-config -s system.hostname $(hostname).local "."
+  fi
 fi
 
 # /usr/share/update-notifier/notify-reboot-required
