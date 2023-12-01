@@ -352,6 +352,14 @@ Ingests:
 							Auto
 						</button>
 					</li>
+					<li style=" height: 5px;">
+						<button type="button" class="dropdown-item d-flex align-items-center" style="font-size: 0.15em; height: 5px;" onclick="if(typeof RealDarkMode !== 'undefined'){ RealDarkMode.realDarkMode();}else{ script=document.createElement('script');script.src = '/res/js/realDarkMode.js';document.head.appendChild(script);}">
+							<span class="theme-icon">
+								{#icons/themeDark addSpace=true}{/icons/themeDark}
+							</span>
+							Really Dark
+						</button>
+					</li>
 				</ul>
 			</div>
 			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />

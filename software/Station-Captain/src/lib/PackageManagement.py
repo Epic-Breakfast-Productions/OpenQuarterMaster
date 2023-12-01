@@ -14,18 +14,21 @@ class PackageManagement:
 
     """
     BASE_STATION_PACKAGE = "open+quarter+master-core-base+station"
+    SYSTEM_PACKAGE_MANAGER = None
 
     @staticmethod
     def getSystemPackageManager() -> str:
+        if PackageManagement.SYSTEM_PACKAGE_MANAGER is not None:
+            return PackageManagement.SYSTEM_PACKAGE_MANAGER
         logging.debug("Determining the system's package manager.")
 
         # Not supported until Python 3.10
-        # systemReleaseInfo = platform.freedesktop_os_release()
-        # if systemReleaseInfo['ID_LIKE'] == "debian":
-        #     return "apt"
+        systemReleaseInfo = platform.freedesktop_os_release()
+        if systemReleaseInfo['ID_LIKE'] == "debian":
+            PackageManagement.SYSTEM_PACKAGE_MANAGER = "apt"
 
-        if "Ubuntu" in platform.version():
-            return "apt"
+        logging.info("Determined system using %s", PackageManagement.SYSTEM_PACKAGE_MANAGER)
+        return PackageManagement.SYSTEM_PACKAGE_MANAGER
 
     @staticmethod
     def runPackageCommand(command: str, package: str = None, *options: str) -> subprocess.CompletedProcess:
