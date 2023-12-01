@@ -1,5 +1,7 @@
 # Station Captain Quickstart
 
+[Back](README.md)
+
 ## Introduction
 
 This software installs and manages an instance of Open QuarterMaster. It is designed to make the process easier and streamlined for everyday users, running on their own hardware.
