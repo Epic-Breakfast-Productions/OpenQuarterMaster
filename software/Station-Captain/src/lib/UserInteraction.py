@@ -228,46 +228,12 @@ class UserInteraction:
     def showHostInfo(self):
         logging.debug("Showing host info.")
 
+        self.dialog.infobox("Gathering system information. please wait.")
         textToShow = ""
         try:
-            self.dialog.gauge_start("Getting networking info...", title="Retrieving system information", percent=0)
-            ipAddrs = subprocess.run(["hostname", "-I"], shell=False, capture_output=True, text=True, check=True).stdout
-            ipAddrs = (subprocess.run(["hostname"], shell=False, capture_output=True, text=True,
-                                      check=True).stdout.replace("\n", "") + ".local " + ipAddrs)
-            ipAddrs = ipAddrs.replace(" ", "\n\t")
-            textToShow += "Hostname and IP addresses:\n\t" + ipAddrs
-            textToShow += "\tHostname set in configuration:\n\t\t" + mainCM.getConfigVal("system.hostname",
-                                                                                         mainCM.configData)
-            textToShow += "\n\n\n"
-
-            self.dialog.gauge_update(20, "Getting OS info...", True)
-            with open("/etc/os-release") as file:
-                osInfo = file.read() + "\n"
-            osInfo += subprocess.run(["uname", "-a"], shell=False, capture_output=True, text=True, check=True).stdout
-            textToShow += "OS Info:\n" + osInfo + "\n\n\n"
-
-            self.dialog.gauge_update(40, "Getting Hardware info...", True)
-            hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
-                                    check=True).stdout
-            hwinfo += "\n\nUSB Devices: \n\n"
-            hwinfo += subprocess.run(["lsusb"], shell=False, capture_output=True, text=True, check=True).stdout
-            hwinfo += "\n\nStorage Devices: \n\n"
-            hwinfo += subprocess.run(["lsblk"], shell=False, capture_output=True, text=True, check=True).stdout
-            textToShow += "Hardware Info:\n\n" + hwinfo + "\n\n"
-
-            self.dialog.gauge_update(60, "Getting Disk Usage info...", True)
-            diskInfo = subprocess.run(["df", "-H"], shell=False, capture_output=True, text=True, check=True).stdout
-            textToShow += "Disk Usage Info:\n\n" + diskInfo + "\n\n"
-
-            self.dialog.gauge_update(80, "Getting Memory Usage info...", True)
-            memInfo = subprocess.run(["free", "-h"], shell=False, capture_output=True, text=True, check=True).stdout
-            textToShow += "Memory Info:\n\n" + memInfo + "\n\n"
-
+            textToShow += LogManagement.getSystemInfo()
         except subprocess.CalledProcessError:
             logging.error("Failed to call necessary commands.")
-        self.dialog.gauge_update(100, "Done!", True)
-        time.sleep(1)
-        self.dialog.gauge_stop()
         logging.debug("Done compiling host info.")
         self.dialog.scrollbox(textToShow, title="Host Information",
                               #    height=UserInteraction.TALL_HEIGHT,

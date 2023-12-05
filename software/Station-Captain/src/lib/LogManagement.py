@@ -61,7 +61,6 @@ class LogManagement:
 
     @staticmethod
     def packageLogs() -> (bool, str):
-
         compressionAlg = mainCM.getConfigVal("snapshots.compressionAlg")
         if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
             return False, "Configured compression algorithm was invalid."
