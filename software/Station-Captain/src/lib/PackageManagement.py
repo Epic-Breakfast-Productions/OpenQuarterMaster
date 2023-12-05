@@ -1,3 +1,4 @@
+import os
 import subprocess
 import logging
 import platform
@@ -14,6 +15,7 @@ class PackageManagement:
 
     """
     BASE_STATION_PACKAGE = "open+quarter+master-core-base+station"
+    ALL_OQM = "open+quarter+master-*"
     SYSTEM_PACKAGE_MANAGER = None
 
     @staticmethod
@@ -43,6 +45,7 @@ class PackageManagement:
     @staticmethod
     def coreInstalled() -> bool:
         logging.debug("Ensuring core components are installed.")
+        # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("list", PackageManagement.BASE_STATION_PACKAGE, "-qq")
         logging.debug("Output of listing core components: " + result.stdout)
         logging.debug("Error Output of listing core components: " + result.stderr)
@@ -51,6 +54,7 @@ class PackageManagement:
     @staticmethod
     def installCore():
         logging.info("Installing core components.")
+        # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("update")
         result = PackageManagement.runPackageCommand("install", PackageManagement.BASE_STATION_PACKAGE, "-y")
         logging.debug("Result of install: " + result.stdout)
@@ -89,3 +93,15 @@ class PackageManagement:
         else:
             return False, "Unsupported OS to setup auto updates on."
         return True, None
+
+    @staticmethod
+    def getInstalledPackages() -> (bool, str):
+        logging.debug("Ensuring core components are installed.")
+        # TODO:: will likely need updated for yum
+        result = PackageManagement.runPackageCommand("list", PackageManagement.ALL_OQM, "-qq")
+        logging.debug("Output of listing core components: " + result.stdout)
+        logging.debug("Error Output of listing core components: " + result.stderr)
+
+        result = os.linesep.join([s for s in result.stdout.splitlines() if "[installed]" in s])
+
+        return result
