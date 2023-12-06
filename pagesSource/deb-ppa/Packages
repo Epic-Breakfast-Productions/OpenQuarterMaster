@@ -1348,3 +1348,33 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
 Licence: GPL-3+
 
+Package: open+quarter+master-manager-station+captain
+Version: 2.0.4
+Architecture: all
+Maintainer: EBP
+Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd
+Filename: ./open+quarter+master-manager-station+captain_2.0.4_all.deb
+Size: 32286
+MD5sum: bf985b5f2f1520b5c87eff253868e971
+SHA1: 4a257e7b6589d6a789e1097e355d75576d4b15fd
+SHA256: c79765b3a1fe56377121a7ce0f76e071e91a256347efd7dd8db40af8c6c2cfdd
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
+Package: open+quarter+master-manager-station+captain
+Version: 2.0.5
+Architecture: all
+Maintainer: EBP
+Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd
+Filename: ./open+quarter+master-manager-station+captain_2.0.5_all.deb
+Size: 32350
+MD5sum: fbc3cd0bca91bd8295ae24f3d981cb42
+SHA1: 86b05a871b87de566830a1c2ec14669d48794d70
+SHA256: 25187568049cb041295c0e35bd1dfe56c2dac8ca8f2b65079e7ca0b6e18cd934
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+

@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script updates the repositories with all relevant files. Run from the dir this exists in.
+# Requires curl, dpkg-dev
 
 GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarterMaster"
 GIT_RELEASES="$GIT_API_BASE/releases"
