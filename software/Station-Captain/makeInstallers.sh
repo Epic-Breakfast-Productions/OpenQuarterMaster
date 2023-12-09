@@ -103,24 +103,6 @@ Files: *
 Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
-cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
-#!/bin/bash
-#set -x
-oqm-config -g system.hostname
-RESULT="$?"
-if [ "$RESULT" -eq 1 ]; then
-  hostnameRaw="$(hostname)"
-  if [[ "$hostnameRaw" == *.local ]]; then
-    oqm-config -s system.hostname $(hostname) "."
-  else
-    oqm-config -s system.hostname $(hostname).local "."
-  fi
-fi
-
-# /usr/share/update-notifier/notify-reboot-required
-
-EOT
-chmod +x "$buildDir/$debDir/DEBIAN/postinst"
 
 dpkg-deb --build "$buildDir/$debDir" "$outputDir"
 if [ $? -ne 0 ]; then
