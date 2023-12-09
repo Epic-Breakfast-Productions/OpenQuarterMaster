@@ -1,5 +1,6 @@
 {
 	"system": {
+		"hostname": "#{#mdnsHost}",
 		"systemDataDir": "/data",
 		"dataDir": "#{system.systemDataDir}/oqm",
 		"automaticContainerPruneFrequency": "monthly"
