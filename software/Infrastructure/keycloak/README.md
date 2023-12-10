@@ -8,18 +8,17 @@ This postgresql instance is currently used by all services that need OIDC and to
 The flow of this is as follows:
 
  - This infra provides the OQM realm
- - Individual apps provide realms defined in:
-   - `/etc/oqm/kcApps/appName.json`
+ - Individual apps provide their clients defined in:
+   - `/etc/oqm/kcClient/clientName.json`
    - Defined by the following schema:
      ```json
      {
-        "appName": "",
-        "roles": [
-            {
-                "name": "",
+        "clientName": "",
+        "roles": {
+            "roleName": {
                 "default": true
             }
-        ]
+        }
      }
      ```
 

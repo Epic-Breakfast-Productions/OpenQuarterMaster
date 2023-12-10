@@ -64,7 +64,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
-
                                 hcGet=\"$(/usr/bin/curl -k \"http://localhost:8115/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
@@ -76,7 +75,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done \
                             "
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
+ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
 [Install]
