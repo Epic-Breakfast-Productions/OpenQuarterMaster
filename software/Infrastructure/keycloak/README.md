@@ -62,6 +62,8 @@ Run on the container where keycloak is running. This will be obsolete once we ge
    - https://www.keycloak.org/server/containers#_importing_a_realm_on_startup
  - https://www.keycloak.org/server/all-config
  - https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
- - https://gist.github.com/thomasdarimont/bb702bd1160eb200147cf1bee1c1f7ed
+ - kc admin examples:
+   - https://medium.com/@rishabhsvats/using-kcadm-in-keycloak-668a592691f4
+   - https://gist.github.com/thomasdarimont/bb702bd1160eb200147cf1bee1c1f7ed
 
 
