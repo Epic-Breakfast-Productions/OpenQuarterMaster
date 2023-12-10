@@ -40,17 +40,16 @@ def updateKc():
     kcContainer = getKcContainer()
     setupAdminConfig(kcContainer)
 
-    runResult = kcContainer.exec_run(
-        [
+    runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT,
-            "get",
-            "clients",
-            "-r", KC_REALM
+            "update",
+            "realms/"+KC_REALM,
+            "-s", "registrationAllowed=" + str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
         ])
     if runResult.exit_code != 0:
-        logging.error("Failed to setup kc admin credentials: %s", runResult.output)
-        raise ChildProcessError("Failed to setup admin credentials")
-    logging.debug("Setting up KC creds output: %s", runResult.output)
+        logging.error("Failed to set registration allowed: %s", runResult.output)
+        raise ChildProcessError("Failed to set registration allowed")
+    logging.debug("Setting up KC registration allowed: %s", runResult.output)
 
 
 updateKc()
