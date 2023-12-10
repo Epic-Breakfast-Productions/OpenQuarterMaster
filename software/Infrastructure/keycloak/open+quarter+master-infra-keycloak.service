@@ -64,6 +64,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
+
                                 hcGet=\"$(/usr/bin/curl -k \"http://localhost:8115/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \

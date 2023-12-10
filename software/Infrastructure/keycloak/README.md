@@ -5,6 +5,28 @@ This postgresql instance is currently used by all services that need OIDC and to
  - [Base Station](../../open-qm-base-station)
  - [Plugins](../../plugins)
 
+The flow of this is as follows:
+
+ - This infra provides the OQM realm
+ - Individual apps provide realms defined in:
+   - `/etc/oqm/kcApps/appName.json`
+   - Defined by the following schema:
+     ```json
+     {
+        "appName": "",
+        "roles": [
+            {
+                "name": "",
+                "default": true
+            }
+        ]
+     }
+     ```
+
+
+
+
+
 In case you get the "HTTPS is required" error: 
 
 ```
@@ -15,6 +37,22 @@ bash-5.1$ ./kcadm.sh update realms/oqm -s sslRequired=NONE
 ```
 Run on the container where keycloak is running. This will be obsolete once we get a unified https model.
 
+## Examples:
+
+### Turn on/off public self-serve adding of users
+
+```bash
+
+```
+
+### 
+
+```bash
+
+```
+
+
+
 
 ## Resources
 
@@ -24,3 +62,6 @@ Run on the container where keycloak is running. This will be obsolete once we ge
    - https://www.keycloak.org/server/containers#_importing_a_realm_on_startup
  - https://www.keycloak.org/server/all-config
  - https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
+ - https://gist.github.com/thomasdarimont/bb702bd1160eb200147cf1bee1c1f7ed
+
+
