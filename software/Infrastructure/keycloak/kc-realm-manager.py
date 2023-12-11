@@ -109,22 +109,25 @@ def updateKc():
     for curClient in getClientConfigs():
         logging.info("Processing client %s", curClient['clientName'])
         # TODO:: validate object data
-        clientId = getClientId(curClient['clientName'])
+        clientName = curClient['clientName']
+        clientId = getClientId(clientName)
         if clientId is None:
             logging.info("Client not currently present. Adding.")
+            mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
             newClientJson = {
-                clientId: curClient['clientName']
+                "clientId": curClient['clientName'],
+                "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName)
             }
             runResult = kcContainer.exec_run([
                 KC_ADM_SCRIPT,
                 "create",
                 "clients",
                 "-r", KC_REALM,
-                json.dumps(newClientJson)
+                "-b", json.dumps(newClientJson)
             ])
             if runResult.exit_code != 0:
-                logging.error("Failed to set registration allowed: %s", runResult.output)
-                raise ChildProcessError("Failed to set registration allowed")
+                logging.error("Failed to add new client: %s", runResult.output)
+                raise ChildProcessError("Failed to add new client")
             clientId = getClientId(curClient['clientName'])
         logging.debug("Client id: %s", clientId)
         # TODO::
