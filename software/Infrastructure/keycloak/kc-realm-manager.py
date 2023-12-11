@@ -18,14 +18,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 def getClientConfigs() -> list:
     configList = os.listdir(KC_CLIENT_CONFIGS_DIR)
-    configList = [KC_CLIENT_CONFIGS_DIR + i for i in configList if os.path.isfile(i) and i.endswith(".json")]
+    configList = [KC_CLIENT_CONFIGS_DIR + i for i in configList]
+    configList = [i for i in configList if os.path.isfile(i) and i.endswith(".json")]
 
     def fileToJson(jsonFile : str) -> object:
         with open(jsonFile) as file:
             return json.load(file)
 
-    configList: list = map(fileToJson, configList)
-    logging.debug("Client configs found: [%s]", ' '.join(configList))
+    configList = [fileToJson(i) for i in configList]
+    logging.debug("Client configs found: %s", json.dumps(configList))
     return configList
 
 
@@ -52,6 +53,44 @@ def setupAdminConfig(kcContainer: Container | None = None):
     logging.debug("Setting up KC creds output: %s", runResult.output)
 
 
+def getAllClientData(kcContainer: Container | None = None):
+    if kcContainer is None:
+        kcContainer = getKcContainer()
+    runResult = kcContainer.exec_run(
+        [
+            KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM
+        ])
+    if runResult.exit_code != 0:
+        logging.error("Failed to get keycloak clients: %s", runResult.output)
+        raise ChildProcessError("Failed to get keycloak clients")
+    return json.loads(runResult.output)
+
+
+def getClientId(clientName: str, kcContainer: Container | None = None) -> str | None:
+    if kcContainer is None:
+        kcContainer = getKcContainer()
+    runResult = kcContainer.exec_run(
+        [
+            KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM, "--fields", "id,clientId"
+        ])
+    if runResult.exit_code != 0:
+        logging.error("Failed to get keycloak clients: %s", runResult.output)
+        raise ChildProcessError("Failed to get keycloak clients")
+    allClientData = json.loads(runResult.output)
+    for curClient in allClientData:
+        if clientName == curClient["clientId"]:
+            return curClient["id"]
+    return None
+
+
+def getClientData(clientName:str, kcContainer: Container | None = None) -> str | None:
+    allClientData = getAllClientData(kcContainer)
+    for curClient in allClientData:
+        if clientName == curClient["clientId"]:
+            return curClient["id"]
+    return None
+
+
 def updateKc():
     kcContainer = getKcContainer()
     setupAdminConfig(kcContainer)
@@ -69,6 +108,25 @@ def updateKc():
 
     for curClient in getClientConfigs():
         logging.info("Processing client %s", curClient['clientName'])
+        # TODO:: validate object data
+        clientId = getClientId(curClient['clientName'])
+        if clientId is None:
+            logging.info("Client not currently present. Adding.")
+            newClientJson = {
+                clientId: curClient['clientName']
+            }
+            runResult = kcContainer.exec_run([
+                KC_ADM_SCRIPT,
+                "create",
+                "clients",
+                "-r", KC_REALM,
+                json.dumps(newClientJson)
+            ])
+            if runResult.exit_code != 0:
+                logging.error("Failed to set registration allowed: %s", runResult.output)
+                raise ChildProcessError("Failed to set registration allowed")
+            clientId = getClientId(curClient['clientName'])
+        logging.debug("Client id: %s", clientId)
         # TODO::
 
 
