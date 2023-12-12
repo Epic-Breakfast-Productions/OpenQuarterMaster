@@ -1,4 +1,5 @@
 #!/bin/python3
+import argparse
 import os
 
 import docker
@@ -9,10 +10,19 @@ import json
 sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
 
+SCRIPT_VERSION = "1.0.0"
 KC_CONTAINER_NAME = "oqm_infra_keycloak"
 KC_ADM_SCRIPT = "/opt/keycloak/bin/kcadm.sh"
 KC_REALM = "oqm"
 KC_CLIENT_CONFIGS_DIR = "/etc/oqm/kcClient/"
+KC_DEFAULT_CLIENTS = [
+    "account",
+    "account-console",
+    "admin-cli",
+    "broker",
+    "realm-management",
+    "security-admin-console"
+]
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -69,13 +79,13 @@ def getAllClientData(kcContainer: Container | None = None):
 def getClientId(clientName: str, kcContainer: Container | None = None) -> str | None:
     if kcContainer is None:
         kcContainer = getKcContainer()
-    runResult = kcContainer.exec_run(
-        [
+    runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM, "--fields", "id,clientId"
         ])
     if runResult.exit_code != 0:
         logging.error("Failed to get keycloak clients: %s", runResult.output)
         raise ChildProcessError("Failed to get keycloak clients")
+    logging.debug("Clients list: %s", runResult.output)
     allClientData = json.loads(runResult.output)
     for curClient in allClientData:
         if clientName == curClient["clientId"]:
@@ -116,7 +126,10 @@ def updateKc():
             mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
             newClientJson = {
                 "clientId": curClient['clientName'],
-                "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName)
+                "name": curClient['displayName'],
+                "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
+                "description": curClient['description'],
+                "redirectUris": ["*"]
             }
             runResult = kcContainer.exec_run([
                 KC_ADM_SCRIPT,
@@ -129,8 +142,24 @@ def updateKc():
                 logging.error("Failed to add new client: %s", runResult.output)
                 raise ChildProcessError("Failed to add new client")
             clientId = getClientId(curClient['clientName'])
+
         logging.debug("Client id: %s", clientId)
-        # TODO::
+        # TODO:: update client information, add roles
 
 
-updateKc()
+argParser = argparse.ArgumentParser(
+    prog="kc-realm-manager",
+    description="This script is a utility to help manage OQM's Keycloak installation.",
+    epilog="Script version "+SCRIPT_VERSION+". With <3, EBP"
+)
+argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+argParser.add_argument('--update-realm', dest="updateRealm", action="store_true", help="Updates the OQM realm with the latest configuration.")
+args = argParser.parse_args()
+
+if args.v:
+    print(SCRIPT_VERSION)
+    exit()
+elif args.updateRealm:
+    updateKc()
+else:
+    argParser.print_usage()

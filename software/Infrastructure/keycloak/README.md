@@ -14,6 +14,8 @@ The flow of this is as follows:
      ```json
      {
         "clientName": "",
+        "displayName": "",
+        "description": "",
         "roles": {
             "roleName": {
                 "default": true

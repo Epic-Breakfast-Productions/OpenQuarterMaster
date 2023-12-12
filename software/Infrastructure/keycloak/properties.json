@@ -6,12 +6,13 @@
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, open+quarter+master-manager-station+captain (>= 2.0.0)"
+		"deb": ", open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker"
 	},
 	"configFiles":{
 	},
 	"files":{
 		"/etc/oqm/static/keycloak/import/oqm-realm.json": "oqm-realm.json",
+		"/etc/oqm/static/keycloak/kc-realm-manager": "kc-realm-manager.py",
 		"/etc/oqm/kcClient/README.md": "clientFileExplainer.md"
 	}
 }

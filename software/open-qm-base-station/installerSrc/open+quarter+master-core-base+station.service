@@ -55,6 +55,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
+                                if [ \"$status\" != \"true\" ]; then \
+                                    echo \"Container was stopped!\"; \
+                                    exit 1; \
+                                fi; \
                                 hcGet=\"$(/usr/bin/curl -k \"http://localhost:80/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
