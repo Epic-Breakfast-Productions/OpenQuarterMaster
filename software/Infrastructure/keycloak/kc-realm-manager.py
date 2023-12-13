@@ -14,7 +14,7 @@ SCRIPT_VERSION = "1.0.0"
 KC_CONTAINER_NAME = "oqm_infra_keycloak"
 KC_ADM_SCRIPT = "/opt/keycloak/bin/kcadm.sh"
 KC_REALM = "oqm"
-KC_CLIENT_CONFIGS_DIR = "/etc/oqm/kcClient/"
+KC_CLIENT_CONFIGS_DIR = "/etc/oqm/kcClients/"
 KC_DEFAULT_CLIENTS = [
     "account",
     "account-console",

@@ -13,6 +13,6 @@
 	"files":{
 		"/etc/oqm/static/keycloak/import/oqm-realm.json": "oqm-realm.json",
 		"/etc/oqm/static/keycloak/kc-realm-manager": "kc-realm-manager.py",
-		"/etc/oqm/kcClient/README.md": "clientFileExplainer.md"
+		"/etc/oqm/kcClients/README.md": "clientFileExplainer.md"
 	}
 }
