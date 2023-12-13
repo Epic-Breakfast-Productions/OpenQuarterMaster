@@ -116,35 +116,49 @@ def updateKc():
         raise ChildProcessError("Failed to set registration allowed")
     logging.debug("Setting up KC registration allowed: %s", runResult.output)
 
+    # Remove all clients not in the set brought in by keycloak
+    allClientData = getAllClientData(kcContainer)
+    for curClient in allClientData:
+        if curClient["clientId"] in KC_DEFAULT_CLIENTS:
+            continue
+        logging.info("Removing client to re-create: %s", curClient["clientId"])
+        clientId = getClientId(curClient["clientId"])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT,
+            "delete",
+            "clients/"+clientId,
+            "-r", KC_REALM
+        ])
+        if runResult.exit_code != 0:
+            logging.error("Failed to remove client: %s", runResult.output)
+            raise ChildProcessError("Failed to remove client")
+
     for curClient in getClientConfigs():
         logging.info("Processing client %s", curClient['clientName'])
         # TODO:: validate object data
         clientName = curClient['clientName']
-        clientId = getClientId(clientName)
-        if clientId is None:
-            logging.info("Client not currently present. Adding.")
-            mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
-            newClientJson = {
-                "clientId": curClient['clientName'],
-                "name": curClient['displayName'],
-                "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
-                "description": curClient['description'],
-                "redirectUris": ["*"]
-            }
-            runResult = kcContainer.exec_run([
-                KC_ADM_SCRIPT,
-                "create",
-                "clients",
-                "-r", KC_REALM,
-                "-b", json.dumps(newClientJson)
-            ])
-            if runResult.exit_code != 0:
-                logging.error("Failed to add new client: %s", runResult.output)
-                raise ChildProcessError("Failed to add new client")
-            clientId = getClientId(curClient['clientName'])
+        mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
+        newClientJson = {
+            "clientId": curClient['clientName'],
+            "name": curClient['displayName'],
+            "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
+            "description": curClient['description'],
+            "redirectUris": ["*"]
+        }
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT,
+            "create",
+            "clients",
+            "-r", KC_REALM,
+            "-b", json.dumps(newClientJson)
+        ])
+        if runResult.exit_code != 0:
+            logging.error("Failed to add new client: %s", runResult.output)
+            raise ChildProcessError("Failed to add new client")
+        clientId = getClientId(curClient['clientName'])
 
         logging.debug("Client id: %s", clientId)
-        # TODO:: update client information, add roles
+        # TODO:: add roles
 
 
 argParser = argparse.ArgumentParser(
