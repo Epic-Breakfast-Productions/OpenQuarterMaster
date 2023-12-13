@@ -23,7 +23,7 @@ KC_DEFAULT_CLIENTS = [
     "realm-management",
     "security-admin-console"
 ]
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def getClientConfigs() -> list:
@@ -102,9 +102,11 @@ def getClientData(clientName:str, kcContainer: Container | None = None) -> str |
 
 
 def updateKc():
+    logging.info("Updating Keycloak Realm")
     kcContainer = getKcContainer()
     setupAdminConfig(kcContainer)
 
+    logging.info("Updating realm settings.")
     runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT,
             "update",
@@ -117,6 +119,7 @@ def updateKc():
     logging.debug("Setting up KC registration allowed: %s", runResult.output)
 
     # Remove all clients not in the set brought in by keycloak
+    logging.info("Removing all clients before re-creation")
     allClientData = getAllClientData(kcContainer)
     for curClient in allClientData:
         if curClient["clientId"] in KC_DEFAULT_CLIENTS:
@@ -133,8 +136,9 @@ def updateKc():
             logging.error("Failed to remove client: %s", runResult.output)
             raise ChildProcessError("Failed to remove client")
 
+    logging.info("Creating clients from config.")
     for curClient in getClientConfigs():
-        logging.info("Processing client %s", curClient['clientName'])
+        logging.info("Adding client %s", curClient['clientName'])
         # TODO:: validate object data
         clientName = curClient['clientName']
         mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
@@ -159,6 +163,7 @@ def updateKc():
 
         logging.debug("Client id: %s", clientId)
         # TODO:: add roles
+    logging.info("Done updating realm.")
 
 
 argParser = argparse.ArgumentParser(
