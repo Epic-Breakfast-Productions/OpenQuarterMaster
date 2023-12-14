@@ -59,7 +59,7 @@ jobs:  # This workflow contains a single job called "build"
             
             if (pulls.data.length < 1) {
               await github.rest.pulls.create({
-                title: '[Repos] Update repo files after release',
+                title: '[Delpoy - Repos] Update repo files after release',
                 owner: owner,
                 repo: repo,
                 head: 'update-repos-staging',
