@@ -120,29 +120,7 @@ systemctl daemon-reload
 systemctl enable ${serviceFiles[@]@Q}
 systemctl start ${serviceFiles[@]@Q}
 
-#add config to file TODO:: remove
-mkdir -p /etc/oqm/serviceConfig
-touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
-
-
-
-	# TODO:: remove
-	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
-		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
-#!/bin/bash
-if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
-	then
-		echo "Config value already present: $curConfig"
-	else
-		echo "$curConfig" >> /etc/oqm/serviceConfig/infraConfig.list
-	fi
-EOT
-	done
-
-
-
 
 	chmod +x "$packageDebDir/DEBIAN/postinst"
 	
@@ -155,17 +133,6 @@ systemctl stop ${serviceFiles[@]@Q}
 echo "Stopped ${serviceFiles[@]@Q}"
 
 EOT
-
-
-
-	# TODO:: remove
-	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
-		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
-sed -i -e "s!$curConfig!!g" /etc/oqm/serviceConfig/infraConfig.list
-EOT
- 	done
-
 
 	chmod +x "$packageDebDir/DEBIAN/prerm"
 	
