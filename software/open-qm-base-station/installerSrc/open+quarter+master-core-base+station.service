@@ -53,6 +53,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            sleep 10s; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \

@@ -7,6 +7,9 @@ from docker.models.containers import Container
 import logging
 import sys
 import json
+from time import sleep
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
 
@@ -166,6 +169,12 @@ def updateKc():
     logging.info("Done updating realm.")
 
 
+class Handler(FileSystemEventHandler):
+    def on_modified(self, event):
+        logging.info("Noted change in kc client configs. Updating realms. File changed: %s", event.src_path)
+        updateKc()
+
+
 argParser = argparse.ArgumentParser(
     prog="kc-realm-manager",
     description="This script is a utility to help manage OQM's Keycloak installation.",
@@ -173,6 +182,7 @@ argParser = argparse.ArgumentParser(
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('--update-realm', dest="updateRealm", action="store_true", help="Updates the OQM realm with the latest configuration.")
+argParser.add_argument('--monitor-client-changes', dest="monitorChanges", action="store_true", help="Monitors the clients config dir for changes, updates as needed.")
 args = argParser.parse_args()
 
 if args.v:
@@ -180,5 +190,17 @@ if args.v:
     exit()
 elif args.updateRealm:
     updateKc()
+elif args.monitorChanges:
+    observer = Observer()
+    observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
+    observer.start()
+
+    try:
+        while True:
+            sleep(5)
+    except KeyboardInterrupt:
+        observer.stop()
+
+    observer.join()
 else:
     argParser.print_usage()
