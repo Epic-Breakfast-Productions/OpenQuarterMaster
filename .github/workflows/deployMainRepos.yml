@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Deployment - Repos
+name: Deployment - Repos - Main
 
 # Controls when the workflow will run
 on:
@@ -36,8 +36,8 @@ jobs:  # This workflow contains a single job called "build"
           gpg_private_key: ${{ secrets.OQM_GPG_KEY }}
           passphrase: ${{ secrets.OQM_GPG_KEY_PASS }}
       
-      - name: Update Repo Files
-        run: ./update-repositories.sh
+      - name: Update Main Repo Files
+        run: ./update-main-repositories.sh
       - name: Commit new repo files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
