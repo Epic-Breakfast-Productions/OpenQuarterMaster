@@ -6,7 +6,7 @@ GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarte
 GIT_RELEASES="$GIT_API_BASE/releases"
 RELEASE_LIST_FILE_CUR="temp.json"
 
-DEB_PPA_DIR="../pagesSource/deb-ppa"
+DEB_PPA_DIR="../pagesSource/repos/deb-ppa"
 
 
 # cleanup repos
