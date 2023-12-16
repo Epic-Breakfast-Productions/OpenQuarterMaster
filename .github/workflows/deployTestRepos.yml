@@ -42,6 +42,7 @@ jobs:  # This workflow contains a single job called "build"
           commit_message: Updated Repositories after release
           branch: 'update-test-repos-staging'
           create_branch: true
+          push_options: '--force'
       - name: Create Pull Request
         uses: actions/github-script@v6
         with:
