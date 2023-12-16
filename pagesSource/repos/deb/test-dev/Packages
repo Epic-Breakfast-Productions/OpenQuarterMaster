@@ -1,0 +1,165 @@
+Package: open+quarter+master-core-base+station
+Version: 1.0.37-DEV
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, docker, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-jaeger (>= 1.1.0), open+quarter+master-infra-mongodb (>= 1.1.0), open+quarter+master-infra-keycloak (>= 1.1.0)
+Filename: ./open+quarter+master-core-base+station_1.0.37-DEV_all.deb
+Size: 3890
+MD5sum: 2815b5fc46f84527898c01ce8e292e7a
+SHA1: e3fc949631296a02d678e77b18215b68c2b2aedb
+SHA256: 410f62485bdff86ffe4098fce797df66fd346ff69f9c5bf40aa28c6f3791a7c2
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: open+quarter+master-infra-artemis
+Version: 1.0.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-artemis_1.0.0_all.deb
+Size: 2298
+MD5sum: aff231f6c808a7f691586f16d1405a60
+SHA1: 65800ca1e8605fa29adfad3392c0ba0e3d06c106
+SHA256: 046fc518cdfcc9b09eb265338b52c88c77546084f496fa9069bdeaa32fc5479e
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/artemis
+Description: ActiveMQ Artemis instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-jaeger
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-jaeger_1.1.0_all.deb
+Size: 10660
+MD5sum: e38f3fbf01ab56d18c77f399a9883b16
+SHA1: add8436fcbf57f2e32a065a21db265c7f9d523a2
+SHA256: 7f7367cb48e8e5e6397238e7a6915e99d8c67dac93c7ff7e6278e1d191b41822
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger
+Description: Jaeger instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-keycloak
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-postgres (>= 1.1.0)
+Filename: ./open+quarter+master-infra-keycloak_1.1.0_all.deb
+Size: 12826
+MD5sum: 748bd6495f36422c73c4e34a5e4bb686
+SHA1: 4ecabac5263536e53bb629a17c4d077bac4b86e2
+SHA256: 32be6c6e67f349ee264bc7bb874f2d48fb00f50e8765764b6c8b932b1dab555f
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak
+Description: Keycloak instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-mongodb
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-mongodb_1.1.0_all.deb
+Size: 3346
+MD5sum: 1ae77726a703bbba25057edd78143ba7
+SHA1: b20dcc735801af9732348801974418c730c496d0
+SHA256: 3177c61e4474779b47998fd7d5c260bb424744ae1d369941c2eb7d4e8f74d95e
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo
+Description: MongoDb instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-nginx
+Version: 1.0.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-nginx_1.0.0_all.deb
+Size: 4594
+MD5sum: 1dbd3f2ba17dc9e2936d5bd27507b576
+SHA1: f1d0a1614a12bf696ecafcd0eb033fd24684334f
+SHA256: 92a7864947eeb26e1b9451ecc2078ab4dd633f061cadf52c10a2a90a9e8f9a63
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/nginx
+Description: Nginx Reverse Proxy instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-otel
+Version: 1.0.4
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-jaeger
+Filename: ./open+quarter+master-infra-otel_1.0.4_all.deb
+Size: 2418
+MD5sum: 31985bef501365d7a3bcb4bf238be2fe
+SHA1: c048528db5f02458761486733a6fc8fbd92b4121
+SHA256: 47d257ff96d7b5c60090456eba133b5555ca9a52baa000e95f0da52fdb7cc5ac
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel
+Description: OpenTelemetry Collector instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-postgres
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-postgres_1.1.0_all.deb
+Size: 3104
+MD5sum: 90f68956a234f4abba922ed4e2c8f6e6
+SHA1: fdac66b2869eafa8270e9ba9b2d4bd037d4e38d4
+SHA256: db3ef6dabebceaaeceb6808cbc103d8269470659545e9c3b1f1558c656d141aa
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
+Description: Postgresql instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-prometheus
+Version: 1.0.5
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-prometheus_1.0.5_all.deb
+Size: 2524
+MD5sum: d8094098995ec5cdd9513736e02d68d2
+SHA1: 67e418b6458a42c22b45975c93faeb9e11897d50
+SHA256: f4541aee76e0b6e638ca65ca97f92c1dcb1d379c379ab29d82d6cbd591a474c8
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus
+Description: Prometheus instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-zookeeper
+Version: 1.0.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
+Filename: ./open+quarter+master-infra-zookeeper_1.0.0_all.deb
+Size: 2258
+MD5sum: 3481f5ba494902d9e8d36b9500e4e3cf
+SHA1: cc61760eb22c13a5f2b8feda66f72819ea117657
+SHA256: ed68f277b5cbfb4299fbe8342512761a93844a3ae375caccac7656e2e7b951e6
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/zookeeper
+Description: Zookeeper instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-manager-station+captain
+Version: 2.0.6-DEV
+Architecture: all
+Maintainer: EBP
+Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd
+Filename: ./open+quarter+master-manager-station+captain_2.0.6-DEV_all.deb
+Size: 23042
+MD5sum: 435e541c0697476ae55aac36466a9476
+SHA1: 75f0b7886430c17be780c262e994d5a0aa83cccc
+SHA256: ef77a548610720b8aca9bd9eb66c24a68abf0f49284a5c08b38bc051682e5905
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
