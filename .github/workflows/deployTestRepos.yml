@@ -35,6 +35,8 @@ jobs:  # This workflow contains a single job called "build"
           
       - name: Update Test Repo Files
         run: ./update-test-repositories.sh
+      - name: Sanity
+        run: echo ${{ github.ref }}
         
       - name: Commit new repo files
         uses: stefanzweifel/git-auto-commit-action@v5
