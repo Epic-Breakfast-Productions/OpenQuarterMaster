@@ -1,6 +1,7 @@
 import base64
 import datetime
 import logging
+import socket
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -233,7 +234,22 @@ class ConfigManager:
             self.secretManager = SecretManager()
         return self.secretManager
 
-    def updateReplacements(self, key: str, val, generateSecretIfNone: bool = True):
+    def getReplacementVal(self, configReference: str, exceptOnNotPresent=True):
+        if configReference.startswith("#"):
+            output = None
+            if configReference == "#mdnsHost":
+                output = socket.gethostname()
+                if not output.endswith(".local"):
+                    output += ".local"
+            if output is None:
+                if exceptOnNotPresent:
+                    raise ConfigKeyNotFoundException()
+                return ""
+            return output;
+        else:
+            return self.getConfigVal(configReference, exceptOnNotPresent=exceptOnNotPresent)
+
+    def updateReplacements(self, key: str, val, generateSecretIfNone: bool = True, exceptOnNotPresent=True):
         if isinstance(val, str):
             if self.getSecretManager().valIsSecret(val):
                 val = self.getSecretManager().getSecretVal(key, generateSecretIfNone)
@@ -241,10 +257,12 @@ class ConfigManager:
                 replacementSearch = re.findall('#\\{[^}]+}', val, re.MULTILINE | re.IGNORECASE)
                 if replacementSearch:
                     replacements = {}
+                    # Gather real values for replacements
                     for curConfig in replacementSearch:
                         curConfig = curConfig.replace("#{","")
                         curConfig = curConfig.replace("}","")
-                        replacements[curConfig] = self.getConfigVal(curConfig)
+                        replacements[curConfig] = self.getReplacementVal(curConfig, exceptOnNotPresent=exceptOnNotPresent)
+                    # replace replacement values
                     for curConfig, curNewVal in replacements.items():
                         if not isinstance(curNewVal, (str)):
                             curNewVal = str(curNewVal)
@@ -254,14 +272,16 @@ class ConfigManager:
                 val[i] = self.updateReplacements(
                     key + ".[" + str(i) + "]",
                     s,
-                    generateSecretIfNone
+                    generateSecretIfNone,
+                    exceptOnNotPresent=exceptOnNotPresent
                 )
         elif isinstance(val, dict):
             for k, v in val.items():
                 val[k] = self.updateReplacements(
                     key + "." + k,
                     v,
-                    generateSecretIfNone
+                    generateSecretIfNone,
+                    exceptOnNotPresent=exceptOnNotPresent
                 )
         return val
 

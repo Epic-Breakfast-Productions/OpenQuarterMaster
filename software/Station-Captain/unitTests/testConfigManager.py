@@ -1,3 +1,4 @@
+import socket
 import sys
 import unittest
 from utils import *
@@ -24,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         "nestedOne": "test"
     },
     "testArr" : ["1", "2", "3"],
-    "testReplacement" : "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
+    "testReplacement" : "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne} - #{#mdnsHost}"
 }
     ''')
         with open(TEST_CONFIG_ADDENDUM_CONFIG_ONE, 'x') as stream:
@@ -68,7 +69,7 @@ class MyTestCase(unittest.TestCase):
                     "nestedOne": "test"
                 },
                 "testArr": ["1", "2", "3"],
-                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
+                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne} - #{#mdnsHost}"
             },
             data
         )
@@ -88,7 +89,7 @@ class MyTestCase(unittest.TestCase):
                     "nestedTwo": "test"
                 },
                 "testArr": ["1", "2", "3"],
-                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne}"
+                "testReplacement": "#{testStr} - #{testInt} - #{testFloat} - #{testObj.nestedOne} - #{#mdnsHost}"
             },
             data
         )
@@ -124,13 +125,13 @@ class MyTestCase(unittest.TestCase):
     def test_getSecret(self):
         data = self.configManager.getConfigVal("testSecret")
         self.assertEqual(type(data), str)
-        self.assertNotEquals(len(data), 0)
-        self.assertNotEquals("<secret>", data)
+        self.assertNotEqual(len(data), 0)
+        self.assertNotEqual("<secret>", data)
 
     def test_getPlaceholder(self):
         data = self.configManager.getConfigVal("testReplacement")
         self.assertEqual(type(data), str)
-        self.assertEqual("config file - 1 - 1.1 - test", data)
+        self.assertEqual("config file - 1 - 1.1 - test - " + socket.gethostname() + ".local", data)
 
     def test_configSetSimple(self):
         data = {}
