@@ -94,7 +94,7 @@ fi
 
 clear
 
-echo "Setup of TEST OQM repo for branch `$(git branch --show-current)` and installation of OQM Captain utility complete."
+echo "Setup of TEST OQM repo for branch $(git branch --show-current) and installation of OQM Captain utility complete."
 echo
 echo "Run 'sudo oqm-captain' to get started."
 echo
