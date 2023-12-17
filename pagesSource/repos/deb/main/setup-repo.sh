@@ -2,9 +2,9 @@
 #Script to setup the Debian OQM repo and install oqm-captain
 
 # get GPG key
-curl -s --compressed "https://deployment.openquartermaster.com/deb-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null
+curl -s --compressed "https://deployment.openquartermaster.com/repos/deb/main/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null
 #add repo to list
-curl -s --compressed "https://deployment.openquartermaster.com/deb-ppa/deb_list_file.list" | sudo tee /etc/apt/sources.list.d/oqm_file.list
+curl -s --compressed "https://deployment.openquartermaster.com/repos/deb/main/deb_list_file.list" | sudo tee /etc/apt/sources.list.d/oqm_file.list
 # update apt and install
 sudo apt-get update
 if [ $? -ne 0 ]; then
