@@ -64,6 +64,11 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
+                                if [ \"$status\" != \"true\" ]; then \
+                                    echo \"Container was stopped!\"; \
+                                    exit 1; \
+                                fi; \
                                 hcGet=\"$(/usr/bin/curl -k \"http://localhost:8115/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
@@ -71,11 +76,12 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 if [ \"$status\" = \"UP\" ]; then \
                                     echo \"Keycloak running and available!\"; \
                                     running=\"true\"; \
-                                fi \
-                            done \
+                                fi; \
+                            done; \
                             "
+ExecStartPost=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --update-realm"
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
+ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
 [Install]
