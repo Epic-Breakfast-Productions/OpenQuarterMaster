@@ -38,15 +38,10 @@ for curPackage in ${packages[@]}; do
 	packageConfigFile="$curPackage/properties.json"
 	packageDebDir="$buildDir/$curPackage/$debDir"
 	echo "Creating deb installer for $curPackage"
-	
-	serviceFile="$(jq -r '.packageName' "$packageConfigFile").service"
-	serviceFileEscaped="$(systemd-escape "$serviceFile")"
+
 	#
 	# Debian build
 	#
-	
-	
-
 	mkdir -p "$packageDebDir"
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
@@ -54,8 +49,18 @@ for curPackage in ${packages[@]}; do
 	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
 	mkdir -p "$packageDebDir/etc/oqm/accountScripts/"
 
-	cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
-	sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+	serviceFiles=()
+
+	for i in `find "./$curPackage" -name "*.service" -type f -printf '%f\n'`; do
+		[ -f "./$curPackage/$i" ] || break
+
+		serviceFile="$i"
+		echo "Service file: $serviceFile"
+		serviceFileEscaped="$(systemd-escape "$serviceFile")"
+		cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+		sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+		serviceFiles+=("$serviceFileEscaped")
+	done
 
 	cp "$curPackage/10-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
 
@@ -103,7 +108,7 @@ EOT
 #mkdir -p "/data/oqm/prometheus"
 EOT
 	chmod +x "$packageDebDir/DEBIAN/preinst"
-	
+
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 #!/bin/bash
 
@@ -112,55 +117,22 @@ systemctl daemon-reload
 #if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
 #	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 #fi
-systemctl enable "$serviceFileEscaped"
-systemctl start "$serviceFileEscaped"
+systemctl enable ${serviceFiles[@]@Q}
+systemctl start ${serviceFiles[@]@Q}
 
-#add config to file TODO:: remove
-mkdir -p /etc/oqm/serviceConfig
-touch /etc/oqm/serviceConfig/infraConfig.list
 EOT
-
-
-
-	# TODO:: remove
-	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
-		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<'EOT' >> "$packageDebDir/DEBIAN/postinst"
-#!/bin/bash
-if grep -Fxq "$curConfig" /etc/oqm/serviceConfig/infraConfig.list
-	then
-		echo "Config value already present: $curConfig"
-	else
-		echo "$curConfig" >> /etc/oqm/serviceConfig/infraConfig.list
-	fi
-EOT
-	done
-
-
-
 
 	chmod +x "$packageDebDir/DEBIAN/postinst"
 	
 	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
 #!/bin/bash
 
-systemctl disable "$serviceFileEscaped"
-systemctl stop "$serviceFileEscaped"
+systemctl disable ${serviceFiles[@]@Q}
+systemctl stop ${serviceFiles[@]@Q}
 
-echo "Stopped $serviceFileEscaped"
+echo "Stopped ${serviceFiles[@]@Q}"
 
 EOT
-
-
-
-	# TODO:: remove
-	for row in $(jq -r '.configs[] | @base64' "$packageConfigFile"); do
-		curConfig="$(echo ${row} | base64 --decode)"
-		cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
-sed -i -e "s!$curConfig!!g" /etc/oqm/serviceConfig/infraConfig.list
-EOT
- 	done
-
 
 	chmod +x "$packageDebDir/DEBIAN/prerm"
 	

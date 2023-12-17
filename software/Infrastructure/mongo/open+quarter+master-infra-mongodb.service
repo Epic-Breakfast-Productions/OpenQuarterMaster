@@ -48,6 +48,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
+                                if [ \"$status\" != \"true\" ]; then \
+                                    echo \"Container was stopped!\"; \
+                                    exit 1; \
+                                fi; \
                                 /usr/bin/docker exec $CONTAINER_NAME mongosh --eval \"\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Mongo container running and available!\"; \
