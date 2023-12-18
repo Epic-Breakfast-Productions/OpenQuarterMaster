@@ -30,12 +30,19 @@ jobs:
         
       - name: Stash
         run: git stash
+        
+      - name: Git status
+        run: git status
       
       - name: Swap to main branch
         if: github.ref_name != 'main'
         uses: actions/checkout@v4
         with:
           ref: main
+      - name: Git status
+        run: git status
+      - name: Git log
+        run: git log
       - name: Unstash
         run: git stash pop
       - name: Commit new repo files
