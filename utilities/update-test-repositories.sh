@@ -101,6 +101,5 @@ echo
 
 EOT
 
-git add ./*
 popd
 
