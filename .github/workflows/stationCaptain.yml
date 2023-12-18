@@ -8,12 +8,12 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/Station-Captain/**"
+      - "deployment/Single Host/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/Station-Captain/**"
+      - "deployment/Single Host/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
@@ -45,7 +45,7 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Installers Produced
-          path: "software/Station-Captain/bin"
+          path: "deployment/Single Host/Station-Captain/bin"
 
   # This workflow contains a single job called "build"
   testUbuntu:
@@ -68,7 +68,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Build with Maven
         run: ./mvnw verify -Dtest.installer="deb" -Dtest.os="ubuntu"
-        working-directory: software/Station-Captain/stationCaptainTest
+        working-directory: deployment/Single Host/Station-Captain/stationCaptainTest
         
         # Runs a single command using the runners shell
       -
@@ -77,7 +77,7 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Ubuntu
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Ubuntu
         if: always()
@@ -85,7 +85,7 @@ jobs:  # This workflow contains a single job called "build"
         with:
           name: Ubuntu Cucumber Reports
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/report.json"
   # This workflow contains a single job called "build"
   testFedora:
     # The type of runner that the job will run on
@@ -107,7 +107,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Build with Maven
         run: ./mvnw verify -Dtest.installer="rpm" -Dtest.os="fedora"
-        working-directory: software/Station-Captain/stationCaptainTest
+        working-directory: deployment/Single Host/Station-Captain/stationCaptainTest
       
         # Runs a single command using the runners shell
       -
@@ -116,7 +116,7 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Fedora
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Fedora
         if: always()
@@ -124,4 +124,4 @@ jobs:  # This workflow contains a single job called "build"
         with:
           name: Fedora Cucumber Reports
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/report.json"
