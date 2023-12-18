@@ -27,12 +27,17 @@ jobs:
           
       - name: Update Test Repo Files
         run: ./update-test-repositories.sh
+        
+      - name: Stash
+        run: git stash
       
       - name: Swap to main branch
         if: github.ref_name != 'main'
         uses: actions/checkout@v4
         with:
           ref: main
+      - name: Unstash
+        run: git stash pop
       - name: Commit new repo files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
