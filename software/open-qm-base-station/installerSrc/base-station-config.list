@@ -24,8 +24,8 @@ quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api
 quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
 
 # Keycloak Config:
-quarkus.oidc.client-id={infra.keycloak.oqmRealmClientId}
-quarkus.oidc.credentials.secret={infra.keycloak.oqmRealmClientSecret}
+quarkus.oidc.client-id=oqm-base-station
+quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-base-station}
 quarkus.oidc.auth-server-url=http://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
 
 runningInfo.protocol=http
