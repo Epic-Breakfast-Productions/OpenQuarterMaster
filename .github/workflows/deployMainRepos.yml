@@ -21,8 +21,6 @@ jobs:  # This workflow contains a single job called "build"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-        with:
-          ref: update-main-repos-staging
       - name: Install dependencies
         run: sudo apt-get install -y curl dpkg-dev
       - name: Setup Signing Key
