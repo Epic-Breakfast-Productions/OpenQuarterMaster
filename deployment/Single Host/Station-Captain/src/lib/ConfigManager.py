@@ -109,7 +109,10 @@ class SecretManager:
 
     @staticmethod
     def newSecret():
-        return secrets.token_urlsafe(24)
+        newSecret = "-"
+        while re.match('^[a-zA-Z0-9].*', newSecret):
+            newSecret = secrets.token_urlsafe(24)
+        return newSecret
 
     def getSecretPassword(self) -> bytes:
         """
