@@ -770,9 +770,9 @@ Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
 Filename: ./open+quarter+master-infra-keycloak_1.1.1_all.deb
 Size: 14632
-MD5sum: 7085e66a4c0a442a8ad2ca0ebcb96f1e
-SHA1: 5d17796016b0f6b7ec1ab9225e3bec0e0b66a4d9
-SHA256: b8e208b726d688781857dfd03bf2410225fa12bad7da7bf3ce281c6ef0ffb956
+MD5sum: 83057b28be0fa024226bccda97a132c5
+SHA1: 76cfc4ccabf4cf8f0b5ebf6b7f2a08b1f02edfaf
+SHA256: 90569c188353d6762104e8cd3e3bc83c0149426c31b4b957c6fe04afc295f515
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak
 Description: Keycloak instance for Open QuarterMaster.
@@ -964,10 +964,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
 Filename: ./open+quarter+master-infra-mongodb_1.1.1_all.deb
-Size: 3364
-MD5sum: efcd72c9d259fe219413e5479474dcdc
-SHA1: 45e3b82a4ec39abb0e1a02351f8593cdbdca6a40
-SHA256: c79e02f106951e865551d79e26fc920b7d9c1dbba0850389828f7523953e9520
+Size: 3368
+MD5sum: 81e3f6a009dc1cce6b4fc4894821efa7
+SHA1: 405a1d47f630eb24d701c809ff366ce91ff6a29d
+SHA256: 0ad4f1972443f99a908bf96226209dc91fce1744c54326d830cdd3f7b8ea972d
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo
 Description: MongoDb instance for Open QuarterMaster.
@@ -1054,10 +1054,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)
 Filename: ./open+quarter+master-infra-postgres_1.1.1_all.deb
-Size: 3114
-MD5sum: 8aaebdfeb72b8cd0d0666803d8f5a901
-SHA1: 997a35e7447e0d0cc628994a4401d08b5d5e7c55
-SHA256: 0a37e08c2f53081f4b70a03a254f46df58afee61c8c76f2596fa5715c55a4300
+Size: 3128
+MD5sum: 84bf14d8c884656037f0d1d2d8a63472
+SHA1: 37267d39086a70bbb64c19f5dfd6ae0b040fab7d
+SHA256: 0a18cb536230a644cb916eecd3923c0a1385a9bd7845019da0ca537d9c69e2b8
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
 Description: Postgresql instance for Open QuarterMaster.
