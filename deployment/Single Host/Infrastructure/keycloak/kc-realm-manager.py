@@ -145,6 +145,7 @@ def updateKc():
         # TODO:: validate object data
         clientName = curClient['clientName']
         mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
+        mainCM.rereadConfigData()
         newClientJson = {
             "clientId": curClient['clientName'],
             "name": curClient['displayName'],
