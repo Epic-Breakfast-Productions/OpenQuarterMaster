@@ -110,7 +110,7 @@ class SecretManager:
     @staticmethod
     def newSecret():
         newSecret = "-"
-        while re.match('^[a-zA-Z0-9].*', newSecret):
+        while not re.match('^[a-zA-Z0-9].*', newSecret):
             newSecret = secrets.token_urlsafe(24)
         return newSecret
 
