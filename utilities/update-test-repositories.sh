@@ -21,7 +21,7 @@ rm -rf "../$DEB_PPA_DIR/".*
 
 # Station Captain
 echo -e "\n\n\n\nBuilding Station Captain."
-pushd "../software/Station-Captain/"
+pushd "../deployment/Single Host/Station-Captain/"
 ./makeInstallers.sh
 if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for station captain."
@@ -32,7 +32,7 @@ popd
 
 # Infrastructure
 echo -e "\n\n\n\nBuilding Infrastructure."
-pushd "../software/Infrastructure/"
+pushd "../deployment/Single Host/Infrastructure/"
 ./makeInstallers.sh
 if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for infrastructure."
@@ -101,6 +101,5 @@ echo
 
 EOT
 
-git add ./*
 popd
 

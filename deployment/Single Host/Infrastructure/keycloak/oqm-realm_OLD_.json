@@ -750,6 +750,8 @@
         "microprofile-jwt"
       ]
     },
+
+
     {
       "id": "ea4470e2-e385-4d3f-833a-266814280437",
       "clientId": "oqm-app",
@@ -850,6 +852,7 @@
         "offline_access"
       ]
     },
+
     {
       "id": "62772859-0242-4ec5-b09d-9910e9e211ef",
       "clientId": "realm-management",
