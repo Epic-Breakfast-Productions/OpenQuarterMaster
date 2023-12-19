@@ -53,7 +53,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.adminUser.postgresUser')\" -tXAc \"SELECT 1\"; \
+                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.keycloak.adminUser')\" -tXAc \"SELECT 1\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Postgres container running and available!\"; \
                                     running=\"true\"; \
