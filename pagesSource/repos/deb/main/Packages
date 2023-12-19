@@ -769,10 +769,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
 Filename: ./open+quarter+master-infra-keycloak_1.1.1_all.deb
-Size: 14632
-MD5sum: 83057b28be0fa024226bccda97a132c5
-SHA1: 76cfc4ccabf4cf8f0b5ebf6b7f2a08b1f02edfaf
-SHA256: 90569c188353d6762104e8cd3e3bc83c0149426c31b4b957c6fe04afc295f515
+Size: 14534
+MD5sum: b311d7c8476a9f88c26118898e3af061
+SHA1: eaa3c57ae7fc35b20daf220cce4902a56934ebb5
+SHA256: 0f33a6b949591185c4128203a2d52caa83c4c414b7c500bdb528e2cdd22eaf18
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak
 Description: Keycloak instance for Open QuarterMaster.
