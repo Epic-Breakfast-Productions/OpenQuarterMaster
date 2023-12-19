@@ -61,6 +61,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
 
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            sleep 10s; \
                             servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
