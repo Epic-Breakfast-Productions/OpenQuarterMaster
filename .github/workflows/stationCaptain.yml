@@ -39,7 +39,7 @@ jobs:  # This workflow contains a single job called "build"
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
-          working-directory: "deployment/Single Host/Station-Captain/unitTests/"
+          path: "deployment/Single Host/Station-Captain/unitTests/"
           verbose: true
           emoji: true
           job-summary: true
