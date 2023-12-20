@@ -18,9 +18,9 @@ on:
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-defaults:
-  run:
-    working-directory: "deployment/Single Host/Station-Captain/"
+#defaults:
+#  run:
+#    working-directory: "deployment/Single Host/Station-Captain/"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:  # This workflow contains a single job called "build"
   runPythonUnitTests:
@@ -39,8 +39,6 @@ jobs:  # This workflow contains a single job called "build"
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: pip install pytest pytest-md pytest-emoji
-      - name: Move to Unit Tests dir
-        run: cd unitTests
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
@@ -54,7 +52,9 @@ jobs:  # This workflow contains a single job called "build"
   buildInstallers:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -79,7 +79,9 @@ jobs:  # This workflow contains a single job called "build"
   testUbuntu:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       -
@@ -118,7 +120,9 @@ jobs:  # This workflow contains a single job called "build"
   testFedora:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       -
