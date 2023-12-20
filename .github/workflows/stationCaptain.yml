@@ -38,7 +38,7 @@ jobs:  # This workflow contains a single job called "build"
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: apt install python3-cryptography
+        run: sudo apt-get install python3-cryptography
       - name: Run Unittest
         run: python3 -m unittest
 #      - name: Install dependencies
