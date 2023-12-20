@@ -38,7 +38,7 @@ jobs:  # This workflow contains a single job called "build"
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: sudo apt-get install python3-pytest
+        run: pip install pytest pytest-md pytest-emoji
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
