@@ -46,6 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --env-file /tmp/oqm/serviceConfig/infra/mongodb/env.list \
                                  $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"
 ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            sleep 10s; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \

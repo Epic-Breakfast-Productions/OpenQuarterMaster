@@ -45,6 +45,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # determine is running
 ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            sleep 10s; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -52,7 +53,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1\"; \
+                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.postgres.adminUser')\" -tXAc \"SELECT 1\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Postgres container running and available!\"; \
                                     running=\"true\"; \

@@ -40,7 +40,7 @@ class PackageManagement:
         if package is not None:
             args.append(package)
 
-        return subprocess.run(args, shell=False, capture_output=True, text=True, check=True)
+        return subprocess.run(args, shell=False, capture_output=True, text=True, check=False)
 
     @staticmethod
     def coreInstalled() -> bool:
@@ -58,6 +58,8 @@ class PackageManagement:
         result = PackageManagement.runPackageCommand("update")
         result = PackageManagement.runPackageCommand("install", PackageManagement.BASE_STATION_PACKAGE, "-y")
         logging.debug("Result of install: " + result.stdout)
+        if result.returncode != 0:
+            logging.error("FAILED to install core components: %s", result.stderr)
 
     @staticmethod
     def updateSystem() -> (bool, str):

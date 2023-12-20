@@ -6,9 +6,8 @@ GIT_API_BASE="https://api.github.com/repos/Epic-Breakfast-Productions/OpenQuarte
 GIT_RELEASES="$GIT_API_BASE/releases"
 RELEASE_LIST_FILE_CUR="temp.json"
 
-DEB_PPA_DIR="pagesSource/repos/deb/test-$(git branch --show-current)"
-
-
+REPO_DIR="pagesSource/repos/test-$(git branch --show-current)"
+DEB_PPA_DIR="$REPO_DIR/deb"
 
 echo $DEB_PPA_DIR
 
@@ -27,7 +26,7 @@ if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for station captain."
 	exit 1;
 fi
-cp bin/*.deb "../../$DEB_PPA_DIR";
+cp bin/*.deb "../../../$DEB_PPA_DIR";
 popd
 
 # Infrastructure
@@ -38,7 +37,7 @@ if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for infrastructure."
 	exit 1;
 fi
-cp build/*.deb "../../$DEB_PPA_DIR";
+cp build/*.deb "../../../$DEB_PPA_DIR";
 popd
 
 # Base Station
@@ -61,8 +60,8 @@ echo
 echo "Processing Deb repo files"
 pushd "../$DEB_PPA_DIR"
 
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/oqm_ppa.gpg] https://deployment.openquartermaster.com/repos/deb/test-$(git branch --show-current)/ ./" > deb_list_file.list
-cp ../main/KEY.gpg .
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/oqm_ppa.gpg] https://deployment.openquartermaster.com/repos/test-$(git branch --show-current)/deb/ ./" > deb_list_file.list
+cp ../../main/deb/KEY.gpg .
 
 dpkg-scanpackages --multiversion . > Packages
 gzip -k -f Packages
@@ -76,9 +75,9 @@ cat <<EOT >> "setup-repo.sh"
 # Script to setup the Debian OQM repo and install oqm-captain
 
 # get GPG key
-curl -s --compressed "https://deployment.openquartermaster.com/repos/deb/test-$(git branch --show-current)/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null
+curl -s --compressed "https://deployment.openquartermaster.com/repos/test-$(git branch --show-current)/deb/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null
 #add repo to list
-curl -s --compressed "https://deployment.openquartermaster.com/repos/deb/test-$(git branch --show-current)/deb_list_file.list" | sudo tee /etc/apt/sources.list.d/oqm_file.list
+curl -s --compressed "https://deployment.openquartermaster.com/repos/test-$(git branch --show-current)/deb/deb_list_file.list" | sudo tee /etc/apt/sources.list.d/oqm_file.list
 # update apt and install
 sudo apt-get update
 if [ $? -ne 0 ]; then
@@ -103,3 +102,4 @@ EOT
 
 popd
 
+git add "../$REPO_DIR/*"

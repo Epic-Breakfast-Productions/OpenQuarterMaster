@@ -133,7 +133,6 @@
       }
     ],
     "client": {
-      "oqm-app": [],
       "realm-management": [
         {
           "id": "494f1f69-cc42-4327-8861-19adc3dc439e",
@@ -530,26 +529,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "users": [
-    {
-      "id": "af46bb6b-dbb2-43d8-8a6e-a3e4d9185df3",
-      "createdTimestamp": 1691685755844,
-      "username": "service-account-oqm-app",
-      "enabled": true,
-      "totp": false,
-      "emailVerified": false,
-      "serviceAccountClientId": "oqm-app",
-      "disableableCredentialTypes": [],
-      "requiredActions": [],
-      "realmRoles": [
-        "default-roles-oqm",
-        "inventoryEdit",
-        "itemCheckout",
-        "inventoryAdmin",
-        "inventoryView"
-      ],
-      "notBefore": 0,
-      "groups": []
-    }
   ],
   "scopeMappings": [
     {

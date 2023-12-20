@@ -1,0 +1,37 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Date: Wed, 20 Dec 2023 18:54:04 +0000
+MD5Sum:
+ d56a71a7778a52ff6ae78a38f83b2d84            65113 Packages
+ 5c634000f293111ca750b76be0e6864b            11166 Packages.gz
+ 771e5a31e3ab37ac31f9cb2494319ee5               38 Release
+SHA1:
+ d41112a96677cdb7dbe38c577ce714733662ab7a            65113 Packages
+ c4ed3252e92ec3811a2fe2df7f847ee1d55e7711            11166 Packages.gz
+ e8d0dd54de7a49a75272d81d31a7f4cdbe7c9d3d               38 Release
+SHA256:
+ 2a783a2627025dcaff63d47f58582b80e0fe13a693963e6b05bde5387e8c4d1a            65113 Packages
+ 1ab706d1e94df730ba65718460889fe10f958f39280dac27f14be9c98057e125            11166 Packages.gz
+ 07e8ba8ed62b0ebe263ae28558a8af2fe66eb659b8cb62c8a1acc2a77055bd40               38 Release
+SHA512:
+ 1a7cb47747a6b7f75535167148304aad5a3b4aa5ffcfde55c32fca3a54fb556323fdf2c51536634ea7c5193a2f2cd527d501ac2213670beb87ed0f1cf1694d8d            65113 Packages
+ e8803c32827beff108690d0b04d3e10b48dc675ea06da78463aa2e6daa58ff327f62322c9bf61be0b1901b4dfb5a66c3d189c8f94bbaa79da0b9e52ce121ba3f            11166 Packages.gz
+ 9c84be9fde74301f2fa3e7ccf96e7e44fad2397e328a37d285b7a472fad0c84ac13d21cd2cf7edc4f45b9ea1e5e25da9d94b6e4ac0bab1563d4c39c8a0ae2b36               38 Release
+-----BEGIN PGP SIGNATURE-----
+
+iQJZBAEBCgBDFiEET4mMzDxL82g2xa7Aa9cIQRtcMhYFAmWDOGYlHGdyZWdAZXBp
+Yy1icmVha2Zhc3QtcHJvZHVjdGlvbnMudGVjaAAKCRBr1whBG1wyFs1GD/0aCLzw
+Y/XwVcZmafjmltcmrgwElu7+BvUgUIjoyJIllNR1olD0G9+iN8Zi41Q4p43S+izr
+JYUm6+I4rFJ39nOhlt99PO0VF26Q2Avls/ucKvLbtgnItM1l2kw7bTvUmsu0IfOx
+/DSCdyFfQsZSBL0kyNfIv7WNwd+1rg9se7+21bBN3BfTiF5P1ZAaY3s5n3nRKRF2
+rK3rxZYHhIlpRyOqibdD93UX/XcdzmjPf9ABItdzX+tyeHZpPSUw9i2WIvd1Bjxl
+sckPhIbpsvwjC2KRtLrPZD+cVDPr+MWCDz7HpuaKNw4Uyd6fNKlVDXojS0hR7s5N
+Bt9jJhvIpRvljy0jUDlty5XmClklE1GA0V7e7hDPHiK1gzbRRwcDGbDUjsicj4aG
+yMRT7H0POvadfUNmxECSoHr61zq0WQiu83Hgf0iToaPL33ntFG92Km74LPYhSwDj
+a7pnh6vi5SkKtG02s5ON/EKAW1Ye7mKXVnqhlpmsC2n1hexG9ktU9zkFij9aMMQE
+hKNj3g2MNkeAF7Y3RsjgTjjX2UjGYD9e7vYBuhjkKxO/9lxlRbtgKxMqZQUBxpc9
+do37v50PVsAJV9AVllrRQMpl6hqqRRP90Hyv9VIg/752BKUINYakfQuP+eDgxXp8
+Bt+dknALnDrY93vgCCikJESVe7C863ttZkvP8Q==
+=KPlO
+-----END PGP SIGNATURE-----
