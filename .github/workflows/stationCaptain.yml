@@ -37,17 +37,19 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: pip install pytest pytest-md pytest-emoji
-      - name: Run pytest
-        uses: pavelzw/pytest-action@v2
-        with:
-          verbose: true
-          emoji: true
-          job-summary: true
-#          custom-arguments: '-q'
-          click-to-expand: true
-          report-title: 'Test Report'
+      - name: Run Unittest
+        run: python3 -m unittest
+#      - name: Install dependencies
+#        run: pip install pytest pytest-md pytest-emoji
+#      - name: Run pytest
+#        uses: pavelzw/pytest-action@v2
+#        with:
+#          verbose: true
+#          emoji: true
+#          job-summary: true
+##          custom-arguments: '-q'
+#          click-to-expand: true
+#          report-title: 'Test Report'
   
   buildInstallers:
     # The type of runner that the job will run on
