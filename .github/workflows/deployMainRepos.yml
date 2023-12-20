@@ -7,19 +7,14 @@ on:
   release:
     types: [published, edited, deleted]
   workflow_call:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
     working-directory: "utilities"
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:  # This workflow contains a single job called "build"
+jobs:
   deployToRepos:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: sudo apt-get install -y curl dpkg-dev
@@ -28,7 +23,6 @@ jobs:  # This workflow contains a single job called "build"
         with:
           gpg_private_key: ${{ secrets.OQM_GPG_KEY }}
           passphrase: ${{ secrets.OQM_GPG_KEY_PASS }}
-      
       - name: Update Main Repo Files
         run: ./update-main-repositories.sh
       - name: Commit new repo files
