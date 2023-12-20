@@ -476,4 +476,5 @@ except NameError: NO_SET_MAINCM = False
 if NO_SET_MAINCM:
     logging.info("Was directed not to setup main CM")
 else:
+    logging.info("Setting up main CM")
     mainCM = ConfigManager()
