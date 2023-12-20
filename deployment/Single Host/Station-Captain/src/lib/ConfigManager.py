@@ -469,7 +469,11 @@ class ConfigManager:
         return d
 
 mainCM = None
-if 'NO_SET_MAINCM' in globals():
+
+global NO_SET_MAINCM
+try: NO_SET_MAINCM
+except NameError: NO_SET_MAINCM = False
+if NO_SET_MAINCM:
     logging.info("Was directed not to setup main CM")
 else:
     mainCM = ConfigManager()
