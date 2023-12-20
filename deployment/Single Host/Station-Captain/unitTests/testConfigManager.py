@@ -6,8 +6,6 @@ import os
 import shutil
 
 sys.path.append("../src/lib")
-global NO_SET_MAINCM
-NO_SET_MAINCM=True
 from ConfigManager import *
 
 

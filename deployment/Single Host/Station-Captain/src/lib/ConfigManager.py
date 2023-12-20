@@ -468,12 +468,9 @@ class ConfigManager:
                 d[k] = v
         return d
 
-mainCM = None
 
-global NO_SET_MAINCM
-try: NO_SET_MAINCM
-except NameError: NO_SET_MAINCM = False
-if NO_SET_MAINCM:
+mainCM = None
+if os.environ["NO_SET_MAINCM"] == "true":
     logging.info("Was directed not to setup main CM")
 else:
     logging.info("Setting up main CM")

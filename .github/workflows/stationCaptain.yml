@@ -31,6 +31,8 @@ jobs:  # This workflow contains a single job called "build"
     defaults:
       run:
         working-directory: "deployment/Single Host/Station-Captain/unitTests/"
+    env:
+      NO_SET_MAINCM: "true"
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
