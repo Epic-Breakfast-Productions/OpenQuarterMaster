@@ -39,6 +39,8 @@ jobs:  # This workflow contains a single job called "build"
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: pip install pytest pytest-md pytest-emoji
+      - name: Move to Unit Tests dir
+        run: cd unitTests
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
