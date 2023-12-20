@@ -468,5 +468,8 @@ class ConfigManager:
                 d[k] = v
         return d
 
-
-mainCM = ConfigManager()
+mainCM = None
+if 'NO_SET_MAINCM' in globals():
+    logging.info("Was directed not to setup main CM")
+else:
+    mainCM = ConfigManager()
