@@ -37,8 +37,10 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install apt dependencies
         run: sudo apt-get install python3-cryptography
+      - name: Install pip dependencies
+        run: pip install cryptography
       - name: Run Unittest
         run: python3 -m unittest
 #      - name: Install dependencies
