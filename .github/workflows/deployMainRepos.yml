@@ -20,7 +20,7 @@ jobs:
         with:
           ref: update-main-repos-staging
       - name: Update branch
-        run: git rebase main
+        run: git rebase origin/main
       - name: Install dependencies
         run: sudo apt-get install -y curl dpkg-dev
       - name: Setup Signing Key
