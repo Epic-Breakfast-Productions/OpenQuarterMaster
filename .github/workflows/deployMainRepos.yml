@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: update-main-repos-staging
+      - name: Get branch
+        run: git branch
       - name: Update branch
         run: git rebase -f origin/main
       - name: Install dependencies
