@@ -473,7 +473,7 @@ class ConfigManager:
 
 
 mainCM = None
-if os.environ["NO_SET_MAINCM"] == "true":
+if "NO_SET_MAINCM" in os.environ and os.environ["NO_SET_MAINCM"] == "true":
     logging.info("Was directed not to setup main CM")
 else:
     logging.info("Setting up main CM")
