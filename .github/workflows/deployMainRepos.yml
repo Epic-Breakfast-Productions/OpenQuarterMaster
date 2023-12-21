@@ -48,7 +48,7 @@ jobs:
               repo: repo,
               head: 'update-main-repos-staging',
               base: 'main',
-              title: '[Delpoy - Repos - Main] Update repo files after release'
+              title: '[Delpoy - Repos - Main] Update repo files after release',
               state: 'open',
             });
             
