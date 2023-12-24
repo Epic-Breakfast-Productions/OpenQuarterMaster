@@ -3,6 +3,7 @@ package stationCaptainTest.testResources.config.snhSetup;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -14,6 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class ExistingSnhSetupConfig extends SnhSetupConfig {
 	
 	private String host;
