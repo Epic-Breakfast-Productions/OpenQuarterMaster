@@ -37,7 +37,9 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		}
 	}
 	
-	public abstract void init();
+	public abstract void init(boolean install);
+	
+	public abstract void installOqm();
 	
 	public abstract SnhType getType();
 	
