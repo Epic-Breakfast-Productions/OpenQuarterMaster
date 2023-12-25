@@ -43,6 +43,9 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 	
 	public abstract SnhType getType();
 	
+	public abstract CommandResult runCommand(String ... command);
+	
+	
 	@Override
 	public void close() throws IOException {}
 }

@@ -84,6 +84,15 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 	}
 	
 	@Override
+	public CommandResult runCommand(String... command) {
+		try {
+			return CommandResult.from(this.runningContainer.execInContainer(command));
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
 	public void close() throws IOException {
 		super.close();
 		if(this.runningContainer != null){
