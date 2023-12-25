@@ -21,7 +21,7 @@
 			<dependency>
 				<groupId>io.cucumber</groupId>
 				<artifactId>cucumber-bom</artifactId>
-				<version>7.11.1</version>
+				<version>7.15.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -42,10 +42,15 @@
 			<artifactId>cucumber-java</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-junit-platform-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+<!--			<version>7.15.0</version>-->
 			<scope>test</scope>
 		</dependency>
 		
@@ -91,28 +96,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>tech.epic-breakfast-productions.openQuarterMaster.lib</groupId>
-			<artifactId>open-qm-lib-core</artifactId>
-			<version>1.0.59</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.26</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.cucumber</groupId>
-			<artifactId>cucumber-picocontainer</artifactId>
-			<version>7.11.1</version>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.19.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>1.17.6</version>
-			<scope>test</scope>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-core</artifactId>
+			<version>2.11.0</version>
 		</dependency>
 	</dependencies>
 	

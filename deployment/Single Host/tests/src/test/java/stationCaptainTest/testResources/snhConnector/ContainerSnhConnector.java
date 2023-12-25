@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.testcontainers.containers.GenericContainer;
 import stationCaptainTest.testResources.config.snhSetup.ContainerSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
@@ -17,10 +18,15 @@ import java.io.IOException;
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class ContainerSnhConnector extends SnhConnector {
+public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig> {
 	
 	//TODO:: container resources
+	private GenericContainer<?> runningContainer = null;
 	
+	@Override
+	public void init() {
+		//TODO:: start container
+	}
 	
 	@Override
 	public SnhType getType() {
@@ -29,6 +35,9 @@ public class ContainerSnhConnector extends SnhConnector {
 	
 	@Override
 	public void close() throws IOException {
-	
+		super.close();
+		if(this.runningContainer != null){
+			this.runningContainer.close();
+		}
 	}
 }
