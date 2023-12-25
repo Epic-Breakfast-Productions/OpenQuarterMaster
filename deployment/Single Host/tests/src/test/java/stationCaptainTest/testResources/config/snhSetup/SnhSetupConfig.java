@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import stationCaptainTest.testResources.config.snhSetup.installType.InstallTypeConfig;
+import stationCaptainTest.testResources.config.snhSetup.installType.RepoInstallTypeConfig;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 })
 public abstract class SnhSetupConfig {
 	
-	private InstallType installType;
+	private InstallTypeConfig installTypeConfig = new RepoInstallTypeConfig();
 	
 	public abstract SnhType getType();
 }

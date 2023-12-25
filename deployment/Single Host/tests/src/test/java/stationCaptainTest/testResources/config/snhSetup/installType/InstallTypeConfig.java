@@ -1,16 +1,20 @@
-package stationCaptainTest.testResources.snhConnector;
+package stationCaptainTest.testResources.config.snhSetup.installType;
+
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import stationCaptainTest.testResources.config.snhSetup.ContainerSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
+import stationCaptainTest.testResources.config.snhSetup.SnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
-import java.io.Closeable;
-import java.io.IOException;
-
+/**
+ * Setup config that specifies to use TestContainers to run a new container to test against.
+ */
 @Data
 @NoArgsConstructor
 @JsonTypeInfo(
@@ -18,13 +22,10 @@ import java.io.IOException;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ContainerSnhSetupConfig.class, name = "CONTAINER"),
-	@JsonSubTypes.Type(value = ExistingSnhSetupConfig.class, name = "EXISTING"),
+	@JsonSubTypes.Type(value = FilesInstallTypeConfig.class, name = "FILES"),
+	@JsonSubTypes.Type(value = RepoInstallTypeConfig.class, name = "REPO"),
 })
-public abstract class SnhConnector implements Closeable {
+public abstract class InstallTypeConfig {
 	
-	public abstract SnhType getType();
-	
-	@Override
-	public void close() throws IOException {}
+	public abstract InstallType getType();
 }
