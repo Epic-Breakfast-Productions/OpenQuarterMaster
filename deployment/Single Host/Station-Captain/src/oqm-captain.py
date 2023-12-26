@@ -58,7 +58,7 @@ if args.packageLogs:
     result, message = LogManagement.packageLogs()
     if not result:
         print("Failed to package logs: " + message)
-        exit(2)
+        exit(3)
     print(message)
 else:
     UserInteraction.ui.startUserInteraction()
