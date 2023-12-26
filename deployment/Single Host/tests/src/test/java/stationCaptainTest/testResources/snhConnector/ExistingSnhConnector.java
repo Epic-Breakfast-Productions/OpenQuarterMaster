@@ -1,5 +1,6 @@
 package stationCaptainTest.testResources.snhConnector;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	private static final int DEFAULT_TIMEOUT = 60;
 	private static final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
@@ -50,11 +53,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 		//TODO:: this
 //		this.clientSession.addPasswordIdentity(password);
 //		session.auth().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
-	}
-	
-	@Override
-	public void installOqm() {
-	
+		super.init(install);
 	}
 	
 	@Override
@@ -96,6 +95,16 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 		} catch (Exception e){
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public void copyToHost(String destination, File localFile) {
+		//TODO
+	}
+	
+	@Override
+	public void copyFromHost(String remoteFile, File destination) {
+		//TODO
 	}
 	
 	@Override

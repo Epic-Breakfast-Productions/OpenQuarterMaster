@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
 import stationCaptainTest.testResources.shellUtils.ShellProcessResults;
+import stationCaptainTest.testResources.snhConnector.CommandResult;
 import stationCaptainTest.testResources.snhConnector.SnhConnector;
 
 import java.io.Closeable;
@@ -18,25 +19,22 @@ import java.util.Map;
 @NoArgsConstructor
 public class TestContext implements Closeable {
 	
-	private SnhConnector snhConnector;
-	
-	private ShellProcessResults shellProcessResults = null;
+	private SnhConnector<?> snhConnector;
+	private CommandResult commandResult;
 	private Map<String, Object> data = new HashMap<>();
-	private GenericContainer<?> runningContainer = null;
-	private Container.ExecResult containerExecResult = null;
-	private String installer = System.getProperty("test.installer", "deb");
-	private String os = System.getProperty("test.os", "ubuntu");
+	
+	{
+		try {
+			this.snhConnector = SnhConnector.fromConfig();
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	@Override
 	public void close() throws IOException {
 		if(this.snhConnector != null){
 			this.snhConnector.close();
-		}
-		
-		try (
-			GenericContainer<?> container = this.getRunningContainer();
-		) {
-			log.info("Container was started? {}", container != null);
 		}
 	}
 }

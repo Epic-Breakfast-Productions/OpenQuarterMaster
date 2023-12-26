@@ -17,8 +17,8 @@ import org.testcontainers.utility.DockerImageName;
 @NoArgsConstructor
 public class ContainerSnhSetupConfig extends SnhSetupConfig {
 	
-	private String imageName;
-	private String imageTag;
+	private String imageName = "ubuntu";
+	private String imageTag = "jammy";
 	
 	@Override
 	public SnhType getType() {
@@ -26,7 +26,7 @@ public class ContainerSnhSetupConfig extends SnhSetupConfig {
 	}
 	
 	@JsonIgnore
-	public DockerImageName getImageName(){
+	public DockerImageName getDockerImageName(){
 		return DockerImageName.parse(this.getImageName() + ":" + this.getImageTag());
 	}
 }

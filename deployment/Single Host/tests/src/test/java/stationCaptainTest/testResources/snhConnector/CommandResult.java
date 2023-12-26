@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.testcontainers.containers.Container;
+import stationCaptainTest.testResources.shellUtils.ShellProcessResults;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +25,14 @@ public class CommandResult {
 				   .stdOut(execResult.getStdout())
 				   .stdErr(execResult.getStderr())
 				   .returnCode(execResult.getExitCode())
+				   .build();
+	}
+	
+	public static CommandResult from(ShellProcessResults results){
+		return CommandResult.builder()
+				   .stdOut(results.getStdOut())
+				   .stdErr(results.getErrOut())
+				   .returnCode(results.getExitCode())
 				   .build();
 	}
 }

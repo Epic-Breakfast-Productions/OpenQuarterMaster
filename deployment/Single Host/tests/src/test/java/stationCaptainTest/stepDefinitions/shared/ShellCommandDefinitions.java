@@ -8,6 +8,7 @@ import org.testcontainers.containers.Container;
 import stationCaptainTest.scenarioUtils.AttachUtils;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
+import stationCaptainTest.testResources.snhConnector.CommandResult;
 
 import java.io.IOException;
 
@@ -27,15 +28,15 @@ public class ShellCommandDefinitions extends BaseStepDefinitions {
 	
 	@When("the {string} command is made")
 	public void theCommandIsMade(String command) throws IOException, InterruptedException {
-		Container.ExecResult result = this.getContext().getRunningContainer().execInContainer(command.split(" "));
+		CommandResult result = this.getContext().getSnhConnector().runCommand(command.split(" "));
 		
 		AttachUtils.attach(result, "Command run", this.getScenario());
-		this.getContext().setContainerExecResult(result);
+		this.getContext().setCommandResult(result);
 	}
 	
 	@Then("command returns successfully")
 	public void command_returns_successfully() {
-		assertEquals(0, this.getContext().getShellProcessResults().getExitCode());
+		assertEquals(0, this.getContext().getCommandResult().getReturnCode());
 	}
 	
 }

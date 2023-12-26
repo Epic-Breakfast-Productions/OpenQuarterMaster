@@ -1,7 +1,5 @@
 package stationCaptainTest.testResources.snhConnector;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,14 +7,11 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.MountableFile;
 import stationCaptainTest.constants.ContainerConstants;
-import stationCaptainTest.constants.FileLocationConstants;
 import stationCaptainTest.testResources.config.snhSetup.ContainerSnhSetupConfig;
-import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
-import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 
 @Slf4j
@@ -31,7 +26,7 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 	
 	@Override
 	public void init(boolean install) {
-		this.runningContainer = new GenericContainer<>(this.getSetupConfig().getImageName());
+		this.runningContainer = new GenericContainer<>(this.getSetupConfig().getDockerImageName());
 		this.runningContainer.withCommand("tail -f /dev/null");
 		this.runningContainer.withEnv("TZ", "UTC");
 		this.runningContainer.withEnv("DEBIAN_FRONTEND", "noninteractive");
@@ -51,9 +46,6 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 			throw new RuntimeException("FAILED to do simple checks after container start", e);
 		}
 		
-		//TODO:: setup for installer type (repo or add files)
-		this.getSetupConfig().getInstallTypeConfig().getInstallerType();
-		
 //		this.runningContainer.copyFileToContainer(MountableFile.forHostPath(oqmCaptInstaller), FileLocationConstants.INSTALLER_CONTAINER_LOCATION);
 //		context.getData().put(ContainerConstants.CONFIG_KEY_INSTALLER_LOCATION, FileLocationConstants.INSTALLER_CONTAINER_LOCATION + oqmCaptInstaller.getFileName().toString());
 //
@@ -68,14 +60,7 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 //			}
 //		}
 		
-		if(install){
-			this.installOqm();
-		}
-	}
-	
-	@Override
-	public void installOqm() {
-	
+		super.init(install);
 	}
 	
 	@Override
@@ -90,6 +75,16 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	@Override
+	public void copyToHost(String destination, File localFile) {
+		//TODO
+	}
+	
+	@Override
+	public void copyFromHost(String remoteFile, File destination) {
+		//TODO
 	}
 	
 	@Override

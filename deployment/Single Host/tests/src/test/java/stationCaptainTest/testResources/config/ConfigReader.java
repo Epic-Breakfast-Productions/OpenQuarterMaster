@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import stationCaptainTest.testResources.config.snhSetup.SnhSetupConfig;
 
+import java.io.File;
+import java.io.IOException;
+
 @Slf4j
 public class ConfigReader {
 	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -12,21 +15,26 @@ public class ConfigReader {
 	
 	private static TestRunConfig MAIN_TEST_RUN_CONFIG;
 	
-	
 	private static SnhSetupConfig getSetupConfig() {
 		return null;
 	}
 	
-	public static synchronized TestRunConfig getTestRunConfig() {
+	public static synchronized TestRunConfig getTestRunConfig() throws IOException {
 		if (MAIN_TEST_RUN_CONFIG != null) {
 			return MAIN_TEST_RUN_CONFIG;
 		}
 		
 		log.info("Setting up new TestRunConfig");
-		TestRunConfig.TestRunConfigBuilder builder = TestRunConfig.builder();
-		builder.setupConfig(getSetupConfig());
+		String configLocaleLocation = System.getProperty(CONFIG_FILE_PROP_NAME, DEFAULT_CONFIG_LOCATION);
+		File configLocaleFile = new File(configLocaleLocation);
 		
-		MAIN_TEST_RUN_CONFIG = builder.build();
+		if(DEFAULT_CONFIG_LOCATION.equals(configLocaleLocation) && !configLocaleFile.exists()){
+			log.info("No default config file present. Returning default config.");
+			MAIN_TEST_RUN_CONFIG = new TestRunConfig();
+		} else {
+			MAIN_TEST_RUN_CONFIG = OBJECT_MAPPER.readValue(configLocaleFile, TestRunConfig.class);
+		}
+		
 		return MAIN_TEST_RUN_CONFIG;
 	}
 	

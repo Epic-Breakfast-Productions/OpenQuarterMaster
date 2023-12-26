@@ -6,11 +6,21 @@ import lombok.Data;
 import stationCaptainTest.testResources.config.ConfigReader;
 import stationCaptainTest.testResources.config.TestRunConfig;
 
+import java.io.IOException;
+
 @Data
 //@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseStepDefinitions {
 	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-	protected static final TestRunConfig CONFIG = ConfigReader.getTestRunConfig();
+	protected static final TestRunConfig CONFIG;
+	
+	static {
+		try {
+			CONFIG = ConfigReader.getTestRunConfig();
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	private Scenario scenario;
 	private TestContext context;

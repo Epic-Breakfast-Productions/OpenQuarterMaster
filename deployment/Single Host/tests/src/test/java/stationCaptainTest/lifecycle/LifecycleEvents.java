@@ -7,6 +7,8 @@ import io.cucumber.java.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
+import stationCaptainTest.testResources.snhConnector.CommandResult;
+import stationCaptainTest.testResources.snhConnector.SnhConnector;
 
 import java.io.IOException;
 
@@ -30,6 +32,9 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	
 	@After
 	public void cleanup() throws IOException {
+		//TODO:: do log packaging, attach to scenario
+		//CommandResult result = this.getContext().getSnhConnector().runCommand("oqm-captain", "--package-logs");
+		
 		log.info("Cleaning up after test.");
 		this.getContext().close();
 		log.info("Done Cleaning up after test.");
