@@ -1,9 +1,9 @@
 #!/bin/bash
 #Script to setup the Debian OQM repo and install oqm-captain
 
-SUDOTXT="sudo"
+SUDOTXT=""
 if [ "$EUID" -ne 0 ]; then
-  SUDOTXT=""
+  SUDOTXT="sudo"
 fi
 
 
