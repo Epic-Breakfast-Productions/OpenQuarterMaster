@@ -87,7 +87,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 			try {
 				channel.open().verify(DEFAULT_TIMEOUT, DEFAULT_TIMEOUT_UNIT);
 				log.info("Command sent to external host. Waiting for reply.");
-				channel.waitFor(//TODO:: not this. wait til stdout has another prompt?
+				channel.waitFor(
 					EnumSet.of(ClientChannelEvent.CLOSED),
 					0L //No timeout
 				);

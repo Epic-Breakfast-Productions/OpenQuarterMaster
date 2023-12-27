@@ -2,28 +2,22 @@ package stationCaptainTest.stepDefinitions.features;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testcontainers.containers.Container;
+import lombok.extern.slf4j.Slf4j;
 import stationCaptainTest.constants.FileLocationConstants;
 import stationCaptainTest.scenarioUtils.AttachUtils;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
-import stationCaptainTest.testResources.containerUtils.ContainerUtils;
 import stationCaptainTest.testResources.shellUtils.ShellProcessResults;
 import stationCaptainTest.testResources.snhConnector.CommandResult;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Slf4j
 public class InstallerSteps extends BaseStepDefinitions {
 	
 	private static ShellProcessResults MAKE_INSTALLER_RESULTS;
@@ -64,7 +58,23 @@ public class InstallerSteps extends BaseStepDefinitions {
 	
 	@Then("OQM is running")
 	public void oqm_is_running() {
-		//TODO:: verify
+		CommandResult dockerStatsResult = this.getContext().getSnhConnector().runCommand("docker", "stats", "--no-stream");
+		AttachUtils.attach(dockerStatsResult, "Running containers", this.getScenario());
+		CommandResult systemdListResult = this.getContext().getSnhConnector().runCommand("systemctl", "list-units", "--no-legend", "open\\\\x2bquarter\\\\x2bmaster\\\\x2d*");
+		AttachUtils.attach(systemdListResult, "OQM related systemd units", this.getScenario());
+		
+		for(
+			String curSystemdUnit :
+			systemdListResult.getStdOut().split("\n")
+		){
+			String[] unitStatusParts = curSystemdUnit.split("\\s+");
+			log.debug("Systemd unit status parts: {}", (Object) unitStatusParts);
+			String active = unitStatusParts[3];
+			String status = unitStatusParts[4];
+			
+			assertEquals("active", active, "Systemd unit " + unitStatusParts[1] + " not running appropriately.");
+			assertEquals("running", status, "Systemd unit " + unitStatusParts[1] + " not running appropriately.");
+		}
 	}
 	
 	
