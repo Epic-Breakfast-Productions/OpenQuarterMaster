@@ -6,6 +6,11 @@ if [ "$EUID" -ne 0 ]; then
   SUDOTXT="sudo"
 fi
 
+AUTO_INSTALL=""
+if [ "$1" == "--auto" ]; then
+  AUTO_INSTALL="-y"
+fi
+
 
 # get GPG key
 curl -s --compressed "https://deployment.openquartermaster.com/repos/main/deb/KEY.gpg" | gpg --dearmor | $SUDOTXT tee /etc/apt/trusted.gpg.d/oqm_ppa.gpg >/dev/null
@@ -18,7 +23,7 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
-$SUDOTXT apt-get install open+quarter+master-manager-station+captain
+$SUDOTXT apt-get install $AUTO_INSTALL open+quarter+master-manager-station+captain
 if [ $? -ne 0 ]; then
 	echo "FAILED to install Station Captain. See above output for information."
 	exit 2;
