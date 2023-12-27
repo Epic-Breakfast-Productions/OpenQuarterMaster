@@ -68,18 +68,18 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 				log.info("Setting up host for repo install.");
 				RepoInstallTypeConfig config = (RepoInstallTypeConfig) this.getSetupConfig().getInstallTypeConfig();
 				
-				CommandResult result =
-					this.runCommand("wget", "-q", "-O", "/tmp/repoSetup.sh",
-									"https://deployment.openquartermaster.com/repos/"+config.getRepoBranch()+"/"+config.getInstallerType().name()+"/setup-repo.sh"
-					);
+				String setupUrl = "https://deployment.openquartermaster.com/repos/"+config.getRepoBranch()+"/"+config.getInstallerType().name()+"/setup-repo.sh";
+				log.debug("Setup script url: {}", setupUrl);
+				CommandResult result = this.runCommand("wget", "-q", "-O", "/tmp/repoSetup.sh", setupUrl);
 				if(result.getReturnCode()!= 0){
 					log.error("FAILED to run command to download repo setup script. Error: {} / std out: {}", result.getStdErr(), result.getStdOut());
 					throw new RuntimeException("FAILED to run command to download repo setup script (returned "+result.getReturnCode()+"): " + result.getStdErr() + " / " + result.getStdOut());
 				}
-				result = this.runCommand("/tmp/repoSetup.sh");
+				result = this.runCommand("chmod", "+x", "/tmp/repoSetup.sh");
+				result = this.runCommand("/tmp/repoSetup.sh", "--auto");
 				if(result.getReturnCode()!= 0){
 					log.error("FAILED to run command to setup repo on host. Error: {}", result.getStdErr());
-					throw new RuntimeException("FAILED to run command to setup repo on host (returned "+result.getReturnCode()+"): " + result.getStdErr());
+					throw new RuntimeException("FAILED to run command to setup repo on host (returned "+result.getReturnCode()+"): " + result.getStdErr() + " / " + result.getStdOut());
 				}
 			}
 			case FILES -> {
@@ -88,15 +88,30 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		}
 	}
 	
-	public void installOqm() {
+	public CommandResult installOqm() {
+		CommandResult output = null;
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()) {
-			case DEB -> {
-				//TODO
+			case deb -> {
+				switch (this.getSetupConfig().getInstallTypeConfig().getType()) {
+					case REPO -> {
+						output = this.runCommand("apt-get", "install", "-y", "open+quarter+master-core-base+station");
+					}
+					case FILES -> {
+						//TODO
+					}
+				}
 			}
-			case RPM -> {
+			case rpm -> {
 				//TODO
 			}
 		}
+		log.debug("OQM install return code: {}", output.getReturnCode());
+		log.debug("OQM install stdout: {}", output.getStdOut());
+		log.debug("OQM install stderr: {}", output.getStdErr());
+		if(output.getReturnCode() != 0){
+			throw new RuntimeException("FAILED to install OQM: " + output.getStdErr());
+		}
+		return output;
 	}
 	
 	

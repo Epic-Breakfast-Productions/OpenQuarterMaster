@@ -13,6 +13,7 @@ import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
 import stationCaptainTest.testResources.containerUtils.ContainerUtils;
 import stationCaptainTest.testResources.shellUtils.ShellProcessResults;
+import stationCaptainTest.testResources.snhConnector.CommandResult;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,7 +55,9 @@ public class InstallerSteps extends BaseStepDefinitions {
 	
 	@When("the command to install OQM is made")
 	public void the_command_to_install_oqm_is_made() {
-		this.getContext().getSnhConnector().installOqm();
+		CommandResult result = this.getContext().getSnhConnector().installOqm();
+		
+		AttachUtils.attach(result, "OQM install step", this.getScenario());
 	}
 	
 	@Then("OQM is running")

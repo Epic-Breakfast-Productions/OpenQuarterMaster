@@ -11,5 +11,4 @@ Feature: 1.1 - Installers
 
 		Given the host is setup for install
 		When the command to install OQM is made
-		Then command returns successfully
-		And OQM is running
+		Then OQM is running

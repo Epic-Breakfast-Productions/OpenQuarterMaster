@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 })
 public abstract class InstallTypeConfig {
 	
-	private InstallerType installerType = InstallerType.DEB;
+	private InstallerType installerType = InstallerType.deb;
 	
 	public abstract InstallType getType();
 }

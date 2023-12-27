@@ -42,6 +42,18 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 			log.info("Working directory: {}", result.getStdout());
 			result = this.runningContainer.execInContainer("whoami");
 			log.info("User when exec: {}", result.getStdout());
+			switch(this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
+				case deb -> {
+					result = this.runningContainer.execInContainer("apt-get", "update");
+					result = this.runningContainer.execInContainer("apt-get", "-y", "install", "wget", "curl", "gnupg");
+					if(result.getExitCode() != 0){
+						throw new RuntimeException("FAILED to install wget: " + result.getStderr() + " / " + result.getStdout());
+					}
+				}
+				case rpm -> {
+					//TODO
+				}
+			}
 		} catch(Exception e) {
 			throw new RuntimeException("FAILED to do simple checks after container start", e);
 		}
