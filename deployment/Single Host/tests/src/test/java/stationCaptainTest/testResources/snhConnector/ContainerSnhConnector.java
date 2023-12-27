@@ -45,7 +45,7 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 			switch(this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
 				case deb -> {
 					result = this.runningContainer.execInContainer("apt-get", "update");
-					result = this.runningContainer.execInContainer("apt-get", "-y", "install", "wget", "curl", "gnupg");
+					result = this.runningContainer.execInContainer("apt-get", "-y", "install", "wget", "curl", "gnupg", "apt-utils");
 					if(result.getExitCode() != 0){
 						throw new RuntimeException("FAILED to install wget: " + result.getStderr() + " / " + result.getStdout());
 					}

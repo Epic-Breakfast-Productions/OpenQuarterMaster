@@ -55,9 +55,11 @@ public class InstallerSteps extends BaseStepDefinitions {
 	
 	@When("the command to install OQM is made")
 	public void the_command_to_install_oqm_is_made() {
-		CommandResult result = this.getContext().getSnhConnector().installOqm();
-		
+		CommandResult result = this.getContext().getSnhConnector().installOqm(false);
 		AttachUtils.attach(result, "OQM install step", this.getScenario());
+		if(result.getReturnCode() != 0){
+			throw new RuntimeException("FAILED to install OQM: " + result.getStdErr());
+		}
 	}
 	
 	@Then("OQM is running")

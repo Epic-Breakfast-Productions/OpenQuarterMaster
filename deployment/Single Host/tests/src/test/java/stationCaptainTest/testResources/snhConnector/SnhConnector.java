@@ -43,7 +43,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 	public void init(boolean install) {
 		this.setupForInstall();
 		if (install) {
-			this.installOqm();
+			this.installOqm(true);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		}
 	}
 	
-	public CommandResult installOqm() {
+	public CommandResult installOqm(boolean verify) {
 		CommandResult output = null;
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()) {
 			case deb -> {
@@ -108,7 +108,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		log.debug("OQM install return code: {}", output.getReturnCode());
 		log.debug("OQM install stdout: {}", output.getStdOut());
 		log.debug("OQM install stderr: {}", output.getStdErr());
-		if(output.getReturnCode() != 0){
+		if(verify && output.getReturnCode() != 0){
 			throw new RuntimeException("FAILED to install OQM: " + output.getStdErr());
 		}
 		return output;
