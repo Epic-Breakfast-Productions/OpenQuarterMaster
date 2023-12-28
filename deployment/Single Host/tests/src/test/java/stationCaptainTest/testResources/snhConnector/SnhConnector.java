@@ -14,7 +14,11 @@ import stationCaptainTest.testResources.config.snhSetup.installType.RepoInstallT
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 
 @Slf4j
@@ -51,9 +55,29 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 	
 	public abstract CommandResult runCommand(String... command);
 	
-	public abstract void copyToHost(String destination, File localFile);
+	public abstract void copyToHost(String destination, InputStream input);
 	
-	public abstract void copyFromHost(String remoteFile, File destination);
+	public void copyToHost(String remoteFile, File source) {
+		try(
+			FileInputStream is = new FileInputStream(source);
+		){
+			this.copyToHost(remoteFile, is);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public abstract void copyFromHost(String remoteFile, OutputStream destination);
+	
+	public void copyFromHost(String remoteFile, File destination) {
+		try(
+			FileOutputStream os = new FileOutputStream(destination);
+		){
+			this.copyFromHost(remoteFile, os);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	public void copyToHost(String destinationDir, File... localFiles) {
 		log.info("Copying files to host into {}: {}", destinationDir, (Object) localFiles);

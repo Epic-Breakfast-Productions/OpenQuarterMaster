@@ -13,6 +13,8 @@ import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -90,12 +92,12 @@ public class ContainerSnhConnector extends SnhConnector<ContainerSnhSetupConfig>
 	}
 	
 	@Override
-	public void copyToHost(String destination, File localFile) {
+	public void copyToHost(String destination, InputStream source) {
 		//TODO
 	}
 	
 	@Override
-	public void copyFromHost(String remoteFile, File destination) {
+	public void copyFromHost(String remoteFile, OutputStream destination) {
 		//TODO
 	}
 	

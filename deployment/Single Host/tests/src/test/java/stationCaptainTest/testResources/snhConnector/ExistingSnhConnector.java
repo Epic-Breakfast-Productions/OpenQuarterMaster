@@ -12,12 +12,17 @@ import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.channel.Channel;
+import org.apache.sshd.scp.client.ScpClient;
+import org.apache.sshd.scp.client.ScpClientCreator;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -39,6 +44,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	
 	private SshClient client = SshClient.setUpDefaultClient();
 	private ClientSession clientSession;
+	private ScpClient scpClient;
 	
 	@Override
 	public void init(boolean install) {
@@ -57,6 +63,9 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 				this.clientSession.auth().verify(DEFAULT_TIMEOUT, DEFAULT_TIMEOUT_UNIT);
 				log.info("Password setup.");
 			}
+			
+			ScpClientCreator scpClientCreator = ScpClientCreator.instance();
+			this.scpClient = scpClientCreator.createScpClient(this.getClientSession());
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -113,13 +122,17 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	}
 	
 	@Override
-	public void copyToHost(String destination, File localFile) {
+	public void copyToHost(String destination, InputStream localFile) {
 		//TODO
 	}
 	
 	@Override
-	public void copyFromHost(String remoteFile, File destination) {
-		//TODO
+	public void copyFromHost(String remoteFile, OutputStream destination) {
+		try {
+			this.getScpClient().download(remoteFile, destination);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
