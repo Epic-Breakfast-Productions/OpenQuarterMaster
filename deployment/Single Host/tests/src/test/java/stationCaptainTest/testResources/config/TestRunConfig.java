@@ -14,4 +14,5 @@ import stationCaptainTest.testResources.config.snhSetup.installType.RepoInstallT
 @Builder
 public class TestRunConfig {
 	private SnhSetupConfig setupConfig = new ContainerSnhSetupConfig();
+	private boolean cleanupAfter = Boolean.parseBoolean(System.getProperty("testconfig.cleanupAfter", "true"));
 }

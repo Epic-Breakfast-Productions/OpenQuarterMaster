@@ -36,6 +36,21 @@ public class LifecycleEvents extends BaseStepDefinitions {
 		//CommandResult result = this.getContext().getSnhConnector().runCommand("oqm-captain", "--package-logs");
 		
 		log.info("Cleaning up after test.");
+		
+		if(CONFIG.isCleanupAfter() && this.getContext().getSnhConnector() != null){
+			log.info("Clearing host of OQM after install.");
+			
+			switch (CONFIG.getSetupConfig().getInstallTypeConfig().getInstallerType()){
+				case deb -> {
+					this.getContext().getSnhConnector().runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
+				}
+				case rpm -> {
+					//TODO
+				}
+			}
+			this.getContext().getSnhConnector().runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm");
+		}
+		
 		this.getContext().close();
 		log.info("Done Cleaning up after test.");
 	}
