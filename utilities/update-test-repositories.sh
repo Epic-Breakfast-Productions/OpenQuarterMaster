@@ -115,4 +115,4 @@ EOT
 
 popd
 
-#git add "../$REPO_DIR/*"
+git add "../$REPO_DIR/*"
