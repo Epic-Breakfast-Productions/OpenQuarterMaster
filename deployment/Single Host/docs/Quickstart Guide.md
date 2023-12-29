@@ -14,9 +14,9 @@ Note: this is not a tool meant for a distributed cloud environment such as Kuber
 
 Steps:
 
-1. Run the following command: `bash <(curl -s https://deployment.openquartermaster.com/repos/main/deb/setup-repo.sh)`
+1. Run the following command: `bash <(wget -q -O - https://deployment.openquartermaster.com/repos/main/deb/setup-repo.sh)`
     - This will setup the OQM repo, and install `oqm-captain` for you.
-    - Might require installing `curl`: `sudo apt install curl`
+    - Might require installing `wget`: `sudo apt install wget`
 4. Run the main script command: `sudo oqm-captain`
     - The first run should prompt you to do an initial install. Do so.
     - Installation should be complete once this finishes. You can exit the script.
