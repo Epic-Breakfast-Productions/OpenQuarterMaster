@@ -33,12 +33,10 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	
 	@After
 	public void cleanup() throws IOException {
-		//TODO:: do log packaging, attach to scenario
 		CommandResult result = this.getContext().getSnhConnector().runCommand("oqm-captain", "--package-logs");
 		if(result.getReturnCode() == 0){
-			//TODO:: this next part
 			AttachUtils.attachRemoteFile(
-				"", //TODO:: this next part
+				result.getStdOut().trim(),
 				"Log bundle",
 				this.getScenario(),
 				this.getContext().getSnhConnector()
