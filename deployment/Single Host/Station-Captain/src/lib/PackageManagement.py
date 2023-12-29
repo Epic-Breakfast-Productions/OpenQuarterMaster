@@ -104,6 +104,6 @@ class PackageManagement:
         logging.debug("Output of listing core components: " + result.stdout)
         logging.debug("Error Output of listing core components: " + result.stderr)
 
-        result = os.linesep.join([s for s in result.stdout.splitlines() if "[installed]" in s])
+        result = os.linesep.join([s for s in result.stdout.splitlines() if "installed" in s])
 
         return result
