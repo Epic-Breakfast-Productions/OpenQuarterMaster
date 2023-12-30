@@ -1,6 +1,7 @@
 package stationCaptainTest.testResources.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
 import stationCaptainTest.testResources.config.snhSetup.SnhSetupConfig;
 
@@ -9,9 +10,9 @@ import java.io.IOException;
 
 @Slf4j
 public class ConfigReader {
-	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
 	protected static final String CONFIG_FILE_PROP_NAME = "TEST_CONFIG_FILE";
-	protected static final String DEFAULT_CONFIG_LOCATION = "config.json";
+	protected static final String DEFAULT_CONFIG_LOCATION = "config.yaml";
 	
 	private static TestRunConfig MAIN_TEST_RUN_CONFIG;
 	

@@ -6,13 +6,14 @@ To run the tests:
 
 Configue the run with a `config.json` in this directory:
 
-```json
-{
-	"setupConfig":{
-		"type": "EXISTING",
-		"host": "oqm-install-test.local",
-		"user": "",
-		"password": ""
-	}
-}
+```yaml
+setupConfig:
+  type: "EXISTING"
+  host: oqm-install-test.local
+  user: gstewart
+  password: 1!Letmein
+  installTypeConfig:
+    type: "REPO"
+#    repoBranch: "test-dev"
+cleanupAfter: true
 ```
