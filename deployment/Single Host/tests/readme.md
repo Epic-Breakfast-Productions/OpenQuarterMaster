@@ -15,5 +15,10 @@ setupConfig:
   installTypeConfig:
     type: "REPO"
 #    repoBranch: "test-dev"
-cleanupAfter: true
+cleanupAfter: true 
 ```
+
+## TODOs:
+
+ - Create a self mode for installing on the box its running on
+ - Create step to check status over time
