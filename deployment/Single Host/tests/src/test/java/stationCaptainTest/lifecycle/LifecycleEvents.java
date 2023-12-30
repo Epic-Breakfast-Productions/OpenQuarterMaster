@@ -51,6 +51,7 @@ public class LifecycleEvents extends BaseStepDefinitions {
 			switch (CONFIG.getSetupConfig().getInstallTypeConfig().getInstallerType()){
 				case deb -> {
 					this.getContext().getSnhConnector().runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
+					this.getContext().getSnhConnector().runCommand("apt-get", "autoremove");
 				}
 				case rpm -> {
 					//TODO
