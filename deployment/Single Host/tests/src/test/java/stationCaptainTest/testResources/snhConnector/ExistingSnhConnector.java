@@ -14,6 +14,7 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.scp.client.ScpClient;
 import org.apache.sshd.scp.client.ScpClientCreator;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.SnhType;
 
@@ -24,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
@@ -123,7 +126,19 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	
 	@Override
 	public void copyToHost(String destination, InputStream localFile) {
-		//TODO
+		try {
+			Path temp = Files.createTempFile("oqm-test-file", "");
+			try(OutputStream toTemp = Files.newOutputStream(temp)){
+				log.debug("Writing data to temp file.");
+				IOUtils.copy(localFile, toTemp);
+			}
+			
+			log.debug("Uploading temp file to host: {} -> remote:{}", temp, destination);
+			this.getScpClient().upload(temp, destination);
+			Files.delete(temp);
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
