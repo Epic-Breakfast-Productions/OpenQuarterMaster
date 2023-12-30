@@ -15,12 +15,17 @@
 #   - jq
 #
 
+cd "$(dirname "$0")" || exit
+
 mainConfigFile="properties.json"
 buildDir="build"
 
 debDir="InfraDeb"
 
+# All
 packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "zookeeper")
+# Ready for deployment
+packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #
 # Clean
