@@ -109,7 +109,10 @@ class SecretManager:
 
     @staticmethod
     def newSecret():
-        return secrets.token_urlsafe(24)
+        newSecret = "-"
+        while not re.match('^[a-zA-Z0-9].*', newSecret):
+            newSecret = secrets.token_urlsafe(24)
+        return newSecret
 
     def getSecretPassword(self) -> bytes:
         """
@@ -470,7 +473,7 @@ class ConfigManager:
 
 
 mainCM = None
-if os.environ["NO_SET_MAINCM"] == "true":
+if "NO_SET_MAINCM" in os.environ and os.environ["NO_SET_MAINCM"] == "true":
     logging.info("Was directed not to setup main CM")
 else:
     logging.info("Setting up main CM")

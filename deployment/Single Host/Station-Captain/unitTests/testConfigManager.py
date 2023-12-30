@@ -185,6 +185,11 @@ class MyTestCase(unittest.TestCase):
             data
         )
 
+    def test_newSecretGet(self):
+        newSecret = SecretManager.newSecret()
+        print("New secret: "+ newSecret)
+        self.assertEqual(24, len(newSecret))
+
     # TODO:: test get arrays
 
     # def test_configSetSimpleArrayNew(self):

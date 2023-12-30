@@ -25,7 +25,7 @@ class PackageManagement:
         logging.debug("Determining the system's package manager.")
 
         systemReleaseInfo = platform.freedesktop_os_release()
-        if ("ID_LIKE" in systemReleaseInfo and systemReleaseInfo['ID_LIKE'] == "debian") or systemReleaseInfo['ID'] == "Debian":
+        if ("ID_LIKE" in systemReleaseInfo and systemReleaseInfo['ID_LIKE'].casefold() == "debian".casefold()) or systemReleaseInfo['ID'].casefold() == "Debian".casefold():
             PackageManagement.SYSTEM_PACKAGE_MANAGER = "apt"
 
         logging.info("Determined system using %s", PackageManagement.SYSTEM_PACKAGE_MANAGER)
@@ -104,6 +104,6 @@ class PackageManagement:
         logging.debug("Output of listing core components: " + result.stdout)
         logging.debug("Error Output of listing core components: " + result.stderr)
 
-        result = os.linesep.join([s for s in result.stdout.splitlines() if "[installed]" in s])
+        result = os.linesep.join([s for s in result.stdout.splitlines() if "installed" in s])
 
         return result
