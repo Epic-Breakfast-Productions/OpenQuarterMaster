@@ -73,7 +73,7 @@ quarkus:
   
 "%dev":
   baseStation:
-    baseUrl: http://localhost
+    baseUrl: http://oqm-dev.local
   moduleConfig:
     serial:
       modules:
@@ -94,6 +94,6 @@ quarkus:
       client-id: oqm-plugin-mss-controller
       credentials:
         secret: "DG_aGHXd10Ci793NqXokRI0TKqvbRX6w"
-      auth-server-url: http://localhost:8115/realms/oqm
+      auth-server-url: http://oqm-dev.local:8115/realms/oqm
     tls:
       trust-all: true
