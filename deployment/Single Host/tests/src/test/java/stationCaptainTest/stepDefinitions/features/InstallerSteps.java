@@ -67,7 +67,7 @@ public class InstallerSteps extends BaseStepDefinitions {
 			String curSystemdUnit :
 			systemdListResult.getStdOut().split("\n")
 		){
-			String[] unitStatusParts = curSystemdUnit.split("\\s+");
+			String[] unitStatusParts = curSystemdUnit.substring(2).split("\\s+");
 			log.debug("Systemd unit status parts: {}", (Object) unitStatusParts);
 			String active = unitStatusParts[3];
 			String status = unitStatusParts[4];

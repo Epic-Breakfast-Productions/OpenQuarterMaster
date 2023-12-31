@@ -45,7 +45,7 @@ class ServiceUtils:
 
         output = []
         for curRawService in re.split(r'\n', result.stdout):
-            curService = re.split(r' ', curRawService)[0].strip()
+            curService = re.split(r' ', curRawService[2:])[0].strip()
             if len(curService):
                 output.append(curService)
         logging.debug("Got OQM services: %s", output)

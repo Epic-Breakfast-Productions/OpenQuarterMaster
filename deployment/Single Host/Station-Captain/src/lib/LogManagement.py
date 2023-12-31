@@ -93,7 +93,10 @@ class LogManagement:
                 return False, "Failed to get service names: " + services
 
             with open(compilingDir + "/02-services.txt", "w") as sysInfoFile:
-                sysInfoFile.write(", ".join(services))
+                if not services:
+                    sysInfoFile.write("No Services present. " + services)
+                else:
+                    sysInfoFile.write("\n".join(services))
 
             executor = concurrent.futures.ProcessPoolExecutor(3)
             futures = [executor.submit(LogManagement.packageServiceLogs, service, compilingDir) for service in services]
