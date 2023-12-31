@@ -12,5 +12,18 @@
 		"numToKeep": 5,
 		"frequency": "weekly",
 		"compressionAlg": "xz"
+	},
+	"cert": {
+		"mode": "self",
+		"certs": {
+			"privateKey": "/etc/oqm/certs/systemPrivateKey.crt",
+			"publicKey": "/etc/oqm/certs/systemPublicKey.crt",
+			"CARootPrivateKey": "/etc/oqm/certs/CArootPrivateKey.crt",
+			"CARootPublicKey": "/etc/oqm/certs/CArootPublicKey.crt"
+		},
+		"selfMode": {
+		},
+		"letsEncryptMode": {
+		}
 	}
 }
