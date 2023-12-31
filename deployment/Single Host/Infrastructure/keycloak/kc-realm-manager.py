@@ -153,6 +153,7 @@ def updateKc():
             "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
             "description": curClient['description'],
             "redirectUris": ["*"],
+            "alwaysDisplayInConsole": True,
             "serviceAccountsEnabled": True
         }
         runResult = kcContainer.exec_run([
