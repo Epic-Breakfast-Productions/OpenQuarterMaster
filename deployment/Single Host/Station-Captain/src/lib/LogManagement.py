@@ -96,7 +96,7 @@ class LogManagement:
                 if not services:
                     sysInfoFile.write("No Services present. " + services)
                 else:
-                    sysInfoFile.write(", ".join(services))
+                    sysInfoFile.write("\n".join(services))
 
             executor = concurrent.futures.ProcessPoolExecutor(3)
             futures = [executor.submit(LogManagement.packageServiceLogs, service, compilingDir) for service in services]
