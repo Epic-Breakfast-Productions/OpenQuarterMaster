@@ -17,6 +17,21 @@ import os
 
 
 class InputValidators:
+
+    @staticmethod
+    def getValidatorFor(valString: str):
+        if valString is "email":
+            return InputValidators.isEmail
+        if valString is "notEmpty":
+            return InputValidators.isNotEmpty
+        if valString is "digit":
+            return InputValidators.isDigit
+        if valString is "cronKeyword":
+            return InputValidators.isCronKeyword
+        if valString is "writableDirectory":
+            return InputValidators.isWritableDirectory
+        return None
+
     @staticmethod
     def isEmail(val: str) -> Optional[str]:
         # I know this looks dumb, but fullmatch returns an obj and not a straight bool so this makes the linter happy
