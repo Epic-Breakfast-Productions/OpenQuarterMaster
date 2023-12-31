@@ -30,10 +30,12 @@ public class LifecycleBean {
 			moduleMaster.getModuleIds()
 		);
 		
-		log.info(
-			"Speech Search using image: {}",
-			voiceSearchService.getCurImageInformation()
-		);
+		if(this.voiceSearchService.enabled()) {
+			log.info(
+				"Speech Search using image: {}",
+				voiceSearchService.getCurImageInformation()
+			);
+		}
 	}
 	
 	void onStop(
