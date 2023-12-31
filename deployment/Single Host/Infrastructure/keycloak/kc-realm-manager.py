@@ -151,7 +151,8 @@ def updateKc():
             "name": curClient['displayName'],
             "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
             "description": curClient['description'],
-            "redirectUris": ["*"]
+            "redirectUris": ["*"],
+            "serviceAccountsEnabled": True
         }
         runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT,
@@ -167,6 +168,14 @@ def updateKc():
 
         logging.debug("Client id: %s", clientId)
         # TODO:: add roles
+
+        # if "serviceAccount" in curClient and curClient['serviceAccount']['enabled']:
+        #     runResult = kcContainer.exec_run([
+        #         KC_ADM_SCRIPT,
+        #
+        #         "-r", KC_REALM,
+        #     ])
+
     logging.info("Done updating realm.")
 
 
