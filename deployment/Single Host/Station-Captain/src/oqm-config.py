@@ -3,13 +3,14 @@
 # Script to get configuration and replace values
 #
 import sys
+import json
+import argparse
+import re
 
 sys.path.append("lib/")
 from ConfigManager import *
 from ScriptInfos import *
-import json
-import argparse
-import re
+from InputValidators import *
 
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
@@ -26,6 +27,9 @@ argParser = argparse.ArgumentParser(
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
+
+# TODO:: make subcommand for get
+
 argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
 argParser.add_argument('-t', '--template', dest="t",
                        help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
