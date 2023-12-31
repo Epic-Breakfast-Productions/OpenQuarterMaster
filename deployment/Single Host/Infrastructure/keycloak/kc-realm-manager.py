@@ -26,8 +26,8 @@ KC_DEFAULT_CLIENTS = [
     "realm-management",
     "security-admin-console"
 ]
-logging.basicConfig(level=logging.INFO)
-
+log = logging.getLogger('kc-realm-manager')
+log.setLevel(logging.DEBUG)
 
 def getClientConfigs() -> list:
     configList = os.listdir(KC_CLIENT_CONFIGS_DIR)
@@ -39,7 +39,7 @@ def getClientConfigs() -> list:
             return json.load(file)
 
     configList = [fileToJson(i) for i in configList]
-    logging.debug("Client configs found: %s", json.dumps(configList))
+    log.debug("Client configs found: %s", json.dumps(configList))
     return configList
 
 
@@ -49,7 +49,7 @@ def getKcContainer() -> Container:
 
 
 def setupAdminConfig(kcContainer: Container | None = None):
-    logging.info("Setting up keycloak admin config for future calls.")
+    log.info("Setting up keycloak admin config for future calls.")
     if kcContainer is None:
         kcContainer = getKcContainer()
 
@@ -61,9 +61,9 @@ def setupAdminConfig(kcContainer: Container | None = None):
             "--password", mainCM.getConfigVal("infra.keycloak.adminPass")
         ])
     if runResult.exit_code != 0:
-        logging.error("Failed to setup kc admin credentials: %s", runResult.output)
+        log.error("Failed to setup kc admin credentials: %s", runResult.output)
         raise ChildProcessError("Failed to setup admin credentials")
-    logging.debug("Setting up KC creds output: %s", runResult.output)
+    log.debug("Setting up KC creds output: %s", runResult.output)
 
 
 def getAllClientData(kcContainer: Container | None = None):
@@ -74,7 +74,7 @@ def getAllClientData(kcContainer: Container | None = None):
             KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM
         ])
     if runResult.exit_code != 0:
-        logging.error("Failed to get keycloak clients: %s", runResult.output)
+        log.error("Failed to get keycloak clients: %s", runResult.output)
         raise ChildProcessError("Failed to get keycloak clients")
     return json.loads(runResult.output)
 
@@ -86,9 +86,9 @@ def getClientId(clientName: str, kcContainer: Container | None = None) -> str | 
             KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM, "--fields", "id,clientId"
         ])
     if runResult.exit_code != 0:
-        logging.error("Failed to get keycloak clients: %s", runResult.output)
+        log.error("Failed to get keycloak clients: %s", runResult.output)
         raise ChildProcessError("Failed to get keycloak clients")
-    logging.debug("Clients list: %s", runResult.output)
+    log.debug("Clients list: %s", runResult.output)
     allClientData = json.loads(runResult.output)
     for curClient in allClientData:
         if clientName == curClient["clientId"]:
@@ -105,11 +105,11 @@ def getClientData(clientName:str, kcContainer: Container | None = None) -> str |
 
 
 def updateKc():
-    logging.info("Updating Keycloak Realm")
+    log.info("Updating Keycloak Realm")
     kcContainer = getKcContainer()
     setupAdminConfig(kcContainer)
 
-    logging.info("Updating realm settings.")
+    log.info("Updating realm settings.")
     runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT,
             "update",
@@ -117,18 +117,19 @@ def updateKc():
             "-s", "registrationAllowed=" + str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
         ])
     if runResult.exit_code != 0:
-        logging.error("Failed to set registration allowed: %s", runResult.output)
+        log.error("Failed to set registration allowed: %s", runResult.output)
         raise ChildProcessError("Failed to set registration allowed")
-    logging.debug("Setting up KC registration allowed: %s", runResult.output)
+    log.debug("Setting up KC registration allowed: %s", runResult.output)
 
     # Remove all clients not in the set brought in by keycloak
-    logging.info("Removing all clients before re-creation")
+    log.info("Removing all clients before re-creation")
     allClientData = getAllClientData(kcContainer)
     for curClient in allClientData:
         if curClient["clientId"] in KC_DEFAULT_CLIENTS:
             continue
-        logging.info("Removing client to re-create: %s", curClient["clientId"])
+        log.info("Removing client to re-create: %s", curClient["clientId"])
         clientId = getClientId(curClient["clientId"])
+        log.debug("Client id: %s", clientId)
         runResult = kcContainer.exec_run([
             KC_ADM_SCRIPT,
             "delete",
@@ -136,12 +137,12 @@ def updateKc():
             "-r", KC_REALM
         ])
         if runResult.exit_code != 0:
-            logging.error("Failed to remove client: %s", runResult.output)
+            log.error("Failed to remove client: %s", runResult.output)
             raise ChildProcessError("Failed to remove client")
 
-    logging.info("Creating clients from config.")
+    log.info("Creating clients from config.")
     for curClient in getClientConfigs():
-        logging.info("Adding client %s", curClient['clientName'])
+        log.info("Adding client %s", curClient['clientName'])
         # TODO:: validate object data
         clientName = curClient['clientName']
         mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
@@ -162,11 +163,11 @@ def updateKc():
             "-b", json.dumps(newClientJson)
         ])
         if runResult.exit_code != 0:
-            logging.error("Failed to add new client: %s", runResult.output)
+            log.error("Failed to add new client: %s", runResult.output)
             raise ChildProcessError("Failed to add new client")
         clientId = getClientId(curClient['clientName'])
 
-        logging.debug("Client id: %s", clientId)
+        log.debug("Client id: %s", clientId)
         # TODO:: add roles
 
         # if "serviceAccount" in curClient and curClient['serviceAccount']['enabled']:
@@ -176,12 +177,12 @@ def updateKc():
         #         "-r", KC_REALM,
         #     ])
 
-    logging.info("Done updating realm.")
+    log.info("Done updating realm.")
 
 
 class Handler(FileSystemEventHandler):
     def on_modified(self, event):
-        logging.info("Noted change in kc client configs. Updating realms. File changed: %s", event.src_path)
+        log.info("Noted change in kc client configs. Updating realms. File changed: %s", event.src_path)
         updateKc()
 
 
