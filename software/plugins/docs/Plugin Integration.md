@@ -9,4 +9,5 @@ Base Station
 
 ## SNH
 
+ - config
  - install client file

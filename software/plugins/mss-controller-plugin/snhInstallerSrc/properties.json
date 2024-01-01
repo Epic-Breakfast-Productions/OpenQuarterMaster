@@ -1,0 +1,13 @@
+{
+	"packageName":"open+quarter+master-plugin-mss+controller+plugin",
+	"version":"1.0.0",
+	"description":"MSS Controller Plugin for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/mss-controller-plugin",
+	"configs": [
+	],
+	"dependencies": {
+		"deb": ", open+quarter+master-core-base+station"
+	},
+	"files":{
+	}
+}
