@@ -539,6 +539,21 @@ Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: open+quarter+master-core-base+station
+Version: 1.0.39
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, docker, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-jaeger (>= 1.1.0), open+quarter+master-infra-mongodb (>= 1.1.0), open+quarter+master-infra-keycloak (>= 1.1.0)
+Filename: ./open+quarter+master-core-base+station_1.0.39_all.deb
+Size: 4114
+MD5sum: 2cb787ff22e1cffee9633a9166ef3c19
+SHA1: bdc74223f5e1875aae8a9e9aa2d1541a21792260
+SHA256: 3f5b770ed097835004bba1a83d5391ddd897bd52470701dcce6a83a6b917cd49
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: open+quarter+master-core-base+station
 Version: 1.0.4-DEV
 Architecture: all
 Maintainer: EBP <contact@gjstewart.net>
@@ -803,6 +818,21 @@ Size: 14620
 MD5sum: eb476f9d4baa64ae55666b21e3922481
 SHA1: 1b9d9238f64fb363ec61f5b5f91016d4cce626d8
 SHA256: 4479c9e3d5f9b315633f3b950398984675a768dae8a943e4f7949a806818a50f
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak
+Description: Keycloak instance for Open QuarterMaster.
+Developer: EBP
+
+Package: open+quarter+master-infra-keycloak
+Version: 1.1.3
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0), open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
+Filename: ./open+quarter+master-infra-keycloak_1.1.3_all.deb
+Size: 14698
+MD5sum: be1a3b29ce41ae1b1a824a3b14675e67
+SHA1: 1570da2cfb3e104bd7afff8f96ee4b1822ee0f0e
+SHA256: 9c4f96d849b552d60791f4fd7adb616c4b54eb13bc65272fdcc7c74b38696a52
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak
 Description: Keycloak instance for Open QuarterMaster.
