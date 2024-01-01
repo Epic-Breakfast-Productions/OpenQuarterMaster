@@ -28,7 +28,7 @@ public abstract class ExternalService extends InteractingEntity {
 	@NonNull
 	@NotNull
 	@NotBlank
-	@Size(max = 30)
+	@Size(max = 100)
 	private String name;
 	
 	@NonNull

@@ -12,7 +12,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
@@ -27,21 +30,47 @@ public class VoiceInteraction {
 	@Inject
 	VoiceSearchService voiceSearchService;
 	
+	@ConfigProperty(name = "voiceSearch.enabled")
+	boolean enabled;
+	
+	private static Response getDisabledResponse(){
+		return Response
+				   .status(Response.Status.CONFLICT)
+				   .entity("This feature is not currently enabled.")
+				   .type(MediaType.TEXT_PLAIN_TYPE)
+				   .build();
+	}
+	
+	@GET
+	@Path("/enabled")
+	@RolesAllowed("inventoryView")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean checkEnabled(
+	) {
+		return this.enabled;
+	}
+	
 	@GET
 	@Path("/test")
 	@RolesAllowed("inventoryView")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectNode identifyModuleBlock(
+	public Response identifyModuleBlock(
 	) throws IOException {
-		return this.voiceSearchService.listenForIntent();
+		if(!this.enabled){
+			return getDisabledResponse();
+		}
+		return Response.ok(this.voiceSearchService.listenForIntent()).build();
 	}
 	
 	@GET
 	@Path("/itemSearch")
 	@RolesAllowed("inventoryView")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ItemVoiceSearchResults itemSearchWithVoice(
+	public Response itemSearchWithVoice(
 	) throws IOException {
-		return this.voiceSearchService.searchForItems();
+		if(!this.enabled){
+			return getDisabledResponse();
+		}
+		return Response.ok(this.voiceSearchService.searchForItems()).build();
 	}
 }
