@@ -21,7 +21,7 @@ buildDir="build"
 debDir="PluginsDeb"
 
 # All
-packages=("mss-controller-plugin")
+packages=("mss-controller")
 # Ready for deployment
 #packages=("mss-controller-plugin")
 
@@ -41,7 +41,8 @@ for curPackage in ${packages[@]}; do
 	packageInstallerSrc="$curPackage/snhInstallerSrc"
 	packageConfigFile="$packageInstallerSrc/properties.json"
 	packageDebDir="$buildDir/$curPackage/$debDir"
-	echo "Creating deb installer for $curPackage"
+	pluginVersion="$(./$curPackage/gradlew printVersion)"
+	echo "Creating deb installer for $curPackage version $pluginVersion"
 
 	#
 	# Debian build
@@ -62,29 +63,29 @@ for curPackage in ${packages[@]}; do
 		echo "Service file: $serviceFile"
 		serviceFileEscaped="$(systemd-escape "$serviceFile")"
 		cp "$packageInstallerSrc/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
-		# TODO:: get version from gradle
-		sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
+		sed -i "s/\${version}/$pluginVersion/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		serviceFiles+=("$serviceFileEscaped")
 	done
 
-	cp "$packageInstallerSrc/10-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
+	cp "$packageInstallerSrc/50-plugin-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
 
 	if [ -f "$packageInstallerSrc/$curPackage-snapshot-restore.sh" ]; then
 		cp "$packageInstallerSrc/$curPackage-snapshot-restore.sh" "$packageDebDir/etc/oqm/snapshots/scripts/"
 	fi
-	if [ -f "$packageInstallerSrc/$curPackage-assert-account.sh" ]; then
-		cp "$packageInstallerSrc/$curPackage-assert-account.sh" "$packageDebDir/etc/oqm/accountScripts/"
-	fi
 	if [ -f "$packageInstallerSrc/infra-$curPackage-proxy-config.json" ]; then
 		mkdir -p "$packageDebDir/etc/oqm/proxyConfig.d/"
 		cp "$packageInstallerSrc/infra-$curPackage-proxy-config.json" "$packageDebDir/etc/oqm/proxyConfig.d/"
+	fi
+	if [ -f "$packageInstallerSrc/plugin-$curPackage-client.json" ]; then
+		mkdir -p "$packageDebDir/etc/oqm/kcClients/"
+		cp "$packageInstallerSrc/plugin-$curPackage-client.json" "$packageDebDir/etc/oqm/kcClients/"
 	fi
 
 	# TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 	# https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 	cat <<EOT >> "$packageDebDir/DEBIAN/control"
 Package: $(cat "$packageConfigFile" | jq -r '.packageName')
-Version: $(cat "$packageConfigFile" | jq -r '.version')
+Version: $pluginVersion
 Section: Open QuarterMaster
 Maintainer: $(cat "$mainConfigFile" | jq -r '.maintainer.name')
 Developer: EBP
@@ -114,6 +115,7 @@ EOT
 EOT
 	chmod +x "$packageDebDir/DEBIAN/preinst"
 
+	# TODO:: add code to update port in config
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 #!/bin/bash
 
