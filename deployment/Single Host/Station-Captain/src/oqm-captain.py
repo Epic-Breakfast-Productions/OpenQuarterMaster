@@ -63,6 +63,9 @@ if args.packageLogs:
         exit(3)
     print(message)
 if args.regenCerts:
-    CertsUtils.generateSelfSignedCerts()
+    result, message = CertsUtils.regenCerts(True)
+    if not result:
+        print("Failed to generate certs: " + message)
+        exit(4)
 else:
     UserInteraction.ui.startUserInteraction()

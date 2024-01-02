@@ -17,56 +17,47 @@ class CertsUtils:
     """
 
     @staticmethod
-    def generateSelfSignedCerts(forceRegenRoot:bool=False) -> (bool, str):
+    def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
         logging.info("Generating self-signed certs")
         try:
             domain = mainCM.getConfigVal("system.hostname")
             root_ca_key_path = mainCM.getConfigVal("cert.certs.CARootPrivateKey")
             root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
 
-            # TODO:: ensure directories exist
-
             #
             # Make RootCA public/private key
             #
-            #TODO:: more smartly determine if need to regen based on expiry
-            #TODO:: respect method param
-            if True or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
-                private_key = rsa.generate_private_key(
+            # TODO:: more smartly determine if need to regen based on expiry
+            if forceRegenRoot or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
+                ca_private_key = rsa.generate_private_key(
                     public_exponent=65537,
                     key_size=2048,
                     backend=default_backend()
                 )
 
-                root_cert = x509.CertificateBuilder().subject_name(
-                    x509.Name([
-                        x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
-                        x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'PA'),
-                        x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                        x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-LOCAL-CA'),
-                        x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-LOCAL-CA'),
-                    ])
-                ).issuer_name(
-                    x509.Name([
-                        x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
-                        x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'PA'),
-                        x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                        x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-LOCAL-CA'),
-                        x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-LOCAL-CA'),
-                    ])
-                ).public_key(
-                    private_key.public_key()
-                ).serial_number(
-                    x509.random_serial_number()
-                ).not_valid_before(
-                    datetime.datetime.utcnow()
-                ).not_valid_after(
-                    datetime.datetime.utcnow() + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.rootCaTtl"))
-                ).sign(private_key, hashes.SHA256(), default_backend())
+                ca_name = x509.Name([
+                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.countryName")),
+                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.stateOrProvinceName")),
+                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.localityName")),
+                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationName")),
+                    x509.NameAttribute(x509.NameOID.COMMON_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.caCommonName")),
+                ])
+                nvb = datetime.datetime.utcnow()
+                nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.rootCaTtl"))
+
+                root_cert = (
+                    x509.CertificateBuilder()
+                    .subject_name(ca_name)
+                    .issuer_name(ca_name)
+                    .public_key(ca_private_key.public_key())
+                    .serial_number(x509.random_serial_number())
+                    .not_valid_before(nvb)
+                    .not_valid_after(nva)
+                ).sign(ca_private_key, hashes.SHA256(), default_backend())
 
                 with open(root_ca_key_path, 'wb') as key_file:
                     key_file.write(
-                        private_key.private_bytes(
+                        ca_private_key.private_bytes(
                             encoding=serialization.Encoding.PEM,
                             format=serialization.PrivateFormat.TraditionalOpenSSL,
                             encryption_algorithm=serialization.NoEncryption()
@@ -89,16 +80,19 @@ class CertsUtils:
                 backend=default_backend()
             )
 
-            csr = x509.CertificateSigningRequestBuilder().subject_name(
-                x509.Name([
-                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, 'US'),
-                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, domain),
-                ])
-            ).sign(private_key, hashes.SHA256(), default_backend())
+            name = x509.Name([
+                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.countryName")),
+                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.stateOrProvinceName")),
+                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.localityName")),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationName")),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationUnitName")),
+                x509.NameAttribute(x509.NameOID.COMMON_NAME, domain),
+            ])
+
+            csr = (x509.CertificateSigningRequestBuilder()
+                   .subject_name(name)
+                   .sign(private_key, hashes.SHA256(), default_backend())
+                   )
 
             #
             # Make Cert conf
@@ -115,27 +109,17 @@ class CertsUtils:
             root_ca_cert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
             root_ca_key = serialization.load_pem_private_key(open(root_ca_key_path, 'rb').read(), password=None, backend=default_backend())
 
+            nvb = datetime.datetime.utcnow()
+            nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.systemCertTtl"))
 
-            cert = x509.CertificateBuilder().subject_name(
-                x509.Name([
-                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
-                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME, u'STAGE'),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, domain),
-                ])
-            ).issuer_name(
-                root_ca_cert.subject
-            ).public_key(
-                csr.public_key()
-            ).serial_number(
-                x509.random_serial_number()
-            ).not_valid_before(
-                datetime.datetime.utcnow()
-            ).not_valid_after(
-                datetime.datetime.utcnow() + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.systemCertTtl"))
-            ).sign(root_ca_key, hashes.SHA256(), default_backend())
+            cert = (x509.CertificateBuilder().subject_name(name)
+                    .issuer_name(root_ca_cert.subject)
+                    .public_key(csr.public_key())
+                    .serial_number(x509.random_serial_number())
+                    .not_valid_before(nvb)
+                    .not_valid_after(nva)
+                    .sign(root_ca_key, hashes.SHA256(), default_backend())
+                    )
 
             # Write out private key
             with open(mainCM.getConfigVal("cert.certs.privateKey"), 'wb') as key_file:
@@ -163,7 +147,7 @@ class CertsUtils:
         except Exception as e:
             logging.error("FAILED to generate new certs: %s", e)
             return False, e
-        return True
+        return True, ""
 
     @staticmethod
     def getLetsEncryptCerts() -> (bool, str):
@@ -172,7 +156,7 @@ class CertsUtils:
         return False, "Not implemented yet."
 
     @staticmethod
-    def regenCerts(forceRegenRoot:bool=False) -> (bool, str):
+    def regenCerts(forceRegenRoot: bool = False) -> (bool, str):
         logging.info("Re-running cert generation utilities")
         certMode = mainCM.getConfigVal("cert.mode")
         if certMode == "provided":

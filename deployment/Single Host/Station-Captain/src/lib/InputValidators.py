@@ -20,15 +20,15 @@ class InputValidators:
 
     @staticmethod
     def getValidatorFor(valString: str):
-        if valString is "email":
+        if valString == "email":
             return InputValidators.isEmail
-        if valString is "notEmpty":
+        if valString == "notEmpty":
             return InputValidators.isNotEmpty
-        if valString is "digit":
+        if valString == "digit":
             return InputValidators.isDigit
-        if valString is "cronKeyword":
+        if valString == "cronKeyword":
             return InputValidators.isCronKeyword
-        if valString is "writableDirectory":
+        if valString == "writableDirectory":
             return InputValidators.isWritableDirectory
         return None
 

@@ -25,8 +25,15 @@
 			"rootCAPrivatePassword": "<secret>",
 			"rootCaTtl": 2920,
 			"systemCertTtl": 365,
-			"publicKeyCsr": "/etc/oqm/certs/systemCert.csr"
-
+			"publicKeyCsr": "/etc/oqm/certs/systemCert.csr",
+			"certInfo":{
+				"countryName": "US",
+				"stateOrProvinceName": "PA",
+				"localityName": "",
+				"organizationName": "OQM-LOCAL",
+				"organizationalUnitName": "",
+				"caCommonName": "#{cert.selfMode.certInfo.organizationName}"
+			}
 		},
 		"letsEncryptMode": {
 		}
