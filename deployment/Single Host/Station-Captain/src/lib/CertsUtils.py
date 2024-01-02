@@ -1,4 +1,8 @@
 from enum import Enum
+
+from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
+from cryptography.hazmat.primitives.serialization import load_pem_private_key, pkcs12
+
 from ConfigManager import *
 import logging
 import subprocess
@@ -36,11 +40,11 @@ class CertsUtils:
                 )
 
                 ca_name = x509.Name([
-                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.countryName")),
-                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.stateOrProvinceName")),
-                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.localityName")),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationName")),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.caCommonName")),
+                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.countryName")),
+                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.stateOrProvinceName")),
+                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.localityName")),
+                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationName")),
+                    x509.NameAttribute(x509.NameOID.COMMON_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.caCommonName")),
                 ])
                 nvb = datetime.datetime.utcnow()
                 nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.rootCaTtl"))
@@ -81,11 +85,11 @@ class CertsUtils:
             )
 
             name = x509.Name([
-                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.countryName")),
-                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.stateOrProvinceName")),
-                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.localityName")),
-                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationName")),
-                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.certs.selfMode.certInfo.organizationUnitName")),
+                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.countryName")),
+                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.stateOrProvinceName")),
+                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.localityName")),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationName")),
+                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationalUnitName")),
                 x509.NameAttribute(x509.NameOID.COMMON_NAME, domain),
             ])
 
@@ -137,6 +141,23 @@ class CertsUtils:
                         encoding=serialization.Encoding.PEM
                     )
                 )
+            # Generate Keystore
+            with (open(mainCM.getConfigVal("cert.certs.keystore"), 'wb') as cert_file,
+                  open(root_ca_cert_path, "rb") as root_ca_cert,
+                  open(root_ca_key_path, "rb") as root_ca_key
+                  ):
+                cert = x509.load_pem_x509_certificate(root_ca_cert.read())
+                key = load_pem_private_key(root_ca_key.read(), None)
+
+                cert_file.write(
+                    pkcs12.serialize_key_and_certificates(
+                        b"OQM CA",
+                        key,
+                        cert,
+                        None,
+                        BestAvailableEncryption(bytes(mainCM.getConfigVal("cert.certs.keystorePass"), 'UTF-8'))
+                    )
+                )
             # write out CSR
             with open(mainCM.getConfigVal("cert.selfMode.publicKeyCsr"), 'wb') as csr_file:
                 csr_file.write(
@@ -145,8 +166,8 @@ class CertsUtils:
                     )
                 )
         except Exception as e:
-            logging.error("FAILED to generate new certs: %s", e)
-            return False, e
+            logging.exception("FAILED to generate new certs: %s", e)
+            return False, f"{e}"
         return True, ""
 
     @staticmethod

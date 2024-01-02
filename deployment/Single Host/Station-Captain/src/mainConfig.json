@@ -19,7 +19,9 @@
 			"privateKey": "/etc/oqm/certs/systemPrivateKey.pem",
 			"systemCert": "/etc/oqm/certs/systemCert.crt",
 			"CARootPrivateKey": "/etc/oqm/certs/CArootPrivateKey.pem",
-			"CARootCert": "/etc/oqm/certs/CArootCert.crt"
+			"CARootCert": "/etc/oqm/certs/CArootCert.crt",
+			"keystore": "/etc/oqm/certs/system-keystore.p12",
+			"keystorePass": "<secret>"
 		},
 		"selfMode": {
 			"rootCAPrivatePassword": "<secret>",
