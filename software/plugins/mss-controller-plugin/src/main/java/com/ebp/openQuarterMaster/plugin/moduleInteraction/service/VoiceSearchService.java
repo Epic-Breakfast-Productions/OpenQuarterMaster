@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.io.BufferedReader;
@@ -90,6 +91,11 @@ public class VoiceSearchService {
 	
 	@PostConstruct
 	void init() throws IOException, InterruptedException, URISyntaxException {
+		if(!this.voiceSearchConfig.enabled()){
+			log.info("Voice search is disabled in configuration.");
+			return;
+		}
+		
 		log.info(
 			"Pulling image for voice search: {}:{}",
 			this.getVoiceSearchConfig().container().image(),
@@ -243,7 +249,18 @@ public class VoiceSearchService {
 		Files.copy(original, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 	
+	private void assertEnabled(){
+		if(!this.enabled()){
+			throw new VoiceDisabledException();
+		}
+	}
+	
+	public boolean enabled(){
+		return this.getVoiceSearchConfig().enabled();
+	}
+	
 	public void trainVoice2Text(DockerClient dockerClient) throws IOException, URISyntaxException {
+		this.assertEnabled();
 		log.info("Training voice2text");
 		
 		this.copyTrainingFile("/sentences.ini", this.sentencesFileLoc);
@@ -298,6 +315,7 @@ public class VoiceSearchService {
 	
 	
 	public void setupVoice2Text(DockerClient dockerClient) throws IOException, URISyntaxException {
+		this.assertEnabled();
 		log.info("Setting up voice2Text profile.");
 		
 		if (new File(this.voiceSearchConfig.container().volumeLoc() + "/.local/share/").mkdirs()) {
@@ -332,6 +350,7 @@ public class VoiceSearchService {
 	}
 	
 	public String getCurImageInformation() throws IOException {
+		this.assertEnabled();
 		try (
 			DockerClient dockerClient = this.getDockerClient();
 		) {
@@ -344,6 +363,7 @@ public class VoiceSearchService {
 	}
 	
 	public ObjectNode listenForIntent() throws IOException {
+		this.assertEnabled();
 		ObjectNode output;
 		
 		//TODO:: we should not need to do this extra component, but docker + audio is a huge PIA.
@@ -376,6 +396,8 @@ public class VoiceSearchService {
 	}
 	
 	public ItemVoiceSearchResults searchForItems() throws IOException {
+		this.assertEnabled();
+		
 		ObjectNode intentResult = this.listenForIntent();
 		
 		//TODO:: ensure intent result is valid

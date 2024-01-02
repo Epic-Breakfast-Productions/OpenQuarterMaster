@@ -73,13 +73,14 @@ quarkus:
   
 "%dev":
   baseStation:
-    baseUrl: https://oqm-demo.local
+    baseUrl: http://oqm-dev.local
   moduleConfig:
     serial:
       modules:
-        - portPath: "/dev/ttyACM0"
-          baudRate: 115200
+#        - portPath: "/dev/ttyACM0"
+#          baudRate: 115200
   voiceSearch:
+    enabled: false
     container:
       engineUri: "unix:///run/user/1000/podman/podman.sock"
   quarkus:
@@ -90,9 +91,9 @@ quarkus:
     log:
       level: DEBUG
     oidc:
-      client-id: oqm-app
+      client-id: oqm-plugin-mss-controller
       credentials:
-        secret: "**********"
-      auth-server-url: http://oqm-demo.local:8115/realms/oqm
+        secret: "DG_aGHXd10Ci793NqXokRI0TKqvbRX6w"
+      auth-server-url: http://oqm-dev.local:8115/realms/oqm
     tls:
       trust-all: true

@@ -12,6 +12,9 @@ public interface VoiceSearchConfig {
 	@WithName("container")
 	ContainerConfig container();
 	
+	@WithName("enabled")
+	boolean enabled();
+	
 	interface ContainerConfig {
 		@WithName("engineUri")
 		@WithDefault("unix:///var/run/docker.sock")
