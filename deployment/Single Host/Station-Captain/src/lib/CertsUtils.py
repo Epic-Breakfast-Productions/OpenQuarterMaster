@@ -17,18 +17,22 @@ class CertsUtils:
     """
 
     @staticmethod
-    def generateSelfSignedCerts() -> bool:
+    def generateSelfSignedCerts(forceRegenRoot:bool=False) -> bool:
         logging.info("Generating self-signed certs")
-        shared_config_dir = './newcerts'
-        domain = "openquartermaster.local"
+        domain = mainCM.getConfigVal("system.hostname")
 
-        if not os.path.exists(shared_config_dir):
-            os.makedirs(shared_config_dir)
 
-        root_ca_key_path = os.path.join(shared_config_dir, "root-CA.key")
-        root_ca_cert_path = os.path.join(shared_config_dir, "root-CA.crt")
+        root_ca_key_path = mainCM.getConfigVal("cert.certs.CARootPrivateKey")
+        root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
 
-        if not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
+        # TODO:: ensure directories exist
+
+        #
+        # Make RootCA public/private key
+        #
+        #TODO:: more smartly determine if need to regen based on expiry
+        #TODO:: respect method param
+        if True or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
             private_key = rsa.generate_private_key(
                 public_exponent=65537,
                 key_size=2048,
@@ -40,16 +44,16 @@ class CertsUtils:
                     x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
                     x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'PA'),
                     x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-CA'),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-CA'),
+                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-LOCAL-CA'),
+                    x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-LOCAL-CA'),
                 ])
             ).issuer_name(
                 x509.Name([
                     x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
                     x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'PA'),
                     x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-CA'),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-CA'),
+                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'OQM-LOCAL-CA'),
+                    x509.NameAttribute(x509.NameOID.COMMON_NAME, u'OQM-LOCAL-CA'),
                 ])
             ).public_key(
                 private_key.public_key()
@@ -58,7 +62,7 @@ class CertsUtils:
             ).not_valid_before(
                 datetime.datetime.utcnow()
             ).not_valid_after(
-                datetime.datetime.utcnow() + datetime.timedelta(days=2920)
+                datetime.datetime.utcnow() + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.rootCaTtl"))
             ).sign(private_key, hashes.SHA256(), default_backend())
 
             with open(root_ca_key_path, 'wb') as key_file:
@@ -77,6 +81,9 @@ class CertsUtils:
                     )
                 )
 
+        #
+        # Make Private key / CSR
+        #
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048,
@@ -85,7 +92,7 @@ class CertsUtils:
 
         csr = x509.CertificateSigningRequestBuilder().subject_name(
             x509.Name([
-                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, u'US'),
+                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, 'US'),
                 x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, u'STAGE'),
                 x509.NameAttribute(x509.NameOID.LOCALITY_NAME, u''),
                 x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, u'STAGE'),
@@ -94,31 +101,21 @@ class CertsUtils:
             ])
         ).sign(private_key, hashes.SHA256(), default_backend())
 
-        with open(os.path.join(shared_config_dir, f"{domain}.csr"), 'wb') as csr_file:
-            csr_file.write(
-                csr.public_bytes(
-                    encoding=serialization.Encoding.PEM
-                )
-            )
+        #
+        # Make Cert conf
+        #
 
-        with open(os.path.join(shared_config_dir, f"{domain}.key"), 'wb') as key_file:
-            key_file.write(
-                private_key.private_bytes(
-                    encoding=serialization.Encoding.PEM,
-                    format=serialization.PrivateFormat.TraditionalOpenSSL,
-                    encryption_algorithm=serialization.NoEncryption()
-                )
-            )
-
-        cert_conf = "authorityKeyIdentifier=keyid,issuer\n" \
-                    "basicConstraints=CA:FALSE\n" \
-                    "keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment"
-
-        with open(os.path.join(shared_config_dir, "cert.conf"), 'w') as cert_conf_file:
-            cert_conf_file.write(cert_conf)
+        # Might not be necessary TODO:: find out
+        # cert_conf = "authorityKeyIdentifier=keyid,issuer\n" \
+        #             "basicConstraints=CA:FALSE\n" \
+        #             "keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment"
+        #
+        # with open(os.path.join(shared_config_dir, "cert.conf"), 'w') as cert_conf_file:
+        #     cert_conf_file.write(cert_conf)
 
         root_ca_cert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
         root_ca_key = serialization.load_pem_private_key(open(root_ca_key_path, 'rb').read(), password=None, backend=default_backend())
+
 
         cert = x509.CertificateBuilder().subject_name(
             x509.Name([
@@ -138,12 +135,29 @@ class CertsUtils:
         ).not_valid_before(
             datetime.datetime.utcnow()
         ).not_valid_after(
-            datetime.datetime.utcnow() + datetime.timedelta(days=365)
+            datetime.datetime.utcnow() + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.systemCertTtl"))
         ).sign(root_ca_key, hashes.SHA256(), default_backend())
 
-        with open(os.path.join(shared_config_dir, f"{domain}.crt"), 'wb') as cert_file:
+        # Write out private key
+        with open(mainCM.getConfigVal("cert.certs.privateKey"), 'wb') as key_file:
+            key_file.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            )
+        # Write out system cert
+        with open(mainCM.getConfigVal("cert.certs.systemCert"), 'wb') as cert_file:
             cert_file.write(
                 cert.public_bytes(
+                    encoding=serialization.Encoding.PEM
+                )
+            )
+        # write out CSR
+        with open(mainCM.getConfigVal("cert.selfMode.publicKeyCsr"), 'wb') as csr_file:
+            csr_file.write(
+                csr.public_bytes(
                     encoding=serialization.Encoding.PEM
                 )
             )
@@ -156,4 +170,5 @@ class CertsUtils:
     @staticmethod
     def regenCerts() -> bool:
         logging.info("Re-running cert generation utilities")
+        # if mainCM.getConfigVal("cert.certs.systemCert")) == "self":
         # TODO:: depending on config, appropriately renew certs. pass when using provided certs

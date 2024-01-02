@@ -16,12 +16,17 @@
 	"cert": {
 		"mode": "self",
 		"certs": {
-			"privateKey": "/etc/oqm/certs/systemPrivateKey.crt",
-			"publicKey": "/etc/oqm/certs/systemPublicKey.crt",
-			"CARootPrivateKey": "/etc/oqm/certs/CArootPrivateKey.crt",
-			"CARootPublicKey": "/etc/oqm/certs/CArootPublicKey.crt"
+			"privateKey": "/etc/oqm/certs/systemPrivateKey.pem",
+			"systemCert": "/etc/oqm/certs/systemCert.crt",
+			"CARootPrivateKey": "/etc/oqm/certs/CArootPrivateKey.pem",
+			"CARootCert": "/etc/oqm/certs/CArootCert.crt"
 		},
 		"selfMode": {
+			"rootCAPrivatePassword": "<secret>",
+			"rootCaTtl": 2920,
+			"systemCertTtl": 365,
+			"publicKeyCsr": "/etc/oqm/certs/systemCert.csr"
+
 		},
 		"letsEncryptMode": {
 		}

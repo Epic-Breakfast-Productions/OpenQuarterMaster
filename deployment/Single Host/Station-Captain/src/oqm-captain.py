@@ -8,6 +8,7 @@ import UserInteraction
 from SnapshotUtils import *
 from ContainerUtils import *
 from LogManagement import *
+from CertsUtils import *
 import argparse
 # This script manages an installation of Open QuarterMaster on a single host
 #
@@ -35,6 +36,7 @@ argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_tru
 argParser.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
 argParser.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
 argParser.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
+argParser.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
 args = argParser.parse_args()
 
 if args.v:
@@ -60,5 +62,7 @@ if args.packageLogs:
         print("Failed to package logs: " + message)
         exit(3)
     print(message)
+if args.regenCerts:
+    CertsUtils.generateSelfSignedCerts()
 else:
     UserInteraction.ui.startUserInteraction()
