@@ -1,16 +1,13 @@
-# Service file for running an instance of Keycloak.
+# Service file for running an instance of the MSS Controller plugin.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Keycloak tags: https://quay.io/repository/keycloak/keycloak?tab=tags
+#  MSS Controller tags: https://hub.docker.com/repository/docker/ebprod/oqm-plugin-mss-controller/general
 #
-# - https://www.keycloak.org/server/containers
-# - https://www.keycloak.org/getting-started/getting-started-docker
-# - https://www.keycloak.org/server/db
 #
 
 [Unit]
-Description=MSS Controller Plugin server for Open Quartermaster. Version ${version}, using MSS Controller plugin tagged to "${version}".
+Description=MSS Controller Plugin server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Plugins/mss-controller-plugin
 After=docker.service
 Wants=network-online.target
@@ -31,8 +28,8 @@ Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugins/mss-controller/env.
 # TODO:: stopped here
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 # Ensure previous runs gone
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop $CONTAINER_NAME container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove $CONTAINER_NAME container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo \"Could not stop $CONTAINER_NAME container\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo \"Could not remove $CONTAINER_NAME container\""
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "mkdir -p $(dirname $MAIN_CONFIG_FILE)"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
@@ -45,8 +42,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --network=oqm-internal \
                                  -p $(oqm-config -g plugins.mss-controller.port):80 \
                                  --env-file $MAIN_CONFIG_FILE \
-                                 -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import \
-                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
+                                 $IMAGE_NAME:$IMAGE_VERSION"
 #  --proxy edge --hostname-path=/infra/keycloak/
 
 # Ensure is up

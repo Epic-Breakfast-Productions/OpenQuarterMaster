@@ -41,7 +41,9 @@ for curPackage in ${packages[@]}; do
 	packageInstallerSrc="$curPackage/snhInstallerSrc"
 	packageConfigFile="$packageInstallerSrc/properties.json"
 	packageDebDir="$buildDir/$curPackage/$debDir"
-	pluginVersion="$(./$curPackage/gradlew printVersion)"
+	pushd ./$curPackage/
+	pluginVersion="$(./gradlew -q printVersion)"
+	popd
 	echo "Creating deb installer for $curPackage version $pluginVersion"
 
 	#
@@ -51,8 +53,6 @@ for curPackage in ${packages[@]}; do
 	mkdir "$packageDebDir/DEBIAN"
 	mkdir -p "$packageDebDir/etc/systemd/system/"
 	mkdir -p "$packageDebDir/etc/oqm/config/configs/"
-	mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
-	mkdir -p "$packageDebDir/etc/oqm/accountScripts/"
 
 	serviceFiles=()
 
@@ -61,7 +61,8 @@ for curPackage in ${packages[@]}; do
 
 		serviceFile="$i"
 		echo "Service file: $serviceFile"
-		serviceFileEscaped="$(systemd-escape "$serviceFile")"
+#		serviceFileEscaped="$(systemd-escape "$serviceFile")" # TODO:: verify works
+		serviceFileEscaped="$serviceFile"
 		cp "$packageInstallerSrc/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		sed -i "s/\${version}/$pluginVersion/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		serviceFiles+=("$serviceFileEscaped")
@@ -70,6 +71,7 @@ for curPackage in ${packages[@]}; do
 	cp "$packageInstallerSrc/50-plugin-$curPackage.json" "$packageDebDir/etc/oqm/config/configs/"
 
 	if [ -f "$packageInstallerSrc/$curPackage-snapshot-restore.sh" ]; then
+		mkdir -p "$packageDebDir/etc/oqm/snapshots/scripts/"
 		cp "$packageInstallerSrc/$curPackage-snapshot-restore.sh" "$packageDebDir/etc/oqm/snapshots/scripts/"
 	fi
 	if [ -f "$packageInstallerSrc/infra-$curPackage-proxy-config.json" ]; then
@@ -147,22 +149,6 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
-
-# Remove docker image
-docker stop oqm_$curPackage || echo "Docker container stopped previously."
-
-if [ $( docker ps -a | grep oqm_$curPackage | wc -l ) -gt 0 ]; then
-	docker rm oqm_$curPackage
-	echo "Removed docker container."
-else
-	echo "Docker container was already gone."
-fi
-if [[ "$(docker images -q oqm_$curPackage 2> /dev/null)" != "" ]]; then
-	docker rmi oqm_$curPackage
-	echo "Removed docker image."
-else
-	echo "Docker image was already gone."
-fi
 
 #if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
 #	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"

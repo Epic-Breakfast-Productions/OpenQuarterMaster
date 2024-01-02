@@ -1,5 +1,5 @@
 {
-	"packageName":"open+quarter+master-plugin-mss+controller+plugin",
+	"packageName":"open+quarter+master-plugin-mss+controller",
 	"description":"MSS Controller Plugin for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/mss-controller-plugin",
 	"configs": [
