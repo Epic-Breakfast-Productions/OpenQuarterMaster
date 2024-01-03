@@ -172,6 +172,20 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		return output;
 	}
 	
+	public void uninstallOqm(){
+		log.info("Uninstalling OQM");
+		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
+			case deb -> {
+				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
+				this.runCommand("apt-get", "autoremove");
+			}
+			case rpm -> {
+				//TODO
+			}
+		}
+		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm");
+	}
+	
 	
 	@Override
 	public void close() throws IOException {
