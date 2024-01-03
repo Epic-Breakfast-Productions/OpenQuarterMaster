@@ -37,6 +37,7 @@ argParser.add_argument('--prune-container-resources', dest="pruneContainerResour
 argParser.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
 argParser.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
 argParser.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
+argParser.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
 args = argParser.parse_args()
 
 if args.v:
@@ -67,5 +68,10 @@ if args.regenCerts:
     if not result:
         print("Failed to generate certs: " + message)
         exit(4)
+if args.ensureCerts:
+    result, message = CertsUtils.ensureCertsPresent()
+    if not result:
+        print("Failed to validate certs: " + message)
+        exit(5)
 else:
     UserInteraction.ui.startUserInteraction()

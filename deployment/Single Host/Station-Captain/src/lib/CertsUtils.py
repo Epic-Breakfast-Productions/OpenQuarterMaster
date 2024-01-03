@@ -185,3 +185,36 @@ class CertsUtils:
         if certMode == "self":
             return CertsUtils.generateSelfSignedCerts(forceRegenRoot)
         return False, "Invalid value for config cert.certs.systemCert : " + certMode
+
+    @staticmethod
+    def ensureCertsPresent() -> (bool, str):
+        logging.info("Ensuring certs are present.")
+        certMode = mainCM.getConfigVal("cert.mode")
+        privateKeyLoc = mainCM.getConfigVal("cert.certs.privateKey")
+        publicKeyLoc = mainCM.getConfigVal("cert.certs.systemCert")
+
+        missingList = []
+        if not os.path.isfile(privateKeyLoc) or not os.path.exists(privateKeyLoc):
+            missingList.append("Private Key")
+        if not os.path.isfile(publicKeyLoc) or not os.path.exists(publicKeyLoc):
+            missingList.append("Public Key/System Cert")
+        if not os.path.isfile(publicKeyLoc) or not os.path.exists(publicKeyLoc):
+            missingList.append("Keystore")
+
+        if len(missingList) != 0:
+            missingList = ", ".join(missingList)
+            message = f"{missingList} not present."
+            if certMode == "self" or certMode == "letsEncrypt":
+                logging.info(message + " Getting.")
+                return CertsUtils.regenCerts()
+            elif certMode == "provided":
+                logging.error(message)
+                return False, message
+            else:
+                return False, "Invalid value for config cert.certs.systemCert : " + certMode
+        return True, ""
+
+
+
+
+
