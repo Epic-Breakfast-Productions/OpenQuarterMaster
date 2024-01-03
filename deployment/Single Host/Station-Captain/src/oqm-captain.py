@@ -1,4 +1,5 @@
 #!/bin/python3
+# PYTHON_ARGCOMPLETE_OK
 import os
 import sys
 import logging
@@ -10,6 +11,7 @@ from ContainerUtils import *
 from LogManagement import *
 from CertsUtils import *
 import argparse
+import argcomplete
 # This script manages an installation of Open QuarterMaster on a single host
 #
 # Author: Greg Stewart
@@ -38,6 +40,7 @@ argParser.add_argument('--ensure-container-setup', dest="ensureContainerSetup", 
 argParser.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
 argParser.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
 argParser.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
+argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
 if args.v:
