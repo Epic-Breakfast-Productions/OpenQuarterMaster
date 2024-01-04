@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-@NoArgsConstructor
-@AllArgsConstructor
 public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	private static final int DEFAULT_TIMEOUT = 60;
 	private static final TimeUnit DEFAULT_TIMEOUT_UNIT = TimeUnit.SECONDS;
@@ -49,8 +47,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	private ClientSession clientSession;
 	private ScpClient scpClient;
 	
-	@Override
-	public void init(boolean install) {
+	public ExistingSnhConnector(){
 		try {
 			this.client.start();
 			log.info("Connecting to remote SSH server.");
@@ -58,7 +55,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 				this.getSetupConfig().getUser(),
 				this.getSetupConfig().getHost(),
 				this.getSetupConfig().getPort()
-				).verify(DEFAULT_TIMEOUT, DEFAULT_TIMEOUT_UNIT).getSession();
+			).verify(DEFAULT_TIMEOUT, DEFAULT_TIMEOUT_UNIT).getSession();
 			log.info("Connected to remote SSH server.");
 			if(this.getSetupConfig().getPassword() != null) {
 				log.info("Password given in config. Setting up password.");
@@ -73,7 +70,6 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 			throw new RuntimeException(e);
 		}
 		log.info("SSH connection setup.");
-		super.init(install);
 	}
 	
 	@Override

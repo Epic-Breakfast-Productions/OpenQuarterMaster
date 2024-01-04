@@ -78,4 +78,8 @@ public class InstallerSteps extends BaseStepDefinitions {
 	}
 	
 	
+	@Given("OQM is not currently installed")
+	public void oqmIsNotCurrentlyInstalled() {
+		this.getContext().getSnhConnector().uninstallOqm();
+	}
 }
