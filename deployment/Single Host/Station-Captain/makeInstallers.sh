@@ -111,7 +111,7 @@ Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
-# TODO:: this doesn't work.
+# TODO:: updating bash completion doesn't work.
 cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 if [ -x "$(command -v register-python-argcomplete)" ]; then
@@ -125,6 +125,8 @@ elif [ -x "$(command -v register-python-argcomplete3)" ]; then
 else
 	echo "WARNING: could not run autocomplete!"
 fi
+
+oqm-captain --regen-certs
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"

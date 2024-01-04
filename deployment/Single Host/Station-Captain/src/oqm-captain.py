@@ -45,36 +45,38 @@ args = argParser.parse_args()
 
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
-    exit(1)
+    exit(0)
 
 if not os.geteuid() == 0:
     print("\n\nPlease run this script as root. ( sudo oqm-captain )\n")
-    exit(2)
+    exit(1)
 
 if args.takeSnapshot:
     trigger = SnapshotTrigger.manual
     if args.takeSnapshot[0]:
         trigger = SnapshotTrigger(args.takeSnapshot[0])
     SnapshotUtils.performSnapshot(trigger)
-if args.pruneContainerResources:
+elif args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
-if args.ensureContainerSetup:
+elif args.ensureContainerSetup:
     ContainerUtils.ensureSharedDockerResources()
-if args.packageLogs:
+elif args.packageLogs:
     result, message = LogManagement.packageLogs()
     if not result:
         print("Failed to package logs: " + message)
         exit(3)
     print(message)
-if args.regenCerts:
+elif args.regenCerts:
     result, message = CertsUtils.regenCerts(True)
     if not result:
         print("Failed to generate certs: " + message)
         exit(4)
-if args.ensureCerts:
+    print(message)
+elif args.ensureCerts:
     result, message = CertsUtils.ensureCertsPresent()
     if not result:
         print("Failed to validate certs: " + message)
         exit(5)
+    print(message)
 else:
     UserInteraction.ui.startUserInteraction()

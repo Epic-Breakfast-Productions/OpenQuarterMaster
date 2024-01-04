@@ -1,3 +1,4 @@
+import shutil
 from enum import Enum
 
 from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
@@ -23,6 +24,7 @@ class CertsUtils:
     @staticmethod
     def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
         logging.info("Generating self-signed certs")
+        output = ""
         try:
             domain = mainCM.getConfigVal("system.hostname")
             root_ca_key_path = mainCM.getConfigVal("cert.certs.CARootPrivateKey")
@@ -33,6 +35,7 @@ class CertsUtils:
             #
             # TODO:: more smartly determine if need to regen based on expiry
             if forceRegenRoot or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
+                output += "Regenerated CA.\n\n"
                 ca_private_key = rsa.generate_private_key(
                     public_exponent=65537,
                     key_size=2048,
@@ -74,6 +77,9 @@ class CertsUtils:
                             encoding=serialization.Encoding.PEM
                         )
                     )
+                shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
+                result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
+                output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
 
             #
             # Make Private key / CSR
@@ -165,10 +171,11 @@ class CertsUtils:
                         encoding=serialization.Encoding.PEM
                     )
                 )
+            output += "Wrote new private key and cert."
         except Exception as e:
             logging.exception("FAILED to generate new certs: %s", e)
             return False, f"{e}"
-        return True, ""
+        return True, output
 
     @staticmethod
     def getLetsEncryptCerts() -> (bool, str):
@@ -201,6 +208,7 @@ class CertsUtils:
         if not os.path.isfile(publicKeyLoc) or not os.path.exists(publicKeyLoc):
             missingList.append("Keystore")
 
+        output = ""
         if len(missingList) != 0:
             missingList = ", ".join(missingList)
             message = f"{missingList} not present."
