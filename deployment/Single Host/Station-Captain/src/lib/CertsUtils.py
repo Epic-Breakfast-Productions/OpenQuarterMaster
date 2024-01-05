@@ -89,6 +89,18 @@ class CertsUtils:
                             encoding=serialization.Encoding.PEM
                         )
                     )
+                caCertName=os.path.basename(root_ca_cert_path)
+                updatePrevious = False
+                if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
+                    updatePrevious = True
+                    os.remove("/usr/local/share/ca-certificates/" + caCertName)
+                if os.path.exists("/etc/ssl/certs/" + caCertName):
+                    updatePrevious = True
+                    os.remove("/etc/ssl/certs/" + caCertName)
+                if updatePrevious:
+                    output += f"Removed previously installed root CA from system: {caCertName}\n\n"
+                    result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
+
                 shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
                 result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
                 output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
