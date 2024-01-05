@@ -1,6 +1,5 @@
+import ipaddress
 import shutil
-from enum import Enum
-
 from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, pkcs12
 
@@ -60,7 +59,20 @@ class CertsUtils:
                     .serial_number(x509.random_serial_number())
                     .not_valid_before(nvb)
                     .not_valid_after(nva)
-                ).sign(ca_private_key, hashes.SHA256(), default_backend())
+                    .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
+                )
+                # root_cert.add_extensions([
+                #     crypto.X509Extension("subjectKeyIdentifier", False, "hash", subject=ca_cert),
+                # ])
+                # root_cert.add_extensions([
+                #     crypto.X509Extension("authorityKeyIdentifier", False, "keyid:always", issuer=ca_cert),
+                # ])
+                # root_cert.add_extensions([
+                #     x509.Extension
+                #     crypto.X509Extension("basicConstraints", False, "CA:TRUE"),
+                #     crypto.X509Extension("keyUsage", False, "keyCertSign, cRLSign"),
+                # ])
+                root_cert = root_cert.sign(ca_private_key, hashes.SHA256(), default_backend())
 
                 with open(root_ca_key_path, 'wb') as key_file:
                     key_file.write(
@@ -104,30 +116,23 @@ class CertsUtils:
                    .sign(private_key, hashes.SHA256(), default_backend())
                    )
 
-            #
-            # Make Cert conf
-            #
-
-            # Might not be necessary TODO:: find out
-            # cert_conf = "authorityKeyIdentifier=keyid,issuer\n" \
-            #             "basicConstraints=CA:FALSE\n" \
-            #             "keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment"
-            #
-            # with open(os.path.join(shared_config_dir, "cert.conf"), 'w') as cert_conf_file:
-            #     cert_conf_file.write(cert_conf)
-
             root_ca_cert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
             root_ca_key = serialization.load_pem_private_key(open(root_ca_key_path, 'rb').read(), password=None, backend=default_backend())
 
             nvb = datetime.datetime.utcnow()
             nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.systemCertTtl"))
 
-            cert = (x509.CertificateBuilder().subject_name(name)
+            cert = (x509.CertificateBuilder()
+                    .subject_name(name)
                     .issuer_name(root_ca_cert.subject)
-                    .public_key(csr.public_key())
                     .serial_number(x509.random_serial_number())
                     .not_valid_before(nvb)
                     .not_valid_after(nva)
+                    .add_extension(x509.SubjectAlternativeName([x509.DNSName(domain)]), critical=False)
+                    # TODO:: support multiple domains/ip's
+                    # .add_extension(x509.IPAddress(ipaddress.IPv4Address(domain)), critical=True)
+
+    .public_key(csr.public_key())
                     .sign(root_ca_key, hashes.SHA256(), default_backend())
                     )
 
