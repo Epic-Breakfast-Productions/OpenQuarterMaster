@@ -21,6 +21,57 @@ class CertsUtils:
     """
 
     @staticmethod
+    def ensureCustomCaInstalled()-> (bool, str):
+        output = ""
+        root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
+        caCertName=os.path.basename(root_ca_cert_path)
+
+        # Install in system location
+        updatePrevious = False
+        if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
+            updatePrevious = True
+            os.remove("/usr/local/share/ca-certificates/" + caCertName)
+        if os.path.exists("/etc/ssl/certs/" + caCertName):
+            updatePrevious = True
+            os.remove("/etc/ssl/certs/" + caCertName)
+        if updatePrevious:
+            output += f"Removed previously installed root CA from system: {caCertName}\n\n"
+            result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
+
+        shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
+        result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
+        output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
+
+        # Install for Firefox
+        Path("/usr/lib/mozilla/certificates/").mkdir(parents=True, exist_ok=True)
+        shutil.copy(root_ca_cert_path, "/usr/lib/mozilla/certificates/")
+        # update Firefox policies
+        policiesJson = None
+        if not os.path.exists("/usr/lib/firefox/distribution/policies.json"):
+            policiesJson = {
+                "policies": {
+                    "ImportEnterpriseRoots": True,
+                    "Certificates": {
+                        "Install": [
+                            caCertName
+                        ]
+                    }
+                }
+            }
+        else:
+            with open("/usr/lib/firefox/distribution/policies.json", 'r') as stream:
+                policiesJson = json.load(stream)
+            policiesJson["policies"]["ImportEnterpriseRoots"] = True
+            certInstallList = policiesJson["policies"]["Certificates"]["Install"]
+            if caCertName not in certInstallList:
+                certInstallList.append(caCertName)
+        with open("/usr/lib/firefox/distribution/policies.json", 'w') as stream:
+            json.dump(policiesJson, stream)
+        output += "Setup CA in Firefox."
+
+        return True, output
+
+    @staticmethod
     def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
         logging.info("Generating self-signed certs")
         output = ""
@@ -89,21 +140,10 @@ class CertsUtils:
                             encoding=serialization.Encoding.PEM
                         )
                     )
-                caCertName=os.path.basename(root_ca_cert_path)
-                updatePrevious = False
-                if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
-                    updatePrevious = True
-                    os.remove("/usr/local/share/ca-certificates/" + caCertName)
-                if os.path.exists("/etc/ssl/certs/" + caCertName):
-                    updatePrevious = True
-                    os.remove("/etc/ssl/certs/" + caCertName)
-                if updatePrevious:
-                    output += f"Removed previously installed root CA from system: {caCertName}\n\n"
-                    result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
-
-                shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
-                result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
-                output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
+                returned, caInstallOutput = CertsUtils.ensureCustomCaInstalled()
+                if not returned:
+                    return False, caInstallOutput
+                output += caInstallOutput
 
             #
             # Make Private key / CSR
