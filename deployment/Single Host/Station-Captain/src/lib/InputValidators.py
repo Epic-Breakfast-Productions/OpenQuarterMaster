@@ -60,6 +60,12 @@ class InputValidators:
         return None
 
     @staticmethod
+    def isCertMode(val: str) -> Optional[str]:
+        if val not in ["self", "letsEncrypt", "provided"]:
+            return "Value given was not a valid option (" + CronFrequency.getFreqListStr() + ")"
+        return None
+
+    @staticmethod
     def isWritableDirectory(val: str) -> Optional[str]:
         if not os.path.exists(val):
             return "Path given does not exist"

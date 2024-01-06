@@ -38,6 +38,10 @@
 			}
 		},
 		"letsEncryptMode": {
+			"acceptTerms": false
+		},
+		"providedMode": {
+			"caProvided": true
 		}
 	}
 }

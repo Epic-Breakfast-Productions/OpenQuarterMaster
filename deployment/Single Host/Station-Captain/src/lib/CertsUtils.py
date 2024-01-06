@@ -48,6 +48,7 @@ class CertsUtils:
         # update Firefox policies
         policiesJson = None
         if not os.path.exists("/usr/lib/firefox/distribution/policies.json"):
+            Path("/usr/lib/firefox/distribution/").mkdir(parents=True, exist_ok=True)
             policiesJson = {
                 "policies": {
                     "ImportEnterpriseRoots": True,
@@ -241,13 +242,13 @@ class CertsUtils:
         return False, "Not implemented yet."
 
     @staticmethod
-    def regenCerts(forceRegenRoot: bool = False) -> (bool, str):
+    def regenCerts(forceRegenCaRoot: bool = False) -> (bool, str):
         logging.info("Re-running cert generation utilities")
         certMode = mainCM.getConfigVal("cert.mode")
         if certMode == "provided":
             return True, "Nothing to do for provided certs."
         if certMode == "self":
-            return CertsUtils.generateSelfSignedCerts(forceRegenRoot)
+            return CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
         return False, "Invalid value for config cert.certs.systemCert : " + certMode
 
     @staticmethod
