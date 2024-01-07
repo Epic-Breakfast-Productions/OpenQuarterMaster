@@ -242,14 +242,19 @@ class CertsUtils:
         return False, "Not implemented yet."
 
     @staticmethod
-    def regenCerts(forceRegenCaRoot: bool = False) -> (bool, str):
+    def regenCerts(forceRegenCaRoot: bool = False, restartServices:bool = False) -> (bool, str):
         logging.info("Re-running cert generation utilities")
+        output = None
         certMode = mainCM.getConfigVal("cert.mode")
         if certMode == "provided":
-            return True, "Nothing to do for provided certs."
-        if certMode == "self":
-            return CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
-        return False, "Invalid value for config cert.certs.systemCert : " + certMode
+            output = (True, "Nothing to do for provided certs.")
+        elif certMode == "self":
+            output = CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
+        elif certMode == "letsEncrypt":
+            output = CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
+        else:
+            return False, "Invalid value for config cert.mode : " + certMode
+        return output
 
     @staticmethod
     def ensureCertsPresent() -> (bool, str):

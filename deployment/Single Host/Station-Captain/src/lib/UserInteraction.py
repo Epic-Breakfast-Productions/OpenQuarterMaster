@@ -245,7 +245,7 @@ class UserInteraction:
         logging.debug("Running Manage Certs menu.")
         certMode = mainCM.getConfigVal("cert.mode")
 
-        choices = [
+        choices = [ #TODO:: add cert auto-regen for let's encrypt, self
             ("(1)", "Current Cert Info"),
             ("(2)", "Verify current certs (TODO)"),
             ("(3)", f"Cert Mode (Currently {certMode})"),
@@ -272,6 +272,7 @@ class UserInteraction:
                 accepted = "NOT accepted"
             choices.append(("(14)", f"Accept Let's Encrypt's Terms of Use ({accepted})"))
         if certMode == "provided":
+            # TODO:: add option to install CA on current host; host level store, etc
             logging.debug("Setting up menu for provided mode")
             choices.append(("(7)", "CA Private Key Location"))
             choices.append(("(8)", "CA Public Cert/Key Location"))
@@ -406,7 +407,7 @@ class UserInteraction:
                     caProvided = True
                 mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
                 mainCM.rereadConfigData()
-
+        # TODO:: prompt to regen certs
         logging.debug("Done running manage certs menu.")
 
     def manageEmailSettings(self):
