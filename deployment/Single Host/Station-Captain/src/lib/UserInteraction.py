@@ -292,11 +292,11 @@ class UserInteraction:
             if choice == "(1)":
                 logging.debug("Showing current cert information")
                 certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                self.dialog.scrollbox(certInfoReturn.stdout, title="System Cert Info")
+                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout, title="System Cert Info")
 
                 if mainCM.getConfigVal("cert.mode") == "self" or (mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal("cert.providedMode.caProvided")):
                     certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                    self.dialog.scrollbox(certInfoReturn.stdout, title="CA Cert Info")
+                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout, title="CA Cert Info")
 
             if choice == "(2)":
                 logging.debug("Verifying current cert setup (TODO)")
