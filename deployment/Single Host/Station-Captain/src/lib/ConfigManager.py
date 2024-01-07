@@ -235,7 +235,7 @@ class ConfigManager:
 
     def getSecretManager(self) -> SecretManager:
         if self.secretManager is None:
-            # print("DEBUG:: getting new secret manager")
+            print("DEBUG:: getting new secret manager")
             self.secretManager = SecretManager()
         return self.secretManager
 
@@ -256,7 +256,7 @@ class ConfigManager:
 
     def updateReplacements(self, key: str, val, generateSecretIfNone: bool = True, exceptOnNotPresent=True):
         if isinstance(val, str):
-            if self.getSecretManager().valIsSecret(val):
+            if SecretManager.valIsSecret(val):
                 val = self.getSecretManager().getSecretVal(key, generateSecretIfNone)
             else:
                 replacementSearch = re.findall('#\\{[^}]+}', val, re.MULTILINE | re.IGNORECASE)
