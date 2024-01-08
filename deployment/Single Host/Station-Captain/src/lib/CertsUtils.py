@@ -43,32 +43,60 @@ class CertsUtils:
         output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
 
         # Install for Firefox
-        Path("/usr/lib/mozilla/certificates/").mkdir(parents=True, exist_ok=True)
-        shutil.copy(root_ca_cert_path, "/usr/lib/mozilla/certificates/")
-        # update Firefox policies
-        policiesJson = None
-        if not os.path.exists("/usr/lib/firefox/distribution/policies.json"):
-            Path("/usr/lib/firefox/distribution/").mkdir(parents=True, exist_ok=True)
-            policiesJson = {
-                "policies": {
-                    "ImportEnterpriseRoots": True,
-                    "Certificates": {
-                        "Install": [
-                            caCertName
-                        ]
+        #   Where FF is a snap, no /usr/lib/firefox or /usr/lib/mozilla
+        ffInstalled = False
+        ffPoliciesFile = None
+        ffPoliciesDir = None
+        ffCertsDir = None
+        if os.path.exists("/usr/lib/firefox"):
+            logging.debug("Firefox installed directly.")
+            ffInstalled = True
+            ffPoliciesFile = "/usr/lib/firefox/distribution/policies.json"
+            ffPoliciesDir = os.path.basename(ffPoliciesFile)
+            ffCertsDir = "/usr/lib/mozilla/certificates/"
+        elif os.path.exists("/etc/firefox"):
+            logging.debug("Firefox probably installed via snap.")
+            ffInstalled = True
+            ffPoliciesFile = "/etc/firefox/policies/policies.json"
+            ffPoliciesDir = os.path.basename(ffPoliciesFile)
+            ffCertsDir = "/etc/firefox/policies/certificates/"
+        else:
+            logging.debug("Firefox not found on system.")
+
+        if ffInstalled:
+            logging.info("Firefox installed, setting up firefox certs.")
+
+            Path(ffCertsDir).mkdir(parents=True, exist_ok=True)
+            shutil.copy(root_ca_cert_path, ffCertsDir)
+
+            # update Firefox policies
+            #
+            policiesJson = None
+            if not os.path.exists(ffPoliciesFile):
+                Path(ffPoliciesDir).mkdir(parents=True, exist_ok=True)
+                policiesJson = {
+                    "policies": {
+                        "ImportEnterpriseRoots": True,
+                        "Certificates": {
+                            "Install": [
+                                f"{ffCertsDir}{caCertName}"
+                            ]
+                        }
                     }
                 }
-            }
+            else:
+                # Read in and update policies
+                with open(ffPoliciesFile, 'r') as stream:
+                    policiesJson = json.load(stream)
+                policiesJson["policies"]["ImportEnterpriseRoots"] = True
+                certInstallList = policiesJson["policies"]["Certificates"]["Install"]
+                if caCertName not in certInstallList:
+                    certInstallList.append(caCertName)
+            with open(ffPoliciesFile, 'w') as stream:
+                json.dump(policiesJson, stream)
+            output += "Setup CA in Firefox.\n\n"
         else:
-            with open("/usr/lib/firefox/distribution/policies.json", 'r') as stream:
-                policiesJson = json.load(stream)
-            policiesJson["policies"]["ImportEnterpriseRoots"] = True
-            certInstallList = policiesJson["policies"]["Certificates"]["Install"]
-            if caCertName not in certInstallList:
-                certInstallList.append(caCertName)
-        with open("/usr/lib/firefox/distribution/policies.json", 'w') as stream:
-            json.dump(policiesJson, stream)
-        output += "Setup CA in Firefox."
+            output += "Firefox not installed.\n\n"
 
         return True, output
 
