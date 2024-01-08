@@ -21,7 +21,7 @@ class CertsUtils:
     """
 
     @staticmethod
-    def ensureCustomCaInstalled()-> (bool, str):
+    def ensureCaInstalled()-> (bool, str):
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
         caCertName=os.path.basename(root_ca_cert_path)
@@ -169,7 +169,7 @@ class CertsUtils:
                             encoding=serialization.Encoding.PEM
                         )
                     )
-                returned, caInstallOutput = CertsUtils.ensureCustomCaInstalled()
+                returned, caInstallOutput = CertsUtils.ensureCaInstalled()
                 if not returned:
                     return False, caInstallOutput
                 output += caInstallOutput
@@ -212,8 +212,7 @@ class CertsUtils:
                     .add_extension(x509.SubjectAlternativeName([x509.DNSName(domain)]), critical=False)
                     # TODO:: support multiple domains/ip's
                     # .add_extension(x509.IPAddress(ipaddress.IPv4Address(domain)), critical=True)
-
-    .public_key(csr.public_key())
+                    .public_key(csr.public_key())
                     .sign(root_ca_key, hashes.SHA256(), default_backend())
                     )
 

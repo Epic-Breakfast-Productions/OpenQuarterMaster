@@ -24,7 +24,6 @@
 			"keystorePass": "<secret>"
 		},
 		"selfMode": {
-			"rootCAPrivatePassword": "<secret>",
 			"rootCaTtl": 2920,
 			"systemCertTtl": 365,
 			"publicKeyCsr": "/etc/oqm/certs/oqmSystemCert.csr",
