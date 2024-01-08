@@ -13,6 +13,10 @@ currently being supported with security updates.
 
 ### Station Captain
 
+| Version | Supported          |
+| ------- | ------------------ |
+| 2.0.x   | :white_check_mark: |
+
 ### Infra
 
 ### Libs

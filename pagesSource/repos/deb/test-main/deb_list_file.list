@@ -1,1 +1,0 @@
-deb [signed-by=/etc/apt/trusted.gpg.d/oqm_ppa.gpg] https://deployment.openquartermaster.com/repos/deb/test-main/ ./

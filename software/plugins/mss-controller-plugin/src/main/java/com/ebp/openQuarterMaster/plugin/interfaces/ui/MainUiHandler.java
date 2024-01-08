@@ -12,6 +12,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
@@ -19,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 @Path("/main")
 @Tags({@Tag(name = "UI", description = "Endpoints for web UI.")})
-public class MainUiHandler {
+public class MainUiHandler extends UiHandler {
     
     @Inject
     @Location("pages/main")
@@ -28,11 +29,16 @@ public class MainUiHandler {
     @Inject
     ModuleMaster moduleMaster;
     
+    @ConfigProperty(name = "voiceSearch.enabled")
+    boolean voiceSearchEnabled;
+    
     @GET
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed("inventoryView")
     public TemplateInstance get() {
-        return page.data("moduleMaster", moduleMaster);
+        return page.data("moduleMaster", moduleMaster)
+                   .data("voiceSearchEnabled", voiceSearchEnabled)
+                   .data("username", this.getUserToken().getClaim("name"));
     }
     
 }

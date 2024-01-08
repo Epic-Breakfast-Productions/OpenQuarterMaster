@@ -14,7 +14,7 @@
 #   - jq
 #
 # TODO:: Figure out how logs work
-
+cd "$(dirname "$0")" || exit
 srcDir="installerSrc"
 configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"

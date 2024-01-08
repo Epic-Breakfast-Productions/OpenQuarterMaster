@@ -1,0 +1,14 @@
+{
+	"packageName":"open+quarter+master-infra-mongodb",
+	"version":"1.1.2",
+	"description":"MongoDb instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo",
+	"configs": [],
+	"dependencies": {
+		"deb": ""
+	},
+	"configFiles":{
+	},
+	"files":{
+	}
+}
