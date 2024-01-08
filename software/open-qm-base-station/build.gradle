@@ -84,8 +84,8 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
-	testImplementation 'net.datafaker:datafaker:2.0.2'
-	testImplementation 'org.assertj:assertj-core:3.24.2'
+	testImplementation 'net.datafaker:datafaker:2.1.0'
+	testImplementation 'org.assertj:assertj-core:3.25.1'
 
 //	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
