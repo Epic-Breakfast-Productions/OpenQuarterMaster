@@ -35,7 +35,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 
 
-    testImplementation 'net.datafaker:datafaker:2.0.2'
+    testImplementation 'net.datafaker:datafaker:2.1.0'
 }
 
 group 'com.ebp.openQuarterMaster'
