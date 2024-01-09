@@ -3,7 +3,10 @@ import os
 import shutil
 from ConfigManager import *
 from ServiceUtils import *
+from LogUtils import *
 
+log = logging.getLogger(__name__)
+log = LogUtils.setupLogger(__name__)
 
 class DataUtils:
 
