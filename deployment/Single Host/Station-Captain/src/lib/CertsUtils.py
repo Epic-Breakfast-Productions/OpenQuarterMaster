@@ -18,6 +18,9 @@ from cryptography.hazmat.primitives import hashes
 class CertsUtils:
     """
 
+    Resources:
+     - https://cryptography.io/en/latest/x509/reference/
+     - https://stackoverflow.com/questions/54677841/how-do-can-i-generate-a-pkcs12-file-using-python-and-the-cryptography-module
     """
 
     @staticmethod
