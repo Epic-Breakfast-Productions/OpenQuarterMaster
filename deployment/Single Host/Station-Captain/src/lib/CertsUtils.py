@@ -1,18 +1,18 @@
 import ipaddress
 import shutil
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, pkcs12
-
-from ConfigManager import *
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
 import logging
 import subprocess
 import os
 import datetime
 from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import hashes
+from ConfigManager import *
+from CronUtils import *
 
 
 class CertsUtils:
@@ -315,7 +315,23 @@ class CertsUtils:
                 return False, "Invalid value for config cert.certs.systemCert : " + certMode
         return True, ""
 
+    AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
 
+    @staticmethod
+    def enableAutoRegenCerts():
+        CronUtils.enableCron(
+            CertsUtils.AUTO_REGEN_CERTS_CRON_NAME,
+            "oqm-captain --regen-certs",
+            CronFrequency.monthly
+        )
+
+    @staticmethod
+    def disableAutoRegenCerts():
+        CronUtils.disableCron(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
+
+    @staticmethod
+    def isAutoRegenCertsEnabled() -> bool:
+        return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
 
 
 

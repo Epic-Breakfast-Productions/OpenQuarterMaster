@@ -67,7 +67,7 @@ elif args.packageLogs:
         exit(3)
     print(message)
 elif args.regenCerts:
-    result, message = CertsUtils.regenCerts(True)
+    result, message = CertsUtils.regenCerts(False)
     if not result:
         print("Failed to generate certs: " + message)
         exit(4)
