@@ -1,0 +1,6 @@
+# Containerfile for OQM's Depot Application
+# https://hub.docker.com/_/php/tags
+FROM php:8.3-apache
+MAINTAINER greg@epic-breakfast-productions.tech
+COPY webroot /var/www/html/
+RUN chown -R www-data:www-data /var/www/html

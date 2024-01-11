@@ -1,0 +1,19 @@
+{
+    "name": "ebprod/oqm-core-depot",
+    "description": "OQM Depot is your entrypoint into the OQM system.",
+    "type": "project",
+    "license": "GPL",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Ebprod\\OqmCoreDepot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "GregJohnStewart",
+            "email": "greg@epic-breakfast-productions.tech"
+        }
+    ],
+    "require": {}
+}
