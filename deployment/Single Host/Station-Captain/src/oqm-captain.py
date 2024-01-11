@@ -43,6 +43,7 @@ argParser.add_argument('--ensure-certs-present', dest="ensureCerts", action="sto
 argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
+# print(str(args))
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
     exit(0)
@@ -67,7 +68,7 @@ elif args.packageLogs:
         exit(3)
     print(message)
 elif args.regenCerts:
-    result, message = CertsUtils.regenCerts(False)
+    result, message = CertsUtils.regenCerts()
     if not result:
         print("Failed to generate certs: " + message)
         exit(4)

@@ -6,6 +6,8 @@ To support this, we have robust support for SSL certs that integrate with our se
 
 To be flexible to your usecase, we support several modes of how these certs are acquired. These are explained below.
 
+**NOTE:** Currently only self-signed is fully implemented. Let's Encrypt still needs work, and Provided should work, as long as you are providing a CA.
+
 ## Config
 
 All config related to certs are placed under `cert.*` in config. Explanation below.
