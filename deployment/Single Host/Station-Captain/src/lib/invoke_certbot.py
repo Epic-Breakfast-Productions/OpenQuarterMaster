@@ -2,6 +2,8 @@ from certbot import main as certbot_main
 import argparse
 import os
 
+# This is a proof of concept script for Let's Encrypt
+
 def create_directories(output_path):
     """Create the specified directories if they do not exist."""
     if not os.path.exists(output_path):
