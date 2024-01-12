@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=OQM Depot
+GenericName=Open QuarterMaster Depot
+Comment=Quick link to open the Open QuarterMaster Depot
+Exec=bash -c 'xdg-open https://$(oqm-config -g system.hostname)'
+Icon=/etc/oqm/static/oqm-icon.svg
+Terminal=false
+
+Type=Application
+Categories=Office;Database;Core

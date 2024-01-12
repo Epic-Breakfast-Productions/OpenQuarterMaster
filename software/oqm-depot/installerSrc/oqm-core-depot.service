@@ -1,0 +1,55 @@
+# Service file for running an instance of the Open QuarterMaster Base Station.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
+#
+[Unit]
+Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-depot
+After=docker.service
+Wants=network-online.target
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+# Setup operating variables
+Environment="CONTAINER_NAME=oqm_core_depot"
+Environment="IMAGE_NAME=ebprod/oqm-core-depot"
+Environment="IMAGE_VERSION=${version}"
+
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+# Ensure previous runs gone
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop depot container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove depot container'"
+
+# Pull image as separate task
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# Run Base Station
+ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
+                                        -p 80:80 -p 443:443 \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+# Ensure is up
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
+                                if [ \"$status\" == \"true\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+# Remove from docker
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+
+[Install]
+WantedBy=multi-user.target
