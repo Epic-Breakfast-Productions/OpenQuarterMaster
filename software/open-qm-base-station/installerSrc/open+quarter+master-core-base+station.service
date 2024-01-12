@@ -28,11 +28,14 @@ Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/user-config.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
-
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config -g 'core.baseStation.mongodb.user')\" -p \"$(oqm-config -g 'core.baseStation.mongodb.pass')\" -d \"$(oqm-config -g 'core.baseStation.mongodb.database')\""
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/core/base+station/files/privateKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/core/base+station/files/publicCert.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/core/base+station/files/keystore.p12"
 
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/base+station/"
@@ -68,6 +71,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            hostname=\"$(oqm-config -g system.hostname)\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -75,7 +79,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:80/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl \"https://$hostname:443/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

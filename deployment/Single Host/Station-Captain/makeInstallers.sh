@@ -61,6 +61,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/static"
 mkdir -p "$buildDir/$debDir/etc/oqm/snapshots/scripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/accountScripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/"
+mkdir -p "$buildDir/$debDir/etc/oqm/certs/"
 mkdir -p "$buildDir/$debDir/etc/bash_completion.d/"
 
 install -m 755 -D src/oqm-captain.py "$buildDir/$debDir/bin/oqm-captain"
@@ -76,6 +77,7 @@ install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/snap
 install -m 755 -D "src/account-assure-base.sh" "$buildDir/$debDir/etc/oqm/accountScripts/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 install -m 755 -D src/mainConfig.json "$buildDir/$debDir/etc/oqm/config/"
+install -m 755 -D src/certsReadme.md "$buildDir/$debDir/etc/oqm/certs/"
 # Register files for cleanup when uninstalled
 install -m 755 -D /dev/null "$buildDir/$debDir/etc/bash_completion.d/oqm-captain"
 install -m 755 -D /dev/null "$buildDir/$debDir/etc/bash_completion.d/oqm-config"
@@ -94,7 +96,8 @@ Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all
 Description: $(cat "$configFile" | jq -r '.description')
 Homepage: $(cat "$configFile" | jq -r '.homepage')
-Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
+Pre-Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
+Recommends: $(cat "$configFile" | jq -r '.dependencies.deb-recommends')
 Licence: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
@@ -109,7 +112,7 @@ Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
-# TODO:: this doesn't work.
+# TODO:: updating bash completion doesn't work.
 cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 if [ -x "$(command -v register-python-argcomplete)" ]; then
@@ -123,6 +126,8 @@ elif [ -x "$(command -v register-python-argcomplete3)" ]; then
 else
 	echo "WARNING: could not run autocomplete!"
 fi
+
+oqm-captain --regen-certs
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"

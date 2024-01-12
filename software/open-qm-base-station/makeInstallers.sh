@@ -88,24 +88,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 
 mkdir -p /etc/oqm/serviceConfig/core/base+station/files/
 
-# https://unix.stackexchange.com/questions/104171/create-ssl-certificate-non-interactively
-if [ ! -f "/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem" ]; then
-	echo "Setting up keys."
-	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
-		-keyout /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem \
-		-out /etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem \
-		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
-
-	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
-		-keyout /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem \
-		-out /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-cert.pem \
-		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
-
-	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
-	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem
-	# TODO:: finish/test/see if works with jwt
-fi
-
 if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
 	cat <<EOF >> "/etc/oqm/serviceConfig/core/base+station/user-config.list"
 # Add your own config here.

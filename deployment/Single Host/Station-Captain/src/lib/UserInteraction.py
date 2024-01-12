@@ -12,6 +12,7 @@ from CronUtils import *
 from SnapshotUtils import *
 from LogManagement import *
 from InputValidators import *
+from CertsUtils import *
 import time
 import re
 import os
@@ -43,7 +44,6 @@ class UserInteraction:
             always_flush=True,
             expand_file_opt=True
         )
-
 
     @staticmethod
     def clearScreen():
@@ -222,7 +222,7 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Manage Installation Menu",
                 choices=[
-                    ("(1)", "SSL/HTTPS Certs (TODO) "),
+                    ("(1)", "SSL/HTTPS Certs"),
                     ("(2)", "Set E-mail Settings"),
                     ("(3)", "User Administration"),
                     ("(4)", "Plugins")
@@ -232,13 +232,204 @@ class UserInteraction:
             logging.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
-
+            if choice == "(1)":
+                self.manageCertsMenu()
             if choice == "(2)":
                 self.manageEmailSettings()
             if choice == "(3)":
                 self.userAdminMenu()
 
         logging.debug("Done running manage install menu.")
+
+    def manageCertsMenu(self):
+        logging.debug("Running Manage Certs menu.")
+        certMode = mainCM.getConfigVal("cert.mode")
+
+        choices = [
+            ("(1)", "Current Cert Info"),
+            ("(2)", "Verify current certs (TODO)"),
+            ("(3)", f"Cert Mode (Currently {certMode})"),
+            ("(6)", "Private Key Location"),
+            ("(7)", "Public Key/Cert Location"),
+        ]
+
+        autoRegenEnabled = "disabled"
+        if CertsUtils.isAutoRegenCertsEnabled():
+            autoRegenEnabled = "enabled"
+
+        if certMode == "self":
+            logging.debug("Setting up menu for self mode")
+            choices.append(("(4)", "Regenerate certs"))
+            choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
+            choices.append(("(8)", "CA Private Key Location"))
+            choices.append(("(9)", "CA Public Cert/Key Location"))
+            choices.append(("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
+            choices.append(("(11)", f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
+            choices.append(("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
+            choices.append(("(13)", f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
+            choices.append(("(14)", f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
+        if certMode == "letsEncrypt":
+            logging.debug("Setting up menu for let's encrypt mode")
+            accepted = mainCM.getConfigVal('cert.letsEncryptMode.acceptTerms')
+            if accepted:
+                accepted = "accepted"
+            else:
+                accepted = "NOT accepted"
+            choices.append(("(4)", "Regenerate certs"))
+            choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
+            choices.append(("(15)", f"Accept Let's Encrypt's Terms of Use ({accepted})"))
+        if certMode == "provided":
+            logging.debug("Setting up menu for provided mode")
+            choices.append(("(8)", "CA Private Key Location"))
+            choices.append(("(9)", "CA Public Cert/Key Location"))
+            choices.append(("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
+            if mainCM.getConfigVal('cert.providedMode.caProvided'):
+                choices.append(("(17)", "Install CA on host"))
+
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Manage Certs Menu",
+                choices=choices
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+                logging.debug("Showing current cert information")
+                certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
+                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout, title="System Cert Info")
+
+                if mainCM.getConfigVal("cert.mode") == "self" or (mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal("cert.providedMode.caProvided")):
+                    certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
+                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout, title="CA Cert Info")
+
+            if choice == "(2)":
+                logging.debug("Verifying current cert setup (TODO)")
+                # TODO
+                # TODO:: in self/provided mode where applicable: openssl verify -verbose -CAfile /etc/oqm/certs/CArootCert.crt /etc/oqm/certs/systemCert.crt
+            if choice == "(3)":
+                logging.debug("Setting cert mode")
+                self.promptForConfigChange(
+                    "The method the system will use to get certs ('self', 'letsEncrypt', or 'provided'):",
+                    "Set Cert Mode",
+                    "cert.mode",
+                    validators=[InputValidators.isCertMode]
+                )
+            if choice == "(4)":
+                logging.debug("Regenerating Certs")
+                forceCaRegen = False
+                if mainCM.getConfigVal("cert.mode") == "self":
+                    self.dialog.yesno("Regenerate root CA (not recommended)?")
+                    if code == self.dialog.OK:
+                        logging.info("User chose to regenerate root CA.")
+                        forceCaRegen = True
+                result, message = CertsUtils.regenCerts(forceCaRegen)
+                header = "Cert Regeneration Complete"
+                if not result:
+                    header = "Cert Regeneration FAILED"
+                self.dialog.msgbox(message, title=header)
+                self.dialog.infobox("Restarting services. Please wait.")
+                ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
+            if choice == "(5)":
+                logging.info("Toggling cron to regen certs")
+                if CertsUtils.isAutoRegenCertsEnabled():
+                    CertsUtils.disableAutoRegenCerts()
+                else:
+                    CertsUtils.enableAutoRegenCerts()
+            if choice == "(6)":
+                logging.debug("Setting private key location")
+                self.promptForConfigChange(
+                    "The location of the system's private key:",
+                    "Set Private Key Location",
+                    "cert.certs.privateKey",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(7)":
+                logging.debug("Setting public cert location")
+                self.promptForConfigChange(
+                    "The location of the system's public cert/key:",
+                    "Set Public Cert/Key Location",
+                    "cert.certs.systemCert",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(8)":
+                logging.debug("Setting CA private key location")
+                self.promptForConfigChange(
+                    "The location of the system's CA private key:",
+                    "Set CA Private Key Location",
+                    "cert.certs.CARootPrivateKey",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(9)":
+                logging.debug("Setting CA public cert location")
+                self.promptForConfigChange(
+                    "The location of the system's CA public cert/key:",
+                    "Set CA Public Cert/Key Location",
+                    "cert.certs.CARootCert",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(10)":
+                logging.debug("Setting country name for self-signed cert")
+                self.promptForConfigChange(
+                    "The country name for self-signed certs:",
+                    "Set country name for self-signed certs",
+                    "cert.selfMode.certInfo.countryName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(11)":
+                logging.debug("Setting state or province name for self-signed cert")
+                self.promptForConfigChange(
+                    "The state or province name for self-signed certs:",
+                    "Set state or province name for self-signed certs",
+                    "cert.selfMode.certInfo.stateOrProvinceName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(12)":
+                logging.debug("Setting locality name for self-signed cert")
+                self.promptForConfigChange(
+                    "The locality name for self-signed certs:",
+                    "Set locality name for self-signed certs",
+                    "cert.selfMode.certInfo.localityName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(13)":
+                logging.debug("Setting organization name for self-signed cert")
+                self.promptForConfigChange(
+                    "The organization name for self-signed certs:",
+                    "Set organization name for self-signed certs",
+                    "cert.selfMode.certInfo.organizationName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(14)":
+                logging.debug("Setting organizational unit name for self-signed cert")
+                self.promptForConfigChange(
+                    "The organizational unit name for self-signed certs:",
+                    "Set organizational unit name for self-signed certs",
+                    "cert.selfMode.certInfo.organizationalUnitName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(15)":
+                logging.debug("Setting that the user has accepted Let's Encrypt's terms of use")
+                mainCM.setConfigValInFile("cert.letsEncryptMode", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.rereadConfigData()
+            if choice == "(16)":
+                logging.debug("Setting if the CA was also provided.")
+                code = self.dialog.yesno("Are you providing your own CA file?")
+                caProvided = False
+                if code == self.dialog.OK:
+                    caProvided = True
+                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.rereadConfigData()
+            if choice == "(17)":
+                logging.debug("Installing CA on host")
+                result, message = CertsUtils.ensureCaInstalled()
+                if not result:
+                    self.dialog.msgbox(f"Failed to setup CA on host: \n{message}", title="Failed")
+        # TODO:: prompt to regen certs?
+        logging.debug("Done running manage certs menu.")
 
     def manageEmailSettings(self):
         logging.info("Entering flow for managing E-mail settings.")
