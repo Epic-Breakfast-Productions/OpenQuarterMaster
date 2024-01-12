@@ -44,6 +44,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
+install -m 755 -D "$srcDir/20-core-depot.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-depot.desktop" "$buildDir/$debDir/usr/share/applications/"
 #install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 #install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
@@ -52,13 +53,13 @@ serviceFile="oqm-core-depot.service"
 serviceFileEscaped="$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
-sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+sed -i "s/\${version}/$(jq -r '.version' webroot/composer.json)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/control"
 Package: $(cat "$configFile" | jq -r '.packageName')
-Version: $(./gradlew -q printVersion)
+Version: $(jq -r '.version' webroot/composer.json)
 Section: Open QuarterMaster
 Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all

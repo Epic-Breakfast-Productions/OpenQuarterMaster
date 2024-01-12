@@ -30,6 +30,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
                                         -p 80:80 -p 443:443 \
+                                        -v /etc/oqm/ui.d/:/etc/oqm/ui.d/:ro \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
