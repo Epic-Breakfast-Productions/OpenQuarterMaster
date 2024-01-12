@@ -16,7 +16,7 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
     public static $prefixDirsPsr4 = array (
         'Ebprod\\OqmCoreDepot\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/../..' . '/res/script',
         ),
     );
 
