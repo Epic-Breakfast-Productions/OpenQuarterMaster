@@ -31,4 +31,5 @@ quarkus.oidc.auth-server-url=https://{system.hostname}:{infra.keycloak.port}/rea
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
+runningInfo.depotUri={core.depot.externalBaseUri}
 
