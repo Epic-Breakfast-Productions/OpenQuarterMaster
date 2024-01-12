@@ -111,20 +111,20 @@ function getEntryTable($name, $content){
 				This is where you can access all your Open QuarterMaster components. Shown below are all available front-end interfaces you can visit and interact with.
 			</p>
 		</div>
-		<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
 			<li class="nav-item" role="presentation">
-				<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+				<button class="nav-link active" id="corePluginsTab" data-bs-toggle="tab" data-bs-target="#corePluginsPane" type="button" role="tab" aria-controls="corePluginsPane" aria-selected="true">
 					Core & Plugins <span class="badge rounded-pill text-bg-dark"><?php echo $numCorePlugins; ?></span>
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+				<button class="nav-link" id="metricsInfraTab" data-bs-toggle="tab" data-bs-target="#metricsInfraPane" type="button" role="tab" aria-controls="metricsInfraPane" aria-selected="false">
 					Metrics & Infrastructure <span class="badge rounded-pill text-bg-dark"><?php echo $numInfraMetrics; ?></span>
 				</button>
 			</li>
 		</ul>
-		<div class="tab-content" id="myTabContent">
-			<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+		<div class="tab-content" id="mainTabContent">
+			<div class="tab-pane fade show active" id="corePluginsPane" role="tabpanel" aria-labelledby="corePluginsTab" tabindex="0">
 				<h2 class="mt-2">
 					Core components & Plugins
 				</h2>
@@ -134,7 +134,7 @@ function getEntryTable($name, $content){
 				<?php echo getEntryTable("Core Components", $coreContent); ?>
 				<?php echo getEntryTable("Plugins", $pluginContent); ?>
 			</div>
-			<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+			<div class="tab-pane fade" id="metricsInfraPane" role="tabpanel" aria-labelledby="metricsInfraTab" tabindex="0">
 				<h2 class="mt-2">
 					Metrics & Infrastructure
 				</h2>
@@ -142,7 +142,7 @@ function getEntryTable($name, $content){
 					Metrics keep track of how well things are running. Infrastructure components are on the backend helping the system run.
 				</p>
 				<?php echo getEntryTable("Metrics", $metricsContent); ?>
-				<?php echo getEntryTable("Infra", $infraContent); ?>
+				<?php echo getEntryTable("Infrastructure", $infraContent); ?>
 			</div>
 		</div>
 	</div>
