@@ -5,6 +5,7 @@ service:
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+  depotUri: " "
   # TODO:: move data that doesn't need to be here
   auth:
     userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
@@ -174,14 +175,6 @@ quarkus:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   
-# TODO:: can probably remove
-mp:
-  jwt:
-    verify:
-      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
-    expiration:
-      default: 86400 # 1 day
-      extended: 2678400 # 1 month
 
 #  messaging:
 #    outgoing:
@@ -227,17 +220,9 @@ smallrye:
         start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
-  mp:
-    jwt:
-      expiration:
-#        default: 60
-      verify:
-        privatekey:
-          location: ../../../../dev/devTest-cert-key.pem
-        publickey:
-          location: ../../../../dev/devTest-cert-cert.pem
-        issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+
   service:
+    depotUri: "Hello World"
     runBy:
       name: The Developers
       email: dev@devlopment.dev
