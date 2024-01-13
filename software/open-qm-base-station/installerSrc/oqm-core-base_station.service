@@ -9,18 +9,18 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
 Wants=network-online.target
-Wants=open\x2bquarter\x2bmaster\x2dinfra\x2djaeger.service
+Wants=oqm-infra-jaeger.service
 Requires=docker.socket
-Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dmongodb.service
-Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
+Requires=oqm-infra-mongodb.service
+Requires=oqm-infra-keycloak.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
 # Setup operating variables
-Environment="CONTAINER_NAME=oqm_core_base_station"
-Environment="IMAGE_NAME=ebprod/open-qm-base-station"
+Environment="CONTAINER_NAME=oqm-core-base_station"
+Environment="IMAGE_NAME=ebprod/oqm-core-base_station"
 Environment="IMAGE_VERSION=${version}"
 Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/base-station-config.list"
 Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/base-station-config.list"

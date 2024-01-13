@@ -1,5 +1,5 @@
 {
-	"packageName":"open+quarter+master-manager-station+captain",
+	"packageName":"oqm-manager-station+captain",
 	"version":"2.0.9",
 	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
 	"maintainer": {

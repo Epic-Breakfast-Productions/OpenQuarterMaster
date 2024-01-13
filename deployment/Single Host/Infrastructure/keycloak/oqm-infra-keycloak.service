@@ -15,14 +15,14 @@ Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tr
 After=docker.service
 Wants=network-online.target
 Requires=docker.socket
-Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dpostgres.service
+Requires=oqm-infra-postgres.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
 # setup operating variables
-Environment="CONTAINER_NAME=oqm_infra_keycloak"
+Environment="CONTAINER_NAME=oqm-infra-keycloak"
 Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
 Environment="IMAGE_VERSION=22.0"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
@@ -59,7 +59,7 @@ ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config -
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull keycloak image.'"
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -p \"$(oqm-config -g 'infra.keycloak.postgresPass')\""
-ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm_infra_postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \

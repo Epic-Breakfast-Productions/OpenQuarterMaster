@@ -15,7 +15,7 @@ Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tr
 After=docker.service
 Wants=network-online.target
 Requires=docker.socket
-Requires=open\x2bquarter\x2bmaster\x2dinfra\x2dkeycloak.service
+Requires=oqm-infra-keycloak.service
 
 [Service]
 Type=simple

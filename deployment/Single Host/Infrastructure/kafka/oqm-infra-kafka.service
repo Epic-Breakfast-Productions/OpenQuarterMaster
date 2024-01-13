@@ -16,7 +16,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-Environment="CONTAINER_NAME=oqm_infra_kafka"
+Environment="CONTAINER_NAME=oqm-infra-kafka"
 Environment="IMAGE_NAME=confluentinc/cp-kafka"
 Environment="IMAGE_VERSION=7.4.3"
 #Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"

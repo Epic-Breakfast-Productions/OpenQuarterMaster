@@ -16,7 +16,7 @@ Type=simple
 Restart=always
 TimeoutSec=5m
 # Setup operating variables
-Environment="CONTAINER_NAME=oqm_core_depot"
+Environment="CONTAINER_NAME=oqm-core-depot"
 Environment="IMAGE_NAME=ebprod/oqm-core-depot"
 Environment="IMAGE_VERSION=${version}"
 

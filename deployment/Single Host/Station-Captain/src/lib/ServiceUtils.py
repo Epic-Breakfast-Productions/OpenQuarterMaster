@@ -17,9 +17,9 @@ class ServiceUtils:
     """
 
     """
-    SERVICE_ALL_INFRA = "open\\x2bquarter\\x2bmaster\\x2dinfra*"
-    SERVICE_ALL_CORE = "open\\x2bquarter\\x2bmaster\\x2dcore*"
-    SERVICE_ALL = "open\\x2bquarter\\x2bmaster*"
+    SERVICE_ALL_INFRA = "oqm-infra-*"
+    SERVICE_ALL_CORE = "oqm-core-*"
+    SERVICE_ALL = "oqm-*"
 
     @staticmethod
     def doServiceCommand(command: ServiceStateCommand, service: str) -> bool:

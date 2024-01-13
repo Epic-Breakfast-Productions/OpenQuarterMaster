@@ -1,7 +1,7 @@
 {
 	"infra": {
 		"keycloak": {
-			"host": "oqm_infra_keycloak",
+			"host": "oqm-infra-keycloak",
 			"port": "8115",
 			"adminUser": "oqmAdmin",
 			"adminPass": "<secret>",
