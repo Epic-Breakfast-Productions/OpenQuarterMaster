@@ -50,7 +50,7 @@ install -m 755 -D "$srcDir/oqm-depot.desktop" "$buildDir/$debDir/usr/share/appli
 #install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
 
 serviceFile="oqm-core-depot.service"
-serviceFileEscaped="$(systemd-escape "$serviceFile")"
+serviceFileEscaped="$serviceFile" #"$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(jq -r '.version' webroot/composer.json)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"

@@ -18,7 +18,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-Environment="CONTAINER_NAME=oqm_infra_jaeger"
+Environment="CONTAINER_NAME=oqm-infra-jaeger"
 Environment="IMAGE_NAME=jaegertracing/all-in-one"
 Environment="IMAGE_VERSION=1.51"
 #Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
@@ -27,9 +27,10 @@ ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop jaeger container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove jaeger container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull jaeger image.'"
+#ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/infra/jaeger/uiEntry.json > /etc/oqm/ui.d/infra-jaeger.json"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
-                                        --name oqm_infra_jaeger \
+                                        --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -e COLLECTOR_OTLP_ENABLED=true \
                                         jaegertracing/all-in-one:1.42"

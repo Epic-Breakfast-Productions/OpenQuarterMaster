@@ -60,7 +60,7 @@ public class InstallerSteps extends BaseStepDefinitions {
 	public void oqm_is_running() {
 		CommandResult dockerStatsResult = this.getContext().getSnhConnector().runCommand("docker", "stats", "--no-stream");
 		AttachUtils.attach(dockerStatsResult, "Running containers", this.getScenario());
-		CommandResult systemdListResult = this.getContext().getSnhConnector().runCommand("systemctl", "list-units", "--no-legend", "open\\\\x2bquarter\\\\x2bmaster\\\\x2d*");
+		CommandResult systemdListResult = this.getContext().getSnhConnector().runCommand("systemctl", "list-units", "--no-legend", "oqm-*");
 		AttachUtils.attach(systemdListResult, "OQM related systemd units", this.getScenario());
 		
 		for(

@@ -53,8 +53,8 @@ install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/shar
 install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
 
-serviceFile="open+quarter+master-core-base+station.service"
-serviceFileEscaped="$(systemd-escape "$serviceFile")"
+serviceFile="oqm-core-base_station.service"
+serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"

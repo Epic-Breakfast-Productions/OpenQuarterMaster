@@ -19,13 +19,13 @@ Type=simple
 Restart=always
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 # TODO:: rework to match others
-ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_grafana 2> /dev/null || /usr/bin/docker run \
-                                                                                              --name oqm_infra_grafana \
+ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm-infra-grafana 2> /dev/null || /usr/bin/docker run \
+                                                                                              --name oqm-infra-grafana \
                                                                                               -p 8110:3000 \
                                                                                               --add-host host.docker.internal:host-gateway \
                                                                                               grafana/grafana-oss:latest"
-ExecStart=/usr/bin/docker start -a oqm_infra_grafana
-ExecStop=/usr/bin/docker stop -t 10 oqm_infra_grafana
+ExecStart=/usr/bin/docker start -a oqm-infra-grafana
+ExecStop=/usr/bin/docker stop -t 10 oqm-infra-grafana
 
 [Install]
 WantedBy=multi-user.target

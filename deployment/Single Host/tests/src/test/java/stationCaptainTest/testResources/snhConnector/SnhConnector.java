@@ -129,10 +129,10 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 					throw new RuntimeException(e);
 				}
 				List<File> installers = new ArrayList<>();
-				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../../../software/open-qm-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/open-qm-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
 				
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");

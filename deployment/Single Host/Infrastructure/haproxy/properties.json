@@ -1,5 +1,5 @@
 {
-	"packageName":"open+quarter+master-infra-haproxy",
+	"packageName":"oqm-infra-haproxy",
 	"version":"1.0.0",
 	"description":"HAProxy instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/haproxy",

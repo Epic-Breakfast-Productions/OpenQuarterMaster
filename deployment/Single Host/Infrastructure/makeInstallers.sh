@@ -61,7 +61,7 @@ for curPackage in ${packages[@]}; do
 
 		serviceFile="$i"
 		echo "Service file: $serviceFile"
-		serviceFileEscaped="$(systemd-escape "$serviceFile")"
+		serviceFileEscaped="$serviceFile" #"$(systemd-escape "$serviceFile")"
 		cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		serviceFiles+=("$serviceFileEscaped")
@@ -91,7 +91,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
+Depends: docker, docker.io, oqm-manager-station+captain (>= 2.0.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"

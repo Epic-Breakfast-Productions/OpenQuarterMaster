@@ -16,7 +16,7 @@ Requires=docker.socket
 Type=simple
 Restart=always
 TimeoutSec=5m
-Environment="CONTAINER_NAME=oqm_infra_mongo"
+Environment="CONTAINER_NAME=oqm-infra-mongo"
 Environment="IMAGE_NAME=mongo"
 Environment="IMAGE_VERSION=7"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
