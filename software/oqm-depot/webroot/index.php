@@ -113,7 +113,7 @@ function getEntryTable($name, $content) {
 <body class="min-vh-100 vstack">
 <main class="container flex-grow-1">
 	<div class="mb-3 mt-3 text-center">
-		<img src="/res/media/logo.svg" class="">
+		<img src="/res/media/logo.svg" class="" style="max-width: 75%;" alt="OQM Logo">
 		<h1 class="display-5 fw-bold text-body-emphasis">OQM Depot</h1>
 		<p class="lead mb-4">
 			This is where you can access all your Open QuarterMaster components. Shown below are all available front-end interfaces you can visit and interact with.
