@@ -5,7 +5,6 @@ service:
   nameShort: OQMbase
   nameFull: Open Quarter Master Base Station
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-  depotUri: " "
   # TODO:: move data that doesn't need to be here
   auth:
     userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
@@ -77,7 +76,8 @@ runningInfo:
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-  fromEmail: no-reply@${runningInfo.baseUrl}
+  fromEmail: no-reply@${runningInfo.hostname}
+  depotUri: " "
 
 externalService:
   secretSizeMin: 50
@@ -221,8 +221,9 @@ smallrye:
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
 
-  service:
+  runningInfo:
     depotUri: "Hello World"
+  service:
     runBy:
       name: The Developers
       email: dev@devlopment.dev

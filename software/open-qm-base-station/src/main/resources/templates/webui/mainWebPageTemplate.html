@@ -234,9 +234,9 @@ Ingests:
 				</div>
 			</form>
 			<ul class="navbar-nav mb-auto">
-				{#if config:['service.depotUri'] != " "}
+				{#if config:['runningInfo.depotUri'] != " "}
 				<li class="nav-item">
-					<a class="nav-link" href="{config:['service.depotUri']}">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
 						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
 					</a>
 				</li>
@@ -286,6 +286,13 @@ Ingests:
 		
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
+				{#if config:['runningInfo.depotUri'] != " "}
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+				</li>
+				{/if}
 				<li class="nav-item">
 					<a class="nav-link" href="/">
 						{#icons/icon icon='door-open'}{/icons/icon} Login
