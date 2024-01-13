@@ -9,6 +9,7 @@
 			"postgresPass": "<secret>",
 			"postgresDb": "oqm_keycloak",
 			"oqmRealmName": "oqm",
+			"externalBaseUri": "https://#{system.hostname}:#{infra.keycloak.port}",
 			"options": {
 				"userSelfRegistration": true
 			}

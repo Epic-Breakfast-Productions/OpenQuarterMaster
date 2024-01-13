@@ -76,7 +76,8 @@ runningInfo:
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-  fromEmail: no-reply@${runningInfo.baseUrl}
+  fromEmail: no-reply@${runningInfo.hostname}
+  depotUri: " "
 
 externalService:
   secretSizeMin: 50
@@ -174,14 +175,6 @@ quarkus:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   
-# TODO:: can probably remove
-mp:
-  jwt:
-    verify:
-      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
-    expiration:
-      default: 86400 # 1 day
-      extended: 2678400 # 1 month
 
 #  messaging:
 #    outgoing:
@@ -227,16 +220,9 @@ smallrye:
         start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
         realm-path: "../../../../dev/oqm-realm.json"
         realm-name: "oqm"
-  mp:
-    jwt:
-      expiration:
-#        default: 60
-      verify:
-        privatekey:
-          location: ../../../../dev/devTest-cert-key.pem
-        publickey:
-          location: ../../../../dev/devTest-cert-cert.pem
-        issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+
+  runningInfo:
+    depotUri: "Hello World"
   service:
     runBy:
       name: The Developers
