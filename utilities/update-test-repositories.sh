@@ -98,7 +98,7 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
-$SUDOTXT apt-get install $AUTO_INSTALL open+quarter+master-manager-station+captain
+$SUDOTXT apt-get install $AUTO_INSTALL oqm-manager-station+captain
 if [ $? -ne 0 ]; then
 	echo "FAILED to install Station Captain. See above output for information."
 	exit 2;
