@@ -14,7 +14,7 @@ class PackageManagement:
     grep -h -P -o "^Package: \K.*" /var/lib/apt/lists/deployment.openquartermaster.com_deb-ppa_._Packages | sort -u
 
     """
-    BASE_STATION_PACKAGE = "oqm-core-base_station"
+    BASE_STATION_PACKAGE = "oqm-core-base+station"
     ALL_OQM = "oqm-*"
     SYSTEM_PACKAGE_MANAGER = None
 
