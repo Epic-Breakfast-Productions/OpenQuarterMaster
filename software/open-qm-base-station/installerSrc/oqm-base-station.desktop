@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=Open QuarterMaster Base Station
-GenericName=Open QuarterMaster Base Station
+Name=OQM Base Station
+GenericName=Base Station - OQM
 
 Comment=Quick link to open the Open QuarterMaster
 
-Exec=bash -c 'xdg-open https://$(oqm-config -g system.hostname)'
+Exec=bash -c 'xdg-open $(oqm-config -g core.baseStation.externalBaseUri)'
 Icon=/etc/oqm/static/oqm-icon.svg
 Terminal=false
 
