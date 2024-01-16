@@ -1,7 +1,7 @@
 {
-	"packageName":"open+quarter+master-infra-zookeeper",
+	"packageName":"oqm-infra-kafka",
 	"version":"1.0.0",
-	"description":"Apache Zookeeper instance for Open QuarterMaster.",
+	"description":"Apache Kafka instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/kafka",
 	"configs": [],
 	"dependencies": {

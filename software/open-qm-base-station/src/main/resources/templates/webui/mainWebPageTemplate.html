@@ -233,7 +233,14 @@ Ingests:
 					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
 				</div>
 			</form>
-			<ul class="d-flex navbar-nav me-auto">
+			<ul class="navbar-nav mb-auto">
+				{#if config:['runningInfo.depotUri'] != " "}
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+				</li>
+				{/if}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
@@ -243,7 +250,7 @@ Ingests:
 							{#icons/you}{/icons/you} You
 						</a>
 						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
-							{#icons/edit}{/icons/edit} Your Account Settings
+							{#icons/edit}{/icons/edit} Account Settings
 						</a>
 					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
 					<div class="dropdown-divider"></div>
@@ -255,7 +262,7 @@ Ingests:
 					{/if}
 					{#if userInfo.getRoles().contains('inventoryAdmin')}
 					<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
+						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
 					</a>
 					{/if}
 					<div class="dropdown-divider"></div>
@@ -279,6 +286,13 @@ Ingests:
 		
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
+				{#if config:['runningInfo.depotUri'] != " "}
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+				</li>
+				{/if}
 				<li class="nav-item">
 					<a class="nav-link" href="/">
 						{#icons/icon icon='door-open'}{/icons/icon} Login

@@ -1,5 +1,5 @@
 {
-	"packageName":"open+quarter+master-infra-zookeeper",
+	"packageName":"oqm-infra-zookeeper",
 	"version":"1.0.0",
 	"description":"Zookeeper instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/zookeeper",

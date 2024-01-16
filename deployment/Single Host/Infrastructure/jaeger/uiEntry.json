@@ -1,0 +1,6 @@
+{
+	"name": "Jaeger",
+	"type": "metrics",
+	"description": "The Jaeger instance for Open QuarterMaster. This service lets you dive into how calls are made through the system.",
+	"url": "{infra.jaeger.externalBaseUri}"
+}

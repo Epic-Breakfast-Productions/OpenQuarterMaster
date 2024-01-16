@@ -113,23 +113,25 @@
 			<img src="/media/logoSymbol.svg" alt="" id="topLogo">
 			OQM MSS Controller Plugin
 		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavCollapse"
+			aria-controls="mainNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse" id="navbarColor03">
+		<div class="collapse navbar-collapse" id="mainNavCollapse">
 			<ul class="navbar-nav me-auto">
+			</ul>
+			<ul class="navbar-nav mb-auto">
 				<li class="nav-item">
 					<a class="nav-link" href="{config:['baseStation.baseUrl']}" target="_self">
 						<img src="/media/baseStationBack.svg" alt="" style="padding-top: 0;padding-bottom: 0;height: 1.5em;">
 						Back to Base Station
 					</a>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item dropdown ">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
 						aria-haspopup="true" aria-expanded="false">
-						<i class="bi bi-person-circle "></i> <span id="userNameDisplay">Greg Stewart</span></a>
-					<div class="dropdown-menu">
+						<i class="bi bi-person-circle "></i> <span id="userNameDisplay">{username}</span></a>
+					<div class="dropdown-menu dropdown-menu-end">
 						<a class="dropdown-item" href="{config:['quarkus.oidc.auth-server-url']}/account/"
 							id="youEditLink" target="_blank">
 							<i class="bi bi-pencil-fill "></i> Your Account Settings
@@ -176,7 +178,8 @@
 				</p>
 				<hr/>
 				<div class="row" id="searchRow">
-					<div class="col-4 card p-0" style="">
+					{#if voiceSearchEnabled}
+					<div class="col-4 card p-0" style="" id="voiceSearchContainer">
 						<div class="card-header">
 							<h3 class="card-title">Voice Search</h3>
 						</div>
@@ -194,6 +197,7 @@
 							</p>
 						</div>
 					</div>
+					{/if}
 					<div class="col card p-0">
 						<div class="card-header">
 							<h3 class="card-title">Regular Search</h3>
@@ -384,11 +388,9 @@
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">OQM MSS Controller Plugin</span><br/>
-			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">1.0.30</a>,
+			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">{config:['service.version']}</a>,
 			&copy; 2023 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP</a><br/>
-			Released under the <a
-				href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE"
-				target="_blank">GPL v3.0 License</a><br/>
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
 					id="bd-theme"
@@ -397,7 +399,8 @@
 					data-bs-toggle="dropdown"
 					data-bs-display="static">
 					<span class="theme-icon-active">
-<i class="bi bi-circle-half ">&nbsp;</i> 					</span>
+						<i class="bi bi-circle-half ">&nbsp;</i>
+					</span>
 					<span id="bd-theme-text">
 					Toggle theme
 					</span>
@@ -407,7 +410,8 @@
 						<button type="button" class="dropdown-item d-flex align-items-center"
 							data-bs-theme-value="light">
 							<span class="theme-icon">
-<i class="bi bi-brightness-high-fill ">&nbsp;</i> 							</span>
+								<i class="bi bi-brightness-high-fill ">&nbsp;</i>
+							</span>
 							Light
 						</button>
 					</li>
@@ -429,15 +433,12 @@
 					</li>
 				</ul>
 			</div>
-			<a href="/help"><i class="bi bi-question-circle "></i> Help & User Guide</a><br/>
+			{!<a href="/help"><i class="bi bi-question-circle "></i> Help & User Guide</a><br/>TODO !}
 		</div>
 		<div id="serverInfo" class="col-sm-4">
 			<br/>
 		</div>
 		<div class="col-sm-4">
-			Your privacy is important to the original project. It only creates minor cookies, and that is for the login
-			functionality. The project also only collects what you give it, and it is up to the people running the
-			server to ensure it is handled well. Please contact the folks running the server for more information.
 		
 		</div>
 	</div>

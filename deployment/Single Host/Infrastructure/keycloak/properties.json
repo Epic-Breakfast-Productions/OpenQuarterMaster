@@ -1,18 +1,19 @@
 {
-	"packageName":"open+quarter+master-infra-keycloak",
-	"version":"1.1.2",
+	"packageName":"oqm-infra-keycloak",
+	"version":"1.1.3",
 	"description":"Keycloak instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/keycloak",
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", open+quarter+master-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog"
+		"deb": ", oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},
 	"files":{
 		"/etc/oqm/static/keycloak/import/oqm-realm.json": "oqm-realm.json",
 		"/etc/oqm/static/keycloak/kc-realm-manager": "kc-realm-manager.py",
-		"/etc/oqm/kcClients/README.md": "clientFileExplainer.md"
+		"/etc/oqm/kcClients/README.md": "clientFileExplainer.md",
+		"/etc/oqm/static/keycloak/uiEntry.json": "uiEntry.json"
 	}
 }

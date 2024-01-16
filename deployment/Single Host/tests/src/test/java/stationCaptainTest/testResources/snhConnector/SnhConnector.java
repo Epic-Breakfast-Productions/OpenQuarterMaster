@@ -122,15 +122,17 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 					log.info("Building installers.");
 					CommandResult.from(new ProcessBuilder("../Station-Captain/makeInstallers.sh")).assertSuccess("Build Station Captain Installers");
 					CommandResult.from(new ProcessBuilder("../Infrastructure/makeInstallers.sh")).assertSuccess("Build Infrastructure Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/oqm-depot/makeSnhInstallers.sh")).assertSuccess("Build Depot Installers");
 					CommandResult.from(new ProcessBuilder("../../../software/open-qm-base-station/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
 					log.info("Done building installers.");
 				} catch(IOException | InterruptedException e) {
 					throw new RuntimeException(e);
 				}
 				List<File> installers = new ArrayList<>();
-				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../../../software/open-qm-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/open-qm-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
 				
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");
@@ -170,6 +172,22 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			throw new RuntimeException("FAILED to install OQM: " + output.getStdErr());
 		}
 		return output;
+	}
+	
+	public void uninstallOqm(){
+		log.info("Uninstalling OQM");
+		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
+			case deb -> {
+				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
+				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
+				this.runCommand("docker", "image", "prune");
+				this.runCommand("apt-get", "-y", "autoremove");
+			}
+			case rpm -> {
+				//TODO
+			}
+		}
+		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm");
 	}
 	
 	
