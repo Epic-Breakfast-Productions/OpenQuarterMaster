@@ -97,7 +97,6 @@ Architecture: all
 Description: $(cat "$configFile" | jq -r '.description')
 Homepage: $(cat "$configFile" | jq -r '.homepage')
 Pre-Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
-Recommends: $(cat "$configFile" | jq -r '.dependencies.deb-recommends')
 Licence: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
