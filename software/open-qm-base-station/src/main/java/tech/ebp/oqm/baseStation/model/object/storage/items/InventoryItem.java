@@ -114,11 +114,11 @@ public abstract class InventoryItem<S extends Stored, C, W extends StoredWrapper
 	 * <p>
 	 * The key is the id of the storage block being stored in, the value the storage wrapper actually holding stored item information.
 	 * <p>
-	 * `null` key is intended as a 'not stored anywhere in particular'
+	 * "new ObjectId(new byte[12])"/"000000000000000000000000" key is intended as a 'not stored anywhere in particular'
 	 */
 	@NonNull
 	@NotNull
-	private Map<ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
+	private Map<@NonNull ObjectId, @NonNull W> storageMap = new LinkedHashMap<>();
 	
 	/**
 	 * Files that have been attached to the item.

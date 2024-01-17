@@ -181,6 +181,16 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		this.defaultRemoveAllTest(this.inventoryItemService);
 	}
 	
+	@Test
+	public void testStoreItemWithNulledStorageBlockKey(){
+		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
+		item.getStorageMap().put(new ObjectId(new byte[12]), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
+		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		
+		SimpleAmountItem returned = (SimpleAmountItem) this.inventoryItemService.get(id);
+		assertEquals(item, returned);
+	}
+	
 	//TODO:: test expiry related
 	
 	//    @Test

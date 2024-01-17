@@ -409,14 +409,4 @@ class SimpleAmountItemTest extends InventoryItemTest {
 		assertFalse(item.getNotificationStatus().isLowStock());
 		assertEquals(0, item.getNumLowStock());
 	}
-	
-	@Test
-	public void testNullStorageBlock(){
-		SimpleAmountItem item = new SimpleAmountItem();
-		item.add(null, new AmountStored(5, OqmProvidedUnits.UNIT));
-		
-		item.recalculateDerived();
-		
-		assertEquals(Quantities.getQuantity(5, OqmProvidedUnits.UNIT), item.getTotal());
-	}
 }

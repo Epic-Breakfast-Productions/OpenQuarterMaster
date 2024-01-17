@@ -45,6 +45,14 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 								   .setNumLowStock(1)
 								   .recalculateDerived(),
 			(SimpleAmountItem) new SimpleAmountItem()
+								   .add(
+									   new ObjectId(new byte[12]),
+									   new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)),
+									   true
+								   ).setName(FAKER.name().name())
+								   .setNumLowStock(1)
+								   .recalculateDerived(),
+			(SimpleAmountItem) new SimpleAmountItem()
 								   .setUnit(UnitUtils.UNIT_LIST.get(0))
 								   .setName(FAKER.name().name())
 								   .recalculateDerived(),
