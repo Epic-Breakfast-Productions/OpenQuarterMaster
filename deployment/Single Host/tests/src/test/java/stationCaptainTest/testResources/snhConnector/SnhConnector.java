@@ -154,7 +154,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			case deb -> {
 				switch (this.getSetupConfig().getInstallTypeConfig().getType()) {
 					case REPO -> {
-						output = this.runCommand("apt-get", "install", "-y", "open+quarter+master-core-base+station");
+						output = this.runCommand("apt-get", "install", "-y", "oqm-core-base+station");
 					}
 					case FILES -> {
 						output = this.runCommand("apt-get", "install", "-y", "/tmp/oqm-installers/*.deb");
