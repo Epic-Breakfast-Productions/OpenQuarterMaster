@@ -40,6 +40,17 @@ fi
 cp build/*.deb "../../../$DEB_PPA_DIR";
 popd
 
+# Depot
+echo -e "\n\n\n\nBuilding Depot."
+pushd "../software/oqm-depot"
+./makeSnhInstallers.sh
+if [ $? -ne 0 ]; then
+	echo "FAILED to make installers for Base Station."
+	exit 1;
+fi
+cp build/installers/*.deb "../../$DEB_PPA_DIR";
+popd
+
 # Base Station
 echo -e "\n\n\n\nBuilding Base Station."
 pushd "../software/open-qm-base-station/"
