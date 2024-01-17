@@ -50,17 +50,11 @@ public class GenericImporter<T extends MainObject, S extends SearchObject<T>> ex
 	}
 	
 	@Override
-	public long readInObjects(
+	protected long readInObjectsImpl(
 		ClientSession clientSession,
-		Path directory,
+		Path objectDirPath,
 		InteractingEntity importingEntity
 	) throws IOException {
-		Path objectDirPath = this.getObjDirPath(directory);
-		
-		if(!Files.exists(objectDirPath)){
-			return 0;
-		}
-		
 		List<File> filesForObject = getObjectFiles(objectDirPath);
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);
@@ -79,6 +73,5 @@ public class GenericImporter<T extends MainObject, S extends SearchObject<T>> ex
 		
 		return filesForObject.size();
 	}
-	
 	
 }

@@ -1,33 +1,22 @@
 package tech.ebp.oqm.baseStation.service.importExport.importer;
 
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.time.StopWatch;
-import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
-import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
-import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,11 +30,10 @@ public class GenericFileImporter<T extends FileMainObject, S extends SearchObjec
 	}
 	
 	@Override
-	public long readInObjects(ClientSession clientSession, Path directory, InteractingEntity importingEntity) throws IOException {
-		Path mainDir = this.getFileObjDirPath(directory);
+	protected long readInObjectsImpl(ClientSession clientSession, Path mainDir, InteractingEntity importingEntity) throws IOException {
 		Path filesDir = mainDir.resolve("files");
 		
-		this.getObjectImporter().readInObjects(clientSession, mainDir, importingEntity);
+		this.getObjectImporter().readInObjectsImpl(clientSession, mainDir, importingEntity);
 		long result = 0;
 		
 		try (

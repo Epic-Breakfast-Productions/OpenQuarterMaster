@@ -3,12 +3,14 @@ package com.ebp.openQuarterMaster.plugin.restClients.headerFactories;
 
 import com.ebp.openQuarterMaster.plugin.restClients.KeycloakRestClient;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.vertx.ext.auth.impl.jose.JWT;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -34,9 +36,15 @@ public class BaseStationAuthHeaderFactory implements ClientHeadersFactory {
 		){
 			log.info("Getting new service account token");
 			ObjectNode result = this.keycloakRestClient.getServiceAccountToken();
-			this.authString = "Bearer " + result.get("access_token").asText();
+			String jwt = result.get("access_token").asText();
+			this.authString = "Bearer " + jwt;
 			this.refreshAfter = (result.get("expires_in").asInt() / 3) * 2;
 			this.lastRefresh = LocalDateTime.now();
+			log.debug(
+				"Got new auth token: {} / {}",
+				jwt,
+				JWT.parse(jwt)
+			);
 		}
 		return authString;
 	}

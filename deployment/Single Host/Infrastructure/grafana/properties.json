@@ -1,0 +1,16 @@
+{
+	"packageName":"oqm-infra-grafana",
+	"version":"1.0.0",
+	"description":"Grafana instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/grafana",
+	"configs": [
+		"# Grafana Config:"
+	],
+	"dependencies": {
+		"deb": ""
+	},
+	"configFiles":{
+	},
+	"files":{
+	}
+}

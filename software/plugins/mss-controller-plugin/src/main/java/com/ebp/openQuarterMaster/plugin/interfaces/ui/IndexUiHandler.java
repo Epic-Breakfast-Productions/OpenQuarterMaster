@@ -11,6 +11,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
@@ -18,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 @Path("/")
 @Tags({@Tag(name = "UI", description = "Endpoints for web UI.")})
-public class IndexUiHandler {
+public class IndexUiHandler extends UiHandler {
     
     @Inject
     @Location("pages/index")
@@ -27,8 +29,17 @@ public class IndexUiHandler {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @PermitAll
-    public TemplateInstance get() {
-        return page.instance();
+    public Response get() {
+        if(this.getUserToken() != null){
+            return Response.seeOther(
+                UriBuilder.fromUri("/main").build()
+            ).build();
+        }
+        
+        return Response.ok()
+                   .type(MediaType.TEXT_HTML_TYPE)
+                   .entity(this.page.instance())
+                   .build();
     }
     
 }

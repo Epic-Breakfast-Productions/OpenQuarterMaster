@@ -233,7 +233,14 @@ Ingests:
 					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
 				</div>
 			</form>
-			<ul class="d-flex navbar-nav me-auto">
+			<ul class="navbar-nav mb-auto">
+				{#if config:['runningInfo.depotUri'] != " "}
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+				</li>
+				{/if}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
@@ -243,7 +250,7 @@ Ingests:
 							{#icons/you}{/icons/you} You
 						</a>
 						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
-							{#icons/edit}{/icons/edit} Your Account Settings
+							{#icons/edit}{/icons/edit} Account Settings
 						</a>
 					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
 					<div class="dropdown-divider"></div>
@@ -255,7 +262,7 @@ Ingests:
 					{/if}
 					{#if userInfo.getRoles().contains('inventoryAdmin')}
 					<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Administration
+						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
 					</a>
 					{/if}
 					<div class="dropdown-divider"></div>
@@ -279,6 +286,13 @@ Ingests:
 		
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
+				{#if config:['runningInfo.depotUri'] != " "}
+				<li class="nav-item">
+					<a class="nav-link" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+				</li>
+				{/if}
 				<li class="nav-item">
 					<a class="nav-link" href="/">
 						{#icons/icon icon='door-open'}{/icons/icon} Login
@@ -311,7 +325,7 @@ Ingests:
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/media/EBP-logo-icon.svg" style="max-height:1em;" alt="EBP Logo"/></a><br/>
+			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
@@ -350,6 +364,14 @@ Ingests:
 								{#icons/themeAuto addSpace=true}{/icons/themeAuto}
 							</span>
 							Auto
+						</button>
+					</li>
+					<li style=" height: 5px;">
+						<button type="button" class="dropdown-item d-flex align-items-center" style="font-size: 0.15em; height: 5px;" onclick="if(typeof RealDarkMode !== 'undefined'){ RealDarkMode.realDarkMode();}else{ script=document.createElement('script');script.src = '/res/js/realDarkMode.js';document.head.appendChild(script);}">
+							<span class="theme-icon">
+								{#icons/themeDark addSpace=true}{/icons/themeDark}
+							</span>
+							Really Dark
 						</button>
 					</li>
 				</ul>

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/OpenQuarterMaster.iml" filepath="$PROJECT_DIR$/.idea/OpenQuarterMaster.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/open-qm-base-station.main.iml" filepath="$PROJECT_DIR$/.idea/modules/open-qm-base-station.main.iml" />
     </modules>
   </component>
 </project>

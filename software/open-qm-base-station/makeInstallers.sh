@@ -14,7 +14,7 @@
 #   - jq
 #
 # TODO:: Figure out how logs work
-
+cd "$(dirname "$0")" || exit
 srcDir="installerSrc"
 configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"
@@ -39,16 +39,22 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
+mkdir -p "$buildDir/$debDir/etc/oqm/static/core/base-station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
+mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
+mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
+install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/base-station/"
 install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 install -m 755 -D "$srcDir/20-baseStation.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
+install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
+install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
 
-serviceFile="open+quarter+master-core-base+station.service"
-serviceFileEscaped="$(systemd-escape "$serviceFile")"
+serviceFile="oqm-core-base_station.service"
+serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
@@ -84,24 +90,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 
 mkdir -p /etc/oqm/serviceConfig/core/base+station/files/
 
-# https://unix.stackexchange.com/questions/104171/create-ssl-certificate-non-interactively
-if [ ! -f "/etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem" ]; then
-	echo "Setting up keys."
-	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
-		-keyout /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem \
-		-out /etc/oqm/serviceConfig/core/base+station/files/https-cert-cert.pem \
-		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
-
-	openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 \
-		-keyout /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem \
-		-out /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-cert.pem \
-		-subj "/C=US/ST=Denial/L=Springfield/O=OQM/CN=$(hostname).local"
-
-	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/https-cert-key.pem
-	chmod 644 /etc/oqm/serviceConfig/core/base+station/files/jwt-cert-key.pem
-	# TODO:: finish/test/see if works with jwt
-fi
-
 if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
 	cat <<EOF >> "/etc/oqm/serviceConfig/core/base+station/user-config.list"
 # Add your own config here.
@@ -118,6 +106,8 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
 systemctl daemon-reload
+# restart proxy after we add config
+#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
@@ -148,7 +138,7 @@ if [ $( docker ps -a | grep oqm_base_station | wc -l ) -gt 0 ]; then
 else
         echo "Docker container was already gone."
 fi
-
+#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"

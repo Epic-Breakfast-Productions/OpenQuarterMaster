@@ -1,0 +1,7 @@
+{
+	"clientName": "oqm-plugin-mss-controller",
+	"displayName": "Modular Storage System Controller Plugin",
+	"description": "The client for OQM's MSS Controler plugin.",
+	"serviceAccount": true,
+	"roles": {}
+}
