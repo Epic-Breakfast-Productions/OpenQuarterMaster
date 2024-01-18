@@ -22,8 +22,8 @@ const ItemAddEdit = {
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
-	itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
-	itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
+	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
+	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
 
 	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
 	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
@@ -88,9 +88,9 @@ const ItemAddEdit = {
 		ItemAddEdit.setIdAttField();
 		UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemStoredContainer);
 
-		this.itemNotStoredCheck.attr("checked", false);
-		this.updateItemNotStored();
-		this.itemNotStoredInputContainer.text("");
+		// this.itemNotStoredCheck.attr("checked", false);
+		// this.updateItemNotStored();
+		// this.itemNotStoredInputContainer.text("");
 
 		ItemAddEdit.addEditItemImagesSelected.text("");
 		ItemAddEdit.addEditKeywordDiv.text("");
