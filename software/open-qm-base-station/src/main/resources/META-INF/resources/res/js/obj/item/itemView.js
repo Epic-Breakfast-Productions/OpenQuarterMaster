@@ -159,7 +159,7 @@ const ItemView = {
 		}
 
 		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
 			.append($('<div class="row"></div>').append(accordContent));
 	},
 	getTrackedStoredWrapperContent(itemId, blockId, trackedMap) {
@@ -186,7 +186,7 @@ const ItemView = {
 
 
 		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(ItemView.getStoredBlockLink(blockId)))
+			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
 			.append($('<div class="row"></div>').append(accordContent));
 	},
 	getStoredAccordView(storageType, itemId, storageId, storedWrapperData){

@@ -24,15 +24,16 @@ argParser = argparse.ArgumentParser(
     prog="oqm-config",
     description="This script is a utility to help manage openQuarterMaster's configuration."
 )
-argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-argParser.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
-argParser.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-argParser.add_argument('-t', '--template', dest="t",
+g = argParser.add_mutually_exclusive_group()
+g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+g.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
+g.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
+g.add_argument('-t', '--template', dest="t",
                        help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
-argParser.add_argument('-s', '--set', dest="s",
+g.add_argument('-s', '--set', dest="s",
                        help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
-argParser.add_argument('-S', '--setSecret', dest="setSecret",
+g.add_argument('-S', '--setSecret', dest="setSecret",
                        help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
                        nargs=3)
 

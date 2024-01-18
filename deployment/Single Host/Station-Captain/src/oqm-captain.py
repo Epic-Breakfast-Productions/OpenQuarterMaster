@@ -33,17 +33,18 @@ argParser = argparse.ArgumentParser(
     description="This script is a utility to help manage an installation of Open QuarterMaster. Must be run as root.",
     epilog="Script version "+ScriptInfo.SCRIPT_VERSION+". With <3, EBP"
 )
-argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-argParser.add_argument('--take-snapshot', dest="takeSnapshot", action="store_true", help="Takes a snapshot. Will pause and restart services.")
-argParser.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
-argParser.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
-argParser.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
-argParser.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
-argParser.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
+g = argParser.add_mutually_exclusive_group()
+g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+g.add_argument('--take-snapshot', dest="takeSnapshot", help="Takes a snapshot. Will pause and restart services.", choices=["manual", "scheduled", "preemptive"])
+g.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
+g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
+g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
+g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
+g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
 argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
-# print(str(args))
+print(str(args))
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
     exit(0)
@@ -53,9 +54,7 @@ if not os.geteuid() == 0:
     exit(1)
 
 if args.takeSnapshot:
-    trigger = SnapshotTrigger.manual
-    if args.takeSnapshot[0]:
-        trigger = SnapshotTrigger(args.takeSnapshot[0])
+    trigger = SnapshotTrigger[args.takeSnapshot]
     SnapshotUtils.performSnapshot(trigger)
 elif args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
