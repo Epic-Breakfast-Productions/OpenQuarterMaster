@@ -326,7 +326,7 @@ class UserInteraction:
                     if code == self.dialog.OK:
                         logging.info("User chose to regenerate root CA.")
                         forceCaRegen = True
-                result, message = CertsUtils.regenCerts(forceCaRegen)
+                result, message = CertsUtils.regenCerts(forceCaRegen, False)
                 header = "Cert Regeneration Complete"
                 if not result:
                     header = "Cert Regeneration FAILED"
@@ -428,7 +428,17 @@ class UserInteraction:
                 result, message = CertsUtils.ensureCaInstalled()
                 if not result:
                     self.dialog.msgbox(f"Failed to setup CA on host: \n{message}", title="Failed")
-        # TODO:: prompt to regen certs?
+        self.dialog.yesno("Regenerate certs? Not necessary if no config changed.")
+        if code == self.dialog.OK:
+            logging.info("User chose to regenerate root CA.")
+            forceCaRegen = False
+            self.dialog.yesno("Regenerate root CA (not recommended)?")
+            if code == self.dialog.OK:
+                logging.info("User chose to regenerate root CA.")
+                forceCaRegen = True
+            CertsUtils.regenCerts(forceCaRegen, False)
+            self.dialog.infobox("Restarting services. Please wait.")
+            ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
         logging.debug("Done running manage certs menu.")
 
     def manageEmailSettings(self):

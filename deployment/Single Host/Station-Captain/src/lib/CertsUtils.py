@@ -13,6 +13,7 @@ import datetime
 from cryptography import x509
 from ConfigManager import *
 from CronUtils import *
+from ServiceUtils import *
 
 
 class CertsUtils:
@@ -284,6 +285,9 @@ class CertsUtils:
             output = CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
         else:
             return False, "Invalid value for config cert.mode : " + certMode
+
+        if restartServices:
+            ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
         return output
 
     @staticmethod
