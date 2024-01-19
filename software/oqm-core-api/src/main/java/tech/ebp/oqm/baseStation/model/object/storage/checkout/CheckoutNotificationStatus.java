@@ -14,6 +14,5 @@ public class CheckoutNotificationStatus {
 	/**
 	 * If the checkout obj is due soon or not
 	 */
-	@Builder.Default
 	private boolean dueSoon = false;
 }

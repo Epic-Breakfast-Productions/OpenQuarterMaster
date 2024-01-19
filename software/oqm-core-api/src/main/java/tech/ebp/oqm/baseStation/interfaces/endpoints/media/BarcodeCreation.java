@@ -51,8 +51,7 @@ public class BarcodeCreation extends EndpointProvider {
 	StorageBlockService storageBlockService;
 	@Inject
 	InventoryItemService inventoryItemService;
-	@Inject
-	JsonWebToken jwt;
+	
 	@ConfigProperty(name="runningInfo.baseUrl")
 	String selfBaseUrl;
 	

@@ -41,15 +41,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	public abstract MongoHistoriedFileService<T, S, G> getFileObjectService();
 	
 	@WithSpan
-	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
+	protected Response.ResponseBuilder getSearchResponseBuilder(
 		@BeanParam S searchObject
 	) {
-		SearchResult<T> searchResult = this.getFileObjectService().getFileObjectService().search(searchObject, false);
-		
-		return Tuple2.of(
-			this.getSearchResultResponseBuilder(searchResult),
-			searchResult
-		);
+		SearchResult<T> searchResult = this.getFileObjectService().getFileObjectService().search(searchObject, true);
+		return this.getSearchResultResponseBuilder(searchResult);
 	}
 	
 	
@@ -82,6 +78,14 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //		@Context SecurityContext securityContext,
 //		@BeanParam F body
 //	) throws IOException;
+	
+	@WithSpan
+	public Response search(
+		//		@BeanParam
+		S searchObject
+	) {
+		return this.getSearchResponseBuilder(searchObject).build();
+	}
 	
 	//</editor-fold>
 	

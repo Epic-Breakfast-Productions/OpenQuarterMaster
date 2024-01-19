@@ -42,16 +42,6 @@ class GeneralInfoTest extends RunningServerTest {
 			.statusCode(200);
 	}
 	
-	@ParameterizedTest
-	@MethodSource("getUnitsArgs")
-	public void testGetCompatibleUnitsHtml(Unit<?> unit) {
-		given()
-			.accept(MediaType.TEXT_HTML)
-			.get("unitCompatibility/" + UnitUtils.stringFromUnit(unit))
-			.then()
-			.statusCode(200);
-	}
-	
 	@Test
 	public void testGetCurrency(){
 		ValidatableResponse response = given()

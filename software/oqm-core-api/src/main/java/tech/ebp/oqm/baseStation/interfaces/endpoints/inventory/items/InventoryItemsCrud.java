@@ -58,9 +58,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
 	
 	@Inject
-	@Location("tags/search/item/itemSearchResults.html")
-	Template itemSearchResultsTemplate;
-	@Inject
 	ObjectMapper objectMapper;
 	@Inject
 	InvItemCsvConverter invItemCsvConverter;
@@ -184,10 +181,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 					type = SchemaType.ARRAY,
 					implementation = InventoryItem.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {
@@ -195,62 +188,13 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
 		//for actual queries
 		@BeanParam InventoryItemSearch itemSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<InventoryItem>> tuple = super.getSearchResponseBuilder(itemSearch);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", itemSearch.getAcceptHeaderVal());
-		switch (itemSearch.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<InventoryItem> output = tuple.getItem2();
-				rb = rb.entity(
-						this.itemSearchResultsTemplate
-							.data("searchResults", output)
-							.data("actionType", (
-								itemSearch.getActionTypeHeaderVal() == null || itemSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									itemSearch.getActionTypeHeaderVal()
-							))
-							.data(
-								"searchFormId",
-								(
-									itemSearch.getSearchFormIdHeaderVal() == null || itemSearch.getSearchFormIdHeaderVal().isBlank() ?
-										"" :
-										itemSearch.getSearchFormIdHeaderVal()
-								)
-							)
-							.data(
-								"inputIdPrepend",
-								(
-									itemSearch.getInputIdPrependHeaderVal() == null || itemSearch.getInputIdPrependHeaderVal().isBlank() ?
-										"" :
-										itemSearch.getInputIdPrependHeaderVal()
-								)
-							)
-							.data(
-								"otherModalId",
-								(
-									itemSearch.getOtherModalIdHeaderVal() == null || itemSearch.getOtherModalIdHeaderVal().isBlank() ?
-										"" :
-										itemSearch.getOtherModalIdHeaderVal()
-								)
-							)
-							.data("pagingCalculations", new PagingCalculations(output))
-							.data("storageService", this.getObjectService())
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(itemSearch);
 	}
 	
 	@Path("{id}")
@@ -402,11 +346,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET
@@ -431,7 +373,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject

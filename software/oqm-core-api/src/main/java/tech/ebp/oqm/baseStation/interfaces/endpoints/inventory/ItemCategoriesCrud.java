@@ -44,10 +44,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, CategoriesSearch> {
 	
 	@Inject
-	@Location("tags/search/category/searchResults.html")
-	Template itemCategoriesSearchResultsTemplate;
-	
-	@Inject
 	@Getter
 	ItemCategoryService objectService;
 	
@@ -139,62 +135,13 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
 		@BeanParam CategoriesSearch categoriesSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemCategory>> tuple = super.getSearchResponseBuilder(categoriesSearch);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", categoriesSearch.getAcceptHeaderVal());
-		switch (categoriesSearch.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<ItemCategory> output = tuple.getItem2();
-				rb = rb.entity(
-						   this.itemCategoriesSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data("actionType", (
-								   categoriesSearch.getActionTypeHeaderVal() == null || categoriesSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									   categoriesSearch.getActionTypeHeaderVal()
-							   ))
-							   .data(
-								   "searchFormId",
-								   (
-									   categoriesSearch.getSearchFormIdHeaderVal() == null || categoriesSearch.getSearchFormIdHeaderVal().isBlank() ?
-										   "" :
-										   categoriesSearch.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   categoriesSearch.getInputIdPrependHeaderVal() == null || categoriesSearch.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   categoriesSearch.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   categoriesSearch.getOtherModalIdHeaderVal() == null || categoriesSearch.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   categoriesSearch.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("pagingCalculations", new PagingCalculations(output))
-							   .data("storageService", this.getObjectService())
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(categoriesSearch);
 	}
 	
 	@Path("{id}")
@@ -339,13 +286,13 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 		description = "No items found from query given.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ItemCategoryTree tree(
 		//for actual queries
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
-		return (ItemCategoryTree) ((ItemCategoryService)this.getObjectService()).getTree(onlyInclude);
+		return (ItemCategoryTree)this.getObjectService().getTree(onlyInclude);
 	}
 	
 	
@@ -379,15 +326,13 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET
@@ -422,7 +367,6 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	
 	//</editor-fold>
 	
-	//TODO:: this
 	@GET
 	@Path("{id}/children")
 	@Operation(

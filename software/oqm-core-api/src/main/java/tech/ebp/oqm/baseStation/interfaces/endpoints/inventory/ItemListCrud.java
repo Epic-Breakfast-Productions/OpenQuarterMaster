@@ -45,10 +45,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	
 	@Inject
-	@Location("tags/search/itemList/searchResults.html")
-	Template itemListSearchResultsTemplate;
-	
-	@Inject
 	@Getter
 	ItemListService objectService;
 	
@@ -129,10 +125,6 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 					type = SchemaType.ARRAY,
 					implementation = ItemList.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {
@@ -140,62 +132,13 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
 		@BeanParam ItemListSearch itemListSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemList>> tuple = super.getSearchResponseBuilder(itemListSearch);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", itemListSearch.getAcceptHeaderVal());
-		switch (itemListSearch.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<ItemList> output = tuple.getItem2();
-				rb = rb.entity(
-						this.itemListSearchResultsTemplate
-							.data("searchResults", output)
-							.data("actionType", (
-								itemListSearch.getActionTypeHeaderVal() == null || itemListSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									itemListSearch.getActionTypeHeaderVal()
-							))
-							.data(
-								"searchFormId",
-								(
-									itemListSearch.getSearchFormIdHeaderVal() == null || itemListSearch.getSearchFormIdHeaderVal().isBlank() ?
-										"" :
-										itemListSearch.getSearchFormIdHeaderVal()
-								)
-							)
-							.data(
-								"inputIdPrepend",
-								(
-									itemListSearch.getInputIdPrependHeaderVal() == null || itemListSearch.getInputIdPrependHeaderVal().isBlank() ?
-										"" :
-										itemListSearch.getInputIdPrependHeaderVal()
-								)
-							)
-							.data(
-								"otherModalId",
-								(
-									itemListSearch.getOtherModalIdHeaderVal() == null || itemListSearch.getOtherModalIdHeaderVal().isBlank() ?
-										"" :
-										itemListSearch.getOtherModalIdHeaderVal()
-								)
-							)
-							.data("pagingCalculations", new PagingCalculations(output))
-							.data("storageService", this.getObjectService())
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(itemListSearch);
 	}
 	
 	@Path("{id}")
@@ -330,10 +273,6 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		}
 	)
@@ -347,15 +286,13 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET

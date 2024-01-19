@@ -168,13 +168,9 @@ quarkus:
     type-check-excludes:
       - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
   oidc:
-    application-type: hybrid
+    application-type: service
     token-state-manager:
       split-tokens: true
-    logout:
-      path: /logout
-      post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
-  
 
 #  messaging:
 #    outgoing:
@@ -222,7 +218,6 @@ smallrye:
         realm-name: "oqm"
 
   runningInfo:
-    depotUri: "Hello World"
   service:
     runBy:
       name: The Developers

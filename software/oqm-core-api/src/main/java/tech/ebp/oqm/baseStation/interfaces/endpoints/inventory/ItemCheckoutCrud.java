@@ -47,10 +47,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheckoutSearch> {
 	
 	@Inject
-	@Location("tags/search/itemCheckout/searchResults.html")
-	Template itemCheckoutSearchResultsTemplate;
-	
-	@Inject
 	@Getter
 	ItemCheckoutService objectService;
 	
@@ -149,63 +145,13 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
 		@BeanParam ItemCheckoutSearch itemCheckoutSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<ItemCheckout>> tuple = super.getSearchResponseBuilder(itemCheckoutSearch);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", itemCheckoutSearch.getAcceptHeaderVal());
-		switch (itemCheckoutSearch.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<ItemCheckout> output = tuple.getItem2();
-				rb = rb.entity(
-						   this.itemCheckoutSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data("actionType", (
-								   itemCheckoutSearch.getActionTypeHeaderVal() == null || itemCheckoutSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									   itemCheckoutSearch.getActionTypeHeaderVal()
-							   ))
-							   .data(
-								   "searchFormId",
-								   (
-									   itemCheckoutSearch.getSearchFormIdHeaderVal() == null || itemCheckoutSearch.getSearchFormIdHeaderVal().isBlank() ?
-										   "" :
-										   itemCheckoutSearch.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   itemCheckoutSearch.getInputIdPrependHeaderVal() == null || itemCheckoutSearch.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   itemCheckoutSearch.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   itemCheckoutSearch.getOtherModalIdHeaderVal() == null || itemCheckoutSearch.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   itemCheckoutSearch.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("showItem", itemCheckoutSearch.getShowItemCol())
-							   .data("pagingCalculations", new PagingCalculations(output))
-							   .data("storageService", this.getObjectService())
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(itemCheckoutSearch);
 	}
 	
 	@Path("{id}")
@@ -340,10 +286,6 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		}
 	)
@@ -357,15 +299,13 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET
@@ -390,7 +330,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject

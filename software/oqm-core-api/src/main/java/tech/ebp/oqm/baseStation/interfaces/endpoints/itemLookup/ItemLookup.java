@@ -40,9 +40,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 public class ItemLookup extends EndpointProvider {
 	
 	@Inject
-	JsonWebToken jwt;
-	
-	@Inject
 	ProductLookupService productLookupService;
 	
 	@GET

@@ -69,9 +69,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 	@Inject
 	ItemCategoryService itemCategoryService;
 	@Inject
-	@Location("tags/search/image/imageSearchResults.html")
-	Template imageSearchResultsTemplate;
-	@Inject
 	Validator validator;
 	
 	@Inject
@@ -128,10 +125,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 					type = SchemaType.ARRAY,
 					implementation = Image.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {
@@ -139,64 +132,12 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
 		@BeanParam ImageSearch searchObject
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<Image>> tuple = super.getSearchResponseBuilder(searchObject);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", searchObject.getAcceptHeaderVal());
-		switch (searchObject.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<Image> output = tuple.getItem2();
-				rb = rb.entity(
-						this.imageSearchResultsTemplate
-							.data("searchResults", output)
-							.data(
-								"actionType",
-								(
-									searchObject.getActionTypeHeaderVal() == null || searchObject.getAcceptHeaderVal().isBlank() ?
-										"full" :
-										searchObject.getActionTypeHeaderVal()
-								)
-							)
-							.data(
-								"searchFormId",
-								(
-									searchObject.getSearchFormIdHeaderVal() == null || searchObject.getSearchFormIdHeaderVal().isBlank() ? "" :
-										searchObject.getSearchFormIdHeaderVal()
-								)
-							)
-							.data(
-								"inputIdPrepend",
-								(
-									searchObject.getInputIdPrependHeaderVal() == null || searchObject.getInputIdPrependHeaderVal().isBlank() ?
-										"" :
-										searchObject.getInputIdPrependHeaderVal()
-								)
-							)
-							.data(
-								"otherModalId",
-								(
-									searchObject.getOtherModalIdHeaderVal() == null || searchObject.getOtherModalIdHeaderVal().isBlank() ?
-										"" :
-										searchObject.getOtherModalIdHeaderVal()
-								)
-							)
-							.data("pagingCalculations", new PagingCalculations(output))
-						//                                        .data("storageService", this.storageBlockService)
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(searchObject);
 	}
 	
 	@Path("{id}")
@@ -328,10 +269,6 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		}
 	)
@@ -345,15 +282,13 @@ public class ImageCrud extends MainObjectProvider<Image, ImageSearch> {
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET

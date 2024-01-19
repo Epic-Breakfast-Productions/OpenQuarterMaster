@@ -43,10 +43,6 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileAttachmentSearch, FileAttachmentGet, FileAttachmentUploadBody> {
 	
-	@Inject
-	@Location("tags/fileAttachment/fileAttachmentSearchResults.html")
-	Template fileAttachmentSearchResultsTemplate;
-	
 	@Getter
 	@Inject
 	FileAttachmentService fileObjectService;
@@ -115,62 +111,8 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	//	@Override
 	public Response search(
 		@BeanParam FileAttachmentSearch search
-	) throws IOException {
-		Tuple2<Response.ResponseBuilder, SearchResult<FileAttachment>> results = this.getSearchResponseBuilder(search);
-		SearchResult<FileAttachment> originalResult = results.getItem2();
-		
-		SearchResult<FileAttachmentGet> output = this.fileObjectService.searchToGet(originalResult);
-		
-		
-		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(output);
-		;
-		
-		log.debug("Accept header value: \"{}\"", search.getAcceptHeaderVal());
-		switch (search.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				rb = rb.entity(
-						this.fileAttachmentSearchResultsTemplate
-							.data("searchResults", output)
-							.data("actionType", (
-								search.getActionTypeHeaderVal() == null || search.getActionTypeHeaderVal().isBlank() ? "full" :
-									search.getActionTypeHeaderVal()
-							))
-							.data(
-								"searchFormId",
-								(
-									search.getSearchFormIdHeaderVal() == null || search.getSearchFormIdHeaderVal().isBlank() ?
-										"" :
-										search.getSearchFormIdHeaderVal()
-								)
-							)
-							.data(
-								"inputIdPrepend",
-								(
-									search.getInputIdPrependHeaderVal() == null || search.getInputIdPrependHeaderVal().isBlank() ?
-										"" :
-										search.getInputIdPrependHeaderVal()
-								)
-							)
-							.data(
-								"otherModalId",
-								(
-									search.getOtherModalIdHeaderVal() == null || search.getOtherModalIdHeaderVal().isBlank() ?
-										"" :
-										search.getOtherModalIdHeaderVal()
-								)
-							)
-							.data("pagingCalculations", new PagingCalculations(output))
-							.data("storageService", this.getFileObjectService().getFileObjectService())
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+	) {
+		return super.search(search);
 	}
 	
 	@GET

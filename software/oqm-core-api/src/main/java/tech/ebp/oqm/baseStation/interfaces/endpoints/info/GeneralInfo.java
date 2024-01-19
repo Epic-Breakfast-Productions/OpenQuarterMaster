@@ -41,17 +41,13 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @RequestScoped
 public class GeneralInfo extends EndpointProvider {
 	
-	@Inject
-	@Location("tags/inputs/units/unitOptions")
-	Template optionsTemplate;
-	
 	@ConfigProperty(name = "service.ops.currency")
 	Currency currency;
 	
 	@GET
 	@Path("currency")
 	@Operation(
-		summary = "The currency the base station is set to operate with."
+		summary = "The currency the api is set to operate with."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -59,7 +55,7 @@ public class GeneralInfo extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Currency getCurrency(@Context SecurityContext ctx) {
+	public Currency getCurrency() {
 		log.info("Getting currency of server.");
 		return this.currency;
 	}
@@ -82,7 +78,7 @@ public class GeneralInfo extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<UnitCategory, Set<Unit<?>>> getUnits(@Context SecurityContext ctx) {
+	public Map<UnitCategory, Set<Unit<?>>> getUnits() {
 		log.info("Getting valid unit list.");
 		return UnitUtils.UNIT_CATEGORY_MAP;
 	}
@@ -105,7 +101,7 @@ public class GeneralInfo extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<Unit<?>, Set<Unit<?>>> getUnitCompatibleMap(@Context SecurityContext ctx) {
+	public Map<Unit<?>, Set<Unit<?>>> getUnitCompatibleMap() {
 		log.info("Getting unit set with lists of compatible units.");
 		return UnitUtils.UNIT_COMPATIBILITY_MAP;
 	}
@@ -127,13 +123,11 @@ public class GeneralInfo extends EndpointProvider {
 		)
 	)
 	@PermitAll
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUnitCompatible(
-		@Context SecurityContext ctx,
-		@HeaderParam("accept") String acceptHeaderVal,
 		@PathParam("unit") String unitString
 	) throws JsonProcessingException {
-		log.info("Getting unit set with lists of compatible units. Accept header: {}", acceptHeaderVal);
+		log.info("Getting unit set with lists of compatible units.");
 		Unit<?> unit;
 		try {
 			unit = UnitUtils.unitFromString(unitString);
@@ -145,18 +139,8 @@ public class GeneralInfo extends EndpointProvider {
 						   .build();
 		}
 		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(unit);
+		return Response.ok(units).build();
 		
-		switch (acceptHeaderVal == null ? "" : acceptHeaderVal.strip()) {
-			case MediaType.APPLICATION_JSON:
-			case "":
-				return Response.ok(units).build();
-			case MediaType.TEXT_HTML:
-				return Response.ok(
-					optionsTemplate.data("units", units)
-				).build();
-			default:
-				return Response.notAcceptable(Variant.encodings(MediaType.APPLICATION_JSON, MediaType.TEXT_HTML).build()).build();
-		}
 	}
 	
 }

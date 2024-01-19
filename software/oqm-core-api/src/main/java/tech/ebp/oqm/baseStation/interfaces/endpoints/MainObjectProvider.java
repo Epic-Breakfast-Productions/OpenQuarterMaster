@@ -35,12 +35,6 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
-	
-	@Inject
-	@Location("tags/objView/history/searchResults.html")
-	@Getter
-	Template historyRowsTemplate;
-	
 	public abstract Class<T> getObjectClass();
 	public abstract MongoHistoriedObjectService<T, S> getObjectService();
 	
@@ -99,16 +93,9 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-	protected Tuple2<Response.ResponseBuilder, SearchResult<T>> getSearchResponseBuilder(
-		//		@BeanParam
-		S searchObject
-	) {
+	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
 		SearchResult<T> searchResult = this.getObjectService().search(searchObject, false);
-		
-		return Tuple2.of(
-			this.getSearchResultResponseBuilder(searchResult),
-			searchResult
-		);
+		return this.getSearchResultResponseBuilder(searchResult);
 	}
 	
 	//	@GET
@@ -143,7 +130,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		//		@BeanParam
 		S searchObject
 	) {
-		return this.getSearchResponseBuilder(searchObject).getItem1().build();
+		return this.getSearchResponseBuilder(searchObject).build();
 	}
 	
 	//	@Path("{id}")
@@ -315,45 +302,22 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "No history found for object with that id.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
 		//@BeanParam
-		HistorySearch searchObject,
-		//		@HeaderParam("accept")
-		String acceptHeaderVal,
-		//		@HeaderParam("searchFormId")
-		String searchFormId
+		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
-		
 		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(searchObject, false);
-		
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
 		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
-		log.debug("Accept header value: \"{}\"", acceptHeaderVal);
-		switch (acceptHeaderVal) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				rb = rb.entity(
-						this.getHistoryRowsTemplate()
-							.data("searchFormId", searchFormId)
-							.data("searchResults", searchResult)
-							.data("interactingEntityService", this.getInteractingEntityService())
-							.data("pagingCalculations", new PagingCalculations(searchResult))
-					)
-						 .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
 		return rb.build();
 	}
 	

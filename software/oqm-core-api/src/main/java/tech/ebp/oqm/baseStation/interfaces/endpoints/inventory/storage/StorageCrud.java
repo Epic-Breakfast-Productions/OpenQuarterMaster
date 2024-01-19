@@ -48,10 +48,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Getter
 	StorageBlockService objectService;
 	
-	@Inject
-	@Location("tags/search/storage/storageSearchResults.html")
-	Template storageSearchResultsTemplate;
-	
 	@Getter
 	Class<StorageBlock> objectClass =  StorageBlock.class;
 	
@@ -146,56 +142,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	public Response search(
 		@BeanParam StorageBlockSearch blockSearch
 	) {
-		Tuple2<Response.ResponseBuilder, SearchResult<StorageBlock>> tuple = super.getSearchResponseBuilder(blockSearch);
-		Response.ResponseBuilder rb = tuple.getItem1();
-		
-		log.debug("Accept header value: \"{}\"", blockSearch.getAcceptHeaderVal());
-		switch (blockSearch.getAcceptHeaderVal()) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				SearchResult<StorageBlock> output = tuple.getItem2();
-				rb = rb.entity(
-						   this.storageSearchResultsTemplate
-							   .data("searchResults", output)
-							   .data("actionType", (
-								   blockSearch.getActionTypeHeaderVal() == null || blockSearch.getActionTypeHeaderVal().isBlank() ? "full" :
-									   blockSearch.getActionTypeHeaderVal()
-							   ))
-							   .data(
-								   "searchFormId",
-								   (
-									   blockSearch.getSearchFormIdHeaderVal() == null || blockSearch.getSearchFormIdHeaderVal().isBlank() ?
-										   "" :
-										   blockSearch.getSearchFormIdHeaderVal()
-								   )
-							   )
-							   .data(
-								   "inputIdPrepend",
-								   (
-									   blockSearch.getInputIdPrependHeaderVal() == null || blockSearch.getInputIdPrependHeaderVal().isBlank() ?
-										   "" :
-										   blockSearch.getInputIdPrependHeaderVal()
-								   )
-							   )
-							   .data(
-								   "otherModalId",
-								   (
-									   blockSearch.getOtherModalIdHeaderVal() == null || blockSearch.getOtherModalIdHeaderVal().isBlank() ?
-										   "" :
-										   blockSearch.getOtherModalIdHeaderVal()
-								   )
-							   )
-							   .data("pagingCalculations", new PagingCalculations(output))
-							   .data("storageService", this.getObjectService())
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		
-		return rb.build();
+		return super.search(blockSearch);
 	}
 	
 	@Path("{id}")
@@ -362,10 +309,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		}
 	)
@@ -379,15 +322,13 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET
@@ -406,13 +347,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 					implementation = ObjectHistoryEvent.class
 				)
 			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject

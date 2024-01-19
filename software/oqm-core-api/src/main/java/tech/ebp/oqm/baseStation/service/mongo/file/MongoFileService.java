@@ -151,6 +151,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public abstract G fileObjToGet(T obj);
 	
+	
 	public SearchResult<G> searchToGet(SearchResult<T> results){
 		SearchResult<G> output = new SearchResult<>(
 			results.getResults()

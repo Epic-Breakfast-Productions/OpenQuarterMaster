@@ -22,34 +22,11 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
-@Slf4j
-@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity")
-@Tags({@Tag(name = "Interacting Entities", description = "Endpoints for dealing with interacting entities.")})
-@RequestScoped
-public class InteractingEntityEndpoints extends EndpointProvider {
-	
-	@Inject
-	@Location("tags/interactingEntityRef")
-	Template interactingRefTemplate;
-	
-	@POST
-	@Path("reference")
-	@Operation(
-		summary = "The html for a given interacting entity reference."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Got the currency."
-	)
-	@PermitAll
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_HTML)
-	public TemplateInstance getInteractingEntityReferenceTemplate(
-		@Valid InteractingEntityReference ref
-	) {
-		//TODO:: will need to change
-		return interactingRefTemplate.data("entityRef", ref);
-	}
-	
-	//TODO:: add search, get, history endpoints
-}
+//@Slf4j
+//@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity")
+//@Tags({@Tag(name = "Interacting Entities", description = "Endpoints for dealing with interacting entities.")})
+//@RequestScoped
+//public class InteractingEntityEndpoints extends EndpointProvider {
+//
+//	//TODO:: add search, get, history endpoints
+//}
