@@ -1,0 +1,33 @@
+{@tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo providerInfo}
+{!
+Ingests:
+- id
+- carouselCss
+!}
+<div class="col-3 card p-0 m-1">
+    <div class="card-header">
+        <a href="{providerInfo.getHomepage()}" target="_blank">
+            {providerInfo.getDisplayName()}
+        </a>
+    </div>
+    <ul class="list-group list-group-flush">
+        {#if !providerInfo.getCost().isBlank()}
+            <li class="list-group-item">
+                {#icons/icon icon='cash-stack'}{/icons/icon} {providerInfo.getCost()}
+            </li>
+        {/if}
+        <li class="list-group-item">
+            {#icons/icon icon='globe'}{/icons/icon} {providerInfo.isAcceptsContributions() ? 'Accepts contributions' : 'No community input'}
+        </li>
+        <li class="list-group-item">
+            {#if providerInfo.isEnabled()}
+                {#icons/icon icon='check-circle'}{/icons/icon} Enabled
+            {#else}
+                {#icons/icon icon='x-circle'}{/icons/icon} Disabled
+            {/if}
+        </li>
+        {#if !providerInfo.getDescription().isBlank()}
+            <li class="list-group-item">{providerInfo.getDescription()}</li>
+        {/if}
+    </ul>
+</div>

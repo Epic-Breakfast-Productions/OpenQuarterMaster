@@ -1,0 +1,33 @@
+[
+	{
+		"id": 7561,
+		"user_id": 0,
+		"gtin14": "01215908",
+		"brand_name": "Aquafina",
+		"name": "Bottled Water",
+		"size": "20Fl oz",
+		"ingredients": null,
+		"serving_size": null,
+		"serving_per_container": null,
+		"calories": null,
+		"fat_calories": null,
+		"fat": null,
+		"saturated_fat": null,
+		"trans_fat": null,
+		"polyunsaturated_fat": null,
+		"monounsaturated_fat": null,
+		"cholesterol": null,
+		"sodium": null,
+		"potassium": null,
+		"carbohydrate": null,
+		"fiber": null,
+		"sugar": null,
+		"protein": null,
+		"author": null,
+		"publisher": null,
+		"pages": null,
+		"alcohol": null,
+		"created_at": "2022-08-10T15:41:47.000000Z",
+		"updated_at": null
+	}
+]

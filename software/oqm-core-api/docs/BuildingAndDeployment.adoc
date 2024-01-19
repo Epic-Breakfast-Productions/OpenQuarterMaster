@@ -1,0 +1,386 @@
+= Building and Deployment
+:toc:
+:toclevels: 5
+:sectnums:
+:sectnumlevels:5
+:sectanchors:
+
+link:README.md[Back]
+
+== Building
+
+== Deployment
+
+=== Configuration
+
+This is a list of relevant config values for configuring a running instance of Open QuarterMaster Base Station. These variables can be passed via environment variables.
+
+For more information: https://quarkus.io/guides/config-reference
+
+When deployed using link:../../Station-Captain[Station Captain], Base Station's config file is: `/etc/oqm/serviceConfig/core-base+station/config.list`
+
+==== Service Info
+
+===== General
+
+
+|===
+| Config | Default | Examples | Explain
+
+| quarkus.application.name
+| ${service.nameShort} - V${service.apiVersion} - ${quarkus.uuid}
+|
+| The more programmatic name given to other services for metrics, etc. Shouldn't need to touch this.
+
+|===
+
+
+
+
+
+
+
+===== Self-url
+
+These configs are used to configure how the service should build links to reference itself.
+
+|===
+| Config | Default | Examples | Explain
+
+| runningInfo.protocol
+| http
+| http
+
+https
+| The protocol of the url the service should use to reference itself
+
+| runningInfo.hostname
+| localhost
+|
+| The hostname of the url the service should use to reference itself
+
+| runningInfo.port
+| ${quarkus.http.port}
+| 8080
+| The port of the url the service should use to reference itself
+
+|===
+
+===== "Run By" information
+
+These configs are used to tell your users who runs this instance of the app. Use this to slightly customize your install, for instance telling that it is the OQM for your store.
+
+All are optional, and mainly used for display on the web ui.
+
+|===
+| Config | Default | Examples | Explain
+
+| service.runBy.name
+|
+| Joe's Workshop
+| The name of the group that runs the instance of the app. Used in the context of "Run by ____"
+
+| service.runBy.email
+|
+| joe@joesworkshop.com
+| The email to use as a point of contact
+
+| service.runBy.phone
+|
+| 111-222-3333
+| The phone number to use as a point of contact
+
+| service.runBy.website
+|
+| http://joesworkshop.com
+| The website url to use as a point of contact
+
+| service.runBy.logo
+|
+| /etc/oqm/serviceConfig/core-base+station/files/logo.png
+| A logo to show representing your group. When deployed using link:../../Station-Captain[Station Captain], location on host system to put files to sync to the server is: `/etc/oqm/serviceConfig/core-base+station/files/`
+
+| service.runBy.banner
+| ${service.runBy.logo}
+| /some/dir/banner.png
+| A banner to show representing your group on the login screen. Defaults to the logo.
+
+| service.runBy.motd
+| `Your privacy is important to the original project. It only creates minor cookies, and that is for the login.
+The project also only collects what you give it, and it is up to the people running the server to ensure
+it is handled well. Please contact the folks running the server for more information.`
+|
+| A message that is shown to your users at the bottom of the screen.
+
+|===
+
+==== Database & Other External Tooling
+
+For more configuration: https://quarkus.io/guides/opentracing#configuration-reference
+
+|===
+| Config | Default | Examples | Explain
+
+| quarkus.mongodb.connection-string
+| mongodb://localhost:27017
+|
+| The Connection string to connect to a MongoDb instance
+
+| quarkus.jaeger.endpoint
+|
+| http://localhost:8091/api/traces
+| The url of the Jaeger connector endpoint to send spans to.
+
+|===
+
+==== Auth
+
+All values for `service.externalAuth.*` are only used when doing external auth.
+
+More information on how authorization works can be found link:UsersAndAuth.md[here]
+
+|===
+| Config | Default | Examples | Explain
+
+| service.authMode
+| SELF
+| SELF
+
+EXTERNAL
+| How the service will handle auth. "SELF" for the service itself, "EXTERNAL" for pointing to Keycloak (or similar)
+
+| mp.jwt.verify.publickey.location
+| security/packagedPublicKey.pem
+|
+| The location of the public key for use in verifying JWT's. Default key is packaged in with the app (do NOT use for production). For External auth, the public key of the private one from Keycloak that was used to sign the JWT.
+
+| mp.jwt.verify.privatekey.location
+| security/packagedPrivateKeyPkcs8.pem
+|
+| The private key used to sign JWT's. Only used when service.authMode="SELF"
+
+| mp.jwt.verify.issuer
+| ${service.runBy.name} - ${service.nameShort}
+| ${service.externalAuth.realmBase}
+| The issuer of JWT's. For SELF auth, the value given in a JWT. For external auth, must match what the external JWT provider gives (For keycloak it is the value held at `${service.externalAuth.realmBase}`)
+
+| service.externalAuth.name
+|
+| Workshop Keycloak
+| The name to give the Authentication server. Used for display purposes only on login screen.
+
+| service.externalAuth.url
+|
+| http://localhost:49185
+| The URL of the external auth provider (Keycloak)
+
+| service.externalAuth.realm
+|
+| apps
+| The realm to use with the external auth provider (Keycloak)
+
+| service.externalAuth.clientId
+|
+| quartermaster
+| The client id to use with the external auth provider (Keycloak)
+
+| service.externalAuth.clientSecret
+|
+| bfa4b025-e7d4-4fe0-9eb5-d9a5be644da4
+| The client secret to use with the external auth provider (Keycloak)
+
+|===
+
+
+==== Product Search Providers
+
+All values for `productLookup.providers.*` are dedicated to sources of product information to help users add items to the system. These providers are queried to get item information at add time.
+
+The configuration relevant to usage of the service for each of the providers is listed below.
+
+===== BarcodeLookup
+
+https://www.barcodelookup.com/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.barcodelookup-com.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.barcodelookup-com.apiKey
+|
+|
+| Key of account to use this provider. Must be set to become enabled.
+
+|===
+
+===== Datakick
+
+https://gtinsearch.org/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.barcodelookup-com.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+|===
+
+===== upcitemdb.com
+
+https://www.upcitemdb.com/
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.upcitemdb.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.upcitemdb.apiKey
+|
+|
+| The API key of the account to access this provider.
+|===
+
+===== Rebrickable
+
+https://rebrickable.com
+
+|===
+| Config | Default | Examples | Explain
+
+| productLookup.providers.rebrickable.enabled
+| false
+| true
+
+false
+| Enables or disables this provider
+
+| productLookup.providers.rebrickable.apiKey
+|
+|
+| The API key of the account to access this provider.
+|===
+
+
+==== Inventory Items
+
+Settings related to InventoryItem handling
+
+|===
+| Config | Default | Examples | Explain
+
+| service.item.expiryCheck.cron
+| 0 0 * ? * *
+
+(every hour)
+|
+| How often to scan the database for expired stored items.
+
+https://www.freeformatter.com/cron-expression-generator-quartz.html[Cron Reference]
+
+|===
+
+==== Emails
+
+For information on setting up your specific email settings, see https://quarkus.io/guides/mailer-reference#configuring-the-smtp-credentials
+
+Note: As a service admin, goto the "Service Admin" page to send a test email to ensure the settings you set are correct.
+
+|===
+| Config | Default | Examples | Explain
+
+| runningInfo.fromEmail
+| no-reply@${runningInfo.baseUrl}
+| your-email@gmail.com
+| The email to use as the sender for emails. `quarkus.mailer.from` is set to this value.
+|===
+
+==== Messaging
+
+For information on setting up your specific messaging settings, see https://quarkus.io/guides/amqp-reference#configuring-the-amqp-broker-access
+
+https://smallrye.io/smallrye-reactive-messaging/3.22.1/
+
+See the subsections for further configuration of specific connectors.
+
+Currently, just AMQP/ Artemis is supported. Please make a Feature Request ticket to have us also include one of the following:
+
+ - Apache Kafka
+ - RabbitMQ
+ - Apache Camel
+ - JMS
+ - MQTT
+
+Connectors:
+
+|===
+| Config | Default | Examples | Explain
+
+| messaging.connector
+|
+| `smallrye-amqp` (Artemis)
+| The connector to use for a messaging broker. Currently just support the
+|===
+
+===== Routes Produced To
+
+These configs must specifically be set when deployed for the messages to reach the message broker.
+
+|===
+| Route | Object | baseStation Config to set | Explain
+
+| items.add
+| ItemAddHistoryEvent
+| `messaging.outgoing."items.add".connector=${messaging.connector}`
+| The route where item add events go.
+|===
+
+===== Artemis AMQP Configuration
+
+|===
+| Config | Default | Examples | Explain
+
+| amqp-host
+|
+| `localhost`
+| The host of the Artemis instance to connect to
+
+| amqp-port
+| `5672`
+|
+| The port of the Artemis instance to connect to
+
+| amqp-username
+|
+| `username`
+| The username used to connect to the Artemis instance.
+
+| amqp-password
+|
+| `password`
+| The password used to connect to the Artemis instance.
+|===
+
+==== Other
+
+|===
+| Config | Default | Examples | Explain
+
+| service.tempDir
+| /tmp/oqm/baseStation
+|
+| The place the service uses for temporary files
+|===

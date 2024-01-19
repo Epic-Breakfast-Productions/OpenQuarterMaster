@@ -1,0 +1,59 @@
+{#if storageBlockList.size() > 0}
+	<div class="section">
+	<h3 class="tableTitle">Storage blocks ({storageBlockList.size()})</h3>
+	<table class="table table-striped table-bordered table-sm">
+	<thead>
+	<tr>
+		{#if options.includeNumCol}
+			<th>#</th>
+		{/if}
+		{#if options.includeImageCol}
+			<th class="imageTableCellHeader">Image</th>
+		{/if}
+		<th>Storage Block</th>
+		<th>Location</th>
+		<th>Description</th>
+	</tr>
+	</thead>
+	<tbody>
+	{#for curBlock in storageBlockList}
+		<tr>
+		{#if options.includeNumCol}
+			<td class="text-center">
+			{curBlock_count}
+			</td>
+		{/if}
+		{#if options.includeImageCol}
+			{#if ! curBlock.getImageIds().isEmpty()}
+				<td class="imageTableCell">
+				{#let curImage = imageService.get(curBlock.getImageIds().get(0))}
+					<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for storage block {curBlock.getLabelText()}"
+					class="imageTableCellImage">
+				{/let}
+				</td>
+			{#else}
+				<td></td>
+			{/if}
+		{/if}
+		<td>{curBlock.getLabelText()}</td>
+		<td>{curBlock.getLocation()}</td>
+		<td>{curBlock.getDescription()}</td>
+		</tr>
+	{/for}
+	</tbody>
+	<tfoot>
+	<tr>
+	{#if options.includeNumCol}
+		<th>#</th>
+	{/if}
+	{#if options.includeImageCol}
+		<th class="imageTableCellHeader">Image</th>
+	{/if}
+	<th>Storage Block</th>
+	<th>Location</th>
+	<th>Description</th>
+</tr>
+	</tfoot>
+	</table>
+	</div>
+{/if}
