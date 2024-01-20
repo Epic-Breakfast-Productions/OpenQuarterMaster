@@ -16,6 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+@SuppressWarnings("LombokGetterMayBeUsed")
 @Blocking
 @Slf4j
 @Path("/")

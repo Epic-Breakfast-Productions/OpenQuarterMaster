@@ -42,3 +42,20 @@ If you want to learn more about building native executables, please consult http
 `docker run --name jaeger -p 8090:16686 -p 8091:14268 jaegertracing/all-in-one:latest`
 
 `docker start oqm_mongo jaeger`
+
+## Creating clients from openapi spec
+
+ 1. Run server in devmode
+ 2. Download openApi spec to `generatedClients/`: http://localhost:8080/q/openapi
+ 3. Ensure file downloaded has `.yaml` extension
+ 4. Run the following command in this project's root:
+    - Java: 
+        ```shell
+        docker run --rm -v $PWD/generatedClients:/local openapitools/openapi-generator-cli generate -i /local/openapi.yaml \
+            -g java \
+            -o /local/out/java
+        ```
+
+### Sources
+
+ - https://openapi-generator.tech/docs/generators
