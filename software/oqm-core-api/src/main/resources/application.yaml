@@ -2,8 +2,8 @@
 service:
   version: ${quarkus.application.version}
   apiVersion: 1.0.0
-  nameShort: OQMbase
-  nameFull: Open Quarter Master Base Station
+  nameShort: OQMapi
+  nameFull: Open Quarter Master Core API
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
   # TODO:: move data that doesn't need to be here
   auth:
