@@ -12,13 +12,6 @@ public class ExternalServiceSearch extends SearchKeyAttObject<ExternalService> {
 	@QueryParam("name") String serviceName;
 	//TODO:: object specific fields, add to bson filter list
 	
-	
-	@HeaderParam("accept") String acceptHeaderVal;
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 	@Override
 	public int getDefaultPageSize() {
 		return 25;

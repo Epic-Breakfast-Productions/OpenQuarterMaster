@@ -17,13 +17,6 @@ public class ImageSearch extends SearchKeyAttObject<Image> {
 	@QueryParam("source") String imageSource;
 	//TODO:: object specific fields, add to bson filter list
 	
-	
-	@HeaderParam("accept") String acceptHeaderVal;
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 	@Override
 	public int getDefaultPageSize() {
 		return 36;

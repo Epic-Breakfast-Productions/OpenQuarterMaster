@@ -12,13 +12,6 @@ public class CategoriesSearch extends SearchObject<ItemCategory> {
 	@QueryParam("name") String unitName;
 	//TODO:: add to bson filter list
 	
-	
-	@HeaderParam("accept") String acceptHeaderVal;
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 	@Override
 	public int getDefaultPageSize() {
 		return 36;

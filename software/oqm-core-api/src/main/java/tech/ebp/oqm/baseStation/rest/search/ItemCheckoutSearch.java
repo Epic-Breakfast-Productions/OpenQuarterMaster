@@ -20,14 +20,6 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("entity") String checkedOutBy;
 	@QueryParam("stillCheckedOut") Boolean stillCheckedOut = true;
 	
-	@HeaderParam("accept") String acceptHeaderVal;
-	//options for html rendering
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	@HeaderParam("showItemCol") Boolean showItemCol = true;
-	
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();

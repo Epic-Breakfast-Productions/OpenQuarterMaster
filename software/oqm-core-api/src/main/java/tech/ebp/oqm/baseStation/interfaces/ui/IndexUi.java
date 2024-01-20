@@ -3,7 +3,6 @@ package tech.ebp.oqm.baseStation.interfaces.ui;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,7 +32,6 @@ public class IndexUi {
 	){
 		this.indexLines = indexTemplate.render();
 	}
-	
 	
 	@GET
 	@PermitAll

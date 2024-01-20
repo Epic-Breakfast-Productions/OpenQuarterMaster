@@ -35,13 +35,6 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	@QueryParam("capacity") List<Integer> capacities;//TODO
 	@QueryParam("unit") List<String> units;//TODO
 	
-	@HeaderParam("accept") String acceptHeaderVal;
-	//options for html rendering
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();

@@ -23,15 +23,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("itemBarcode") String itemBarcode;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	
-	
 	//TODO:: object specific fields, add to bson filter list
-	
-	@HeaderParam("accept") String acceptHeaderVal;
-	//options for html rendering
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
 	
 	@Override
 	public List<Bson> getSearchFilters() {

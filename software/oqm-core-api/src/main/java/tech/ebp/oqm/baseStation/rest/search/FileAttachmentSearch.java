@@ -11,10 +11,4 @@ public class FileAttachmentSearch extends SearchObject<FileAttachment> {
 	//TODO:: add to bson filter list
 	
 	
-	@HeaderParam("accept") String acceptHeaderVal;
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 }

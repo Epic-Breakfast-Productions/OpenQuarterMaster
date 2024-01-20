@@ -16,13 +16,6 @@ public class ItemListSearch extends SearchKeyAttObject<ItemList> {
 	@QueryParam("name") String name;
 	//TODO:: object specific fields, add to bson filter list
 	
-	@HeaderParam("accept") String acceptHeaderVal;
-	//options for html rendering
-	@HeaderParam("actionType") String actionTypeHeaderVal;
-	@HeaderParam("searchFormId") String searchFormIdHeaderVal;
-	@HeaderParam("inputIdPrepend") String inputIdPrependHeaderVal;
-	@HeaderParam("otherModalId") String otherModalIdHeaderVal;
-	
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
