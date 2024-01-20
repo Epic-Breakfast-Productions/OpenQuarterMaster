@@ -1,6 +1,5 @@
 package tech.ebp.oqm.baseStation.interfaces.ui;
 
-
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -11,19 +10,23 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 @Blocking
 @Slf4j
 @Path("/")
-@Tags({@Tag(name = "UI")})
-@ApplicationScoped
+@Tags({@Tag(name = "UI", description = "UI endpoints")})
+@PermitAll
 @Produces(MediaType.TEXT_HTML)
+@ApplicationScoped
 public class IndexUi {
 	
-	String indexLines = "";
+	@Getter
+	String indexLines;
 	
 	@Inject
 	IndexUi(
@@ -34,9 +37,16 @@ public class IndexUi {
 	}
 	
 	@GET
-	@PermitAll
-	@Produces(MediaType.TEXT_HTML)
+	@Operation(summary = "Simple index content to lead user to more resources. Same as /index.html.")
+	public String getRoot() {
+		return this.getIndexLines();
+	}
+	
+	//Probably overthinking this
+	@GET
+	@Operation(summary = "Simple index content to lead user to more resources. Same as / .")
+	@Path("index.html")
 	public String getIndex() {
-		return this.indexLines;
+		return this.getIndexLines();
 	}
 }

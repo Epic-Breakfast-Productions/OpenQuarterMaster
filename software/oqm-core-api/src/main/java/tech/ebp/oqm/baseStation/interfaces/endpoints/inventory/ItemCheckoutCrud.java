@@ -134,10 +134,6 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 					type = SchemaType.ARRAY,
 					implementation = ItemCheckout.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {

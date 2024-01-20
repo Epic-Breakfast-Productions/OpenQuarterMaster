@@ -124,10 +124,6 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 					type = SchemaType.ARRAY,
 					implementation = ItemCategory.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {
@@ -309,10 +305,6 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		}
 	)
@@ -357,7 +349,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject

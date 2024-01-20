@@ -125,10 +125,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 					type = SchemaType.ARRAY,
 					implementation = StorageBlock.class
 				)
-			),
-			@Content(
-				mediaType = "text/html",
-				schema = @Schema(type = SchemaType.STRING)
 			)
 		},
 		headers = {
@@ -136,7 +132,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(

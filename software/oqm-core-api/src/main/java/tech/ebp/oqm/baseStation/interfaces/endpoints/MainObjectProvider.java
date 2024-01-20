@@ -112,10 +112,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//					type = SchemaType.ARRAY,
 	//					implementation = MainObject.class
 	//				)
-	//			),
-	//			@Content(
-	//				mediaType = "text/html",
-	//				schema = @Schema(type = SchemaType.STRING)
 	//			)
 	//		},
 	//		headers = {
@@ -123,7 +119,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 	//		}
 	//	)
-	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public Response search(
@@ -285,10 +281,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//			@Content(
 	//				mediaType = "application/json",
 	//				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-	//			),
-	//			@Content(
-	//				mediaType = "text/html",
-	//				schema = @Schema(type = SchemaType.STRING)
 	//			)
 	//		}
 	//	)
@@ -343,7 +335,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 	//		}
 	//	)
-	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(

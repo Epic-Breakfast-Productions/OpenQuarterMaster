@@ -35,9 +35,6 @@ import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 @NoArgsConstructor
 public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, F extends FileUploadBody> extends ObjectProvider {
 	
-	@Getter
-	private Template historyRowsTemplate;
-	
 	public abstract MongoHistoriedFileService<T, S, G> getFileObjectService();
 	
 	@WithSpan
@@ -103,10 +100,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //			@Content(
 //				mediaType = "application/json",
 //				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-//			),
-//			@Content(
-//				mediaType = "text/html",
-//				schema = @Schema(type = SchemaType.STRING)
 //			)
 //		}
 //	)
@@ -120,7 +113,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //		description = "No history found for object with that id.",
 //		content = @Content(mediaType = "text/plain")
 //	)
-//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+//	@Produces(MediaType.APPLICATION_JSON)
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
@@ -134,29 +127,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		searchObject.setObjectId(new ObjectId(id));
 		
 		SearchResult<ObjectHistoryEvent> searchResult = this.getFileObjectService().getFileObjectService().searchHistory(searchObject, false);
-		
-		
-		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
-		
-		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
-		log.debug("Accept header value: \"{}\"", acceptHeaderVal);
-		switch (acceptHeaderVal) {
-			case MediaType.TEXT_HTML:
-				log.debug("Requestor wanted html.");
-				rb = rb.entity(
-						   this.getHistoryRowsTemplate()
-							   .data("searchFormId", searchFormId)
-							   .data("searchResults", searchResult)
-							   .data("interactingEntityService", this.getInteractingEntityService())
-							   .data("pagingCalculations", new PagingCalculations(searchResult))
-					   )
-					   .type(MediaType.TEXT_HTML_TYPE);
-				break;
-			case MediaType.APPLICATION_JSON:
-			default:
-				log.debug("Requestor wanted json, or any other form");
-		}
-		return rb.build();
+		return this.getSearchResultResponseBuilder(searchResult).build();
 	}
 	
 	//	@GET
@@ -181,7 +152,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 	//		}
 	//	)
-	//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
