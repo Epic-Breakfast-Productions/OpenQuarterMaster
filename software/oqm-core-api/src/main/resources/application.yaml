@@ -102,9 +102,6 @@ quarkus:
     lego-rebrickable:
       url: ${productLookup.providers.rebrickable.url}
       scope: jakarta.inject.Singleton
-  native:
-    resources:
-      includes: security/*
   log:
     level: DEBUG
     console:
@@ -149,10 +146,6 @@ quarkus:
       max-body-size: 500M
     auth:
       proactive: false
-      permission:
-        logout:
-          paths: ${quarkus.oidc.logout.path}
-          policy: authenticated
     access-log:
       enabled: true
     port: 80
@@ -164,9 +157,6 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
-  qute:
-    type-check-excludes:
-      - "tech.ebp.oqm.baseStation.model.object.storage.checkout.checkoutFor.CheckoutFor.*"
   oidc:
     application-type: service
     token-state-manager:
@@ -225,5 +215,3 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-
-  
