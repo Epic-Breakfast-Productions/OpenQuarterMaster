@@ -1,19 +1,22 @@
 {
-    "name": "ebprod/oqm-core-base-station",
-    "description": "OQM Base Station is the default UI for OQM",
-    "type": "project",
-    "license": "GPL",
-    "version": "1.0.0",
-    "autoload": {
-        "psr-4": {
-            "Ebprod\\OqmCoreDepot\\": "res/script/"
-        }
-    },
-    "authors": [
-        {
-            "name": "GregJohnStewart",
-            "email": "greg@epic-breakfast-productions.tech"
-        }
-    ],
-    "require": {}
+	"name": "ebprod/oqm-core-base-station",
+	"description": "OQM Base Station is the default UI for OQM",
+	"type": "project",
+	"license": "GPL",
+	"version": "1.0.0",
+	"autoload": {
+		"psr-4": {
+			"Ebprod\\OqmCoreDepot\\": "res/script/"
+		}
+	},
+	"authors": [
+		{
+			"name": "GregJohnStewart",
+			"email": "greg@epic-breakfast-productions.tech"
+		}
+	],
+	"require": {},
+	"require-dev": {
+		"phpunit/phpunit": "^10"
+	}
 }
