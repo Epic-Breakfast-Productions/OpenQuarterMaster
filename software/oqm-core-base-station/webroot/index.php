@@ -32,7 +32,7 @@ use Ebprod\OqmCoreDepot\UiEntry;
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Depot</span><br/>
 			Version
-			<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank"><?php echo $depotVersion; ?></a>, &copy; 2024
+			<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">v</a>, &copy; 2024
 			<a href="https://epic-breakfast-productions.tech/" target="_blank">EBP
 				<img src="/res/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
 			Released under the
