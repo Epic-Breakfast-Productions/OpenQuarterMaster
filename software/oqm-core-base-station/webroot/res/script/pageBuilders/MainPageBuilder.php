@@ -111,7 +111,7 @@ class MainPageBuilder {
 	public static function getPageStart(
 		string $pageStyle = ""
 	):string {
-		$title = "placeholder";
+		$page = Page::getPage();
 		$styleSheets = "";
 		return '
 <!doctype html>
@@ -122,7 +122,7 @@ class MainPageBuilder {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link rel="shortcut icon" href="/favicon.ico"/>
-	<title>'.$title.' - OQM Base Station</title>
+	<title>'.$page->getTitle().' - OQM Base Station</title>
 
 	<!-- CSS -->
 	<link href="/res/lib/bootstrap/5.3.2/yeti-bootswatch.min.css" rel="stylesheet">
@@ -141,20 +141,27 @@ class MainPageBuilder {
 <span id="pageInfo" data-page-initted="false"></span>
 '.self::getNav().'
 <div id="mainContainer" class="container flex-grow-1">
-	{#if showTitle}
-		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon}{title}</h1>
-		{#insert additionalTitleContent}{/}
-			<hr/>
-	{/if}
+	<h1>
+		'.IconBuilder::build($page->getIcon(), trailingSpace: true).$page->getTitle().'
+	</h1>
+	<hr />
 	<div id="messageDiv">
 	</div>
 
-	<main class="" role="main">
+	<main class="" role="main" id="mainContent">
 ';
 	}
 	
 	public static function getPageEnd(
+		array $modals = [],
+		string $pageScript = "",
+		array $pageScriptFiles = []
 	):string {
+		$scriptFiles = "";
+		foreach ($pageScriptFiles as $pageScriptFile) {
+			$scriptFiles .= '<script src="'.$pageScriptFile.'"></script>\n';
+		}
+		
 		return '
 	</main>
 </div>
@@ -163,7 +170,7 @@ class MainPageBuilder {
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:[\'service.gitLink\']}" target="_blank">{config:[\'service.version\']}</a>, &copy; {generateDatetime.getYear()} <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
+			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">'.Context::instance()->getBsVersion().'</a>, &copy; '.date("Y").' <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/res/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
@@ -173,7 +180,7 @@ class MainPageBuilder {
 						data-bs-toggle="dropdown"
 						data-bs-display="static">
 					<span class="theme-icon-active">
-						{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+						'.IconBuilder::build(Icon::$themeAuto).'
 							</span>
 							<span id="bd-theme-text">
 							Toggle theme
@@ -183,7 +190,7 @@ class MainPageBuilder {
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
 							<span class="theme-icon">
-								{#icons/themeLight addSpace=true}{/icons/themeLight}
+								'.IconBuilder::build(Icon::$themeLight).'
 									</span>
 								Light
 						</button>
@@ -191,7 +198,7 @@ class MainPageBuilder {
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
 							<span class="theme-icon">
-								{#icons/themeDark addSpace=true}{/icons/themeDark}
+								'.IconBuilder::build(Icon::$themeDark).'
 									</span>
 								Dark
 						</button>
@@ -199,7 +206,7 @@ class MainPageBuilder {
 					<li>
 						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
 							<span class="theme-icon">
-								{#icons/themeAuto addSpace=true}{/icons/themeAuto}
+								'.IconBuilder::build(Icon::$themeAuto).'
 									</span>
 								Auto
 						</button>
@@ -207,15 +214,15 @@ class MainPageBuilder {
 					<li style=" height: 5px;">
 						<button type="button" class="dropdown-item d-flex align-items-center" style="font-size: 0.15em; height: 5px;" onclick="if(typeof RealDarkMode !== \'undefined\'){ RealDarkMode.realDarkMode();}else{ script=document.createElement(\'script\');script.src = \'/res/js/realDarkMode.js\';document.head.appendChild(script);}">
 							<span class="theme-icon">
-								{#icons/themeDark addSpace=true}{/icons/themeDark}
+								'.IconBuilder::build(Icon::$themeDark).'
 									</span>
 								Really Dark
 								</button>
 					</li>
 				</ul>
 			</div>
-			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />
-									<small class="fw-lighter fst-italic text-muted">
+			<a href="/help">'.IconBuilder::build(Icon::$help).' Help & User Guide</a><br />
+			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
 					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
 							data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
@@ -259,47 +266,32 @@ class MainPageBuilder {
 	</div>
 </footer>
 
-
 <!-- Modals -->
-{#insert modals}{/}
+'.implode("\n", $modals).'
 
-	<!-- scripts -->
-<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
-<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
-<script src="/lib/spin.js/spin.umd.js"></script>
-<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
-<script src="/res/js/spinnerHelpers.js"></script>
-<script src="/res/js/getParamUtils.js"></script>
-<script src="/res/js/pageMessages.js"></script>
-<script src="/res/js/dselectHelpers.js"></script>
+<!-- scripts -->
+<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
+<script src="/res/lib/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="/res/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="/res/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script src="/res/lib/spin.js/spin.umd.js"></script>
+<script src="/res/lib/dselect/1.0.4/dist/js/dselect.js"></script>
+<script src="/res/js/otherUtils/spinnerHelpers.js"></script>
+<script src="/res/js/page/getParamUtils.js"></script>
+<script src="/res/js/page/pageMessages.js"></script>
+<script src="/res/js/inputs/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
-<script src="/res/js/timeHelpers.js"></script>
+<script src="/res/js/otherUtils/timeHelpers.js"></script>
+<script src="/res/js/icons.js.php"></script>
 <script src="/res/js/main.js"></script>
-<script src="/res/js/icons.js"></script>
-<script src="/res/js/links.js"></script>
-<script>
-	var popoverTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="popover"]\'));
-	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-		return new bootstrap.Popover(popoverTriggerEl)
-	});
-	Dselect.setupPageDselects();
-</script>
-{#insert scripts}{/}
-	{!
-{#if styleSheets??}
-	{#for script in scripts}
-		<script src="{script}"></script>
-{/for}
-{/if}
-!}
-
-	{#insert pageScript}{/}
-
-		</body>
+<!-- Extra Page Script files -->
+'.$scriptFiles.'
+<!-- End Page Script files -->
+<!-- Extra Page Script -->
+'.$pageScript.'
+<!-- End Extra Page Script -->
+</body>
 </html>
-
 ';
 	}
 	

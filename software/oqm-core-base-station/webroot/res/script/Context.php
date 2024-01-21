@@ -20,12 +20,17 @@ final class Context {
 	}
 	
 	public $entriesDir = "/etc/oqm/ui.d/";
-	
 	public ?string $depotUrl;
+	private string $bsVersion;
+	
 	
 	private function __construct() {
 		$this->depotUrl = getenv("CFG_DEPOT_URL");
 		
+		$jsonRaw = file_get_contents($_SERVER['DOCUMENT_ROOT'] . "/composer.json");
+		//json_validate($jsonRaw);//needed?
+		$json = json_decode($jsonRaw, true);
+		$this->bsVersion = $json["version"];
 	}
 	
 	public function getEntriesDir(): string {
@@ -38,5 +43,9 @@ final class Context {
 	
 	public function hasDepotUrl():bool {
 		return is_null($this->getDepotUrl());
+	}
+	
+	public function getBsVersion(): string {
+		return $this->bsVersion;
 	}
 }
