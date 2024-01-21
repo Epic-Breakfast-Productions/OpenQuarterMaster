@@ -19,6 +19,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'monolog/monolog' => array(
+            'pretty_version' => '3.5.0',
+            'version' => '3.5.0.0',
+            'reference' => 'c915e2634718dbc8a4a15c61b0e62e7a44e14448',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../monolog/monolog',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'myclabs/deep-copy' => array(
             'pretty_version' => '1.11.1',
             'version' => '1.11.1.0',
@@ -108,6 +117,21 @@
             'install_path' => __DIR__ . '/../phpunit/phpunit',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'psr/log' => array(
+            'pretty_version' => '3.0.0',
+            'version' => '3.0.0.0',
+            'reference' => 'fe5ea303b0887d5caefd3d431c3e61ad47037001',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/log',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'psr/log-implementation' => array(
+            'dev_requirement' => false,
+            'provided' => array(
+                0 => '3.0.0',
+            ),
         ),
         'sebastian/cli-parser' => array(
             'pretty_version' => '2.0.0',

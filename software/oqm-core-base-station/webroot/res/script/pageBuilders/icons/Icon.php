@@ -295,7 +295,7 @@ class Icon {
 	}
 	
 	public function hasSecondary(): bool {
-		return $this->getSecondary() == null;
+		return !is_null($this->secondary);
 	}
 	
 	public function getAltText(): string {
@@ -303,7 +303,7 @@ class Icon {
 	}
 	
 	public function hasAltText(): bool {
-		return $this->getAltText() == null;
+		return !is_null($this->altText);
 	}
 }
 

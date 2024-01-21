@@ -15,7 +15,9 @@
 			"email": "greg@epic-breakfast-productions.tech"
 		}
 	],
-	"require": {},
+	"require": {
+		"monolog/monolog": "^3.5"
+	},
 	"require-dev": {
 		"phpunit/phpunit": "^10"
 	}

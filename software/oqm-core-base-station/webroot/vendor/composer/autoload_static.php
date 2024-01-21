@@ -14,7 +14,12 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'PhpParser\\' => 10,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'E' => 
         array (
@@ -27,9 +32,17 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'Ebprod\\OqmCoreDepot\\' => 
         array (

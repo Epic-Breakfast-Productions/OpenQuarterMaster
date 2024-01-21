@@ -2,16 +2,43 @@
 
 namespace Ebprod\OqmCoreDepot\pageBuilders;
 
+use Ebprod\OqmCoreDepot\Context;
+use Ebprod\OqmCoreDepot\pageBuilders\icons\Icon;
+use Ebprod\OqmCoreDepot\pageBuilders\icons\IconBuilder;
+
 class MainPageBuilder {
 	
-	protected static function getNav(){
-		$activePage = NavLink::cases();
+	protected static function getNavEntry(NavEntry $navEntry):string{
+		//TODO:: handle sub-groups
+		return '
+				<li class="nav-item">
+					<a class="nav-link '.($navEntry->isActive()?"active":"").'" href="'.$navEntry->getPage()->getPath().'">
+						'.IconBuilder::build($navEntry->getPage()->getIcon()).' '.$navEntry->getPage()->getTitle().'
+						'.($navEntry->isActive()?'<span class="visually-hidden">(current)</span>':"").'
+					</a>
+				</li>
+';
+	}
+	
+	protected static function getNavItems():string{
+		$output = '';
+		
+		$navEntries = NavEntry::getNavEntries();
+		
+		foreach ($navEntries as $curNavEntry){
+			$output .= self::getNavEntry($curNavEntry);
+		}
+		
+		return $output;
+	}
+	
+	protected static function getNav():string{
 		
 		return '
 <nav class="navbar navbar-expand-lg bg-light top-nav mb-2" data-bs-theme="light" id="top-nav">
 	<div class="container-fluid">
-		<a class="navbar-brand p-0" href="/overview">
-			<img src="/res/media/logo.svg" alt=""  id="topLogo">
+		<a class="navbar-brand p-0" href="/overview.html">
+			<img src="/res/media/logo.svg" alt="OQM Logo" id="topLogo">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
 				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,93 +46,7 @@ class MainPageBuilder {
 		</button>
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
-				<li class="nav-item">
-					<a class="nav-link active" href="/overview">
-						{#icons/pageIcon page=\'overview\'}{/icons/pageIcon} Overview
-							{#if page is \'overview\'}
-								<span class="visually-hidden">(current)</span>
-						{/if}
-					</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link {#if page is \'storage\'}active{/if}" href="/storage">
-						{#icons/pageIcon page=\'storage\'}{/icons/pageIcon} Storage
-							{#if page is \'storage\'}
-								<span class="visually-hidden">(current)</span>
-						{/if}
-					</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link pe-0 {#if page is \'items\'}active{/if}" href="/items">
-						{#icons/pageIcon page=\'items\'}{/icons/pageIcon} Items
-							{#if page is \'items\'}
-								<span class="visually-hidden">(current)</span>
-						{/if}
-					</a>
-				</li>
-
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle ps-0 {#if page is \'itemLists\' || page is \'categories\' || page is \'itemCheckout\' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-							aria-haspopup="true" aria-expanded="false">&nbsp;</a>
-					<div class="dropdown-menu">
-						<!-- Not ready yet
-							<a class="dropdown-item {#if page is \'itemLists\'}active{/if}" href="/itemLists">
-							{#icons/pageIcon page=\'itemLists\'}{/icons/pageIcon} Item Lists
-								{#if page is \'itemLists\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						<a class="dropdown-item" href="/itemLists#add">
-							{#icons/add}{/icons/add} New Item List
-								</a>
-							-->
-						<a class="dropdown-item {#if page is \'categories\'}active{/if}" href="/categories">
-							{#icons/categories}{/icons/categories} Categories
-								{#if page is \'categories\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						{#if userInfo.getRoles().contains(\'inventoryEdit\')}
-							<a class="dropdown-item {#if page is \'itemCheckout\'}active{/if}" href="/itemCheckout">
-							{#icons/checkinout}{/icons/checkinout} Checkouts
-								{#if page is \'itemCheckout\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						{/if}
-					</div>
-				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle {#if page is \'images\' || page is \'codes\' || page is \'files\' || page is \'help\' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-							aria-haspopup="true" aria-expanded="false">
-						{#icons/icon icon=\'infinity\'}{/icons/icon} Other</a>
-							<div class="dropdown-menu">
-						<a class="dropdown-item {#if page is \'images\'}active{/if}" href="/images">
-							{#icons/pageIcon page=\'images\'}{/icons/pageIcon} Images
-								{#if page is \'images\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						<a class="dropdown-item {#if page is \'files\'}active{/if}" href="/files">
-							{#icons/pageIcon page=\'files\'}{/icons/pageIcon} Files
-								{#if page is \'files\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						<a class="dropdown-item {#if page is \'codes\'}active{/if}" href="/codes">
-							{#icons/pageIcon page=\'codes\'}{/icons/pageIcon} QR &amp; Bar Code Generator
-								{#if page is \'codes\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-						<a class="dropdown-item {#if page is \'help\'}active{/if}" href="/help">
-							{#icons/pageIcon page=\'help\'}{/icons/pageIcon} Help & User Guide
-								{#if page is \'help\'}
-									<span class="visually-hidden">(current)</span>
-							{/if}
-						</a>
-					</div>
-				</li>
+				'.self::getNavItems().'
 			</ul>
 
 			<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
@@ -115,17 +56,20 @@ class MainPageBuilder {
 						<option data-action="/items" data-field="name" selected>Items</option>
 						<option data-action="/storage" data-field="label">Storage Blocks</option>
 					</select>
-					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
-									</div>
+					<button class="btn btn-outline-dark" type="submit">'.IconBuilder::build(Icon::$search).' Search</button>
+				</div>
 			</form>
 			<ul class="navbar-nav mb-auto">
-				{#if config:[\'runningInfo.depotUri\'] != " "}
-					<li class="nav-item">
-					<a class="nav-link" href="{config:[\'runningInfo.depotUri\']}">
-						{#icons/icon icon=\'box-arrow-in-up-left\'}{/icons/icon} Back to Depot
+				'.(
+					Context::instance()->hasDepotUrl() ?
+						'
+						<li class="nav-item">
+							<a class="nav-link" href="'.Context::instance()->getDepotUrl().'">
+								Back to Depot
 							</a>
-				</li>
-				{/if}
+						</li>
+' : ''
+			).'
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
@@ -153,41 +97,12 @@ class MainPageBuilder {
 					<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{config:[\'quarkus.oidc.logout.path\']}" id="logoutButton">
 							{#icons/icon icon=\'door-closed\'}{/icons/icon} Logout
-								</a>
+						</a>
 					</div>
 				</li>
 			</ul>
 		</div>
 	</div>
-	{#else if navbar == "toLogin"}
-		<div class="container-fluid">
-		<a class="navbar-brand" href="/">
-			<img src="/media/logo.svg" alt="" height="40" width="97" id="topLogo">
-		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-		<div class="collapse navbar-collapse" id="navbarColor03">
-			<ul class="navbar-nav me-auto">
-				{#if config:[\'runningInfo.depotUri\'] != " "}
-					<li class="nav-item">
-					<a class="nav-link" href="{config:[\'runningInfo.depotUri\']}">
-						{#icons/icon icon=\'box-arrow-in-up-left\'}{/icons/icon} Back to Depot
-							</a>
-				</li>
-				{/if}
-				<li class="nav-item">
-					<a class="nav-link" href="/">
-						{#icons/icon icon=\'door-open\'}{/icons/icon} Login
-							</a>
-				</li>
-			</ul>
-
-		</div>
-	</div>
-	{/if}
 </nav>
 
 ';
@@ -210,10 +125,10 @@ class MainPageBuilder {
 	<title>'.$title.' - OQM Base Station</title>
 
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.3.2/yeti-bootswatch.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.3/bootstrap-icons.min.css">
-	<link rel="stylesheet" href="/lib/spin.js/spin.css">
-	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
+	<link href="/res/lib/bootstrap/5.3.2/yeti-bootswatch.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/res/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="/res/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
 	<link rel="stylesheet" href="/res/css/main.css">
 	'.$styleSheets.'
