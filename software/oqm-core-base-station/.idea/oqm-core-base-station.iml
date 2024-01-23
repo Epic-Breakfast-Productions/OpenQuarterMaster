@@ -37,6 +37,10 @@
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/erusev/parsedown" />
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/ezyang/htmlpurifier" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/jumbojett/openid-connect-php" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/paragonie/constant_time_encoding" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/paragonie/random_compat" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/phpseclib/phpseclib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

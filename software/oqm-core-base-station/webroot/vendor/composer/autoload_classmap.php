@@ -7,6 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'Jumbojett\\OpenIDConnectClient' => $vendorDir . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
+    'Jumbojett\\OpenIDConnectClientException' => $vendorDir . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
     'PHPUnit\\Event\\Application\\Finished' => $vendorDir . '/phpunit/phpunit/src/Event/Events/Application/Finished.php',
     'PHPUnit\\Event\\Application\\FinishedSubscriber' => $vendorDir . '/phpunit/phpunit/src/Event/Events/Application/FinishedSubscriber.php',
     'PHPUnit\\Event\\Application\\Started' => $vendorDir . '/phpunit/phpunit/src/Event/Events/Application/Started.php',

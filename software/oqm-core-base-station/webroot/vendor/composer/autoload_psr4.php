@@ -6,8 +6,10 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'phpseclib3\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
+    'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Ebprod\\OqmCoreDepot\\' => array($baseDir . '/res/script'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),

@@ -2,7 +2,9 @@
 
 namespace Ebprod\OqmCoreDepot\pageBuilders;
 
+use Ebprod\OqmCoreDepot\auth\AuthUtils;
 use Ebprod\OqmCoreDepot\context\Context;
+use Ebprod\OqmCoreDepot\context\OidcContext;
 use Ebprod\OqmCoreDepot\context\RunByContext;
 use Ebprod\OqmCoreDepot\LogUtils;
 use Ebprod\OqmCoreDepot\pageBuilders\icons\Icon;
@@ -43,7 +45,7 @@ class MainPageBuilder {
 	}
 	
 	protected static function getNav():string{
-		
+		AuthUtils::ensureLoggedIn();
 		return '
 <nav class="navbar navbar-expand-lg bg-light top-nav mb-2" data-bs-theme="light" id="top-nav">
 	<div class="container-fluid">
@@ -83,7 +85,7 @@ class MainPageBuilder {
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						'.IconBuilder::build(Icon::$you).'
-						<span id="userNameDisplay">USERNAME</span>
+						<span id="userNameDisplay">'.AuthUtils::getUsername().'</span>
 					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="/you" id="youLink">
@@ -125,6 +127,7 @@ class MainPageBuilder {
 		string $pageStyle = ""
 	):string {
 		$page = Page::getPage();
+		
 		$styleSheets = "";
 		return '
 <!doctype html>

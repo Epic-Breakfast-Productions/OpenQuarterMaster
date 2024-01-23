@@ -43,6 +43,10 @@
       <path value="$PROJECT_DIR$/webroot/vendor/monolog/monolog" />
       <path value="$PROJECT_DIR$/webroot/vendor/ezyang/htmlpurifier" />
       <path value="$PROJECT_DIR$/webroot/vendor/erusev/parsedown" />
+      <path value="$PROJECT_DIR$/webroot/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/webroot/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/webroot/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/webroot/vendor/jumbojett/openid-connect-php" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />

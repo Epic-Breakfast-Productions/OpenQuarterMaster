@@ -8,15 +8,21 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpseclib3\\' => 11,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
             'PhpParser\\' => 10,
+            'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
         array (
@@ -33,6 +39,10 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpseclib3\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
@@ -40,6 +50,10 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'ParagonIE\\ConstantTime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
         'Monolog\\' => 
         array (
@@ -74,6 +88,8 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Jumbojett\\OpenIDConnectClient' => __DIR__ . '/..' . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
+        'Jumbojett\\OpenIDConnectClientException' => __DIR__ . '/..' . '/jumbojett/openid-connect-php/src/OpenIDConnectClient.php',
         'PHPUnit\\Event\\Application\\Finished' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Finished.php',
         'PHPUnit\\Event\\Application\\FinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/FinishedSubscriber.php',
         'PHPUnit\\Event\\Application\\Started' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Started.php',

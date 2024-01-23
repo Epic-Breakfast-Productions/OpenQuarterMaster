@@ -6,14 +6,20 @@ use Ebprod\OqmCoreDepot\LogUtils;
 use Monolog\Logger;
 
 final class Context {
-	private static Logger $log;
+	private static ?Logger $log = null;
 	private static ?Context $INSTANCE = null;
+	
+	private static function log():Logger{
+		if(self::$log == null){
+			self::$log = LogUtils::getLogger(self::class);
+		}
+		return self::$log;
+	}
 	
 	public static function instance():Context{
 		if(self::$INSTANCE == null){
 			self::$INSTANCE = new Context();
-			self::$log = LogUtils::getLogger(self::class);
-			self::$log->debug("Initted Context.");
+			self::log()->debug("Initted Context");
 		}
 		return self::$INSTANCE;
 	}
@@ -21,7 +27,8 @@ final class Context {
 	public $entriesDir = "/etc/oqm/ui.d/";
 	public ?string $depotUrl;
 	private string $bsVersion;
-	private RunByContext $runBy;
+	private ?RunByContext $runBy = null;
+	private ?OidcContext $oidc = null;
 	
 	private function __construct() {
 		$this->depotUrl = getenv("CFG_DEPOT_URL");
@@ -30,7 +37,6 @@ final class Context {
 		//json_validate($jsonRaw);//needed?
 		$json = json_decode($jsonRaw, true);
 		$this->bsVersion = $json["version"];
-		$this->runBy = new RunByContext();
 	}
 	
 	public function getEntriesDir(): string {
@@ -50,6 +56,18 @@ final class Context {
 	}
 	
 	public function runBy(): RunByContext {
+		if($this->runBy == null){
+			$this->runBy = new RunByContext();
+			self::log()->debug("Initted RunBy context");
+		}
 		return $this->runBy;
+	}
+	
+	public function getOidc(): OidcContext {
+		if($this->oidc == null){
+			$this->oidc = new OidcContext();
+			self::log()->debug("Initted Oidc context");
+		}
+		return $this->oidc;
 	}
 }
