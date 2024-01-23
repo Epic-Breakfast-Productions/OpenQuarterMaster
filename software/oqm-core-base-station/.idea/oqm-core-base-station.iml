@@ -35,6 +35,8 @@
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/sebastian/type" />
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/sebastian/version" />
       <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/theseer/tokenizer" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/erusev/parsedown" />
+      <excludeFolder url="file://$MODULE_DIR$/webroot/vendor/ezyang/htmlpurifier" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

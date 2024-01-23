@@ -2,11 +2,21 @@
 
 namespace Ebprod\OqmCoreDepot\pageBuilders;
 
-use Ebprod\OqmCoreDepot\Context;
+use Ebprod\OqmCoreDepot\context\Context;
+use Ebprod\OqmCoreDepot\context\RunByContext;
+use Ebprod\OqmCoreDepot\LogUtils;
 use Ebprod\OqmCoreDepot\pageBuilders\icons\Icon;
 use Ebprod\OqmCoreDepot\pageBuilders\icons\IconBuilder;
+use Monolog\Logger;
 
 class MainPageBuilder {
+	private static ?Logger $log = null;
+	public static function log():Logger{
+		if(self::$log == null){
+			self::$log = LogUtils::getLogger(self::class);
+		}
+		return self::$log;
+	}
 	
 	protected static function getNavEntry(NavEntry $navEntry):string{
 		//TODO:: handle sub-groups
@@ -72,15 +82,17 @@ class MainPageBuilder {
 			).'
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-						{#icons/user}{/icons/user}
-							<span id="userNameDisplay">{userInfo.getName()}</span></a>
+						'.IconBuilder::build(Icon::$you).'
+						<span id="userNameDisplay">USERNAME</span>
+					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="/you" id="youLink">
-							{#icons/you}{/icons/you} You
-								</a>
-						<a class="dropdown-item" href="{config:[\'service.auth.userSettingsUrl\']}" id="youEditLink" target="_blank">
-							{#icons/edit}{/icons/edit} Account Settings
-								</a>
+							'.IconBuilder::build(Icon::$you).' You
+						</a>
+						<a class="dropdown-item" href="#" id="youEditLink" target="_blank">
+							'.IconBuilder::build(Icon::$you).' Account Settings
+						</a>
+						<!--
 					{#if userInfo.getRoles().contains(\'userAdmin\') || userInfo.getRoles().contains(\'inventoryAdmin\')}
 						<div class="dropdown-divider"></div>
 					{/if}
@@ -89,14 +101,15 @@ class MainPageBuilder {
 						{#icons/userAdmin}{/icons/userAdmin} User Administration
 							</a>
 					{/if}
-					{#if userInfo.getRoles().contains(\'inventoryAdmin\')}
+					-->
+					<!--{#if userInfo.getRoles().contains(\'inventoryAdmin\')}-->
 						<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
-						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
-							</a>
-					{/if}
-					<div class="dropdown-divider"></div>
+							'.IconBuilder::build(Icon::$inventoryAdminPage).' Inventory Admin
+						</a>
+					
+						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{config:[\'quarkus.oidc.logout.path\']}" id="logoutButton">
-							{#icons/icon icon=\'door-closed\'}{/icons/icon} Logout
+							'.IconBuilder::build(Icon::$logout).' Logout
 						</a>
 					</div>
 				</li>
@@ -152,6 +165,119 @@ class MainPageBuilder {
 ';
 	}
 	
+	private static function getFooter():string{
+		self::log()->debug("Building Footer");
+		$runBy = '
+			'.(Context::instance()->runBy()->hasLogo()?'
+			<img src="/TODO" style="float:right; max-width: 30%;" alt="Logo of who runs this service">
+':'<!-- No Run By Logo -->').'
+			'.(Context::instance()->runBy()->hasName()?'
+			<span class="h5">Run by:</span><br/>
+				'.Context::instance()->runBy()->getName().'
+':'<!-- No Run By Name -->').'
+			<br/>
+';
+		if(Context::instance()->runBy()->hasContact()){
+			$runBy .= '<span class="h6">Contact Info:</span><br/>\n';
+			if(Context::instance()->runBy()->hasEmail()){
+				$runBy .= '<a href="mailto:'.Context::instance()->runBy()->getEmail().'">'.Context::instance()->runBy()->getEmail().'</a><br />\n';
+			}
+			if(Context::instance()->runBy()->hasPhone()){
+				$runBy .= '<a href="tel:'.Context::instance()->runBy()->getPhone().'">'.Context::instance()->runBy()->getPhone().'</a><br />\n';
+			}
+			if(Context::instance()->runBy()->hasWebsite()){
+				$runBy .= '<a href="'.Context::instance()->runBy()->getWebsite().'" target="_blank">'.Context::instance()->runBy()->getWebsite().'</a><br />\n';
+			}
+		}
+		
+		return '
+<footer id="footer" class="container mb-3" role="contentinfo">
+	<hr/>
+	<div class="row">
+		<div id="serverInfo" class="col-sm-4">
+			<span class="h5">Open QuarterMaster Base Station</span><br/>
+			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">'.Context::instance()->getBsVersion().'</a>, &copy; '.date("Y").' <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/res/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			<div class="dropup color-modes" id="theme-picker">
+				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
+						id="bd-theme"
+						type="button"
+						aria-expanded="false"
+						data-bs-toggle="dropdown"
+						data-bs-display="static">
+					<span class="theme-icon-active">
+						'.IconBuilder::build(Icon::$themeAuto).'
+					</span>
+					<span id="bd-theme-text">
+						Toggle theme
+					</span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+							<span class="theme-icon">
+								'.IconBuilder::build(Icon::$themeLight).'
+							</span>
+							Light
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+							<span class="theme-icon">
+								'.IconBuilder::build(Icon::$themeDark).'
+							</span>
+							Dark
+						</button>
+					</li>
+					<li>
+						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
+							<span class="theme-icon">
+								'.IconBuilder::build(Icon::$themeAuto).'
+							</span>
+							Auto
+						</button>
+					</li>
+					<li style=" height: 5px;">
+						<button type="button" class="dropdown-item d-flex align-items-center" style="font-size: 0.15em; height: 5px;" onclick="if(typeof RealDarkMode !== \'undefined\'){ RealDarkMode.realDarkMode();}else{ script=document.createElement(\'script\');script.src = \'/res/js/otherUtils/realDarkMode.js\';document.head.appendChild(script);}">
+							<span class="theme-icon">
+								'.IconBuilder::build(Icon::$themeDark).'
+							</span>
+							Really Dark
+						</button>
+					</li>
+				</ul>
+			</div>
+			<a href="/help">'.IconBuilder::build(Icon::$help).' Help & User Guide</a><br />
+			<small class="fw-lighter fst-italic text-muted">
+				<div class="d-grid gap-2">
+					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
+							data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
+							aria-controls="pageLoadInfoCollapse">
+						Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span>
+						(Server time)
+					</button>
+				</div>
+				<div class="collapse" id="pageLoadInfoCollapse">
+					<div class="card card-body">
+									Service id: <code class="user-select-all"
+								id="traceServiceName">{config:[\'quarkus.application.name\']}</code><br/>
+						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
+						<!-- TODO:: link to Jaeger? -->
+					</div>
+				</div>
+			</small>
+		</div>
+		<div id="runByInfo" class="col-sm-4">
+			'.$runBy.'
+		</div>
+		<div class="col-sm-4" id="motdContainer">
+			'.Context::instance()->runBy()->getMotd().'
+		</div>
+	</div>
+</footer>
+';
+	}
+	
 	public static function getPageEnd(
 		array $modals = [],
 		string $pageScript = "",
@@ -165,106 +291,7 @@ class MainPageBuilder {
 		return '
 	</main>
 </div>
-<footer id="footer" class="container mb-3" role="contentinfo">
-	<hr/>
-	<div class="row">
-		<div class="col-sm-4">
-			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster" target="_blank">'.Context::instance()->getBsVersion().'</a>, &copy; '.date("Y").' <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/res/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
-			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
-			<div class="dropup color-modes" id="theme-picker">
-				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
-						id="bd-theme"
-						type="button"
-						aria-expanded="false"
-						data-bs-toggle="dropdown"
-						data-bs-display="static">
-					<span class="theme-icon-active">
-						'.IconBuilder::build(Icon::$themeAuto).'
-							</span>
-							<span id="bd-theme-text">
-							Toggle theme
-						</span>
-				</button>
-				<ul class="dropdown-menu" aria-labelledby="bd-theme" style="--bs-dropdown-min-width: 8rem;">
-					<li>
-						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
-							<span class="theme-icon">
-								'.IconBuilder::build(Icon::$themeLight).'
-									</span>
-								Light
-						</button>
-					</li>
-					<li>
-						<button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
-							<span class="theme-icon">
-								'.IconBuilder::build(Icon::$themeDark).'
-									</span>
-								Dark
-						</button>
-					</li>
-					<li>
-						<button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
-							<span class="theme-icon">
-								'.IconBuilder::build(Icon::$themeAuto).'
-									</span>
-								Auto
-						</button>
-					</li>
-					<li style=" height: 5px;">
-						<button type="button" class="dropdown-item d-flex align-items-center" style="font-size: 0.15em; height: 5px;" onclick="if(typeof RealDarkMode !== \'undefined\'){ RealDarkMode.realDarkMode();}else{ script=document.createElement(\'script\');script.src = \'/res/js/realDarkMode.js\';document.head.appendChild(script);}">
-							<span class="theme-icon">
-								'.IconBuilder::build(Icon::$themeDark).'
-									</span>
-								Really Dark
-								</button>
-					</li>
-				</ul>
-			</div>
-			<a href="/help">'.IconBuilder::build(Icon::$help).' Help & User Guide</a><br />
-			<small class="fw-lighter fst-italic text-muted">
-				<div class="d-grid gap-2">
-					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
-							data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
-							aria-controls="pageLoadInfoCollapse">
-								Page Loaded: <span id="pageLoadTimestamp">{generateDatetime.format(dateTimeFormatter)}</span>
-									(Server time)
-					</button>
-				</div>
-				<div class="collapse" id="pageLoadInfoCollapse">
-					<div class="card card-body">
-									Service id: <code class="user-select-all"
-								id="traceServiceName">{config:[\'quarkus.application.name\']}</code><br/>
-						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
-						<!-- TODO:: link to Jaeger? -->
-					</div>
-				</div>
-			</small>
-		</div>
-		<div id="serverInfo" class="col-sm-4">
-			{#if config:[\'service.runBy.logo\'] != " "}
-				<img src="/api/v1/media/runBy/logo" style="float:right; max-width: 30%;">
-			{/if}
-			{#if config:[\'service.runBy.name\'] != " "}
-				<span class="h5">Run by:</span><br/>
-				{config:[\'service.runBy.name\']}
-			{/if}
-			<br/>
-			{#if config:[\'service.runBy.email\'] != " " || config:[\'service.runBy.phone\'] != " " || config:[\'service.runBy.website\'] != " "}
-				<span class="h6">Contact Info:</span><br/>
-				{#if config:[\'service.runBy.email\'] != " "}<a href="mailto:{config:[\'service.runBy.email\']}">{config:[\'service.runBy.email\']}</a>
-					<br/>{/if}
-				{#if config:[\'service.runBy.phone\'] != " "}<a href="tel:{config:[\'service.runBy.phone\']}">{config:[\'service.runBy.phone\']}</a>
-					<br/>{/if}
-				{#if config:[\'service.runBy.website\'] != " "}<a href="{config:[\'service.runBy.website\']}">{config:[\'service.runBy.website\']}</a>
-					<br/>{/if}
-			{/if}
-		</div>
-		<div class="col-sm-4">
-			{config:[\'service.runBy.motd\']}
-		</div>
-	</div>
-</footer>
+'.self::getFooter().'
 
 <!-- Modals -->
 '.implode("\n", $modals).'

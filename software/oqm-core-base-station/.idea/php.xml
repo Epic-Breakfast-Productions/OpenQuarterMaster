@@ -41,6 +41,8 @@
       <path value="$PROJECT_DIR$/webroot/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/webroot/vendor/psr/log" />
       <path value="$PROJECT_DIR$/webroot/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/webroot/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/webroot/vendor/erusev/parsedown" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />

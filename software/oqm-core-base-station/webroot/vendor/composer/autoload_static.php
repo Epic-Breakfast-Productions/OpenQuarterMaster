@@ -8,6 +8,7 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
 
@@ -51,6 +52,23 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'Parsedown' => 
+            array (
+                0 => __DIR__ . '/..' . '/erusev/parsedown',
+            ),
+        ),
+        'H' => 
+        array (
+            'HTMLPurifier' => 
+            array (
+                0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
+            ),
         ),
     );
 
@@ -1227,6 +1245,7 @@ class ComposerStaticInit553cfb7e2d21df646689160a99599f70
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit553cfb7e2d21df646689160a99599f70::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit553cfb7e2d21df646689160a99599f70::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit553cfb7e2d21df646689160a99599f70::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit553cfb7e2d21df646689160a99599f70::$classMap;
 
         }, null, ClassLoader::class);

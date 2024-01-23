@@ -83,6 +83,7 @@ class Icon {
 	public static Icon $history;
 	public static Icon $info;
 	public static Icon $locked;
+	public static Icon $logout;
 	public static Icon $newTab;
 	public static Icon $print;
 	public static Icon $qr;
@@ -138,6 +139,7 @@ class Icon {
 		Icon::$history = new Icon("clock-history");
 		Icon::$info = new Icon("info");
 		Icon::$locked = new Icon("lock-fill");
+		Icon::$logout = new Icon("lock-fill");
 		Icon::$newTab = new Icon("box-arrow-up-right");
 		Icon::$print = new Icon("printer");
 		Icon::$qr = new Icon("qr-code-scan");

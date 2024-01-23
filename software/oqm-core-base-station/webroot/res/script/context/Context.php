@@ -1,10 +1,9 @@
 <?php
 
-namespace Ebprod\OqmCoreDepot;
+namespace Ebprod\OqmCoreDepot\context;
 
-use Monolog\Level;
+use Ebprod\OqmCoreDepot\LogUtils;
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 final class Context {
 	private static Logger $log;
@@ -22,7 +21,7 @@ final class Context {
 	public $entriesDir = "/etc/oqm/ui.d/";
 	public ?string $depotUrl;
 	private string $bsVersion;
-	
+	private RunByContext $runBy;
 	
 	private function __construct() {
 		$this->depotUrl = getenv("CFG_DEPOT_URL");
@@ -31,6 +30,7 @@ final class Context {
 		//json_validate($jsonRaw);//needed?
 		$json = json_decode($jsonRaw, true);
 		$this->bsVersion = $json["version"];
+		$this->runBy = new RunByContext();
 	}
 	
 	public function getEntriesDir(): string {
@@ -47,5 +47,9 @@ final class Context {
 	
 	public function getBsVersion(): string {
 		return $this->bsVersion;
+	}
+	
+	public function runBy(): RunByContext {
+		return $this->runBy;
 	}
 }
