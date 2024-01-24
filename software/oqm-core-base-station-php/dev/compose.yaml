@@ -1,0 +1,44 @@
+services:
+#  mongo:
+#    container_name: dev-bs-mongo
+#    image: mongo:7
+#    networks:
+#      - dev-bs-net
+#    # Might need to configure?
+#  coreApi: # TODO
+#    container_name: dev-bs-coreApi
+#    image: example/webapp
+#    networks:
+#      - dev-bs-net
+#    # TODO: configure
+  keycloak:
+    container_name: dev-bs-keycloak
+    image: quay.io/keycloak/keycloak:22.0
+    ports:
+      - 8080:8080
+    networks:
+      - dev-bs-net
+    extra_hosts:
+      - "oqm-dev.local:host-gateway"
+    volumes:
+      - ./kc/:/opt/keycloak/data/import
+    command: start-dev --import-realm
+    # TODO: configure
+  base-station:
+    container_name: dev-bs
+    build: ../
+    networks:
+      - dev-bs-net
+    ports:
+      - 8085:80
+    extra_hosts:
+      - "oqm-dev.local:host-gateway"
+    environment:
+      CFG_DEV_MODE: true
+      CFG_OIDC_HOST: http://oqm-dev.local:8080/realms/oqm
+      CFG_OIDC_CLIENT_ID: oqm-app
+      CFG_OIDC_CLIENT_SECRET: "**********"
+    # TODO:: configure?
+
+networks:
+  dev-bs-net:
