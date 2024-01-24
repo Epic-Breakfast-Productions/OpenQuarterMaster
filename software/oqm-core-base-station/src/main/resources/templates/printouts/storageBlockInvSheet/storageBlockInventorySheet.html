@@ -1,0 +1,26 @@
+{#include printouts/mainPrintoutTemplate}
+	{#title}{storageBlock.getLabelText()} - Inventory sheet{/title}
+	{#body}
+		<h1>
+			{storageBlock.getLabelText()} - Inventory sheet
+		</h1>
+		{#printouts/storageBlockTable}{/printouts/storageBlockTable}
+		
+		<p>Total Items: {searchResult.getNumResultsForEntireQuery()}</p>
+		{#if searchResult.isEmpty()}
+			<h3>
+				No Items Stored
+			</h3>
+			{#else}
+			{#let curItemList=searchResult.getResults().stream().filter(simpleAmountFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/amountSimpleStoredTable}{/printouts/storageBlockInventorySheet/amountSimpleStoredTable}
+			{/let}
+			{#let curItemList=searchResult.getResults().stream().filter(listAmountFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/amountListStoredTable}{/printouts/storageBlockInventorySheet/amountListStoredTable}
+			{/let}
+			{#let curItemList=searchResult.getResults().stream().filter(trackedFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/trackedStoredTable}{/printouts/storageBlockInventorySheet/trackedStoredTable}
+			{/let}
+		{/if}
+	{/body}
+{/include}

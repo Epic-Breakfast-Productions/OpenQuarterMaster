@@ -1,0 +1,432 @@
+{!{@tech.ebp.oqm.baseStation.service.mongo.StorageBlockService storageBlockService}!}
+{!{@java.util.List<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> expiredList}!}
+{!{@java.util.List<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> expiredWarnList}!}
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' page='overview'}
+	{#pageStyle}
+		.buttonCell{
+		border: 1px solid black;
+		height: 50px;
+		width: 50px;
+		}
+	{/pageStyle}
+	{#pageContent}
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
+					{#icons/icon icon='diagram-3'}{/icons/icon} Overview
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
+					{#icons/expiring}{/icons/expiring} Expiring
+					{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
+					{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
+					{#icons/lowStock}{/icons/lowStock} Low Stock
+					{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
+				</button>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
+				<p>
+					{numItems} types of items stored in over {numStorageBlocks} storage blocks
+				</p>
+				<div class="row">
+					<div class="col">
+						{#let parents=storageBlockService.getTopParents()}
+							{#if parents.isEmpty()}
+								<h2>
+									No Storage Blocks!
+								</h2>
+								<p>
+									No storage blocks currently exist. Go to
+									<a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a>
+									to add a place where items are stored!
+								</p>
+								<p>
+									You can then go to
+									<a href="/items">{#icons/item}{/icons/item} Items</a>
+									to add an item that is stored in that location!
+								</p>
+							{#else}
+								<div class="accordion" id="mainParentAccordion">
+									{#for parent in parents}
+										<div class="accordion-item" id="accordItem{parent.getId()}" data-storage-block-id="{parent.getId()}">
+											<h2 class="accordion-header" id="accordHeader{parent.getId()}" onclick="overviewAccordionClicked('{parent.getId()}', $(this).parent())">
+												<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse{parent.getId()}" aria-expanded="false" aria-controls="accordCollapse{parent.getId()}">
+													<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/{parent.getId()}" alt="">
+													{parent.getLabelText()}
+												</button>
+											</h2>
+											<div id="accordCollapse{parent.getId()}" class="accordion-collapse collapse" aria-labelledby="accordHeader{parent.getId()}" data-bs-parent="#mainParentAccordion">
+												<div class="accordion-body" id="accordContent{parent.getId()}">
+													Loading...
+												</div>
+											</div>
+										</div>
+									{/for}
+								</div>
+							{/if}
+						{/let}
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
+				<div class="row">
+					<div class="col">
+						<h3>
+							Expired:
+						</h3>
+						{#if expiredList.isEmpty()}
+							<p>
+								Nothing expired!
+							</p>
+						{#else}
+							<table class="table">
+								<thead>
+								<tr>
+									<th>
+										Image
+									</th>
+									<th>
+										Item
+									</th>
+									<th>
+										# Expired
+									</th>
+									<th>
+										Actions
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								{#for curExpiredItem in expiredList}
+									<tr class="align-middle">
+										<td>
+											{#if !curExpiredItem.getImageIds().isEmpty()}
+												<img src="/api/v1/media/image/for/item/{curExpiredItem.getId()}" class="searchResultImage">
+											{/if}
+										</td>
+										<td>{curExpiredItem.getName()}</td>
+										<td>{curExpiredItem.getNumExpired()}</td>
+										<td>
+											<a href="/items?view={curExpiredItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+												<i class="bi bi-eye"> </i>
+											</a>
+										</td>
+									</tr>
+								{/for}
+								</tbody>
+							</table>
+						{/if}
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col">
+						<h3>
+							Close to expiring:
+						</h3>
+						{#if expiredWarnList.isEmpty()}
+							<p>
+								Nothing close to expiring!
+							</p>
+						{#else}
+							<table class="table">
+								<thead>
+								<tr>
+									<th>
+										Image
+									</th>
+									<th>
+										Item
+									</th>
+									<th>
+										# close to expiring
+									</th>
+									<th>
+										Actions
+									</th>
+								</tr>
+								</thead>
+								<tbody>
+								{#for curExpiredWarnItem in expiredWarnList}
+									<tr class="align-middle">
+										<td>
+											{#if !curExpiredWarnItem.getImageIds().isEmpty()}
+												<img src="/api/v1/media/image/for/item/{curExpiredWarnItem.getId()}" class="searchResultImage">
+											{/if}
+										</td>
+										<td>{curExpiredWarnItem.getName()}</td>
+										<td>{curExpiredWarnItem.getNumExpiryWarn()}</td>
+										<td>
+											<a href="/items?view={curExpiredWarnItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+												<i class="bi bi-eye"> </i>
+											</a>
+										</td>
+									</tr>
+								{/for}
+								</tbody>
+							</table>
+						{/if}
+					</div>
+				</div>
+			</div>
+		<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
+			<div class="row">
+				<div class="col">
+					<h3>
+						Low Stock:
+					</h3>
+					{#if lowStockList.isEmpty()}
+						<p>
+							No stock is low!
+						</p>
+					{#else}
+						<table class="table table-bordered table-sm table-striped">
+							<thead>
+							<tr>
+								<th class="searchResultImageCol">
+									Image
+								</th>
+								<th>
+									Item
+								</th>
+								<th>
+									# Low Stock
+								</th>
+								<th>
+									Actions
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+							{#for curLowStockItem in lowStockList}
+								<tr class="align-middle">
+									<td>
+										{#if !curLowStockItem.getImageIds().isEmpty()}
+											<img src="/api/v1/media/image/for/item/{curLowStockItem.getId()}" class="searchResultImage">
+										{/if}
+									</td>
+									<td>{curLowStockItem.getName()}</td>
+									<td>{curLowStockItem.getNumLowStock()}</td>
+									<td>
+										<a href="/items?view={curLowStockItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">
+											<i class="bi bi-eye"> </i>
+										</a>
+									</td>
+								</tr>
+								
+							{/for}
+							</tbody>
+						</table>
+					{/if}
+				</div>
+			</div>
+		</div>
+		</div>
+	{/pageContent}
+	{#scripts}
+		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/units.js"></script>
+	{/scripts}
+	{#pageScript}
+		<script>
+			var created = { };
+
+
+			function getInvItemSection(invItemArr, parentId){
+				if(invItemArr.length === 0){
+					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
+				}
+				let accordId = "invItemAccord" + parentId;
+				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
+
+				invItemArr.forEach(function(invItem){
+					let accordItemId = accordId+'AccordItem'+invItem.id;
+					let accordItemHeaderId = accordItemId + "Header";
+					let accordItemCollapseId = accordItemId + "Collapse";
+					let accordItemContentId = accordItemId + "Content";
+					let curAccord = $('<div class="accordion-item" id="'+accordItemId+'" data-item-id="'+invItem.id+'">' +
+						'<h2 class="accordion-header " id="'+accordItemHeaderId+'" onclick="overviewItemAccordionClicked(\''+invItem.id+'\',\''+parentId+'\', $(this).parent())">' +
+						'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#'+accordItemCollapseId+'" aria-expanded="false" aria-controls="'+accordItemCollapseId+'">' +
+						'</button>'+
+						'</h2>'+
+						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
+						'<div class="accordion-body" id="'+accordItemContentId+'">'+
+						'Loading...'+//TODO
+						'</div>'+
+						'</div>'+
+						'</div>');
+
+					let accordButt = curAccord.find(".accordion-button");
+
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/'+invItem.id+'" alt="">'),
+						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
+					);
+					
+					accordion = accordion.append(curAccord);
+				});
+
+				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.length+'):</h5>');
+				output = output.add(accordion);
+				return output;
+			}
+			
+			function getStorageBlockSection(storageBlockArr, parentId){
+				if(storageBlockArr.length === 0){
+					return $('<p>{#icons/storageBlocks}{/icons/storageBlocks} No children.</p>');
+				}
+				let accordId = "storageBlockAccord" + parentId;
+				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
+				
+				storageBlockArr.forEach(function(storageBlock){
+					let curAccord = $('<div class="accordion-item" id="accordItem'+storageBlock.id+'" data-storage-block-id="'+storageBlock.id+'">' +
+											'<h2 class="accordion-header " id="accordHeader'+storageBlock.id+'" onclick="overviewAccordionClicked(\''+storageBlock.id+'\', $(this).parent())">' +
+												'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse'+storageBlock.id+'" aria-expanded="false" aria-controls="accordCollapse'+storageBlock.id+'">' +
+												'</button>'+
+											'</h2>'+
+											'<div id="accordCollapse'+storageBlock.id+'" class="accordion-collapse collapse" aria-labelledby="accordHeader'+storageBlock.id+'" data-bs-parent="#'+accordId+'">'+
+												'<div class="accordion-body" id="accordContent'+storageBlock.id+'">'+
+													'Loading...'+
+												'</div>'+
+											'</div>'+
+										'</div>');
+					let accordButt = curAccord.find(".accordion-button");
+					
+					accordButt.append(
+						$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
+						$('<span></span>').text(storageBlock.labelText)
+					);
+					
+					accordion = accordion.append(curAccord);
+				});
+				
+				let output = $('<h5>{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				output = output.add(accordion);
+				return output;
+			}
+			
+			function getBlockDetailsSection(storageBlockData){
+				let output = $('<div class="row">' +
+					'<div class="col">' +
+					// '<h5>Block details</h5>' + //unnecessary
+					'</div>' +
+					'</div>'
+				);
+				let detailsRow = $(
+					'<div class="row storageBlockDetailsRow">'+
+					'</div>');
+				
+				detailsRow.append('<div class="col-sm-1">' +Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
+				
+				if(storageBlockData.description){
+					//TODO:: might need better format
+					let locationData = $('<div class="col">' +
+						'Description: <span class="storageBlockDescription"></span>' +
+						'</div>');
+					locationData.find(".storageBlockDescription").text(storageBlockData.description);
+
+					detailsRow = detailsRow.append(locationData);
+				}
+				if(storageBlockData.location){
+					let locationData = $('<div class="col">' +
+						'Location: <span class="storageBlockLocation"></span>' +
+						'</div>');
+					locationData.find(".storageBlockLocation").text(storageBlockData.location);
+
+					detailsRow = detailsRow.append(locationData);
+				}
+				//TODO:: barcode
+				
+				//TODO:: images, attr/keywords?, capacities?
+				
+				output = output.add(detailsRow);
+				return output;
+			}
+
+			function getInvItemDetailsSection(itemData, storageBlockId){
+				let output = $('<div class="row"></div>');
+				
+				output.append($('<div class="col-1">'+Links.getItemViewButtonAsHtml(itemData.id, "View")+'</div>'));
+				
+				if(itemData.description){
+					//TODO
+				}
+				//TODO:: fill with details
+				
+				return output;
+			}
+			
+			async function createNewStorageBlockContent(storageBlockData){
+				let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
+				let storageBlockChildren = getStorageBlockChildrenData(storageBlockData.id);
+				storageBlockItems = await storageBlockItems;
+				storageBlockChildren = await storageBlockChildren;
+				
+				console.log("Got " + storageBlockItems.length + " items, " + storageBlockChildren.length + " children for storage block " + storageBlockData.id);
+				
+				let output = $();
+
+				output = output.add(getBlockDetailsSection(storageBlockData));
+				output = output.add($("<hr />"));
+				output = output.add(getInvItemSection(storageBlockItems, storageBlockData.id));
+				output = output.add($("<hr />"));
+				output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
+				return output;
+			}
+			
+			function overviewAccordionClicked(storageBlockId, accordionDivJq){
+				console.debug("Accordion " + accordionDivJq.attr("id") + " for storage block " + storageBlockId + " clicked.");
+				
+				if(created[storageBlockId]){
+					console.log("Already clicked on this.");
+					return;
+				}
+				created[storageBlockId] = [];
+
+				doRestCall({
+					url: "/api/v1/inventory/storage-block/" + storageBlockId,
+					method: "GET",
+					done: async function(data) {
+						let newContent = await createNewStorageBlockContent(data);
+						console.log("Got new content for accordion.");
+
+						accordionDivJq.find(".accordion-body").html(newContent);
+					},
+					fail: function(data) {
+					
+					}
+				});
+			}
+
+			function overviewItemAccordionClicked(itemId, storageBlockId, accordionDivJq){
+				console.debug("Accordion " + accordionDivJq.attr("id") + " for item "+itemId+" in storage block " + storageBlockId + " clicked.");
+
+				if(created[storageBlockId][itemId]){
+					console.log("Already clicked on this.");
+					return;
+				}
+				created[storageBlockId][itemId] = true;
+
+				doRestCall({
+					url: "/api/v1/inventory/item/" + itemId,
+					method: "GET",
+					done: async function(data) {
+						let newContent = await getInvItemDetailsSection(data, storageBlockId);
+						console.log("Got new content for accordion.");
+
+						accordionDivJq.find(".accordion-body").html(newContent);
+					},
+					fail: function(data) {
+					}
+				});
+			}
+		</script>
+	{/pageScript}
+{/include}

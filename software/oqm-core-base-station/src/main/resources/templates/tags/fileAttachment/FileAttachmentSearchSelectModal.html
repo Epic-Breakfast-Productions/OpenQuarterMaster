@@ -1,0 +1,39 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- otherModalId - the modal to return to when closing, if any
+!}
+{#modal id='fileAttachmentSearchSelect' size='xl' title='Select a File' otherModalId=otherModalId}
+{#titleIcon}{#icons/search}{/icons/search}{/titleIcon}
+<ul class="nav nav-tabs" id="fileAttachmentSearchSelectSelectTab" role="tablist">
+    <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="fileAttachmentSearchSelectSelectTabSearchTab" data-bs-toggle="tab" data-bs-target="#fileAttachmentSearchSelectSelectTabSearchTabContent" type="button" role="tab" aria-controls="fileAttachmentSearchSelectSelectTabSearchTabContent" aria-selected="true">
+        {#icons/search}{/icons/search} Search
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="fileAttachmentSearchSelectSelectTabNewFileTab" data-bs-toggle="tab" data-bs-target="#fileAttachmentSearchSelectSelectTabNewFileTabContent" type="button" role="tab" aria-controls="fileAttachmentSearchSelectSelectTabNewFileTabContent" aria-selected="false">
+        {#icons/add}{/icons/add} Add New
+    </button>
+  </li>
+</ul>
+<div class="tab-content" id="imageSelectTabContent">
+	<div class="tab-pane fade show active" id="fileAttachmentSearchSelectSelectTabSearchTabContent" role="tabpanel" aria-labelledby="fileAttachmentSearchSelectSelectTabSearchTab">
+		{#fileAttachment/fileAttachmentSearchForm id='fileAttachmentSearchSelectForm'  searchObject=tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:newImageSearchInstance()}
+		{/fileAttachment/fileAttachmentSearchForm}
+		<div class="row">
+			<div class="col">
+				<table class=" table table-bordered table-striped table-hover table-sm" id="fileAttachmentSearchSelectResults">
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="tab-pane fade" id="fileAttachmentSearchSelectSelectTabNewFileTabContent" role="tabpanel" aria-labelledby="fileAttachmentSearchSelectSelectTabNewFileTab">
+		{#fileAttachment/FileAttachmentAddEditForm}
+		{/fileAttachment/FileAttachmentAddEditForm}
+		<button type="submit" form="fileAttachmentAddEditForm" class="btn btn-success">{#icons/add}{/icons/add} Add File and Select</button>
+	</div>
+</div>
+
+{/modal}

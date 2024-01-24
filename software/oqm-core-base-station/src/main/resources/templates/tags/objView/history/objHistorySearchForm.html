@@ -1,0 +1,13 @@
+{!{@tech.ebp.oqm.baseStation.rest.search.HistorySearch historySearchObject}!}
+{#include tags/search/searchForm id=id action=objectUrl searchObject=historySearchObject showKeywords=true showAttributes=true pagingOptions=historySearchObject.getPagingOptions(true) searchFormClasses="historySearchForm" onSubmit="runHistorySearch(this, event);"}
+	{#inputs}
+		<input type="hidden" name="objectId" id="{id}ObjectId" value="{#if objectId??}{objectId}{/if}">
+		{! TODO:: this
+		<div class="mb-3 col col-3">
+		<label for="{id}-itemNameInput" class="form-label">Name</label>
+		<input type="text" class="form-control" name="name" id="{id}-itemNameInput" aria-describedby="{id}-itemNameInputHelp" value="{searchObject.getName()}">
+		<div id="{id}-itemNameInputHelp" class="form-text">The name of the item to find.</div>
+		</div>
+		!}
+	{/inputs}
+{/include}

@@ -1,0 +1,7 @@
+{#include email/textEmailTemplate}
+{#textBody}
+    This is a test email, to check that your email configuration works!
+
+    If you are reading this, it should be working fine.
+{/textBody}
+{/include}

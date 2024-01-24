@@ -1,0 +1,5 @@
+<div class="input-group">
+	<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">{#icons/barcode}{/icons/barcode}</button>
+	<input type="number" class="form-control" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" {#if required??}{required}{/if}>
+	{#if searchSubmit??}<button class="btn btn-success" type="submit">{#icons/search addSpace=true}{/icons/search}Search</button>{/if}
+</div>

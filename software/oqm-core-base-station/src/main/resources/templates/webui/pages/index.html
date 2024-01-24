@@ -1,0 +1,39 @@
+{#include webui/mainWebPageTemplate title='Login' navbar="none" showTitle=false}
+	{#pageContent}
+		<br/>
+		<div class="row justify-content-center ">
+			<div class="col align-self-center col-md-6 card text-center p-0">
+				<div class="card-header">
+					<img src="/media/logo.svg" alt="Open QuarterMaster Logo" style="width: 100%;">
+					{#if config:['service.runBy.name'] != " "}
+					<h3>As Run By {config:['service.runBy.name']}</h3>
+					{/if}
+					{#if config:['service.runBy.banner'] != " "}
+						<img src="/api/v1/media/runBy/banner" style="max-height: 150px;">
+					{/if}
+				</div>
+				<div class="card-body d-grid gap-2">
+					<a href="/overview" class="btn btn-lg btn-primary" id="loginWithExternalLink" target="_self">
+						{#icons/icon icon='door-open'}{/icons/icon} Continue
+					</a>
+					<br />
+					{#if config:['runningInfo.depotUri'] != " "}
+					<a class="link-info" href="{config:['runningInfo.depotUri']}">
+						{#icons/icon icon='box-arrow-in-up-left'}{/icons/icon} Back to Depot
+					</a>
+					{/if}
+				</div>
+				<div class="card-footer">
+					<p class="mt-3 text-muted">
+						&copy; 2021–{generateDatetime.getYear()}
+					</p>
+				</div>
+			</div>
+		</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+		
+		</script>
+	{/pageScript}
+{/include}
