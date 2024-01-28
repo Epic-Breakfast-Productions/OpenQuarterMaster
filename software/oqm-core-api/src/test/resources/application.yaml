@@ -34,28 +34,21 @@ quarkus:
     info-title: Open QuarterMaster Base Station API (TEST)
   mailer:
     mock: true
-  oidc:
-    client-id: oqm-app
-    credentials:
-      secret: "**********"
-  keycloak:
-    admin-client:
-      username: admin
-      password: admin
-    devservices:
-#      port: 8089
-      realm-path: "dev/oqm-realm.json"
-      realm-name: "oqm"
-#      show-logs: true
     
 mp:
   jwt:
     verify:
+      issuer: "oqm-test"
       privatekey:
         location: dev/devTest-cert-key.pem
       publickey:
         location: dev/devTest-cert-cert.pem
-      issuer: ${service.runBy.name}${service.nameShort} # set to ${service.externalAuth.realmBase:} for external
+smallrye:
+  jwt:
+    sign:
+      key:
+        location: dev/devTest-cert-key.pem
+        
 #mp:
 #  messaging:
 #    outgoing:

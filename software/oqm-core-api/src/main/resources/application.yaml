@@ -195,17 +195,7 @@ smallrye:
         certificate:
           files: ../../../../dev/devTest-cert-cert.pem
           key-files: ../../../../dev/devTest-cert-key.pem
-    oidc:
-      client-id: oqm-app
-      credentials:
-        secret: "**********"
-#      auth-server-url: http://localhost:8115/realms/oqm
-    keycloak:
-      devservices:
-        # Required to export realm
-        start-command: "start --http-enabled=true --hostname-strict=false --hostname-strict-https=false"
-        realm-path: "../../../../dev/oqm-realm.json"
-        realm-name: "oqm"
+    
 
   runningInfo:
   service:

@@ -1,6 +1,5 @@
 package tech.ebp.oqm.baseStation.interfaces;
 
-import io.quarkus.oidc.IdToken;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
@@ -19,12 +18,6 @@ import java.util.Optional;
 @Slf4j
 @NoArgsConstructor
 public abstract class RestInterface {
-	
-	@Getter(AccessLevel.PROTECTED)
-	@Inject
-	@IdToken
-	JsonWebToken idToken;
-	
 	@Getter(AccessLevel.PROTECTED)
 	@Inject
 	JsonWebToken accessToken;
@@ -40,10 +33,6 @@ public abstract class RestInterface {
 	@Getter(AccessLevel.PROTECTED)
 	InteractingEntity interactingEntity = null;
 	
-	protected boolean hasIdToken() {
-		return this.getIdToken() != null && this.getIdToken().getClaimNames() != null;
-	}
-	
 	protected boolean hasAccessToken(){
 		return this.getAccessToken() != null && this.getAccessToken().getClaimNames() != null;
 	}
@@ -55,9 +44,6 @@ public abstract class RestInterface {
 	 * @return
 	 */
 	protected JsonWebToken getUserToken(){
-		if(this.hasIdToken()){
-			return this.getIdToken();
-		}
 		if(this.hasAccessToken()){
 			return this.getAccessToken();
 		}
@@ -73,8 +59,8 @@ public abstract class RestInterface {
 				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
 				this.getSecurityContext().getUserPrincipal().getName(),
 				this.getSecurityContext().isSecure(),
-				idToken.getIssuer(),
-				idToken.getGroups()
+				this.getUserToken().getIssuer(),
+				this.getUserToken().getGroups()
 			);
 			if (this.getSecurityContext().isSecure()) {
 				log.warn("Request with JWT made without HTTPS");

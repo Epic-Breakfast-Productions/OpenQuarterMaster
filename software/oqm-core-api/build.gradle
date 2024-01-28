@@ -35,7 +35,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
-	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-smallrye-jwt'
 //	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 //	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
 
@@ -83,7 +83,7 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
-	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
+	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'net.datafaker:datafaker:2.1.0'
 	testImplementation 'org.assertj:assertj-core:3.25.1'
 

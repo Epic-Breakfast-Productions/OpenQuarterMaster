@@ -55,14 +55,14 @@ public class GeneralAuth extends EndpointProvider {
 		log.info("Checking user's token.");
 		
 		TokenCheckResponse response = new TokenCheckResponse();
-		if (this.getIdToken().getRawToken() != null) {
+		if (this.getUserToken().getRawToken() != null) {
 			log.info("User roles: {}", this.identity.getRoles());
-			log.info("User JWT claims: {}", this.getIdToken().getClaimNames());
+			log.info("User JWT claims: {}", this.getUserToken().getClaimNames());
 			
 			response.setHadToken(true);
 			response.setTokenSecure(this.getSecurityContext().isSecure());
-			response.setExpired(this.getIdToken().getExpirationTime() <= TimeUtils.currentTimeInSecs());
-			response.setExpirationDate(new Date(this.getIdToken().getExpirationTime()));
+			response.setExpired(this.getUserToken().getExpirationTime() <= TimeUtils.currentTimeInSecs());
+			response.setExpirationDate(new Date(this.getUserToken().getExpirationTime()));
 		} else {
 			log.info("User had no jwt");
 		}

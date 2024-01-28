@@ -68,15 +68,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output;
-		if (
-			this.getObjectService().isAllowNullEntityForCreate()
-			&& this.getIdToken().getRawToken() == null
-		) {
-			output = this.getObjectService().add(object, null);
-		} else {
-			output = this.getObjectService().add(object, this.getInteractingEntity());
-		}
+		ObjectId output = this.getObjectService().add(object, this.getInteractingEntity());
 		
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
 		return output;
