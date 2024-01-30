@@ -1,7 +1,5 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.smallrye.health.api.HealthGroup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonObject;
 import org.eclipse.microprofile.health.HealthCheck;
@@ -23,8 +21,13 @@ public class CoreApiHealthCheck implements HealthCheck {
 		
 		try {
 			JsonObject returned = this.oqmCoreApiClient.getApiServerHealth();
-			//TODO:: determine that "returned" has status of up
-			responseBuilder.up();
+			String status = returned.getString("status");
+			
+			if(status.equalsIgnoreCase(HealthCheckResponse.Status.UP.name())){
+				responseBuilder.up();
+			} else {
+				responseBuilder.down();
+			}
 		} catch (Exception e) {
 			responseBuilder.down().withData("error", e.getMessage());
 		}

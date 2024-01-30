@@ -14,7 +14,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
-    implementation("io.quarkus:quarkus-websockets")
+//    implementation("io.quarkus:quarkus-websockets")
     implementation 'io.quarkus:quarkus-rest-client-reactive'
     implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
     implementation 'io.quarkus:quarkus-oidc'
@@ -25,6 +25,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-opentelemetry'
+
+    implementation 'tech.ebp.oqm.lib.core.api.quark:core-api-lib-quarkus:1.0.0-SNAPSHOT'
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
     //webjars

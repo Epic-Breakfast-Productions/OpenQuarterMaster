@@ -6,6 +6,7 @@ use Ebprod\OqmCoreDepot\context\Context;
 use Ebprod\OqmCoreDepot\LogUtils;
 use Jumbojett\OpenIDConnectClient;
 use Monolog\Logger;
+use TypeError;
 
 /**
  * Refs:
@@ -45,8 +46,17 @@ class AuthUtils {
 	
 	public static function ensureLoggedIn(): void {
 		self::log()->info("Authenticating user.");
-		self::getOidc()->authenticate();
+		
+		try {
+			self::getOidc()->getAccessToken();
+			self::log()->info("Had access token.");
+		} catch (TypeError $e){
+			self::log()->info("Need to authenticate.");
+			self::getOidc()->authenticate();
+		}
+		
 		self::log()->info("Authenticated user: " . self::getUsername());
+		self::log()->debug("User token: " . self::getUsersToken());
 	}
 	
 	public static function getUsername(): string {

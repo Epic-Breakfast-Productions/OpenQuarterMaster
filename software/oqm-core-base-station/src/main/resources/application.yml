@@ -109,7 +109,8 @@ quarkus:
     level: DEBUG
     console:
       format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
-  
+  smallrye-health:
+    context-propagation: true
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API
