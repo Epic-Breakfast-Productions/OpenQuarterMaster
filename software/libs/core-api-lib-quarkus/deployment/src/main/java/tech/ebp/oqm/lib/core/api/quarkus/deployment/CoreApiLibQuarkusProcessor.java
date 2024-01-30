@@ -7,17 +7,22 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
-import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 class CoreApiLibQuarkusProcessor {
 	
 	private static final String FEATURE = "core-api-lib-quarkus";
+	private static final String MONGODB_HOSTNAME = "mongodbserver";
 	
 	@BuildStep
 	FeatureBuildItem feature() {
@@ -26,51 +31,53 @@ class CoreApiLibQuarkusProcessor {
 	
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode) {
-		
-		DockerImageName dockerImageName = DockerImageName.parse("ebprod/oqm-core-api:1.0.0");
-		
-		// You might want to use Quarkus config here to customise the container
-		OtherWebServiceContainer container = new OtherWebServiceContainer(dockerImageName)
-												 .withEnv("whatever", "true")
-												 .withEnv("otherenv", "something");
-		
-		container.start();
-		
-		Map<String, String> props = Map.of(
-			"mynew.url",
-			"https://" + container.getHost() + ":" + container.getPort()
-		);
-		
-		
-		return List.of(new DevServicesResultBuildItem.RunningDevService(
-				FEATURE,
-				container.getContainerId(),
-				container::close,
-				props
-			)
+		List<DevServicesResultBuildItem> output = new ArrayList<>();
+		Map<String, String> mongoConnectionInfo = new HashMap<>();
+		{//mongodb
+			DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
+			
+			MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
+			mongoDBContainer.addExposedPorts();
+			mongoDBContainer.withNetwork(Network.SHARED);
+			mongoDBContainer.withNetworkAliases(MONGODB_HOSTNAME);
+			mongoDBContainer.start();
+			
+			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://"+MONGODB_HOSTNAME+":27017");
+			
+			output.add(new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					mongoDBContainer.getContainerId(),
+					mongoDBContainer::close,
+					Map.of()
+				)
 						   .toBuildItem()
-		);
-	}
-	
-	private static class OtherWebServiceContainer extends GenericContainer<OtherWebServiceContainer> {
-		
-		static final int PORT = 25565;
-		
-		public OtherWebServiceContainer(DockerImageName image) {
-			super(image);
+			);
+		}
+		{//Base Station
+			DockerImageName dockerImageName = DockerImageName.parse("ebprod/oqm-core-api:1.0.0");
+			// You might want to use Quarkus config here to customise the container
+			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(dockerImageName)
+														  .withAccessToHost(true)
+														  .withEnv(mongoConnectionInfo)
+														  .withNetwork(Network.SHARED);
+				;
+			
+			container.start();
+			
+			Map<String, String> props = new HashMap<>();
+			props.put("quarkus.oqmCoreApiLib.coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
+			
+			output.add(new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					container.getContainerId(),
+					container::close,
+					props
+				)
+						   .toBuildItem()
+			);
 		}
 		
-		@Override
-		protected void configure() {
-			withNetwork(Network.SHARED);
-			addExposedPorts(PORT);
-			// Tell the dev service how to know the container is ready
-			waitingFor(Wait.forLogMessage(".*Listening on http://0.0.0.0:9292.*", 1));
-		}
-		
-		public Integer getPort() {
-			return this.getMappedPort(PORT);
-		}
+		return output;
 	}
 	
 	@BuildStep

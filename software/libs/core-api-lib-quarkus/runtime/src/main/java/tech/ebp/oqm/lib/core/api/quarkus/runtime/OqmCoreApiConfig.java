@@ -9,6 +9,10 @@ import io.quarkus.runtime.annotations.ConfigRoot;
  */
 @ConfigRoot(name = "oqmCoreApiLib", phase = ConfigPhase.RUN_TIME)
 public class OqmCoreApiConfig {
+	
+	/**
+	 * The base uri for the OQM core API service. example: `<pre>http://host:port/</pre>`
+	 */
 	@ConfigItem(name = ConfigItem.ELEMENT_NAME)
 	public String coreApiBaseUri;
 }
