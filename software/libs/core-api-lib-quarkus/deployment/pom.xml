@@ -27,18 +27,29 @@
       <artifactId>quarkus-smallrye-health-spi</artifactId>
     </dependency>
     <dependency>
-      <groupId>tech.ebp.oqm.lib.core.api.quark</groupId>
+      <groupId>tech.ebp.oqm.lib</groupId>
       <artifactId>core-api-lib-quarkus</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5-internal</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-deployment</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health-deployment</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.builditem.ConfigurationBuildItem;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
@@ -10,19 +11,17 @@ import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 class CoreApiLibQuarkusProcessor {
 	
 	private static final String FEATURE = "core-api-lib-quarkus";
-	private static final String MONGODB_HOSTNAME = "mongodbserver";
+	private static final String MONGODB_DEVSERVICE_HOSTNAME = "mongodbserver";
 	
 	@BuildStep
 	FeatureBuildItem feature() {
@@ -39,10 +38,10 @@ class CoreApiLibQuarkusProcessor {
 			MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
 			mongoDBContainer.addExposedPorts();
 			mongoDBContainer.withNetwork(Network.SHARED);
-			mongoDBContainer.withNetworkAliases(MONGODB_HOSTNAME);
+			mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 			mongoDBContainer.start();
 			
-			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://"+MONGODB_HOSTNAME+":27017");
+			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":27017");
 			
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
@@ -65,7 +64,8 @@ class CoreApiLibQuarkusProcessor {
 			container.start();
 			
 			Map<String, String> props = new HashMap<>();
-			props.put("quarkus.oqmCoreApiLib.coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
+			props.put("quarkus."+Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
+			props.put("quarkus.rest-client.oqmCoreApi.url", "${quarkus."+Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
 			
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,

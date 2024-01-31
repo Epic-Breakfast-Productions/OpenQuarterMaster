@@ -3,8 +3,9 @@ package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
-@ConfigRoot(name="oqmCoreApiLib", phase= ConfigPhase.BUILD_TIME)
+@ConfigRoot(name= Constants.CONFIG_ROOT_NAME, phase= ConfigPhase.BUILD_TIME)
 public class CoreApiLibBuildTimeConfig {
 	/**
 	 * Whether a health check is published in case the smallrye-health extension is present.

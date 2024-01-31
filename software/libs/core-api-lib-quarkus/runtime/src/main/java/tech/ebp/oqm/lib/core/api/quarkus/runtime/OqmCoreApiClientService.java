@@ -6,7 +6,7 @@ import jakarta.ws.rs.Path;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 
-@RegisterRestClient(configKey = "oqmCoreApi")
+@RegisterRestClient(configKey = Constants.CONFIG_ROOT_NAME)
 public interface OqmCoreApiClientService {
 	
 	@Path("/q/health")

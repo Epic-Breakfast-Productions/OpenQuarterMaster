@@ -7,7 +7,7 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 /**
  * https://github.com/quarkusio/quarkus/blob/main/extensions/mongodb-client/runtime/src/main/java/io/quarkus/mongodb/runtime/MongodbConfig.java
  */
-@ConfigRoot(name = "oqmCoreApiLib", phase = ConfigPhase.RUN_TIME)
+@ConfigRoot(name = Constants.CONFIG_ROOT_NAME, phase = ConfigPhase.RUN_TIME)
 public class OqmCoreApiConfig {
 	
 	/**
