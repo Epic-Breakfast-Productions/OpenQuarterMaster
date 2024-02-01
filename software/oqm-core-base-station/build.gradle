@@ -26,7 +26,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-opentelemetry'
 
-    implementation 'tech.ebp.oqm.lib.core.api.quark:core-api-lib-quarkus:1.0.0-SNAPSHOT'
+    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:1.0.0-SNAPSHOT'
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
     //webjars
