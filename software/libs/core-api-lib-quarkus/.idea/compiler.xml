@@ -65,8 +65,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/eclipse/parsson/parsson/1.1.5/parsson-1.1.5.jar" />
           <entry name="$MAVEN_REPOSITORY$/io/quarkus/quarkus-bom/3.6.7/quarkus-bom-3.6.7.pom" />
         </processorPath>
-        <module name="core-api-lib-quarkus" />
         <module name="core-api-lib-quarkus-deployment" />
+        <module name="core-api-lib-quarkus" />
       </profile>
     </annotationProcessing>
   </component>

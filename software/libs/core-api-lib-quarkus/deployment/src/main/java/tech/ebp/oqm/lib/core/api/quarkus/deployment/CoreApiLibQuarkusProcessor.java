@@ -2,10 +2,10 @@ package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.ConfigurationBuildItem;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
+import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.testcontainers.containers.MongoDBContainer;
@@ -26,6 +26,21 @@ class CoreApiLibQuarkusProcessor {
 	@BuildStep
 	FeatureBuildItem feature() {
 		return new FeatureBuildItem(FEATURE);
+	}
+	
+	@BuildStep
+	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
+		return List.of(
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client.oqmCoreApi.url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}")
+		);
+	}
+	
+	@BuildStep
+	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
+		return new HealthBuildItem(
+			"tech.ebp.oqm.lib.core.api.quarkus.runtime.CoreApiHealthCheck",
+			buildTimeConfig.healthEnabled
+		);
 	}
 	
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
@@ -59,13 +74,13 @@ class CoreApiLibQuarkusProcessor {
 														  .withAccessToHost(true)
 														  .withEnv(mongoConnectionInfo)
 														  .withNetwork(Network.SHARED);
-				;
+			;
 			
 			container.start();
 			
 			Map<String, String> props = new HashMap<>();
-			props.put("quarkus."+Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
-			props.put("quarkus.rest-client.oqmCoreApi.url", "${quarkus."+Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
+			props.put("quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
+			props.put("quarkus.rest-client.oqmCoreApi.url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
 			
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
@@ -78,13 +93,5 @@ class CoreApiLibQuarkusProcessor {
 		}
 		
 		return output;
-	}
-	
-	@BuildStep
-	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
-		return new HealthBuildItem(
-			"tech.ebp.oqm.lib.core.api.quarkus.runtime.CoreApiHealthCheck",
-			buildTimeConfig.healthEnabled
-		);
 	}
 }
