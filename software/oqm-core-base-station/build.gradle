@@ -28,6 +28,8 @@ dependencies {
 
     implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:1.0.0-SNAPSHOT'
 
+    implementation 'org.apache.commons:commons-io:1.3.2'
+
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
     //webjars
     implementation 'org.webjars:jquery:3.7.1'

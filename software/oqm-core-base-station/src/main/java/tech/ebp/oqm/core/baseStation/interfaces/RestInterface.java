@@ -62,18 +62,17 @@ public abstract class RestInterface {
 	}
 	
 	private UserInfo logRequestAndProcessEntity() {
+		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
 		log.info(
 			"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
-			this.getSecurityContext().getUserPrincipal().getName(),
+			this.userInfo.getName(),
 			this.getSecurityContext().isSecure(),
-			idToken.getIssuer(),
-			idToken.getGroups()
+			this.idToken.getIssuer(),
+			this.idToken.getGroups()
 		);
 		if (this.getSecurityContext().isSecure()) {
 			log.warn("Request with JWT made without HTTPS");
 		}
-		
-		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
 		
 		return this.getUserInfo();
 	}
