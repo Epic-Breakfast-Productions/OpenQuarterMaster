@@ -27,9 +27,9 @@ service:
   item:
     expiryCheck:
       cron: 0 0 * ? * * # Every Hour
-  display:
-    datetimeFormat: "" #TODO:: determine good time format, use wherever datetimes are displayed
   tempDir: "/tmp/oqm-baseStation"
+  dateTimeFormat:
+    default: "MM/dd/YYYY hh:mm:ss a (z)"
 
 productLookup:
   providers:
