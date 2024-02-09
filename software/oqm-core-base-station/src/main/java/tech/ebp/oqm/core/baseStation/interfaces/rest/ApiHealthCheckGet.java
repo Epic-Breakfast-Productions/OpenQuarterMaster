@@ -12,7 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
 
 @Blocking
 @Slf4j
@@ -23,7 +23,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmCoreApiClientService;
 public class ApiHealthCheckGet extends RestInterface {
 	
 	@RestClient
-	OqmCoreApiClientService oqmCoreApiClient;
+	OqmCoreApiClientInfoHealthService oqmCoreApiClient;
 	
 	@GET
 	public Response getApiHealth(){

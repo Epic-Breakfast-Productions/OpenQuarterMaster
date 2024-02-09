@@ -11,9 +11,8 @@ class GreetingResourceTest {
     @Test
     void testHelloEndpoint() {
         given()
-          .when().get("/hello")
+          .when().get("/q/health")
           .then()
-             .statusCode(200)
-             .body(is("Hello from RESTEasy Reactive"));
+             .statusCode(200);
     }
 }

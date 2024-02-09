@@ -1,10 +1,8 @@
 package tech.ebp.oqm.core.baseStation.interfaces;
 
 import io.quarkus.oidc.IdToken;
-import io.vertx.ext.auth.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.AccessLevel;
@@ -14,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
-
-import java.util.Optional;
 
 @Slf4j
 @NoArgsConstructor
@@ -61,7 +57,11 @@ public abstract class RestInterface {
 		return null;
 	}
 	
-	private UserInfo logRequestAndProcessEntity() {
+	protected String getUserTokenStr(){
+		return "Bearer " + this.getAccessToken().getRawToken();
+	}
+	
+	private void logRequestAndProcessEntity() {
 		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
 		log.info(
 			"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
@@ -73,8 +73,7 @@ public abstract class RestInterface {
 		if (this.getSecurityContext().isSecure()) {
 			log.warn("Request with JWT made without HTTPS");
 		}
-		
-		return this.getUserInfo();
+		log.debug("User JWT: {}", this.getUserTokenStr());
 	}
 	
 	@PostConstruct

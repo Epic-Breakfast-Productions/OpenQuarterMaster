@@ -12,37 +12,34 @@
 	{#pageContent}
 	Overview
 	
-		<button onclick="testCall()">
-			Test
-		</button>
 	
-		{!<ul class="nav nav-tabs" id="mainTab" role="tablist">!}
-			{!<li class="nav-item" role="presentation">!}
-				{!<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">!}
-					{!{#icons/icon icon='diagram-3'}{/icons/icon} Overview!}
-				{!</button>!}
-			{!</li>!}
-			{!<li class="nav-item" role="presentation">!}
-				{!<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">!}
-					{!{#icons/expiring}{/icons/expiring} Expiring!}
+		<ul class="nav nav-tabs" id="mainTab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="overviewTab" data-bs-toggle="tab" data-bs-target="#overviewTabContent" type="button" role="tab" aria-controls="overviewTabContent" aria-selected="true">
+					{#icons/icon icon='diagram-3'}{/icons/icon} Overview
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
+					{#icons/expiring}{/icons/expiring} Expiring
 					{!{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}!}
 					{!{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}!}
-				{!</button>!}
-			{!</li>!}
-			{!<li class="nav-item" role="presentation">!}
-				{!<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">!}
-					{!{#icons/lowStock}{/icons/lowStock} Low Stock!}
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
+					{#icons/lowStock}{/icons/lowStock} Low Stock
 					{!{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}!}
-				{!</button>!}
-			{!</li>!}
-		{!</ul>!}
-		{!<div class="tab-content">!}
-			{!<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">!}
-				{!<p>!}
-					{!{numItems} types of items stored in over {numStorageBlocks} storage blocks!}
-				{!</p>!}
-				{!<div class="row">!}
-					{!<div class="col">!}
+				</button>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
+				<p>
+					{numItems} types of items stored in over {!numStorageBlocks!} storage blocks
+				</p>
+				<div class="row">
+					<div class="col">
 						{!{#let parents=storageBlockService.getTopParents()}!}
 							{!{#if parents.isEmpty()}!}
 								{!<h2>!}
@@ -78,15 +75,15 @@
 								{!</div>!}
 							{!{/if}!}
 						{!{/let}!}
-					{!</div>!}
-				{!</div>!}
-			{!</div>!}
-			{!<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">!}
-				{!<div class="row">!}
-					{!<div class="col">!}
-						{!<h3>!}
-							{!Expired:!}
-						{!</h3>!}
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
+				<div class="row">
+					<div class="col">
+						<h3>
+							Expired:
+						</h3>
 						{!{#if expiredList.isEmpty()}!}
 							{!<p>!}
 								{!Nothing expired!!}
@@ -129,14 +126,14 @@
 								{!</tbody>!}
 							{!</table>!}
 						{!{/if}!}
-					{!</div>!}
-				{!</div>!}
-				{!<hr />!}
-				{!<div class="row">!}
-					{!<div class="col">!}
-						{!<h3>!}
-							{!Close to expiring:!}
-						{!</h3>!}
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col">
+						<h3>
+							Close to expiring:
+						</h3>
 						{!{#if expiredWarnList.isEmpty()}!}
 							{!<p>!}
 								{!Nothing close to expiring!!}
@@ -179,15 +176,15 @@
 								{!</tbody>!}
 							{!</table>!}
 						{!{/if}!}
-					{!</div>!}
-				{!</div>!}
-			{!</div>!}
-		{!<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">!}
-			{!<div class="row">!}
-				{!<div class="col">!}
-					{!<h3>!}
-						{!Low Stock:!}
-					{!</h3>!}
+					</div>
+				</div>
+			</div>
+		<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
+			<div class="row">
+				<div class="col">
+					<h3>
+						Low Stock:
+					</h3>
 					{!{#if lowStockList.isEmpty()}!}
 						{!<p>!}
 							{!No stock is low!!}
@@ -231,10 +228,10 @@
 							{!</tbody>!}
 						{!</table>!}
 					{!{/if}!}
-				{!</div>!}
-			{!</div>!}
-		{!</div>!}
-		{!</div>!}
+				</div>
+			</div>
+		</div>
+		</div>
 	{/pageContent}
 	{#scripts}
 		<script src="/res/js/obj/getters.js"></script>
@@ -242,47 +239,6 @@
 	{/scripts}
 	{#pageScript}
 		<script>
-			function testCall(){
-				Rest.call({
-					url: "/hello/authed",
-					method: "GET",
-					done: async function(data) {
-						console.log("Got response.");
-					},
-					fail: function(data) {
-					
-					}
-				});
-			}
-			
-			let socket = new WebSocket("ws://"+location.host+"/v1/ui/componentSocket/"+crypto.randomUUID());
-			
-			socket.onopen = function(e) {
-				console.log("[open] Connection established");
-				console.log("Sending to server");
-				socket.send("My name is John");
-			};
-			
-			socket.onmessage = function(event) {
-				console.log(`[message] Data received from server: ` + event.data);
-			};
-			
-			socket.onclose = function(event) {
-				if (event.wasClean) {
-					console.log('[close] Connection closed cleanly, code='+event.code+' reason=' + event.reason);
-				} else {
-					// e.g. server process killed or network down
-					// event.code is usually 1006 in this case
-					console.log('[close] Connection died: ' + event.code);
-				}
-			};
-			
-			socket.onerror = function(error) {
-				console.log(`[error]`);
-			};
-			
-			
-			
 			var created = { };
 
 
