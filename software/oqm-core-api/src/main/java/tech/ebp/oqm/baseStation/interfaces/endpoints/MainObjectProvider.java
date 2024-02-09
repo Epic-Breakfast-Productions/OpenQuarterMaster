@@ -5,9 +5,13 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
@@ -15,8 +19,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import tech.ebp.oqm.baseStation.model.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.baseStation.model.rest.auth.roles.UserRoles;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
@@ -35,7 +46,9 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
+	
 	public abstract Class<T> getObjectClass();
+	
 	public abstract MongoHistoriedObjectService<T, S> getObjectService();
 	
 	//<editor-fold desc="CRUD operations">
@@ -165,6 +178,29 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		
 		log.info("{} found with id {}", this.getObjectClass().getSimpleName(), id);
 		return output;
+	}
+	
+//	@Path("stats")
+//	@GET
+//	@Operation(
+//		summary = "Gets stats on this object's collection."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Object retrieved.",
+//		content = @Content(
+//			mediaType = "application/json",
+//			schema = @Schema(
+//				implementation = CollectionStats.class
+//			)
+//		)
+//	)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
+//	@WithSpan
+	public CollectionStats getCollectionStats(
+	) {
+		return this.getObjectService().getStats();
 	}
 	
 	//	@PUT

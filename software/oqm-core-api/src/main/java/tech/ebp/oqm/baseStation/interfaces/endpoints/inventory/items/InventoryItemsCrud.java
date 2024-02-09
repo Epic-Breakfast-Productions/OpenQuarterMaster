@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -29,6 +30,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
@@ -67,7 +69,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	InventoryItemService objectService;
 	
 	@Getter
-	Class<InventoryItem> objectClass =  InventoryItem.class;
+	Class<InventoryItem> objectClass = InventoryItem.class;
 	
 	@POST
 	@Operation(
@@ -165,6 +167,30 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		}
 		
 		return Response.ok(results).build();
+	}
+	
+	@Override
+	@Path("stats")
+	@GET
+	@Operation(
+		summary = "Gets stats on this object's collection."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = CollectionStats.class
+			)
+		)
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public CollectionStats getCollectionStats(
+	) {
+		return super.getCollectionStats();
 	}
 	
 	@GET
@@ -675,8 +701,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	
 	/**
 	 * TODO:: add endpoint to support list of actions
+	 *
 	 * @param itemId
 	 * @param action
+	 *
 	 * @return
 	 * @throws JsonProcessingException
 	 */

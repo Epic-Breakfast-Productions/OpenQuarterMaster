@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.baseStation.model.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 
@@ -137,6 +138,15 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
 	 */
 	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
+	}
+	
+	/**
+	 * Todo:: extend this per service, subtypes, etc.
+	 */
+	public CollectionStats getStats(){
+		return CollectionStats.builder()
+				   .size(this.getCollection().countDocuments())
+				   .build();
 	}
 	
 }

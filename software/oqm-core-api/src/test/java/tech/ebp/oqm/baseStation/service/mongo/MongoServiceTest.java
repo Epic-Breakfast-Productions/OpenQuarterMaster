@@ -10,6 +10,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.model.CollectionStats;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
@@ -520,6 +521,18 @@ class MongoServiceTest extends RunningServerTest {
 		assertEquals(
 			16.5,
 			this.testMongoService.getSumOfFloatField("floatValue")
+		);
+	}
+	
+	@Test
+	public void testCo() {
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		
+		assertEquals(
+			CollectionStats.builder().size(3).build(),
+			this.testMongoService.getStats()
 		);
 	}
 	
