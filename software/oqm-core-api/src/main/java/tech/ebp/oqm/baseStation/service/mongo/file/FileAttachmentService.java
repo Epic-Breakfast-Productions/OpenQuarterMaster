@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
@@ -84,7 +85,7 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		return FileAttachmentGet.fromFileAttachment(obj, this.getRevisions(obj.getId()));
 	}
 	
-	private static class FileAttachmentObjectService extends MongoHistoriedObjectService<FileAttachment, FileAttachmentSearch> {
+	private static class FileAttachmentObjectService extends MongoHistoriedObjectService<FileAttachment, FileAttachmentSearch, CollectionStats> {
 		
 		@Setter
 		@Getter(AccessLevel.PRIVATE)
@@ -108,6 +109,12 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 			);
 //			this.fileService = fileService;
 			//        this.validator = validator;
+		}
+		
+		@Override
+		public CollectionStats getStats() {
+			return super.addBaseStats(CollectionStats.builder())
+					   .build();
 		}
 		
 		//TODO:: make this work somehow

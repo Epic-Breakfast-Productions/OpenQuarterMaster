@@ -12,6 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch> {
+public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
 	CustomUnitService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -68,6 +69,12 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 	public void ensureObjectValid(boolean newObject, CustomUnitEntry newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: ensure name,symbol, tostring? not same as any in default set or held
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

@@ -18,7 +18,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.baseStation.model.CollectionStats;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 
@@ -29,7 +29,7 @@ import tech.ebp.oqm.baseStation.rest.search.SearchObject;
  */
 @AllArgsConstructor
 @Slf4j
-public abstract class MongoService<T extends MainObject, S extends SearchObject<T>> {
+public abstract class MongoService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> {
 	
 	public static String getCollectionNameFromClass(Class<?> clazz) {
 		return clazz.getSimpleName();
@@ -140,13 +140,13 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
 	}
 	
+	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(X builder){
+		return (X) builder.size(this.getCollection().countDocuments());
+	}
+	
 	/**
 	 * Todo:: extend this per service, subtypes, etc.
 	 */
-	public CollectionStats getStats(){
-		return CollectionStats.builder()
-				   .size(this.getCollection().countDocuments())
-				   .build();
-	}
+	public abstract V getStats();
 	
 }

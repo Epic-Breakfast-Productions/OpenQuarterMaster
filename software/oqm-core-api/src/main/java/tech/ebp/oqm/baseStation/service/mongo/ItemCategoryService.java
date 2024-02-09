@@ -10,6 +10,7 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
@@ -26,7 +27,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Named("ItemCategoryService")
 @Slf4j
 @ApplicationScoped
-public class ItemCategoryService extends HasParentObjService<ItemCategory, CategoriesSearch, ItemCategoryTreeNode> {
+public class ItemCategoryService extends HasParentObjService<ItemCategory, CategoriesSearch, CollectionStats, ItemCategoryTreeNode> {
 	
 	private InventoryItemService inventoryItemService;
 	private StorageBlockService storageBlockService;
@@ -54,6 +55,12 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, Categ
 		);
 		this.inventoryItemService = inventoryItemService;
 		this.storageBlockService = storageBlockService;
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

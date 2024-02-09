@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
@@ -33,7 +34,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Named("StorageBlockService")
 @Slf4j
 @ApplicationScoped
-public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, StorageBlockTreeNode>{
+public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, CollectionStats, StorageBlockTreeNode>{
 	
 	
 	private InventoryItemService inventoryItemService;
@@ -61,6 +62,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		);
 		this.inventoryItemService = inventoryItemService;
 		this.itemCheckoutService = itemCheckoutService;
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

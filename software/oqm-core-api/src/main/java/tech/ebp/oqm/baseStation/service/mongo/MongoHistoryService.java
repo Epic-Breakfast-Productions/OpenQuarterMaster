@@ -10,6 +10,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.collectionStats.HistoryCollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
@@ -34,7 +35,7 @@ import static com.mongodb.client.model.Filters.eq;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public class MongoHistoryService<T extends MainObject> extends MongoObjectService<ObjectHistoryEvent, HistorySearch> {
+public class MongoHistoryService<T extends MainObject> extends MongoObjectService<ObjectHistoryEvent, HistorySearch, HistoryCollectionStats> {
 	
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	
@@ -257,4 +258,12 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	public ObjectId objectDeleted(T updated, InteractingEntity entity) {
 		return this.objectDeleted(null, updated, entity);
 	}
+	
+	@Override
+	public HistoryCollectionStats getStats() {
+		return super.addBaseStats(HistoryCollectionStats.builder())
+				   //TODO:: this
+				   .build();
+	}
+	
 }

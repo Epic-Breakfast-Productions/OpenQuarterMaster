@@ -29,6 +29,7 @@ import org.bson.codecs.EncoderContext;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.media.FileHashes;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
@@ -57,7 +58,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoService<T, S> {
+public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoService<T, S, X> {
 	
 	GridFSBucket gridFSBucket = null;
 	@Getter(AccessLevel.PUBLIC)
@@ -147,7 +148,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 * Gets the mongo service responsible for handling the associated data objects
 	 * @return
 	 */
-	public abstract MongoObjectService<T, S> getFileObjectService();
+	public abstract MongoObjectService<T, S, X> getFileObjectService();
 	
 	public abstract G fileObjToGet(T obj);
 	

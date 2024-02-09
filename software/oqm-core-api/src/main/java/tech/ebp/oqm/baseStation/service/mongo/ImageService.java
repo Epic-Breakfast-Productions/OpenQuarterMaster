@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 
 @Slf4j
 @ApplicationScoped
-public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch> {
+public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch, CollectionStats> {
 	
 	private StorageBlockService storageBlockService;
 	private ItemCategoryService itemCategoryService;
@@ -48,6 +49,12 @@ public class ImageService extends MongoHistoriedObjectService<Image, ImageSearch
 		this.storageBlockService = storageBlockService;
 		this.itemCategoryService = itemCategoryService;
 		this.inventoryItemService = inventoryItemService;
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

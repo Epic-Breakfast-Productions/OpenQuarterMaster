@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemCheckinEvent;
@@ -36,7 +37,7 @@ import static com.mongodb.client.model.Filters.or;
 @Named("ItemCheckoutService")
 @Slf4j
 @ApplicationScoped
-public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckout, ItemCheckoutSearch> {
+public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckout, ItemCheckoutSearch, CollectionStats> {
 	
 	private InventoryItemService inventoryItemService;
 	
@@ -68,6 +69,12 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	public void ensureObjectValid(boolean newObject, ItemCheckout newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: this
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	public ObjectId checkoutItem(ItemCheckoutRequest request, InteractingEntity entity){

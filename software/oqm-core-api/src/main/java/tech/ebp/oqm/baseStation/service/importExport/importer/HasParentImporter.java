@@ -26,10 +26,10 @@ import java.util.Map;
  * TODO:: changeover to generic 'parentImporter' to operate on the HasParent interface
  */
 @Slf4j
-public class HasParentImporter<T extends MainObject & HasParent, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S>>{
+public class HasParentImporter<T extends MainObject & HasParent, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>>{
 	
 	
-	public HasParentImporter(MongoHistoriedObjectService<T, S> mongoService) {
+	public HasParentImporter(MongoHistoriedObjectService<T, S, ?> mongoService) {
 		super(mongoService);
 	}
 	

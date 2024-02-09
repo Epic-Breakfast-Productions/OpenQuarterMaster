@@ -65,7 +65,7 @@ public class DataExportService {
 	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
 		File tempDir,
-		MongoObjectService<T, S> service,
+		MongoObjectService<T, S, ?> service,
 		boolean includeHistory
 	) {
 		String dataTypeName = service.getCollectionName();
@@ -104,7 +104,7 @@ public class DataExportService {
 					throw new IOException("Failed to create directory for object history.");
 				}
 				
-				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S>) service).historyIterator();
+				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S, ?>) service).historyIterator();
 				while (hIt.hasNext()) {
 					ObjectHistoryEvent curObj = hIt.next();
 					ObjectId curId = curObj.getId();
@@ -128,7 +128,7 @@ public class DataExportService {
 	
 	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
 		File tempDir,
-		MongoFileService<T, S, G> fileService,
+		MongoFileService<T, S, ?, G> fileService,
 		boolean includeHistory
 	) {
 		String dataTypeName = fileService.getCollectionName();

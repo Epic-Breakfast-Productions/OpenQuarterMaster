@@ -10,6 +10,7 @@ import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.history.events.itemList.ItemListActionAddEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
@@ -18,7 +19,7 @@ import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
 
 @Slf4j
 @ApplicationScoped
-public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch> {
+public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
 	ItemListService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -38,6 +39,12 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 			ItemList.class,
 			false
 		);
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

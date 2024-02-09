@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.rest.search.InteractingEntitySearch;
@@ -23,7 +24,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @Named("InteractingEntityService")
 @ApplicationScoped
-public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch> {
+public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch, CollectionStats> {
 	
 	InteractingEntityService() {//required for DI
 		super(null, null, null, null, null, null);
@@ -71,6 +72,12 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 				.limit(1)
 				.first()
 		);
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
 	}
 	
 	@WithSpan

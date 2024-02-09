@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.model;
+package tech.ebp.oqm.baseStation.model.collectionStats;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

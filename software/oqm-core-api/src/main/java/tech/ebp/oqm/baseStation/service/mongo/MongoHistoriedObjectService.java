@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
@@ -37,7 +38,7 @@ import java.util.List;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedObjectService<T extends MainObject, S extends SearchObject<T>> extends MongoObjectService<T, S> {
+public abstract class MongoHistoriedObjectService<T extends MainObject, S extends SearchObject<T>, X extends CollectionStats> extends MongoObjectService<T, S, X> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	

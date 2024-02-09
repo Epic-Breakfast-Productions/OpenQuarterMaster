@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.baseStation.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemSubEvent;
@@ -53,7 +54,7 @@ import static com.mongodb.client.model.Filters.exists;
 @Named("InventoryItemService")
 @Slf4j
 @ApplicationScoped
-public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch> {
+public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch, InvItemCollectionStats> {
 	
 	private BaseStationInteractingEntity baseStationInteractingEntity;
 	private ItemLowStockEventNotificationService ilsens;
@@ -91,6 +92,15 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		newOrChangedObject.recalculateDerived();
 		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant, storage block ids exist, image ids exist
+	}
+	
+	@Override
+	public InvItemCollectionStats getStats() {
+		return super.addBaseStats(InvItemCollectionStats.builder())
+				   .numExpired(this.getNumStoredExpired())
+				   .numCloseExpireWarn(this.getNumStoredExpiryWarn())
+				   .numLowStock(this.getNumLowStock())
+				   .build();
 	}
 	
 	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents) {

@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.file.NewFileVersionEvent;
@@ -41,7 +42,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoFileService<T, S, G> {
+public abstract class MongoHistoriedFileService<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends MongoFileService<T, S, CollectionStats,
+																																											   G> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -61,7 +63,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	@Getter
 	protected final boolean allowNullEntityForCreate;
 	@Getter
-	private MongoHistoriedObjectService<T, S> fileObjectService = null;
+	private MongoHistoriedObjectService<T, S, CollectionStats> fileObjectService = null;
 	
 	public MongoHistoriedFileService(
 		ObjectMapper objectMapper,
@@ -71,7 +73,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoriedObjectService<T, S> fileMetadataService
+		MongoHistoriedObjectService<T, S, CollectionStats> fileMetadataService
 	) {
 		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
@@ -110,7 +112,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 		Class<T> metadataClazz,
 		boolean allowNullEntityForCreate,
 		TempFileService tempFileService,
-		MongoHistoriedObjectService<T, S> historiedObjectService
+		MongoHistoriedObjectService<T, S, CollectionStats> historiedObjectService
 	) {
 		this(
 			objectMapper,
@@ -126,7 +128,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 	/**
 	 * This is the standard impl of the MongoHistoriedObjectService used to store T.
 	 */
-	private class FileObjectService extends MongoHistoriedObjectService<T, S> {
+	private class FileObjectService extends MongoHistoriedObjectService<T, S, CollectionStats> {
 		FileObjectService() {//required for DI
 			super(null, null, null, null, null, null, false, null);
 		}
@@ -146,6 +148,22 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, S exte
 			);
 			//        this.validator = validator;
 		}
+		
+		/**
+		 * TODO:: this shoudl be its own class, or at least be capable of so.
+		 * @return
+		 */
+		@Override
+		public CollectionStats getStats() {
+			return super.addBaseStats(CollectionStats.builder())
+					   .build();
+		}
+	}
+	
+	@Override
+	public CollectionStats getStats() {
+		//TODO:: this should be checked
+		return this.getFileObjectService().getStats();
 	}
 	
 	@WithSpan

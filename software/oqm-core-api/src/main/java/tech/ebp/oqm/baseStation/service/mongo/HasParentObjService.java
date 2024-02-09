@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.HasParent;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
@@ -20,9 +21,10 @@ public abstract class
 	HasParentObjService<
 						   T extends MainObject & HasParent,
 						   S extends SearchObject<T>,
+						   X extends CollectionStats,
 						   N extends ParentedMainObjectTreeNode<T>
 						   >
-	extends MongoHistoriedObjectService<T, S>
+	extends MongoHistoriedObjectService<T, S, X>
 {
 	
 	public HasParentObjService(

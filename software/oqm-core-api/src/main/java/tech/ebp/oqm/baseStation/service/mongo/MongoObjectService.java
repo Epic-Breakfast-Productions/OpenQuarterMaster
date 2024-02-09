@@ -20,6 +20,7 @@ import org.bson.BsonNull;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
@@ -41,7 +42,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 @Slf4j
-public abstract class MongoObjectService<T extends MainObject, S extends SearchObject<T>> extends MongoService<T, S> {
+public abstract class MongoObjectService<T extends MainObject, S extends SearchObject<T>, X extends CollectionStats> extends MongoService<T, S, X> {
 	
 	public MongoObjectService(
 		ObjectMapper objectMapper,
