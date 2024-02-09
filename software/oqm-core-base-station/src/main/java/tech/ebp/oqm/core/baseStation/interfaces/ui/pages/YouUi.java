@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -26,37 +25,23 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfo
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class OverviewUi extends UiProvider {
+public class YouUi extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/overview")
+	@Location("webui/pages/you")
 	Template overview;
 	
 	@RestClient
 	OqmCoreApiClientInfoHealthService coreApiClient;
 	
 	@GET
-	@Path("overview")
+	@Path("you")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
-		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr());
-		
-		log.debug("Item stats json: {}", itemStats);
-		
-		long numItems = itemStats.get("size").asLong();
-		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview)
-				.data("numItems", itemStats.get("size").asLong())
-				.data("totalExpired", itemStats.get("numExpired").asLong())
-//				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
-				.data("totalExpiryWarn", itemStats.get("numCloseExpireWarn").asLong())
-//				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
-				.data("totalLowStock", itemStats.get("numLowStock").asLong())
-//				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
-//				.data("numStorageBlocks", storageBlockService.count())
-//				.data("storageBlockService", storageBlockService)
+				.data("jwt", this.getUserTokenStr())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

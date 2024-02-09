@@ -58,7 +58,11 @@ public abstract class RestInterface {
 	}
 	
 	protected String getUserTokenStr(){
-		return "Bearer " + this.getAccessToken().getRawToken();
+		return this.getAccessToken().getRawToken();
+	}
+	
+	protected String getBearerHeaderStr(){
+		return "Bearer " + this.getUserTokenStr();
 	}
 	
 	private void logRequestAndProcessEntity() {
@@ -73,7 +77,7 @@ public abstract class RestInterface {
 		if (this.getSecurityContext().isSecure()) {
 			log.warn("Request with JWT made without HTTPS");
 		}
-		log.debug("User JWT: {}", this.getUserTokenStr());
+		log.debug("User JWT: {}", this.getBearerHeaderStr());
 	}
 	
 	@PostConstruct

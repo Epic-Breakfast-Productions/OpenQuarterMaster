@@ -12,6 +12,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfo {
+	private String id;
 	private String name;
+	private String username;
+	private String email;
 	private Set<String> roles;
 }

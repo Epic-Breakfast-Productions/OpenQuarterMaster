@@ -9,6 +9,9 @@ import java.util.Set;
 
 public class JwtUtils {
 	
+	public static String getId(JsonWebToken jwt){
+		return jwt.getClaim(Claims.sub);
+	}
 	public static String getName(JsonWebToken jwt){
 		return jwt.getClaim("name");
 	}
@@ -24,7 +27,10 @@ public class JwtUtils {
 	
 	public static UserInfo getUserInfo(JsonWebToken jwt){
 		return UserInfo.builder()
+				   .id(getId(jwt))
 				   .name(getName(jwt))
+				   .username(getUserName(jwt))
+				   .email(getEmail(jwt))
 				   .roles(getRoles(jwt))
 				   .build();
 	}
