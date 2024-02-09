@@ -1,9 +1,15 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
+import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
+
+import java.io.File;
+import java.util.Optional;
 
 @ConfigRoot(name= Constants.CONFIG_ROOT_NAME, phase= ConfigPhase.BUILD_TIME)
 public class CoreApiLibBuildTimeConfig {
@@ -20,8 +26,9 @@ public class CoreApiLibBuildTimeConfig {
 	public boolean metricsEnabled;
 	
 	/**
-	 * Configuration for DevServices. DevServices allows Quarkus to automatically start MongoDB in dev and test mode.
+	 * Config to manage the devservice stood up.
+	 * @return
 	 */
-//	@ConfigItem
-//	public DevServicesBuildTimeConfig devservices; TODO https://github.com/quarkusio/quarkus/blob/main/extensions/mongodb-client/deployment/src/main/java/io/quarkus/mongodb/deployment/DevServicesBuildTimeConfig.java
+	@ConfigItem(name="devservice")
+	public CoreApiLibDevserviceConfig devservice;
 }

@@ -11,8 +11,10 @@ import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.MountableFile;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +46,10 @@ class CoreApiLibQuarkusProcessor {
 	}
 	
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
-	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode) {
+	public List<DevServicesResultBuildItem> createContainer(
+		LaunchModeBuildItem launchMode,
+		CoreApiLibBuildTimeConfig config
+	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
 		{//mongodb
@@ -75,6 +80,30 @@ class CoreApiLibQuarkusProcessor {
 														  .withEnv(mongoConnectionInfo)
 														  .withNetwork(Network.SHARED);
 			;
+			
+			if (
+				config.devservice.certKeyPath.isPresent() ||
+				config.devservice.certPath.isPresent()
+			) {
+				if(!(config.devservice.certKeyPath.isPresent() &&
+				   config.devservice.certPath.isPresent())){
+					throw new RuntimeException("Must specify both cert and key for core api devservice.");
+				}
+
+				File cert = config.devservice.certPath.get();
+				File key = config.devservice.certKeyPath.get();
+
+				container.withCopyFileToContainer(
+					MountableFile.forHostPath(cert.getPath()),
+					"/tmp/systemCert.pem"
+				);
+				container.withCopyFileToContainer(
+					MountableFile.forHostPath(key.getPath()),
+					"/tmp/systemCertKey.pem"
+				);
+				container.withEnv("mp.jwt.verify.publickey.location", "/tmp/systemCert.pem");
+
+			}
 			
 			container.start();
 			
