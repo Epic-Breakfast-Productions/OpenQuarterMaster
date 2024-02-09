@@ -48,12 +48,12 @@ public class OverviewUi extends UiProvider {
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(overview)
-				.data("numItems", numItems)
-//				.data("totalExpired", inventoryItemService.getNumStoredExpired())
+				.data("numItems", itemStats.get("size").asLong())
+				.data("totalExpired", itemStats.get("numExpired").asLong())
 //				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
-//				.data("totalExpiryWarn", inventoryItemService.getNumStoredExpiryWarn())
+				.data("totalExpiryWarn", itemStats.get("numCloseExpireWarn").asLong())
 //				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
-//				.data("totalLowStock", inventoryItemService.getNumLowStock())
+				.data("totalLowStock", itemStats.get("numLowStock").asLong())
 //				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
 //				.data("numStorageBlocks", storageBlockService.count())
 //				.data("storageBlockService", storageBlockService)

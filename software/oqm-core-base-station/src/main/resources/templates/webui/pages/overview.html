@@ -22,14 +22,14 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					{#icons/expiring}{/icons/expiring} Expiring
-					{!{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}!}
-					{!{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}!}
+					{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
+					{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
 					{#icons/lowStock}{/icons/lowStock} Low Stock
-					{!{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}!}
+					{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
 				</button>
 			</li>
 		</ul>
