@@ -43,10 +43,6 @@ public class HelpUi extends UiProvider {
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
 		
-//		ObjectNode unitCategories = coreApiClient.getAllUnits(this.getBearerHeaderStr());
-		
-//		unitCategories.fields().next().getValue()
-		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(help)
 				.data("unitCategoryMap", coreApiClient.getAllUnits(this.getBearerHeaderStr()))
