@@ -17,26 +17,31 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.UiProvider;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 
+import java.util.Map;
+
 @Blocking
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class YouUi extends UiProvider {
+public class HelpUi extends UiProvider {
 	
 	@Inject
-	@Location("webui/pages/you")
-	Template you;
+	@Location("webui/pages/help")
+	Template help;
 	
 	@GET
-	@Path("you")
+	@Path("help")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(you)
-				.data("jwt", this.getUserTokenStr())
+			this.setupPageTemplate(help)
+				.data("unitCategoryMap", Map.of())//UnitUtils.UNIT_CATEGORY_MAP) TODO:: this
+//				.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
+//				.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
+//				.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo())
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
