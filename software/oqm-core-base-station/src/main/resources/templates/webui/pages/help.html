@@ -51,19 +51,19 @@
 			<p>
 				This describes what units are available to use in this system. An inventory administrator can add additional units.
 			</p>
-			{!{#for curCategory in unitCategoryMap}!}
-			{!<hr />!}
-				{!<h4>!}
-					{!{curCategory.getKey()}!}
-				{!</h4>!}
-				{!<ul>!}
-					{!{#for curUnit in curCategory.getValue()}!}
-					{!<li>!}
-						{!{curUnit.getName()} - (  #{curUnit.getSymbol()} )!}
-					{!</li>!}
-					{!{/for}!}
-				{!</ul>!}
-			{!{/for}!}
+			{#for curCategory in unitCategoryMap.fields()}
+			<hr />
+				<h4>
+					{curCategory.getKey()}
+				</h4>
+				<ul>
+					{#for curUnit in curCategory.getValue()}
+					<li>
+						{curUnit.get("name").asText()} - (  #{curUnit.get("symbol").asText()} )
+					</li>
+					{/for}
+				</ul>
+			{/for}
 		</div>
 		<div class="tab-pane fade" id="itemSearchProvidersContent" role="tabpanel" aria-labelledby="itemSearchProvidersTab">
 		<h2>
