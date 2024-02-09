@@ -8,6 +8,7 @@ public class Constants {
 	private static final String ROOT_API_ENDPOINT = "/api";
 	public static final String ROOT_API_ENDPOINT_V1 = ROOT_API_ENDPOINT + "/v1";
 	
+	public static final String STORAGE_BLOCK_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/inventory/storage-block";
 	public static final String INV_ITEM_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/inventory/item";
 	
 	
