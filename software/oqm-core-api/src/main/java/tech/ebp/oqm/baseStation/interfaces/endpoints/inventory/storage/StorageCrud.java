@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.storage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -23,6 +24,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
+import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
@@ -139,6 +141,30 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		@BeanParam StorageBlockSearch blockSearch
 	) {
 		return super.search(blockSearch);
+	}
+	
+	@Override
+	@Path("stats")
+	@GET
+	@Operation(
+		summary = "Gets stats on this object's collection."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = CollectionStats.class
+			)
+		)
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public CollectionStats getCollectionStats(
+	) {
+		return super.getCollectionStats();
 	}
 	
 	@Path("{id}")

@@ -28,6 +28,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.baseStation.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.AddSubtractTransferAction;
@@ -176,16 +177,16 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = CollectionStats.class
+				implementation = InvItemCollectionStats.class
 			)
 		)
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
-	public CollectionStats getCollectionStats(
+	public InvItemCollectionStats getCollectionStats(
 	) {
-		return super.getCollectionStats();
+		return (InvItemCollectionStats) super.getCollectionStats();
 	}
 	
 	@GET
