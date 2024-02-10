@@ -1,7 +1,6 @@
 package tech.ebp.oqm.baseStation.rest.search;
 
 import com.mongodb.client.model.Filters;
-import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,7 +13,9 @@ import javax.measure.Quantity;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
+import static com.mongodb.client.model.Filters.ne;
 
 @ToString(callSuper = true)
 @Getter
@@ -31,6 +32,8 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	List<String> parents;
 	//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
 	@QueryParam("parent") ObjectId parent; //TODO:
+	@QueryParam("isParent") Boolean isParent = false;
+	@QueryParam("isChild") Boolean isChild = false;
 	//capacities
 	@QueryParam("capacity") List<Integer> capacities;//TODO
 	@QueryParam("unit") List<String> units;//TODO
@@ -71,6 +74,12 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 			for (Quantity<?> curCap : capacityList) {
 				//TODO:: capacities with greater than or equal capacity to what was given
 			}
+		}
+		
+		if (this.isParent) {
+			filters.add(eq("parent", null));
+		} else if(this.isChild){
+			filters.add(ne("parent", null));
 		}
 		
 		//TODO:: stores
