@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.baseStation.interfaces.ui;
+package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
 import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Template;

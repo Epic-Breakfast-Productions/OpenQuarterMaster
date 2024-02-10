@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
-import tech.ebp.oqm.core.baseStation.interfaces.ui.UiProvider;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 
 @Blocking

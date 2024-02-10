@@ -1,5 +1,7 @@
-package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
+package tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
@@ -18,40 +20,39 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
 
+import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageComponentProvider.PAGE_COMPONENT_ROOT;
+
 @Blocking
 @Slf4j
-@Path("/")
+@Path(PAGE_COMPONENT_ROOT + "/storageBlock")
 @Tags({@Tag(name = "UI")})
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class HelpUi extends UiProvider {
+public class StorageBlockPageComponents extends PageComponentProvider {
 	
 	@Inject
-	@Location("webui/pages/help")
-	Template help;
+	@Location("webui/pages/storage")
+	Template pageTemplate;
 	
 	@RestClient
 	OqmCoreApiClientInfoHealthService coreApiClient;
 	
 	@GET
 	@Blocking
-	@Path("help")
+	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@Produces(MediaType.TEXT_HTML)
 	public Response overview() {
+		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr()).await().indefinitely();
+		
+		log.debug("Item stats json: {}", itemStats);
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(help)
-				.data("unitCategoryMap", coreApiClient.getAllUnits(this.getBearerHeaderStr()).await().indefinitely())
-			//TODO
-//				.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
-//				.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
-//				.data("legoProviderInfoList", this.productLookupService.getLegoProviderInfo())
+			"<p>uwu</p>"
 			,
 			MediaType.TEXT_HTML_TYPE
 		);
 		
 		return responseBuilder.build();
 	}
-	
+
 }
