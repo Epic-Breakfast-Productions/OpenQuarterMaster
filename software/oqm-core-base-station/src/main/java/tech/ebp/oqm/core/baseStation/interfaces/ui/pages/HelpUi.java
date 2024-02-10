@@ -38,6 +38,7 @@ public class HelpUi extends UiProvider {
 	OqmCoreApiClientInfoHealthService coreApiClient;
 	
 	@GET
+	@Blocking
 	@Path("help")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
@@ -45,7 +46,7 @@ public class HelpUi extends UiProvider {
 		
 		Response.ResponseBuilder responseBuilder = Response.ok(
 			this.setupPageTemplate(help)
-				.data("unitCategoryMap", coreApiClient.getAllUnits(this.getBearerHeaderStr()))
+				.data("unitCategoryMap", coreApiClient.getAllUnits(this.getBearerHeaderStr()).await().indefinitely())
 			//TODO
 //				.data("productProviderInfoList", this.productLookupService.getProductProviderInfo())
 //				.data("supportedPageScanInfoList", this.productLookupService.getSupportedPageScanInfo())
