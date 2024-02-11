@@ -6,6 +6,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MultivaluedMap;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.jboss.resteasy.reactive.RestQuery;
@@ -41,6 +42,10 @@ public interface OqmCoreApiClientInfoHealthService {
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/stats")
 	Uni<ObjectNode> getStorageBlockStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	@GET
+	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}")
+	Uni<ObjectNode> getStorageBlockStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("blockId") String storageBlockId);
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Items">
