@@ -37,41 +37,7 @@
 				</p>
 				<div class="row">
 					<div class="col">
-						{!{#let parents=storageBlockService.getTopParents()}!}
-							{!{#if parents.isEmpty()}!}
-								{!<h2>!}
-									{!No Storage Blocks!!}
-								{!</h2>!}
-								{!<p>!}
-									{!No storage blocks currently exist. Go to!}
-									{!<a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a>!}
-									{!to add a place where items are stored!!}
-								{!</p>!}
-								{!<p>!}
-									{!You can then go to!}
-									{!<a href="/items">{#icons/item}{/icons/item} Items</a>!}
-									{!to add an item that is stored in that location!!}
-								{!</p>!}
-							{!{#else}!}
-								{!<div class="accordion" id="mainParentAccordion">!}
-									{!{#for parent in parents}!}
-										{!<div class="accordion-item" id="accordItem{parent.getId()}" data-storage-block-id="{parent.getId()}">!}
-											{!<h2 class="accordion-header" id="accordHeader{parent.getId()}" onclick="overviewAccordionClicked('{parent.getId()}', $(this).parent())">!}
-												{!<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse{parent.getId()}" aria-expanded="false" aria-controls="accordCollapse{parent.getId()}">!}
-													{!<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/{parent.getId()}" alt="">!}
-													{!{parent.getLabelText()}!}
-												{!</button>!}
-											{!</h2>!}
-											{!<div id="accordCollapse{parent.getId()}" class="accordion-collapse collapse" aria-labelledby="accordHeader{parent.getId()}" data-bs-parent="#mainParentAccordion">!}
-												{!<div class="accordion-body" id="accordContent{parent.getId()}">!}
-													{!Loading...!}
-												{!</div>!}
-											{!</div>!}
-										{!</div>!}
-									{!{/for}!}
-								{!</div>!}
-							{!{/if}!}
-						{!{/let}!}
+						{#storageBlock/blockTree parentBlocks=parentBlocks}{/storageBlock/blockTree}
 					</div>
 				</div>
 			</div>

@@ -1,0 +1,17 @@
+{#if parentBlocks.isEmpty()}
+	<h2>
+		No Storage Blocks!
+	</h2>
+	<p>
+		No storage blocks currently exist. Go to <a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a> to add a place where items are stored!
+	</p>
+	<p>
+		You can then go to <a href="/items">{#icons/item}{/icons/item} Items</a> to add an item that is stored in that location!
+	</p>
+{#else}
+	<div class="accordion" id="mainParentAccordion">
+		{#for parentBlock in parentBlocks}
+		
+		{/for}
+	</div>
+{/if}

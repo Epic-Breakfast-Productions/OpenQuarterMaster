@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -19,6 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
+import tech.ebp.oqm.core.baseStation.utils.Searches;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
 
 import java.util.concurrent.ExecutorService;
@@ -45,18 +47,21 @@ public class OverviewUi extends UiProvider {
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response overview() {
-		JsonNode itemCollectionStats;
-		JsonNode storageCollectionStats;
+		ObjectNode itemCollectionStats;
+		ObjectNode storageCollectionStats;
+		ArrayNode storageBlockParents;
 		
 		{
 			Uni<ObjectNode> storageCollectionStatsUni = this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr());
 			Uni<ObjectNode> itemCollectionStatsUni = this.coreApiClient.getItemStats(this.getBearerHeaderStr());
+			Uni<ArrayNode> storageBlockParentsUni = this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), Searches.PARENT_SEARCH);
 			
 			storageCollectionStatsUni = storageCollectionStatsUni.runSubscriptionOn(this.executorService);
 			itemCollectionStatsUni = itemCollectionStatsUni.runSubscriptionOn(this.executorService);
 			
 			storageCollectionStats = storageCollectionStatsUni.await().indefinitely();
 			itemCollectionStats = itemCollectionStatsUni.await().indefinitely();
+			storageBlockParents = storageBlockParentsUni.await().indefinitely();
 		}
 		
 		log.debug("Item stats json: {}", itemCollectionStats);
@@ -70,7 +75,7 @@ public class OverviewUi extends UiProvider {
 				.data("totalLowStock", itemCollectionStats.get("numLowStock").asLong())
 //				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
 				.data("numStorageBlocks", storageCollectionStats.get("size").asLong())
-//				.data("storageBlockService", storageBlockService)
+				.data("parentBlocks", storageBlockParents)
 			,
 			MediaType.TEXT_HTML_TYPE
 		);

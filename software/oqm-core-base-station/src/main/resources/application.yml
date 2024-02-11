@@ -93,6 +93,8 @@ quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
+    logging:
+      scope: all
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
       scope: jakarta.inject.Singleton

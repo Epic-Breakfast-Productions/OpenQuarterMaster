@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageComponentProvider.PAGE_COMPONENT_ROOT;
 
@@ -26,9 +27,11 @@ import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageCom
 @Slf4j
 @Path(PAGE_COMPONENT_ROOT + "/storageBlock")
 @Tags({@Tag(name = "UI")})
-@RequestScoped
 @Produces(MediaType.TEXT_HTML)
+@RequestScoped
 public class StorageBlockPageComponents extends PageComponentProvider {
+	
+	
 	
 	@Inject
 	@Location("webui/pages/storage")
@@ -39,7 +42,7 @@ public class StorageBlockPageComponents extends PageComponentProvider {
 	
 	@GET
 	@Blocking
-	@Path("storage")
+	@Path("treeItem")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response overview() {
 		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr()).await().indefinitely();
