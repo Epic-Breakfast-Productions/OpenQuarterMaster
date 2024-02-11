@@ -32,10 +32,10 @@ Ingests:
             <button type="reset" class="btn btn-warning mb-1">Reset</button>
         </div>
         <div class="col col-2">
-            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="{#if pagingOptions??}{pagingOptions.getPageNum()}{#else}1{/if}">
+            <input type="hidden" id="{id}-pageNumInput" name="pageNum" value="1">
             <div class="input-group" title="Number of results per page">
                 <label for="{id}-pageSizeInput" class="input-group-text">{#icons/icon icon='hash'}{/icons/icon}</label>
-                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="{searchObject.getDefaultPageSize()}" value="{#if pagingOptions??}{pagingOptions.getPageSize()}{/if}" min="1">
+                <input type="number" class="form-control numPerPageInput" name="pageSize" id="{id}-pageSizeInput" aria-describedby="{id}-pageSizeInputHelp" placeholder="25" value="" min="1">
             </div>
         </div>
     </div>

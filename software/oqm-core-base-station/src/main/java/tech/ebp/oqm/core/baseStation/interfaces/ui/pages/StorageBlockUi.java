@@ -19,39 +19,37 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
 
-//@Blocking
-//@Slf4j
-//@Path("/")
-//@Tags({@Tag(name = "UI")})
-//@RequestScoped
-//@Produces(MediaType.TEXT_HTML)
-//public class StorageBlockUi extends UiProvider {
-//
-//	@Inject
-//	@Location("webui/pages/storage")
-//	Template pageTemplate;
-//
-//	@RestClient
-//	OqmCoreApiClientInfoHealthService coreApiClient;
-//
-//	@GET
-//	@Blocking
-//	@Path("storage")
-//	@RolesAllowed(Roles.INVENTORY_VIEW)
-//	public Response overview() {
-//		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr()).await().indefinitely();
-//
-//		log.debug("Item stats json: {}", itemStats);
-//
-//		Response.ResponseBuilder responseBuilder = Response.ok(
-//			this.setupPageTemplate(pageTemplate)
-//				.data("numItems", itemStats.get("size").asLong())
-//				.data("totalExpired", itemStats.get("numExpired").asLong())
-//			,
-//			MediaType.TEXT_HTML_TYPE
-//		);
-//
-//		return responseBuilder.build();
-//	}
-//
-//}
+@Blocking
+@Slf4j
+@Path("/")
+@Tags({@Tag(name = "UI")})
+@RequestScoped
+@Produces(MediaType.TEXT_HTML)
+public class StorageBlockUi extends UiProvider {
+
+	@Inject
+	@Location("webui/pages/storage")
+	Template pageTemplate;
+
+	@RestClient
+	OqmCoreApiClientInfoHealthService coreApiClient;
+
+	@GET
+	@Blocking
+	@Path("storage")
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public Response overview() {
+		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr()).await().indefinitely();
+
+		log.debug("Item stats json: {}", itemStats);
+
+		Response.ResponseBuilder responseBuilder = Response.ok(
+			this.setupPageTemplate(pageTemplate)
+				.data("showSearch", false),
+			MediaType.TEXT_HTML_TYPE
+		);
+
+		return responseBuilder.build();
+	}
+
+}

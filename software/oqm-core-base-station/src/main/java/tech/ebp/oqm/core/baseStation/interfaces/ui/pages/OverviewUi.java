@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;

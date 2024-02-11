@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/storage' showKeywords=true showAttributes=true pagingOptions=searchObject.getPagingOptions(true)}
+{#include tags/search/searchForm id=id action='/storage' showKeywords=true showAttributes=true}
 {#inputs}
 <div class="mb-3 col col-3">
 	<label for="{id}-blockLabelInput" class="form-label">Label/Nickname</label>
@@ -21,7 +21,7 @@ Ingests:
 <div class="mb-3 col col-3">
 	{#let id=(id + '-blockCategoryInput')}
 	<label for="{id}" class="form-label">{#icons/categories}{/icons/categories} Stored Categories</label>
-	{#inputs/categoryInput name="storedCategories"}{/inputs/categoryInput}
+	{!{#inputs/categoryInput name="storedCategories"}{/inputs/categoryInput}!}
 	<div id="{id}-help" class="form-text">Find storage blocks that hold items of these {#links/itemCategory}{/links/itemCategory}.</div>
 	{/let}
 </div>

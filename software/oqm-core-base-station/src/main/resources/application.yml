@@ -171,18 +171,18 @@ quarkus:
         systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
         systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
       # TODO:: figure out
-#      users:
-#        alice: 1!Letmein
-#      roles:
-#        alice:
-#          - "default-roles-oqm"
-#          - "inventoryView"
-#          - "offline_access"
-#          - "itemCheckout"
-#          - "inventoryEdit"
-#          - "uma_authorization"
-#          - "inventoryAdmin"
-#          - "user"
+      users:
+        alice: 1!Letmein
+      roles:
+        alice:
+          - "default-roles-oqm"
+          - "inventoryView"
+          - "offline_access"
+          - "itemCheckout"
+          - "inventoryEdit"
+          - "uma_authorization"
+          - "inventoryAdmin"
+          - "user"
 
 
 #  messaging:
