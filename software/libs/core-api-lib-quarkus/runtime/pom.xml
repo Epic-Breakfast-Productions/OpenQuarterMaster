@@ -27,9 +27,16 @@
 			<artifactId>quarkus-smallrye-health</artifactId>
 			<optional>true</optional>
 		</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.18.20</version>
+				<scope>provided</scope>
+			</dependency>
 	</dependencies>
 	<build>
 		<plugins>
+			
 			<plugin>
 				<groupId>io.quarkus</groupId>
 				<artifactId>quarkus-extension-maven-plugin</artifactId>
@@ -54,6 +61,11 @@
 							<groupId>io.quarkus</groupId>
 							<artifactId>quarkus-extension-processor</artifactId>
 							<version>${quarkus.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.20</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
