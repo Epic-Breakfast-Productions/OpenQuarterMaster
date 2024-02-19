@@ -19,21 +19,25 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					{#icons/expiring}{/icons/expiring} Expiring
-					{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
-					{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
+					{#let totalExpired=itemCollectionStats.get("numExpired").asLong() totalExpiryWarn=itemCollectionStats.get("numExpireWarn").asLong()}
+						{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
+						{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
+					{/let}
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
 					{#icons/lowStock}{/icons/lowStock} Low Stock
-					{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
+					{#let totalLowStock=itemCollectionStats.get("numLowStock").asLong()}
+						{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
+					{/let}
 				</button>
 			</li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
 				<p>
-					{numItems} types of items stored in over {numStorageBlocks} storage blocks
+					{itemCollectionStats.get("size").asLong()} types of items stored in over {storageCollectionStats.get("size").asLong()} storage blocks
 				</p>
 				<div class="row">
 					<div class="col">

@@ -16,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-@Blocking
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})

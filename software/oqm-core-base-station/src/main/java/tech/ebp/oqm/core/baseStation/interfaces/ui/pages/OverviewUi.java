@@ -1,11 +1,11 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -14,6 +14,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -22,9 +23,9 @@ import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.core.baseStation.utils.Searches;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-@Blocking
 @Slf4j
 @Path("/")
 @Tags({@Tag(name = "UI")})
@@ -32,9 +33,10 @@ import java.util.concurrent.ExecutorService;
 @Produces(MediaType.TEXT_HTML)
 public class OverviewUi extends UiProvider {
 	
+	@Getter
 	@Inject
 	@Location("webui/pages/overview")
-	Template overview;
+	Template pageTemplate;
 	
 	@RestClient
 	OqmCoreApiClientInfoHealthService coreApiClient;
@@ -45,41 +47,15 @@ public class OverviewUi extends UiProvider {
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response overview() {
-		ObjectNode itemCollectionStats;
-		ObjectNode storageCollectionStats;
-		ArrayNode storageBlockParents;
-		
-		{
-			Uni<ObjectNode> storageCollectionStatsUni = this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr());
-			Uni<ObjectNode> itemCollectionStatsUni = this.coreApiClient.getItemStats(this.getBearerHeaderStr());
-			Uni<ArrayNode> storageBlockParentsUni = this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), Searches.PARENT_SEARCH);
-			
-			storageCollectionStatsUni = storageCollectionStatsUni.runSubscriptionOn(this.executorService);
-			itemCollectionStatsUni = itemCollectionStatsUni.runSubscriptionOn(this.executorService);
-			
-			storageCollectionStats = storageCollectionStatsUni.await().indefinitely();
-			itemCollectionStats = itemCollectionStatsUni.await().indefinitely();
-			storageBlockParents = storageBlockParentsUni.await().indefinitely();
-		}
-		
-		log.debug("Item stats json: {}", itemCollectionStats);
-		Response.ResponseBuilder responseBuilder = Response.ok(
-			this.setupPageTemplate(overview)
-				.data("numItems", itemCollectionStats.get("size").asLong())
-				.data("totalExpired", itemCollectionStats.get("numExpired").asLong())
-//				.data("expiredList", inventoryItemService.list(Filters.gt("numExpired", 0), null, null))
-				.data("totalExpiryWarn", itemCollectionStats.get("numCloseExpireWarn").asLong())
-//				.data("expiredWarnList", inventoryItemService.list(Filters.gt("numExpiryWarn", 0), null, null))
-				.data("totalLowStock", itemCollectionStats.get("numLowStock").asLong())
-//				.data("lowStockList", inventoryItemService.list(Filters.gt("numLowStock", 0), null, null))
-				.data("numStorageBlocks", storageCollectionStats.get("size").asLong())
-				.data("parentBlocks", storageBlockParents)
-			,
-			MediaType.TEXT_HTML_TYPE
+	public Uni<Response> overview() {
+		return this.getUni(
+			Map.of(
+				"itemCollectionStats", this.coreApiClient.getItemStats(this.getBearerHeaderStr()),
+				"storageCollectionStats", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()),
+				"totalExpired", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()).map(stats -> stats.get("size").asLong()),
+				"parentBlocks", this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), Searches.PARENT_SEARCH)
+			)
 		);
-		
-		return responseBuilder.build();
 	}
 	
 }
