@@ -98,7 +98,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public InvItemCollectionStats getStats() {
 		return super.addBaseStats(InvItemCollectionStats.builder())
 				   .numExpired(this.getNumStoredExpired())
-				   .numCloseExpireWarn(this.getNumStoredExpiryWarn())
+				   .numExpireWarn(this.getNumStoredExpiryWarn())
 				   .numLowStock(this.getNumLowStock())
 				   .build();
 	}

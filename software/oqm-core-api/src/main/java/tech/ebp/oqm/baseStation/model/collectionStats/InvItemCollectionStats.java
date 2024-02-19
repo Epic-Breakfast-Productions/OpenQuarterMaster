@@ -15,6 +15,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class InvItemCollectionStats extends CollectionStats {
 	private long numExpired;
-	private long numCloseExpireWarn;
+	private long numExpireWarn;
 	private long numLowStock;
 }
