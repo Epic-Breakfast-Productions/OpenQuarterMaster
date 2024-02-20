@@ -1,0 +1,6 @@
+{
+	"name": "Keycloak",
+	"type": "infra",
+	"description": "The Keycloak instance for Open QuarterMaster. This service manages users and handles authentication on the system.",
+	"url": "{infra.keycloak.externalBaseUri}"
+}

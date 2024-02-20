@@ -14,7 +14,7 @@ from systemd import journal
 class LogManagement:
 
     @staticmethod
-    def packageServiceLogs(service:str, compilingDir:str):
+    def packageServiceLogs(service: str, compilingDir: str):
         outFileName = compilingDir + "/10-" + service + ".log"
         logging.info("Logging events for %s to file %s", service, outFileName)
         start = time.time()

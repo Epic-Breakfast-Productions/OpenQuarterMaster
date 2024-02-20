@@ -1,5 +1,5 @@
 {
-	"packageName": "open+quarter+master-infra-prometheus",
+	"packageName": "oqm-infra-prometheus",
 	"version": "1.0.5",
 	"description": "Prometheus instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus",

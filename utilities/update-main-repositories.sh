@@ -50,7 +50,7 @@ while [ "$keepCalling" = true ]; do
 			curAssetFileName=$(echo $curReleaseAsset | jq -r ".name")
 			echo "DEBUG:: Cur release asset file: $curAssetFileName -> $curAssetFileUrl";
 
-			if [[ "$curAssetFileName" == *.deb ]]; then
+			if [[ "$curAssetFileName" == oqm-*.deb ]]; then
 				wget -P "$DEB_PPA_DIR" "$curAssetFileUrl"
 			else
 				echo "DEBUG:: not a package"

@@ -1,5 +1,5 @@
 {
-	"packageName": "open+quarter+master-infra-otel",
+	"packageName": "oqm-infra-otel",
 	"version": "1.0.4",
 	"description": "OpenTelemetry Collector instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel",

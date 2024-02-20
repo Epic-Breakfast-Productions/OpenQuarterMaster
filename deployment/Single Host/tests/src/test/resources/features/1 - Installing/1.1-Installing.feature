@@ -9,6 +9,7 @@ Feature: 1.1 - Installers
 
 	This tests that the install can occur without a hitch
 
-		Given the host is setup for install
+		Given OQM is not currently installed
+		And the host is setup for install
 		When the command to install OQM is made
 		Then OQM is running

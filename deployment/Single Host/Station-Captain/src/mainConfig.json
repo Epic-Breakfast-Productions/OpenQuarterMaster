@@ -12,5 +12,35 @@
 		"numToKeep": 5,
 		"frequency": "weekly",
 		"compressionAlg": "xz"
+	},
+	"cert": {
+		"mode": "self",
+		"certs": {
+			"privateKey": "/etc/oqm/certs/oqmSystemPrivateKey.pem",
+			"systemCert": "/etc/oqm/certs/oqmSystemCert.crt",
+			"CARootPrivateKey": "/etc/oqm/certs/oqmCaRootPrivateKey.pem",
+			"CARootCert": "/etc/oqm/certs/oqmCaRootCert.crt",
+			"keystore": "/etc/oqm/certs/oqmSystemKeystore.p12",
+			"keystorePass": "<secret>"
+		},
+		"selfMode": {
+			"rootCaTtl": 2920,
+			"systemCertTtl": 365,
+			"publicKeyCsr": "/etc/oqm/certs/oqmSystemCert.csr",
+			"certInfo":{
+				"countryName": "US",
+				"stateOrProvinceName": "PA",
+				"localityName": "",
+				"organizationName": "OQM-LOCAL",
+				"organizationalUnitName": "",
+				"caCommonName": "#{cert.selfMode.certInfo.organizationName}"
+			}
+		},
+		"letsEncryptMode": {
+			"acceptTerms": false
+		},
+		"providedMode": {
+			"caProvided": true
+		}
 	}
 }

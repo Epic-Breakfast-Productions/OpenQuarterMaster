@@ -40,6 +40,17 @@ fi
 cp build/*.deb "../../../$DEB_PPA_DIR";
 popd
 
+# Depot
+echo -e "\n\n\n\nBuilding Depot."
+pushd "../software/oqm-depot"
+./makeSnhInstallers.sh
+if [ $? -ne 0 ]; then
+	echo "FAILED to make installers for Base Station."
+	exit 1;
+fi
+cp build/installers/*.deb "../../$DEB_PPA_DIR";
+popd
+
 # Base Station
 echo -e "\n\n\n\nBuilding Base Station."
 pushd "../software/open-qm-base-station/"
@@ -98,7 +109,7 @@ if [ $? -ne 0 ]; then
 	exit 1;
 fi
 
-$SUDOTXT apt-get install $AUTO_INSTALL open+quarter+master-manager-station+captain
+$SUDOTXT apt-get install $AUTO_INSTALL oqm-manager-station+captain
 if [ $? -ne 0 ]; then
 	echo "FAILED to install Station Captain. See above output for information."
 	exit 2;

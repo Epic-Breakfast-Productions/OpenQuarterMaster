@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.0.39'
+version '1.0.40'
 
 repositories {
 	mavenCentral()
@@ -47,7 +47,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.1'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
 	implementation 'org.passay:passay:1.6.4'
 	implementation 'com.itextpdf:html2pdf:5.0.2'
 
@@ -84,8 +84,8 @@ dependencies {
 	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 	testImplementation 'io.quarkus:quarkus-keycloak-admin-client-reactive'
-	testImplementation 'net.datafaker:datafaker:2.0.2'
-	testImplementation 'org.assertj:assertj-core:3.24.2'
+	testImplementation 'net.datafaker:datafaker:2.1.0'
+	testImplementation 'org.assertj:assertj-core:3.25.1'
 
 //	testImplementation 'com.github.dasniko:testcontainers-keycloak:2.5.0'
 	//2.1.2 seems dud, fails to start & null pointers
@@ -93,7 +93,7 @@ dependencies {
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.16.1'
 	testImplementation 'org.testcontainers:selenium:1.19.3'
 	testImplementation 'com.deque:axe-selenium:3.0'
 }

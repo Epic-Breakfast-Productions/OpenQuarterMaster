@@ -61,6 +61,8 @@ mkdir -p "$buildDir/$debDir/etc/oqm/static"
 mkdir -p "$buildDir/$debDir/etc/oqm/snapshots/scripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/accountScripts/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/"
+mkdir -p "$buildDir/$debDir/etc/oqm/certs/"
+mkdir -p "$buildDir/$debDir/etc/bash_completion.d/"
 
 install -m 755 -D src/oqm-captain.py "$buildDir/$debDir/bin/oqm-captain"
 install -m 755 -D src/oqm-config.py "$buildDir/$debDir/bin/oqm-config"
@@ -75,6 +77,10 @@ install -m 755 -D "src/snapshot-restore-base.sh" "$buildDir/$debDir/etc/oqm/snap
 install -m 755 -D "src/account-assure-base.sh" "$buildDir/$debDir/etc/oqm/accountScripts/"
 install -m 755 -D src/lib/* "$buildDir/$debDir/usr/lib/oqm/station-captain/"
 install -m 755 -D src/mainConfig.json "$buildDir/$debDir/etc/oqm/config/"
+install -m 755 -D src/certsReadme.md "$buildDir/$debDir/etc/oqm/certs/"
+# Register files for cleanup when uninstalled
+install -m 755 -D /dev/null "$buildDir/$debDir/etc/bash_completion.d/oqm-captain"
+install -m 755 -D /dev/null "$buildDir/$debDir/etc/bash_completion.d/oqm-config"
 
 sed -i "s/    SCRIPT_VERSION = 'SCRIPT_VERSION'/    SCRIPT_VERSION = '$(cat "$configFile" | jq -r '.version')'/" "$buildDir/$debDir/usr/lib/oqm/station-captain/ScriptInfos.py"
 sed -i 's|sys.path.append("lib/")|sys.path.append("/usr/lib/oqm/station-captain/")|' "$buildDir/$debDir/bin/oqm-config"
@@ -90,7 +96,7 @@ Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all
 Description: $(cat "$configFile" | jq -r '.description')
 Homepage: $(cat "$configFile" | jq -r '.homepage')
-Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
+Pre-Depends: $(cat "$configFile" | jq -r '.dependencies.deb')
 Licence: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
@@ -104,6 +110,26 @@ Files: *
 Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
+
+# TODO:: updating bash completion doesn't work.
+cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
+#!/bin/bash
+if [ -x "$(command -v register-python-argcomplete)" ]; then
+	echo "Using register-python-argcomplete"
+	register-python-argcomplete oqm-captain > /etc/bash_completion.d/oqm-captain
+	register-python-argcomplete oqm-config > /etc/bash_completion.d/oqm-config
+elif [ -x "$(command -v register-python-argcomplete3)" ]; then
+	echo "Using register-python-argcomplete3"
+	register-python-argcomplete3 oqm-captain > /etc/bash_completion.d/oqm-captain
+	register-python-argcomplete3 oqm-config > /etc/bash_completion.d/oqm-config
+else
+	echo "WARNING: could not run autocomplete!"
+fi
+
+oqm-captain --regen-certs
+
+EOT
+chmod +x "$buildDir/$debDir/DEBIAN/postinst"
 
 dpkg-deb --build "$buildDir/$debDir" "$outputDir"
 if [ $? -ne 0 ]; then
