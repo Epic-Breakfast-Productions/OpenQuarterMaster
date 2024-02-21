@@ -2,11 +2,12 @@ package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-
+@NoArgsConstructor
 @ToString
 @Getter
 @Setter
