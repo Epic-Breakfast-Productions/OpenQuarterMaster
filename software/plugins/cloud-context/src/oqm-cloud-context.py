@@ -3,6 +3,8 @@
 import json
 import sys
 import logging
+import argparse
+import argcomplete
 from abc import ABC, abstractmethod
 sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
