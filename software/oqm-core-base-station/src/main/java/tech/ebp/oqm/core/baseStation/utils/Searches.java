@@ -1,10 +1,7 @@
 package tech.ebp.oqm.core.baseStation.utils;
 
-import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.MultivaluedMap;
-
-import java.util.Map;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 public class Searches {
-	public static final MultivaluedMap<String, String> PARENT_SEARCH = new MultivaluedHashMap<>(Map.of("isParent", "true"));
+	public static final StorageBlockSearch PARENT_SEARCH = StorageBlockSearch.builder().isParent(true).build();
 }
