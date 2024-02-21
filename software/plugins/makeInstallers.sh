@@ -112,50 +112,46 @@ EOT
 	cat <<EOT >> "$packageDebDir/DEBIAN/preinst"
 #!/bin/bash
 
-#mkdir -p "/data/oqm/db/mongo"
-#mkdir -p "/data/oqm/prometheus"
 EOT
 	chmod +x "$packageDebDir/DEBIAN/preinst"
 
-	# TODO:: add code to update port in config
 	cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 #!/bin/bash
 
-systemctl daemon-reload
-# restart proxy after we add config
-#if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
-#	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
-#fi
-systemctl enable ${serviceFiles[@]@Q}
-systemctl start ${serviceFiles[@]@Q}
-
 EOT
-
 	chmod +x "$packageDebDir/DEBIAN/postinst"
+
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
 #!/bin/bash
 
-systemctl disable ${serviceFiles[@]@Q}
-systemctl stop ${serviceFiles[@]@Q}
-
-echo "Stopped ${serviceFiles[@]@Q}"
-
 EOT
-
 	chmod +x "$packageDebDir/DEBIAN/prerm"
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/postrm"
 #!/bin/bash
 
+EOT
+	chmod +x "$packageDebDir/DEBIAN/postrm"
+
+	if [ ${#serviceFiles[@]} -ne 0 ]; then
+		cat <<EOT >> "$packageDebDir/DEBIAN/postinst"
 systemctl daemon-reload
 
-#if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
-#	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
-#fi
-EOT
+systemctl enable ${serviceFiles[@]@Q}
+systemctl start ${serviceFiles[@]@Q}
 
-	chmod +x "$packageDebDir/DEBIAN/postrm"
+EOT
+		cat <<EOT >> "$packageDebDir/DEBIAN/prerm"
+systemctl disable ${serviceFiles[@]@Q}
+systemctl stop ${serviceFiles[@]@Q}
+
+echo "Stopped ${serviceFiles[@]@Q}"
+EOT
+		cat <<EOT >> "$packageDebDir/DEBIAN/postrm"
+systemctl daemon-reload
+EOT
+	fi
 
 	fileKeys=($(jq -r '.files | keys[]'  "$packageConfigFile"))
 
