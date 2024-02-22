@@ -10,21 +10,34 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchResult<T> {
+	
 	private List<T> results;
+	private long numResults;
 	private long numResultsForEntireQuery;
 	private boolean hadSearchQuery;
 	private PagingOptions pagingOptions;
 	
-	public SearchResult(List<T> results){
+	public SearchResult(List<T> results) {
 		this(
 			results,
+			results.size(),
 			results.size(),
 			false,
 			null
 		);
 	}
 	
-	public boolean isEmpty(){
+	public SearchResult(List<T> results, long numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions) {
+		this(
+			results,
+			results.size(),
+			numResultsForEntireQuery,
+			hadSearchQuery,
+			pagingOptions
+		);
+	}
+	
+	public boolean isEmpty() {
 		return this.results.isEmpty();
 	}
 }
