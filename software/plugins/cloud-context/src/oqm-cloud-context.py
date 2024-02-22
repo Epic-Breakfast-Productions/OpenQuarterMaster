@@ -37,7 +37,6 @@ class AwsCcg(CloudContextGetter):
 
     def __init__(self):
         self.url = mainCM.getConfigVal("plugins.cloud-context.aws.url")
-        # TODO:: get config for aws
 
     def getContext(self) -> CloudContext:
         contextOut = CloudContext()
@@ -46,10 +45,8 @@ class AwsCcg(CloudContextGetter):
         #                  "placement/availability-zone" "placement/region"
         #                  "public-ipv4" "local-ipv4" "public-hostname"
         #                  "local-hostname" "mac" "security-groups")
+        contextOut.pubDomainName = requests.get(self.url + "/public-hostname")
 
-        # public-hostname
-
-        # TODO:: call AWS endpoint, get data
         return contextOut
 
 
