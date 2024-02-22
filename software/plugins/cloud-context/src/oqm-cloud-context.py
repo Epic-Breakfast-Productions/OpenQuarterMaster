@@ -5,6 +5,7 @@ import sys
 import logging
 import argparse
 import argcomplete
+import requests
 from abc import ABC, abstractmethod
 sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
@@ -40,6 +41,14 @@ class AwsCcg(CloudContextGetter):
 
     def getContext(self) -> CloudContext:
         contextOut = CloudContext()
+
+        # Some interesting options: ("instance-id" "instance-type" "ami-id"
+        #                  "placement/availability-zone" "placement/region"
+        #                  "public-ipv4" "local-ipv4" "public-hostname"
+        #                  "local-hostname" "mac" "security-groups")
+
+        # public-hostname
+
         # TODO:: call AWS endpoint, get data
         return contextOut
 
