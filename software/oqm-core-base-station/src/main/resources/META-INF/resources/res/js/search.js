@@ -1,4 +1,12 @@
 
+let Search = {
+
+}
+
+
+
+
+
 function paginationClick(formId, page){
     console.log("Paginating. Form Id: \"" + formId, "\", page: " + page);
     var searchForm = $("#" + formId);
