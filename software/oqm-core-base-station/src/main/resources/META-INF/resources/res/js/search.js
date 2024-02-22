@@ -1,4 +1,8 @@
 let Search = {
+	mainPageSearch: $('#mainPageSearch'),
+	hasMainPageSearch: function (){
+		return Search.mainPageSearch.length === 1;
+	},
 	paginationClick: function (formId, page) {
 		console.log("Paginating. Form Id: \"" + formId, "\", page: " + page);
 		let searchForm = $("#" + formId);
@@ -98,13 +102,12 @@ let Search = {
 // TODO:: attach handlers to all search forms
 
 
-let mainPageSearch = $('#mainPageSearch');
-
-if (mainPageSearch.length) {
-    Search.fillInQueryForm(mainPageSearch);
-	mainPageSearch.submit();
-}
-
+$(document).ready(function(){
+	if (Search.hasMainPageSearch()) {
+		Search.fillInQueryForm(Search.mainPageSearch);
+		Search.mainPageSearch.submit();
+	}
+});
 
 $(".pagingSearchForm").each(function (i, form) {
 	var pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
