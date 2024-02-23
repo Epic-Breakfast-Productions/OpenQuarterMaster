@@ -47,7 +47,7 @@ Accepts:
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/storage/StorageSearchForm id='mainStorageSearch'}
+                    {#search/storage/StorageSearchForm id='mainPageSearch' defaultPageSize=defaultPageSize}
                     {/search/storage/StorageSearchForm}
                 </div>
             </div>
@@ -392,7 +392,7 @@ Accepts:
 {/scripts}
 {#pageScript}
 <script>
-fillInQueryForm($("#mainStorageSearch"));
+// Search.fillInQueryForm($("#mainStorageSearch"));
 
 function clearParentInput(caller){
     caller.siblings("input[name=parentName]").val("");

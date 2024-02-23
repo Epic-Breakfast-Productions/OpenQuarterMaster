@@ -48,7 +48,8 @@ public class StorageBlockUi extends UiProvider {
 		
 		return this.getUni(
 			this.setupPageTemplate()
-				.data("showSearch", false),
+				.data("showSearch", false)
+				.data("defaultPageSize", this.getDefaultPageSize()),
 			Map.of(
 				"searchResults", this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), search)
 			)

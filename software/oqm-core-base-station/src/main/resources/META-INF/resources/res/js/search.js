@@ -104,8 +104,11 @@ let Search = {
 
 $(document).ready(function(){
 	if (Search.hasMainPageSearch()) {
+		console.log("Filling in main search form from GET params")
 		Search.fillInQueryForm(Search.mainPageSearch);
 		// Search.mainPageSearch.submit();
+	} else {
+		console.log("Page has no main search to fill in.")
 	}
 });
 
