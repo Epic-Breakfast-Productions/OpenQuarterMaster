@@ -5,32 +5,35 @@ Inputs:
 - pagingOptions: the options for paging
 - numResults: the number of search results in the current search
 !}
-
-{#if pagingCalculations.getNumPages() > 1 }
+{#let pagingOptions=searchResults.get("pagingOptions") pagingCalculations=searchResults.get("pagingCalculations")}
+{#if !searchResults.get("empty").asBoolean() }
 <nav aria-label="Search Pagination">
+	{#let isOnFirstPage=pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage=pagingCalculations.get("onLastPage").asBoolean() }
     <ul class="pagination justify-content-center mb-0">
-        <li class="page-item {#if pagingCalculations.isOnFirstPage()}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="First page" onclick="paginationClick('{searchFormId}', 1);" {#if pagingCalculations.isOnFirstPage()}disabled{/if}>{#icons/icon icon='chevron-bar-left'}{/icons/icon}</button>
+        <li class="page-item {#if isOnFirstPage}disabled{/if}">
+            <button type="button" class="btn-link page-link" title="First page" onclick="paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon='chevron-bar-left'}{/icons/icon}</button>
         </li>
-        <li class="page-item {#if pagingCalculations.isOnFirstPage()}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Previous page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getPreviousPage()});" {#if pagingCalculations.isOnFirstPage()}disabled{/if}>{#icons/icon icon='chevron-left'}{/icons/icon}</button>
+        <li class="page-item {#if isOnFirstPage}disabled{/if}">
+            <button type="button" class="btn-link page-link" title="Previous page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getPreviousPage()});" {#if pisOnFirstPage}disabled{/if}>{#icons/icon icon='chevron-left'}{/icons/icon}</button>
         </li>
 
-        {#for page in pagingCalculations.getPageIterator()}
-        <li class="page-item {#if pagingCalculations.onPage(page)}active{/if}">
+        {#for page in pagingCalculations.get("numPages").asLong()}
+        <li class="page-item {#if page == pagingOptions.get("pageNum").asLong()}active{/if}">
             <button type="button" class="btn-link page-link" title="Page {page}" onclick="paginationClick('{searchFormId}', {page});" {#if pagingCalculations.onPage(page)}disabled{/if}>{page}</button>
         </li>
         {/for}
 
-        <li class="page-item {#if pagingCalculations.isOnLastPage()}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Next page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getNextPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}>{#icons/icon icon='chevron-right'}{/icons/icon}</button>
+        <li class="page-item {#if isOnLastPage)}disabled{/if}">
+            <button type="button" class="btn-link page-link" title="Next page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getNextPage()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon='chevron-right'}{/icons/icon}</button>
         </li>
-        <li class="page-item {#if pagingCalculations.isOnLastPage()}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Last page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getLastPage()});" {#if pagingCalculations.isOnLastPage()}disabled{/if}>{#icons/icon icon='chevron-bar-right'}{/icons/icon}</button>
+        <li class="page-item {#if isOnLastPage}disabled{/if}">
+            <button type="button" class="btn-link page-link" title="Last page" onclick="paginationClick('{searchFormId}', {pagingCalculations.getLastPage()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon='chevron-bar-right'}{/icons/icon}</button>
         </li>
     </ul>
+	{/let}
 </nav>
 {#else}
 <!-- No pagination needed. -->
 {/if}
-<span class="fw-lighter"># of results total: {str:format("%,d",pagingCalculations.getNumResults())}</span>
+{/let}
+<span class="fw-lighter"># of results total: {str:format("%,d",searchResults.get("numResultsForEntireQuery").asLong())}</span>

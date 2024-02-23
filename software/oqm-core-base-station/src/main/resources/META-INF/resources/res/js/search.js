@@ -105,7 +105,7 @@ let Search = {
 $(document).ready(function(){
 	if (Search.hasMainPageSearch()) {
 		Search.fillInQueryForm(Search.mainPageSearch);
-		Search.mainPageSearch.submit();
+		// Search.mainPageSearch.submit();
 	}
 });
 

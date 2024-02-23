@@ -16,7 +16,7 @@
   <thead>
   <tr>
     <td colspan="6" class="text-center">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -29,7 +29,7 @@
   </tr>
   </thead>
   <tbody>
-  {#if searchResults.getResults().isEmpty()}
+  {#if searchResults.get("empty").asBoolean()}
   <tr>
     <td colspan="6" class="text-center">
       <h2>
@@ -46,44 +46,44 @@
     </td>
   </tr>
   {#else}
-  {#for result in searchResults.getResults()}
-  <tr class="storageBlockResultRow align-middle">
-    <td>
-      {#if !result.getImageIds().isEmpty()}
-      <img src="/api/v1/media/image/for/storageBlock/{result.getId()}" class="searchResultImage">
-      {/if}
-    </td>
-    <td>{result.getLabel()}{#if result.getNickname() != null && !result.getNickname().isBlank()} / {result.getNickname()}{/if}</td>
-    <td>{result.getLocation()}</td>
-    <td>{#if result.getParent()??}{storageService.get(result.getParent()).getLabel()}{/if}</td>
-    <td></td>
-    {#if actionType == 'full'}
-    <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');">
-        {#icons/view}{/icons/view}
-      </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">
-        {#icons/edit}{/icons/edit}
-      </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeStorageBlock('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
-      {#else if actionType == 'select'}
-    <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getLabel()}"
-              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
-              onclick="StorageSearchSelect.selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">
-        {#icons/select}{/icons/select} Select
-      </button>
-      {/if}
-    </td>
-  </tr>
-  {/for}
+  {!{#for result in searchResults.getResults()}!}
+  {!<tr class="storageBlockResultRow align-middle">!}
+    {!<td>!}
+      {!{#if !result.getImageIds().isEmpty()}!}
+      {!<img src="/api/v1/media/image/for/storageBlock/{result.getId()}" class="searchResultImage">!}
+      {!{/if}!}
+    {!</td>!}
+    {!<td>{result.getLabel()}{#if result.getNickname() != null && !result.getNickname().isBlank()} / {result.getNickname()}{/if}</td>!}
+    {!<td>{result.getLocation()}</td>!}
+    {!<td>{#if result.getParent()??}{storageService.get(result.getParent()).getLabel()}{/if}</td>!}
+    {!<td></td>!}
+    {!{#if actionType == 'full'}!}
+    {!<td>!}
+      {!<button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{result.getId()}');">!}
+        {!{#icons/view}{/icons/view}!}
+      {!</button>!}
+      {!<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{result.getId()}');">!}
+        {!{#icons/edit}{/icons/edit}!}
+      {!</button>!}
+      {!<button type="button" class="btn btn-sm btn-danger" title="Remove"!}
+              {!onclick="removeStorageBlock('{result.getId()}');">{#icons/remove}{/icons/remove}</button>!}
+      {!{#else if actionType == 'select'}!}
+    {!<td class="d-grid gap-2">!}
+      {!<button type="button" class="btn btn-sm btn-success" title="Select {result.getLabel()}"!}
+              {!data-bs-toggle="modal" data-bs-target="#{otherModalId}"!}
+              {!onclick="StorageSearchSelect.selectStorageBlock('{result.getLabel()}', '{result.getId()}', '{inputIdPrepend}');">!}
+        {!{#icons/select}{/icons/select} Select!}
+      {!</button>!}
+      {!{/if}!}
+    {!</td>!}
+  {!</tr>!}
+  {!{/for}!}
   {/if}
   </tbody>
   <tfoot>
   <tr>
     <td colspan="6" class="text-center">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   </tfoot>

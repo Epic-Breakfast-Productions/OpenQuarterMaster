@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -24,6 +25,19 @@ public abstract class UiProvider extends RestInterface {
 	@Inject
 	Span span;
 	
+	protected int getDefaultPageSize(){
+		return 25;
+	}
+	
+	protected void ensureSearchDefaults(SearchObject searchObject){
+		if(searchObject.getPageNum() == null || searchObject.getPageNum() < 1){
+			searchObject.setPageNum(1);
+		}
+		if(searchObject.getPageSize() == null || searchObject.getPageSize() < 1){
+			searchObject.setPageSize(this.getDefaultPageSize());
+		}
+	}
+	
 	protected abstract Template getPageTemplate();
 	
 	protected TemplateInstance setupPageTemplate(Template template) {
@@ -32,6 +46,10 @@ public abstract class UiProvider extends RestInterface {
 				   .data("traceId", this.span.getSpanContext().getTraceId())
 				   .data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
 				   ;
+	}
+	
+	protected TemplateInstance setupPageTemplate() {
+		return this.setupPageTemplate(this.getPageTemplate());
 	}
 	
 	protected Uni<Response> getUni(TemplateInstance pageTemplate, Map<String, Uni> uniMap) {
@@ -67,7 +85,7 @@ public abstract class UiProvider extends RestInterface {
 	
 	protected Uni<Response> getUni(Map<String, Uni> uniMap) {
 		return this.getUni(
-			this.setupPageTemplate(this.getPageTemplate()),
+			this.setupPageTemplate(),
 			uniMap
 		);
 	}
