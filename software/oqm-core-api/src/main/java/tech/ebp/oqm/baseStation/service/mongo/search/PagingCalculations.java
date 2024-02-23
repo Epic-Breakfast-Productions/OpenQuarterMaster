@@ -22,15 +22,15 @@ public class PagingCalculations {
 	private long nextPage;
 	private long previousPage;
 	
-	protected PagingCalculations(long pageNum, long numPages) {
+	protected PagingCalculations(long curPageNum, long numPages) {
 		this(
-			pageNum <= 1,
-			pageNum == numPages,
+			curPageNum <= 1,
+			curPageNum == numPages,
 			numPages,
 			numPages,
-			pageNum,
-			(Math.min(pageNum + 1, numPages)),
-			(Math.max(pageNum - 1, 1))
+			curPageNum,
+			(Math.min(curPageNum + 1, numPages)),
+			(Math.max(curPageNum - 1, 1))
 		);
 	}
 	
