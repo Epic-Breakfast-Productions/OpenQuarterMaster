@@ -16,6 +16,7 @@ public class SearchResult<T> {
 	private long numResultsForEntireQuery;
 	private boolean hadSearchQuery;
 	private PagingOptions pagingOptions;
+	private PagingCalculations pagingCalculations;
 	
 	public SearchResult(List<T> results) {
 		this(
@@ -23,6 +24,7 @@ public class SearchResult<T> {
 			results.size(),
 			results.size(),
 			false,
+			null,
 			null
 		);
 	}
@@ -33,7 +35,8 @@ public class SearchResult<T> {
 			results.size(),
 			numResultsForEntireQuery,
 			hadSearchQuery,
-			pagingOptions
+			pagingOptions,
+			new PagingCalculations(pagingOptions, numResultsForEntireQuery)
 		);
 	}
 	

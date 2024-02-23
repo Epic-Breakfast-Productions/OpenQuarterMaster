@@ -47,8 +47,6 @@ class PagingCalculationsTest {
 	) {
 		PagingCalculations calculations = new PagingCalculations(options, numResults);
 		
-		assertEquals(options, calculations.getPagingOptions());
-		assertEquals(numResults, calculations.getNumResults());
 		assertEquals(expectedOnFirstPage, calculations.isOnFirstPage());
 		assertEquals(expectedOnLastPage, calculations.isOnLastPage());
 		assertEquals(expectedNumPages, calculations.getNumPages());

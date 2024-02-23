@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.service.mongo.search;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +14,6 @@ import java.util.Iterator;
 @NoArgsConstructor
 @Setter(AccessLevel.PROTECTED)
 public class PagingCalculations {
-	
-	private PagingOptions pagingOptions = new PagingOptions(PagingOptions.DEFAULT_PAGE_SIZE, PagingOptions.DEFAULT_PAGE_NUM);
-	private long numResults;
-	
 	private boolean onFirstPage;
 	private boolean onLastPage;
 	private long numPages;
@@ -25,26 +22,20 @@ public class PagingCalculations {
 	private long nextPage;
 	private long previousPage;
 	
-	protected PagingCalculations(PagingOptions options, long numResults, long numPages) {
+	protected PagingCalculations(long pageNum, long numPages) {
 		this(
-			options,
-			numResults,
-			options.getPageNum() <= 1,
-			options.getPageNum() == numPages,
+			pageNum <= 1,
+			pageNum == numPages,
 			numPages,
 			numPages,
-			options.getPageNum(),
-			(Math.min(options.getPageNum() + 1, numPages)),
-			(Math.max(options.getPageNum() - 1, 1))
+			pageNum,
+			(Math.min(pageNum + 1, numPages)),
+			(Math.max(pageNum - 1, 1))
 		);
 	}
 	
 	public PagingCalculations(PagingOptions options, long numResults) {
-		this(
-			options,
-			numResults,
-			(long) Math.ceil((double) numResults / (double) options.getPageSize()) //Ciel?
-		);
+		this(options.getPageNum(), (long) Math.ceil((double) numResults / (double) options.getPageSize()));
 	}
 	
 	public PagingCalculations(SearchResult<?> searchResult) {
