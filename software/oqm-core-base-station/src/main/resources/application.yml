@@ -69,9 +69,6 @@ productLookup:
       url: https://rebrickable.com
       apiKey: " "
 
-messaging:
-  connector: ""
-
 # TODO:: move this into `service` config
 runningInfo:
   protocol: http
@@ -81,13 +78,17 @@ runningInfo:
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
   fromEmail: no-reply@${runningInfo.hostname}
   depotUri: " "
-
-externalService:
-  secretSizeMin: 50
-  secretSizeMax: 100
-  serviceTokenExpires: 86400 # 1 day
-  extServices:
-  # Service entries here
+  
+ui:
+  storage:
+    search:
+      defaultPageSize: 25
+  image:
+    search:
+      defaultPageSize: 16
+  history:
+    search:
+      defaultPageSize: 25
 
 quarkus:
   application:

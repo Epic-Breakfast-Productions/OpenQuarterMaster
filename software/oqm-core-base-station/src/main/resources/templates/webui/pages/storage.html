@@ -47,7 +47,7 @@ Accepts:
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/storage/StorageSearchForm id='mainPageSearch' defaultPageSize=defaultPageSize}
+                    {#search/storage/StorageSearchForm id='mainPageSearch'}
                     {/search/storage/StorageSearchForm}
                 </div>
             </div>
@@ -74,144 +74,138 @@ Accepts:
 
     {/pageContent}
 {#modals}
-
-    {!
-{#include webui/bootstrapComponents/modal}
-{title}Add/Edit Storage Block{/title}
-{/include}
-!}
     
-    {!{#modal id='addEdit' size='lg' title='Add/Edit Storage Block'}!}
-        {!<div id="addEditFormMessages"></div>!}
-        {!<form id="addEditStorageForm">!}
-            {!<input type="hidden" id="addEditFormMode" value="">!}
-            {!<input type="hidden" id="addEditFormId" value="">!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditLabelInput" class="col-sm-2 col-form-label">Label</label>!}
-                {!<div class="col-sm-10">!}
-                    {!<input type="text" class="form-control" id="addEditLabelInput" placeholder="Label" required>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditNicknameInput" class="col-sm-2 col-form-label">Nickname</label>!}
-                {!<div class="col-sm-10">!}
-                    {!<input type="text" class="form-control" id="addEditNicknameInput" aria-describedby="addEditNicknameInput-help" placeholder="Nickname">!}
-                    {!<div id="addEditNicknameInput-help" class="form-text">!}
-                        {!Optional. A more recognizable name to call this storage block.!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>!}
-                {!<div class="col-sm-10">!}
-                    {!<textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditLocationInput" class="col-sm-2 col-form-label">Location</label>!}
-                {!<div class="col-sm-10">!}
-                    {!<input type="text" class="form-control" id="addEditLocationInput" aria-describedby="addEditLocationInput-help" placeholder="Location">!}
-                    {!<div id="addEditLocationInput-help" class="form-text">!}
-                        {!Optional. Where this storage block is generally located.!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditParentInputName" class="col-sm-2 col-form-label">Parent</label>!}
-                {!<div class="col-sm-10">!}
-                    {!<div class="input-group">!}
-                        {!<input type="hidden" id="addEditParentInputId" name="parentId">!}
-                        {!<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupStorageSearchModal('addEditParentInput');StorageSearchSelect.storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>!}
-                        {!<input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" aria-describedby="addEditParentInputName-help" disabled>!}
-                        {!<button class="btn btn-outline-secondary" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>!}
-                    {!</div>!}
-                    {!<div id="addEditParentInputName-help" class="form-text">Optional. The storage block this block is to be located within.</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="mb-3 row">!}
-                {!<label for="addEditCategoryInput" class="col-form-label col-sm-2">Stored Categories:</label>!}
-                {!<div class="col-sm-10">!}
-                    {!{#inputs/categoryInput id="addEditCategoriesInput"}!}
-                    {!{/inputs/categoryInput}!}
-                    {!<div id="itemCatInputaddEditCategoriesInput-help" class="form-text">The categories of item this storage block holds. {#links/itemCategory}{/links/itemCategory}</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!!}
-            {!{#search/image/imageSelectFormInput}!}
-            {!{/search/image/imageSelectFormInput}!}
-            {!!}
-            {!{! TODO:: do capacities: [FR]: Enable managing storage block capacities in UI #230 !}!}
-            {!{!{#inputs/capacityInput}!}!}
-            {!{!{/inputs/capacityInput}!}!}
-            {!!}
-            {!{#inputs/keywordInput}!}
-            {!{/inputs/keywordInput}!}
-            {!{#inputs/attInput}!}
-            {!{/inputs/attInput}!}
-            {!<hr />!}
-            {!<div class="accordion" id="addBulkAccord">!}
-                {!<div class="accordion-item">!}
-                    {!<h2 class="accordion-header" id="addBulkAccordHeading">!}
-                        {!<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#addBulkAccordCollapse" aria-expanded="false" aria-controls="addBulkAccordCollapse">!}
-                            {!Bulk Add Options!}
-                        {!</button>!}
-                    {!</h2>!}
-                    {!<div id="addBulkAccordCollapse" class="accordion-collapse collapse" aria-labelledby="addBulkAccordHeading" data-bs-parent="#addBulkAccord">!}
-                        {!<div class="accordion-body">!}
-                            {!<div class="row mb-4">!}
-                                {!<div class="col">!}
-                                    {!<div class="form-check form-switch">!}
-                                        {!<input class="form-check-input" type="checkbox" value="true" id="addBulkEnabledInput" aria-describedby="#bulkHelp" onchange="setBulkInsertInputState()">!}
-                                        {!<label class="form-check-label" for="addBulkEnabledInput">!}
-                                            {!Do bulk insert!}
-                                        {!</label>!}
-                                        {!<div id="bulkHelp" class="form-text">Bulk insert will make a copies of the block described above using the settings below.</div>!}
-                                    {!</div>!}
-                                {!</div>!}
-                            {!</div>!}
-                            {!<div id="bulkInputControls">!}
-                                {!<div class="row mb-3">!}
-                                    {!<div class="col">!}
-                                        {!<label for="addBulkNumberInput" class="form-label"># of storage blocks to make</label>!}
-                                        {!<input type="number" class="form-control" id="addBulkNumberInput" aria-describedby="addBulkNumberInputHelp" min="1" value="1" onchange="updateBulkLabelExample()">!}
-                                    {!</div>!}
-                                {!</div>!}
-                                {!<div class="row mb-3">!}
-                                    {!<div class="col">!}
-                                        {!<div class="form-check">!}
-                                            {!<input class="form-check-input" type="checkbox" value="true" id="addBulkLeadingZeroesInput" onchange="updateBulkLabelExample()">!}
-                                            {!<label class="form-check-label" for="addBulkLeadingZeroesInput">!}
-                                                {!Leading Zeroes!}
-                                            {!</label>!}
-                                        {!</div>!}
-                                    {!</div>!}
-                                {!</div>!}
-                                {!<div class="row">!}
-                                    {!<div class="col">!}
-                                        {!<h5>!}
-                                            {!Example Labels:!}
-                                        {!</h5>!}
-                                        {!<p id="addBulkExample">!}
-                                        {!!}
-                                        {!</p>!}
-                                    {!</div>!}
-                                {!</div>!}
-                            {!</div>!}
-                        {!</div>!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-        {!</form>!}
-        {!{#footerButtons}!}
-            {!<button type="submit" form="addEditStorageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>!}
-        {!{/footerButtons}!}
-    {!{/modal}!}
-    {!!}
-    {!!}
-{!{#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}!}
-{!{/search/storage/StorageSearchSelectModal}!}
-{!{#search/image/imageSearchSelectModal otherModalId="addEditModal"}!}
-{!{/search/image/imageSearchSelectModal}!}
+    {#modal id='addEdit' size='lg' title='Add/Edit Storage Block'}
+        <div id="addEditFormMessages"></div>
+        <form id="addEditStorageForm">
+            <input type="hidden" id="addEditFormMode" value="">
+            <input type="hidden" id="addEditFormId" value="">
+            <div class="mb-3 row">
+                <label for="addEditLabelInput" class="col-sm-2 col-form-label">Label</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="addEditLabelInput" placeholder="Label" required>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="addEditNicknameInput" class="col-sm-2 col-form-label">Nickname</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="addEditNicknameInput" aria-describedby="addEditNicknameInput-help" placeholder="Nickname">
+                    <div id="addEditNicknameInput-help" class="form-text">
+                        Optional. A more recognizable name to call this storage block.
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="addEditDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="addEditDescriptionInput" placeholder="Description"></textarea>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="addEditLocationInput" class="col-sm-2 col-form-label">Location</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="addEditLocationInput" aria-describedby="addEditLocationInput-help" placeholder="Location">
+                    <div id="addEditLocationInput-help" class="form-text">
+                        Optional. Where this storage block is generally located.
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="addEditParentInputName" class="col-sm-2 col-form-label">Parent</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <input type="hidden" id="addEditParentInputId" name="parentId">
+                        <button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupStorageSearchModal('addEditParentInput');StorageSearchSelect.storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
+                        <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" aria-describedby="addEditParentInputName-help" disabled>
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
+                    </div>
+                    <div id="addEditParentInputName-help" class="form-text">Optional. The storage block this block is to be located within.</div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="addEditCategoryInput" class="col-form-label col-sm-2">Stored Categories:</label>
+                <div class="col-sm-10">
+                    {#inputs/categoryInput id="addEditCategoriesInput"}
+                    {/inputs/categoryInput}
+                    <div id="itemCatInputaddEditCategoriesInput-help" class="form-text">The categories of item this storage block holds. {#links/itemCategory}{/links/itemCategory}</div>
+                </div>
+            </div>
+            
+            {#search/image/imageSelectFormInput}
+            {/search/image/imageSelectFormInput}
+            
+            {! TODO:: do capacities: [FR]: Enable managing storage block capacities in UI #230 !}
+            {!{#inputs/capacityInput}!}
+            {!{/inputs/capacityInput}!}
+            
+            {#inputs/keywordInput}
+            {/inputs/keywordInput}
+            {#inputs/attInput}
+            {/inputs/attInput}
+            <hr />
+            <div class="accordion" id="addBulkAccord">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="addBulkAccordHeading">
+                        <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#addBulkAccordCollapse" aria-expanded="false" aria-controls="addBulkAccordCollapse">
+                            Bulk Add Options
+                        </button>
+                    </h2>
+                    <div id="addBulkAccordCollapse" class="accordion-collapse collapse" aria-labelledby="addBulkAccordHeading" data-bs-parent="#addBulkAccord">
+                        <div class="accordion-body">
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" value="true" id="addBulkEnabledInput" aria-describedby="#bulkHelp" onchange="setBulkInsertInputState()">
+                                        <label class="form-check-label" for="addBulkEnabledInput">
+                                            Do bulk insert
+                                        </label>
+                                        <div id="bulkHelp" class="form-text">Bulk insert will make a copies of the block described above using the settings below.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="bulkInputControls">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="addBulkNumberInput" class="form-label"># of storage blocks to make</label>
+                                        <input type="number" class="form-control" id="addBulkNumberInput" aria-describedby="addBulkNumberInputHelp" min="1" value="1" onchange="updateBulkLabelExample()">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="true" id="addBulkLeadingZeroesInput" onchange="updateBulkLabelExample()">
+                                            <label class="form-check-label" for="addBulkLeadingZeroesInput">
+                                                Leading Zeroes
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>
+                                            Example Labels:
+                                        </h5>
+                                        <p id="addBulkExample">
+                                        
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {#footerButtons}
+            <button type="submit" form="addEditStorageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>
+        {/footerButtons}
+    {/modal}
+    
+    
+{#search/storage/StorageSearchSelectModal otherModalId="addEditModal"}
+{/search/storage/StorageSearchSelectModal}
+{#search/image/imageSearchSelectModal otherModalId="addEditModal"}
+{/search/image/imageSearchSelectModal}
 {!!}
 {!{#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}!}
 	{!{#titleIcon}{#icons/print}{/icons/print}{/titleIcon}!}
@@ -268,102 +262,102 @@ Accepts:
     {!</div>!}
 {!{/modal}!}
 {!!}
-{!{#modal id='storageBlockView' size='xl' title='Storage Block View'}!}
-    {!{#titleIcon}{#icons/storageBlock}{/icons/storageBlock}{/titleIcon}!}
-    {!<div class="row">!}
-        {!<div class="col" id="storageBlockViewMessages">!}
-        {!</div>!}
-    {!</div>!}
-    {!<div class="row">!}
-        {!{#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}!}
-        {!<div class="col">!}
-            {!<div class="card">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title" style="display: inline">Id:</h5>!}
-                    {!<p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>!}
-                    {!<p style="margin-bottom: 5px;">!}
-                        {!<button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()">{#icons/print}{/icons/print} Printout</button>!}
-                    {!</p>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="card">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title">Location in storage:</h5>!}
-                    {!<div id="storageBlockViewBreadcrumbContainer">!}
-                    {!</div>!}
-                    {!<h5 class="card-title" id="storageBlockViewChildrenContainerTitle">Children:</h5>!}
-                    {!<div id="storageBlockViewChildrenContainer">!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="card" id="storageBlockViewLocationContainer">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title">Location:</h5>!}
-                    {!<p class="card-text" id="storageBlockViewLocation"></p>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="card" id="storageBlockViewDescriptionContainer">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title">Description:</h5>!}
-                    {!<p class="card-text" id="storageBlockViewDescription"></p>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="card" id="storageBlockViewCapacityContainer">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title">Capacities:</h5>!}
-                    {!<div id="storageBlockViewCapacity">!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-            {!<div class="card" id="storageBlockViewStoredItemCategoriesContainer">!}
-                {!<div class="card-body">!}
-                    {!<h5 class="card-title">{#icons/categories}{/icons/categories} Stored Item Categories:</h5>!}
-                    {!<div id="storageBlockViewStoredItemCategories">!}
-                    {!</div>!}
-                {!</div>!}
-            {!</div>!}
-        {!</div>!}
-    {!</div>!}
-    {!<hr />!}
-    {!<div class="row">!}
-        {!{#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}!}
-        {!{#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}!}
-    {!</div>!}
-    {!<hr />!}
-    {!<div class="row">!}
-        {!<div class="col">!}
-            {!<h3>{#icons/items}{/icons/items} Items Stored:</h3>!}
-            {!<table class="table table-bordered table-striped table-hover table-sm">!}
-                {!<thead>!}
-                    {!<tr>!}
-                        {!<th>!}
-                            {!Image!}
-                        {!</th>!}
-                        {!<th>!}
-                            {!Name!}
-                        {!</th>!}
-                        {!<th>!}
-                            {!Stored Here!}
-                        {!</th>!}
-                        {!<th>!}
-                            {!Total Stored!}
-                        {!</th>!}
-                        {!<th>!}
-                            {!Actions!}
-                        {!</th>!}
-                    {!</tr>!}
-                {!</thead>!}
-                {!<tbody id="storageBlockViewItemsStoredContent">!}
-                {!</tbody>!}
-            {!</table>!}
-        {!</div>!}
-    {!</div>!}
-    {!<div class="row">!}
-        {!<div class="col">!}
-            {!{#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/v1/inventory/storage-block/'}{/objView/history/objHistoryView}!}
-        {!</div>!}
-    {!</div>!}
-{!{/modal}!}
+{#modal id='storageBlockView' size='xl' title='Storage Block View'}
+    {#titleIcon}{#icons/storageBlock}{/icons/storageBlock}{/titleIcon}
+    <div class="row">
+        <div class="col" id="storageBlockViewMessages">
+        </div>
+    </div>
+    <div class="row">
+        {#carousel id='storageBlockViewCarousel' carouselCss='col'}{/carousel}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" style="display: inline">Id:</h5>
+                    <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>
+                    <p style="margin-bottom: 5px;">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()">{#icons/print}{/icons/print} Printout</button>
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Location in storage:</h5>
+                    <div id="storageBlockViewBreadcrumbContainer">
+                    </div>
+                    <h5 class="card-title" id="storageBlockViewChildrenContainerTitle">Children:</h5>
+                    <div id="storageBlockViewChildrenContainer">
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="storageBlockViewLocationContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Location:</h5>
+                    <p class="card-text" id="storageBlockViewLocation"></p>
+                </div>
+            </div>
+            <div class="card" id="storageBlockViewDescriptionContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Description:</h5>
+                    <p class="card-text" id="storageBlockViewDescription"></p>
+                </div>
+            </div>
+            <div class="card" id="storageBlockViewCapacityContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Capacities:</h5>
+                    <div id="storageBlockViewCapacity">
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="storageBlockViewStoredItemCategoriesContainer">
+                <div class="card-body">
+                    <h5 class="card-title">{#icons/categories}{/icons/categories} Stored Item Categories:</h5>
+                    <div id="storageBlockViewStoredItemCategories">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+        {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <h3>{#icons/items}{/icons/items} Items Stored:</h3>
+            <table class="table table-bordered table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Stored Here
+                        </th>
+                        <th>
+                            Total Stored
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="storageBlockViewItemsStoredContent">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/v1/inventory/storage-block/'}{/objView/history/objHistoryView}
+        </div>
+    </div>
+{/modal}
 
 {/modals}
 

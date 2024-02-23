@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -39,6 +40,10 @@ public class StorageBlockUi extends UiProvider {
 	@RestClient
 	OqmCoreApiClientInfoHealthService coreApiClient;
 	
+	@Getter(onMethod = @__(@Override))
+	@ConfigProperty(name="ui.storage.search.defaultPageSize")
+	int defaultPageSize;
+	
 	@GET
 	@Blocking
 	@Path("storage")
@@ -48,8 +53,7 @@ public class StorageBlockUi extends UiProvider {
 		
 		return this.getUni(
 			this.setupPageTemplate()
-				.data("showSearch", false)
-				.data("defaultPageSize", this.getDefaultPageSize()),
+				.data("showSearch", false),
 			Map.of(
 				"searchResults", this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), search)
 			)
