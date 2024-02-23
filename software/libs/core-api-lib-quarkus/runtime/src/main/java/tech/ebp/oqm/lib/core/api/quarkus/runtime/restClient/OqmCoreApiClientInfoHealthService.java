@@ -37,7 +37,7 @@ public interface OqmCoreApiClientInfoHealthService {
 	//<editor-fold desc="Storage Blocks">
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
-	Uni<ArrayNode> searchStorageBlocks(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam StorageBlockSearch storageBlockSearch);
+	Uni<ObjectNode> searchStorageBlocks(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam StorageBlockSearch storageBlockSearch);
 	
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/stats")
