@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.api.quark.quarkus.test;
 
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
+import io.restassured.response.ValidatableResponse;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -19,9 +20,12 @@ public class CoreApiLibHealthCheckTest {
 	
 	@Test
 	public void testDataSourceHealthCheckExclusion() {
-		RestAssured.when().get("/q/health")
-			.then()
-			.statusCode(200)
+		ValidatableResponse response = RestAssured.when().get("/q/health")
+			.then();
+		
+		System.out.println(response.extract().body().asPrettyString());
+		
+		response.statusCode(200)
 			.body("status", CoreMatchers.equalTo("UP"));
 	}
 }
