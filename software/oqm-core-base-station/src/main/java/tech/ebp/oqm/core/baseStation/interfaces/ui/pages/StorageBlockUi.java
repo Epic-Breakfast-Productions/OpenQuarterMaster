@@ -20,7 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import java.util.Map;
@@ -38,14 +38,13 @@ public class StorageBlockUi extends UiProvider {
 	Template pageTemplate;
 	
 	@RestClient
-	OqmCoreApiClientInfoHealthService coreApiClient;
+	OqmCoreApiClientService coreApiClient;
 	
 	@Getter(onMethod = @__(@Override))
 	@ConfigProperty(name="ui.storage.search.defaultPageSize")
 	int defaultPageSize;
 	
 	@GET
-	@Blocking
 	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Uni<Response> storagePage(@BeanParam StorageBlockSearch search) {
@@ -55,7 +54,7 @@ public class StorageBlockUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"searchResults", this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), search)
+				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), search)
 			)
 		);
 	}

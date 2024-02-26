@@ -21,7 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.core.baseStation.utils.Searches;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -39,7 +39,7 @@ public class OverviewUi extends UiProvider {
 	Template pageTemplate;
 	
 	@RestClient
-	OqmCoreApiClientInfoHealthService coreApiClient;
+	OqmCoreApiClientService coreApiClient;
 	
 	@Inject
 	ExecutorService executorService;
@@ -50,10 +50,10 @@ public class OverviewUi extends UiProvider {
 	public Uni<Response> overview() {
 		return this.getUni(
 			Map.of(
-				"itemCollectionStats", this.coreApiClient.getItemStats(this.getBearerHeaderStr()),
-				"storageCollectionStats", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()),
-				"totalExpired", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()).map(stats -> stats.get("size").asLong()),
-				"parentBlocks", this.coreApiClient.searchStorageBlocks(this.getBearerHeaderStr(), Searches.PARENT_SEARCH)
+				"itemCollectionStats", this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr()),
+				"storageCollectionStats", this.coreApiClient.storageBlockCollectionStats(this.getBearerHeaderStr()),
+//				"totalExpired", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()).map(stats -> stats.get("size").asLong()),
+				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), Searches.PARENT_SEARCH)
 			)
 		);
 	}

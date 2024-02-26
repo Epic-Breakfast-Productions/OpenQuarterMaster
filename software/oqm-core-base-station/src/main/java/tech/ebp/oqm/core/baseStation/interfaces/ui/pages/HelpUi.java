@@ -18,7 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class HelpUi extends UiProvider {
 	Template pageTemplate;
 	
 	@RestClient
-	OqmCoreApiClientInfoHealthService coreApiClient;
+	OqmCoreApiClientService coreApiClient;
 	
 	@GET
 	@Path("help")

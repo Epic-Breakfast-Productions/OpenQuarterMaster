@@ -18,12 +18,11 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientInfoHealthService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageComponentProvider.PAGE_COMPONENT_ROOT;
 
-@Blocking
 @Slf4j
 @Path(PAGE_COMPONENT_ROOT + "/storageBlock")
 @Tags({@Tag(name = "UI")})
@@ -31,21 +30,18 @@ import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageCom
 @RequestScoped
 public class StorageBlockPageComponents extends PageComponentProvider {
 	
-	
-	
 	@Inject
 	@Location("webui/pages/storage")
 	Template pageTemplate;
 	
 	@RestClient
-	OqmCoreApiClientInfoHealthService coreApiClient;
+	OqmCoreApiClientService coreApiClient;
 	
 	@GET
-	@Blocking
 	@Path("treeItem")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response overview() {
-		JsonNode itemStats = this.coreApiClient.getItemStats(this.getBearerHeaderStr()).await().indefinitely();
+		JsonNode itemStats = this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr()).await().indefinitely();
 		
 		log.debug("Item stats json: {}", itemStats);
 		
