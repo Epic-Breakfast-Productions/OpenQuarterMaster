@@ -71,7 +71,7 @@ Accepts:
             <br/>
     {!{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}!}
     {!{/inputs/units/unitOptionsHidden}!}
-
+<button onclick="testCall()">test</button>
     {/pageContent}
 {#modals}
     
@@ -400,8 +400,8 @@ function removeStorageBlock(blockId) {
     
     console.log("Removing storage block " + blockId);
     
-    doRestCall({
-        url: "/api/v1/inventory/storage-block/" + blockId,
+    Rest.call({
+        url: Rest.passRoot +"/inventory/storage-block/" + blockId,
         method: "DELETE",
         async: false,
         done: function (data) {
@@ -478,9 +478,9 @@ function setupAddEditForEdit(blockId){
     addEditModalTitleText.text("Edit Storage Block");
     addEditFormSubmitButton.html(Icons.edit + ' Edit Storage Block');
 
-    doRestCall({
+    Rest.call({
     	spinnerContainer: addEditModal,
-    	url: "/api/v1/inventory/storage-block/" + blockId,
+    	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
     	done: function(data){
     	    addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
@@ -542,8 +542,8 @@ addEditStorageForm.submit(async function (event) {
         if (addBulkEnabledInput.is(":checked")) {
             addEditData = getBulkInsertData(addEditData);
             console.log("Adding new storage blocks in bulk.");
-            await doRestCall({
-                url: "/api/v1/inventory/storage-block/bulk",
+            await Rest.call({
+                url: Rest.passRoot +"/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
                 async: false,
@@ -557,8 +557,8 @@ addEditStorageForm.submit(async function (event) {
             });
         } else {
             console.log("Adding new storage block.");
-            await doRestCall({
-                url: "/api/v1/inventory/storage-block",
+            await Rest.call({
+                url: Rest.passRoot +"/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
                 async: false,
@@ -576,8 +576,8 @@ addEditStorageForm.submit(async function (event) {
         let id = addEditFormId.val();
         console.log("Editing storage block " + id);
         
-        await doRestCall({
-            url: "/api/v1/inventory/storage-block/" + id,
+        await Rest.call({
+            url: Rest.passRoot +"/inventory/storage-block/" + id,
             method: "PUT",
             data: addEditData,
             async: false,
@@ -655,9 +655,9 @@ function setupView(blockId){
     getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
     //TODO:: do this in await getter
-    doRestCall({
+    Rest.call({
     	spinnerContainer: storageBlockViewModal,
-    	url: "/api/v1/inventory/storage-block/" + blockId,
+    	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
     	done: async function(data){
             let promises = [];
             let children = getStorageBlockChildrenData(blockId);
@@ -808,6 +808,16 @@ function setupStorageBlockInvSheetPrintoutForm(){
     
     storageBlockInventorySheetPrintoutForm.attr("action", "/api/v1/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
     storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
+}
+
+function testCall(){
+	Rest.call({
+    	spinnerContainer: storageBlockViewModal,
+    	url: Rest.passRoot +"/inventory/storage-block",
+    	done: async function(data){
+			
+    	}
+		});
 }
 
 // showTree("#mainTreeChart");

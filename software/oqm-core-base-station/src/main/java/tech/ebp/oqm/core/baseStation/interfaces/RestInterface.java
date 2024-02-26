@@ -34,7 +34,9 @@ public abstract class RestInterface {
 	UserInfo userInfo;
 	
 	protected boolean hasIdToken() {
-		return this.getIdToken() != null && this.getIdToken().getClaimNames() != null;
+		return this.getIdToken() != null &&
+			   this.getIdToken()
+				   .getClaimNames() != null;
 	}
 	
 	protected boolean hasAccessToken(){
@@ -49,9 +51,11 @@ public abstract class RestInterface {
 	 */
 	protected JsonWebToken getUserToken(){
 		if(this.hasIdToken()){
+			log.debug("Had id token");
 			return this.getIdToken();
 		}
 		if(this.hasAccessToken()){
+			log.debug("Had access token");
 			return this.getAccessToken();
 		}
 		return null;

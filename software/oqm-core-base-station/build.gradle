@@ -18,7 +18,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client-reactive'
     implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
     implementation 'io.quarkus:quarkus-oidc'
-    implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
+//    implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
     implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-container-image-jib'

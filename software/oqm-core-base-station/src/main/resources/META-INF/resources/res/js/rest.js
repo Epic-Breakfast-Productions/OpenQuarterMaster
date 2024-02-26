@@ -1,6 +1,8 @@
 
 const Rest = {
 	wholeBody: $('body'),
+	apiRoot: "/api",
+	passRoot: "/api/passthrough",
 	buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 
@@ -94,12 +96,12 @@ const Rest = {
 			ajaxOps.dataType = returnType;
 		}
 
-		if (authorization) {
-			extraHeaders = {
-				...extraHeaders,
-				...{Authorization: "Bearer " + authorization}
-			}
-		}
+		// if (authorization) {
+		// 	extraHeaders = {
+		// 		...extraHeaders,
+		// 		...{Authorization: "Bearer " + authorization}
+		// 	}
+		// }
 		if (crossDomain) {
 			ajaxOps = {
 				...ajaxOps,
