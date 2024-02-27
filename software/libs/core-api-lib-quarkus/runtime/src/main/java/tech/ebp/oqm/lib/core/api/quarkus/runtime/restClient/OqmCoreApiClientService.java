@@ -15,6 +15,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
+import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.IMAGE_ROOT_ENDPOINT;
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.INV_ITEM_ROOT_ENDPOINT;
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.ROOT_API_ENDPOINT_V1;
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.STORAGE_BLOCK_ROOT_ENDPOINT;
@@ -61,5 +62,11 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
 	Uni<ObjectNode> invItemCollectionStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	//</editor-fold>
+	
+	//<editor-fold desc="Images">
+	@GET
+	@Path(IMAGE_ROOT_ENDPOINT + "/for/{type}/{id}")
+	Uni<ObjectNode> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
 	//</editor-fold>
 }
