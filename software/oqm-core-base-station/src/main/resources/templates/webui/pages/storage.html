@@ -71,7 +71,6 @@ Accepts:
             <br/>
     {!{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}!}
     {!{/inputs/units/unitOptionsHidden}!}
-<button onclick="testCall()">test</button>
     {/pageContent}
 {#modals}
     
@@ -808,16 +807,6 @@ function setupStorageBlockInvSheetPrintoutForm(){
     
     storageBlockInventorySheetPrintoutForm.attr("action", "/api/v1/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
     storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
-}
-
-function testCall(){
-	Rest.call({
-    	spinnerContainer: storageBlockViewModal,
-    	url: Rest.passRoot +"/inventory/storage-block",
-    	done: async function(data){
-			
-    	}
-		});
 }
 
 // showTree("#mainTreeChart");
