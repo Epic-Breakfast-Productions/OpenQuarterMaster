@@ -1,6 +1,8 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.smallrye.health.api.AsyncHealthCheck;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
@@ -11,48 +13,28 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 
 @Readiness
 @ApplicationScoped
-public class CoreApiHealthCheck implements HealthCheck {
+public class CoreApiHealthCheck implements AsyncHealthCheck {
 	
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClient;
 	
 	@Override
-	public HealthCheckResponse call() {
+	public Uni<HealthCheckResponse> call() {
 		HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("OqmCoreApi");
-		
-		try {
-			ObjectNode returned = this.oqmCoreApiClient.getApiServerHealth().await().indefinitely();
-			String status = returned.get("status").asText();
-			
-			if(status.equalsIgnoreCase(HealthCheckResponse.Status.UP.name())){
-				responseBuilder.up();
-			} else {
-				responseBuilder.down();
-			}
-		} catch (Exception e) {
-			responseBuilder.down().withData("error", e.getMessage());
-		}
-		
-		return responseBuilder.build();
-		
-		//fails with "java.lang.IllegalStateException - The current thread cannot be blocked: vert.x-eventloop-thread-0"
-		// https://stackoverflow.com/questions/78051079/issue-with-asynchealthcheck-in-extension
-//		HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("OqmCoreApi");
-//		return this.oqmCoreApiClient.getApiServerHealth()
-//				   .map((ObjectNode coreApiHealth) -> {
-//					   ObjectNode returned = this.oqmCoreApiClient.getApiServerHealth().await().indefinitely();
-//					   String status = returned.get("status").asText();
-//
-//					   if(status.equalsIgnoreCase(HealthCheckResponse.Status.UP.name())){
-//						   responseBuilder.up();
-//					   } else {
-//						   responseBuilder.down();
-//					   }
-//					   return responseBuilder.build();
-//				   })
-//				   .onFailure().recoverWithItem(e -> {
-//				return responseBuilder.down().withData("error", e.getClass().getName() + " - " + e.getMessage()).build();
-//			})
-//			;
+		return this.oqmCoreApiClient.getApiServerHealth()
+				   .map((ObjectNode coreApiHealth) -> {
+					   String status = coreApiHealth.get("status").asText();
+
+					   if(status.equalsIgnoreCase(HealthCheckResponse.Status.UP.name())){
+						   responseBuilder.up();
+					   } else {
+						   responseBuilder.down();
+					   }
+					   return responseBuilder.build();
+				   })
+				   .onFailure().recoverWithItem(e -> {
+				return responseBuilder.down().withData("error", e.getClass().getName() + " - " + e.getMessage()).build();
+			})
+			;
 	}
 }
