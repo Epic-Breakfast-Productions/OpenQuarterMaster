@@ -13,8 +13,4 @@ public class CustomUnitSearch extends SearchObject<CustomUnitEntry> {
 	@QueryParam("unitSymbol") String unitSymbol;
 	//TODO:: add to bson filter list
 	
-	@Override
-	public int getDefaultPageSize() {
-		return 36;
-	}
 }

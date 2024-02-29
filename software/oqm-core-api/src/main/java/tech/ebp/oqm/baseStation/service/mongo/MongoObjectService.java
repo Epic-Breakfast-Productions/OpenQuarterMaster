@@ -90,7 +90,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		if (sort != null) {
 			results = results.sort(sort);
 		}
-		if (pageOptions != null) {
+		if (pageOptions != null && pageOptions.isDoPaging()) {
 			results = results.skip(pageOptions.getSkipVal()).limit(pageOptions.pageSize);
 		}
 		
@@ -160,7 +160,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		List<Bson> filters = searchObject.getSearchFilters();
 		log.debug("Filters: {}", filters);
 		Bson filter = (filters.isEmpty() ? null : and(filters));
-		PagingOptions pagingOptions = searchObject.getPagingOptions(defaultPageSizeIfNotSet);
+		PagingOptions pagingOptions = searchObject.getPagingOptions();
 		
 		List<T> list = this.list(
 			filter,

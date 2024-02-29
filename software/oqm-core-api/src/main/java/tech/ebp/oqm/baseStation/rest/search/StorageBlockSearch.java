@@ -34,9 +34,12 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	@QueryParam("parent") ObjectId parent; //TODO:
 	@QueryParam("isParent") Boolean isParent = false;
 	@QueryParam("isChild") Boolean isChild = false;
+	@QueryParam("isChildOf") ObjectId isChildOf;
 	//capacities
 	@QueryParam("capacity") List<Integer> capacities;//TODO
 	@QueryParam("unit") List<String> units;//TODO
+	//Other special use cases
+	@QueryParam("blocks") List<ObjectId> blocks;
 	
 	@Override
 	public List<Bson> getSearchFilters() {
@@ -78,8 +81,12 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 		
 		if (this.isParent) {
 			filters.add(eq("parent", null));
-		} else if(this.isChild){
-			filters.add(ne("parent", null));
+		} else if(this.isChild && this.isChildOf != null){
+			if(this.isChildOf != null){
+				filters.add(eq("parent", this.isChildOf));
+			} else {
+				filters.add(ne("parent", null));
+			}
 		}
 		
 		//TODO:: stores

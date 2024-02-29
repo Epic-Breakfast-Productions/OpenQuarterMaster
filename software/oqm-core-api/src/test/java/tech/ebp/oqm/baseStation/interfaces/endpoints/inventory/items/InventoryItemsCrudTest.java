@@ -207,6 +207,5 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		response.statusCode(Response.Status.OK.getStatusCode());
 		
 		log.info("Got response body: {}", response.extract().body().asString());
-		
 	}
 }

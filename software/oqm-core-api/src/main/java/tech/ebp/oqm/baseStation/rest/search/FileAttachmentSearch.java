@@ -9,6 +9,4 @@ import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 @Getter
 public class FileAttachmentSearch extends SearchObject<FileAttachment> {
 	//TODO:: add to bson filter list
-	
-	
 }

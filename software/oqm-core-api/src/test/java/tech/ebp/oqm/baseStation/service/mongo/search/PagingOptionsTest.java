@@ -15,14 +15,13 @@ class PagingOptionsTest {
 	
 	public static Stream<Arguments> getFromArgs() {
 		return Stream.of(
-			Arguments.of(1, 1, false, 1, 1, 0, null),
 			Arguments.of(1, 1, true, 1, 1, 0, null),
-			Arguments.of(null, 1, true, PagingOptions.DEFAULT_PAGE_SIZE, 1, 0, null),
+			Arguments.of(1, 1, true, 1, 1, 0, null),
+			Arguments.of(null, 1, false, PagingOptions.DEFAULT_PAGE_SIZE, 1, 0, null),
 			Arguments.of(1, null, true, 1, PagingOptions.DEFAULT_PAGE_NUM, 0, null),
 			Arguments.of(null, null, false, Integer.MAX_VALUE, 1, 0, null),
-			Arguments.of(null, 1, false, 1, 1, 0, IllegalArgumentException.class),
-			Arguments.of(-1, 1, false, 1, 1, 0, IllegalArgumentException.class),
-			Arguments.of(1, -1, false, 1, 1, 0, IllegalArgumentException.class)
+			Arguments.of(-1, 1, true, 1, 1, 0, IllegalArgumentException.class),
+			Arguments.of(1, -1, true, 1, 1, 0, IllegalArgumentException.class)
 		);
 	}
 	
@@ -31,15 +30,16 @@ class PagingOptionsTest {
 	public void testFromQueryParams(
 		Integer pageSize,
 		Integer pageNum,
-		boolean defaultsIfNotSet,
+		boolean expectedDoPaging,
 		long expectedPageSize,
 		long expectedPageNum,
 		long expectedSkipVal,
 		Class<Throwable> expectedE
 	) {
 		if (expectedE == null) {
-			PagingOptions ops = PagingOptions.from(pageSize, pageNum, defaultsIfNotSet);
+			PagingOptions ops = PagingOptions.from(pageSize, pageNum);
 			
+			assertEquals(expectedDoPaging, ops.isDoPaging());
 			assertEquals(expectedPageSize, ops.getPageSize());
 			assertEquals(expectedPageNum, ops.getPageNum());
 			assertEquals(expectedSkipVal, ops.getSkipVal());
@@ -47,7 +47,7 @@ class PagingOptionsTest {
 			assertThrows(
 				expectedE,
 				()->{
-					PagingOptions.from(pageSize, pageNum, defaultsIfNotSet);
+					PagingOptions.from(pageSize, pageNum);
 				}
 			);
 		}

@@ -12,8 +12,4 @@ public class CategoriesSearch extends SearchObject<ItemCategory> {
 	@QueryParam("name") String unitName;
 	//TODO:: add to bson filter list
 	
-	@Override
-	public int getDefaultPageSize() {
-		return 36;
-	}
 }

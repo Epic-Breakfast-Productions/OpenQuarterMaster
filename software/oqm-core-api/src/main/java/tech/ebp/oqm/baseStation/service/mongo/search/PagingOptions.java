@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.service.mongo.search;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 
@@ -7,14 +8,14 @@ import tech.ebp.oqm.baseStation.rest.search.SearchObject;
  * Object to describe paging options.
  */
 @Data
+@AllArgsConstructor
 public class PagingOptions {
 	
-	public static final int DEFAULT_PAGE_SIZE = 25;
+	public static final int DEFAULT_PAGE_SIZE = Integer.MAX_VALUE;
 	public static final int DEFAULT_PAGE_NUM = 1;
 	
-	
-	public static PagingOptions from(SearchObject<?> searchObject, boolean defaultPageSizeIfNotSet){
-		return from(searchObject.getPageSize(), searchObject.getPageNum(), defaultPageSizeIfNotSet, searchObject.getDefaultPageSize());
+	public static PagingOptions from(SearchObject<?> searchObject){
+		return from(searchObject.getPageSize(), searchObject.getPageNum());
 	}
 	
 	/**
@@ -25,29 +26,18 @@ public class PagingOptions {
 	 *
 	 * @return A paging options object. Can be null
 	 */
-	public static PagingOptions from(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet, int defaultPageSize) {
-		if (defaultPageSizeIfNotSet) {
-			if (pageSize == null) {
-				pageSize = defaultPageSize;
-			}
+	public static PagingOptions from(Integer pageSize, Integer pageNum) {
+		if(pageSize == null){
+			return new PagingOptions(false, DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM);
 		} else {
-			if (pageSize == null && pageNum == null) {
-				return new PagingOptions(Integer.MAX_VALUE, 1);
+			if (pageNum == null) {
+				pageNum = DEFAULT_PAGE_NUM;
 			}
-			if (pageSize == null) {
-				throw new IllegalArgumentException("Page size not provided.");
-			}
-		}
-		if (pageNum == null) {
-			pageNum = 1;
 		}
 		return new PagingOptions(pageSize, pageNum);
 	}
 	
-	public static PagingOptions from(Integer pageSize, Integer pageNum, boolean defaultPageSizeIfNotSet) {
-		return from(pageSize, pageNum, defaultPageSizeIfNotSet, DEFAULT_PAGE_SIZE);
-	}
-	
+	public final boolean doPaging;
 	/** The size of the pages */
 	public final int pageSize;
 	/** The number of the page we are on */
@@ -60,6 +50,7 @@ public class PagingOptions {
 		if (pageNum < 1) {
 			throw new IllegalArgumentException("Page number cannot be less than 1.");
 		}
+		this.doPaging = true;
 		this.pageSize = pageSize;
 		this.pageNum = pageNum;
 	}

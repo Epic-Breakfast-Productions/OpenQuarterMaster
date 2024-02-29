@@ -12,8 +12,4 @@ public class ExternalServiceSearch extends SearchKeyAttObject<ExternalService> {
 	@QueryParam("name") String serviceName;
 	//TODO:: object specific fields, add to bson filter list
 	
-	@Override
-	public int getDefaultPageSize() {
-		return 25;
-	}
 }

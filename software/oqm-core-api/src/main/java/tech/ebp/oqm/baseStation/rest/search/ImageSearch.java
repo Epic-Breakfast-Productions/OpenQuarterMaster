@@ -18,11 +18,6 @@ public class ImageSearch extends SearchKeyAttObject<Image> {
 	//TODO:: object specific fields, add to bson filter list
 	
 	@Override
-	public int getDefaultPageSize() {
-		return 36;
-	}
-	
-	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> output = super.getSearchFilters();
 		

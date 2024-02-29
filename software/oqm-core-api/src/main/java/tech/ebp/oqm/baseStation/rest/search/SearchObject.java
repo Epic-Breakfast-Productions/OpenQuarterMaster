@@ -28,15 +28,11 @@ public abstract class SearchObject<T extends MainObject> {
 		return SearchUtils.getSortBson(this.sortField, this.sortType);
 	}
 	
-	public PagingOptions getPagingOptions(boolean defaultPageSizeIfNotSet){
-		return PagingOptions.from(this, defaultPageSizeIfNotSet);
+	public PagingOptions getPagingOptions(){
+		return PagingOptions.from(this);
 	}
 	
 	public List<Bson> getSearchFilters(){
 		return new ArrayList<>();
-	}
-	
-	public int getDefaultPageSize(){
-		return PagingOptions.DEFAULT_PAGE_SIZE;
 	}
 }

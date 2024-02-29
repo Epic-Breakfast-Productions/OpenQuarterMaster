@@ -381,34 +381,34 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	
 	//</editor-fold>
 	
-	@GET
-	@Path("{id}/children")
-	@Operation(
-		summary = "Gets children of a particular storage block."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = StorageBlock.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
-	)
-	@Produces({MediaType.APPLICATION_JSON})
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getChildrenOfBlock(
-		@PathParam("id") String storageBlockId
-	) {
-		log.info("Getting children of \"{}\"", storageBlockId);
-		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
-	}
+//	@GET
+//	@Path("{id}/children")
+//	@Operation(
+//		summary = "Gets children of a particular storage block."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Blocks retrieved.",
+//		content = {
+//			@Content(
+//				mediaType = "application/json",
+//				schema = @Schema(
+//					type = SchemaType.ARRAY,
+//					implementation = StorageBlock.class
+//				)
+//			)
+//		},
+//		headers = {
+//			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+//			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+//		}
+//	)
+//	@Produces({MediaType.APPLICATION_JSON})
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
+//	public Response getChildrenOfBlock(
+//		@PathParam("id") String storageBlockId
+//	) {
+//		log.info("Getting children of \"{}\"", storageBlockId);
+//		return Response.ok(((StorageBlockService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
+//	}
 }

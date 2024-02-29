@@ -222,6 +222,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		
 		FileMetadata gotten = this.testMongoService.getLatestMetadata(mainFileObject.getId());
 		
+		//TODO:: compare duration between, not stamps?
 		Comparator<ZonedDateTime> comparator = Comparator.comparing(
 			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
 		);
