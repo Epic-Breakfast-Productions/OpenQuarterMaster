@@ -651,7 +651,7 @@ function setupView(blockId){
     storageBlockViewId.text(blockId);
     UriUtils.addOrReplaceParams("view", blockId);
     storageBlockViewModalLabel.text(blockId);
-    getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
+    StorageBlockTree.getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 
     //TODO:: do this in await getter
     Rest.call({

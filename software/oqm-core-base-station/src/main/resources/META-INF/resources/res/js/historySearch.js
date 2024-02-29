@@ -49,7 +49,7 @@ async function runHistorySearch(historySearchFormJs, event){
 		"/history?" +
 		new URLSearchParams(formData).toString();
 
-	return doRestCall({
+	return Rest.call({
 		spinnerContainer: historySearchContainer.get(0),
 		url: historyUrl,
 		method: 'GET',

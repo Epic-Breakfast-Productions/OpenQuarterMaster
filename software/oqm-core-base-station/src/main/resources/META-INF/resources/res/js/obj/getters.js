@@ -3,9 +3,9 @@ const Getters = {
 	InventoryItem: {
 		get(itemId, doneFunc) {
 			console.log("Getting name for inventory item \"" + itemId + "\"");
-			return doRestCall({
+			return Rest.call({
 				spinnerContainer: null,
-				url: "/api/v1/inventory/item/" + itemId,
+				url: Rest.passRoot + "/inventory/item/" + itemId,
 				done: function (data) {
 					doneFunc(data);
 				}
@@ -13,9 +13,9 @@ const Getters = {
 		},
 		getItemName(itemId, doneFunc) {
 			console.log("Getting name for inventory item \"" + itemId + "\"");
-			return doRestCall({
+			return Rest.call({
 				spinnerContainer: null,
-				url: "/api/v1/inventory/item/" + itemId,
+				url: Rest.passRoot + "/inventory/item/" + itemId,
 				done: function (data) {
 					console.log("Got item name: " + data.name);
 					doneFunc(data.name);
@@ -33,9 +33,9 @@ async function getStorageBlock(blockId){
 async function getStorageBlockItemData(blockId) {
 	console.log("Getting item data for storage block \"" + blockId + "\"");
 	return new Promise((done, fail) => {
-		doRestCall({
+		Rest.call({
 			spinnerContainer: null,
-			url: "/api/v1/inventory/item/inStorageBlock/" + blockId,
+			url: Rest.passRoot + "/inventory/item/inStorageBlock/" + blockId,
 			done: done,
 			fail: fail
 		})
@@ -45,9 +45,9 @@ async function getStorageBlockItemData(blockId) {
 async function getStorageBlockChildrenData(blockId) {
 	console.log("Getting children of storage block \"" + blockId + "\"");
 	return new Promise((done, fail) => {
-		doRestCall({
+		Rest.call({
 			spinnerContainer: null,
-			url: "/api/v1/inventory/storage-block/" + blockId + "/children",
+			url: Rest.passRoot + "/inventory/storage-block/" + blockId + "/children",
 			done: done,
 			fail: fail
 		})
@@ -56,9 +56,9 @@ async function getStorageBlockChildrenData(blockId) {
 
 function getStorageBlockLabel(blockId, doneFunc) {
 	console.log("Getting label for storage block \"" + blockId + "\"");
-	return doRestCall({
+	return Rest.call({
 		spinnerContainer: null,
-		url: "/api/v1/inventory/storage-block/" + blockId,
+		url: Rest.passRoot + "/inventory/storage-block/" + blockId,
 		done: function (data) {
 			console.log("Got label: " + data.labelText);
 			doneFunc(data.labelText);
@@ -67,9 +67,9 @@ function getStorageBlockLabel(blockId, doneFunc) {
 }
 
 function getImageName(imageId, doneFunc) {
-	return doRestCall({
+	return Rest.call({
 		spinnerContainer: null,
-		url: "/api/v1/media/image/" + imageId,
+		url: Rest.passRoot + "/media/image/" + imageId,
 		done: function (data) {
 			doneFunc(data.title)
 		}
@@ -79,9 +79,9 @@ function getImageName(imageId, doneFunc) {
 async function getItemCategoryChildrenData(categoryId) {
 	console.log("Getting children of category \"" + categoryId + "\"");
 	return new Promise((done, fail) => {
-		doRestCall({
+		Rest.call({
 			spinnerContainer: null,
-			url: "/api/v1/inventory/item-categories/" + categoryId + "/children",
+			url: Rest.passRoot + "/inventory/item-categories/" + categoryId + "/children",
 			done: done,
 			fail: fail
 		})

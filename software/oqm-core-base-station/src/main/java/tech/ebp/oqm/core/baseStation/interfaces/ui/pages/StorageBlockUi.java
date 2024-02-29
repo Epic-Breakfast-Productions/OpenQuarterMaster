@@ -1,9 +1,13 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -44,6 +48,31 @@ public class StorageBlockUi extends UiProvider {
 	@ConfigProperty(name="ui.storage.search.defaultPageSize")
 	int defaultPageSize;
 	
+	private Uni<ObjectNode> addParentLabels(ObjectNode results){
+		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
+		boolean hasResultWithParent = false;
+		
+		for(JsonNode curResult : (ArrayNode)results.get("results")){
+			if(curResult.get("hasParent").asBoolean()){
+				hasResultWithParent = true;
+				uniJoinBuilder.add(
+					coreApiClient.storageBlockGet(getBearerHeaderStr(), curResult.get("parent").asText())
+						.invoke((ObjectNode storageBlock) ->{
+							((ObjectNode)curResult).set("parentLabel", storageBlock.get("labelText"));
+						})
+				);
+			}
+		}
+		if(hasResultWithParent) {
+			return uniJoinBuilder.joinAll()
+					   .andCollectFailures()
+					   .map((list)->{
+						   return results;
+					   });
+		}
+		return Uni.createFrom().item(results);
+	}
+	
 	@GET
 	@Path("storage")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -54,7 +83,9 @@ public class StorageBlockUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), search)
+				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), search).call((ObjectNode results)->{
+					return addParentLabels(results);
+				})
 			)
 		);
 	}

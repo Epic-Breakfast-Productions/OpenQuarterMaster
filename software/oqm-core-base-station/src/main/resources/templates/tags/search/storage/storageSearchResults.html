@@ -57,9 +57,8 @@
     <td>{label}</td>
     <td>{result.get("location").asText()}</td>
     <td>
-		  {#if result.get("parent").asText()??}
-			  p
-			  {!{storageService.get(result.getParent()).getLabel()}!}
+		  {#if result.get("hasParent").asBoolean()}
+			  {result.get("parentLabel").asText()}
 		  {/if}
 	</td>
     <td></td>

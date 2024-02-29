@@ -42,6 +42,7 @@ const Rest = {
 	 * @param extraHeaders
 	 * @param async If this function should await the ajax promise before returning
 	 * @param crossDomain
+	 * @param returnType
 	 * @param done Required, Function to call when the call is successful
 	 * @param fail Optional, Function to call when the call fails
 	 * @param failMessagesDiv Null for no auto message display. String Jquery selector or Jquery object otherwise.
@@ -60,7 +61,7 @@ const Rest = {
 			extraHeaders = {},
 			async = true,
 			crossDomain = false,
-			returnType = null,
+			returnType = "json",
 			done,
 			fail = function () {
 			},
