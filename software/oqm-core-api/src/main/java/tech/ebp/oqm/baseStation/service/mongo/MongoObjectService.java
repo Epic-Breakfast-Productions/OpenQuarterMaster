@@ -60,6 +60,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	private FindIterable<T> find(ClientSession session, Bson filter) {
+		log.debug("Filter for find: {}", filter);
 		if (filter != null) {
 			if (session == null) {
 				return getCollection().find(filter);

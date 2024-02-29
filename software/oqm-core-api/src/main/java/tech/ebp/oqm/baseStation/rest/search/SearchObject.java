@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.baseStation.service.mongo.search.SortType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @ToString
@@ -34,5 +36,21 @@ public abstract class SearchObject<T extends MainObject> {
 	
 	public List<Bson> getSearchFilters(){
 		return new ArrayList<>();
+	}
+	
+	protected boolean hasValue(String val){
+		return val != null && !val.isBlank();
+	}
+	
+	protected boolean hasValue(Boolean val){
+		return val != null;
+	}
+	
+	protected boolean hasValue(ObjectId val){
+		return val != null;
+	}
+	
+	protected boolean hasValue(Collection<?> val){
+		return val != null && !val.isEmpty();
 	}
 }

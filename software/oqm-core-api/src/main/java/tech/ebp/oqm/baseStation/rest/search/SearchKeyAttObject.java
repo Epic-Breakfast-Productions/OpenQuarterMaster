@@ -32,12 +32,4 @@ public abstract class SearchKeyAttObject<T extends AttKeywordMainObject> extends
 		
 		return filters;
 	}
-	
-	protected boolean hasValue(String val){
-		return val != null && !val.isBlank();
-	}
-	
-	protected boolean hasValue(Boolean val){
-		return val != null;
-	}
 }

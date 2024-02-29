@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 import static com.mongodb.client.model.Filters.in;
+import static com.mongodb.client.model.Filters.or;
 
 @ToString(callSuper = true)
 @Getter
@@ -22,6 +24,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
 	@QueryParam("itemBarcode") String itemBarcode;
 	@QueryParam("itemCategories") List<ObjectId> categories;
+	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -48,6 +51,13 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 				));
 			}
 			filters.add(Filters.or(catsFilterList));
+		}
+		if(this.hasValue(this.getInStorageBlocks())){
+			filters.add(or(
+				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
+					return exists("storageMap." + storageBlockId.toHexString());
+				}).toList()
+			));
 		}
 		
 		return filters;

@@ -81,8 +81,9 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 		
 		if (this.isParent) {
 			filters.add(eq("parent", null));
-		} else if(this.isChild && this.isChildOf != null){
-			if(this.isChildOf != null){
+		}
+		if(this.isChild || this.hasValue(this.isChildOf)){
+			if(this.hasValue(this.isChildOf)){
 				filters.add(eq("parent", this.isChildOf));
 			} else {
 				filters.add(ne("parent", null));
