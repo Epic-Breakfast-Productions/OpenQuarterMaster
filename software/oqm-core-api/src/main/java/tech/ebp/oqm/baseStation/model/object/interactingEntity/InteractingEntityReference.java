@@ -19,9 +19,15 @@ import tech.ebp.oqm.baseStation.model.validation.annotations.ValidInteractingEnt
 @ValidInteractingEntityReference
 public class InteractingEntityReference {
 	
-	private ObjectId entityId;
+	private ObjectId id;
+	
+	private String name;
 	
 	@NotNull
 	@NonNull
-	private InteractingEntityType entityType;
+	private InteractingEntityType type;
+	
+	public InteractingEntityReference(InteractingEntity entity) {
+		this(entity.getId(), entity.getName(), entity.getInteractingEntityType());
+	}
 }

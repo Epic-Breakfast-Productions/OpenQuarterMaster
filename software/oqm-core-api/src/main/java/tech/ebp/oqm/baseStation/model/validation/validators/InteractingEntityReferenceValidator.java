@@ -15,7 +15,7 @@ public class InteractingEntityReferenceValidator extends Validator<ValidInteract
 	public boolean isValid(InteractingEntityReference reference, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> errs = new ArrayList<>();
 		
-		if (reference.getEntityId() == null && !BASE_STATION.equals(reference.getEntityType())) {
+		if (reference.getId() == null && !BASE_STATION.equals(reference.getType())) {
 			errs.add("Null entity id given.");
 		}
 		//TODO:: if object id, not BASE_STATION?
