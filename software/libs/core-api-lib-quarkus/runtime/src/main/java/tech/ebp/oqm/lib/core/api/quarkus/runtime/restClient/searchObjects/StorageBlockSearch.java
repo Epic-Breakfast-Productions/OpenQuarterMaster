@@ -26,6 +26,7 @@ public class StorageBlockSearch extends SearchKeyAttObject {
 	@QueryParam("parent") String parent; //TODO:
 	@QueryParam("isParent") Boolean isParent = false;
 	@QueryParam("isChild") Boolean isChild = false;
+	@QueryParam("isChildOf") String isChildOf;
 	//capacities
 	@QueryParam("capacity") List<Integer> capacities;//TODO
 	@QueryParam("unit") List<String> units;//TODO
