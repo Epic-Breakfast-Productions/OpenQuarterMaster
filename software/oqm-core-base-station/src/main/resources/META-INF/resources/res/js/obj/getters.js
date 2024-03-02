@@ -35,7 +35,7 @@ async function getStorageBlockItemData(blockId) {
 	return new Promise((done, fail) => {
 		Rest.call({
 			spinnerContainer: null,
-			url: Rest.passRoot + "/inventory/item/inStorageBlock/" + blockId,
+			url: Rest.passRoot + "/inventory/item?inStorageBlock=" + blockId,
 			done: done,
 			fail: fail
 		})
@@ -47,7 +47,7 @@ async function getStorageBlockChildrenData(blockId) {
 	return new Promise((done, fail) => {
 		Rest.call({
 			spinnerContainer: null,
-			url: Rest.passRoot + "/inventory/storage-block/" + blockId + "/children",
+			url: Rest.passRoot + "/inventory/storage-block?isChildOf="+blockId,
 			done: done,
 			fail: fail
 		})

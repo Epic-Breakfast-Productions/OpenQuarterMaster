@@ -77,6 +77,7 @@ const Rest = {
 			url: url,
 			method: method,
 			timeout: timeout,
+			dataType: returnType
 		};
 
 		if (data != null) {
@@ -93,9 +94,6 @@ const Rest = {
 				console.log("Sending json data: ", data);
 			}
 		}
-		if(returnType){
-			ajaxOps.dataType = returnType;
-		}
 
 		// if (authorization) {
 		// 	extraHeaders = {
@@ -111,7 +109,6 @@ const Rest = {
 			extraHeaders = {
 				...extraHeaders,
 				...{'Access-Control-Allow-Origin': "*"},
-				...{'some': "thing"},
 			}
 		}
 

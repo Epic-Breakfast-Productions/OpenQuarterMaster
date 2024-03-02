@@ -55,6 +55,7 @@ async function runHistorySearch(historySearchFormJs, event){
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
+		returnType: "html",
 		extraHeaders: {
 			"accept": "text/html",
 			"searchFormId": historySearchForm.attr("id"),

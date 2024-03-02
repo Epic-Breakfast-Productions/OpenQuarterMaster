@@ -82,7 +82,6 @@ const StorageBlockTree = {
 	getBlockBreadcrumbs: async function(crumbContainer, toKeepId) {
 		Rest.call({
 			url: Rest.passRoot + "/inventory/storage-block/tree?onlyInclude=" + toKeepId,
-			returnType: "json",
 			done: function (data) {
 				console.log("Successfully got tree data.");
 

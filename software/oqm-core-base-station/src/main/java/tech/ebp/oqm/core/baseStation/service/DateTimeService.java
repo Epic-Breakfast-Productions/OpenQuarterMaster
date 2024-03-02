@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.baseStation.service.extItemLookup;
+package tech.ebp.oqm.core.baseStation.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -37,6 +37,11 @@ public class DateTimeService {
 		}
 		return formatter.format(date);
 	}
+	
+	public String formatForUi(String dateTime) {
+		return this.formatForUi(ZonedDateTime.parse(dateTime));
+	}
+	
 	public String formatForUi(){
 		return this.formatForUi((TemporalAccessor) null);
 	}

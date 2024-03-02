@@ -353,7 +353,7 @@ Accepts:
     </div>
     <div class="row">
         <div class="col">
-            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/v1/inventory/storage-block/'}{/objView/history/objHistoryView}
+            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/passthrough/inventory/storage-block/'}{/objView/history/objHistoryView}
         </div>
     </div>
 {/modal}
@@ -657,6 +657,7 @@ function setupView(blockId){
     Rest.call({
     	spinnerContainer: storageBlockViewModal,
     	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
+    	failMessagesDiv: storageBlockViewMessages,
     	done: async function(data){
             let promises = [];
             let children = getStorageBlockChildrenData(blockId);
@@ -697,11 +698,13 @@ function setupView(blockId){
                 console.log("Storage block had no images to show.");
                 storageBlockViewCarousel.hide();
             }
+			
             storageBlockItems = await storageBlockItems;
-            
-            if(storageBlockItems.length){
-                console.log(storageBlockItems.length + " items stored.")
-                storageBlockItems.forEach(function (item){
+            if(storageBlockItems.empty){
+				storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
+            } else {
+                console.log(storageBlockItems.numResults + " items stored.")
+                storageBlockItems.results.forEach(function (item){
                     let row = $('<tr>' +
                             '<td class="blockViewItemInImage"></td>' +//image
                             '<td class="blockViewItemName"></td>' +//name
@@ -714,26 +717,23 @@ function setupView(blockId){
                     row.find(".blockViewItemTotal").text(item.total.value + item.total.unit.symbol);
                     storageBlockViewItemsStoredContent.append(row);
                 });
-            } else {
-                storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
             }
             
             children = await children;
-            if(!children.length){
+            if(children['empty']){
                 storageBlockViewChildrenContainerTitle.text("No children!")
             } else {
-                children.forEach(function (child) {
+                children.results.forEach(function (child) {
                     let newGetParams = new URLSearchParams(window.location.search);
                     newGetParams.set("view", child.id)
                     
                     let newChildLink = $('<li class="list-inline-item"><a href="/storage?'+newGetParams.toString()+'"></li></a>');
-                    newChildLink.find("a").text(child.label);
+                    newChildLink.find("a").text(child.labelText);
                     storageBlockViewChildrenContainer.append(newChildLink);
                 });
             }
             await Promise.all(promises);
-    	},
-    	failMessagesDiv: storageBlockViewMessages
+    	}
     });
     
     setupHistorySearch(storageBlockHistoryAccordionCollapse, blockId);
