@@ -33,7 +33,7 @@
     <div class="row">
         <div class="col table-responsive">
             <table class=" table table-bordered table-striped table-hover table-sm">
-                {#search/category/searchResults searchResults=searchResult actionType='full' searchFormId='mainCategorySearch' pagingCalculations=pagingCalculations}
+                {#search/category/searchResults actionType='full' searchFormId='mainCategorySearch' searchResults=searchResults}
                 {/search/category/searchResults}
             </table>
         </div>
@@ -78,9 +78,10 @@
                             <div class="col-sm-10">
                                 <select class="form-select dselect-select" id="addEditItemCategoryParentInput" name="itemCategoryParent">
                                     <option value="" selected>No Parent</option>
-                                {#for curItemCat in itemCatService.listIterator()}
-                                    <option value="{curItemCat.getId()}">{curItemCat.getName()}</option>
-                                {/for}
+									{!TODO, move to own thing !}
+                                {!{#for curItemCat in itemCatService.listIterator()}!}
+                                    {!<option value="{curItemCat.getId()}">{curItemCat.getName()}</option>!}
+                                {!{/for}!}
                                 </select>
                             </div>
                         </div>

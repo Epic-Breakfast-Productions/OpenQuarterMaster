@@ -80,15 +80,21 @@ runningInfo:
   depotUri: " "
   
 ui:
-  storage:
+  defaults:
     search:
       defaultPageSize: 25
+  storage:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   image:
     search:
       defaultPageSize: 16
   history:
     search:
-      defaultPageSize: 25
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemCategory:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
