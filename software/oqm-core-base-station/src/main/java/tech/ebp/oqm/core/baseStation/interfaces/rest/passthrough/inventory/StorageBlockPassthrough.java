@@ -10,14 +10,7 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
@@ -171,7 +164,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	}
 	
 	@GET
-	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/tree")
+	@Path("/tree")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> storageBlockTree(@QueryParam("onlyInclude") List<String> onlyInclude) {
 		return this.oqmCoreApiClient.storageBlockTree(this.getBearerHeaderStr(), onlyInclude)
@@ -180,4 +173,22 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 				   );
 	}
 	
+	@PUT
+	@Path("/{id}")
+	public Uni<Response> storageBlockUpdate(@PathParam("id") String id, ObjectNode updates){
+		return this.oqmCoreApiClient.storageBlockUpdate(this.getBearerHeaderStr(), id, updates)
+				   .map(output->
+							Response.ok(output).build()
+				   );
+	}
+	
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<Response>  storageBlockDelete(@PathParam("id") String id){
+		return this.oqmCoreApiClient.storageBlockDelete(this.getBearerHeaderStr(), id)
+				   .map(output->
+							Response.ok(output).build()
+				   );
+	}
 }
