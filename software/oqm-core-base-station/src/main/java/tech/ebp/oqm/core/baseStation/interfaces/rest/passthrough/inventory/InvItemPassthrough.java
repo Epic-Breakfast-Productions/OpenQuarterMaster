@@ -31,12 +31,9 @@ import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.STORAGE_BLOCK_
 @Produces(MediaType.TEXT_HTML)
 public class InvItemPassthrough extends PassthroughProvider {
 	
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClient;
-	
 	@GET
 	public Uni<Response> getStorageBlock(@BeanParam InventoryItemSearch search){
-		return this.oqmCoreApiClient.invItemSearch(this.getBearerHeaderStr(), search)
+		return this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), search)
 				   .map( output ->
 							 Response.ok(output).build()
 				   );

@@ -38,42 +38,9 @@ import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.STORAGE_BLOCK_
 @Produces(MediaType.TEXT_HTML)
 public class StorageBlockPassthrough extends PassthroughProvider {
 	
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClient;
-	
-	@Getter
-	@Inject
-	@Location("tags/objView/history/searchResults")
-	Template historyTemplate;
-	
-	private Uni<ObjectNode> addEntityReferences(ObjectNode results) {
-		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		boolean hasResultWithParent = false;
-		
-		for (JsonNode curResult : (ArrayNode) results.get("results")) {
-			if (curResult.get("hasParent").asBoolean()) {
-				hasResultWithParent = true;
-				uniJoinBuilder.add(
-					oqmCoreApiClient.storageBlockGet(getBearerHeaderStr(), curResult.get("parent").asText())
-						.invoke((ObjectNode storageBlock)->{
-							((ObjectNode) curResult).set("parentLabel", storageBlock.get("labelText"));
-						})
-				);
-			}
-		}
-		if (hasResultWithParent) {
-			return uniJoinBuilder.joinAll()
-					   .andCollectFailures()
-					   .map((list)->{
-						   return results;
-					   });
-		}
-		return Uni.createFrom().item(results);
-	}
-	
 	@POST
 	public Uni<Response> addStorageBlock(ObjectNode newStorageBlock) {
-		return this.oqmCoreApiClient.storageBlockAdd(this.getBearerHeaderStr(), newStorageBlock)
+		return this.getOqmCoreApiClient().storageBlockAdd(this.getBearerHeaderStr(), newStorageBlock)
 				   .map(output->Response.ok(output).build()
 				   );
 	}
@@ -81,7 +48,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> getStorageBlock(@BeanParam StorageBlockSearch storageBlockSearch) {
-		return this.oqmCoreApiClient.storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch)
+		return this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -90,11 +57,12 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@GET
 	@Path("{blockId}")
 	public Uni<Response> getStorageBlock(@PathParam("blockId") String storageBlockId) {
-		return this.oqmCoreApiClient.storageBlockGet(this.getBearerHeaderStr(), storageBlockId)
+		return this.getOqmCoreApiClient().storageBlockGet(this.getBearerHeaderStr(), storageBlockId)
 				   .map(output->
 							Response.ok(output).build()
 				   );
 	}
+	
 	
 	@GET
 	@Path("{blockId}/history")
@@ -105,69 +73,15 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.oqmCoreApiClient.storageBlockGetHistory(this.getBearerHeaderStr(), storageBlockId, historySearch);
-		
-		if (MediaType.TEXT_HTML.equals(acceptType)) {
-			return searchUni.call((ObjectNode results)->{
-					if (results.get("empty").asBoolean()) {
-						return Uni.createFrom().item(results);
-						//					return Response.ok(
-						//						historyTemplate
-						//							.data("searchFormId", searchFormId)
-						//							.data("searchResults", results),
-						//						MediaType.TEXT_HTML
-						//					).build();
-					}
-					
-					Map<String, Optional<ObjectNode>> entityRefMap = new ConcurrentHashMap<>();
-					for (JsonNode curResult : (ArrayNode) results.get("results")) {
-						entityRefMap.put(curResult.get("entity").asText(), Optional.empty());
-					}
-					
-					UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-					
-					for (String curEntityId : entityRefMap.keySet()) {
-						uniJoinBuilder.add(oqmCoreApiClient.interactingEntityGetReference(getBearerHeaderStr(), curEntityId));
-					}
-					
-					//returns a uni, not a response
-					return uniJoinBuilder.joinAll()
-							   .andCollectFailures()
-							   .map((List<ObjectNode> resultList)->{
-								   for (ObjectNode curEntityRef : resultList) {
-									   entityRefMap.put(curEntityRef.get("id").asText(), Optional.of(curEntityRef));
-								   }
-								   
-								   for (JsonNode curResult : (ArrayNode) results.get("results")) {
-									   ((ObjectNode) curResult).set("entityRef", entityRefMap.get(curResult.get("entity").asText()).get());
-								   }
-								   return results;
-								   
-							   });
-				})
-					   .map((ObjectNode endResults)->{
-						   log.debug("Final result of history search: {}", endResults);
-						   return Response.ok(
-							   historyTemplate
-								   .data("searchFormId", searchFormId)
-								   .data("searchResults", endResults),
-							   MediaType.TEXT_HTML
-						   ).build();
-					   });
-		} else {
-			return searchUni.map((output)->{
-				log.debug("Storage Block History search results: {}", output);
-				return Response.ok(output).build();
-			});
-		}
-		
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().storageBlockGetHistory(this.getBearerHeaderStr(), storageBlockId, historySearch);
+		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
 	@GET
 	@Path("/tree")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> storageBlockTree(@QueryParam("onlyInclude") List<String> onlyInclude) {
-		return this.oqmCoreApiClient.storageBlockTree(this.getBearerHeaderStr(), onlyInclude)
+		return this.getOqmCoreApiClient().storageBlockTree(this.getBearerHeaderStr(), onlyInclude)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -176,7 +90,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@PUT
 	@Path("/{id}")
 	public Uni<Response> storageBlockUpdate(@PathParam("id") String id, ObjectNode updates){
-		return this.oqmCoreApiClient.storageBlockUpdate(this.getBearerHeaderStr(), id, updates)
+		return this.getOqmCoreApiClient().storageBlockUpdate(this.getBearerHeaderStr(), id, updates)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -186,7 +100,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Uni<Response>  storageBlockDelete(@PathParam("id") String id){
-		return this.oqmCoreApiClient.storageBlockDelete(this.getBearerHeaderStr(), id)
+		return this.getOqmCoreApiClient().storageBlockDelete(this.getBearerHeaderStr(), id)
 				   .map(output->
 							Response.ok(output).build()
 				   );
