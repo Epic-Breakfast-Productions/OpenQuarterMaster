@@ -1,9 +1,6 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
-import io.smallrye.mutiny.tuples.Tuple2;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -27,10 +24,9 @@ import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
-import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemCategorySearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 
 import java.util.List;
@@ -38,10 +34,10 @@ import java.util.List;
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
 @Slf4j
-@Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-categories")
+@Path(ROOT_API_ENDPOINT_V1 + "/inventory/item-category")
 @Tags({@Tag(name = "Item Categories", description = "Endpoints for managing Item Categories.")})
 @RequestScoped
-public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, CategoriesSearch> {
+public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCategorySearch> {
 	
 	@Inject
 	@Getter
@@ -135,9 +131,9 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public Response search(
-		@BeanParam CategoriesSearch categoriesSearch
+		@BeanParam ItemCategorySearch itemCategorySearch
 	) {
-		return super.search(categoriesSearch);
+		return super.search(itemCategorySearch);
 	}
 	
 	@Path("{id}")
@@ -358,35 +354,4 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, Categor
 	}
 	
 	//</editor-fold>
-	
-	@GET
-	@Path("{id}/children")
-	@Operation(
-		summary = "Gets children of a particular item category."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ItemCategory.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
-	)
-	@Produces({MediaType.APPLICATION_JSON})
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getChildrenOfCategory(
-		@PathParam("id") String storageBlockId
-	) {
-		log.info("Getting children of \"{}\"", storageBlockId);
-		return Response.ok(((ItemCategoryService)this.getObjectService()).getChildrenIn(storageBlockId)).build();
-	}
 }

@@ -32,6 +32,7 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 	List<String> parents;
 	//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
 	@QueryParam("parent") ObjectId parent; //TODO:
+	//TODO:: rename this to 'topLevelParent'
 	@QueryParam("isParent") Boolean isParent = false;
 	@QueryParam("isChild") Boolean isChild = false;
 	@QueryParam("isChildOf") ObjectId isChildOf;

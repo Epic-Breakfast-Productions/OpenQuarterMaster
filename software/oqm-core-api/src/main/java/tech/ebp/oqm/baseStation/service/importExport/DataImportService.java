@@ -23,7 +23,7 @@ import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
-import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemCategorySearch;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
@@ -130,7 +130,7 @@ public class DataImportService {
 	private UnitImporter unitImporter;
 	private GenericFileImporter<FileAttachment, FileAttachmentSearch, FileAttachmentGet> fileImporter;
 	private GenericImporter<Image, ImageSearch> imageImporter;
-	private HasParentImporter<ItemCategory, CategoriesSearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
+	private HasParentImporter<ItemCategory, ItemCategorySearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
 	private GenericImporter<ItemList, ItemListSearch> itemListImporter;

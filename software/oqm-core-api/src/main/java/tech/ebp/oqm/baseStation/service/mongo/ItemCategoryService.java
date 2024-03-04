@@ -16,7 +16,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTreeNode;
-import tech.ebp.oqm.baseStation.rest.search.CategoriesSearch;
+import tech.ebp.oqm.baseStation.rest.search.ItemCategorySearch;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Named("ItemCategoryService")
 @Slf4j
 @ApplicationScoped
-public class ItemCategoryService extends HasParentObjService<ItemCategory, CategoriesSearch, CollectionStats, ItemCategoryTreeNode> {
+public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemCategorySearch, CollectionStats, ItemCategoryTreeNode> {
 	
 	private InventoryItemService inventoryItemService;
 	private StorageBlockService storageBlockService;
