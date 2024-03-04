@@ -1,24 +1,19 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import java.util.List;
 
-import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.IMAGE_ROOT_ENDPOINT;
-import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.INV_ITEM_ROOT_ENDPOINT;
-import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.ROOT_API_ENDPOINT_V1;
-import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.STORAGE_BLOCK_ROOT_ENDPOINT;
+import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
 
 @RegisterRestClient(configKey = Constants.CONFIG_ROOT_NAME)
@@ -78,6 +73,30 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}/history")
 	Uni<ObjectNode> storageBlockGetHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("blockId") String storageBlockId, @BeanParam HistorySearch historySearch);
+	//</editor-fold>
+	
+	//<editor-fold desc="Item Categories">
+	@GET
+	@Path(ITEM_CAT_ROOT_ENDPOINT)
+	Uni<ObjectNode> itemCatSearch(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam ItemCategorySearch itemCategorySearch);
+	
+	@POST
+	@Path(ITEM_CAT_ROOT_ENDPOINT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, ObjectNode newItemCategory);
+	
+	@GET
+	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
+	Uni<ObjectNode> itemCatGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("catId") String itemCatId);
+	
+	@PUT
+	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
+	Uni<ObjectNode> itemCatUpdate(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("catId") String itemCatId, ObjectNode updates);
+	
+	@GET
+	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}/history")
+	Uni<ObjectNode> itemCatGetHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("catId") String catId, @BeanParam HistorySearch historySearch);
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Items">
