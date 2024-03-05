@@ -48,6 +48,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> getStorageBlock(@BeanParam StorageBlockSearch storageBlockSearch) {
+		//TODO:: handle HTML return for searches
 		return this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch)
 				   .map(output->
 							Response.ok(output).build()

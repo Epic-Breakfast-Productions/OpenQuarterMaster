@@ -23,7 +23,7 @@ function addSelectedImages(selectedImagesDiv, imageList) {
 	setupImageSearchModal(selectedImagesDiv);
 	var titleArr = [];
 	imageList.forEach(async function (imageId, i) {
-		await doRestCall({
+		await Rest.call({
 			async: false,
 			spinnerContainer: null,
 			url: "/api/v1/media/image/" + imageId,
@@ -74,7 +74,7 @@ imageSearchSelectForm.on("submit", function (event) {
 	var searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
 
-	doRestCall({
+	Rest.call({
 		spinnerContainer: imageSearchSelectModal.get(0),
 		url: "/api/v1/media/image?" + searchParams,
 		method: 'GET',

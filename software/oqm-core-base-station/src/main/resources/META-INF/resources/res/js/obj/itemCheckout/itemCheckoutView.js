@@ -79,7 +79,7 @@ const ItemCheckoutView = {
 
 		ItemCheckoutView.viewId.text(itemCheckoutId);
 
-		await doRestCall({
+		await Rest.call({
 			spinnerContainer: ItemCheckoutView.itemCheckoutViewModal.get(0),
 			url: "/api/v1/inventory/item-checkout/" + itemCheckoutId,
 			method: "GET",
@@ -147,7 +147,7 @@ const ItemCheckoutView = {
 					ItemCheckoutView.notesContainer.show();
 				}
 
-				promises.push(doRestCall({
+				promises.push(Rest.call({
 					url: "/api/v1/inventory/item/" + checkoutData.item,
 					method: "GET",
 					async: false,

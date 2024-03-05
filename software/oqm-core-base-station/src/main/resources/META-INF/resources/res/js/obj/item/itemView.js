@@ -217,7 +217,7 @@ const ItemView = {
 		UriUtils.addOrReplaceParams("view", itemId);
 		ItemView.itemViewModalLabel.text(itemId);
 
-		doRestCall({
+		Rest.call({
 			spinnerContainer: ItemView.itemViewModal,
 			url: "/api/v1/inventory/item/" + itemId,
 			failMessagesDiv: ItemView.itemViewMessages,
@@ -287,7 +287,7 @@ const ItemView = {
 					promises.push(new Promise(async function () {
 						console.log("Processing stored wrapper under storage block " + storageId);
 						let curBlockName = storageId;
-						await doRestCall({
+						await Rest.call({
 							spinnerContainer: null,
 							async: false,
 							url: "/api/v1/inventory/storage-block/" + storageId,
@@ -340,7 +340,7 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 	let searchParams = new URLSearchParams(new FormData(e.target));
 	console.log("URL search params: " + searchParams);
 
-	doRestCall({
+	Rest.call({
 		spinnerContainer: ItemView.itemViewModal.get(0),
 		url: "/api/v1/inventory/item-checkout?" + searchParams,
 		method: 'GET',

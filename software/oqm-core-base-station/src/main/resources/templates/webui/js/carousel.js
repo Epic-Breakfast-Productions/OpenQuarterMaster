@@ -66,7 +66,7 @@ const Carousel = {
 
 			imageIds.forEach(function (id, i) {
 				ajaxPromises.push(
-					doRestCall({ //TODO:: move to getter
+					Rest.call({ //TODO:: move to getter
 						spinnerContainer: carousel[0],
 						url: "/api/v1/media/image/" + id,
 						async: false,

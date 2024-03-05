@@ -1,7 +1,7 @@
 
 const EntityRef = {
 	getEntityRef(entityRef, doneFunc){
-		return doRestCall({
+		return Rest.call({
 			spinnerContainer: null,
 			url: "/api/v1/interacting-entity/reference",
 			method: "POST",

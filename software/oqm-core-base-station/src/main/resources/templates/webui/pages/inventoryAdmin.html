@@ -227,7 +227,7 @@
 				formData.append("fileName", file.name);
 				formData.append("file", file);
 				
-				doRestCall({
+				Rest.call({
 					url: '/api/v1/inventory/manage/import/file/bundle',
 					method: "post",
 					data: formData,
@@ -293,7 +293,7 @@
 				
 				console.log("New unit request: " + JSON.stringify(newUnitRequest));
 				
-				doRestCall({
+				Rest.call({
 					authorization: true,
 					url: "/api/v1/inventory/manage/customUnit",
 					method: 'POST',

@@ -27,7 +27,7 @@ ItemSearchSelect.itemSearchSelectForm.on("submit", function (event) {
 	var searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
 
-	doRestCall({
+	Rest.call({
 		spinnerContainer: ItemSearchSelect.itemSearchSelectModal.get(0),
 		url: "/api/v1/inventory/item?" + searchParams,
 		method: 'GET',

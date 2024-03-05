@@ -22,12 +22,13 @@ StorageSearchSelect.storageSearchSelectForm.on("submit", function (event) {
 	let searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
 
-	doRestCall({
+	Rest.call({
 		spinnerContainer: StorageSearchSelect.storageSearchSelectModal.get(0),
-		url: "/api/v1/inventory/storage-block?" + searchParams,
+		url: Rest.passRoot + "/inventory/storage-block?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
+		returnType: "html",
 		extraHeaders: {
 			"accept": "text/html",
 			"actionType": "select",

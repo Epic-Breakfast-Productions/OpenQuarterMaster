@@ -121,7 +121,7 @@
 					description: itemListAddNameInput.val(),
 				};
 				
-				await doRestCall({
+				await Rest.call({
 					url: "/api/v1/inventory/item-list",
 					method: "POST",
 					data: addData,
@@ -145,7 +145,7 @@
 				}
 				console.log("Removing item list " + listId);
 
-				doRestCall({
+				Rest.call({
 					url: "/api/v1/inventory/item-list/" + listId,
 					method: "DELETE",
 					done: function(data) {

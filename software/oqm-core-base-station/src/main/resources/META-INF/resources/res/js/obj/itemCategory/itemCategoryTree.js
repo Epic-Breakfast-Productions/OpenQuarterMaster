@@ -47,9 +47,9 @@ const ItemCategoryTree = {
 
 		chartConfig.chart.container = containerSelector;
 
-		doRestCall({
+		Rest.call({
 //        spinnerContainer: $(containerSelector),
-			url: "/api/v1/inventory/item-categories/tree",
+			url: "/api/v1/inventory/item-category/tree",
 			done: function (data) {
 				console.log("Successfully got tree data.");
 				var rootChildrenList = chartConfig.nodeStructure.children;
@@ -70,7 +70,7 @@ const ItemCategoryTree = {
 			curCrumb.find("a").text(cur.catName);
 			let newGetParams = new URLSearchParams(window.location.search);
 			newGetParams.set("view", cur.objectId)
-			curCrumb.find("a").attr("href", "/categories?" + newGetParams.toString());
+			curCrumb.find("a").attr("href", "/itemCategories?" + newGetParams.toString());
 
 			crumbList.append(curCrumb);
 			ItemCategoryTree.addCrumbs(cur.children[0], crumbList, toKeepId);
@@ -81,8 +81,8 @@ const ItemCategoryTree = {
 		}
 	},
 	async getBreadcrumbs(crumbContainer, toKeepId) {
-		doRestCall({
-			url: "/api/v1/inventory/item-categories/tree?onlyInclude=" + toKeepId,
+		Rest.call({
+			url: Rest.passRoot + "/inventory/item-category/tree?onlyInclude=" + toKeepId,
 			done: function (data) {
 				console.log("Successfully got tree data.");
 

@@ -30,7 +30,7 @@ const ItemListView = {
 		ItemListView.itemListReviewDesc.text("");
 		ItemListView.itemListReviewActionsContent.text("");
 
-		doRestCall({
+		Rest.call({
 			url: "/api/v1/inventory/item-list/" + itemListId,
 			failMessagesDiv: ItemListView.itemListReviewMessages,
 			spinnerContainer: ItemListView.itemListReviewModalBody,

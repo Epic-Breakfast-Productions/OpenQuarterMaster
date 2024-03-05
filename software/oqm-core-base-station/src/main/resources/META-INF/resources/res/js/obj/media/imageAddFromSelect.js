@@ -36,7 +36,7 @@ imageAddImageForm.submit(function (ev) {
 		addKeywordAttData(addData, imageAddKeywordInputDiv, imageAddAttInputDiv);
 
 		console.log("Adding new image.");
-		doRestCall({
+		Rest.call({
 			url: "/api/v1/media/image",
 			method: "POST",
 			data: addData,

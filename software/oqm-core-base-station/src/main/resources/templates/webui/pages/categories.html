@@ -76,13 +76,8 @@
                         <div class="mb-3 row">
                             <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
                             <div class="col-sm-10">
-                                <select class="form-select dselect-select" id="addEditItemCategoryParentInput" name="itemCategoryParent">
-                                    <option value="" selected>No Parent</option>
-									{!TODO, move to own thing !}
-                                {!{#for curItemCat in itemCatService.listIterator()}!}
-                                    {!<option value="{curItemCat.getId()}">{curItemCat.getName()}</option>!}
-                                {!{/for}!}
-                                </select>
+								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults}
+								{/inputs/categoryInput}
                             </div>
                         </div>
                         {#search/image/imageSelectFormInput}
@@ -150,7 +145,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl='/api/v1/inventory/item-categories/'}{/objView/history/objHistoryView}
+                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl='/api/passthrough/inventory/item-category/'}{/objView/history/objHistoryView}
                 </div>
             </div>
         {/modal}
@@ -167,6 +162,7 @@
         <script src="/res/js/obj/units.js"></script>
         <script src="/res/js/obj/getters.js"></script>
         <script src="/res/js/obj/storageBlock/capacities.js"></script>
+		<script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
         <script src="/res/js/carousel.js"></script>
         <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
         <script src="/res/js/obj/media/imageAdd.js"></script>
@@ -230,8 +226,8 @@
                     Category.modeInput.val("edit");
                     Category.idInput.val(categoryId);
     
-                    await doRestCall({
-                        url: "/api/v1/inventory/item-categories/" + categoryId,
+                    await Rest.call({
+                        url: Rest.passRoot + "/inventory/item-category/" + categoryId,
                         method: "GET",
                         async: false,
                         done: function (data) {
@@ -263,7 +259,7 @@
                 let data = {
                     name: Category.nameInput.val(),
                     description: Category.descInput.val(),
-                    parent: (Category.parentInput.val()? Category.parentInput.val():null),
+                    parent: ItemCategoryInput.getValueFromInput(Category.parentInput),
 					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
                 };
                 addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
@@ -275,8 +271,8 @@
                     verb = "Created";
         
                     console.log("Adding new item category.");
-                    await doRestCall({
-                        url: "/api/v1/inventory/item-categories",
+                    await Rest.call({
+                        url: Rest.passRoot + "/inventory/item-category",
                         method: "POST",
                         data: data,
                         async: false,
@@ -294,8 +290,8 @@
                     let id = Category.idInput.val();
                     console.log("Editing item category " + id);
         
-                    await doRestCall({
-                        url: "/api/v1/inventory/item-categories/" + id,
+                    await Rest.call({
+                        url: Rest.passRoot + "/inventory/item-category/" + id,
                         method: "PUT",
                         data: data,
                         async: false,
@@ -318,8 +314,8 @@
                     return;
                 }
     
-                await doRestCall({
-                    url: "/api/v1/inventory/item-categories/" + id,
+                await Rest.call({
+                    url: Rest.passRoot + "/inventory/item-category/" + id,
                     method: "DELETE",
                     async: false,
                     done: function (data) {
@@ -366,8 +362,8 @@
                     UriUtils.addOrReplaceParams("view", categoryId);
                     ItemCategoryView.catId.text(categoryId);
                     
-                    await doRestCall({
-                        url: "/api/v1/inventory/item-categories/" + categoryId,
+                    await Rest.call({
+                        url: Rest.passRoot +"/inventory/item-category/" + categoryId,
                         method: "GET",
                         async: false,
                         done: async function (data) {
@@ -396,15 +392,15 @@
                             processAttDisplay(ItemCategoryView.attsView, data.attributes);
     
                             children = await children;
-                            if(!children.length){
+                            if(children.empty){
                                 ItemCategoryView.childrenContainer.text("No children!")
                             } else {
                                 console.log("Processing category children.");
-                                children.forEach(function (child) {
+                                children.results.forEach(function (child) {
                                     let newGetParams = new URLSearchParams(window.location.search);
                                     newGetParams.set("view", child.id)
             
-                                    let newChildLink = $('<li class="list-inline-item"><a href="/categories?'+newGetParams.toString()+'"></li></a>');
+                                    let newChildLink = $('<li class="list-inline-item"><a href="/itemCategories?'+newGetParams.toString()+'"></li></a>');
                                     newChildLink.find("a").text(child.name);
                                     ItemCategoryView.childrenContainer.append(newChildLink);
                                 });

@@ -24,7 +24,7 @@ const FileAttachmentAddEdit = {
 		formData.append("file", file);
 		formData.append("description", FileAttachmentAddEdit.descriptionInput.val())
 
-		doRestCall({
+		Rest.call({
 			url: '/api/v1/media/fileAttachments',
 			method: "post",
 			data: formData,
@@ -44,7 +44,7 @@ const FileAttachmentAddEdit = {
 			console.log("User chose not to delete after all.");
 			return;
 		}
-		doRestCall({
+		Rest.call({
 			url: '/api/v1/media/fileAttachments/' + fileId,
 			method: "delete",
 			done: function (data){

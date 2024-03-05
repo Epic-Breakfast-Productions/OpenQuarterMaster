@@ -360,7 +360,7 @@
 				}
 				created[storageBlockId] = [];
 
-				doRestCall({
+				Rest.call({
 					url: "/api/v1/inventory/storage-block/" + storageBlockId,
 					method: "GET",
 					done: async function(data) {
@@ -384,7 +384,7 @@
 				}
 				created[storageBlockId][itemId] = true;
 
-				doRestCall({
+				Rest.call({
 					url: "/api/v1/inventory/item/" + itemId,
 					method: "GET",
 					done: async function(data) {

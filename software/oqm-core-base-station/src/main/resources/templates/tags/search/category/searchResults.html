@@ -44,30 +44,35 @@
     </td>
   </tr>
   {#else}
-  {#for result in searchResults.getResults()}
+  {#for result in searchResults.get("results")}
+  {#let id=result.get("id").asText() name=result.get("name").asText()}
   <tr class="itemCategoryResultRow align-middle">
     <td>
-      {#if !result.getImageIds().isEmpty()}
-      <img src="/api/v1/media/image/for/item_category/{result.getId()}" class="searchResultImage">
+		{#if !result.get("imageIds").isEmpty()}
+      <img src="/api/passthrough/media/image/for/item_category/{id}" class="searchResultImage">
       {/if}
     </td>
-    <td {#if result.getColor()??}style="background-color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getColor())}; color: {tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteUtils:colorToHex(result.getTextColor())}"{/if}>
-      {result.getName()}
+    <td {#if !result.get("color").isNull()}style="background-color: {result.get("color").asText()}; color: {result.get("textColor").asText()}"{/if}>
+      {name}
     </td>
-    <td>{#if result.getParent()??}{itemCatService.get(result.getParent()).getName()}{/if}</td>
+    <td>
+		{#if result.get("hasParent").asBoolean()}
+			{result.get("parentLabel").asText()}
+		{/if}
+	</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCategoryViewModal" onclick="ItemCategoryView.setupItemCategoryView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCategoryViewModal" onclick="ItemCategoryView.setupItemCategoryView('{id}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemCategoryModal" onclick="Category.setupAddEditItemCategoryForEdit('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemCategoryModal" onclick="Category.setupAddEditItemCategoryForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeItemCategory('{result.getId()}', '{result.getName()}');">{#icons/remove}{/icons/remove}</button>
+              onclick="removeItemCategory('{id}', '{name}');">{#icons/remove}{/icons/remove}</button>
       {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
+      <button type="button" class="btn btn-sm btn-success" title="Select {name}}"
               data-bs-toggle="modal" data-bs-target="#{otherModalId}"
               onclick="">
         {#icons/select}{/icons/select} Select

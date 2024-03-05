@@ -111,7 +111,7 @@ const ExtItemSearch = {
 	addOrGetAndSelectImage(imageUrl, resultUnifiedName, imageData) {
 		console.log("Setting image for item. Image source: " + imageUrl);
 
-		doRestCall({
+		Rest.call({
 			url: "/api/v1/media/image?" + new URLSearchParams([["source", imageUrl]]).toString(),
 			method: "GET",
 			failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
@@ -124,7 +124,7 @@ const ExtItemSearch = {
 
 					let saveImageFail = false;
 
-					await doRestCall({
+					await Rest.call({
 						async: false,
 						url: "/api/v1/media/image",
 						method: "POST",
@@ -310,7 +310,7 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 	console.log("Scanning a web page: " + webpage);
 	ExtItemSearch.extSearchResults.html("");
 
-	doRestCall({
+	Rest.call({
 		url: "/api/v1/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data);
@@ -326,7 +326,7 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	ItemAddEdit.addEditItemBarcodeInput.val(barcodeText);
 	ExtItemSearch.extSearchResults.html("");
 
-	doRestCall({
+	Rest.call({
 		url: "/api/v1/externalItemLookup/product/barcode/" + barcodeText,
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data);
@@ -341,7 +341,7 @@ ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 	console.log("Searching for a lego part: " + partNumber);
 	ExtItemSearch.extSearchResults.html("");
 
-	doRestCall({
+	Rest.call({
 		url: "/api/v1/externalItemLookup/lego/part/" + partNumber,
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data)

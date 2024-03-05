@@ -81,7 +81,7 @@ async function getItemCategoryChildrenData(categoryId) {
 	return new Promise((done, fail) => {
 		Rest.call({
 			spinnerContainer: null,
-			url: Rest.passRoot + "/inventory/item-categories/" + categoryId + "/children",
+			url: Rest.passRoot + "/inventory/item-category?isChildOf=" + categoryId,
 			done: done,
 			fail: fail
 		})

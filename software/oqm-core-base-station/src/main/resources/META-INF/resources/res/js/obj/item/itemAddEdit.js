@@ -135,7 +135,7 @@ const ItemAddEdit = {
 
 		ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", true);
 
-		doRestCall({
+		Rest.call({
 			spinnerContainer: ItemAddEdit.addEditItemModal,
 			url: "/api/v1/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
@@ -626,7 +626,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	if (ItemAddEdit.addEditItemFormMode.val() === "add") {
 		verb = "Created";
 		console.log("Adding new item.");
-		await doRestCall({
+		await Rest.call({
 			url: "/api/v1/inventory/item",
 			method: "POST",
 			data: addEditData,
@@ -642,7 +642,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		let id = ItemAddEdit.addEditItemIdInput.val();
 		console.log("Editing storage block " + id);
 
-		await doRestCall({
+		await Rest.call({
 			url: "/api/v1/inventory/item/" + id,
 			method: "PUT",
 			data: addEditData,

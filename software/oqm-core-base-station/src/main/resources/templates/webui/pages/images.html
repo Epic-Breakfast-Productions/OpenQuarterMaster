@@ -179,7 +179,7 @@ function setupAddEditForEdit(id){
 
     addEditFormId.val(id);
 
-    doRestCall({
+    Rest.call({
         url: "/api/v1/media/image/" + id,
         method: "GET",
         done: function(data) {
@@ -215,7 +215,7 @@ addEditImageForm.submit(function (ev) {
     
         if (addEditFormMode.val() == "add") {
             console.log("Adding new image.");
-            doRestCall({
+            Rest.call({
                 url: "/api/v1/media/image",
                 method: "POST",
                 data: addEditData,
@@ -232,7 +232,7 @@ addEditImageForm.submit(function (ev) {
             var id = addEditFormId.val();
             console.log("Editing image " + id);
         
-            doRestCall({
+            Rest.call({
                 url: "/api/v1/media/image/" + id,
                 method: "PUT",
                 data: addEditData,
@@ -286,7 +286,7 @@ function setupViewForImage(id){
         cur.src = curUrl;
     });
 
-    doRestCall({
+    Rest.call({
         url: "/api/v1/media/image/" + id,
         method: "GET",
         async: false,
@@ -311,7 +311,7 @@ function setupViewForImage(id){
                 }
                 console.log("Deleting image " + id);
 
-                doRestCall({
+                Rest.call({
                     url: "/api/v1/media/image/" + id,
                     method: "DELETE",
                     done: function(data) {

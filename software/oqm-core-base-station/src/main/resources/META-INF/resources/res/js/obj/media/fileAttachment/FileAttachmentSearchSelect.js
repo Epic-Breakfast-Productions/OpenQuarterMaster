@@ -42,7 +42,7 @@ const FileAttachmentSearchSelect = {
 		this.curResultContainer = inputContainerJq.find(".fileAttachmentSelectInputTableContent");
 
 		fileIdList.forEach(function (curId){
-			doRestCall({
+			Rest.call({
 				spinnerContainer: null,
 				url: "/api/v1/media/fileAttachments/" + curId,
 				failMessagesDiv: failMessagesDiv,
@@ -61,7 +61,7 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 	let searchParams = new URLSearchParams(new FormData(e.target));
 	console.log("URL search params: " + searchParams);
 
-	doRestCall({
+	Rest.call({
 		spinnerContainer: imageSearchSelectModal.get(0),
 		url: "/api/v1/media/fileAttachments?" + searchParams,
 		method: 'GET',

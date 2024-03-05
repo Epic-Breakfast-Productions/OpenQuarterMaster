@@ -155,7 +155,7 @@
 				let searchParams = new URLSearchParams();
 				searchParams.set("itemBarcode", barcode);
 				
-				doRestCall({
+				Rest.call({
 					url: "/api/v1/inventory/item?"+searchParams.toString(),
 					done: async function (data) {
 						if(!data.length){

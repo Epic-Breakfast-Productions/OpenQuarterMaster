@@ -124,7 +124,7 @@ Accepts:
             <div class="mb-3 row">
                 <label for="addEditCategoryInput" class="col-form-label col-sm-2">Stored Categories:</label>
                 <div class="col-sm-10">
-                    {#inputs/categoryInput id="addEditCategoriesInput"}
+                    {#inputs/categoryInput id="addEditCategoriesInput" allCategorySearchResults=allCategorySearchResults multi=true}
                     {/inputs/categoryInput}
                     <div id="itemCatInputaddEditCategoriesInput-help" class="form-text">The categories of item this storage block holds. {#links/itemCategory}{/links/itemCategory}</div>
                 </div>
@@ -370,6 +370,7 @@ Accepts:
 <script src="/res/js/obj/units.js"></script>
 <script src="/res/js/obj/getters.js"></script>
 <script src="/res/js/obj/itemCategoryView.js"></script>
+<script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
 <script src="/res/js/obj/storageBlock/capacities.js"></script>
 <script src="/res/js/carousel.js"></script>
 <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
@@ -510,7 +511,7 @@ addEditStorageForm.submit(async function (event) {
         nickname: addEditNicknameInput.val(),
         description: addEditDescriptionInput.val(),
         location: addEditLocationInput.val(),
-        storedCategories: addEditCategoriesInput.val(),
+        storedCategories: ItemCategoryInput.getValueFromInput(addEditCategoriesInput),
         capacityMeasures: []
     };
     

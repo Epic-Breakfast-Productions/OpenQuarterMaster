@@ -261,7 +261,7 @@ const ItemStoredAddSubTransfer = {
 	setupForItem(itemId) {
 		this.resetForms();
 		this.formItemImg.attr("src", "/api/v1/media/image/for/item/" + itemId);
-		doRestCall({
+		Rest.call({
 			// spinnerContainer: null,
 			url: "/api/v1/inventory/item/" + itemId,
 			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
@@ -426,7 +426,7 @@ const ItemStoredAddSubTransfer = {
 
 	addSubTransFormSubmitAction(applyObject, itemId){
 		console.log("Applying item add/sub/transfer object.")
-		doRestCall({
+		Rest.call({
 			// spinnerContainer: null,
 			url: "/api/v1/inventory/item/" + itemId + "/stored/applyAddSubtractTransfer",
 			method: "PUT",

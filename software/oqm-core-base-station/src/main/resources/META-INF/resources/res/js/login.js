@@ -25,7 +25,7 @@ async function getToken(usernameEmail, password, rememberUser){
     var result = false;
 
 
-    await doRestCall({
+    await Rest.call({
         url: "/api/v1/auth/user",
         method: "POST",
         data: loginRequestData,
@@ -48,7 +48,7 @@ async function checkToken(jwtToken){
     console.log("Checking validity of token: " + jwtToken);
     var valid = false;
 
-    await doRestCall({
+    await Rest.call({
         spinnerContainer: null,
         url: "/api/v1/auth/tokenCheck",
         async: true,

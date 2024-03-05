@@ -124,7 +124,7 @@ const FileAttachmentView = {
 		this.fileViewDownloadButton.prop("href", '/api/v1/media/fileAttachments/' + fileId + '/data');
 		this.contentViewDownloadButton.prop("href", '/api/v1/media/fileAttachments/' + fileId + '/data');
 
-		doRestCall({
+		Rest.call({
 			spinnerContainer: FileAttachmentView.viewModal,
 			url: "/api/v1/media/fileAttachments/" + fileId,
 			failMessagesDiv: FileAttachmentView.viewModalMessages,
@@ -172,7 +172,7 @@ const FileAttachmentView = {
 		let fileShowContent = fileObjViewContainerJq.find(".fileAttachmentListTableContent");
 
 		fileList.forEach(function (curFileId, i){
-			doRestCall({
+			Rest.call({
 				spinnerContainer: null,
 				url: "/api/v1/media/fileAttachments/" + curFileId,
 				failMessagesDiv: failMessagesDiv,

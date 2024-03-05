@@ -23,7 +23,7 @@ const UnitUtils = {
 	},
 	//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
 	updateCompatibleUnits(unitToCompatWith, containerToSearch) {
-		doRestCall({
+		Rest.call({
 			url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
 			extraHeaders: {accept: "text/html"},
 			async: false,

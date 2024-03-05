@@ -158,7 +158,7 @@ $("#addItemFromFileForm").submit(function (e){
     formData.append("fileName", file.name);
     formData.append("file", file);
     
-    doRestCall({
+    Rest.call({
         url: '/api/v1/inventory/item',
         method: "post",
         data: formData,
@@ -176,7 +176,7 @@ function removeItem(itemId){
     }
     console.log("Removing item " + itemId);
     
-    doRestCall({
+    Rest.call({
         url: "/api/v1/inventory/item/" + itemId,
         method: "DELETE",
         done: function(data) {

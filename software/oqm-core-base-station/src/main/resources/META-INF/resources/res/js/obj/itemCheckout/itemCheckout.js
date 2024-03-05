@@ -97,7 +97,7 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 	//TODO:: checkedOutFor
 	//TODO:: adjusting the amount checked out for AMOUNT_STORED
 
-	await doRestCall({
+	await Rest.call({
 		url: "/api/v1/inventory/item-checkout",
 		method: "POST",
 		data: checkoutRequestData,
