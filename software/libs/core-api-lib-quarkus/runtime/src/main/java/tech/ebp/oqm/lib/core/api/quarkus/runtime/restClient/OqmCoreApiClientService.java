@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -94,9 +95,20 @@ public interface OqmCoreApiClientService {
 	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
 	Uni<ObjectNode> itemCatUpdate(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("catId") String itemCatId, ObjectNode updates);
 	
+	@DELETE
+	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCatDelete(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String itemCatId);
+	
 	@GET
 	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}/history")
 	Uni<ObjectNode> itemCatGetHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("catId") String catId, @BeanParam HistorySearch historySearch);
+	
+	@GET
+	@Path(ITEM_CAT_ROOT_ENDPOINT + "/tree")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<ObjectNode> itemCatTree(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @QueryParam("onlyInclude") List<String> onlyInclude);
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Items">
