@@ -23,7 +23,7 @@ class CloudContextGetter(ABC):
 
     def setConfig(self):
         context = self.getContext()
-        log.debug("Got context from provider: %s", json.dumps(context))
+        log.debug("Got context from provider: %s", json.dumps(context.__dict__))
         if context.pubDomainName is None:
             raise Exception("No domain gotten from provider.")
         mainCM.setConfigValInFile("system.hostname", context.pubDomainName, CLOUD_CONTEXT_CONFIG_FILE)
