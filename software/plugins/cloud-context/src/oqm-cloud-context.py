@@ -23,7 +23,7 @@ class CloudContextGetter(ABC):
 
     def setConfig(self):
         context = self.getContext()
-        log.debug("Got context from provider: %s", json.dumps(context, default=lambda o: o.__dict__))
+        log.debug("Got context from provider: %s", json.dumps(context))
         if context.pubDomainName is None:
             raise Exception("No domain gotten from provider.")
         mainCM.setConfigValInFile("system.hostname", context.pubDomainName, CLOUD_CONTEXT_CONFIG_FILE)
@@ -45,7 +45,7 @@ class AwsCcg(CloudContextGetter):
         #                  "placement/availability-zone" "placement/region"
         #                  "public-ipv4" "local-ipv4" "public-hostname"
         #                  "local-hostname" "mac" "security-groups")
-        contextOut.pubDomainName = requests.get(self.url + "/public-hostname")
+        contextOut.pubDomainName = requests.get(self.url + "/public-hostname").text
 
         return contextOut
 
