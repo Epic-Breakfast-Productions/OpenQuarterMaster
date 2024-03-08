@@ -1,5 +1,6 @@
 package tech.ebp.oqm.baseStation.model.object.media;
 
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,13 +20,13 @@ class ImageSerializationTest extends ObjectSerializationTest<Image> {
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new Image(
-				BasicTest.FAKER.job().title(),
-				BasicTest.FAKER.lorem().paragraph(),
-				"png",
-				"test",
-				new String(Base64.getEncoder().encode(BasicTest.FAKER.lorem().paragraph().getBytes(StandardCharsets.UTF_8)))
-			))
+			Arguments.of(
+				new Image()
+					.setSource(FAKER.name().name())
+					.setDescription(FAKER.lorem().paragraph())
+					.setGridfsFileName(new ObjectId().toHexString()+".txt")
+					.setId(new ObjectId())
+			)
 		);
 	}
 	

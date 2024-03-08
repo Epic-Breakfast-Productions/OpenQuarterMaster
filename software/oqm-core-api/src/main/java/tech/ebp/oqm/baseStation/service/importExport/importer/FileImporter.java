@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
+import tech.ebp.oqm.baseStation.rest.search.FileSearchObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
@@ -18,7 +20,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public abstract class FileImporter<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, M extends MongoHistoriedFileService<T, S, G>> extends Importer {
+public abstract class FileImporter<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet, M extends MongoHistoriedFileService<T, U, S,
+																																											G>> extends Importer {
 	
 	@Getter
 	private final M fileService;

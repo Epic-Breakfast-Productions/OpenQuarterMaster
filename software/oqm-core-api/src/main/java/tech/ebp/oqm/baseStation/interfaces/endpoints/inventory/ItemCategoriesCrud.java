@@ -255,7 +255,6 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 		return super.delete(id);
 	}
 	
-	//TODO:: this
 	@GET
 	@Path("tree")
 	@Operation(

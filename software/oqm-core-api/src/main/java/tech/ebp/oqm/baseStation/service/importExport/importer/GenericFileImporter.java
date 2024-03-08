@@ -10,6 +10,8 @@ import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
+import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
+import tech.ebp.oqm.baseStation.rest.search.FileSearchObject;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
@@ -22,10 +24,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public class GenericFileImporter<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> extends FileImporter<T, S, G, MongoHistoriedFileService<T, S, G>> {
+public class GenericFileImporter<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends FileImporter<T, U, S, G,
+																																						   MongoHistoriedFileService<T
+																																												   , U, S, G>> {
 	
 	
-	public GenericFileImporter(MongoHistoriedFileService<T, S, G> fileService) {
+	public GenericFileImporter(MongoHistoriedFileService<T, U, S, G> fileService) {
 		super(fileService);
 	}
 	
@@ -41,7 +45,7 @@ public class GenericFileImporter<T extends FileMainObject, S extends SearchObjec
 		) {
 			while (it.hasNext()) {
 				T curFileObj = it.next();
-				String curFileName = curFileObj.getFileName();
+				String curFileName = curFileObj.getGridfsFileName();
 				Path curFileDir = filesDir.resolve(curFileName);
 				
 				List<Path> fileVersionDirs;

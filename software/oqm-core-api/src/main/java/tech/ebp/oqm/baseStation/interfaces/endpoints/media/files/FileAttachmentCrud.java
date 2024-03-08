@@ -1,15 +1,12 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.media.files;
 
-// TODO:: reenable once working #51
-
-import com.mongodb.client.ClientSession;
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
-import io.smallrye.mutiny.tuples.Tuple2;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
@@ -23,13 +20,16 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.MainFileObjectProvider;
+import tech.ebp.oqm.baseStation.model.object.MainObject;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
-import tech.ebp.oqm.baseStation.rest.file.FileAttachmentUploadBody;
+import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
+import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.file.FileAttachmentService;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 
@@ -41,15 +41,61 @@ import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROO
 @Path(ROOT_API_ENDPOINT_V1 + "/media/fileAttachments")
 @Tags({@Tag(name = "File Attachments", description = "Endpoints for File Attachments.")})
 @RequestScoped
-public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileAttachmentSearch, FileAttachmentGet, FileAttachmentUploadBody> {
+public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> {
 	
 	@Getter
 	@Inject
-	FileAttachmentService fileObjectService;
+	FileAttachmentService fileService;
+	
+	@Override
+	protected FileAttachment getFileObjFromUpload(FileUploadBody upload) {
+		return new FileAttachment(
+			upload.description,
+			upload.source
+		);
+	}
+	
+	@GET
+	@Operation(
+		summary = "Searches for files"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Searched.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = SearchResult.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public Response search(
+		@BeanParam FileAttachmentSearch searchObject
+	) {
+		return super.search(searchObject);
+	}
 	
 	@POST
 	@Operation(
-		summary = "Adds a new file attachment."
+		summary = "Adds a file."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -66,101 +112,25 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	//	@Override
 	public Response add(
-		@BeanParam FileAttachmentUploadBody body
+		@BeanParam FileUploadBody body
 	) throws IOException {
-		FileAttachment newAttachmentObj = new FileAttachment();
-		newAttachmentObj.setFileName(body.fileName);
-		newAttachmentObj.setDescription(body.description);
-		
-		this.getFileObjectService().add(
-			newAttachmentObj,
-			body,
-			this.getInteractingEntity()
-		);
-		
-		return Response.ok(this.getFileObjectService().fileObjToGet(newAttachmentObj)).build();
+		return super.add(body);
 	}
 	
-	@GET
-	@Operation(
-		summary = "Searches for file attachments."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = FileAttachmentGet.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Produces(MediaType.APPLICATION_JSON)
-	//	@Override
-	public Response search(
-		@BeanParam FileAttachmentSearch search
-	) {
-		return super.search(search);
-	}
-	
-	@GET
 	@Path("{id}")
-	@Operation(
-		summary = "Gets a particular file attachment details."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "File information retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				implementation = FileAttachmentGet.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	//	@Override
-	public Response get(
-		@PathParam("id")
-		String id
-	) throws IOException {
-		return Response.ok(
-			FileAttachmentGet.fromFileAttachment(
-				this.getFileObjectService().getFileObjectService().get(id),
-				this.getFileObjectService().getRevisions(new ObjectId(id))
-			)
-		).build();
-	}
-	
 	@GET
-	@Path("{id}/data")
 	@Operation(
-		summary = "Gets the data for the latest revision of a file."
+		summary = "Gets a particular file object, not the file itself."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "File information retrieved.",
+		description = "Object retrieved.",
 		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
+			mediaType = "application/json",
 			schema = @Schema(
 				implementation = FileAttachmentGet.class
 			)
@@ -171,37 +141,38 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	//	@Override
-	public Response getLatestData(
-		@PathParam("id")
-		String id
-	) throws IOException {
-		FileContentsGet fileContentsGet = this.getFileObjectService().getLatestFile(id);
-		Response.ResponseBuilder response = Response.ok(
-			fileContentsGet.getContents()
-		);
-		response.header("Content-Type", fileContentsGet.getMetadata().getMimeType());
-		response.header("Content-Disposition", "attachment;filename=" + fileContentsGet.getMetadata().getOrigName());
-		response.header("hash-md5", fileContentsGet.getMetadata().getHashes().getMd5());
-		response.header("hash-sha1", fileContentsGet.getMetadata().getHashes().getSha1());
-		response.header("hash-sha256", fileContentsGet.getMetadata().getHashes().getSha256());
-		response.header("upload-datetime", fileContentsGet.getMetadata().getUploadDateTime());
-		return response.build();
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public FileAttachmentGet get(
+		@PathParam("id") String id
+	) {
+		return super.get(id);
 	}
 	
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Adds a new revision to the file."
+		summary = "Updates a particular File, adds a new revision.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "File updated.",
+		description = "Object updated.",
 		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
+			mediaType = "application/json",
 			schema = @Schema(
-				implementation = FileAttachmentGet.class
+				implementation = Integer.class
 			)
 		)
 	)
@@ -210,41 +181,40 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	//	@Override
-	public Response update(
-		@PathParam("id")
-		String id,
-		@BeanParam FileAttachmentUploadBody body
+	@WithSpan
+	public Integer updateFile(
+		@PathParam("id") String id,
+		@BeanParam FileUploadBody body
 	) throws IOException {
-		this.getFileObjectService().updateFile(
-			new ObjectId(id),
-			body,
-			this.getInteractingEntity()
-		);
-		
-		return Response.ok(
-			FileAttachmentGet.fromFileAttachment(
-				this.getFileObjectService().getFileObjectService().get(id),
-				this.getFileObjectService().getRevisions(new ObjectId(id))
-			)
-		).build();
+		return super.updateFile(id, body);
 	}
 	
-	@DELETE
+	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Deletes a particular file attachment."
+		summary = "Updates a particular file's Object.",
+		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "File information retrieved.",
+		description = "Object updated.",
 		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
+			mediaType = "application/json",
 			schema = @Schema(
-				implementation = FileAttachment.class
+				implementation = Integer.class
 			)
 		)
 	)
@@ -253,16 +223,180 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	//	@Override
-	public Response delete(
+	@WithSpan
+	public FileAttachmentGet updateObj(
+		//		@PathParam("id")
+		String id,
+		//		@BeanParam
+		ObjectNode updates
+	) {
+		return this.getFileService().fileObjToGet(this.getFileService().getFileObjectService().update(
+			id,
+			updates,
+			this.getInteractingEntity()
+		));
+	}
+	
+	@Path("{id}/revision/{rev}")
+	@GET
+	@Operation(
+		summary = "Gets a particular file revision's metadata."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = FileMetadata.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public FileMetadata getRevision(
 		@PathParam("id")
-		String id
+		String id,
+		@PathParam("rev")
+		String revision
 	) throws IOException {
-		return Response.ok(
-			this.getFileObjectService().removeFile(null, new ObjectId(id), this.getInteractingEntity())
-		).build();
+		return super.getRevision(id, revision);
+	}
+	
+	@Path("{id}/revision/{rev}/data")
+	@GET
+	@Operation(
+		summary = "Gets a particular file revision's data."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = MainObject.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces("*/*")
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	public Response getRevisionData(
+		@PathParam("id")
+		String id,
+		@PathParam("rev")
+		String revision
+	) throws IOException {
+		return super.getRevisionData(id, revision);
+	}
+	
+	@GET
+	@Path("{id}/history")
+	@Operation(
+		summary = "Gets a particular file's history."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
+			)
+		}
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No history found for object with that id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	@Override
+	public Response getHistoryForObject(
+		@PathParam("id") String id,
+		@BeanParam HistorySearch searchObject,
+		@HeaderParam("accept") String acceptHeaderVal,
+		@HeaderParam("searchFormId") String searchFormId
+	) {
+		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+	}
+	
+	@GET
+	@Path("history")
+	@Operation(
+		summary = "Searches the history for the objects."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.ARRAY,
+					implementation = ObjectHistoryEvent.class
+				)
+			)
+		}
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@WithSpan
+	@Override
+	public SearchResult<ObjectHistoryEvent> searchHistory(
+		@BeanParam HistorySearch searchObject
+	) {
+		return super.searchHistory(searchObject);
 	}
 }

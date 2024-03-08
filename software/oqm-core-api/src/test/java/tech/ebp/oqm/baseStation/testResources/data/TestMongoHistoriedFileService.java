@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
+import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
@@ -13,7 +14,7 @@ import jakarta.inject.Inject;
 import java.io.File;
 
 @ApplicationScoped
-public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainFileObject, TestMainFileObjectSearch, TestMainFileObjectGet> {
+public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainFileObject, FileUploadBody, TestMainFileObjectSearch, TestMainFileObjectGet> {
 	
 	TestMongoHistoriedFileService() {//required for DI
 		super(null, null, null, null, null, null, false, null);
@@ -33,7 +34,8 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 			database,
 			TestMainFileObject.class,
 			false,
-			tempFileService
+			tempFileService,
+			"testFile"
 		);
 	}
 	

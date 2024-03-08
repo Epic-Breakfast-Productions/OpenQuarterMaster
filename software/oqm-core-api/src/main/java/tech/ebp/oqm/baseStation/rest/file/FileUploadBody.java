@@ -15,4 +15,12 @@ public class FileUploadBody {
 	@FormParam("fileName")
 	@PartType(MediaType.TEXT_PLAIN)
 	public String fileName;
+	
+	@FormParam("source")
+	@PartType(MediaType.TEXT_PLAIN)
+	public String source;
+	
+	@FormParam("description")
+	@PartType(MediaType.TEXT_PLAIN)
+	public String description;
 }

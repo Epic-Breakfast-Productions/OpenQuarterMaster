@@ -1,53 +1,98 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.qute.Template;
-import io.smallrye.mutiny.tuples.Tuple2;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
+import tech.ebp.oqm.baseStation.rest.search.FileSearchObject;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.rest.search.SearchObject;
-import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
-import tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
+import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
+
+import java.io.IOException;
 
 /**
  * Main abstract method to handle standard CRUD operations for MainObjects
  * <p>
+ *     TODO:: SearchObject -> FileSearchObject
  *
  * @param <T>
  * @param <S>
  */
 @Slf4j
 @NoArgsConstructor
-public abstract class MainFileObjectProvider<T extends FileMainObject, S extends SearchObject<T>, G extends FileGet, F extends FileUploadBody> extends ObjectProvider {
+public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends ObjectProvider {
 	
-	public abstract MongoHistoriedFileService<T, S, G> getFileObjectService();
+	public abstract MongoHistoriedFileService<T, U, S, G> getFileService();
 	
 	@WithSpan
 	protected Response.ResponseBuilder getSearchResponseBuilder(
 		@BeanParam S searchObject
 	) {
-		SearchResult<T> searchResult = this.getFileObjectService().getFileObjectService().search(searchObject, true);
+		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, true);
 		return this.getSearchResultResponseBuilder(searchResult);
 	}
 	
-	
-	
 	//<editor-fold desc="CRUD operations">
+	
+	
+	
+	//	@GET
+	//	@Operation(
+	//		summary = "Searches for files"
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object retrieved.",
+	//		content = @Content(
+	//			mediaType = "application/json",
+	//			schema = @Schema(
+	//				implementation = MainObject.class
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "Bad request given, could not find object at given id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "410",
+	//		description = "Object requested has been deleted.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
+	public Response search(
+		//		@BeanParam
+		S searchObject
+	) {
+		//TODO:: this should produce results of the G type, not T
+		return this.getSearchResponseBuilder(searchObject).build();
+	}
+	
+	
+	protected abstract T getFileObjFromUpload(U upload);
 	
 //	@POST
 //	@Operation(
@@ -71,17 +116,227 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 //	@RolesAllowed(Roles.INVENTORY_ADMIN)
 //	@Consumes(MediaType.MULTIPART_FORM_DATA)
 //	@Produces(MediaType.APPLICATION_JSON)
-//	public abstract Response add(
-//		@Context SecurityContext securityContext,
-//		@BeanParam F body
-//	) throws IOException;
+	public Response add(
+		//@BeanParam
+		U body
+	) throws IOException {
+		return Response.ok(this.getFileService().add(
+			this.getFileObjFromUpload(body),
+			body,
+			this.getInteractingEntity()
+		)).build();
+	};
+	
+	//	@Path("{id}")
+	//	@GET
+	//	@Operation(
+	//		summary = "Gets a particular object."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object retrieved.",
+	//		content = @Content(
+	//			mediaType = "application/json",
+	//			schema = @Schema(
+	//				implementation = MainObject.class
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "Bad request given, could not find object at given id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "410",
+	//		description = "Object requested has been deleted.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
+	public G get(
+		//		@PathParam("id")
+		String id
+	) {
+		log.info("Retrieving object with id {}", id);
+		return this.getFileService().getObjGet(id);
+	}
+	
+	//	@PUT
+	//	@Path("{id}")
+	//	@Operation(
+	//		summary = "Updates a particular Object.",
+	//		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object updated.",
+	//		content = @Content(
+	//			mediaType = "application/json",
+	//			schema = @Schema(
+	//				implementation = MainObject.class
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "Bad request given, could not find object at given id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "410",
+	//		description = "Object requested has been deleted.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	@WithSpan
+	public Integer updateFile(
+		//		@PathParam("id")
+		String id,
+//		@BeanParam
+		U body
+	) throws IOException {
+		return this.getFileService().updateFile(null, id, body, this.getInteractingEntity());
+	}
 	
 	@WithSpan
-	public Response search(
+	public G updateObj(
+		//		@PathParam("id")
+		String id,
 		//		@BeanParam
-		S searchObject
+		ObjectNode updates
 	) {
-		return this.getSearchResponseBuilder(searchObject).build();
+		return this.getFileService().fileObjToGet(this.getFileService().getFileObjectService().update(
+			id,
+			updates,
+			this.getInteractingEntity()
+		));
+	}
+	
+	protected <A> A getRevision(String id, String revision, Class<A> aClass) throws IOException {
+		int revisionNum;
+		if("latest".equalsIgnoreCase(revision)) {
+			revisionNum = this.getFileService().getLatestVersionNum(id);
+		}else if("first".equalsIgnoreCase(revision)){
+				revisionNum = 1;
+		} else {
+			revisionNum = Integer.parseInt(revision);
+		}
+		
+		if(aClass == FileMetadata.class){
+			return (A) this.getFileService().getFileMetadata(id, revisionNum);
+		} else if (aClass == FileContentsGet.class){
+			return (A) this.getFileService().getFile(id, revisionNum);
+		}
+		throw new IllegalArgumentException("Illegal aClss given: " + aClass.getSimpleName());
+	}
+	
+	//	@Path("{id}/revision/{rev}")
+	//	@GET
+	//	@Operation(
+	//		summary = "Gets a particular object."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object retrieved.",
+	//		content = @Content(
+	//			mediaType = "application/json",
+	//			schema = @Schema(
+	//				implementation = MainObject.class
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "Bad request given, could not find object at given id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "410",
+	//		description = "Object requested has been deleted.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+		@Produces(MediaType.APPLICATION_JSON)
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
+	public FileMetadata getRevision(
+		//		@PathParam("id")
+		String id,
+		//		@PathParam("rev")
+		String revision
+	) throws IOException {
+		//TODO
+		log.info("Retrieving object with id {}", id);
+		return this.getRevision(id, revision, FileMetadata.class);
+	}
+	
+	//	@Path("{id}/revision/{rev}/data")
+	//	@GET
+	//	@Operation(
+	//		summary = "Gets a particular object."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object retrieved.",
+	//		content = @Content(
+	//			mediaType = "application/json",
+	//			schema = @Schema(
+	//				implementation = MainObject.class
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "Bad request given, could not find object at given id.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@APIResponse(
+	//		responseCode = "410",
+	//		description = "Object requested has been deleted.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
+	@WithSpan
+	public Response getRevisionData(
+		//		@PathParam("id")
+		String id,
+		//		@PathParam("rev")
+		String revision
+	) throws IOException {
+		FileContentsGet fileContentsGet = this.getRevision(id, revision, FileContentsGet.class);
+		Response.ResponseBuilder response = Response.ok(
+			fileContentsGet.getContents()
+		);
+		response.header(HttpHeaders.CONTENT_TYPE, fileContentsGet.getMetadata().getMimeType());
+		response.header("Content-Disposition", "attachment;filename=" + fileContentsGet.getMetadata().getOrigName());
+		response.header("hash-md5", fileContentsGet.getMetadata().getHashes().getMd5());
+		response.header("hash-sha1", fileContentsGet.getMetadata().getHashes().getSha1());
+		response.header("hash-sha256", fileContentsGet.getMetadata().getHashes().getSha256());
+		response.header("upload-datetime", fileContentsGet.getMetadata().getUploadDateTime());
+		return response.build();
 	}
 	
 	//</editor-fold>
@@ -122,11 +377,11 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 		@HeaderParam("accept") String acceptHeaderVal,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileObjectService().getClazz().getSimpleName(), id);
+		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
 		
-		SearchResult<ObjectHistoryEvent> searchResult = this.getFileObjectService().getFileObjectService().searchHistory(searchObject, false);
+		SearchResult<ObjectHistoryEvent> searchResult = this.getFileService().getFileObjectService().searchHistory(searchObject, false);
 		return this.getSearchResultResponseBuilder(searchResult).build();
 	}
 	
@@ -160,7 +415,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, S extends
 	) {
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getFileObjectService().getFileObjectService().searchHistory(searchObject, false);
+		return this.getFileService().getFileObjectService().searchHistory(searchObject, false);
 	}
 	//</editor-fold>
 }

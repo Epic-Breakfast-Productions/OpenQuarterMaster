@@ -3,167 +3,168 @@ package tech.ebp.oqm.baseStation.service.mongo;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeleteRelationalException;
-import tech.ebp.oqm.baseStation.testResources.data.ImageTestObjectCreator;
-import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
+import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.baseStation.service.mongo.image.ImageService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import tech.ebp.oqm.baseStation.testResources.testClasses.MongoHistoriedServiceTest;
-import tech.ebp.oqm.baseStation.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.baseStation.model.object.media.Image;
-import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
-import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.TrackedItem;
-import tech.ebp.oqm.baseStation.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.baseStation.model.object.storage.items.stored.TrackedStored;
-import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.baseStation.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.baseStation.model.units.UnitUtils;
-import tech.units.indriya.quantity.Quantities;
 
 import jakarta.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-class ImageServiceTest extends MongoHistoriedServiceTest<Image, ImageService> {
+class ImageServiceTest { //extends MongoHistoriedFileServiceTest<Image, ImageService> {
+	private static final Color COLOR_CENTER = new Color(255, 0, 0);
+	private static final Color COLOR_TOP_LEFT = new Color(0, 255, 0);
+	private static final Color COLOR_TOP_RIGHT = new Color(0, 0, 255);
+	private static final Color COLOR_BOT_LEFT = new Color(255, 255, 255);
+	private static final Color COLOR_BOT_RIGHT = new Color(255, 255, 0);
+	private static final Color COLOR_CROSS = new Color(0, 0, 0);
 	
-	ImageService imageService;
-	StorageBlockService storageBlockService;
-	ItemCategoryService itemCategoryService;
-	InventoryItemService inventoryItemService;
+	private enum AtVal {
+		CENTER,
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOT_LEFT,
+		BOT_RIGHT,
+		CENTER_LEFT,
+		CENTER_RIGHT,
+		CENTER_UP,
+		CENTER_DOWN
+	}
 	
-	ImageTestObjectCreator imageTestObjectCreator;
+	private static Color getColorAt(BufferedImage image, int x, int y) {
+		int clr = image.getRGB(x, y);
+		return new Color(
+			(clr & 0x00ff0000) >> 16,
+			(clr & 0x0000ff00) >> 8,
+			clr & 0x000000ff
+		);
+	}
 	
-	@Inject
-	ImageServiceTest(
-		ImageService imageService,
-		ImageTestObjectCreator imageTestObjectCreator,
-		TestUserService testUserService,
-		StorageBlockService storageBlockService,
-		ItemCategoryService itemCategoryService,
-		InventoryItemService inventoryItemService
-	) {
-		this.imageService = imageService;
-		this.imageTestObjectCreator = imageTestObjectCreator;
-		this.testUserService = testUserService;
+	private static void assertImageSameAt(BufferedImage imageOrig, BufferedImage imageOut, AtVal where) {
+		final int origHeight = imageOrig.getHeight() - 1,
+			origWidth = imageOrig.getWidth() - 1,
+			origXmid = imageOrig.getWidth() / 2,
+			origYmid = imageOrig.getHeight() / 2,
+			
+			outHeight = imageOut.getHeight() - 1,
+			outWidth = imageOut.getWidth() - 1,
+			outXmid = imageOut.getWidth() / 2,
+			outYmid = imageOut.getHeight() / 2;
 		
-		this.storageBlockService = storageBlockService;
-		this.itemCategoryService = itemCategoryService;
-		this.inventoryItemService = inventoryItemService;
-	}
-	
-	@Override
-	protected Image getTestObject() {
-		return imageTestObjectCreator.getTestObject();
-	}
-	
-	@Test
-	public void injectTest() {
-		assertNotNull(imageService);
-	}
-	
-	@Test
-	public void listTest() {
-		this.defaultListTest(this.imageService);
-	}
-	
-	@Test
-	public void countTest() {
-		this.defaultCountTest(this.imageService);
-	}
-	
-	@Test
-	public void addTest() {
-		this.defaultAddTest(this.imageService);
-	}
-	
-	//TODO:: Test update
-	
-	@Test
-	public void getObjectIdTest() {
-		this.defaultGetObjectIdTest(this.imageService);
-	}
-	
-	@Test
-	public void getStringTest() {
-		this.defaultGetStringTest(this.imageService);
-	}
-	
-	@Test
-	public void removeAllTest() {
-		this.defaultRemoveAllTest(this.imageService);
-	}
-	
-	@Ignore
-	@Test
-	public void testDeleteWithRelational(){
-		User testUser = this.testUserService.getTestUser();
-		Image testImage = this.getTestObject();
-		Map<String, Set<ObjectId>> expectedRefs = new HashMap<>();
 		
-		this.imageService.add(testImage, testUser);
-		{//setup referencing data
-			//Storage block
-			ObjectId storageBlockId = this.storageBlockService.add((StorageBlock) new StorageBlock().setLabel(FAKER.name().fullName()).setImageIds(List.of(testImage.getId(), ObjectId.get())), testUser);
-			this.storageBlockService.add((StorageBlock) new StorageBlock().setLabel(FAKER.name().fullName()).setImageIds(List.of(ObjectId.get())), testUser);
-			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(storageBlockId)));
-			
-			//Item Category
-			ObjectId itemCatId = this.itemCategoryService.add((ItemCategory) new ItemCategory().setName(FAKER.name().name()).setImageIds(List.of(testImage.getId(), ObjectId.get())), testUser);
-			this.itemCategoryService.add(new ItemCategory().setName(FAKER.name().name()), testUser);
-			expectedRefs.put(this.itemCategoryService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemCatId)));
-			
-			//Inventory item, basic
-			this.inventoryItemService.add((InventoryItem<?,?,?>) new SimpleAmountItem().setName(FAKER.name().name()).setImageIds(List.of(ObjectId.get())), testUser);
-			
-			ObjectId itemId = this.inventoryItemService.add((InventoryItem<?,?,?>) new SimpleAmountItem().setName(FAKER.name().name()).setImageIds(List.of(testImage.getId(), ObjectId.get())), testUser);
-			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
-			
-			{//In stored
-				SimpleAmountItem sai = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name());
-				sai.getStoredForStorage(storageBlockId).setImageIds(List.of(
-					testImage.getId(),
-					ObjectId.get()
-				));
-				itemId = this.inventoryItemService.add(sai, testUser);
-				expectedRefs.get(this.inventoryItemService.getClazz().getSimpleName()).add(itemId);
-			}
-			{//In list
-				ListAmountItem lai = (ListAmountItem) new ListAmountItem().setName(FAKER.name().name());
-				lai.getStoredForStorage(storageBlockId)
-					.add((AmountStored) new AmountStored(Quantities.getQuantity(0, OqmProvidedUnits.UNIT)).setImageIds(List.of(testImage.getId(), ObjectId.get())));
-				itemId = this.inventoryItemService.add(lai, testUser);
-				expectedRefs.get(this.inventoryItemService.getClazz().getSimpleName()).add(itemId);
-			}
-			{//In tracked
-				TrackedItem ti = (TrackedItem) new TrackedItem().setTrackedItemIdentifierName("sid").setName(FAKER.name().name());
-				ti.getStoredForStorage(storageBlockId).put("Identifier", (TrackedStored) new TrackedStored("Identifier").setImageIds(List.of(testImage.getId(), ObjectId.get())));
-				itemId = this.inventoryItemService.add(ti, testUser);
-				expectedRefs.get(this.inventoryItemService.getClazz().getSimpleName()).add(itemId);
-			}
+		int origX = 0, origY = 0, outX = 0, outY = 0;
+		switch (where) {
+			case CENTER:
+				origX = origXmid;
+				origY = origYmid;
+				outX = outXmid;
+				outY = outYmid;
+				break;
+			case TOP_LEFT:
+				//                origX = 0;
+				//                origY = 0;
+				//                outX = 0;
+				//                outY = 0;
+				break;
+			case TOP_RIGHT:
+				origX = origWidth;
+				//                origY = 0;
+				outX = outWidth;
+				//                outY = 0;
+				break;
+			case BOT_LEFT:
+				//                origX = 0;
+				origY = origHeight;
+				//                outX = 0;
+				outY = outHeight;
+				break;
+			case BOT_RIGHT:
+				origX = origWidth;
+				origY = origHeight;
+				outX = outWidth;
+				outY = outHeight;
+				break;
+			case CENTER_LEFT:
+				//                origX = 0;
+				origY = origYmid;
+				//                outX = 0;
+				outY = outYmid;
+				break;
+			case CENTER_RIGHT:
+				origX = origWidth;
+				origY = origYmid;
+				outX = outWidth;
+				outY = outYmid;
+				break;
+			case CENTER_UP:
+				origX = origXmid;
+				//                origY = 0;
+				outX = outXmid;
+				//                outY = 0;
+				break;
+			case CENTER_DOWN:
+				origX = origXmid;
+				origY = origHeight;
+				outX = outXmid;
+				outY = outHeight;
+				break;
 		}
 		
-		DbDeleteRelationalException exception = assertThrows(
-			DbDeleteRelationalException.class,
-			()->this.imageService.remove(testImage.getId(), testUser)
-		);
-		
-		log.info("Referenced objects: {}", exception.getObjectsReferencing());
-		assertEquals(expectedRefs, exception.getObjectsReferencing());
+		Color colorOrig = getColorAt(imageOrig, origX, origY);
+		Color colorOut = getColorAt(imageOut, outX, outY);
+		log.debug("Colors at {}({}:{}/{}:{}): {}/{}", where, origX, origY, outX, outY, colorOrig, colorOut);
+		assertEquals(colorOrig, colorOut);
 	}
+	
+	public static Stream<Arguments> getTestImages() {
+		return Stream.of(
+			Arguments.of("/test_image.png"),
+			//			Arguments.of("/test_image_big.png"),
+			Arguments.of("/test_image_big_tall.png")
+		);
+	}
+	
+	@Inject
+	ImageService imageService;
+	
+	@BeforeEach
+	@AfterEach
+	public void triggerGC() {
+		log.info("Triggering Garbage Collector.");
+		System.gc();
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getTestImages")
+	public void resizeImageTest(String imageFile) throws IOException {
+		BufferedImage imageIn = ImageIO.read(ImageServiceTest.class.getResourceAsStream(imageFile));
+		
+		StopWatch sw = StopWatch.createStarted();
+		BufferedImage imageOut = this.imageService.resizeImage(imageIn);
+		sw.stop();
+		log.info("Took {} to resize image.", sw);
+		
+		for (AtVal cur : AtVal.values()) {
+			assertImageSameAt(imageIn, imageOut, cur);
+		}
+	}
+	
+	
+	//TODO:: test real CRUD
+	
+	
 }

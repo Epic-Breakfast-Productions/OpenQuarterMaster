@@ -19,10 +19,12 @@ import tech.ebp.oqm.baseStation.model.object.storage.ItemCategory;
 import tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.baseStation.model.rest.media.ImageGet;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.ItemCategorySearch;
 import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
@@ -35,7 +37,7 @@ import tech.ebp.oqm.baseStation.service.importExport.importer.GenericImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.HasParentImporter;
 import tech.ebp.oqm.baseStation.service.importExport.importer.UnitImporter;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.baseStation.service.mongo.ImageService;
+import tech.ebp.oqm.baseStation.service.mongo.image.ImageService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.ItemCheckoutService;
@@ -128,8 +130,8 @@ public class DataImportService {
 	FileAttachmentService fileAttachmentService;
 	
 	private UnitImporter unitImporter;
-	private GenericFileImporter<FileAttachment, FileAttachmentSearch, FileAttachmentGet> fileImporter;
-	private GenericImporter<Image, ImageSearch> imageImporter;
+	private GenericFileImporter<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> fileImporter;
+	private GenericFileImporter<Image, FileUploadBody, ImageSearch, ImageGet> imageImporter;
 	private HasParentImporter<ItemCategory, ItemCategorySearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
 	private HasParentImporter<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericImporter<InventoryItem, InventoryItemSearch> itemImporter;
@@ -142,7 +144,7 @@ public class DataImportService {
 		this.itemCategoryImporter = new HasParentImporter<>(this.itemItemCategoryService);
 		this.storageBlockImporter = new HasParentImporter<>(this.storageBlockService);
 		this.fileImporter = new GenericFileImporter<>(this.fileAttachmentService);
-		this.imageImporter = new GenericImporter<>(this.imageService);
+		this.imageImporter = new GenericFileImporter<>(this.imageService);
 		this.itemImporter = new GenericImporter<>(this.inventoryItemService);
 		this.itemListImporter = new GenericImporter<>(this.itemListService);
 		this.itemCheckoutImporter = new GenericImporter<>(this.itemCheckoutService);

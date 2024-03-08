@@ -24,9 +24,13 @@ service:
   item:
     expiryCheck:
       cron: 0 0 * ? * * # Every Hour
-  display:
-    datetimeFormat: "" #TODO:: determine good time format, use wherever datetimes are displayed
   tempDir: "/tmp/oqm-baseStation"
+  image:
+    resizing:
+      enabled: true
+      height: 500
+      width: ${service.image.resizing.height}
+      savedType: "PNG"
     
 productLookup:
   providers:

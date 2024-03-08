@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.model.rest.media.file;
+package tech.ebp.oqm.baseStation.model.rest.media;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
-import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
+import tech.ebp.oqm.baseStation.model.object.media.Image;
 
 import java.util.List;
 
@@ -14,15 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class FileAttachmentGet extends FileAttachment implements FileGet {
+public class ImageGet extends Image implements FileGet {
 	
-	public static FileAttachmentGet fromFileAttachment(
-		FileAttachment a,
+	public static ImageGet fromImage(
+		Image a,
 		List<FileMetadata> revisions
 	) {
-		return (FileAttachmentGet) (
-			(FileAttachmentGet) new FileAttachmentGet()
+		return (ImageGet) (
+			(ImageGet) new ImageGet()
 									.setDescription(a.getDescription())
+						   .setSource(a.getSource())
 		)
 									   .setRevisions(revisions)
 									   .setGridfsFileName(a.getGridfsFileName())
