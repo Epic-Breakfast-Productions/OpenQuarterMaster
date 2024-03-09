@@ -6,7 +6,9 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
@@ -26,6 +28,8 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch, CollectionStats> {
 	
+	private boolean basicAuthEnabled = false;
+	
 	InteractingEntityService() {//required for DI
 		super(null, null, null, null, null, null);
 	}
@@ -36,7 +40,9 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
-		BaseStationInteractingEntity baseStationInteractingEntityArc
+		BaseStationInteractingEntity baseStationInteractingEntityArc,
+		@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
+		boolean basicAuthEnabled
 	) {
 		super(
 			objectMapper,
@@ -44,6 +50,7 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 			database,
 			InteractingEntity.class
 		);
+		this.basicAuthEnabled = basicAuthEnabled;
 		//force getting around Arc subclassing out the injected class
 		BaseStationInteractingEntity baseStationInteractingEntity = new BaseStationInteractingEntity(
 			baseStationInteractingEntityArc.getEmail()
@@ -59,13 +66,26 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 		}
 	}
 	
-	private Optional<InteractingEntity> getEntity(String authProvider, String idFromAuthProvider) {
+	@Override
+	public CollectionStats getStats() {
+		return super.addBaseStats(CollectionStats.builder())
+				   .build();
+	}
+	
+	private Optional<InteractingEntity> getEntityFromDb(SecurityContext securityContext, JsonWebToken jwt) {
+		Bson query;
+		if(this.basicAuthEnabled){
+			query = eq("name", securityContext.getUserPrincipal().getName());
+		} else {
+			query = and(
+				eq("authProvider", jwt.getIssuer()),
+				eq("idFromAuthProvider", jwt.getSubject())
+			);
+		}
+		
 		return Optional.ofNullable(
 			this.listIterator(
-					and(
-						eq("authProvider", authProvider),
-						eq("idFromAuthProvider", idFromAuthProvider)
-					),
+					query,
 					null,
 					null
 				)
@@ -74,22 +94,19 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 		);
 	}
 	
-	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
-				   .build();
-	}
-	
 	@WithSpan
-	public InteractingEntity getEntity(JsonWebToken jwt) {
-		String authProvider = jwt.getIssuer();
-		String idFromAuthProvider = jwt.getSubject();
-		
+	public InteractingEntity getEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
-		Optional<InteractingEntity> returningEntityOp = this.getEntity(authProvider, idFromAuthProvider);
+		Optional<InteractingEntity> returningEntityOp = this.getEntityFromDb(context, jwt);
 		if(returningEntityOp.isEmpty()){
 			log.info("New entity interacting with system.");
-			entity = InteractingEntity.createEntity(jwt);
+			if(this.basicAuthEnabled){
+				entity = InteractingEntity.createEntity(context);
+			} else {
+				entity = InteractingEntity.createEntity(jwt);
+				
+			}
+			
 		} else {
 			log.info("Returning entity interacting with system.");
 			entity = returningEntityOp.get();
@@ -97,7 +114,7 @@ public class InteractingEntityService extends MongoObjectService<InteractingEnti
 		
 		if(entity.getId() == null){
 			this.add(entity);
-		} else if (entity.updateFrom(jwt)) {
+		} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
 			this.update(entity);
 			log.info("Entity has been updated.");
 		}

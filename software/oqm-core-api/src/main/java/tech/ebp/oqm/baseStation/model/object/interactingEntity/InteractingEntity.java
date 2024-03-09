@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,13 +41,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 public abstract class InteractingEntity extends AttKeywordMainObject {
 	
-	@NonNull
-	@NotNull
-	@NotBlank
 	private String idFromAuthProvider;
-	@NonNull
-	@NotNull
-	@NotBlank
 	private String authProvider;
 	
 	public abstract String getName();
@@ -85,6 +80,14 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		
 		log.debug("New entity: {}", newEntity);
 		return newEntity;
+	}
+	
+	public static InteractingEntity createEntity(SecurityContext context){
+		User newUser = new User();
+		newUser.setName(context.getUserPrincipal().getName());
+		
+		log.debug("New entity: {}", newUser);
+		return newUser;
 	}
 	
 }

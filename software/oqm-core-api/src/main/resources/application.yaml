@@ -161,10 +161,6 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
-  oidc:
-    application-type: service
-    token-state-manager:
-      split-tokens: true
 
 #  messaging:
 #    outgoing:
@@ -189,6 +185,8 @@ smallrye:
             endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
+      security-scheme: basic
+      security-scheme-name: BasicAuth
     mongodb:
       database: openQuarterMasterDev
 #      connection-string: mongodb://test:test@localhost:27017
@@ -199,7 +197,19 @@ smallrye:
         certificate:
           files: ../../../../dev/devTest-cert-cert.pem
           key-files: ../../../../dev/devTest-cert-key.pem
-    
+      auth:
+        basic: true
+    smallrye-jwt:
+      enabled: false
+    security:
+      users:
+        embedded:
+          enabled: true
+          plain-text: true
+          users:
+            regularUser: "1!Letmein"
+          roles:
+            regularUser: "inventoryView"
 
   runningInfo:
   service:

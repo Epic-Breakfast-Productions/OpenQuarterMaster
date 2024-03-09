@@ -44,6 +44,9 @@ public abstract class RestInterface {
 	 * @return
 	 */
 	protected JsonWebToken getUserToken(){
+		if(this.securityContext.getAuthenticationScheme().equals("Basic")){
+			return null;
+		}
 		if(this.hasAccessToken()){
 			return this.getAccessToken();
 		}
@@ -51,23 +54,17 @@ public abstract class RestInterface {
 	}
 	
 	private Optional<InteractingEntity> logRequestAndProcessEntity() {
-		if (this.getUserToken() == null) {
-			log.info("Processing request with no JWT; ssh:{}", this.getSecurityContext().isSecure());
+		if (this.securityContext.getAuthenticationScheme() == null) {
+			log.info("Processing request with no authentication; ssh:{}", this.getSecurityContext().isSecure());
 			return Optional.empty();
 		} else {
-			log.info(
-				"Processing request with JWT; User:{} ssh:{} jwtIssuer: {} roles: {}",
-				this.getSecurityContext().getUserPrincipal().getName(),
-				this.getSecurityContext().isSecure(),
-				this.getUserToken().getIssuer(),
-				this.getUserToken().getGroups()
-			);
 			if (this.getSecurityContext().isSecure()) {
-				log.warn("Request with JWT made without HTTPS");
+				log.warn("Request with Auth made without HTTPS");
 			}
 			
-			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getUserToken());
+			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getSecurityContext(), this.getUserToken());
 			
+			log.info("Processing request with Auth; interacting entity: {}", interactingEntity);
 			return Optional.of(this.interactingEntity);
 		}
 	}

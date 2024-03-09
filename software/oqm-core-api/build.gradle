@@ -20,8 +20,6 @@ dependencies {
 	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
 	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
-//	implementation 'io.quarkus:quarkus-smallrye-jwt'// https://quarkus.io/guides/security-properties
-	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-kafka'
 	implementation 'io.quarkus:quarkus-opentelemetry'
@@ -36,6 +34,8 @@ dependencies {
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
 	implementation 'io.quarkus:quarkus-smallrye-jwt'
+//	implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+	implementation 'io.quarkus:quarkus-elytron-security-properties-file'
 //	implementation 'io.quarkus:quarkus-oidc-client-reactive-filter'
 //	implementation 'io.quarkus:quarkus-oidc-token-propagation-reactive'
 
