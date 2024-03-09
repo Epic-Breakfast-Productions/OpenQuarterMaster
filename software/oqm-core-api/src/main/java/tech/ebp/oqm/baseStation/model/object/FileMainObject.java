@@ -1,5 +1,8 @@
 package tech.ebp.oqm.baseStation.model.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,18 +34,11 @@ public class FileMainObject
 	public FileMainObject(ObjectId id, Map<@NotBlank @NotNull String, String> attributes, List<@NotBlank String> keywords) {
 		super(id, attributes, keywords);
 	}
-	public FileMainObject(String description, String source){
-		this.description = description;
-		this.source = source;
-	}
 	
-	/**
-	 * The filename of the file in gridfs. Do _not_ change after initially set.
-	 */
-	@NotNull
-	@NonNull
-	@NotBlank
-	private String gridfsFileName;
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public String getGridfsFileName(){
+		return this.getId().toHexString();
+	}
 	
 	@NotNull
 	@NonNull

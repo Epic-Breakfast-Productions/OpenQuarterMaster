@@ -273,7 +273,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//		description = "Object requested has been deleted.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-		@Produces(MediaType.APPLICATION_JSON)
+//		@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public FileMetadata getRevision(

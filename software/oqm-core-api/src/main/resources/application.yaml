@@ -209,7 +209,7 @@ smallrye:
           users:
             regularUser: "1!Letmein"
           roles:
-            regularUser: "inventoryView"
+            regularUser: "inventoryView,inventoryEdit"
 
   runningInfo:
   service:

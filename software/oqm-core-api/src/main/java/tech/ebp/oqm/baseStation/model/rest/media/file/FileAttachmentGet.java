@@ -25,7 +25,6 @@ public class FileAttachmentGet extends FileAttachment implements FileGet {
 									.setDescription(a.getDescription())
 		)
 									   .setRevisions(revisions)
-									   .setGridfsFileName(a.getGridfsFileName())
 									   .setAttributes(a.getAttributes())
 									   .setKeywords(a.getKeywords())
 									   .setId(a.getId());

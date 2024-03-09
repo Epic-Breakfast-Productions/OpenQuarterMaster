@@ -112,7 +112,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response add(

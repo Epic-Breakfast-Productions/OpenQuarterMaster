@@ -134,11 +134,9 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				newId = this.getFileObjectService().add(clientSession, fileObject, interactingEntity);
 				
 				GridFSUploadOptions ops = this.getUploadOps(fileMetadata);
-				String filename = newId.toHexString();
 				
-				fileObject.setGridfsFileName(filename);//the _only_ place this should happen
 				this.getFileObjectService().update(clientSession, fileObject);
-				bucket.uploadFromStream(clientSession, filename, is, ops);
+				bucket.uploadFromStream(clientSession, fileObject.getGridfsFileName(), is, ops);
 				
 				if (!sessionGiven) {
 					clientSession.commitTransaction();
@@ -156,8 +154,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	@WithSpan
 	public ObjectId add(ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
-			FilenameUtils.removeExtension(fileObject.getGridfsFileName()),
-			FilenameUtils.getExtension(fileObject.getGridfsFileName()),
+			FilenameUtils.removeExtension(uploadBody.fileName),
+			FilenameUtils.getExtension(uploadBody.fileName),
 			"uploads"
 		);
 		

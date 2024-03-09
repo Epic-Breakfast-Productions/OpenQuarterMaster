@@ -23,7 +23,6 @@ public class TestMainFileObjectGet extends TestMainFileObject implements FileGet
 	) {
 		return (TestMainFileObjectGet) new TestMainFileObjectGet()
 									   .setRevisions(revisions)
-									   .setGridfsFileName(a.getGridfsFileName())
 									   .setAttributes(a.getAttributes())
 									   .setKeywords(a.getKeywords())
 									   .setId(a.getId());

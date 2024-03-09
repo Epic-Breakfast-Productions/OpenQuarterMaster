@@ -26,7 +26,6 @@ public class ImageGet extends Image implements FileGet {
 						   .setSource(a.getSource())
 		)
 									   .setRevisions(revisions)
-									   .setGridfsFileName(a.getGridfsFileName())
 									   .setAttributes(a.getAttributes())
 									   .setKeywords(a.getKeywords())
 									   .setId(a.getId());

@@ -24,7 +24,6 @@ class ImageSerializationTest extends ObjectSerializationTest<Image> {
 				new Image()
 					.setSource(FAKER.name().name())
 					.setDescription(FAKER.lorem().paragraph())
-					.setGridfsFileName(new ObjectId().toHexString()+".txt")
 					.setId(new ObjectId())
 			)
 		);
