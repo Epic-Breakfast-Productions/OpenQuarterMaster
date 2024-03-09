@@ -238,9 +238,8 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
 	public FileAttachmentGet updateObj(
-		//		@PathParam("id")
+		@PathParam("id")
 		String id,
-		//		@BeanParam
 		ObjectNode updates
 	) {
 		return this.getFileService().fileObjToGet(this.getFileService().getFileObjectService().update(
@@ -365,11 +364,9 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Override
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+		@BeanParam HistorySearch searchObject
 	) {
-		return super.getHistoryForObject(id, searchObject, acceptHeaderVal, searchFormId);
+		return super.getHistoryForObject(id, searchObject);
 	}
 	
 	@GET
@@ -384,8 +381,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
+					implementation = SearchResult.class
 				)
 			)
 		}

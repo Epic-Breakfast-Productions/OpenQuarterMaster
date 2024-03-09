@@ -41,7 +41,8 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	
 	@WithSpan
 	protected Response.ResponseBuilder getSearchResponseBuilder(
-		@BeanParam S searchObject
+//		@BeanParam
+		S searchObject
 	) {
 		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, true);
 		return this.getSearchResultResponseBuilder(searchResult);
@@ -372,10 +373,10 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 //	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
 	public Response getHistoryForObject(
-		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject,
-		@HeaderParam("accept") String acceptHeaderVal,
-		@HeaderParam("searchFormId") String searchFormId
+//		@PathParam("id")
+		String id,
+//		@BeanParam
+		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
@@ -411,7 +412,8 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
-		@BeanParam HistorySearch searchObject
+//		@BeanParam
+		HistorySearch searchObject
 	) {
 		log.info("Searching for objects with: {}", searchObject);
 		
