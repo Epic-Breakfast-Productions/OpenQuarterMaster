@@ -140,7 +140,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<File> imageAdd(
+	Uni<String> imageAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@BeanParam FileUploadBody body
 	);
@@ -188,7 +188,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@GET
 	@Produces("*/*")
-	Uni<File> imageGetRevisionData(
+	Uni<Response> imageGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id")
 		String id,
@@ -217,6 +217,6 @@ public interface OqmCoreApiClientService {
 		"image/png",
 		"text/plain"
 	})
-	Uni<File> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
+	Uni<Response> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
 	//</editor-fold>
 }
