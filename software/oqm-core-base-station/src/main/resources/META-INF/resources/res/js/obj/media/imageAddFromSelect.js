@@ -1,4 +1,8 @@
 
+const ImageAddFromSelect = {
+
+}
+
 var addImageFormMessages = $("addImageFormMessages");
 var imageSearchSelectModalLabelCloseButton = $("#imageSearchSelectModalLabelCloseButton");
 var imageAddImageForm = $("#addImageForm");
@@ -23,21 +27,20 @@ imageAddImageForm.submit(function (ev) {
 	ev.preventDefault();
 
 	$uploadCrop.croppie('result', {
-		type: 'base64',
+		type: 'blob',
 		size: 'original'
 	}).then(function(imageDataStr){
 		console.log("Got image data.");
-		var addData = {
-			title: imageAddTitleInput.val(),
-			description: imageAddDescriptionInput.val(),
-			imageData: imageDataStr
-		};
+		let addData = new FormData();
 
-		addKeywordAttData(addData, imageAddKeywordInputDiv, imageAddAttInputDiv);
+		addData.append("fileName", imageUploadInput[0].files[0]);
+		addData.append("file", imageDataStr);
+		addData.append("description", imageAddDescriptionInput.val());
+		addData.append("source", "user");
 
 		console.log("Adding new image.");
 		Rest.call({
-			url: "/api/v1/media/image",
+			url: "/api/passthrough/media/image",
 			method: "POST",
 			data: addData,
 			async: false,

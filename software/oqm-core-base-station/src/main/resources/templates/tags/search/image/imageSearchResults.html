@@ -14,11 +14,11 @@
 !}
 <div class="row">
   <div class="col text-center m-1 searchResultsContainer">
-    {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
   </div>
 </div>
 <div class="row">
-  {#if searchResults.getResults().isEmpty()}
+  {#if searchResults.get("empty").asBoolean()}
   <div class="col d-grid gap-2 text-center">
     <h2>
       No Images found.
@@ -32,21 +32,23 @@
     {/if}
   </div>
   {#else}
-  {#for result in searchResults.getResults()}
-    <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="selectImage('{result.getTitle()}', '{result.getId()}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{result.getId()}')"{/if}>
-      <img src="/api/v1/media/image/{result.getId()}/data" class="card-img-top img-thumbnail" alt="{result.getTitle()}">
+  {#for result in searchResults.get("results")}
+	  {#let id=result.get("id").asText() title=result.get("filename").asText()}
+    <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="selectImage('{title}', '{id}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{id}')"{/if}>
+      <img src="/api/passthrough/media/image/{id}/revision/latest/data" class="card-img-top img-thumbnail" alt="{title}">
       <div class="card-body">
-        <h5 class="card-title">{result.getTitle()}</h5>
-        {#if result.getDescription() != null && !result.getDescription().isBlank() }
-        <p class="card-text">{result.getDescription()}</p>
+        <h5 class="card-title">{title}</h5>
+        {#if !result.get("description").asText().isBlank() }
+        <p class="card-text">{result.get("description").asText()}</p>
         {/if}
       </div>
     </div>
+	{/let}
   {/for}
   {/if}
 </div>
 <div class="row">
   <div class="col text-center m-1 searchResultsContainer">
-    {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
   </div>
 </div>

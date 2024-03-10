@@ -36,7 +36,7 @@
     </div>
 </div>
 <div id="imageSearchresults">
-    {#search/image/imageSearchResults searchResults=searchResult actionType='full' searchFormId='mainImageSearch' pagingCalculations=pagingCalculations}
+    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch'}
     {/search/image/imageSearchResults}
 </div>
 
@@ -134,7 +134,7 @@
 {/scripts}
 {#pageScript}
 <script>
-fillInQueryForm($("#mainImageSearch"));
+Search.fillInQueryForm($("#mainImageSearch"));
 
 var addEditImageForm = $("#addEditImageForm");
 var addEditModalLabel = $("#addEditModalLabel");
@@ -149,6 +149,7 @@ var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
 var addEditTitleInput = $("#addEditTitleInput");
 var addEditDescriptionInput = $("#addEditDescriptionInput");
+var addEditFileInput = $("#imageUploadInput");
 
 //TODO:: figure out proper sizing on small screens
 
@@ -200,25 +201,26 @@ addEditImageForm.submit(function (ev) {
     ev.preventDefault();
 
     $uploadCrop.croppie('result', {
-		type: 'base64',
+		type: 'blob',
 		size: 'original'
-	}).then(async function (imageDataStr) {
-        var addEditData = {
-            title: addEditTitleInput.val(),
-            description: addEditDescriptionInput.val(),
-            imageData: imageDataStr
-        };
+	}).then(async function (imageDataBlob) {
+		console.log("Got image data.");
+		let addEditData = new FormData();
+		
+		addEditData.append("fileName", addEditFileInput[0].files[0].name);
+		addEditData.append("description", addEditDescriptionInput.val());
+		addEditData.append("source", "user");
+		addEditData.append("file", imageDataBlob);//imageDataBlob);
     
-        addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+        console.log("Got image data: ", imageDataBlob);
     
-        console.log("Got image data.");
-    
-        if (addEditFormMode.val() == "add") {
+        if (addEditFormMode.val() === "add") {
             console.log("Adding new image.");
             Rest.call({
-                url: "/api/v1/media/image",
+                url: "/api/passthrough/media/image",
                 method: "POST",
                 data: addEditData,
+				dataType: false,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     PageMessages.reloadPageWithMessage("Created image successfully!", "success", "Success!");
@@ -228,12 +230,12 @@ addEditImageForm.submit(function (ev) {
                     PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
                 }
             });
-        } else if (addEditFormMode.val() == "edit") {
+        } else if (addEditFormMode.val() === "edit") {
             var id = addEditFormId.val();
             console.log("Editing image " + id);
         
             Rest.call({
-                url: "/api/v1/media/image/" + id,
+                url: "/api/passthrough/media/image/" + id,
                 method: "PUT",
                 data: addEditData,
                 done: function (data) {
