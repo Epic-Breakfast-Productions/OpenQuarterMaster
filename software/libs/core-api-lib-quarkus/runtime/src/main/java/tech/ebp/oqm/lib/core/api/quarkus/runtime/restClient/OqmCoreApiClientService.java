@@ -131,7 +131,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> search(
+	Uni<ObjectNode> imageSearch(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@BeanParam ImageSearch searchObject
 	);
@@ -140,7 +140,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<File> add(
+	Uni<File> imageAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@BeanParam FileUploadBody body
 	);
@@ -148,7 +148,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> get(
+	Uni<ObjectNode> imageGet(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id") String id
 	);
@@ -157,7 +157,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<Integer> updateFile(
+	Uni<Integer> imageUpdateFile(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id") String id,
 		@BeanParam FileUploadBody body
@@ -167,7 +167,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> updateObj(
+	Uni<ObjectNode> imageUpdateObj(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id")
 		String id,
@@ -177,7 +177,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> getRevision(
+	Uni<ObjectNode> imageGetRevision(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id")
 		String id,
@@ -188,7 +188,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@GET
 	@Produces("*/*")
-	Response getRevisionData(
+	Uni<File> imageGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id")
 		String id,
@@ -199,7 +199,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> getHistoryForObject(
+	Uni<ObjectNode> imageGetHistoryForObject(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject
@@ -208,7 +208,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> searchHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token,@BeanParam HistorySearch searchObject);
+	Uni<ObjectNode> imageSearchHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token,@BeanParam HistorySearch searchObject);
 	
 	//TODO:: what return datatype?
 	@GET
