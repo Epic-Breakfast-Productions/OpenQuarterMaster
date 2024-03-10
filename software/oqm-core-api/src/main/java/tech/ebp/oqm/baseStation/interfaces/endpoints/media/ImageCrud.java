@@ -5,7 +5,6 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -27,13 +25,11 @@ import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.media.FileMetadata;
 import tech.ebp.oqm.baseStation.model.object.media.Image;
-import tech.ebp.oqm.baseStation.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.model.rest.media.ImageGet;
 import tech.ebp.oqm.baseStation.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.baseStation.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
 import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
-import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.rest.search.ImageSearch;
 import tech.ebp.oqm.baseStation.service.mongo.image.ImageService;
@@ -86,6 +82,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Override
 	protected Image getFileObjFromUpload(FileUploadBody upload) {
 		return new Image(
+			upload.fileName,
 			upload.description,
 			upload.source
 		);
@@ -278,11 +275,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 		String id,
 		ObjectNode updates
 	) {
-		return this.getFileService().fileObjToGet(this.getFileService().getFileObjectService().update(
-			id,
-			updates,
-			this.getInteractingEntity()
-		));
+		return super.updateObj(id, updates);
 	}
 	
 	@Path("{id}/revision/{rev}")

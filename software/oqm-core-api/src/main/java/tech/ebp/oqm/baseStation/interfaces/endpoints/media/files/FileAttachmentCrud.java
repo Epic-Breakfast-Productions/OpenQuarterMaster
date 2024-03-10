@@ -50,6 +50,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Override
 	protected FileAttachment getFileObjFromUpload(FileUploadBody upload) {
 		return new FileAttachment(
+			upload.fileName,
 			upload.description,
 			upload.source
 		);

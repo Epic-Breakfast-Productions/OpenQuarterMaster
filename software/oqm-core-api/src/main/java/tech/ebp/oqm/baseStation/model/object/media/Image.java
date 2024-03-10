@@ -26,10 +26,11 @@ import java.util.Map;
 public class Image extends FileMainObject {
 	
 	public Image(
+		@NotNull @NonNull String fileName,
 		@NotNull @NonNull @Size(max = 500) String description,
 		@NotNull @NonNull @NotBlank @Size(max = 500) String source
 	) {
-		super(description, source);
+		super(fileName, description, source);
 	}
 	
 	public Image() {

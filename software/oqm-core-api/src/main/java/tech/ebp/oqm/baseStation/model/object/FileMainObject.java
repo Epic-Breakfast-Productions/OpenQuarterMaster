@@ -40,6 +40,11 @@ public class FileMainObject
 	
 	@NotNull
 	@NonNull
+	@NotBlank
+	private String filename;
+	
+	@NotNull
+	@NonNull
 	@Size(max = 500)
 	private String description = "";
 	

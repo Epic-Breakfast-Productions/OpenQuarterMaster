@@ -128,6 +128,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
+		fileObject.setFilename(fileMetadata.getOrigName());
 		
 		this.assertValidMimeType(fileMetadata);
 		
@@ -200,10 +201,14 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 			InputStream is = new FileInputStream(file)
 		) {
 			T object = this.getFileObjectService().get(id);
+			object.setFilename(fileMetadata.getOrigName());
 			GridFSBucket bucket = this.getGridFSBucket();
 			
 			GridFSUploadOptions ops = this.getUploadOps(fileMetadata);
 			String filename = object.getGridfsFileName();
+			
+			//TODO:: improve flow of handling client session
+			//TODO:: use new update obj for file updates
 			boolean sessionGiven = clientSession != null;
 			if (sessionGiven) {
 				bucket.uploadFromStream(clientSession, filename, is, ops);
@@ -235,25 +240,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		);
 		FileUtils.copyInputStreamToFile(uploadBody.file, tempFile);
 		
-		//TODO:: improve flow of handling client session
-		//TODO:: use new update obj for file updates
-		int output;
-		if(clientSession == null){
-			try (
-				ClientSession session = this.getFileObjectService().getNewClientSession(true);
-			) {
-				T fileObject = this.getObject(session, id);
-				fileObject.updateFrom(uploadBody);
-				output = this.updateFile(session, id, tempFile, interactingEntity);
-				this.getFileObjectService().update(session, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
-				session.commitTransaction();
-			}
-		} else {
-			T fileObject = this.getObject(clientSession, id);
-			fileObject.updateFrom(uploadBody);
-			output = this.updateFile(clientSession, id, tempFile, interactingEntity);
-			this.getFileObjectService().update(clientSession, fileObject, interactingEntity, new UpdateEvent(fileObject, interactingEntity));
-		}
+		int output = this.updateFile(clientSession, id, tempFile, interactingEntity);
 		
 		if (!tempFile.delete()) {
 			log.warn("Failed to delete temporary upload file: {}", tempFile);
