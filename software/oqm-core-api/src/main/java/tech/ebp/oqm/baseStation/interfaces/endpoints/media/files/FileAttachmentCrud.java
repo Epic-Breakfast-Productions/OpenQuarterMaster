@@ -333,6 +333,46 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		return super.getRevisionData(id, revision);
 	}
 	
+	@Path("{id}")
+	@DELETE
+	@Operation(
+		summary = "Removes a particular file."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = MainObject.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "Bad request given, could not find object at given id.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@APIResponse(
+		responseCode = "410",
+		description = "Object requested has been deleted.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
+	@WithSpan
+	public FileAttachmentGet remove(
+		@PathParam("id")
+		String id
+	) {
+		return super.remove(id);
+	}
+	
 	@GET
 	@Path("{id}/history")
 	@Operation(

@@ -161,8 +161,14 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public abstract G fileObjToGet(T obj);
 	
+	public G getObjGet(ObjectId id) {
+		return this.fileObjToGet(this.getObj(id));
+	}
 	public G getObjGet(String id) {
 		return this.fileObjToGet(this.getObj(id));
+	}
+	public T getObj(ObjectId id) {
+		return this.getFileObjectService().get(id);
 	}
 	public T getObj(String id) {
 		return this.getFileObjectService().get(id);

@@ -71,6 +71,14 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		this.itemCategoryService = itemCategoryService;
 		this.inventoryItemService = inventoryItemService;
 		this.imageResizeConfig = imageResizeConfig;
+		this.allowedMimeTypes = Set.of(
+			"image/png",
+			"image/jpeg",
+			"image/bmp",
+			"image/tiff",
+			"image/webp",
+			"image/gif"
+		);
 	}
 	
 	/**

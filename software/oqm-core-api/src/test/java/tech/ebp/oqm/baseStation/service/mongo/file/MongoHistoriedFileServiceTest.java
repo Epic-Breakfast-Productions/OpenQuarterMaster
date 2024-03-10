@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.baseStation.testResources.data.TestMainFileObject;
+import tech.ebp.oqm.baseStation.testResources.data.TestMainFileObjectGet;
 import tech.ebp.oqm.baseStation.testResources.data.TestMongoHistoriedFileService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
 import tech.ebp.oqm.baseStation.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -393,9 +394,10 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		List<FileMetadata> metadataList = this.testMongoFileService.getRevisions(mainFileObject.getId());
 		log.info("Metadata list: {}", metadataList);
 		
-		TestMainFileObject result = this.testMongoFileService.removeFile(null, mainFileObject.getId(), testUser);
+		TestMainFileObjectGet mainFileObjectGet = this.testMongoFileService.fileObjToGet(mainFileObject);
+		TestMainFileObjectGet result = this.testMongoFileService.removeFile(null, mainFileObject.getId(), testUser);
 		
-		assertEquals(mainFileObject, result);
+		assertEquals(mainFileObjectGet, result);
 		assertEquals(0, this.testMongoFileService.getFileObjectService().count());
 		assertNull(this.testMongoFileService.getGridFSBucket().find().first());
 	}

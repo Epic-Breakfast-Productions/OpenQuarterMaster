@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -39,7 +41,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedFileService<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends MongoFileService<T, S,
+public abstract class MongoHistoriedFileService<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends MongoFileService<T
+																																												   , S,
 																																								  CollectionStats,
 																																											   G> {
 	
@@ -63,6 +66,9 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	
 	@Getter
 	private MongoHistoriedObjectService<T, S, CollectionStats> fileObjectService = null;
+	
+	@Getter
+	protected Set<String> allowedMimeTypes = new HashSet<>();
 	
 	public MongoHistoriedFileService(
 		ObjectMapper objectMapper,
@@ -112,10 +118,18 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.getFileObjectService().getStats();
 	}
 	
+	public void assertValidMimeType(FileMetadata fileMetadata){
+		if(!this.getAllowedMimeTypes().isEmpty() && !this.getAllowedMimeTypes().contains(fileMetadata.getMimeType())){
+			throw new IllegalArgumentException("File with type not allowed given: " + fileMetadata.getMimeType());
+		}
+	}
+	
 	@WithSpan
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
+		
+		this.assertValidMimeType(fileMetadata);
 		
 		try (
 			InputStream is = new FileInputStream(file)
@@ -280,12 +294,15 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return numRemoved.get();
 	}
 	
-	public T removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity){
+	public G removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity){
+		//TODO:: this with cs
 		T toRemove = this.getFileObjectService().get(cs, objectId);
+		G output = this.getObjGet(objectId);
 		
-		this.assertNotReferenced(cs, toRemove);
+		this.assertNotReferenced(cs, (T) toRemove);
 		GridFSBucket bucket = this.getGridFSBucket();
 		
+		//TODO:: ensure noting is referencing the file
 		if(cs == null){
 			try(ClientSession clientSession = this.getNewClientSession(true)){
 				bucket.find(clientSession, Filters.eq("filename", toRemove.getGridfsFileName())).forEach(
@@ -305,6 +322,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 			this.getFileObjectService().remove(cs, toRemove.getId(), entity);
 		}
 		
-		return toRemove;
+		return output;
 	}
 }
