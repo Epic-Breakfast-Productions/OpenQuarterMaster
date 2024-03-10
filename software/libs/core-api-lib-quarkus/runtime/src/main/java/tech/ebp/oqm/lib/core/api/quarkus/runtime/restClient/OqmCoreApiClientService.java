@@ -5,13 +5,18 @@ import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
@@ -122,8 +127,96 @@ public interface OqmCoreApiClientService {
 	//</editor-fold>
 	
 	//<editor-fold desc="Images">
+	
+	@GET
+	@Path(IMAGE_ROOT_ENDPOINT)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> search(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam ImageSearch searchObject
+	);
+	
+	@POST
+	@Path(IMAGE_ROOT_ENDPOINT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<File> add(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam FileUploadBody body
+	);
+	
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> get(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
+	
+	@PUT
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<Integer> updateFile(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam FileUploadBody body
+	);
+	
+	@PUT
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> updateObj(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		ObjectNode updates
+	);
+	
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> getRevision(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		@PathParam("rev")
+		String revision
+	);
+	
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
+	@GET
+	@Produces("*/*")
+	Response getRevisionData(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		@PathParam("rev")
+		String revision
+	);
+	
+	@GET
+	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> getHistoryForObject(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam HistorySearch searchObject
+	);
+	
+	@GET
+	@Path(IMAGE_ROOT_ENDPOINT + "/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> searchHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token,@BeanParam HistorySearch searchObject);
+	
+	//TODO:: what return datatype?
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/for/{type}/{id}")
-	Uni<ObjectNode> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
+	@Produces({
+		"image/png",
+		"text/plain"
+	})
+	Uni<File> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
 	//</editor-fold>
 }
