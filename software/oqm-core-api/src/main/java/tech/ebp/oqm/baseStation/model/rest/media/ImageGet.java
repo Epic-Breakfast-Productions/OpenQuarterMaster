@@ -24,7 +24,9 @@ public class ImageGet extends Image implements FileGet {
 			(ImageGet) new ImageGet()
 									.setDescription(a.getDescription())
 						   .setSource(a.getSource())
+						   .setFileName(a.getFileName())
 		)
+							  
 									   .setRevisions(revisions)
 									   .setAttributes(a.getAttributes())
 									   .setKeywords(a.getKeywords())

@@ -41,7 +41,7 @@ public class FileMainObject
 	@NotNull
 	@NonNull
 	@NotBlank
-	private String filename;
+	private String fileName;
 	
 	@NotNull
 	@NonNull

@@ -128,7 +128,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	public ObjectId add(ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
-		fileObject.setFilename(fileMetadata.getOrigName());
+		fileObject.setFileName(fileName);
 		
 		this.assertValidMimeType(fileMetadata);
 		
@@ -201,7 +201,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 			InputStream is = new FileInputStream(file)
 		) {
 			T object = this.getFileObjectService().get(id);
-			object.setFilename(fileMetadata.getOrigName());
+			object.setFileName(fileMetadata.getOrigName());
 			GridFSBucket bucket = this.getGridFSBucket();
 			
 			GridFSUploadOptions ops = this.getUploadOps(fileMetadata);

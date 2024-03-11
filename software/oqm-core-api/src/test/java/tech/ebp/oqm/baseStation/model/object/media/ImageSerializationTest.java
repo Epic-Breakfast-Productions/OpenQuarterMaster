@@ -22,7 +22,7 @@ class ImageSerializationTest extends ObjectSerializationTest<Image> {
 		return Stream.of(
 			Arguments.of(
 				new Image()
-					.setFilename(FAKER.file().fileName())
+					.setFileName(FAKER.file().fileName())
 					.setSource(FAKER.name().name())
 					.setDescription(FAKER.lorem().paragraph())
 					.setId(new ObjectId())
