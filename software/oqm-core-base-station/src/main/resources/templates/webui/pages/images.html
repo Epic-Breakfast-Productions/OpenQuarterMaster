@@ -49,19 +49,12 @@
 <form id="addEditImageForm">
     <input type="hidden" id="addEditFormMode" value="">
     <input type="hidden" id="addEditFormId" value="">
-    <div class="mb-3 row">
-        <label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>
-        <div class="col-sm-9">
-            <input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
-        <div class="col-sm-9">
-                            <textarea class="form-control" id="addEditDescriptionInput"
-                                      placeholder="Description"></textarea>
-        </div>
-    </div>
+    {!<div class="mb-3 row">!}
+        {!<label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>!}
+        {!<div class="col-sm-9">!}
+            {!<input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>!}
+        {!</div>!}
+    {!</div>!}
     <div class="mb-3">
         <label for="imageUploadInput" class="form-label">Image File</label>
         <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
@@ -69,6 +62,13 @@
             <div id="imageUploadCroppieDiv" class="border" style="width:350px;"></div>
         </div>
     </div>
+	<div class="mb-3 row">
+		<label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
+		<div class="col-sm-9">
+                            <textarea class="form-control" id="addEditDescriptionInput"
+								placeholder="Description"></textarea>
+		</div>
+	</div>
     {#inputs/keywordInput}
     {/inputs/keywordInput}
     {#inputs/attInput}
@@ -110,7 +110,7 @@
     {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
 </div>
 <div class="row">
-    {#objView/history/objHistoryView containerId='imageHistory' objectUrl='/api/v1/media/image/'}{/objView/history/objHistoryView}
+    {#objView/history/objHistoryView containerId='imageHistory' objectUrl='/api/passthrough/media/image/'}{/objView/history/objHistoryView}
     
 </div>
 <hr />
@@ -147,7 +147,7 @@ var attInputDiv = addEditImageForm.find(".attInputDiv");
 //inputs
 var addEditFormMode = $("#addEditFormMode");
 var addEditFormId = $("#addEditFormId");
-var addEditTitleInput = $("#addEditTitleInput");
+// var addEditTitleInput = $("#addEditTitleInput");
 var addEditDescriptionInput = $("#addEditDescriptionInput");
 var addEditFileInput = $("#imageUploadInput");
 
@@ -185,7 +185,7 @@ function setupAddEditForEdit(id){
         method: "GET",
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
-            addEditTitleInput.val(data.title);
+            // addEditTitleInput.val(data.title);
             addEditDescriptionInput.text(data.description);
 
             bindCroppie("/api/v1/media/image/" + id + "/data");
@@ -283,18 +283,18 @@ function resetView(){
 function setupViewForImage(id){
     resetView();
 
-    var curUrl = '/api/v1/media/image/' + id + '/data';
+    let curUrl = Rest.passRoot + '/media/image/' + id + '/revision/latest/data';
     imageViewImages.each(function(i, cur){
         cur.src = curUrl;
     });
 
     Rest.call({
-        url: "/api/v1/media/image/" + id,
+        url: Rest.passRoot + "/media/image/" + id,
         method: "GET",
         async: false,
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
-            viewModalLabel.text(data.title);
+            viewModalLabel.text(data.fileName);
             if(data.description){
                 console.log("had description");
                 viewDescriptionTextSection.show();
@@ -314,7 +314,7 @@ function setupViewForImage(id){
                 console.log("Deleting image " + id);
 
                 Rest.call({
-                    url: "/api/v1/media/image/" + id,
+                    url: Rest.passRoot + "/media/image/" + id,
                     method: "DELETE",
                     done: function(data) {
                         console.log("Response from create request: " + JSON.stringify(data));

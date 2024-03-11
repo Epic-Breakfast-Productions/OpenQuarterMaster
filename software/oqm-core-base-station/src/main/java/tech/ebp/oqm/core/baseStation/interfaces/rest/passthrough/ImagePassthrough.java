@@ -9,6 +9,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -321,14 +322,17 @@ public class ImagePassthrough extends PassthroughProvider {
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
-	public Uni<ObjectNode> getHistoryForObject(
+	public Uni<Response> getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject
+		@BeanParam HistorySearch historySearch,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return this.oqmCoreApiClient.imageGetHistoryForObject(this.getBearerHeaderStr(), id, searchObject);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().imageGetHistoryForObject(this.getBearerHeaderStr(), id, historySearch);
+		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
 	@GET
