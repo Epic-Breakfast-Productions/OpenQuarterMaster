@@ -38,6 +38,11 @@ import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.STORAGE_BLOCK_
 @Produces(MediaType.TEXT_HTML)
 public class StorageBlockPassthrough extends PassthroughProvider {
 	
+	@Getter
+	@Inject
+	@Location("tags/search/storage/storageSearchResults")
+	Template searchResultTemplate;
+	
 	@POST
 	public Uni<Response> addStorageBlock(ObjectNode newStorageBlock) {
 		return this.getOqmCoreApiClient().storageBlockAdd(this.getBearerHeaderStr(), newStorageBlock)
@@ -46,13 +51,18 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	}
 	
 	@GET
-	@Produces({MediaType.APPLICATION_JSON})
-	public Uni<Response> getStorageBlock(@BeanParam StorageBlockSearch storageBlockSearch) {
-		//TODO:: handle HTML return for searches
-		return this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch)
-				   .map(output->
-							Response.ok(output).build()
-				   );
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Uni<Response> getStorageBlock(
+		@BeanParam StorageBlockSearch storageBlockSearch,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId
+	) {
+		return this.processSearchResults(
+			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch),
+			this.searchResultTemplate,
+			acceptType,
+			searchFormId
+		);
 	}
 	
 	@GET
@@ -90,7 +100,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	
 	@PUT
 	@Path("/{id}")
-	public Uni<Response> storageBlockUpdate(@PathParam("id") String id, ObjectNode updates){
+	public Uni<Response> storageBlockUpdate(@PathParam("id") String id, ObjectNode updates) {
 		return this.getOqmCoreApiClient().storageBlockUpdate(this.getBearerHeaderStr(), id, updates)
 				   .map(output->
 							Response.ok(output).build()
@@ -100,7 +110,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<Response>  storageBlockDelete(@PathParam("id") String id){
+	public Uni<Response> storageBlockDelete(@PathParam("id") String id) {
 		return this.getOqmCoreApiClient().storageBlockDelete(this.getBearerHeaderStr(), id)
 				   .map(output->
 							Response.ok(output).build()

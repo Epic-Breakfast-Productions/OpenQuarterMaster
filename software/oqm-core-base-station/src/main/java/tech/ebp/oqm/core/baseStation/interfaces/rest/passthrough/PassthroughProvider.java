@@ -98,4 +98,31 @@ public abstract class PassthroughProvider extends ApiProvider {
 		}
 		
 	}
+	
+	protected Uni<Response> processSearchResults(
+		Uni<ObjectNode> searchUni,
+		Template searchResultTemplate,
+		String acceptType,
+		String searchFormId
+	) {
+		if (MediaType.TEXT_HTML.equals(acceptType)) {
+			return searchUni.map(
+				(ObjectNode endResults)->{
+					log.debug("Final result of history search: {}", endResults);
+					return Response.ok(
+						searchResultTemplate
+							.data("actionType", "select")
+							.data("searchFormId", searchFormId)
+							.data("searchResults", endResults),
+						MediaType.TEXT_HTML
+					).build();
+				});
+		} else {
+			return searchUni.map((output)->{
+				log.debug("Storage Block search results: {}", output);
+				return Response.ok(output).build();
+			});
+		}
+		
+	}
 }
