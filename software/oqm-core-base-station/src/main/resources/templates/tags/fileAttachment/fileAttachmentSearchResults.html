@@ -16,7 +16,7 @@
   <thead>
   <tr>
     <td colspan="4" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -27,7 +27,7 @@
   </tr>
   </thead>
   <tbody>
-  {#if searchResults.getResults().isEmpty()}
+  {#if searchResults.get("empty").asBoolean()}
   <tr>
     <td colspan="4" class="text-center">
       <h2>
@@ -44,17 +44,18 @@
     </td>
   </tr>
   {#else}
-  {#for result in searchResults.getResults()}
+  {#for result in searchResults.get("results")}
+  	{#let id=result.get("id").asText() fileName=result.get("fileName").asText() latestRevision=result.get("revisions").get(result.get("revisions").size() - 1)}
   <tr class="fileAttachmentResultRow align-middle">
-    <td class="text-center" style="font-size: 1.5em;">{#icons/fileType mimeType=result.getLatestRevision().getMimeType()}{/icons/fileType}</td>
-    <td>{result.getLatestRevision().getOrigName()}</td>
-    <td class="text-center">{result.getRevisions().size()}</td>
+    <td class="text-center" style="font-size: 1.5em;">{#icons/fileType mimeType=latestRevision.get("mimeType").asText()}{/icons/fileType}</td>
+    <td>{fileName}</td>
+    <td class="text-center">{result.get("revisions").size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
-		<a href="/api/v1/media/fileAttachments/{result.getId()}/data" class="btn btn-sm btn-success" title="Download" target="_blank">
+		<a href="/api/v1/media/fileAttachments/{id}/data" class="btn btn-sm btn-success" title="Download" target="_blank">
 			{#icons/download}{/icons/download}
 		</a>
 		{! TODO:: re-enable for #467 !}
@@ -62,12 +63,12 @@
         {!{#icons/edit}{/icons/edit}!}
       {!</button>!}
       <button type="button" class="btn btn-sm btn-danger" title="Remove File"
-              onclick="FileAttachmentAddEdit.removeFile('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
+              onclick="FileAttachmentAddEdit.removeFile('{id}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getFileName()}"
+      <button type="button" class="btn btn-sm btn-success" title="Select {fileName}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="FileAttachmentSearchSelect.selectFile('{result.getId()}', '{result.getLatestRevision().getOrigName()}');">
+              onclick="FileAttachmentSearchSelect.selectFile('{id}', '{fileName}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}
@@ -79,7 +80,7 @@
   <tfoot>
   <tr>
     <td colspan="4" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   </tfoot>

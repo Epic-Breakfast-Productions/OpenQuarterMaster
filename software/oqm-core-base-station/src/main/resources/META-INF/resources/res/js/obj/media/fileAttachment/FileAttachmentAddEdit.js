@@ -1,3 +1,4 @@
+//TODO:: handle edit
 const FileAttachmentAddEdit = {
 	formMessages: $("#fileAttachmentAddEditFormMessages"),
 	form: $("#fileAttachmentAddEditForm"),
@@ -22,10 +23,11 @@ const FileAttachmentAddEdit = {
 
 		formData.append("fileName", file.name);
 		formData.append("file", file);
-		formData.append("description", FileAttachmentAddEdit.descriptionInput.val())
+		formData.append("source", "user");
+		formData.append("description", FileAttachmentAddEdit.descriptionInput.val());
 
 		Rest.call({
-			url: '/api/v1/media/fileAttachments',
+			url: Rest.passRoot + '/media/fileAttachment',
 			method: "post",
 			data: formData,
 			done: function (data){
@@ -45,7 +47,7 @@ const FileAttachmentAddEdit = {
 			return;
 		}
 		Rest.call({
-			url: '/api/v1/media/fileAttachments/' + fileId,
+			url: Rest.passRoot + '/media/fileAttachment/' + fileId,
 			method: "delete",
 			done: function (data){
 				console.log("Successfully removed file attachment.");

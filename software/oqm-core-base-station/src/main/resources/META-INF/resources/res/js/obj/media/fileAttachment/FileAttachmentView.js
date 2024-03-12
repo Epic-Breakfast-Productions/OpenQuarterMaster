@@ -28,11 +28,12 @@ const FileAttachmentView = {
 		clearHideAttDisplay(this.atts);
 	},
 	setupFileView(fileGetData, container, preview = true) {
-		let latestMetadata = fileGetData.revisions[0];
+		let latestMetadata = fileGetData.revisions[fileGetData.revisions.length - 1];
 		let newContent;
+		let dataUrl = Rest.passRoot + '/media/fileAttachment/' + fileGetData.id + '/revision/latest/data';
 		if (latestMetadata.mimeType.startsWith("audio/")) {
 			newContent = $(' <audio controls>\n' +
-				'  <source src="/api/v1/media/fileAttachments/' + fileGetData.id + '/data" type="' + latestMetadata.mimeType + '">\n' +
+				'  <source src="'+dataUrl+'" type="' + latestMetadata.mimeType + '">\n' +
 				'</audio> ');
 			newContent.on("stalled", function (e) {
 				let code = newContent[0].error.code
@@ -41,7 +42,7 @@ const FileAttachmentView = {
 			});
 		} else if (latestMetadata.mimeType.startsWith("video/")) {
 			newContent = $(' <video controls style="max-width: 100%;">\n' +
-				'  <source src="/api/v1/media/fileAttachments/' + fileGetData.id + '/data" type="' + latestMetadata.mimeType + '">\n' +
+				'  <source src="'+dataUrl+'" type="' + latestMetadata.mimeType + '">\n' +
 				'</video> ');
 			newContent.on("stalled", function (e) {
 				let code = newContent[0].error.code
@@ -49,11 +50,11 @@ const FileAttachmentView = {
 				console.log("Error code: ", code);
 			});
 		} else if (latestMetadata.mimeType.startsWith("image/")) {
-			newContent = $(' <img src="/api/v1/media/fileAttachments/' + fileGetData.id + '/data" style="max-width: 100%;" alt="">\n');
+			newContent = $(' <img src="'+dataUrl+'" style="max-width: 100%;" alt="">\n');
 		} else if (!preview) {//only show these if we are not previewing
 			if (latestMetadata.mimeType === "application/pdf") {
 				//TODO:: neither of these work
-				newContent = $('<object style="width: 100%; height: 500px;" type="application/pdf" data="/api/v1/media/fileAttachments/' + fileGetData.id + '/data"><p>Failed to load pdf.</p></object>');
+				newContent = $('<object style="width: 100%; height: 500px;" type="application/pdf" data="'+dataUrl+'"><p>Failed to load pdf.</p></object>');
 				// newContent = $('<embed src="/api/v1/media/fileAttachments/'+ fileGetData.id + '/data" width="500" height="375" />');
 			}
 			//TODO:: show pdf, text, markdown?
@@ -121,18 +122,18 @@ const FileAttachmentView = {
 	setupView(fileId) {
 		console.log("Setting up view for file ", fileId);
 		this.resetView();
-		this.fileViewDownloadButton.prop("href", '/api/v1/media/fileAttachments/' + fileId + '/data');
-		this.contentViewDownloadButton.prop("href", '/api/v1/media/fileAttachments/' + fileId + '/data');
+		let dataUrl = Rest.passRoot + '/media/fileAttachment/' + fileId + '/revision/latest/data';
+		this.fileViewDownloadButton.prop("href", dataUrl);
+		this.contentViewDownloadButton.prop("href", dataUrl);
 
 		Rest.call({
 			spinnerContainer: FileAttachmentView.viewModal,
-			url: "/api/v1/media/fileAttachments/" + fileId,
+			url: Rest.passRoot + "/media/fileAttachment/" + fileId,
 			failMessagesDiv: FileAttachmentView.viewModalMessages,
 			done: async function (data) {
 				console.log("Got file info: ", data);
-				let latestMetadata = data.revisions[0];
-				FileAttachmentView.fileName.text(latestMetadata.origName);
-				FileAttachmentView.fullViewTitle.text(latestMetadata.origName);
+				FileAttachmentView.fileName.text(data.fileName);
+				FileAttachmentView.fullViewTitle.text(data.fileName);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.previewContainer);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.fullViewContainer, false);
 				processKeywordDisplay(FileAttachmentView.keywords, data.keywords);
@@ -144,7 +145,7 @@ const FileAttachmentView = {
 					let newAccordItem = $('<div class="accordion-item">\n' +
 						'    <h2 class="accordion-header">\n' +
 						'        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fileAttachmentViewRevisionsAccord-' + i + '" aria-expanded="false" aria-controls="fileAttachmentViewRevisionsAccord-' + i + '">\n' +
-						'            ' + i + (i === 0 ? " (Latest)" : "") + '\n' +
+						'            ' + (i + 1) + ((i === (data.revisions.length - 1)) ? " (Latest)" : "") + '\n' +
 						'        </button>\n' +
 						'    </h2>\n' +
 						'    <div id="fileAttachmentViewRevisionsAccord-' + i + '" class="accordion-collapse collapse" data-bs-parent="#fileAttachmentViewRevisionsAccord">\n' +
@@ -174,11 +175,11 @@ const FileAttachmentView = {
 		fileList.forEach(function (curFileId, i){
 			Rest.call({
 				spinnerContainer: null,
-				url: "/api/v1/media/fileAttachments/" + curFileId,
+				url: Rest.passRoot + "/media/fileAttachment/" + curFileId,
 				failMessagesDiv: failMessagesDiv,
 				done: async function (data) {
 					let nextRow = $('<tr></tr>');
-					nextRow.append($('<td></td>').text(data.revisions[0].origName));
+					nextRow.append($('<td></td>').text(data.fileName));
 					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\''+curFileId+'\');">'+Icons.view+'</button></td>'));
 					fileShowContent.append(nextRow);
 				}

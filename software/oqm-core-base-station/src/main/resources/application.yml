@@ -95,6 +95,9 @@ ui:
   itemCategory:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  fileAttachment:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
