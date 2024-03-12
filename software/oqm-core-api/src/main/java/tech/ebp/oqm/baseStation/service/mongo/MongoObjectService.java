@@ -109,6 +109,20 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.listIterator(cs, null, null, null);
 	}
 	
+	public FindIterable<T> listIterator(@NonNull S searchObject) {
+		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+		
+		List<Bson> filters = searchObject.getSearchFilters();
+		log.debug("Filters: {}", filters);
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		
+		return this.listIterator(
+			filter,
+			searchObject.getSortBson(),
+			searchObject.getPagingOptions()
+		);
+	}
+	
 	/**
 	 * Gets a list of entries based on the options given.
 	 *

@@ -38,7 +38,7 @@ import java.io.IOException;
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
 @Slf4j
-@Path(ROOT_API_ENDPOINT_V1 + "/media/fileAttachments")
+@Path(ROOT_API_ENDPOINT_V1 + "/media/fileAttachment")
 @Tags({@Tag(name = "File Attachments", description = "Endpoints for File Attachments.")})
 @RequestScoped
 public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> {

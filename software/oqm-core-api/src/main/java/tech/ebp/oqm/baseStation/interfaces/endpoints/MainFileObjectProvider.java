@@ -1,6 +1,7 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.client.FindIterable;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.HeaderParam;
@@ -41,11 +42,9 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	
 	@WithSpan
 	protected Response.ResponseBuilder getSearchResponseBuilder(
-//		@BeanParam
 		S searchObject
 	) {
-		SearchResult<T> searchResult = this.getFileService().getFileObjectService().search(searchObject, true);
-		return this.getSearchResultResponseBuilder(searchResult);
+		return this.getSearchResultResponseBuilder(this.getFileService().search(searchObject));
 	}
 	
 	//<editor-fold desc="CRUD operations">

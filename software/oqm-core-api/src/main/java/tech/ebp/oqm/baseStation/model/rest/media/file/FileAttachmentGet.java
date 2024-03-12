@@ -22,6 +22,7 @@ public class FileAttachmentGet extends FileAttachment implements FileGet {
 	) {
 		return (FileAttachmentGet) (
 			(FileAttachmentGet) new FileAttachmentGet()
+									.setFileName(a.getFileName())
 									.setDescription(a.getDescription())
 		)
 									   .setRevisions(revisions)

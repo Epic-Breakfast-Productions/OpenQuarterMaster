@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.service.mongo.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
@@ -42,6 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Filters.and;
 
 /**
  * The main abstract service dealing with files.
@@ -174,17 +178,22 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getFileObjectService().get(id);
 	}
 	
-	public SearchResult<G> searchToGet(SearchResult<T> results){
-		SearchResult<G> output = new SearchResult<>(
-			results.getResults()
-				.stream()
-				.map(this::fileObjToGet)
-				.collect(Collectors.toList()),
-			results.getNumResultsForEntireQuery(),
-			results.isHadSearchQuery(),
-			results.getPagingOptions()
+	public SearchResult<G> search(S search){
+		List<Bson> filters = search.getSearchFilters();
+//		Bson filter = (filters.isEmpty() ? null : and(filters));
+		FindIterable<T> searchResult = this.getFileObjectService().listIterator(search);
+		
+		List<G> results = new ArrayList<>();
+		searchResult
+			.map(this::fileObjToGet)
+			.into(results);
+		
+		return new SearchResult<>(
+			results,
+			this.getFileObjectService().count(),
+			!filters.isEmpty(),
+			search.getPagingOptions()
 		);
-		return output;
 	}
 	
 	public long count(ClientSession clientSession) {
