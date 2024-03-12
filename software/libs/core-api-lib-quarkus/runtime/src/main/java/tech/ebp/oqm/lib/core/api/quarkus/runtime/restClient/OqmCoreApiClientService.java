@@ -1,9 +1,7 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -18,8 +16,6 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCa
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
@@ -127,6 +123,10 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(INV_ITEM_ROOT_ENDPOINT)
 	Uni<ObjectNode> invItemSearch(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam InventoryItemSearch inventoryItemSearch);
+	
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
+	Uni<ObjectNode> invItemGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("itemId") String invItemId);
 	
 	@GET
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
