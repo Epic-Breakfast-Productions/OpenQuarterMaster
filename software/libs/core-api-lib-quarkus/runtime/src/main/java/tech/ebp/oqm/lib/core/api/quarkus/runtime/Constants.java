@@ -13,6 +13,7 @@ public class Constants {
 	public static final String ITEM_CAT_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/inventory/item-category";
 	public static final String MEDIA_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/media";
 	public static final String IMAGE_ROOT_ENDPOINT = MEDIA_ROOT_ENDPOINT + "/image";
+	public static final String FILE_ATTACHMENT_ROOT_ENDPOINT = MEDIA_ROOT_ENDPOINT + "/fileAttachment";
 	
 	
 }

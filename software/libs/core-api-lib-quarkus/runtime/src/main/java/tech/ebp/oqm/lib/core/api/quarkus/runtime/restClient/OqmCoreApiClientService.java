@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
@@ -9,10 +10,12 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.FileAttachmentSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import java.io.File;
@@ -78,7 +81,11 @@ public interface OqmCoreApiClientService {
 	
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}/history")
-	Uni<ObjectNode> storageBlockGetHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("blockId") String storageBlockId, @BeanParam HistorySearch historySearch);
+	Uni<ObjectNode> storageBlockGetHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("blockId") String storageBlockId,
+		@BeanParam HistorySearch historySearch
+	);
 	//</editor-fold>
 	
 	//<editor-fold desc="Item Categories">
@@ -127,7 +134,6 @@ public interface OqmCoreApiClientService {
 	//</editor-fold>
 	
 	//<editor-fold desc="Images">
-	
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -208,7 +214,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> imageSearchHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token,@BeanParam HistorySearch searchObject);
+	Uni<ObjectNode> imageSearchHistory(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam HistorySearch searchObject);
 	
 	//TODO:: what return datatype?
 	@GET
@@ -217,6 +223,102 @@ public interface OqmCoreApiClientService {
 		"image/png",
 		"text/plain"
 	})
-	Uni<Response> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type,  @PathParam("id") String objId);
+	Uni<Response> imageForObject(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("id") String objId);
+	//</editor-fold>
+	
+	//<editor-fold desc="File Attachments">
+	@GET
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam FileAttachmentSearch searchObject
+	);
+	
+	@POST
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> fileAttachmentAdd(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam FileUploadBody body
+	);
+	
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
+	
+	@PUT
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<Integer> fileAttachmentUpdateFile(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam FileUploadBody body
+	);
+	
+	@PUT
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentUpdateObj(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		ObjectNode updates
+	);
+	
+	@GET
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentGetRevision(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		@PathParam("rev")
+		String revision
+	);
+	
+	@GET
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
+	@Produces("*/*")
+	Uni<Response> fileAttachmentGetRevisionData(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id,
+		@PathParam("rev")
+		String revision
+	);
+	
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentRemove(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id")
+		String id
+	);
+	
+	@GET
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> fileAttachmentGetHistoryForObject(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam HistorySearch searchObject
+	);
+	
+	@GET
+	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<SearchObject> fileAttachmentSearchHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam HistorySearch searchObject
+	);
 	//</editor-fold>
 }
