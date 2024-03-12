@@ -17,14 +17,12 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.model.CodeImageType;
 import tech.ebp.oqm.core.baseStation.model.ObjectCodeContentType;
 import tech.ebp.oqm.core.baseStation.service.BarcodeService;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
-
-import static tech.ebp.oqm.core.baseStation.model.ObjectCodeContentType.apilink;
-import static tech.ebp.oqm.core.baseStation.model.ObjectCodeContentType.uilink;
 
 /**
  * TODO:: review produces
@@ -38,12 +36,12 @@ public class BarcodeCreation extends ApiProvider {
 	
 	@Inject
 	BarcodeService barcodeService;
-	@Inject
+	@RestClient
 	OqmCoreApiClientService coreApiClientService;
 	
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String selfBaseUrl;
-	@ConfigProperty(name = "quarkus.coreApiBaseUri.coreApiBaseUri")
+	@ConfigProperty(name = "quarkus.oqmCoreApi.coreApiBaseUri")
 	String apiUri;
 	
 	private Response getBarcodeResponse(

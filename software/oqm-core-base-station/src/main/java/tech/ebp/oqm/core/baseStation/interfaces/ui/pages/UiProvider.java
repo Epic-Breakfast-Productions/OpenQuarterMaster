@@ -56,6 +56,12 @@ public abstract class UiProvider extends RestInterface {
 	}
 	
 	protected Uni<Response> getUni(TemplateInstance pageTemplate, Map<String, Uni> uniMap) {
+		if(uniMap.isEmpty()){
+			return Uni.createFrom().item(Response.ok(
+				pageTemplate,
+				MediaType.TEXT_HTML_TYPE
+			).build());
+		}
 		TreeSet<String> keys = new TreeSet<>(uniMap.keySet());
 		
 		UniJoin.Builder<Object> uniJoinBuilder = Uni.join().builder();
@@ -90,6 +96,11 @@ public abstract class UiProvider extends RestInterface {
 		return this.getUni(
 			this.setupPageTemplate(),
 			uniMap
+		);
+	}
+	protected Uni<Response> getUni() {
+		return this.getUni(
+			Map.of()
 		);
 	}
 	
