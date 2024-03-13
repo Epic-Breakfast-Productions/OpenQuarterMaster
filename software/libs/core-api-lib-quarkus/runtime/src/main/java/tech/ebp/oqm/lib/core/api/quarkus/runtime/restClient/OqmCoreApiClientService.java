@@ -1,5 +1,7 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.*;
@@ -8,6 +10,7 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.FileAttachmentSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
@@ -120,17 +123,165 @@ public interface OqmCoreApiClientService {
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Items">
+	@POST
+	@Path(INV_ITEM_ROOT_ENDPOINT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> invItemCreate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		ObjectNode item
+	);
+	
+	@POST
+	@Path(INV_ITEM_ROOT_ENDPOINT)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ArrayNode> invItemImportData(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam ImportBundleFileBody body
+	);
+	
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemCollectionStats(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
+	);
+	
 	@GET
 	@Path(INV_ITEM_ROOT_ENDPOINT)
-	Uni<ObjectNode> invItemSearch(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam InventoryItemSearch inventoryItemSearch);
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		//for actual queries
+		@BeanParam InventoryItemSearch itemSearch
+	);
+	
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemUpdate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		ObjectNode updates
+	);
+	
+	@DELETE
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemDelete(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
 	
 	@GET
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
-	Uni<ObjectNode> invItemGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("itemId") String invItemId);
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemGetHistoryForObject(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam HistorySearch searchObject
+	);
 	
 	@GET
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
-	Uni<ObjectNode> invItemCollectionStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemSearchHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam HistorySearch searchObject
+	);
+	
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemGetStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemAddStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode addObject
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemAddStoredInventoryItemToStored(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storedId") String storedId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode addObject
+	);
+	
+	@DELETE
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemSubtractStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode subtractObject
+	);
+	
+	@DELETE
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemSubtractStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storedId") String storedId,
+		@PathParam("storageBlockId") String storageBlockId,
+		JsonNode subtractObject
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockIdFrom}/{storageBlockIdTo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemTransferStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
+		@PathParam("storageBlockIdTo") String storageBlockIdTo,
+		JsonNode transferObject
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemTransferStoredInventoryItem(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
+		@PathParam("storedIdFrom") String storedIdFrom,
+		@PathParam("storageBlockIdTo") String storageBlockIdTo,
+		@PathParam("storedIdTo") String storedIdTo,
+		JsonNode transferObject
+	);
+	
+	@PUT
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/applyAddSubtractTransfer")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemApplyAddSubtractTransfer(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("itemId") String itemId,
+		ObjectNode action
+	);
 	//</editor-fold>
 	
 	//<editor-fold desc="Images">
