@@ -6,7 +6,7 @@ function addCapacityInput(container, value, selectedUnit){
   <input type="number" class="form-control capacityInput" placeholder="Capacity" name="capacity" min="0" required value="'+value+'"> \
   <select class="form-select unitSelect dselect-select" name="unit" required> \
   </select> \
-  <button type="button" class="input-group-text" onclick="keywordsAttsInputRem(this);" title="Remove Capacity">'+Icons.remove +'</button> \
+  <button type="button" class="input-group-text" onclick="KeywordAttEdit.keywordsAttsInputRem(this);" title="Remove Capacity">'+Icons.remove +'</button> \
 </div>');
 
     newInputDiv.find(".unitSelect").append(UnitUtils.getUnitOptions(selectedUnit));

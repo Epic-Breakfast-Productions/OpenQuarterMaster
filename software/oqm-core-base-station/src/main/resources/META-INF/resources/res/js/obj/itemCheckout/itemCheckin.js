@@ -125,7 +125,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 		"notes": ItemCheckin.notesInput.val(),
 		"checkinType": ItemCheckin.checkinTypeInput.val()
 	};
-	addKeywordAttData(checkinDetailsData, ItemCheckin.keywords, ItemCheckin.atts);
+	KeywordAttEdit.addKeywordAttData(checkinDetailsData, ItemCheckin.keywords, ItemCheckin.atts);
 
 	switch (checkinDetailsData.checkinType){
 		case "RETURN":

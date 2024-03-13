@@ -251,7 +251,7 @@ const ExtItemSearch = {
 				let useButt = ExtItemSearch.getUseButton();
 
 				useButt.on("click", function (e) {
-					addAttInput(
+					KeywordAttEdit.addAttInput(
 						ItemAddEdit.addEditAttDiv,
 						key,
 						val

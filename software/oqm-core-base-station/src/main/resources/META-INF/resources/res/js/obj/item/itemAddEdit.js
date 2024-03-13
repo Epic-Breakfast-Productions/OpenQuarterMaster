@@ -123,8 +123,8 @@ const ItemAddEdit = {
 		storedDivJq.find("[name=expires]")[0].value = storedData.expires;
 
 		addSelectedImages(storedDivJq.find(".imagesSelected"), storedData.imageIds);
-		addKeywordInputs(storedDivJq.find(".keywordInputDiv"), storedData.keywords);
-		addAttInputs(storedDivJq.find(".attInputDiv"), storedData.attributes);
+		KeywordAttEdit.addKeywordInputs(storedDivJq.find(".keywordInputDiv"), storedData.keywords);
+		KeywordAttEdit.addAttInputs(storedDivJq.find(".attInputDiv"), storedData.attributes);
 	},
 	setupAddEditForEdit(itemId) {
 		console.log("Setting up add/edit form for editing item " + itemId);
@@ -141,8 +141,8 @@ const ItemAddEdit = {
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
 				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
-				addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
-				addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
+				KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
+				KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
 				FileAttachmentSearchSelect.populateFileInputFromObject(
 					ItemAddEdit.fileInput,
 					data.attachedFiles,
@@ -586,7 +586,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		}
 	);
 
-	addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
+	KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
 	addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
 	ItemAddEdit.addEditItemStoredContainer.find(".storageBlock").each(function (i, storageBlockElement) {

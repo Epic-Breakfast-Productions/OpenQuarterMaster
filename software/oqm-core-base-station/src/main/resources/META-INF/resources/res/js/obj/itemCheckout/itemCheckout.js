@@ -92,7 +92,7 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 		"reason": ItemCheckout.reasonInput.val(),
 		"notes": ItemCheckout.notesInput.val()
 	}
-	addKeywordAttData(checkoutRequestData, ItemCheckout.keywords, ItemCheckout.atts);
+	KeywordAttEdit.addKeywordAttData(checkoutRequestData, ItemCheckout.keywords, ItemCheckout.atts);
 
 	//TODO:: checkedOutFor
 	//TODO:: adjusting the amount checked out for AMOUNT_STORED

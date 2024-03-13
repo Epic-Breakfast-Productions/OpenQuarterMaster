@@ -242,8 +242,8 @@
                                 Category.colorInput.val(data.color);
                             }
                             addSelectedImages(Category.imagesInputDiv, data.imageIds);
-                            addKeywordInputs(Category.keywordInputs, data.keywords);
-                            addAttInputs(Category.attInputs, data.attributes);
+							KeywordAttEdit.addKeywordInputs(Category.keywordInputs, data.keywords);
+							KeywordAttEdit.addAttInputs(Category.attInputs, data.attributes);
                         },
                         fail: function (data) {
                             console.warn("Bad response from get item category attempt: " + JSON.stringify(data));
@@ -262,7 +262,7 @@
                     parent: ItemCategoryInput.getValueFromInput(Category.parentInput),
 					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
                 };
-                addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
+				KeywordAttEdit.addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
                 addImagesToData(data, Category.imagesInputDiv);
                 
                 var result = false;

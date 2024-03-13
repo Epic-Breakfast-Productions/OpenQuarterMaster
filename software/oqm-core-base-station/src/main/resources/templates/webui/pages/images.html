@@ -189,9 +189,9 @@ function setupAddEditForEdit(id){
             addEditDescriptionInput.text(data.description);
 
             bindCroppie("/api/v1/media/image/" + id + "/data");
-
-            addKeywordInputs(keywordInputDiv, data.keywords);
-            addAttInputs(attInputDiv, data.attributes);
+			
+			KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
+			KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
         },
         failMessagesDiv: addEditFormMessages
     });

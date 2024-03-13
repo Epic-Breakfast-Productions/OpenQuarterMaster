@@ -134,7 +134,7 @@ const StoredEdit = {
 				output["expires"] = input.get(0).value;
 			}
 		}
-		addKeywordAttData(output, $(addEditItemStoredContainer.find(".keywordInputDiv").get(0)), $(addEditItemStoredContainer.find(".attInputDiv").get(0)));
+		KeywordAttEdit.addKeywordAttData(output, $(addEditItemStoredContainer.find(".keywordInputDiv").get(0)), $(addEditItemStoredContainer.find(".attInputDiv").get(0)));
 		addImagesToData(output, $(addEditItemStoredContainer.find(".imagesSelected").get(0)));
 
 		return output;

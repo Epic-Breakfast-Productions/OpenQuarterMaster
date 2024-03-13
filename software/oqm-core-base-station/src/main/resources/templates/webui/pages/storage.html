@@ -495,8 +495,8 @@ function setupAddEditForEdit(blockId){
                     addEditParentInputName.val(parentLabel);
                 });
             }
-            addKeywordInputs(keywordInputDiv, data.keywords);
-            addAttInputs(attInputDiv, data.attributes);
+            KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
+            KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
             addCapacityInputs(capacityInputDiv, data.capacityMeasures);
     	}
     });
@@ -515,7 +515,7 @@ addEditStorageForm.submit(async function (event) {
         capacityMeasures: []
     };
     
-    addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+    KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
     addImagesToData(addEditData, imagesSelected);
     
     capacityInputDiv.children().each(function (i, curCapDiv) {
