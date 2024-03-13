@@ -16,7 +16,7 @@
   <thead>
   <tr>
     <td colspan="6" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -29,7 +29,7 @@
   </tr>
   </thead>
   <tbody>
-  {#if searchResults.getResults().isEmpty()}
+  {#if searchResults.get("empty").asBoolean()}
   <tr>
     <td colspan="6" class="text-center">
       <h2>
@@ -86,7 +86,7 @@
   <tfoot>
   <tr>
     <td colspan="6" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   </tfoot>

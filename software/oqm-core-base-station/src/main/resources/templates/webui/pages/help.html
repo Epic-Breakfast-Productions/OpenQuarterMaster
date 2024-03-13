@@ -59,7 +59,7 @@
 				<ul>
 					{#for curUnit in curCategory.getValue()}
 					<li>
-						{curUnit.get("name").asText()} - (  #{curUnit.get("symbol").asText()} )
+						{curUnit.get("name").asText()} - (  <code>#</code>{curUnit.get("symbol").asText()} )
 					</li>
 					{/for}
 				</ul>

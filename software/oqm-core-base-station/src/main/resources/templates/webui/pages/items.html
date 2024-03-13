@@ -35,7 +35,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainItemSearch'}
+                    {#search/item/itemSearchForm id='mainPageSearch'}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -45,18 +45,16 @@
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainItemSearch'}
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
             {/search/item/itemSearchResults}
         </table>
     </div>
 </div>
-{#inputs/units/unitOptionsHidden allowedUnitsMap=allowedUnitsMap}
-{/inputs/units/unitOptionsHidden}
 {#search/image/imageSelectFormInputHidden}
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal}
+    {#objView/itemViewModal currency=currency}
         {#footerButtons}
             <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
                 {#icons/edit}{/icons/edit}
@@ -64,7 +62,7 @@
             </button>
         {/footerButtons}
     {/objView/itemViewModal}
-	{#itemAddEditModal}{/itemAddEditModal}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency}{/itemAddEditModal}
 	{#itemStoredAddSubTransferModal}{/itemStoredAddSubTransferModal}
 {#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
     {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
@@ -134,7 +132,6 @@
 {/scripts}
 {#pageScript}
 <script>
-fillInQueryForm($("#mainItemSearch"));
 const STORAGE_CLASS = "storageBlock";
 
 var keywordInputTemplate = $('#keywordInputTemplate');

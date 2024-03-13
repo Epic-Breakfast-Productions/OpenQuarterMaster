@@ -42,7 +42,7 @@ public class HelpUi extends UiProvider {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public Uni<Response> overview() {
-		return this.getUni(Map.of("unitCategoryMap", coreApiClient.getAllUnits(this.getBearerHeaderStr())));
+		return this.getUni(Map.of("unitCategoryMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr())));
 	}
 	
 }

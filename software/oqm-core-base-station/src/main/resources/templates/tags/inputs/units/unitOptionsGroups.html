@@ -6,11 +6,9 @@ Ingests:
 <String, List
 <Unit>> the map of allowed units
     !}
-{#for unitCategory in allowedUnitsMap.entrySet()}
-
-<optgroup label="{unitCategory.getKey()}">
-	{#inputs/units/unitOptions units=unitCategory.getValue()}
+{#for unitCategory in allUnitMap.fieldNames()}
+<optgroup label="{unitCategory}">
+	{#inputs/units/unitOptions units=allUnitMap.get(unitCategory)}
 	{/inputs/units/unitOptions}
 </optgroup>
-	
 {/for}

@@ -24,8 +24,10 @@ const UnitUtils = {
 	//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
 	updateCompatibleUnits(unitToCompatWith, containerToSearch) {
 		Rest.call({
-			url: "/api/v1/info/unitCompatibility/" + unitToCompatWith,
+			url: Rest.passRoot + "/inventory/unit/compatibility/" + unitToCompatWith,
 			extraHeaders: {accept: "text/html"},
+			dataType: "html",
+			returnType: "html",
 			async: false,
 			done: function (data) {
 				ItemAddEdit.compatibleUnitOptions = data;
