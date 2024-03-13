@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -19,7 +21,10 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCa
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
+import java.util.Currency;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
@@ -33,16 +38,46 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> getApiServerHealth();
 	
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/info/units")
-	Uni<ObjectNode> getAllUnits(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
-	
-	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/info/unitCompatibility")
-	Uni<ObjectNode> getUnitCompatability(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
-	
-	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
 	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
+	
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/info/currency")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	//</editor-fold>
+	
+	//<editor-fold desc="Units">
+	@GET
+	@Path(UNIT_ROOT_ENDPOINT)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> unitGetAll(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	@GET
+	@Path(UNIT_ROOT_ENDPOINT + "/compatibility")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> unitGetCompatibleMap(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	@GET
+	@Path(UNIT_ROOT_ENDPOINT + "/compatibility/{unit}")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ArrayNode> unitGetUnitCompatibleWith(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("unit") String unitString
+	);
+	
+	@POST
+	@Path(UNIT_ROOT_ENDPOINT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> unitCreateCustomUnit(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		ObjectNode ncur
+	);
 	//</editor-fold>
 	
 	//<editor-fold desc="Storage Blocks">
