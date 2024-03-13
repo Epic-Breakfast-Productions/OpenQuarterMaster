@@ -247,7 +247,7 @@ const ExtItemSearch = {
 			Object.keys(result.attributes).forEach(key => {
 				let val = result.attributes[key];
 
-				let curAtt = getAttDisplay(key, val);
+				let curAtt = KeywordAttUtils.getAttDisplay(key, val);
 				let useButt = ExtItemSearch.getUseButton();
 
 				useButt.on("click", function (e) {

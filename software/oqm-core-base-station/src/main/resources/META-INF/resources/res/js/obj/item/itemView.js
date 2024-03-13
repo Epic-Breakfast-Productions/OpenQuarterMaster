@@ -72,8 +72,8 @@ const ItemView = {
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
-		clearHideKeywordDisplay(ItemView.viewKeywordsSection);
-		clearHideAttDisplay(ItemView.viewAttsSection);
+		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
+		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.off('click');
@@ -229,8 +229,8 @@ const ItemView = {
 					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
 				}
 
-				processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
-				processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
+				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
+				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
 				ItemView.itemViewStorageType.text(itemData.storageType);
 				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);

@@ -352,8 +352,8 @@
                     ItemCategoryView.childrenContainer.text('');
                     
                     Carousel.clearCarousel(ItemCategoryView.carousel);
-                    clearHideKeywordDisplay(ItemCategoryView.keywordView);
-                    clearHideAttDisplay(ItemCategoryView.attsView);
+					KeywordAttUtils.clearHideKeywordDisplay(ItemCategoryView.keywordView);
+					KeywordAttUtils.clearHideAttDisplay(ItemCategoryView.attsView);
                     resetHistorySearch(ItemCategoryView.historyView);
                 },
                 async setupItemCategoryView(categoryId){
@@ -387,9 +387,9 @@
                             }
                             
                             //TODO:: parent (similar to storage)
-                            
-                            processKeywordDisplay(ItemCategoryView.keywordView, data.keywords);
-                            processAttDisplay(ItemCategoryView.attsView, data.attributes);
+							
+							KeywordAttUtils.processKeywordDisplay(ItemCategoryView.keywordView, data.keywords);
+							KeywordAttUtils.processAttDisplay(ItemCategoryView.attsView, data.attributes);
     
                             children = await children;
                             if(children.empty){

@@ -272,8 +272,8 @@ function resetView(){
     });
     viewDescriptionTextSection.hide();
     viewDescriptionText.text("");
-    clearHideKeywordDisplay(viewKeywordsSection);
-    clearHideAttDisplay(viewAttsSection);
+	KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
+	KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
     
     resetHistorySearch(imageHistoryAccordionCollapse);
 
@@ -300,8 +300,8 @@ function setupViewForImage(id){
                 viewDescriptionTextSection.show();
                 viewDescriptionText.text(data.description);
             }
-            processKeywordDisplay(viewKeywordsSection, data.keywords);
-            processAttDisplay(viewAttsSection, data.attributes);
+			KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
+			KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
 
             imageEditButton.click(function(event){
                 setupAddEditForEdit(id);

@@ -68,10 +68,10 @@ const ItemCheckoutView = {
 		ItemCheckoutView.checkinButton.hide();
 
 		resetHistorySearch(ItemCheckoutView.history);
-		clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
-		clearHideAttDisplay(ItemCheckoutView.viewAttsSection);
-		clearHideKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection);
-		clearHideAttDisplay(ItemCheckoutView.checkinDetailsAttsSection);
+		KeywordAttUtils.clearHideKeywordDisplay(ItemCheckoutView.viewKeywordsSection);
+		KeywordAttUtils.clearHideAttDisplay(ItemCheckoutView.viewAttsSection);
+		KeywordAttUtils.clearHideKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection);
+		KeywordAttUtils.clearHideAttDisplay(ItemCheckoutView.checkinDetailsAttsSection);
 	},
 	async setupView(itemCheckoutId){
 		console.log("Setting up view for item checkout " + itemCheckoutId);
@@ -114,8 +114,8 @@ const ItemCheckoutView = {
 						break;
 				}
 
-				processKeywordDisplay(ItemCheckoutView.viewKeywordsSection, checkoutData.keywords);
-				processAttDisplay(ItemCheckoutView.viewAttsSection, checkoutData.attributes);
+				KeywordAttUtils.processKeywordDisplay(ItemCheckoutView.viewKeywordsSection, checkoutData.keywords);
+				KeywordAttUtils.processAttDisplay(ItemCheckoutView.viewAttsSection, checkoutData.attributes);
 				ItemCheckoutView.checkedOutOn.text(checkoutData.checkoutDate);
 
 				if(checkoutData.dueBack){
@@ -180,8 +180,8 @@ const ItemCheckoutView = {
 					//TODO:: checked in by, enabled by #332
 					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
 					ItemCheckoutView.checkinDetailsTime.text(checkoutData.checkInDetails.checkinDateTime);
-					processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);
-					processAttDisplay(ItemCheckoutView.checkinDetailsAttsSection, checkoutData.checkInDetails.attributes);
+					KeywordAttUtils.processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);
+					KeywordAttUtils.processAttDisplay(ItemCheckoutView.checkinDetailsAttsSection, checkoutData.checkInDetails.attributes);
 
 					if(checkoutData.checkInDetails.notes) {
 						ItemCheckoutView.checkinDetailsNotes.text(checkoutData.checkInDetails.notes);

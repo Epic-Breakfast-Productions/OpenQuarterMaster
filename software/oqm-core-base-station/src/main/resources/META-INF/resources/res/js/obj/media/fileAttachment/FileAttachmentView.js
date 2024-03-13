@@ -24,8 +24,8 @@ const FileAttachmentView = {
 		this.description.text("");
 		this.numRevisions.text("0");
 		this.revisionsAccord.text("");
-		clearHideKeywordDisplay(this.keywords);
-		clearHideAttDisplay(this.atts);
+		KeywordAttUtils.clearHideKeywordDisplay(this.keywords);
+		KeywordAttUtils.clearHideAttDisplay(this.atts);
 	},
 	setupFileView(fileGetData, container, preview = true) {
 		let latestMetadata = fileGetData.revisions[fileGetData.revisions.length - 1];
@@ -136,8 +136,8 @@ const FileAttachmentView = {
 				FileAttachmentView.fullViewTitle.text(data.fileName);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.previewContainer);
 				FileAttachmentView.setupFileView(data, FileAttachmentView.fullViewContainer, false);
-				processKeywordDisplay(FileAttachmentView.keywords, data.keywords);
-				processAttDisplay(FileAttachmentView.atts, data.attributes);
+				KeywordAttUtils.processKeywordDisplay(FileAttachmentView.keywords, data.keywords);
+				KeywordAttUtils.processAttDisplay(FileAttachmentView.atts, data.attributes);
 				FileAttachmentView.description.text(data.description);
 				FileAttachmentView.numRevisions.text(data.revisions.length);
 

@@ -641,8 +641,8 @@ function resetView(){
     storageBlockViewModalLabel.text("");
     storageBlockViewItemsStoredContent.text("");
     Carousel.clearCarousel(storageBlockViewCarousel);
-    clearHideKeywordDisplay(viewKeywordsSection);
-    clearHideAttDisplay(viewAttsSection);
+    KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
+    KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
     
 }
 
@@ -663,8 +663,8 @@ function setupView(blockId){
             let promises = [];
             let children = getStorageBlockChildrenData(blockId);
             let storageBlockItems = getStorageBlockItemData(blockId);
-            processKeywordDisplay(viewKeywordsSection, data.keywords);
-            processAttDisplay(viewAttsSection, data.attributes);
+            KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
+            KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
             promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
             
             if(data.nickname){
