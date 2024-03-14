@@ -52,7 +52,7 @@ const ItemCheckin = {
 
 		await Rest.call({
 			spinnerContainer: ItemCheckin.modal.get(0),
-			url: "/api/v1/inventory/item-checkout/" + checkoutId,
+			url: Rest.passRoot + "/inventory/item-checkout/" + checkoutId,
 			method: "GET",
 			async: false,
 			done: async function (data) {
@@ -74,7 +74,7 @@ const ItemCheckin = {
 				let promises = [];
 
 				promises.push(Rest.call({
-					url: "/api/v1/inventory/item/" + data.item,
+					url: Rest.passRoot + "/inventory/item/" + data.item,
 					method: "GET",
 					async: false,
 					failMessagesDiv: ItemCheckin.messages,
@@ -146,7 +146,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 	Rest.call({
 		spinnerContainer: ItemCheckin.modal.get(0),
 		failMessagesDiv: ItemCheckin.messages,
-		url: "/api/v1/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
+		url: Rest.passRoot + "/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
 		method: "PUT",
 		data: checkinDetailsData,
 		done: function (data) {

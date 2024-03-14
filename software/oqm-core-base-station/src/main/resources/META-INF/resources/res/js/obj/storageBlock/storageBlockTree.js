@@ -31,7 +31,7 @@ const StorageBlockTree = {
 		};
 
 		if (curBlock.firstImageId) {
-			curNode.image = "/api/v1/media/image/" + curBlock.firstImageId + "/data";
+			curNode.image = Rest.passRoot + "/media/image/" + curBlock.firstImageId + "/revision/latest/data";
 		}
 
 		if (curBlock.children) {

@@ -32,7 +32,7 @@ const ItemCategoryTree = {
 		};
 
 		if (curBlock.firstImageId) {
-			curNode.image = "/api/v1/media/image/" + curBlock.firstImageId + "/data";
+			curNode.image = Rest.passRoot + "/media/image/" + curBlock.firstImageId + "/data";
 		}
 
 		if (curBlock.children) {
@@ -49,7 +49,7 @@ const ItemCategoryTree = {
 
 		Rest.call({
 //        spinnerContainer: $(containerSelector),
-			url: "/api/v1/inventory/item-category/tree",
+			url: Rest.passRoot + "/inventory/item-category/tree",
 			done: function (data) {
 				console.log("Successfully got tree data.");
 				var rootChildrenList = chartConfig.nodeStructure.children;

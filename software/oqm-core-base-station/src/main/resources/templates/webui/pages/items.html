@@ -76,7 +76,7 @@
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
                     <label for="importBulkFileInput" class="form-label">
-                        <a href="/api/v1/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        <a href="/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
                         or {#icons/fileJson}{/icons/fileJson} JSON file:
                     </label>
                     <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
@@ -153,7 +153,7 @@ $("#addItemFromFileForm").submit(function (e){
     formData.append("file", file);
     
     Rest.call({
-        url: '/api/v1/inventory/item',
+        url: Rest.passRoot + '/inventory/item',
         method: "post",
         data: formData,
         done: function (data){
@@ -171,7 +171,7 @@ function removeItem(itemId){
     console.log("Removing item " + itemId);
     
     Rest.call({
-        url: "/api/v1/inventory/item/" + itemId,
+        url: Rest.passRoot + "/inventory/item/" + itemId,
         method: "DELETE",
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));

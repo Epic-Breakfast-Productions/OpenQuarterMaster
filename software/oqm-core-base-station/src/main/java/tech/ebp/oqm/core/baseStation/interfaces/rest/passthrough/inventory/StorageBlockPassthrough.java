@@ -55,13 +55,17 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	public Uni<Response> getStorageBlock(
 		@BeanParam StorageBlockSearch storageBlockSearch,
 		@HeaderParam("Accept") String acceptType,
-		@HeaderParam("searchFormId") String searchFormId
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch),
 			this.searchResultTemplate,
 			acceptType,
-			searchFormId
+			searchFormId,
+			otherModalId,
+			inputIdPrepend
 		);
 	}
 	

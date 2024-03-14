@@ -806,7 +806,7 @@ var storageBlockInventorySheetPrintoutFormBlockNameInput = $("#storageBlockInven
 function setupStorageBlockInvSheetPrintoutForm(){
     storageBlockInventorySheetPrintoutForm[0].reset();
     
-    storageBlockInventorySheetPrintoutForm.attr("action", "/api/v1/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
+    storageBlockInventorySheetPrintoutForm.attr("action", Rest.passRoot + "/inventory/storage-block/"+storageBlockViewId.text()+"/storageSheet");
     storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
 }
 

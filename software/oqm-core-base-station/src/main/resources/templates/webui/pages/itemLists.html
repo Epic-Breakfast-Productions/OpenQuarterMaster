@@ -118,7 +118,7 @@
 				};
 				
 				await Rest.call({
-					url: "/api/v1/inventory/item-list",
+					url: Rest.passRoot + "/inventory/item-list",
 					method: "POST",
 					data: addData,
 					async: false,
@@ -142,7 +142,7 @@
 				console.log("Removing item list " + listId);
 
 				Rest.call({
-					url: "/api/v1/inventory/item-list/" + listId,
+					url: Rest.passRoot + "/inventory/item-list/" + listId,
 					method: "DELETE",
 					done: function(data) {
 						console.log("Response from remove request: " + JSON.stringify(data));

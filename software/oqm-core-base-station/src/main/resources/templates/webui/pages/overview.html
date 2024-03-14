@@ -237,7 +237,7 @@
 					let accordButt = curAccord.find(".accordion-button");
 
 					accordButt.append(
-						$('<img class="accordion-thumb" src="/api/v1/media/image/for/item/'+invItem.id+'" alt="">'),
+						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/item/'+invItem.id+'" alt="">'),
 						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
 					);
 					
@@ -271,7 +271,7 @@
 					let accordButt = curAccord.find(".accordion-button");
 					
 					accordButt.append(
-						$('<img class="accordion-thumb" src="/api/v1/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
+						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
 						$('<span></span>').text(storageBlock.labelText)
 					);
 					
@@ -362,7 +362,7 @@
 				created[storageBlockId] = [];
 
 				Rest.call({
-					url: "/api/v1/inventory/storage-block/" + storageBlockId,
+					url: Rest.passRoot + "/inventory/storage-block/" + storageBlockId,
 					method: "GET",
 					done: async function(data) {
 						let newContent = await createNewStorageBlockContent(data);
@@ -386,7 +386,7 @@
 				created[storageBlockId][itemId] = true;
 
 				Rest.call({
-					url: "/api/v1/inventory/item/" + itemId,
+					url: Rest.passRoot + "/inventory/item/" + itemId,
 					method: "GET",
 					done: async function(data) {
 						let newContent = await getInvItemDetailsSection(data, storageBlockId);

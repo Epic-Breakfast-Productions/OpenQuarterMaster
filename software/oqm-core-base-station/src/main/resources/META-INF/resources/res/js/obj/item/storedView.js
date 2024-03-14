@@ -20,7 +20,7 @@ const StoredView = {
 	},
 	getStorageBlockBarcodeView(stored, itemId, storageBlockId, index = false) {
 		if (stored.barcode) {
-			let url = "/api/v1/media/code/item/" + itemId + "/barcode/stored/" + storageBlockId;
+			let url = "/api/media/code/item/" + itemId + "/barcode/stored/" + storageBlockId;
 
 			if (index !== false) {
 				url += "/" + index;

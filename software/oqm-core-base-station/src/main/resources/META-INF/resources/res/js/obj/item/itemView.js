@@ -358,4 +358,4 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 			ItemView.checkoutSearchResults.html(data);
 		}
 	});
-})
+});

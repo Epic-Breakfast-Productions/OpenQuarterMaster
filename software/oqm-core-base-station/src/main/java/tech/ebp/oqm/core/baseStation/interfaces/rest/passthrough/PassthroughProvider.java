@@ -103,7 +103,9 @@ public abstract class PassthroughProvider extends ApiProvider {
 		Uni<ObjectNode> searchUni,
 		Template searchResultTemplate,
 		String acceptType,
-		String searchFormId
+		String searchFormId,
+		String otherModalId,
+		String inputIdPrepend
 	) {
 		if (MediaType.TEXT_HTML.equals(acceptType)) {
 			return searchUni.map(
@@ -113,6 +115,8 @@ public abstract class PassthroughProvider extends ApiProvider {
 						searchResultTemplate
 							.data("actionType", "select")
 							.data("searchFormId", searchFormId)
+							.data("otherModalId", otherModalId)
+							.data("inputIdPrepend", inputIdPrepend)
 							.data("searchResults", endResults),
 						MediaType.TEXT_HTML
 					).build();

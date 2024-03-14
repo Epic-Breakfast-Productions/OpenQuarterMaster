@@ -9,7 +9,7 @@ function setupImageSearchModal(selectedImagesDiv) {
 
 function selectImage(imageName, imageId) {
 	var newImageSelected = $('<div class="card selectedImage g-0 p-1 m-1 text-center float-start" > \
-        <img src="/api/v1/media/image/' + imageId + '/data" alt="' + imageName + '" class="card-img-top" onclick="removeSelectedImage(this.parentElement);" data-bs-imageId="' + imageId + '"> \
+        <img src="'+Rest.passRoot+'/media/image/' + imageId + '/revision/latest/data" alt="' + imageName + '" class="card-img-top" onclick="removeSelectedImage(this.parentElement);" data-bs-imageId="' + imageId + '"> \
         <div class="input-group m-1 p-1"> \
             <button type="button" title="Move image up" class="btn btn-sm btn-outline-dark" onclick="moveImageInputUp(this.parentElement.parentElement);">&lt;</button> \
             <button type="button" title="Move image down" class="btn btn-sm btn-outline-dark" onclick="moveImageInputDown(this.parentElement.parentElement);">&gt;</button> \
@@ -26,7 +26,7 @@ function addSelectedImages(selectedImagesDiv, imageList) {
 		await Rest.call({
 			async: false,
 			spinnerContainer: null,
-			url: "/api/v1/media/image/" + imageId,
+			url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest/data",
 			done: function (data) {
 				titleArr[i] = data.title
 			}
@@ -76,7 +76,7 @@ imageSearchSelectForm.on("submit", function (event) {
 
 	Rest.call({
 		spinnerContainer: imageSearchSelectModal.get(0),
-		url: "/api/v1/media/image?" + searchParams,
+		url: Rest.passRoot + "/media/image?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,

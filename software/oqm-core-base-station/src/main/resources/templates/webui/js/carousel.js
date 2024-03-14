@@ -72,7 +72,7 @@ const Carousel = {
 						async: false,
 						done: function (data) {
 							carouselData[i] = {
-								src: "/api/v1/media/image/" + id + "/data",
+								src: Rest.passRoot + "/media/image/" + id + "/revision/latest/data",
 								alt: data.name,
 								captionHeading: data.name,
 								caption: data.description

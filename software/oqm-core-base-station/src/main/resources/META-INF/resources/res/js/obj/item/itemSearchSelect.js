@@ -29,7 +29,7 @@ ItemSearchSelect.itemSearchSelectForm.on("submit", function (event) {
 
 	Rest.call({
 		spinnerContainer: ItemSearchSelect.itemSearchSelectModal.get(0),
-		url: "/api/v1/inventory/item?" + searchParams,
+		url: Rest.passRoot + "/inventory/item?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,

@@ -179,7 +179,7 @@
 								</h2>
 								<div id="exportCollapse" class="accordion-collapse collapse" aria-labelledby="exportHeading" data-bs-parent="#importExportAccordion">
 									<div class="accordion-body">
-										<form target="_blank" method="get" action="/api/v1/inventory/manage/export">
+										<form target="_blank" method="get" action="/api/passthrough/inventory/manage/export">
 											<div class="col-12 mb-2">
 												<div class="form-check form-switch">
 													<input class="form-check-input" type="checkbox" role="switch" id="excludeHistoryCheckbox" name="excludeHistory" value="true">
@@ -228,7 +228,7 @@
 				formData.append("file", file);
 				
 				Rest.call({
-					url: '/api/v1/inventory/manage/import/file/bundle',
+					url: Rest.passRoot + '/inventory/manage/import/file/bundle',
 					method: "post",
 					data: formData,
 					failMessagesDiv: $("#dataImportMessages"),
@@ -295,7 +295,7 @@
 				
 				Rest.call({
 					authorization: true,
-					url: "/api/v1/inventory/manage/customUnit",
+					url: Rest.passRoot + "/inventory/manage/customUnit",
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){

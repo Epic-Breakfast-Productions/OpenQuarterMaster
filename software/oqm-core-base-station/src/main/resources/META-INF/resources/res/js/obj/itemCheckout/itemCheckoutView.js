@@ -81,7 +81,7 @@ const ItemCheckoutView = {
 
 		await Rest.call({
 			spinnerContainer: ItemCheckoutView.itemCheckoutViewModal.get(0),
-			url: "/api/v1/inventory/item-checkout/" + itemCheckoutId,
+			url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId,
 			method: "GET",
 			async: false,
 			failMessagesDiv: ItemCheckin.messages,
@@ -148,7 +148,7 @@ const ItemCheckoutView = {
 				}
 
 				promises.push(Rest.call({
-					url: "/api/v1/inventory/item/" + checkoutData.item,
+					url: Rest.passRoot + "/inventory/item/" + checkoutData.item,
 					method: "GET",
 					async: false,
 					failMessagesDiv: ItemCheckin.messages,

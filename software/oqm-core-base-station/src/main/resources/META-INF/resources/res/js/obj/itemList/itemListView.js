@@ -31,7 +31,7 @@ const ItemListView = {
 		ItemListView.itemListReviewActionsContent.text("");
 
 		Rest.call({
-			url: "/api/v1/inventory/item-list/" + itemListId,
+			url: Rest.passRoot + "/inventory/item-list/" + itemListId,
 			failMessagesDiv: ItemListView.itemListReviewMessages,
 			spinnerContainer: ItemListView.itemListReviewModalBody,
 			done: async function (data) {

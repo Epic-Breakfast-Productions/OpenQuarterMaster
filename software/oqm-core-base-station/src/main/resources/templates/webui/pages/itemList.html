@@ -150,7 +150,7 @@
 				searchParams.set("itemBarcode", barcode);
 				
 				Rest.call({
-					url: "/api/v1/inventory/item?"+searchParams.toString(),
+					url: Rest.passRoot + "/inventory/item?"+searchParams.toString(),
 					done: async function (data) {
 						if(!data.length){
 							console.log("No item with barcode found.");

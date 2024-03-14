@@ -260,10 +260,10 @@ const ItemStoredAddSubTransfer = {
 	 */
 	setupForItem(itemId) {
 		this.resetForms();
-		this.formItemImg.attr("src", "/api/v1/media/image/for/item/" + itemId);
+		this.formItemImg.attr("src", Rest.passRoot + "/media/image/for/item/" + itemId);
 		Rest.call({
 			// spinnerContainer: null,
-			url: "/api/v1/inventory/item/" + itemId,
+			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
 			done: async function (itemData) {
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
@@ -428,7 +428,7 @@ const ItemStoredAddSubTransfer = {
 		console.log("Applying item add/sub/transfer object.")
 		Rest.call({
 			// spinnerContainer: null,
-			url: "/api/v1/inventory/item/" + itemId + "/stored/applyAddSubtractTransfer",
+			url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/applyAddSubtractTransfer",
 			method: "PUT",
 			data: applyObject,
 			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,

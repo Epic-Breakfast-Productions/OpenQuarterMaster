@@ -3,7 +3,7 @@ const EntityRef = {
 	getEntityRef(entityRef, doneFunc){
 		return Rest.call({
 			spinnerContainer: null,
-			url: "/api/v1/interacting-entity/reference",
+			url: Rest.passRoot + "/interacting-entity/reference",
 			method: "POST",
 			data: entityRef,
 			extraHeaders: {
