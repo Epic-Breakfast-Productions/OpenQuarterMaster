@@ -46,40 +46,42 @@
     </td>
   </tr>
   {#else}
-  {#for result in searchResults.getResults()}
+  {#for result in searchResults.get("results")}
+  	{#let id=result.get("id").asText() name=result.get("name").asText()}
   <tr class="itemResultRow align-middle">
     <td>
-      {#if !result.getImageIds().isEmpty()}
-      <img src="/api/v1/media/image/for/item/{result.getId()}" class="searchResultImage">
+      {#if !result.get("imageIds").isEmpty()}
+      <img src="/api/v1/media/image/for/item/{id}" class="searchResultImage">
       {/if}
     </td>
-    <td>{result.getName()}</td>
-    <td>{result.getStorageType()}</td>
-    <td>{result.getTotal()}</td>
-    <td>{result.getStorageMap().size()}</td>
+    <td>{name}</td>
+    <td>{result.get("storageType").asText()}</td>
+    <td>{result.get("total").asText()}</td>
+    <td>{result.get("storageMap").size()}</td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">
         {#icons/addSubTrans}{/icons/addSubTrans}
       </button>
       <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeItem('{result.getId()}');">{#icons/remove}{/icons/remove}</button>
+              onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {result.getName()}"
+      <button type="button" class="btn btn-sm btn-success" title="Select {name}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="ItemSearchSelect.selectItem('{result.getName()}', '{result.getId()}', '{inputIdPrepend}');">
+              onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
       {/if}
     </td>
   </tr>
+  	{/let}
   {/for}
   {/if}
   </tbody>

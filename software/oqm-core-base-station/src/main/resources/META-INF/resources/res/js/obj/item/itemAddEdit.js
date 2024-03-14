@@ -137,7 +137,7 @@ const ItemAddEdit = {
 
 		Rest.call({
 			spinnerContainer: ItemAddEdit.addEditItemModal,
-			url: "/api/v1/inventory/item/" + itemId,
+			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
 				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
@@ -566,7 +566,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(),
 			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
-		categories: ItemAddEdit.addEditItemCategoriesInput.val(),
+		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
 		storageMap: {},
 		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
 	};
@@ -627,7 +627,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		verb = "Created";
 		console.log("Adding new item.");
 		await Rest.call({
-			url: "/api/v1/inventory/item",
+			url: Rest.passRoot + "/inventory/item",
 			method: "POST",
 			data: addEditData,
 			async: false,
@@ -643,7 +643,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		console.log("Editing storage block " + id);
 
 		await Rest.call({
-			url: "/api/v1/inventory/item/" + id,
+			url: Rest.passRoot + "/inventory/item/" + id,
 			method: "PUT",
 			data: addEditData,
 			async: false,

@@ -219,7 +219,7 @@ const ItemView = {
 
 		Rest.call({
 			spinnerContainer: ItemView.itemViewModal,
-			url: "/api/v1/inventory/item/" + itemId,
+			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemView.itemViewMessages,
 			done: async function (itemData) {
 				let promises = [];
@@ -243,7 +243,7 @@ const ItemView = {
 				}
 
 				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", "/api/v1/media/code/item/" + itemData.id + "/barcode")
+					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode")
 					ItemView.itemViewBarcodeContainer.show();
 				}
 
@@ -290,7 +290,7 @@ const ItemView = {
 						await Rest.call({
 							spinnerContainer: null,
 							async: false,
-							url: "/api/v1/inventory/storage-block/" + storageId,
+							url: Rest.passRoot + "/inventory/storage-block/" + storageId,
 							failMessagesDiv: ItemView.itemViewMessages,
 							done: function (data) {
 								curBlockName = data.label;
@@ -342,7 +342,7 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 
 	Rest.call({
 		spinnerContainer: ItemView.itemViewModal.get(0),
-		url: "/api/v1/inventory/item-checkout?" + searchParams,
+		url: Rest.passRoot + "/inventory/item-checkout?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
