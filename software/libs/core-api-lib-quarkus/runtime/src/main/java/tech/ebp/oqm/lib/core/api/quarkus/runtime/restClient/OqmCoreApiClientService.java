@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -20,11 +19,10 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Invent
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCheckoutSearch;
 
 import java.util.Currency;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
@@ -503,6 +501,78 @@ public interface OqmCoreApiClientService {
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<SearchObject> fileAttachmentSearchHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam HistorySearch searchObject
+	);
+	//</editor-fold>
+	
+	//<editor-fold desc="Item Checkouts">
+	
+	@POST
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> itemCheckoutCreate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		ObjectNode itemCheckoutRequest
+	);
+	
+	@PUT
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT+ "/{id}/checkin")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutCheckin(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		ObjectNode checkInDetails
+	);
+	
+	@GET
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam ItemCheckoutSearch itemCheckoutSearch
+	);
+	
+	@Path( ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
+	
+	@PUT
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutUpdate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		ObjectNode updates
+	);
+	
+	@DELETE
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutDelete(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id
+	);
+	
+	@GET
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutGetHistoryForObject(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("id") String id,
+		@BeanParam HistorySearch searchObject
+	);
+	
+	@GET
+	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> itemCheckoutSearchHistory(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@BeanParam HistorySearch searchObject
 	);
