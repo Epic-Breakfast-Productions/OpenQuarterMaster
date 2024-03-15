@@ -34,9 +34,8 @@
 			<div class="mb-3">
 				<label class="form-label" for="itemCheckinFormTypeInput">Type:</label>
 				<select id="itemCheckinFormTypeInput" class="form-select" aria-describedby="itemCheckinFormTypeInputHelp" onchange="ItemCheckin.setCheckinTypeView();" required>
-				{#each tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteEnumUtils:getCheckinTypes()}
-					<option value="{it}">{it.name().toLowerCase()}</option>
-				{/each}
+					<option value="RETURN">Return</option>
+					<option value="LOSS">Loss</option>
 				</select>
 				<div id="itemCheckinFormTypeInputHelp" class="form-text">
 					If the checkout is being returned or marked as a loss.

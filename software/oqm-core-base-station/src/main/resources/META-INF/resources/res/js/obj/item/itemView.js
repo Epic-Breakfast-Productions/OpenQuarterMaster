@@ -344,6 +344,7 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 		spinnerContainer: ItemView.itemViewModal.get(0),
 		url: Rest.passRoot + "/inventory/item-checkout?" + searchParams,
 		method: 'GET',
+		returnType: false,
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
 		extraHeaders: {

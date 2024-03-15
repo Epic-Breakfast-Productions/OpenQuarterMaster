@@ -15,15 +15,12 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 @Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/coreApiHealth")
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class ApiHealthCheckGet extends PassthroughProvider {
-	
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClient;
+public class ApiHealthCheckPassthrough extends PassthroughProvider {
 	
 	@GET
 	public Uni<Response> getApiHealth(){
 		//TODO:: handle error cases
-		return oqmCoreApiClient.getApiServerHealth().map(
+		return this.getOqmCoreApiClient().getApiServerHealth().map(
 			response ->
 			Response.ok(response).build()
 		);

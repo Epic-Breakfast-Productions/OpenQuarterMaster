@@ -1,11 +1,10 @@
 
 const EntityRef = {
-	getEntityRef(entityRef, doneFunc){
+	getEntityRef(entityId, doneFunc){
 		return Rest.call({
 			spinnerContainer: null,
-			url: Rest.passRoot + "/interacting-entity/reference",
-			method: "POST",
-			data: entityRef,
+			url: Rest.passRoot + "/interacting-entity/"+entityId+"/reference",
+			method: "GET",
 			extraHeaders: {
 				"accept": "text/html"
 			},

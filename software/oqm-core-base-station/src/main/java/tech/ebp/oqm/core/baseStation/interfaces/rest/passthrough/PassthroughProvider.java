@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.inject.Inject;
@@ -101,7 +102,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 	
 	protected Uni<Response> processSearchResults(
 		Uni<ObjectNode> searchUni,
-		Template searchResultTemplate,
+		TemplateInstance searchResultTemplate,
 		String acceptType,
 		String searchFormId,
 		String otherModalId,
@@ -128,5 +129,22 @@ public abstract class PassthroughProvider extends ApiProvider {
 			});
 		}
 		
+	}
+	protected Uni<Response> processSearchResults(
+		Uni<ObjectNode> searchUni,
+		Template searchResultTemplate,
+		String acceptType,
+		String searchFormId,
+		String otherModalId,
+		String inputIdPrepend
+	) {
+		return this.processSearchResults(
+			searchUni,
+			searchResultTemplate.instance(),
+			acceptType,
+			searchFormId,
+			otherModalId,
+			inputIdPrepend
+		);
 	}
 }

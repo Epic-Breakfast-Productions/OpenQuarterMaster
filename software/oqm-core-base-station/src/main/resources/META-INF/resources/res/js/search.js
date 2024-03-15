@@ -113,11 +113,11 @@ $(document).ready(function(){
 });
 
 $(".pagingSearchForm").each(function (i, form) {
-	var pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
+	let pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
 	$(form).find(":input").each(function (i2, input) {
 		if (input.name != "pageNum") {
 			input.addEventListener('change', function () {
-				resetToOne(pageNumInputId);
+				Search.resetPageToOne(pageNumInputId);
 			});
 		}
 	});

@@ -16,7 +16,7 @@
   <thead>
   <tr>
     <td colspan="7" class="text-center">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
@@ -30,7 +30,7 @@
   </tr>
   </thead>
   <tbody>
-  {#if searchResults.getResults().isEmpty()}
+  {#if searchResults.get("empty").asBoolean()}
   <tr>
     <td colspan="7" class="text-center">
       <h2>
@@ -42,49 +42,50 @@
     </td>
   </tr>
   {#else}
-  {#for result in searchResults.getResults()}
+  {#for result in searchResults.get("results")}
+  	{#let id=result.get("id").asText()}
   <tr class="align-middle">
     {#if showItem}
     <td>
-      {#links/inventoryItem inventoryItem=result.getItem()}{/links/inventoryItem}
+      {#links/inventoryItem inventoryItem=result.get("item").asText()}{/links/inventoryItem}
     </td>
     {/if}
-      <td class="table-{#if result.isStillCheckedOut()}active{#else}success{/if}">
-      {#if result.isStillCheckedOut()}
+      <td class="table-{#if result.get("stillCheckedOut").asBoolean()}active{#else}success{/if}">
+      {#if result.get("stillCheckedOut").asBoolean()}
         {#icons/checkout}{/icons/checkout} Out
       {#else}
         {#icons/checkin}{/icons/checkin} In
       {/if}
       </td>
     <td>
-      {#links/storageBlock storageBlock=result.getCheckedOutFrom()}{/links/storageBlock}
+      {#links/storageBlock storageBlock=result.get("checkedOutFrom").asText()}{/links/storageBlock}
     </td>
     <td>
-      {#when result.getCheckedOutFor().getType()}
-      {#is OQM_ENTITY}
+      {#when result.get("checkedOutFor").asText()}
+      {#is "OQM_ENTITY"}
       {#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}
-      {#is EXT_SYS_USER}
+      {#is "EXT_SYS_USER"}
       {/when}
     </td>
     <td>
-		CREATE EVENT
+		SOME USER
       {!{#interactingEntityRef entityRef=cdi:ItemCheckoutService.getCreateEvent(result.getId()).getEntity()}{/interactingEntityRef}!}
     </td>
     <td>
       {! TODO:: special styling !}
-      {result.getDueBack()}
+      {result.get("dueBack").asText()}
     </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="ItemCheckoutView.setupView('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="ItemCheckoutView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
-      {#if result.isStillCheckedOut()}
-      <button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{result.getId()}');">
+      {#if result.get("stillCheckedOut").asBoolean()}
+      <button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{id}');">
         {#icons/checkin}{/icons/checkin}
       </button>
       {/if}
-      <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItem('{result.getId()}');">
+      <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemCheckout('{id}');">
         {#icons/remove}{/icons/remove}
       </button>
     </td>
@@ -99,17 +100,18 @@
     {#else if actionType == 'viewLink'}
     <td>
       {#links/itemCheckoutButton id=result.getId()}{/links/itemCheckoutButton}
-      <a href="/itemCheckout?checkin={result.getId()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
+      <a href="/itemCheckout?checkin={id}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
     </td>
     {/if}
   </tr>
+  	{/let}
   {/for}
   {/if}
   </tbody>
   <tfoot>
   <tr>
     <td colspan="7" class="text-center">
-      {#paginationButtons searchFormId=searchFormId pagingCalculations=pagingCalculations}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   </tfoot>
