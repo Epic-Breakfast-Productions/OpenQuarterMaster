@@ -211,13 +211,13 @@
 
 
 			function getInvItemSection(invItemArr, parentId){
-				if(invItemArr.length === 0){
+				if(invItemArr.results.length === 0){
 					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
 
-				invItemArr.forEach(function(invItem){
+				invItemArr.results.forEach(function(invItem){
 					let accordItemId = accordId+'AccordItem'+invItem.id;
 					let accordItemHeaderId = accordItemId + "Header";
 					let accordItemCollapseId = accordItemId + "Collapse";
@@ -250,13 +250,13 @@
 			}
 			
 			function getStorageBlockSection(storageBlockArr, parentId){
-				if(storageBlockArr.length === 0){
+				if(storageBlockArr.results.length === 0){
 					return $('<p>{#icons/storageBlocks}{/icons/storageBlocks} No children.</p>');
 				}
 				let accordId = "storageBlockAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
 				
-				storageBlockArr.forEach(function(storageBlock){
+				storageBlockArr.results.forEach(function(storageBlock){
 					let curAccord = $('<div class="accordion-item" id="accordItem'+storageBlock.id+'" data-storage-block-id="'+storageBlock.id+'">' +
 											'<h2 class="accordion-header " id="accordHeader'+storageBlock.id+'" onclick="overviewAccordionClicked(\''+storageBlock.id+'\', $(this).parent())">' +
 												'<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse'+storageBlock.id+'" aria-expanded="false" aria-controls="accordCollapse'+storageBlock.id+'">' +
