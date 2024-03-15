@@ -10,6 +10,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -254,12 +255,15 @@ public class InvItemPassthrough extends PassthroughProvider {
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getHistoryForObject(
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Uni<Response> getHistoryForObject(
 		@PathParam("id") String id,
-		@BeanParam HistorySearch searchObject
+		@BeanParam HistorySearch searchObject,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return this.getOqmCoreApiClient().invItemGetHistoryForObject(this.getBearerHeaderStr(), id, searchObject);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().invItemGetHistoryForObject(this.getBearerHeaderStr(), id, searchObject);
+		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
 	@GET
