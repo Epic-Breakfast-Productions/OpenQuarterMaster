@@ -80,6 +80,7 @@ imageSearchSelectForm.on("submit", function (event) {
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
+		returnType: "html",
 		extraHeaders: {
 			"accept": "text/html",
 			"actionType": "select",

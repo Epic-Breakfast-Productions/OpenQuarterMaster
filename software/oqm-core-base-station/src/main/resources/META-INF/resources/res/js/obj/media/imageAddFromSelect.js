@@ -33,16 +33,17 @@ imageAddImageForm.submit(function (ev) {
 		console.log("Got image data.");
 		let addData = new FormData();
 
-		addData.append("fileName", imageUploadInput[0].files[0]);
-		addData.append("file", imageDataStr);
+		addData.append("fileName", imageUploadInput[0].files[0].name);
 		addData.append("description", imageAddDescriptionInput.val());
 		addData.append("source", "user");
+		addData.append("file", imageDataStr);
 
 		console.log("Adding new image.");
 		Rest.call({
 			url: "/api/passthrough/media/image",
 			method: "POST",
 			data: addData,
+			dataType: false,
 			async: false,
 			done: function(data) {
 				console.log("New image id: " + data)

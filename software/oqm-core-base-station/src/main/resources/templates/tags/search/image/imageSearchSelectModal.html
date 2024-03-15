@@ -29,19 +29,6 @@ Ingests:
       <div id="addImageFormMessages">
       </div>
       <form id="addImageForm">
-        <div class="mb-3 row">
-            <label for="addTitleInput" class="col-sm-3 col-form-label">Title</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control" id="addTitleInput" placeholder="Title" required>
-            </div>
-        </div>
-        <div class="mb-3 row">
-            <label for="addDescriptionInput" class="col-sm-3 col-form-label">Description</label>
-            <div class="col-sm-9">
-                                <textarea class="form-control" id="addDescriptionInput"
-                                          placeholder="Description"></textarea>
-            </div>
-        </div>
     <div class="mb-3">
         <label for="imageUploadInput" class="form-label">Image File</label>
         <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
@@ -49,10 +36,13 @@ Ingests:
             <div id="imageUploadCroppieDiv" class="border" style="width:350px;"></div>
         </div>
     </div>
-        {#inputs/keywordInput}
-        {/inputs/keywordInput}
-        {#inputs/attInput}
-        {/inputs/attInput}
+        <div class="mb-3 row">
+            <label for="addDescriptionInput" class="col-sm-3 col-form-label">Description</label>
+            <div class="col-sm-9">
+                                <textarea class="form-control" id="addDescriptionInput"
+                                          placeholder="Description"></textarea>
+            </div>
+        </div>
         <hr />
     <div class="mb-3">
         <button type="submit" class="btn btn-success">
