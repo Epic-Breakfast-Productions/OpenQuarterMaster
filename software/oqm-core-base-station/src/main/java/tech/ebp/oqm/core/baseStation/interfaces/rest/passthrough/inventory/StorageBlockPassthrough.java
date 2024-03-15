@@ -52,7 +52,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public Uni<Response> getStorageBlock(
+	public Uni<Response> search(
 		@BeanParam StorageBlockSearch storageBlockSearch,
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId,
@@ -60,7 +60,9 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
 		return this.processSearchResults(
-			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch),
+			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch).call((ObjectNode results)->{
+				return addParentLabelsToSearchResults(results, "labelText", this.getOqmCoreApiClient()::storageBlockGet);
+			}),
 			this.searchResultTemplate,
 			acceptType,
 			searchFormId,

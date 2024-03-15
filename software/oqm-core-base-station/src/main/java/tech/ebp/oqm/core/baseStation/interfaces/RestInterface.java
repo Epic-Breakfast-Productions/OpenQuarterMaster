@@ -1,6 +1,11 @@
 package tech.ebp.oqm.core.baseStation.interfaces;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.oidc.IdToken;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
@@ -10,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
 
@@ -87,5 +93,31 @@ public abstract class RestInterface {
 	@PostConstruct
 	void initialLogAndEntityProcess(){
 		this.logRequestAndProcessEntity();
+	}
+	
+	protected Uni<ObjectNode> addParentLabelsToSearchResults(ObjectNode results, String labelKey, UiProvider.ObjGetMethod parentGetCall){
+		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
+		
+		//TODO:: do map thing to not call more than needed
+		boolean hadParents = false;
+		for(JsonNode curResult : (ArrayNode)results.get("results")){
+			if(curResult.get("hasParent").asBoolean()){
+				hadParents = true;
+				uniJoinBuilder.add(
+					parentGetCall.get(getBearerHeaderStr(), curResult.get("parent").asText())
+						.invoke((ObjectNode storageBlock) ->{
+							((ObjectNode)curResult).set("parentLabel", storageBlock.get(labelKey));
+						})
+				);
+			}
+		}
+		if(!hadParents){
+			return Uni.createFrom().item(results);
+		}
+		return uniJoinBuilder.joinAll()
+				   .andCollectFailures()
+				   .map((list)->{
+					   return results;
+				   });
 	}
 }

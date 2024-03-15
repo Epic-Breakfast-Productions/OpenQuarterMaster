@@ -109,29 +109,4 @@ public abstract class UiProvider extends RestInterface {
 		public Uni<ObjectNode> get(String one, String two);
 	}
 	
-	protected Uni<ObjectNode> addParentLabelsToSearchResults(ObjectNode results, String labelKey, ObjGetMethod parentGetCall){
-		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
-		//TODO:: do map thing to not call more than needed
-		boolean hadParents = false;
-		for(JsonNode curResult : (ArrayNode)results.get("results")){
-			if(curResult.get("hasParent").asBoolean()){
-				hadParents = true;
-				uniJoinBuilder.add(
-					parentGetCall.get(getBearerHeaderStr(), curResult.get("parent").asText())
-						.invoke((ObjectNode storageBlock) ->{
-							((ObjectNode)curResult).set("parentLabel", storageBlock.get(labelKey));
-						})
-				);
-			}
-		}
-		if(!hadParents){
-			return Uni.createFrom().item(results);
-		}
-		return uniJoinBuilder.joinAll()
-				   .andCollectFailures()
-				   .map((list)->{
-					   return results;
-				   });
-	}
 }
