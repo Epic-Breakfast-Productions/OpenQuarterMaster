@@ -63,10 +63,11 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 
 	Rest.call({
 		spinnerContainer: imageSearchSelectModal.get(0),
-		url: Rest.passRoot + "/media/fileAttachments?" + searchParams,
+		url: Rest.passRoot + "/media/fileAttachment?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
+		returnType: "html",
 		extraHeaders: {
 			"accept": "text/html",
 			"actionType": "select",
@@ -82,8 +83,8 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 	});
 });
 
-FileAttachmentAddEdit.fileAttachmentAdded = function (data){
-	console.log("Selecting newly addd file attachment: ", data);
-	FileAttachmentSearchSelect.selectFile(data.id, data.revisions[0].origName);
+FileAttachmentAddEdit.fileAttachmentAdded = function (newFileId, name){
+	console.log("Selecting newly addd file attachment: ", newFileId);
+	FileAttachmentSearchSelect.selectFile(newFileId, name);
 	FileAttachmentSearchSelect.modalCloseButton.click();
 }

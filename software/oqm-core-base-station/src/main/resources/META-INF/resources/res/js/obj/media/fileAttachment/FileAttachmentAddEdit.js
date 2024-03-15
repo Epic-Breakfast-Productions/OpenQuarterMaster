@@ -32,7 +32,7 @@ const FileAttachmentAddEdit = {
 			data: formData,
 			done: function (data){
 				console.log("Successfully added file attachment.");
-				FileAttachmentAddEdit.fileAttachmentAdded(data);
+				FileAttachmentAddEdit.fileAttachmentAdded(data, FileAttachmentAddEdit.fileInput[0].files[0].name);
 			},
 			failMessagesDiv: FileAttachmentAddEdit.formMessages
 		});

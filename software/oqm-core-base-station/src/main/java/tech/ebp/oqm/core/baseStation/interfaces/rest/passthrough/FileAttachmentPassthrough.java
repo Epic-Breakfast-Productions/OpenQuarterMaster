@@ -2,13 +2,17 @@ package tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -34,6 +38,10 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClient;
 	
+	@Getter
+	@Inject
+	@Location("tags/fileAttachment/fileAttachmentSearchResults")
+	Template searchResultTemplate;
 	
 	@GET
 	@Operation(
@@ -64,12 +72,23 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	@WithSpan
-	public Uni<ObjectNode> search(
-		@BeanParam FileAttachmentSearch searchObject
+	public Uni<Response> search(
+		@BeanParam FileAttachmentSearch searchObject,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
-		return this.oqmCoreApiClient.fileAttachmentSearch(this.getBearerHeaderStr(), searchObject);
+		return this.processSearchResults(
+			this.getOqmCoreApiClient().fileAttachmentSearch(this.getBearerHeaderStr(), searchObject),
+			this.searchResultTemplate,
+			acceptType,
+			searchFormId,
+			otherModalId,
+			inputIdPrepend
+		);
 	}
 	
 	@POST
