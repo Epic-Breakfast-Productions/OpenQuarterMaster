@@ -78,7 +78,11 @@
               onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
+	{#else if actionType == 'view'}
+	  <td class="d-grid gap-2">
+		  <a href="/items" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
       {/if}
+		  
     </td>
   </tr>
   	{/let}

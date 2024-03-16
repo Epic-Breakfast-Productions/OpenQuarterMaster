@@ -19,7 +19,7 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
 					{#icons/expiring}{/icons/expiring} Expiring
-					{#let totalExpired=itemCollectionStats.get("numExpired").asLong() totalExpiryWarn=itemCollectionStats.get("numExpireWarn").asLong()}
+					{#let totalExpired=expiredResults.get("numResultsForEntireQuery").asInt() totalExpiryWarn=expiryWarnResults.get("numResultsForEntireQuery").asInt()}
 						{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
 						{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
 					{/let}
@@ -28,7 +28,7 @@
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
 					{#icons/lowStock}{/icons/lowStock} Low Stock
-					{#let totalLowStock=itemCollectionStats.get("numLowStock").asLong()}
+					{#let totalLowStock=lowStockResults.get("numResultsForEntireQuery").asInt()}
 						{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
 					{/let}
 				</button>
@@ -51,48 +51,16 @@
 						<h3>
 							Expired:
 						</h3>
-						{!{#if expiredList.isEmpty()}!}
-							{!<p>!}
-								{!Nothing expired!!}
-							{!</p>!}
-						{!{#else}!}
-							{!<table class="table">!}
-								{!<thead>!}
-								{!<tr>!}
-									{!<th>!}
-										{!Image!}
-									{!</th>!}
-									{!<th>!}
-										{!Item!}
-									{!</th>!}
-									{!<th>!}
-										{!# Expired!}
-									{!</th>!}
-									{!<th>!}
-										{!Actions!}
-									{!</th>!}
-								{!</tr>!}
-								{!</thead>!}
-								{!<tbody>!}
-								{!{#for curExpiredItem in expiredList}!}
-									{!<tr class="align-middle">!}
-										{!<td>!}
-											{!{#if !curExpiredItem.getImageIds().isEmpty()}!}
-												{!<img src="/api/v1/media/image/for/item/{curExpiredItem.getId()}" class="searchResultImage">!}
-											{!{/if}!}
-										{!</td>!}
-										{!<td>{curExpiredItem.getName()}</td>!}
-										{!<td>{curExpiredItem.getNumExpired()}</td>!}
-										{!<td>!}
-											{!<a href="/items?view={curExpiredItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">!}
-												{!<i class="bi bi-eye"> </i>!}
-											{!</a>!}
-										{!</td>!}
-									{!</tr>!}
-								{!{/for}!}
-								{!</tbody>!}
-							{!</table>!}
-						{!{/if}!}
+						{#if expiredResults.get("empty").asBoolean()}
+							<p>
+								Nothing expired!
+							</p>
+						{#else}
+							<table class=" table table-bordered table-striped table-hover table-sm">
+							{#search/item/itemSearchResults searchResults=expiredResults actionType='view' searchFormId=""}
+							{/search/item/itemSearchResults}
+							</table>
+						{/if}
 					</div>
 				</div>
 				<hr />
@@ -101,48 +69,16 @@
 						<h3>
 							Close to expiring:
 						</h3>
-						{!{#if expiredWarnList.isEmpty()}!}
-							{!<p>!}
-								{!Nothing close to expiring!!}
-							{!</p>!}
-						{!{#else}!}
-							{!<table class="table">!}
-								{!<thead>!}
-								{!<tr>!}
-									{!<th>!}
-										{!Image!}
-									{!</th>!}
-									{!<th>!}
-										{!Item!}
-									{!</th>!}
-									{!<th>!}
-										{!# close to expiring!}
-									{!</th>!}
-									{!<th>!}
-										{!Actions!}
-									{!</th>!}
-								{!</tr>!}
-								{!</thead>!}
-								{!<tbody>!}
-								{!{#for curExpiredWarnItem in expiredWarnList}!}
-									{!<tr class="align-middle">!}
-										{!<td>!}
-											{!{#if !curExpiredWarnItem.getImageIds().isEmpty()}!}
-												{!<img src="/api/v1/media/image/for/item/{curExpiredWarnItem.getId()}" class="searchResultImage">!}
-											{!{/if}!}
-										{!</td>!}
-										{!<td>{curExpiredWarnItem.getName()}</td>!}
-										{!<td>{curExpiredWarnItem.getNumExpiryWarn()}</td>!}
-										{!<td>!}
-											{!<a href="/items?view={curExpiredWarnItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">!}
-												{!<i class="bi bi-eye"> </i>!}
-											{!</a>!}
-										{!</td>!}
-									{!</tr>!}
-								{!{/for}!}
-								{!</tbody>!}
-							{!</table>!}
-						{!{/if}!}
+						{#if expiryWarnResults.get("empty").asBoolean()}
+							<p>
+								Nothing close to expiring!
+							</p>
+						{#else}
+							<table class=" table table-bordered table-striped table-hover table-sm">
+							{#search/item/itemSearchResults searchResults=expiryWarnResults actionType='view' searchFormId=""}
+							{/search/item/itemSearchResults}
+							</table>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -152,49 +88,16 @@
 					<h3>
 						Low Stock:
 					</h3>
-					{!{#if lowStockList.isEmpty()}!}
-						{!<p>!}
-							{!No stock is low!!}
-						{!</p>!}
-					{!{#else}!}
-						{!<table class="table table-bordered table-sm table-striped">!}
-							{!<thead>!}
-							{!<tr>!}
-								{!<th class="searchResultImageCol">!}
-									{!Image!}
-								{!</th>!}
-								{!<th>!}
-									{!Item!}
-								{!</th>!}
-								{!<th>!}
-									{!# Low Stock!}
-								{!</th>!}
-								{!<th>!}
-									{!Actions!}
-								{!</th>!}
-							{!</tr>!}
-							{!</thead>!}
-							{!<tbody>!}
-							{!{#for curLowStockItem in lowStockList}!}
-								{!<tr class="align-middle">!}
-									{!<td>!}
-										{!{#if !curLowStockItem.getImageIds().isEmpty()}!}
-											{!<img src="/api/v1/media/image/for/item/{curLowStockItem.getId()}" class="searchResultImage">!}
-										{!{/if}!}
-									{!</td>!}
-									{!<td>{curLowStockItem.getName()}</td>!}
-									{!<td>{curLowStockItem.getNumLowStock()}</td>!}
-									{!<td>!}
-										{!<a href="/items?view={curLowStockItem.getId()}" type="button" class="btn btn-sm btn-info" title="View">!}
-											{!<i class="bi bi-eye"> </i>!}
-										{!</a>!}
-									{!</td>!}
-								{!</tr>!}
-								{!!}
-							{!{/for}!}
-							{!</tbody>!}
-						{!</table>!}
-					{!{/if}!}
+					{#if lowStockResults.get("empty").asBoolean()}
+						<p>
+							No stock is low!
+						</p>
+					{#else}
+						<table class=" table table-bordered table-striped table-hover table-sm">
+							{#search/item/itemSearchResults searchResults=lowStockResults actionType='view' searchFormId=""}
+							{/search/item/itemSearchResults}
+						</table>
+					{/if}
 				</div>
 			</div>
 		</div>

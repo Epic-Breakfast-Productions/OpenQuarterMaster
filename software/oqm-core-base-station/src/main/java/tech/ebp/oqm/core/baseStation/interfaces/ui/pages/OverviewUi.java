@@ -2,10 +2,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
-import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -22,6 +19,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.core.baseStation.utils.Searches;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -52,8 +50,10 @@ public class OverviewUi extends UiProvider {
 			Map.of(
 				"itemCollectionStats", this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr()),
 				"storageCollectionStats", this.coreApiClient.storageBlockCollectionStats(this.getBearerHeaderStr()),
-//				"totalExpired", this.coreApiClient.getStorageBlockStats(this.getBearerHeaderStr()).map(stats -> stats.get("size").asLong()),
-				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), Searches.PARENT_SEARCH)
+				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), Searches.BLOCK_PARENT_SEARCH),
+				"expiredResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_EXPIRED_SEARCH),
+				"expiryWarnResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_EXPIRY_WARN_SEARCH),
+				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_LOW_STOCK_SEARCH)
 			)
 		);
 	}
