@@ -169,7 +169,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The search results for the search given
 	 */
 	@WithSpan
-	public SearchResult<T> search(@NonNull S searchObject, boolean defaultPageSizeIfNotSet) {
+	public SearchResult<T> search(@NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -189,6 +189,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 			!filters.isEmpty(),
 			pagingOptions
 		);
+	}
+	
+	@Deprecated
+	public SearchResult<T> search(@NonNull S searchObject, boolean defaultPageSizeIfNotSet) {
+		return this.search(searchObject);
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
+package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.management;
 
 
 import io.smallrye.common.annotation.Blocking;

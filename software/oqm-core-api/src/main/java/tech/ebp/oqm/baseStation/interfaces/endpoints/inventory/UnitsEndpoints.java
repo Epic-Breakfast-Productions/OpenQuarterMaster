@@ -1,54 +1,39 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.baseStation.interfaces.endpoints.MainObjectProvider;
-import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
-import tech.ebp.oqm.baseStation.model.object.itemList.ItemListAction;
-import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewCustomUnitRequest;
+import tech.ebp.oqm.baseStation.model.rest.unit.custom.NewDerivedCustomUnitRequest;
 import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitCategory;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
-import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
-import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
+import tech.ebp.oqm.baseStation.model.units.ValidUnitDimension;
+import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.CustomUnitService;
-import tech.ebp.oqm.baseStation.service.mongo.InteractingEntityService;
-import tech.ebp.oqm.baseStation.service.mongo.ItemListService;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
 
 import javax.measure.Unit;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,6 +68,52 @@ public class UnitsEndpoints extends EndpointProvider {
 	public Map<UnitCategory, Set<Unit<?>>> getUnits() {
 		log.info("Getting valid unit list.");
 		return UnitUtils.UNIT_CATEGORY_MAP;
+	}
+	
+	@GET
+	@Path("dimensions")
+	@Operation(
+		summary = "Gets the list of supported unit dimensions."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the list.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				//TODO: better
+				implementation = Map.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public ValidUnitDimension[] getUnitDimensions() {
+		log.info("Getting valid unit list.");
+		return ValidUnitDimension.values();
+	}
+	
+	@GET
+	@Path("deriveTypes")
+	@Operation(
+		summary = "Gets the list of supported units."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the list.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				//TODO: better
+				implementation = Map.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public NewDerivedCustomUnitRequest.DeriveType[] getUnitDeriveTypes() {
+		log.info("Getting valid unit list.");
+		return NewDerivedCustomUnitRequest.DeriveType.values();
 	}
 	
 	@GET
@@ -146,6 +177,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	}
 	
 	@POST
+	@Path("custom")
 	@Operation(
 		summary = "Adds a new custom unit."
 	)
@@ -180,5 +212,31 @@ public class UnitsEndpoints extends EndpointProvider {
 		);
 		
 		return id;
+	}
+	
+	@GET
+	@Path("custom")
+	@Operation(
+		summary = "Gets all custom units."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = ObjectId.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	public SearchResult<CustomUnitEntry> getCustomUnits() {
+		return this.customUnitService.search(new CustomUnitSearch());
 	}
 }
