@@ -56,7 +56,7 @@
     </td>
     <td>{name}</td>
     <td>{result.get("storageType").asText()}</td>
-    <td>{result.get("total").asText()}</td>
+    <td>{#amountDisplay amount=result.get("total")}{/amountDisplay}</td>
     <td>{result.get("storageMap").size()}</td>
     {#if actionType == 'full'}
     <td>
