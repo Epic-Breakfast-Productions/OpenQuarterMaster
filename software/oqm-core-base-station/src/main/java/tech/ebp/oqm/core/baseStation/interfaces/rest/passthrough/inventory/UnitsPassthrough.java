@@ -103,6 +103,7 @@ public class UnitsPassthrough extends PassthroughProvider {
 	}
 	
 	@POST
+	@Path("custom")
 	@Operation(
 		summary = "Adds a new custom unit."
 	)

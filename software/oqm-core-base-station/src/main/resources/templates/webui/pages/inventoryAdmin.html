@@ -36,7 +36,7 @@
 												<div class="col">
 													<label for="unitAddCategoryInput" class="form-label">Category</label>
 													<select class="form-select" id="unitAddCategoryInput" required>
-														{#for curCategory in unitCategories}
+														{#for curCategory in allUnitMap.fieldNames()}
 															<option value="{curCategory}">{curCategory}</option>
 														{/for}
 													</select>
@@ -72,7 +72,7 @@
 												<div class="col-3">
 													<label for="unitAddDerivedFromInput" class="form-label">Unit Derived From</label>
 													<select class="form-select" id="unitAddDerivedFromInput" required>
-													{#inputs/units/unitOptionsGroups allowedUnitsMap=allowedUnitsMap}
+													{#inputs/units/unitOptionsGroups allUnitMap=allUnitMap}
 													{/inputs/units/unitOptionsGroups}
 													</select>
 												</div>
@@ -80,7 +80,7 @@
 													<label for="unitAddDerivedTypeInput" class="form-label">Derivation Type</label>
 													<select class="form-select" id="unitAddDerivedTypeInput" required>
 														{#for curType in unitDerivisionTypes}
-															<option value="{curType}">{curType}</option>
+															<option value="{curType.asText()}">{curType.asText()}</option>
 														{/for}
 													</select>
 												</div>
@@ -108,18 +108,22 @@
 							</tr>
 							</thead>
 							<tbody>
-							{#if customUnits.isEmpty()}
+							{#if customUnits.get("empty").asBoolean()}
 								<tr>
 									<td colspan="4">
 										No Custom units!
 									</td>
 								</tr>
 							{#else}
-								{#for curCustomUnitEntry in customUnits}
+								{#for curCustomUnitEntry in customUnits.get("results")}
 									<tr>
-										<td>{curCustomUnitEntry.getUnitCreator().toUnit().getName()}</td>
-										<td>{curCustomUnitEntry.getCategory()}</td>
-										<td>{curCustomUnitEntry.getUnitCreator().toUnit().getSymbol()}</td>
+										<td>
+											{curCustomUnitEntry.get("unitCreator").get("name").asText()}
+										</td>
+										<td>{curCustomUnitEntry.get("category").asText()}</td>
+										<td>
+											{curCustomUnitEntry.get("unitCreator").get("symbol").asText()}
+										</td>
 										<td>{! TODO:: actions !}</td>
 									</tr>
 								{/for}
@@ -295,7 +299,7 @@
 				
 				Rest.call({
 					authorization: true,
-					url: Rest.passRoot + "/inventory/manage/customUnit",
+					url: Rest.passRoot + "/inventory/unit/custom",
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){
