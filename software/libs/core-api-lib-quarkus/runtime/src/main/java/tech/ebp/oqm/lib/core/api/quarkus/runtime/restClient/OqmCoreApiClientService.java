@@ -3,8 +3,10 @@ package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -21,6 +23,8 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Search
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCheckoutSearch;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Currency;
 import java.util.List;
 
@@ -57,6 +61,18 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> unitGetAll(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	
 	@GET
+	@Path(UNIT_ROOT_ENDPOINT + "/dimensions")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ArrayNode> unitGetDimensions(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	@GET
+	@Path(UNIT_ROOT_ENDPOINT + "/deriveTypes")
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ArrayNode> unitGetDeriveTypes(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	@GET
 	@Path(UNIT_ROOT_ENDPOINT + "/compatibility")
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
@@ -71,8 +87,15 @@ public interface OqmCoreApiClientService {
 		@PathParam("unit") String unitString
 	);
 	
+	@GET
+	@Path(UNIT_ROOT_ENDPOINT + "/custom")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> unitCustomGetAll(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
+	);
+	
 	@POST
-	@Path(UNIT_ROOT_ENDPOINT)
+	@Path(UNIT_ROOT_ENDPOINT + "/custom")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<String> unitCreateCustomUnit(
@@ -579,5 +602,32 @@ public interface OqmCoreApiClientService {
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@BeanParam HistorySearch searchObject
 	);
+	//</editor-fold>
+	
+	//<editor-fold desc="Inventory Management">
+	@GET
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/export")
+	@Produces("application/tar+gzip")
+	Uni<Response> manageExportData(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@QueryParam("excludeHistory") boolean excludeHistory
+	);
+	
+	@POST
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/import/file/bundle")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> manageImportData(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@BeanParam ImportBundleFileBody body
+	);
+	
+//	@GET
+//	@Path("processExpiry")
+//	public Response triggerSearchAndProcessExpiring() {
+//		expiryProcessor.searchAndProcessExpiring();
+//
+//		return Response.ok().build();
+//	}
 	//</editor-fold>
 }
