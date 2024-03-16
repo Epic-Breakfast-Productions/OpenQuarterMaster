@@ -32,8 +32,8 @@ const StoredEdit = {
 			//TODO:: move these templates to js calls
 			imageInputTemplate.html() +
 			//TODO:: show kw/att on same row. images too?
-			keywordInputTemplate.html() +
-			attInputTemplate.html() +
+			PageComponents.Inputs.keywords +
+			PageComponents.Inputs.attribute +
 			(
 				toRemoveId != null ?
 					'<div class="mb-3 ">\n' +

@@ -37,7 +37,7 @@ public class JsGetters {
 	String carouselLines = "";
 	
 	@Inject
-	@Location("webui/js/components.js")
+	@Location("webui/js/pageComponents.js")
 	Template componentsJs;
 	String attInputLines;
 	String keywordInputLines;
@@ -88,7 +88,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("components.js")
+	@Path("pageComponents.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> components() {

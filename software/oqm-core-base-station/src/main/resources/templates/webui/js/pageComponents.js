@@ -1,4 +1,4 @@
-const Components = {
+const PageComponents = {
 	Inputs: {
 		attribute: '{attInputLines}\
 ',

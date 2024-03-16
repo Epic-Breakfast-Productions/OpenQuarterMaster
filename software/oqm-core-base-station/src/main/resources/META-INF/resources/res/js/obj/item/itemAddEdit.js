@@ -549,7 +549,7 @@ UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddE
 
 StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
 	console.log("Selected " + blockId + " - " + blockName);
-	var newStorageBody = ItemAddEdit.createStorageBlockAccord(blockName, blockId);
+	let newStorageBody = ItemAddEdit.createStorageBlockAccord(blockName, blockId);
 }
 
 ItemAddEdit.addEditItemForm.submit(async function (event) {
