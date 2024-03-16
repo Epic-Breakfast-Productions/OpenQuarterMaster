@@ -36,14 +36,17 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> getApiServerHealth();
 	
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
-	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
-	
-	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/info/currency")
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	//</editor-fold>
+	
+	
+	//<editor-fold desc="Interacting Entity">
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
+	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
 	//</editor-fold>
 	
 	//<editor-fold desc="Units">
