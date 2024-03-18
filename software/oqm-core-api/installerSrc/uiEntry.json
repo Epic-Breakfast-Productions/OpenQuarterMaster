@@ -1,6 +1,6 @@
 {
-	"name": "Base Station",
+	"name": "Core API",
 	"type": "core",
-	"description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
-	"url": "{core.baseStation.externalBaseUri}"
+	"description": "The core API of the Open QuarterMaster system. Is the base functionality for all inventory management tasks. Go here if you want to interact with that directly.",
+	"url": "{core.api.externalBaseUri}"
 }

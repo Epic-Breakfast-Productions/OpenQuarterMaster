@@ -53,10 +53,22 @@ popd
 
 # Base Station
 echo -e "\n\n\n\nBuilding Base Station."
-pushd "../software/open-qm-base-station/"
+pushd "../software/oqm-core-base-station/"
 ./makeInstallers.sh
 if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for Base Station."
+	exit 1;
+fi
+cp build/installers/*.deb "../../$DEB_PPA_DIR";
+popd
+
+
+# api
+echo -e "\n\n\n\nBuilding Core API."
+pushd "../software/oqm-base-station/"
+./makeInstallers.sh
+if [ $? -ne 0 ]; then
+	echo "FAILED to make installers for core API."
 	exit 1;
 fi
 cp build/installers/*.deb "../../$DEB_PPA_DIR";

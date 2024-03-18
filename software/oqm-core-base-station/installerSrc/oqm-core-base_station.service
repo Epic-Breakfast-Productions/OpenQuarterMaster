@@ -32,7 +32,6 @@ ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
-ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config -g 'core.baseStation.mongodb.user')\" -p \"$(oqm-config -g 'core.baseStation.mongodb.pass')\" -d \"$(oqm-config -g 'core.baseStation.mongodb.database')\""
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/core/base+station/files/privateKey.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/core/base+station/files/publicCert.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/core/base+station/files/keystore.p12"
@@ -50,7 +49,8 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
                                         --network=oqm-internal \
-                                        -p $(oqm-config -g core.baseStation.port):443 \
+                                        -p $(oqm-config -g core.baseStation.httpsPort):443 \
+                                        -p $(oqm-config -g core.baseStation.httpPort):80 \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \

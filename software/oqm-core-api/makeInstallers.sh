@@ -19,7 +19,7 @@ srcDir="installerSrc"
 configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"
 
-debDir="StationCaptainDeb"
+debDir="oqmCoreAPiDeb"
 
 #
 # Clean
@@ -39,21 +39,18 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
-mkdir -p "$buildDir/$debDir/etc/oqm/static/core/base-station/"
-mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
+mkdir -p "$buildDir/$debDir/etc/oqm/static/core/api/"
+mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/api/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
-mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/base-station/"
-install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
-install -m 755 -D "$srcDir/20-baseStation.json" "$buildDir/$debDir/etc/oqm/config/configs/"
-install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
-install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
-install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
+install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/api/"
+install -m 755 -D "$srcDir/core-api-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/api/"
+install -m 755 -D "$srcDir/20-coreApi.json" "$buildDir/$debDir/etc/oqm/config/configs/"
+install -m 755 -D "$srcDir/core-api-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 
-serviceFile="oqm-core-base_station.service"
+serviceFile="oqm-core-api.service"
 serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
@@ -75,7 +72,7 @@ EOT
 
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/copyright"
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Open QuarterMaster Base Station
+Upstream-Name: Open QuarterMaster Core API
 Upstream-Contact: $(cat "$configFile" | jq -r '.copyright.contact')
 Source: $(cat "$configFile" | jq -r '.homepage')
 
@@ -88,13 +85,13 @@ EOT
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 #!/bin/bash
 
-mkdir -p /etc/oqm/serviceConfig/core/base+station/files/
+mkdir -p /etc/oqm/serviceConfig/core/api/files/
 
-if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
-	cat <<EOF >> "/etc/oqm/serviceConfig/core/base+station/user-config.list"
+if [ ! -f "/etc/oqm/serviceConfig/core/api/user-config.list" ]; then
+	cat <<EOF >> "/etc/oqm/serviceConfig/core/api/user-config.list"
 # Add your own config here.
-# Configuration here will override those in base-station-config.list
-# Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
+# Configuration here will override those in core-api-config.list
+# Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/docs/BuildingAndDeployment.adoc
 
 
 EOF
@@ -107,7 +104,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 
 systemctl daemon-reload
 # restart proxy after we add config
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
@@ -126,14 +122,14 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postrm"
 
 systemctl daemon-reload
 # Remove docker image
-if [[ "$(docker images -q oqm_base_station 2> /dev/null)" != "" ]]; then
+if [[ "$(docker images -q oqm-core-api 2> /dev/null)" != "" ]]; then
         docker rmi oqm_base_station
         echo "Removed docker image."
 else
         echo "Docker image was already gone."
 fi
-if [ $( docker ps -a | grep oqm_base_station | wc -l ) -gt 0 ]; then
-        docker rm oqm_base_station
+if [ $( docker ps -a | grep oqm-core-api | wc -l ) -gt 0 ]; then
+        docker rm oqm-core-api
         echo "Removed docker container."
 else
         echo "Docker container was already gone."

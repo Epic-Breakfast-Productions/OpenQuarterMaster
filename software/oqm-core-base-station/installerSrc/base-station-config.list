@@ -16,10 +16,6 @@ quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
 quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
 quarkus.oidc.tls.trust-store-password={cert.certs.keystorePass}
 
-# Mongo Config:
-quarkus.mongodb.connection-string=mongodb://{core.baseStation.mongodb.user}:{core.baseStation.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
-quarkus.mongodb.database={core.baseStation.mongodb.database}
-
 # Jaeger Config:
 quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
 quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
@@ -29,7 +25,9 @@ quarkus.oidc.client-id=oqm-base-station
 quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-base-station}
 quarkus.oidc.auth-server-url=https://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
 
+# Core API config
+quarkus.oqmCoreApi.coreApiBaseUri={core.api.externalBaseUri}
+
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
 runningInfo.depotUri={core.depot.externalBaseUri}
-

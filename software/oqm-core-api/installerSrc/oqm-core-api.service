@@ -19,13 +19,13 @@ Type=simple
 Restart=always
 TimeoutSec=5m
 # Setup operating variables
-Environment="CONTAINER_NAME=oqm-core-base_station"
-Environment="IMAGE_NAME=ebprod/oqm-core-base_station"
+Environment="CONTAINER_NAME=oqm-core-api"
+Environment="IMAGE_NAME=ebprod/oqm-core-api"
 Environment="IMAGE_VERSION=${version}"
-Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/base-station-config.list"
-Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/base-station-config.list"
-Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/user-config.list"
-Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/user-config.list"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/api/core-api-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/api/core-api-config.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/api/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/api/user-config.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
@@ -48,10 +48,11 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
-ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
-                                        -p $(oqm-config -g core.baseStation.port):443 \
-                                        -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
+                                        -p $(oqm-config -g core.api.httpPort):80 \
+                                        -p $(oqm-config -g core.api.httpsPort):443 \
+                                        -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"

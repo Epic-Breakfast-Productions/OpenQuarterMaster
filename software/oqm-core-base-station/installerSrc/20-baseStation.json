@@ -2,13 +2,9 @@
 	"core": {
 		"baseStation": {
 			"host": "oqm_core_base_station",
-			"port": 9000,
-			"externalBaseUri": "https://#{system.hostname}:#{core.baseStation.port}",
-			"mongodb": {
-				"user": "base_station_user",
-				"pass": "<secret>",
-				"database": "oqmBaseStationMain"
-			}
+			"httpPort": 9005,
+			"httpsPort": 9006,
+			"externalBaseUri": "https://#{system.hostname}:#{core.baseStation.httpsPort}"
 		}
 	}
 }

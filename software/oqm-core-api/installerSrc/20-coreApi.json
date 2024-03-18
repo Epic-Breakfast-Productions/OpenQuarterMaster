@@ -1,0 +1,15 @@
+{
+	"core": {
+		"api": {
+			"host": "oqm_core_api",
+			"httpPort": 9000,
+			"httpsPort": 9001,
+			"externalBaseUri": "https://#{system.hostname}:#{core.baseStation.httpsPrt}",
+			"mongodb": {
+				"user": "core_api_user",
+				"pass": "<secret>",
+				"database": "oqmCoreApiMain"
+			}
+		}
+	}
+}
