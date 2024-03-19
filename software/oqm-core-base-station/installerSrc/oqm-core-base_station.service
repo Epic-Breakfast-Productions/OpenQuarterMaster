@@ -73,7 +73,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             hostname=\"$(oqm-config -g system.hostname)\"; \
-                            port=\"$(oqm-config -g core.baseStation.port)\"; \
+                            port=\"$(oqm-config -g core.baseStation.httpsPort)\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
