@@ -8,19 +8,19 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/oqm-base-station/**"
+      - "software/oqm-core-base-station/**"
       - ".github/workflows/baseStation.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/oqm-base-station/**"
+      - "software/oqm-core-base-station/**"
       - ".github/workflows/baseStation.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/oqm-base-station"
+    working-directory: "software/oqm-core-base-station"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -39,19 +39,19 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: check
-          build-root-directory: "software/oqm-base-station"
+          build-root-directory: "software/oqm-core-base-station"
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
           name: Code Coverage Report
-          path: "software/oqm-base-station/build/jacoco-report"
+          path: "software/oqm-core-base-station/build/jacoco-report"
       - name: Archive Test Report
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
-          path: "software/oqm-base-station/build/reports/tests/test"
+          path: "software/oqm-core-base-station/build/reports/tests/test"
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
         uses: dorny/test-reporter@v1
@@ -60,13 +60,13 @@ jobs:
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Test Report            # Name of the check run which will be created
-          path: "software/oqm-base-station/build/test-results/test/*.xml"    # Path to test results
+          path: "software/oqm-core-base-station/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
       - name: Archive Selenium Recordings
         uses: actions/upload-artifact@v2
         with:
           name: Selenium Recordings
-          path: "software/oqm-base-station/build/seleniumRecordings"
+          path: "software/oqm-core-base-station/build/seleniumRecordings"
 #  integrationTest:
 #    # The type of runner that the job will run on
 #    runs-on: ubuntu-latest
@@ -87,21 +87,21 @@ jobs:
 #      - uses: gradle/gradle-build-action@v2
 #        with:
 #          arguments: quarkusIntTest
-#          build-root-directory: "software/oqm-base-station"
+#          build-root-directory: "software/oqm-core-base-station"
 #      # https://github.com/marketplace/actions/test-reporter
 #      - name: Integration Test Report
 #        uses: dorny/test-reporter@v1
 #        if: success() || failure()    # run this step even if previous step failed
 #        with:
 #          name: Integration Test Report            # Name of the check run which will be created
-#          path: "software/oqm-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
+#          path: "software/oqm-core-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
 #          reporter: java-junit        # Format of test results
 #      - name: Archive Integration Test Report
 #        uses: actions/upload-artifact@v2
 #        if: success() || failure()
 #        with:
 #          name: Integration Test Report
-#          path: "software/oqm-base-station/build/reports/tests/quarkusIntTest"
+#          path: "software/oqm-core-base-station/build/reports/tests/quarkusIntTest"
 
 
 
@@ -125,21 +125,21 @@ jobs:
 #      - uses: gradle/gradle-build-action@v2
 #        with:
 #          arguments: quarkusIntTest -Dquarkus.package.type=native -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
-#          build-root-directory: "software/oqm-base-station"
+#          build-root-directory: "software/oqm-core-base-station"
 #      # https://github.com/marketplace/actions/test-reporter
 #      - name: Native Integration Test Report
 #        uses: dorny/test-reporter@v1
 #        if: success() || failure()    # run this step even if previous step failed
 #        with:
 #          name: Native Integration Test Report            # Name of the check run which will be created
-#          path: "software/oqm-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
+#          path: "software/oqm-core-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
 #          reporter: java-junit        # Format of test results
 #      - name: Archive Native Integration Test Report
 #        uses: actions/upload-artifact@v2
 #        if: success() || failure()
 #        with:
 #          name: Native Integration Test Report
-#          path: "software/oqm-base-station/build/reports/tests/quarkusIntTest"
+#          path: "software/oqm-core-base-station/build/reports/tests/quarkusIntTest"
 
           
 #      - name: Publish Unit Test Results
@@ -147,4 +147,4 @@ jobs:
 #        if: always()
 #        with:
 #          github_token: "${{ secrets.GITHUB_TOKEN }}"
-#          files: "software/oqm-base-station/build/test-results/**/*.xml"
+#          files: "software/oqm-core-base-station/build/test-results/**/*.xml"
