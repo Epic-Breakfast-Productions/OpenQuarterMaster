@@ -1,0 +1,6 @@
+{
+	"name": "Core API",
+	"type": "core",
+	"description": "The core API of the Open QuarterMaster system. Is the base functionality for all inventory management tasks. Go here if you want to interact with that directly.",
+	"url": "{core.api.externalBaseUri}"
+}

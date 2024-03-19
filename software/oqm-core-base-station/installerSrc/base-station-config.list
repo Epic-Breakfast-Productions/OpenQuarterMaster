@@ -1,0 +1,35 @@
+#
+# The Main config for Base Station. Do not edit. To adjust configuration, edit:
+# /etc/oqm/serviceConfig/core/base+station/user-config.list
+#
+
+# Basic configs
+quarkus.http.port=80
+quarkus.http.ssl.port=443
+quarkus.http.insecure-requests=redirect
+
+# Files brought over in shared volume
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/publicCert.pem
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/privateKey.pem
+quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
+quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+quarkus.oidc.tls.trust-store-password={cert.certs.keystorePass}
+
+# Jaeger Config:
+quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+
+# Keycloak Config:
+quarkus.oidc.client-id=oqm-base-station
+quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-base-station}
+quarkus.oidc.auth-server-url=https://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
+
+# Core API config
+quarkus.oqmCoreApi.coreApiBaseUri={core.api.externalBaseUri}
+quarkus.rest-client.oqmCoreApi.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+quarkus.rest-client.oqmCoreApi.trust-store-password={cert.certs.keystorePass}
+
+runningInfo.protocol=https
+runningInfo.hostname={system.hostname}
+runningInfo.depotUri={core.depot.externalBaseUri}

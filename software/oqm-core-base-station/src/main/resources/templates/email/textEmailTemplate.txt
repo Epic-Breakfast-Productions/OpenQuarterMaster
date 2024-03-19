@@ -1,0 +1,8 @@
+
+Hello {user.getFirstName()},
+
+{#insert textBody}No body!{/}
+
+Thanks, Open QuarterMaster Server
+
+{config:['runningInfo.baseUrl']}

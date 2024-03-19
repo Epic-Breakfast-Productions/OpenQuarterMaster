@@ -1,0 +1,169 @@
+{#include webui/mainWebPageTemplate showTitle=true title=itemList.getName() page='itemLists' navbar="full"}
+	{#pageStyle}
+	
+	{/pageStyle}
+	{#additionalTitleContent}
+		<a href="/itemLists">Back to List Search</a>
+		<div class="row">
+			<div class="col">
+				<p class="mb-0">
+					Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
+					On: {listCreateEvent.getTimestamp()}<br />
+					<small>Id: <span id="itemListId">{itemList.getId()}</span>{#copyTextButton textContainerId='itemListId'}{/copyTextButton}</small>
+					{#if !itemList.getDescription().isBlank()}
+					<br />{itemList.getDescription()}
+					{/if}
+					{! TODO:: allow updating description, name !}
+				</p>
+			</div>
+			<div class="col text-end">
+				<button type="button" class="btn btn-success btn-lg" onclick="ItemListView.setupReview('{itemList.getId()}', false)" data-bs-toggle="modal" data-bs-target="#itemListReviewModal">
+					{#icons/review}{/icons/review} Review
+				</button>
+			</div>
+		</div>
+	{/additionalTitleContent}
+	{#pageContent}
+		<h2>
+			Default Settings
+		</h2>
+		<div class="row">
+			<div class="col">
+				<label for="itemListActionDefaultModeInput" class="form-label">Default Action:</label>
+				{#inputs/itemList/ItemListActionModeInput id="itemListActionDefaultModeInput" noDefault=true}{/inputs/itemList/ItemListActionModeInput}
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="col">
+			
+			
+			
+			</div>
+		</div>
+		<hr />
+		<h2>
+			Item Find
+		</h2>
+		<div class="row">
+			<div class="col-3">
+				<form id="findItemByBarcodeForm">
+					<div class="input-group">
+						<span class="input-group-text" id="quickSearchBarcodeInputHelp">{#icons/barcode}{/icons/barcode}</span>
+						<input type="text" class="form-control" placeholder="Barcode" aria-label="Barcode" id="quickSearchBarcodeInput" aria-describedby="quickSearchBarcodeInputHelp" name="barcode" required>
+						<button type="submit" class="btn btn-success">{#icons/search}{/icons/search}</button>
+					</div>
+				</form>
+			</div>
+			<div class="col text-center">
+				or
+			</div>
+			<div class="col-3 d-grid gap-2">
+				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal" onclick="ItemSearchSelect.itemSearchSelectForm.submit();">{#icons/search}{/icons/search} Item Search</button>
+			</div>
+			<div class="col text-center">
+				or
+			</div>
+			<div class="col-3 d-grid gap-2">
+				<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item</button>
+			</div>
+		</div>
+		<hr />
+		<h2>
+			Actions:
+		</h2>
+		{! TODO:: filter/search. Pagination? !}
+		
+		{! TODO:: generate list content here !}
+		<p>
+		{#for actionIt in itemList.getItemActions()}
+			{actionIt.key()} - {actionIt.val()}<br />
+		{/for}
+		</p>
+		
+		{#search/image/imageSelectFormInputHidden}
+		{/search/image/imageSelectFormInputHidden}
+	{/pageContent}
+	{#modals}
+		{#itemAddEditModal}{/itemAddEditModal}
+		{#search/item/itemSearchSelectModal otherModalId=""}
+		{/search/item/itemSearchSelectModal}
+		{#modal id='itemListSetupAction' large=true title='Setup Action'}
+		TODO
+		{/modal}
+		{#itemList/itemListReviewModal}
+		{/itemList/itemListReviewModal}
+	{/modals}
+	{#scripts}
+		<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
+		<script src="/res/js/obj/media/imageAdd.js"></script>
+		<script src="/res/js/obj/media/imageAddFromSelect.js"></script>
+		<script src="/res/js/search.js"></script>
+		<script src="/res/js/obj/item/itemSearchSelect.js"></script>
+		<script src="/res/js/historySearch.js"></script>
+		<script src="/res/js/obj/objEdit.js"></script>
+		<script src="/res/js/obj/objView.js"></script>
+		<script src="/res/js/storedTypeUtils.js"></script>
+		<script src="/res/js/obj/media/imageSearchSelect.js"></script>
+		<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+		<script src="/res/js/obj/units.js"></script>
+		<script src="/res/js/obj/getters.js"></script>
+		<script src="/res/js/obj/storageBlock/capacities.js"></script>
+		<script src="/res/js/carousel.js"></script>
+		<script src="/res/js/item/ItemAddSubTrans.js"></script>
+		<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+		<script src="/res/js/obj/itemCategoryView.js"></script>
+		<script src="/res/js/textCopy.js"></script>
+		<script src="/res/js/item/extItemSearch.js"></script>
+		<script src="/res/js/obj/item/itemAddEdit.js"></script>
+		<script src="/res/js/obj/item/itemView.js"></script>
+		<script src="/res/js/obj/itemList/itemListView.js"></script>
+	{/scripts}
+	
+	{#pageScript}
+		<script>
+		
+		
+		const ItemList = {
+			findItemByBarcodeForm: $("#findItemByBarcodeForm"),
+			findItemBarcodeInput: $("#findItemByBarcodeForm").find("input[name=barcode]"),
+			
+			itemSelected(itemName, itemId){
+				console.log("Got item: " + itemId);
+				
+				
+				
+				
+				
+				
+			}
+		};
+		ItemSearchSelect.selectItem = ItemList.itemSelected;
+		ItemAddEdit.itemAdded = ItemList.itemSelected;
+		
+		ItemList.findItemByBarcodeForm.on("submit", function (e){
+				e.preventDefault();
+				let barcode = ItemList.findItemBarcodeInput.val();
+				console.log("Searching for item by barcode: " + barcode);
+				
+				let searchParams = new URLSearchParams();
+				searchParams.set("itemBarcode", barcode);
+				
+				Rest.call({
+					url: Rest.passRoot + "/inventory/item?"+searchParams.toString(),
+					done: async function (data) {
+						if(!data.length){
+							console.log("No item with barcode found.");
+							alert("No item with barcode found.");
+							//TODO:: tell user nothing found
+							//  data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="Not Found" data-bs-content=""
+							
+							return;
+						}
+						ItemList.itemSelected(data[0].name, data[0].id);
+					}
+				});
+			});
+		</script>
+	{/pageScript}
+{/include}

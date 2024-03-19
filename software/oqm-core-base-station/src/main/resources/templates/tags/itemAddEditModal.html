@@ -1,0 +1,219 @@
+{#modal id='addEditItem' size='xl' title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
+    <div class="row">
+        <div class="col" id="addEditItemFormMessages">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
+                {#icons/search}{/icons/search} Search for Products
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 card p-0" id="addEditProductSearchPane">
+            <div class="card-header">
+                Search for items:
+            </div>
+            <div class="card-body p-0 h-auto">
+                <ul class="nav nav-tabs" id="extItemSearchTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Product</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Lego&trade;</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Website</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-1" id="searchTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <form id="prodBarcodeSearchForm">
+                            <div class="mb-3">
+                                <label for="prodBarcodeSearchBarcodeInput" class="form-label">Search with Barcode</label>
+                                {#inputs/barcodeInput id='prodBarcodeSearchBarcodeInput' searchSubmit=true}{/inputs/barcodeInput}
+                                <div id="barcodeInputHelp" class="form-text">Scan in or enter a barcode on a product.</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <form id="legoPartNumSearchForm">
+                            <div class="mb-3">
+                                <label for="legoPartNumSearchInput" class="form-label">Search with Lego&trade; part number</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="legoPartNumSearchInput" aria-describedby="legoPartNumInputHelp" required>
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                </div>
+                                <div id="legoPartNumInputHelp" class="form-text">Most legos have a number on them, it's that parts numbers.</div>
+                            </div>
+                        </form>
+                        <div id="legoPartNumSearchFormMessages">
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <form id="websiteScanSearchForm">
+                            <div class="mb-3">
+                                <label for="websiteScanSearchInput" class="form-label">Scan a website</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="websiteScanSearchInput" aria-describedby="websiteScanInputHelp" required>
+                                    <button class="btn btn-success" type="submit">Search</button>
+                                </div>
+                                <div id="websiteScanInputHelp" class="form-text">Very limited number of supported sites.</div>
+                            </div>
+                        </form>
+                        <div id="websiteScanSearchFormMessages">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="extItemSearchSearchFormMessages">
+            </div>
+            <div class="card-header">
+                Search Results:
+            </div>
+            <div class="card-body h-100 row" id="extSearchResults">
+            </div>
+        </div>
+        <div class="col">
+            <form id="addEditItemForm">
+                <input type="hidden" id="addEditItemFormMode" value="">
+                <input type="hidden" id="addEditItemIdInput" value="">
+                <div class="mb-3 row">
+                    <label for="addEditItemNameInput" class="col-sm-2 col-form-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditItemNameInput" placeholder="Name" required>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
+                    <div class="col-sm-10">
+                        {#inputs/barcodeInput id='addEditItemBarcodeInput'}{/inputs/barcodeInput}
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
+                    <div class="col-sm-10">
+                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="ItemAddEdit.addEditStoredTypeInputChanged()">
+                            <option value="AMOUNT_SIMPLE" title="hello world" selected>Amount</option>
+                            <option value="AMOUNT_LIST">Amount List</option>
+                            <option value="TRACKED">Tracked</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row" id="addEditItemTrackedItemIdentifierNameRow" style="display: none;">
+                    <label for="addEditItemIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="addEditItemIdentifyingAttInput" placeholder="Identifying Attribute" required>
+                    </div>
+                </div>
+                <!-- TODO:: default value -->
+                <div class="mb-3 row" id="addEditItemUnitNameRow">
+                    <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
+                    <div class="col-sm-10">
+                        <select class="form-select dselect-select" id="addEditItemUnitInput" onchange="ItemAddEdit.handleItemUnitChange();">
+                            {#inputs/units/unitOptionsGroups allUnitMap=allUnitMap}
+                            {/inputs/units/unitOptionsGroups}
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemCategoriesInput" class="col-form-label col-sm-2">Categories:</label>
+                    <div class="col-sm-10">
+                        {#inputs/categoryInput id="addEditItemCategoriesInput" allCategorySearchResults=allCategorySearchResults multi=true}
+                        {/inputs/categoryInput}
+                    </div>
+                </div>
+                <div class="mb-3 row" id="addEditItemPricePerUnitNameRow">
+                    <label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
+                            <input type="number" min="0.00" step="any" class="form-control" id="addEditItemPricePerUnitInput" placeholder="Price Per Unit" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
+                    <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="number" min="0" class="form-control" id="addEditItemExpiryWarningThresholdInput" placeholder="Expiry Warning Threshold" required value="0" aria-describedby="addEditExpiryWarningThresholdHelp">
+                            <select class="form-select" style="max-width: 10em;" id="addEditItemExpiryWarningThresholdUnitInput">
+                                <!-- The values here represent the multiplier to make the equivalent number of seconds for each -->
+                                <option value="1">Seconds*</option>
+                                <option value="60">Minutes*</option>
+                                <option value="3600" selected>Hours</option>
+                                <option value="86400">Days</option>
+                                <option value="604800">Weeks</option>
+                            </select>
+                        </div>
+                        <div id="addEditExpiryWarningThresholdHelp" class="form-text">
+                            How many time units before expiration dates to warn of imminent expiration. 0 for no warning.<br />
+                            * = Depending on server settings, you might not get an accurate warning with a short warning period.
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemTotalLowStockThresholdInput" class="col-sm-2 col-form-label">Total Low Stock Threshold</label>
+                    <div class="col-sm-10">
+                        <div class="input-group mt-2 mb-3">
+                            <input type="number" class="form-control amountStoredValueInput" id="addEditItemTotalLowStockThresholdInput" placeholder="Value" min="0.00" step="any">
+                            <select class="form-select amountStoredUnitInput unitInput" id="addEditItemTotalLowStockThresholdUnitInput">
+                            </select>
+                        </div>
+                        <div id="addEditTotalLowStockThresholdHelp" class="form-text">
+                            The lowest amount to be stored before being marked as low on stock. Leave blank for no threshold.
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                {!<div class="mb-3 row">!} {!TODO:: 460 !}
+                    {!<label class="col-sm-2 col-form-label">Not Stored</label>!}
+                    {!<div class="col-sm-10">!}
+                        {!<div>!}
+							{!<input class="form-check-input" type="checkbox" value="" id="addEditItemNotStoredCheck" aria-describedby="addEditItemNotStoredCheckHelp" onchange="ItemAddEdit.updateItemNotStored()">!}
+							{!<label class="form-check-label" for="addEditItemNotStoredCheck">!}
+								{!Have unstored items!}
+							{!</label>!}
+							{!<div id="addEditItemNotStoredCheckHelp" class="form-text">!}
+								{!Check this to specify items you have, but aren't stored in any particular location. To specify items stored somewhere, hit the "Add Associated Storage" below.!}
+							{!</div>!}
+                        {!</div>!}
+                        {!<div id="addEditItemNotStoredInputContainer">!}
+						{!</div>!}
+                    {!</div>!}
+                {!</div>!}
+                <hr />
+                <div class="mb-3 row">
+                    <div class="col-sm-2 col-form-label">Stored</div>
+                    <div class="col-sm-10">
+                        <div class="accordion mt-2" id="addEditItemStoredContainer">
+                
+                        </div>
+                        <div class="col d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
+                                {#icons/add}{/icons/add} Add Associated Storage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                {#search/image/imageSelectFormInput}
+                {/search/image/imageSelectFormInput}
+                {#fileAttachment/fileAttachmentSelectFormInput}
+                {/fileAttachment/fileAttachmentSelectFormInput}
+                {#inputs/keywordInput}
+                {/inputs/keywordInput}
+                {#inputs/attInput}
+                {/inputs/attInput}
+            </form>
+        </div>
+    </div>
+
+{/modal}
