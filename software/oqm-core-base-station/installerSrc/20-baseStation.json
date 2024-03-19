@@ -1,0 +1,10 @@
+{
+	"core": {
+		"baseStation": {
+			"host": "oqm_core_base_station",
+			"httpPort": 9005,
+			"httpsPort": 9006,
+			"externalBaseUri": "https://#{system.hostname}:#{core.baseStation.httpsPort}"
+		}
+	}
+}

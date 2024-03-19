@@ -1,0 +1,12 @@
+# Containerfile for OQM's Depot Application
+# https://hub.docker.com/_/php/tags
+FROM php:8.3-apache
+MAINTAINER greg@epic-breakfast-productions.tech
+# TODO:: add param to specify conf for dev or deploy
+COPY webroot /var/www/html/
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+#COPY php.ini /usr/local/etc/php/php.ini-development
+RUN chown -R www-data:www-data /var/www/html && \
+    a2enmod ssl && a2enmod socache_shmcb
+EXPOSE 80
+EXPOSE 443

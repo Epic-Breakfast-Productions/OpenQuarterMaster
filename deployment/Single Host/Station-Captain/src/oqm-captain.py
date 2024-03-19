@@ -41,10 +41,10 @@ g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="
 g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
 g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
 g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
-argcomplete.autocomplete(argParser)
+# argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
-print(str(args))
+# print(str(args))
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
     exit(0)

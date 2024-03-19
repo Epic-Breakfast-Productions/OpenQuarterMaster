@@ -18,6 +18,11 @@ setupConfig:
 cleanupAfter: true 
 ```
 
+## Good commands to remember:
+
+`sudo apt remove --purge oqm-* && sudo rm -rf /data/oqm /data/oqm-snapshots /etc/oqm`
+`watch sudo docker ps`
+
 ## TODOs:
 
  - Create a self mode for installing on the box its running on

@@ -6,11 +6,14 @@ This document outlines what ports are used for the system on a Single Node Host 
 
 Core components generally occupy the port range `9000`-`9254`. Known ports listed below.
 
-| Port | Component                                                        | Purpose                      | Forwarded to host |
-|------|------------------------------------------------------------------|------------------------------|-------------------|
-| 80   | [Depot](../../../software/oqm-depot/README.md)                   | Depot HTTP connection port   | Yes               |
-| 443  | [Depot](../../../software/oqm-depot/README.md)                   | Depot HTTPS connection port  | Yes               |
-| 9000 | [Base Station](../../../software/open-qm-base-station/README.md) | Base Station connection port | Yes               |
+| Port | Component                                                         | Purpose                            | Forwarded to host |
+|------|-------------------------------------------------------------------|------------------------------------|-------------------|
+| 80   | [Depot](../../../software/oqm-depot/README.md)                    | Depot HTTP connection port         | Yes               |
+| 443  | [Depot](../../../software/oqm-depot/README.md)                    | Depot HTTPS connection port        | Yes               |
+| 9000 | [Core API](../../../software/oqm-core-api/README.md)              | Core API HTTP connection port      | Yes               |
+| 9001 | [Core API](../../../software/oqm-core-api/README.md)              | Core API HTTPS connection port     | Yes               |
+| 9005 | [Base Station](../../../software/oqm-core-base-station/README.md) | Base Station HTTP connection port  | Yes               |
+| 9006 | [Base Station](../../../software/oqm-core-base-station/README.md) | Base Station HTTPS connection port | Yes               |
 
 ## Infrastructure
 
@@ -30,7 +33,6 @@ Infrastructure components generally occupy the port range `8090`-`8999`. For cer
 | 8110  | Grafana          | Grafana UI port                   | Optional  |
 | 8115  | Keycloak         | Keycloak port                     | Yes       |
 | 8120  | Postgres         | Postgres port                     | Optional  |
-
 
 ## Plugins
 

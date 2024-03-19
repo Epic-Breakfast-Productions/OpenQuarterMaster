@@ -23,9 +23,10 @@ updates:
   #   labels:
   #     - "area-dependencies"
   #     - "project-lib-moduleDriver"
+
   # Base Station
   - package-ecosystem: "gradle"
-    directory: "/software/open-qm-base-station"
+    directory: "/software/oqm-core-base-station"
     target-branch: "dev"
     schedule:
       interval: "weekly"
@@ -33,7 +34,24 @@ updates:
       - "area-dependencies"
       - "project-baseStation"
   - package-ecosystem: "docker"
-    directory: "/software/open-qm-base-station/src/main/docker"
+    directory: "/software/oqm-core-base-station/src/main/docker"
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
+  
+  - package-ecosystem: "gradle"
+    directory: "/software/oqm-core-api"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
+  - package-ecosystem: "docker"
+    directory: "/software/oqm-core-api/src/main/docker"
     target-branch: "dev"
     schedule:
       interval: "daily"
