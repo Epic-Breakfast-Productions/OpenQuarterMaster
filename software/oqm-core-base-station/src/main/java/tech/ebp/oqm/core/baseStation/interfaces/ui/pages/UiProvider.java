@@ -47,7 +47,6 @@ public abstract class UiProvider extends RestInterface {
 		return template
 				   .data("userInfo", this.getUserInfo())
 				   .data("traceId", this.span.getSpanContext().getTraceId())
-				   .data("currency", ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class))
 				   ;
 	}
 	
