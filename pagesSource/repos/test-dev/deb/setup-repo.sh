@@ -25,7 +25,7 @@ if [ 0 -ne 0 ]; then
 	exit 1;
 fi
 
- apt-get install  open+quarter+master-manager-station+captain
+ apt-get install  oqm-manager-station+captain
 if [ 0 -ne 0 ]; then
 	echo "FAILED to install Station Captain. See above output for information."
 	exit 2;
