@@ -34,6 +34,9 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	@After
 	public void cleanup() throws IOException {
 		CommandResult result = this.getContext().getSnhConnector().runCommand("oqm-captain", "--package-logs");
+		log.debug("return code of getting logs packaged: {}", result.getReturnCode());
+		log.debug("output of getting logs packaged: {}", result.getStdOut());
+		log.debug("error of getting logs packaged: {}", result.getStdErr());
 		if(result.getReturnCode() == 0){
 			AttachUtils.attachRemoteFile(
 				result.getStdOut().trim(),

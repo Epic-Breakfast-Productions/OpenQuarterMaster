@@ -16,9 +16,13 @@ quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
 quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/api/files/keystore.p12
 quarkus.oidc.tls.trust-store-password={cert.certs.keystorePass}
 
+# jwt verification
+smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
+smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/publicCert.pem
+
 # Mongo Config:
 quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
-quarkus.mongodb.database={core.baseStation.mongodb.database}
+quarkus.mongodb.database={core.api.mongodb.database}
 
 # Jaeger Config:
 quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
