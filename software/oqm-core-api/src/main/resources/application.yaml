@@ -24,7 +24,7 @@ service:
   item:
     expiryCheck:
       cron: 0 0 * ? * * # Every Hour
-  tempDir: "/tmp/oqm-baseStation"
+  tempDir: "/tmp/oqm-api"
   image:
     resizing:
       enabled: true
@@ -32,44 +32,6 @@ service:
       width: ${service.image.resizing.height}
       savedType: "PNG"
     
-productLookup:
-  providers:
-    barcodelookup-com:
-      displayName: BarcodeLookup.com
-      description: Comprehensive database of products, but a paid service.
-      cost: Paid
-      acceptsContributions: true
-      homepage: https://www.barcodelookup.com/
-      enabled: true
-      url: https://api.barcodelookup.com/
-      apiKey: " "
-    datakick:
-      displayName: Datakick
-      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
-      cost: Free
-      acceptsContributions: true
-      homepage: https://gtinsearch.org/
-      enabled: true
-      url: https://www.gtinsearch.org
-    upcitemdb:
-      displayName: upcitemdb.com
-      description: A lookup database with good number of records, and a free tier with 100 requests per day.
-      cost: Free tier, Paid
-      acceptsContributions: false
-      homepage: https://www.upcitemdb.com/
-      enabled: true
-      url: https://api.upcitemdb.com
-      apiKey: " "
-    rebrickable:
-      displayName: Rebrickable
-      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
-      cost: Free
-      acceptsContributions: false
-      homepage: https://rebrickable.com
-      enabled: true
-      url: https://rebrickable.com
-      apiKey: " "
-      
 messaging:
   connector: ""
 
@@ -93,19 +55,6 @@ externalService:
 quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
-  rest-client:
-    upc-barcodelookup-com:
-      url: ${productLookup.providers.barcodelookup-com.url}
-      scope: jakarta.inject.Singleton
-    upc-datakick:
-      url: ${productLookup.providers.datakick.url}
-      scope: jakarta.inject.Singleton
-    upc-upcitemdb:
-      url: ${productLookup.providers.upcitemdb.url}
-      scope: jakarta.inject.Singleton
-    lego-rebrickable:
-      url: ${productLookup.providers.rebrickable.url}
-      scope: jakarta.inject.Singleton
   log:
     level: DEBUG
     console:
