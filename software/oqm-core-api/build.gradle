@@ -75,7 +75,7 @@ dependencies {
 	implementation 'commons-codec:commons-codec:1.16.0'
 	implementation 'org.apache.tika:tika-core:2.9.1'
 
-	implementation 'uk.org.okapibarcode:okapibarcode:0.4.1'
+	implementation 'uk.org.okapibarcode:okapibarcode:0.4.2'
 
 	/*
 	Test Dependencies
