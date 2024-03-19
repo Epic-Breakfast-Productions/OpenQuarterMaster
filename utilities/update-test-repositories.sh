@@ -65,7 +65,7 @@ popd
 
 # api
 echo -e "\n\n\n\nBuilding Core API."
-pushd "../software/oqm-base-station/"
+pushd "../software/oqm-core-api/"
 ./makeInstallers.sh
 if [ $? -ne 0 ]; then
 	echo "FAILED to make installers for core API."
