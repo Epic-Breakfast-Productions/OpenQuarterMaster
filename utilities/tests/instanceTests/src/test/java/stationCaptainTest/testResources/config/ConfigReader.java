@@ -3,7 +3,6 @@ package stationCaptainTest.testResources.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
-import stationCaptainTest.testResources.config.snhSetup.SnhSetupConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class ConfigReader {
 	
 	private static TestRunConfig MAIN_TEST_RUN_CONFIG;
 	
-	private static SnhSetupConfig getSetupConfig() {
+	private static InstanceConnectionConfig getSetupConfig() {
 		return null;
 	}
 	

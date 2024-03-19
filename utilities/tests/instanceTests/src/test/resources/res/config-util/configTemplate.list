@@ -1,5 +1,0 @@
-test.testStr="{test.testStr}"
-test.testInt={test.testInt}
-test.testDouble={test.testDouble}
-test.testObjVal={test.testObj.testVal}
-
