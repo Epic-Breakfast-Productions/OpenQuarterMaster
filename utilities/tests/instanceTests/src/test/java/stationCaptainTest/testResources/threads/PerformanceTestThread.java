@@ -37,6 +37,7 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 		PerformanceTestResult.PerformanceTestResultBuilder outputBuilder = PerformanceTestResult.builder().threadNum(this.threadNum);
 		HttpClient client = RestHelpers.NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER.build();
 		long numCalls = 0;
+		long numErrors = 0;
 		StopWatch overallWatch = StopWatch.createStarted();
 		
 		List<String> storageBlocks = new ArrayList<>(this.numStorageBlocks);
@@ -56,6 +57,10 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 										  .build();
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 				numCalls++;
+				if(response.statusCode() != 200){
+					numErrors++;
+				}
+				
 				String newId = response.body();
 				storageBlocks.add(newId);
 				log.debug("Created storage block with id: {}", newId);

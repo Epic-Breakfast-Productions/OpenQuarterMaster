@@ -10,6 +10,7 @@ import java.time.Duration;
 public class PerformanceTestResult {
 	private int threadNum;
 	private long numCalls;
+	private long numErrors;
 	private Duration overallDuration;
 	
 	public Duration getAverageTimePerCall(){

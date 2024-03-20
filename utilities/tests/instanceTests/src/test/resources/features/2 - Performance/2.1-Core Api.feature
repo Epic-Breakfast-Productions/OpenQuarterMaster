@@ -18,6 +18,12 @@ Feature: 2.1 - Core API Performance
 
 		Examples:
 			| numClients | numStorageBlocks | numItems | numUpdates |
+			# Typical Home - Small shop situation
 			| 1          | 5                | 5        | 5          |
 			| 2          | 5                | 5        | 5          |
+			| 2          | 100              | 5        | 5          |
+			# Medium
+			| 10         | 100              | 5        | 5          |
+			| 50         | 100              | 5        | 5          |
+			# Large
 			| 100        | 100              | 5        | 5          |
