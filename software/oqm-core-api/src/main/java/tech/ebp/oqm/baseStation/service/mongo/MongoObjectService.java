@@ -499,6 +499,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 	}
 	
+	@Override
+	public long clear(@NonNull ClientSession session) {
+		return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
+	}
+	
 	/**
 	 * Gets the sum of an integer(or long) field in the object stored.
 	 *
