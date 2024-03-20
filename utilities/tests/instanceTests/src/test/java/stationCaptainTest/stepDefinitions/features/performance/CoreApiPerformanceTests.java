@@ -1,6 +1,5 @@
 package stationCaptainTest.stepDefinitions.features.performance;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
@@ -14,6 +13,7 @@ import stationCaptainTest.testResources.TestContext;
 import stationCaptainTest.testResources.threads.PerformanceTestResult;
 import stationCaptainTest.testResources.threads.PerformanceTestThread;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class CoreApiPerformanceTests extends BaseStepDefinitions {
@@ -94,9 +96,24 @@ public class CoreApiPerformanceTests extends BaseStepDefinitions {
 	}
 	
 	@Then("all requests returned successfully")
-	public void allRequestsReturnedSuccessfully() throws JsonProcessingException {
+	public void allRequestsReturnedSuccessfully() {
 		List<PerformanceTestResult> performanceTestResult = (List<PerformanceTestResult>) this.getContext().getData().get(RESULTS_KEY);
 		AttachUtils.attach(performanceTestResult, "Performance Test Results", this.getScenario());
-		//TODO
+		
+		for(PerformanceTestResult curResult : performanceTestResult){
+			assertEquals(0, curResult.getNumErrors());
+		}
+	}
+	
+	@Given("a {string} buffer between tests has occurred")
+	public void aBufferBetweenTestsHasOccurred(String bufferTime) {
+		Duration waitDuration = Duration.parse("PT"+bufferTime);
+		log.info("Doing a {} wait to even out between tests.", waitDuration);
+		try {
+			Thread.sleep(waitDuration.toMillis());
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		log.debug("Done waiting between tests.");
 	}
 }

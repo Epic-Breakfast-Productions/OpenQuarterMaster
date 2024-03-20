@@ -7,8 +7,14 @@ import io.cucumber.java.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
+import stationCaptainTest.testResources.config.ConfigReader;
+import stationCaptainTest.testResources.rest.RestHelpers;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 
 @Slf4j
@@ -23,14 +29,7 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	public void setup(Scenario scenario) {
 		this.setScenario(scenario);
 		
-		Duration waitDuration = CONFIG.getTestSpacerWait();
-		log.info("Doing a {} wait to even out between tests.", waitDuration);
-		try {
-			Thread.sleep(waitDuration.toMillis());
-		} catch(InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-		log.debug("Done waiting between tests.");
+		
 	}
 	
 	@BeforeAll
@@ -39,10 +38,17 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	}
 	
 	@After
-	public void cleanup() throws IOException {
+	public void cleanup() throws IOException, URISyntaxException, InterruptedException {
 		log.info("Cleaning up after test.");
 		
-		//TODO:: remove data from instance
+		HttpClient client = RestHelpers.NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER.build();
+		HttpRequest request = HttpRequest.newBuilder()
+								  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(9001, "/api/v1/inventory/manage/clearDb"))
+								  .header("Authorization", RestHelpers.getClientCredentialString())
+								  .DELETE()
+								  .build();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+		log.info("Response from clearing database: {} / {}", response, response.body());
 		
 		this.getContext().close();
 		log.info("Done Cleaning up after test.");

@@ -3,8 +3,11 @@ Feature: 2.1 - Core API Performance
 
 	This feature covers checking health of the running instance.
 
+	Background:
+		Given a "10s" buffer between tests has occurred
+
 	@feature-1.2
-	Scenario Outline: Core API performance test
+	Scenario Outline: Core API performance test (<numClients> clients, <numStorageBlocks> blocks, <numItems> items)
 
 	This tests that the core api service is performant.
 
@@ -27,3 +30,5 @@ Feature: 2.1 - Core API Performance
 			| 50         | 100              | 5        | 5          |
 			# Large
 			| 100        | 100              | 5        | 5          |
+
+		# TODO:: do over duration, not just # of requests

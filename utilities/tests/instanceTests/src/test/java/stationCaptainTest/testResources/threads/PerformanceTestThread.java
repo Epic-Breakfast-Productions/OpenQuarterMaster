@@ -69,19 +69,27 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 		{
 			String itemPrefix = "Item-" + threadNum + "-";
 			ObjectNode itemObj = Utils.OBJECT_MAPPER.createObjectNode()
-												.put("description", FAKER.lorem().paragraph());
-			for (int i = 0; i < this.numStorageBlocks; i++) {
-				itemObj.put("name", itemPrefix + i)
-					.put("location", FAKER.address().fullAddress());
+												.put("description", FAKER.lorem().paragraph())
+												.put("storageType", "AMOUNT_SIMPLE");
+			for (int i = 0; i < this.numItems; i++) {
+				itemObj.put("name", itemPrefix + i);
+				String bodyData = itemObj.toPrettyString();
 				HttpRequest request = HttpRequest.newBuilder()
 										  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(coreApiPort, "/api/v1/inventory/item"))
 										  .header("Authorization", RestHelpers.getClientCredentialString())
-										  .POST(HttpRequest.BodyPublishers.ofString(itemObj.toPrettyString()))
+										  .header("Content-Type", "application/json")
+										  .POST(HttpRequest.BodyPublishers.ofString(bodyData))
 										  .build();
 				numCalls++;
+				log.debug("Sending item create request body: {}", bodyData);
+				
 				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+				if(response.statusCode() != 200){
+					log.warn("Request FAILED with code: {} {}", response, response.statusCode());
+					numErrors++;
+				}
 				String newId = response.body();
-				storageBlocks.add(newId);
+				items.add(newId);
 				log.debug("Created item with id: {}", newId);
 			}
 		}
@@ -94,6 +102,7 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 		log.info("Performance test thread {} took {} to complete.", this.threadNum, overallWatch.formatTime());
 		outputBuilder.overallDuration(Duration.of(overallWatch.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
 		outputBuilder.numCalls(numCalls);
+		outputBuilder.numErrors(numErrors);
 		return outputBuilder.build();
 	}
 }
