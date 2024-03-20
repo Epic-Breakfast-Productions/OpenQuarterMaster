@@ -51,6 +51,7 @@ while [ "$keepCalling" = true ]; do
 			echo "DEBUG:: Cur release asset file: $curAssetFileName -> $curAssetFileUrl";
 
 			if [[ "$curAssetFileName" == oqm-*.deb ]]; then
+#				echo "Downloading."
 				wget -P "$DEB_PPA_DIR" "$curAssetFileUrl"
 			else
 				echo "DEBUG:: not a package"
