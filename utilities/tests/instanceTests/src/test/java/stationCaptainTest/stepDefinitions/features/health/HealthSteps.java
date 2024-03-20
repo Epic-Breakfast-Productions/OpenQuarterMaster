@@ -1,6 +1,5 @@
 package stationCaptainTest.stepDefinitions.features.health;
 
-import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
@@ -11,13 +10,13 @@ import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static stationCaptainTest.testResources.rest.RestHelpers.NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER;
 
 @Slf4j
 public class HealthSteps extends BaseStepDefinitions {

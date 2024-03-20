@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,4 +17,7 @@ public class TestRunConfig {
 	private InstanceConnectionConfig instance = new InstanceConnectionConfig();
 	@Builder.Default
 	private boolean cleanupAfter = Boolean.parseBoolean(System.getProperty("testconfig.cleanupAfter", "true"));
+	@Builder.Default
+	private Duration testSpacerWait = Duration.of(10, ChronoUnit.SECONDS);
+	
 }

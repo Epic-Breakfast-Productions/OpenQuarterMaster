@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @Slf4j
 public class ConfigReader {
-	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
+	public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
 	protected static final String CONFIG_FILE_PROP_NAME = "TEST_CONFIG_FILE";
 	protected static final String DEFAULT_CONFIG_LOCATION = "config.yaml";
 	

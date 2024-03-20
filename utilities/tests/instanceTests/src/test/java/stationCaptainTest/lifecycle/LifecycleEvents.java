@@ -9,6 +9,7 @@ import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Slf4j
 public class LifecycleEvents extends BaseStepDefinitions {
@@ -21,6 +22,15 @@ public class LifecycleEvents extends BaseStepDefinitions {
 	@Override
 	public void setup(Scenario scenario) {
 		this.setScenario(scenario);
+		
+		Duration waitDuration = CONFIG.getTestSpacerWait();
+		log.info("Doing a {} wait to even out between tests.", waitDuration);
+		try {
+			Thread.sleep(waitDuration.toMillis());
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		log.debug("Done waiting between tests.");
 	}
 	
 	@BeforeAll

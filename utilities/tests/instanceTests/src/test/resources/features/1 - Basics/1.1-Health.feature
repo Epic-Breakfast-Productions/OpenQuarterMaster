@@ -3,7 +3,7 @@ Feature: 1.1 - Health
 
 	This feature covers checking health of the running instance.
 
-	@feature-1.1.1
+	@feature-1.1
 	Scenario Outline: <serviceName> Health Check
 
 	This tests that the <serviceName> is up and healthy.
