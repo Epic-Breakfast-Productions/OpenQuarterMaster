@@ -264,11 +264,19 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return this.removeAll(null, entity);
 	}
 	
+	
+	@Override
+	public long clear(@NonNull ClientSession session) {
+		this.getHistoryService().clear(session);
+		return super.clear(session);
+	}
+	
 	/**
 	 * Removes all items from the collection.
 	 *
 	 * @return The number of items that were removed.
 	 */
+	@Override
 	public long removeAll() {
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}

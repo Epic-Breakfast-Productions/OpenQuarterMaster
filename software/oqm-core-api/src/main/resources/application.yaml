@@ -157,8 +157,10 @@ smallrye:
           plain-text: true
           users:
             regularUser: "1!Letmein"
+            adminUser: "1!Letmein"
           roles:
             regularUser: "inventoryView,inventoryEdit"
+            adminUser: "inventoryView,inventoryEdit,inventoryAdmin"
 
   runningInfo:
   service:
