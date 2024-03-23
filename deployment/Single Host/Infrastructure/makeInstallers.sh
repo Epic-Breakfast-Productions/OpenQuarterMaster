@@ -23,9 +23,9 @@ buildDir="build"
 debDir="InfraDeb"
 
 # All
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "zookeeper")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "kafka")
 # Ready for deployment
-packages=("jaeger" "mongo" "postgres" "keycloak")
+packages=("jaeger" "mongo" "postgres" "keycloak" "kafka")
 
 #
 # Clean
