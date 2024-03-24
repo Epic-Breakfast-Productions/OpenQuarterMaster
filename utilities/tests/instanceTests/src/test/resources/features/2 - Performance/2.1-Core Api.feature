@@ -19,16 +19,32 @@ Feature: 2.1 - Core API Performance
 		When the clients perform their actions
 		Then all requests returned successfully
 
+		@performance-small
 		Examples:
 			| numClients | numStorageBlocks | numItems | numUpdates |
-			# Typical Home - Small shop situation
 			| 1          | 5                | 5        | 5          |
 			| 2          | 5                | 5        | 5          |
 			| 2          | 100              | 5        | 5          |
-			# Medium
+			| 1          | 100              | 5        | 5          |
+		@performance-medium
+		Examples:
+			| numClients | numStorageBlocks | numItems | numUpdates |
 			| 10         | 100              | 5        | 5          |
 			| 50         | 100              | 5        | 5          |
-			# Large
+		@performance-large
+		Examples:
+			| numClients | numStorageBlocks | numItems | numUpdates |
 			| 100        | 100              | 5        | 5          |
+			| 100        | 100              | 100      | 5          |
+		@performance-xl
+		Examples:
+			| numClients | numStorageBlocks | numItems | numUpdates |
+			| 1000       | 1                | 1        | 5          |
+			| 1000       | 100              | 100      | 5          |
+		@performance-overboard
+		Examples:
+			| numClients | numStorageBlocks | numItems | numUpdates |
+			| 1000       | 1                | 1        | 5          |
+			| 1000       | 100              | 100      | 5          |
 
 		# TODO:: do over duration, not just # of requests
