@@ -31,9 +31,6 @@ service:
       height: 500
       width: ${service.image.resizing.height}
       savedType: "PNG"
-    
-messaging:
-  connector: ""
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -110,6 +107,12 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
+
+mp:
+  messaging:
+    outgoing:
+      events-outgoing:
+        connector: smallrye-kafka
 
 #  messaging:
 #    outgoing:
