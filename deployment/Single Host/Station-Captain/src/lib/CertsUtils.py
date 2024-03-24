@@ -223,7 +223,6 @@ class CertsUtils:
                     .not_valid_after(nva)
                     # TODO:: support multiple domains/ip's
                     .add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(domain)]), critical=False)
-                    # .add_extension(x509.IPAddress(ipaddress.IPv4Address(domain)), critical=True)
                     .public_key(csr.public_key())
                     .sign(root_ca_key, hashes.SHA256(), default_backend())
                     )
