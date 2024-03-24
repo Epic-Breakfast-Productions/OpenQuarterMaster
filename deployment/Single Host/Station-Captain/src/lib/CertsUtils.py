@@ -14,6 +14,7 @@ from cryptography import x509
 from ConfigManager import *
 from CronUtils import *
 from ServiceUtils import *
+from ipaddress import *
 
 
 class CertsUtils:
@@ -25,10 +26,10 @@ class CertsUtils:
     """
 
     @staticmethod
-    def ensureCaInstalled()-> (bool, str):
+    def ensureCaInstalled() -> (bool, str):
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
-        caCertName=os.path.basename(root_ca_cert_path)
+        caCertName = os.path.basename(root_ca_cert_path)
 
         # Install in system location
         updatePrevious = False
@@ -44,7 +45,7 @@ class CertsUtils:
 
         shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
         result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
-        output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
+        output += "Output from updating system ca certs:\n" + result.stdout + "\n\n"
 
         # Install for Firefox
         #   Where FF is a snap, no /usr/lib/firefox or /usr/lib/mozilla
@@ -103,6 +104,13 @@ class CertsUtils:
             output += "Firefox not installed.\n\n"
 
         return True, output
+
+    @staticmethod
+    def getSAN(san: str):
+        try:
+            return x509.IPAddress(ipaddress.ip_address(san))
+        except ValueError:
+            return x509.DNSName(san)
 
     @staticmethod
     def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
@@ -213,8 +221,8 @@ class CertsUtils:
                     .serial_number(x509.random_serial_number())
                     .not_valid_before(nvb)
                     .not_valid_after(nva)
-                    .add_extension(x509.SubjectAlternativeName([x509.DNSName(domain)]), critical=False)
                     # TODO:: support multiple domains/ip's
+                    .add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(domain)]), critical=False)
                     # .add_extension(x509.IPAddress(ipaddress.IPv4Address(domain)), critical=True)
                     .public_key(csr.public_key())
                     .sign(root_ca_key, hashes.SHA256(), default_backend())
@@ -273,7 +281,7 @@ class CertsUtils:
         return False, "Not implemented yet."
 
     @staticmethod
-    def regenCerts(forceRegenCaRoot: bool = False, restartServices:bool = False) -> (bool, str):
+    def regenCerts(forceRegenCaRoot: bool = False, restartServices: bool = False) -> (bool, str):
         logging.info("Re-running cert generation utilities")
         output = None
         certMode = mainCM.getConfigVal("cert.mode")
@@ -336,6 +344,3 @@ class CertsUtils:
     @staticmethod
     def isAutoRegenCertsEnabled() -> bool:
         return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
-
-
-
