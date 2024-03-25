@@ -37,7 +37,7 @@ dependencies {
     implementation 'uk.org.okapibarcode:okapibarcode:0.4.2'
     //webjars
     implementation 'org.webjars:jquery:3.7.1'
-    implementation 'org.webjars:bootstrap:5.3.2'
+    implementation 'org.webjars:bootstrap:5.3.3'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
