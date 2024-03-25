@@ -15,9 +15,8 @@ This system is regularly tested on Ubuntu 22.04.
 
 ## Hardware Requirements:
 
-- 4(quad) cores
-  - As in, 4 threads total. Two cores with two threads each works.
-- 8gb of RAM
+- 2 cores on headless server, 4 cores on a host with a desktop
+- 4gb of RAM, 8gb recommended for minimum
 - CPU Requirements
     - One of the following architectures:
         - 64-bit `x64` ISA, intel or AMD
@@ -32,6 +31,6 @@ Note:: it is possible certain plugins, or a large number of plugins, will requir
 ### Proven SBC's and other 'specialty' hardware:
 
 - ARM:
-    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/), 8Gb memory recommended. 4Gb would probably be fine for testing purposes only, but any less is probably not going to be enough for a good experience.
+    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/), 8Gb memory recommended. 4Gb would probably be fine for testing and minimal purposes only, but any less is probably not going to be enough for a good experience.
 
 
