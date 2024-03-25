@@ -177,8 +177,9 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		if(entity != null) {
 			history.setEntity(entity.getId());
 		}
+		ObjectId output = this.add(session, history);
 		this.getHens().sendEvents(this.clazzForObjectHistoryIsFor, history);
-		return this.add(session, history);
+		return output;
 	}
 	public ObjectId addHistoryFor(T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
 		return this.addHistoryFor(null, objectReferred, entity, history);

@@ -8,6 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.object.history.EventType;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity;
 
@@ -16,7 +17,7 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @BsonDiscriminator
-public class ItemListActionAddEvent extends CreateEvent {
+public class ItemListActionAddEvent extends ObjectHistoryEvent {
 	public ItemListActionAddEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
 	}
