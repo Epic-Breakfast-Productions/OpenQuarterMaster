@@ -10,6 +10,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -57,11 +59,15 @@ import static com.mongodb.client.model.Filters.exists;
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch, InvItemCollectionStats> {
 	
+	@Getter(AccessLevel.PRIVATE)
 	private BaseStationInteractingEntity baseStationInteractingEntity;
+	@Getter(AccessLevel.PRIVATE)
 	private ItemCheckoutService itemCheckoutService;
+	@Getter(AccessLevel.PRIVATE)
+	private HistoryEventNotificationService hens;
 	
 	InventoryItemService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject
@@ -82,6 +88,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			false,
 			hens
 		);
+		this.hens = hens;
 		this.baseStationInteractingEntity = baseStationInteractingEntity;
 		this.itemCheckoutService = itemCheckoutService;
 	}

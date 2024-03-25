@@ -60,8 +60,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	protected final boolean allowNullEntityForCreate;
 	@Getter
 	private MongoHistoryService<T> historyService = null;
-	@Getter
-	private HistoryEventNotificationService hens;
 	
 	public MongoHistoriedObjectService(
 		ObjectMapper objectMapper,
@@ -71,13 +69,11 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService,
-		HistoryEventNotificationService hens
+		MongoHistoryService<T> historyService
 	) {
 		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.historyService = historyService;
-		this.hens = hens;
 	}
 	
 	protected MongoHistoriedObjectService(
@@ -99,9 +95,9 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			objectMapper,
 			mongoClient,
 			database,
-			clazz
+			clazz,
+			hens
 		);
-		this.hens = hens;
 	}
 	
 	/**
@@ -327,8 +323,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public ObjectId addHistoryFor(T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.addHistoryFor(null, object, entity, event);
 	}
-	
-	
 	
 	@WithSpan
 	public CreateEvent getCreateEvent(ObjectId objectId){

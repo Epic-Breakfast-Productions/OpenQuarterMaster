@@ -23,7 +23,7 @@ import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationSer
 public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
 	ItemListService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

@@ -36,10 +36,9 @@ HasParentObjService<
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService,
-		HistoryEventNotificationService hens
+		MongoHistoryService<T> historyService
 	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService, hens);
+		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService);
 	}
 	
 	protected HasParentObjService(

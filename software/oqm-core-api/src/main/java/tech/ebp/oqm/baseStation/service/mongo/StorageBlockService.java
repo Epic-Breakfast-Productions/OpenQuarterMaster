@@ -42,7 +42,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	private ItemCheckoutService itemCheckoutService;
 	
 	StorageBlockService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

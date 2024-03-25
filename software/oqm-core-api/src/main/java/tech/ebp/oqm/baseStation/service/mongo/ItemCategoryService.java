@@ -34,7 +34,7 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 	private StorageBlockService storageBlockService;
 	
 	ItemCategoryService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

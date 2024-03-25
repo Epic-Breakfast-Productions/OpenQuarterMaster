@@ -27,7 +27,7 @@ import java.util.List;
 public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
 	CustomUnitService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject

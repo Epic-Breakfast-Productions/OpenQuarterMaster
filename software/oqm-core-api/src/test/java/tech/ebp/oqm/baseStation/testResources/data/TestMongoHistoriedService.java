@@ -14,7 +14,7 @@ import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationSer
 public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestMainObject, TestMainObjectSearch, CollectionStats> {
 	
 	TestMongoHistoriedService() {//required for DI
-		super(null, null, null, null, null, null, false, null, null);
+		super(null, null, null, null, null, null, false, null);
 	}
 	
 	@Inject
