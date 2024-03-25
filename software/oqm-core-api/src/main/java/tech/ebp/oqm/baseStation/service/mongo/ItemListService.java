@@ -16,13 +16,14 @@ import tech.ebp.oqm.baseStation.model.object.interactingEntity.InteractingEntity
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemList;
 import tech.ebp.oqm.baseStation.model.object.itemList.ItemListAction;
 import tech.ebp.oqm.baseStation.rest.search.ItemListSearch;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 @Slf4j
 @ApplicationScoped
 public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
 	ItemListService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null, null);
 	}
 	
 	@Inject
@@ -30,14 +31,16 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			ItemList.class,
-			false
+			false,
+			hens
 		);
 	}
 	

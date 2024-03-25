@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.model.collectionStats.InvItemCollectionStats;
+import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.ItemSubEvent;
@@ -35,7 +36,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.items.storedWrapper.tracked
 import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.baseStation.service.notification.item.ItemLowStockEventNotificationService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
 import java.util.Map;
@@ -57,11 +58,10 @@ import static com.mongodb.client.model.Filters.exists;
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch, InvItemCollectionStats> {
 	
 	private BaseStationInteractingEntity baseStationInteractingEntity;
-	private ItemLowStockEventNotificationService ilsens;
 	private ItemCheckoutService itemCheckoutService;
 	
 	InventoryItemService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null, null);
 	}
 	
 	@Inject
@@ -70,19 +70,19 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
-		ItemLowStockEventNotificationService ilsens,
 		BaseStationInteractingEntity baseStationInteractingEntity,
-		ItemCheckoutService itemCheckoutService
+		ItemCheckoutService itemCheckoutService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			InventoryItem.class,
-			false
+			false,
+			hens
 		);
 		this.baseStationInteractingEntity = baseStationInteractingEntity;
-		this.ilsens = ilsens;
 		this.itemCheckoutService = itemCheckoutService;
 	}
 	
@@ -113,7 +113,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					item, null, event
 				);
 			}
-			this.ilsens.sendEvents(item, lowStockEvents);
+			this.getHens().sendEvents(this.getClazz(), lowStockEvents.toArray(new ObjectHistoryEvent[0]));
 		}
 	}
 	

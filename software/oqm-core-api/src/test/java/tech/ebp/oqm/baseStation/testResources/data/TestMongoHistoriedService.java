@@ -8,12 +8,13 @@ import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 @ApplicationScoped
 public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestMainObject, TestMainObjectSearch, CollectionStats> {
 	
 	TestMongoHistoriedService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+		super(null, null, null, null, null, null, false, null, null);
 	}
 	
 	@Inject
@@ -21,14 +22,16 @@ public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestM
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
+			String database,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			TestMainObject.class,
-			false
+			false,
+			hens
 		);
 	}
 	

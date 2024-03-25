@@ -27,6 +27,7 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,6 +60,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	protected final boolean allowNullEntityForCreate;
 	@Getter
 	private MongoHistoryService<T> historyService = null;
+	@Getter
+	private HistoryEventNotificationService hens;
 	
 	public MongoHistoriedObjectService(
 		ObjectMapper objectMapper,
@@ -68,11 +71,13 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService
+		MongoHistoryService<T> historyService,
+		HistoryEventNotificationService hens
 	) {
 		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.historyService = historyService;
+		this.hens = hens;
 	}
 	
 	protected MongoHistoriedObjectService(
@@ -80,7 +85,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		MongoClient mongoClient,
 		String database,
 		Class<T> clazz,
-		boolean allowNullEntityForCreate
+		boolean allowNullEntityForCreate,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -95,6 +101,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			database,
 			clazz
 		);
+		this.hens = hens;
 	}
 	
 	/**

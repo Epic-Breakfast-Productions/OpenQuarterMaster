@@ -13,17 +13,18 @@ import tech.ebp.oqm.baseStation.model.object.MainObject;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTreeNode;
 import tech.ebp.oqm.baseStation.rest.search.SearchObject;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.Collection;
 import java.util.List;
 
 public abstract class
-	HasParentObjService<
-						   T extends MainObject & HasParent,
-						   S extends SearchObject<T>,
-						   X extends CollectionStats,
-						   N extends ParentedMainObjectTreeNode<T>
-						   >
+HasParentObjService<
+					   T extends MainObject & HasParent,
+					   S extends SearchObject<T>,
+					   X extends CollectionStats,
+					   N extends ParentedMainObjectTreeNode<T>
+					   >
 	extends MongoHistoriedObjectService<T, S, X>
 {
 	
@@ -35,33 +36,41 @@ public abstract class
 		Class<T> clazz,
 		MongoCollection<T> collection,
 		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService
+		MongoHistoryService<T> historyService,
+		HistoryEventNotificationService hens
 	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService);
+		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService, hens);
 	}
 	
-	protected HasParentObjService(ObjectMapper objectMapper, MongoClient mongoClient, String database, Class<T> clazz, boolean allowNullEntityForCreate) {
-		super(objectMapper, mongoClient, database, clazz, allowNullEntityForCreate);
+	protected HasParentObjService(
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		String database,
+		Class<T> clazz,
+		boolean allowNullEntityForCreate,
+		HistoryEventNotificationService hens
+	) {
+		super(objectMapper, mongoClient, database, clazz, allowNullEntityForCreate, hens);
 	}
 	
 	@WithSpan
-	public List<T> getTopParents(){
+	public List<T> getTopParents() {
 		return this.list(Filters.exists("parent", false), null, null);
 	}
 	
 	@WithSpan
-	public List<T> getChildrenIn(ObjectId parentId){
+	public List<T> getChildrenIn(ObjectId parentId) {
 		return this.list(Filters.eq("parent", parentId), null, null);
 	}
 	
 	@WithSpan
-	public List<T> getChildrenIn(String parentId){
+	public List<T> getChildrenIn(String parentId) {
 		return this.getChildrenIn(new ObjectId(parentId));
 	}
 	
 	protected abstract ParentedMainObjectTree<T, N> getNewTree();
 	
-	public ParentedMainObjectTree<T, N> getTree(Collection<ObjectId> onlyInclude){
+	public ParentedMainObjectTree<T, N> getTree(Collection<ObjectId> onlyInclude) {
 		ParentedMainObjectTree<T, N> output = this.getNewTree();
 		
 		FindIterable<T> results = getCollection().find();
