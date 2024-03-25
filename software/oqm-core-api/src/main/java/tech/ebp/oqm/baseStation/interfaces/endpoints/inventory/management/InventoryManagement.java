@@ -1,12 +1,14 @@
 package tech.ebp.oqm.baseStation.interfaces.endpoints.inventory.management;
 
 
+import com.mongodb.annotations.Immutable;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -27,9 +29,11 @@ import tech.ebp.oqm.baseStation.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.baseStation.scheduled.ExpiryProcessor;
 import tech.ebp.oqm.baseStation.service.importExport.DataExportService;
 import tech.ebp.oqm.baseStation.service.importExport.DataImportService;
+import tech.ebp.oqm.baseStation.service.mongo.DatabaseManagementService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static tech.ebp.oqm.baseStation.interfaces.endpoints.EndpointProvider.ROOT_API_ENDPOINT_V1;
 
@@ -53,6 +57,9 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
 	ExpiryProcessor expiryProcessor;
+	
+	@Inject
+	DatabaseManagementService dbms;
 	
 	@Blocking
 	@GET
@@ -133,6 +140,26 @@ public class InventoryManagement extends EndpointProvider {
 		expiryProcessor.searchAndProcessExpiring();
 		
 		return Response.ok().build();
+	}
+	
+	@Blocking
+	@DELETE
+	@Path("clearDb")
+	@Operation(
+		summary = "Manually triggers the process to clear the database."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Process triggered."
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	public Map<String, Long> clearDatabase() {
+		return this.dbms.clearDb(this.getInteractingEntity());
 	}
 	
 	//TODO:: prune histories
