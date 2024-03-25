@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.bson.BsonDocument;
 import org.bson.BsonDocumentReader;
 import org.bson.BsonReader;
 import org.bson.Document;
@@ -366,5 +367,13 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		if(!objsWithRefs.isEmpty()){
 			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
 		}
+	}
+	
+	@Override
+	public long clear(ClientSession session) {
+		this.getGridFSBucket().find().forEach((GridFSFile file)->{
+			this.getGridFSBucket().delete(session, file.getId());
+		});
+		return this.getFileObjectService().clear(session);
 	}
 }
