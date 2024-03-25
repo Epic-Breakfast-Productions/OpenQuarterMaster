@@ -17,6 +17,7 @@ import jakarta.validation.ValidatorFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.MainObject;
@@ -149,4 +150,5 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 */
 	public abstract V getStats();
 	
+	public abstract long clear(@NonNull ClientSession session);
 }
