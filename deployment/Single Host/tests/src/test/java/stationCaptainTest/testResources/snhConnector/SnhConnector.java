@@ -183,6 +183,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
 				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
 				this.runCommand("docker", "image", "prune", "-f");
+				this.runCommand("systemctl", "reset-failed");
 //				this.runCommand("apt-get", "-y", "autoremove");
 			}
 			case rpm -> {
