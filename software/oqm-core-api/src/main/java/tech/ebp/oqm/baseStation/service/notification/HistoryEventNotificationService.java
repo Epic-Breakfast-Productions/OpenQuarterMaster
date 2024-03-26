@@ -46,7 +46,6 @@ public class HistoryEventNotificationService {
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
 		log.info("Sending event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());
-//		log.info("Kafka server config: {}", ConfigProvider.getConfig().getValue("mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.class));
 		try {
 			this.outgoingEventEmitter.send(
 				Message.of(
@@ -85,8 +84,7 @@ public class HistoryEventNotificationService {
 			if (event.getId() == null) {
 				throw new NullPointerException("Null ID for " + event.getType() + " event given for object of type " + objectClass.getSimpleName());
 			}
-//			this.internalEventEmitter.send(new EventNotificationWrapper(objectClass.getSimpleName(), event));
-			this.sendEventOutgoing(new EventNotificationWrapper(objectClass.getSimpleName(), event));
+			this.internalEventEmitter.send(new EventNotificationWrapper(objectClass.getSimpleName(), event));
 		}
 	}
 	
