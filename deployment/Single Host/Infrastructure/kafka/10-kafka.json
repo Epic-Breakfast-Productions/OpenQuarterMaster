@@ -2,7 +2,7 @@
 	"infra": {
 		"kafka": {
 			"host": "oqm-infra-kafka",
-			"port": 9092
+			"port": "9092"
 		}
 	}
 }
