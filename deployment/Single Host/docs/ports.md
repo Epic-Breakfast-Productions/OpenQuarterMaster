@@ -19,20 +19,18 @@ Core components generally occupy the port range `9000`-`9254`. Known ports liste
 
 Infrastructure components generally occupy the port range `8090`-`8999`. For certain services with well-established port numbers, those are used instead. Known ports listed below.
 
-| Port  | Infra Service    | Purpose                           | Forwarded |
-|-------|------------------|-----------------------------------|-----------|
-| 27017 | Mongo            | Mongodb connection port           | Optional  |
-| 8090  | Jaeger           | Jaeger UI                         | Optional  |
-| 8091  | Jaeger           | Jaeger collector                  | Optional  |
-| 8092  | Jaeger           | OTLP gRPC port                    | Optional  |
-| 8095  | Prometheus       | Prometheus UI                     | Optional  |
-| 8100  | OpenTelemetry    | OpenTelemetry?                    | Optional  |
-| 8105  | ActiveMQ Artemis | Artemis UI                        | Optional  |
-| 8106  | ActiveMQ Artemis | Artemis broker port (Qpid JMS)    | Optional  |
-| 8107  | ActiveMQ Artemis | Artemis broker port (Artemis JMS) | Optional  |
-| 8110  | Grafana          | Grafana UI port                   | Optional  |
-| 8115  | Keycloak         | Keycloak port                     | Yes       |
-| 8120  | Postgres         | Postgres port                     | Optional  |
+| Port  | Infra Service | Purpose                 | Forwarded |
+|-------|---------------|-------------------------|-----------|
+| 27017 | Mongo         | Mongodb connection port | Optional  |
+| 8090  | Jaeger        | Jaeger UI               | Optional  |
+| 8091  | Jaeger        | Jaeger collector        | Optional  |
+| 8092  | Jaeger        | OTLP gRPC port          | Optional  |
+| 8095  | Prometheus    | Prometheus UI           | Optional  |
+| 8100  | OpenTelemetry | OpenTelemetry?          | Optional  |
+| 8105  | Apache Kafka  | Kafka connection        | Optional  |
+| 8110  | Grafana       | Grafana UI port         | Optional  |
+| 8115  | Keycloak      | Keycloak port           | Yes       |
+| 8120  | Postgres      | Postgres port           | Optional  |
 
 ## Plugins
 
