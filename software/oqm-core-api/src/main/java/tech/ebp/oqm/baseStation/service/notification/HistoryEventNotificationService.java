@@ -6,10 +6,14 @@ import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
+import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import tech.ebp.oqm.baseStation.model.object.history.ObjectHistoryEvent;
 
 import java.util.Arrays;
@@ -26,14 +30,14 @@ public class HistoryEventNotificationService {
 	@Inject
 	@Broadcast
 	@Channel(INTERNAL_EVENT_CHANNEL)
+	@OnOverflow(value = OnOverflow.Strategy.DROP)//TODO:: this better https://quarkus.io/version/3.2/guides/kafka#sending-messages-with-emitter
 	Emitter<EventNotificationWrapper> internalEventEmitter;
 	
 	@Inject
 	@Broadcast
 	@Channel(OUTGOING_EVENT_CHANNEL)
+	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<ObjectHistoryEvent> outgoingEventEmitter;
-	
-	//TODO:: test and verify; ensure broadcast
 	
 	/**
 	 * Don't call this directly, use the other one
@@ -42,6 +46,7 @@ public class HistoryEventNotificationService {
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
 		log.info("Sending event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());
+//		log.info("Kafka server config: {}", ConfigProvider.getConfig().getValue("mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.class));
 		try {
 			this.outgoingEventEmitter.send(
 				Message.of(
@@ -59,7 +64,8 @@ public class HistoryEventNotificationService {
 						.withTopic(ALL_EVENT_TOPIC)
 						.build()
 				));
-		} catch(Throwable e){
+			log.debug("Sent event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());
+		} catch(Throwable e) {
 			log.error("FAILED to send event to external channels: {}/{}:", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId(), e);
 			throw e;
 		}
@@ -76,10 +82,11 @@ public class HistoryEventNotificationService {
 	public void sendEvents(Class<?> objectClass, Collection<ObjectHistoryEvent> events) {
 		for (ObjectHistoryEvent event : events) {
 			log.info("Sending event to internal channel: {}/{}", objectClass.getSimpleName(), event.getId());
-			if(event.getId() == null){
-				throw new NullPointerException("Null ID for "+event.getType()+" event given for object of type " + objectClass.getSimpleName());
+			if (event.getId() == null) {
+				throw new NullPointerException("Null ID for " + event.getType() + " event given for object of type " + objectClass.getSimpleName());
 			}
-			this.internalEventEmitter.send(new EventNotificationWrapper(objectClass.getSimpleName(), event));
+//			this.internalEventEmitter.send(new EventNotificationWrapper(objectClass.getSimpleName(), event));
+			this.sendEventOutgoing(new EventNotificationWrapper(objectClass.getSimpleName(), event));
 		}
 	}
 	

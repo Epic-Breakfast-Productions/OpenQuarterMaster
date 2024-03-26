@@ -113,6 +113,9 @@ mp:
     outgoing:
       events-outgoing:
         connector: smallrye-kafka
+        broadcast: true
+        value:
+          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 
 #  messaging:
 #    outgoing:
