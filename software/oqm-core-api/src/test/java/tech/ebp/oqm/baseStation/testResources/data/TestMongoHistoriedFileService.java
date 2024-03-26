@@ -10,6 +10,7 @@ import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.io.File;
 
@@ -26,7 +27,8 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
-		TempFileService tempFileService
+		TempFileService tempFileService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -35,7 +37,8 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 			TestMainFileObject.class,
 			false,
 			tempFileService,
-			"testFile"
+			"testFile",
+			hens
 		);
 	}
 	

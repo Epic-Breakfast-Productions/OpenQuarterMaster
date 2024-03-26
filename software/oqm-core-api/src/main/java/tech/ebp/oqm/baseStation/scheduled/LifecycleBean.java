@@ -33,19 +33,7 @@ public class LifecycleBean {
 	
 	private ZonedDateTime startDateTime;
 	
-	private void startLogAnnounce(){
-		this.startDateTime = ZonedDateTime.now();
-		log.info("Open QuarterMaster Web Server starting.");
-		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
-		//		log.debug("Version: {}", this.serverVersion);
-		//		log.debug("build time: {}", this.buildTime);
-		//		log.debug("Core lib version: {}", this.coreVersion);
-		//		log.debug("ManagerIO lib version: {}", this.managerIOVersion);
-		//		log.debug("Stats lib version: {}", this.statsVersion);
-		//		log.debug("Web lib version: {}", this.webLibVersion);
-		
-		log.info(this.startTemplate.render());
-		
+	public static void logConfig(){
 		if (log.isDebugEnabled()) {
 			TreeMap<String, String> configMap = new TreeMap<>();
 			
@@ -70,6 +58,22 @@ public class LifecycleBean {
 			}
 			log.debug("Configuration: \n{}", sb);
 		}
+	}
+	
+	private void startLogAnnounce(){
+		this.startDateTime = ZonedDateTime.now();
+		log.info("Open QuarterMaster Web Server starting.");
+		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
+		//		log.debug("Version: {}", this.serverVersion);
+		//		log.debug("build time: {}", this.buildTime);
+		//		log.debug("Core lib version: {}", this.coreVersion);
+		//		log.debug("ManagerIO lib version: {}", this.managerIOVersion);
+		//		log.debug("Stats lib version: {}", this.statsVersion);
+		//		log.debug("Web lib version: {}", this.webLibVersion);
+		
+		log.info(this.startTemplate.render());
+		
+		logConfig();
 	}
 	
 	void onStart(

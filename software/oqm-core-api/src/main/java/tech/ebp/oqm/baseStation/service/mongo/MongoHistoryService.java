@@ -7,6 +7,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -23,6 +25,7 @@ import tech.ebp.oqm.baseStation.rest.search.HistorySearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
 
@@ -40,12 +43,15 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	
 	private final Class<T> clazzForObjectHistoryIsFor;
+	@Getter(AccessLevel.PRIVATE)
+	private final HistoryEventNotificationService hens;
 	
 	public MongoHistoryService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		Class<T> clazz
+		Class<T> clazz,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -56,6 +62,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 			null
 		);
 		this.clazzForObjectHistoryIsFor = clazz;
+		this.hens = hens;
 	}
 	
 	@WithSpan
@@ -165,16 +172,17 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 	
 	@WithSpan
-	public ObjectId addHistoryFor(ClientSession session, T created, InteractingEntity entity, ObjectHistoryEvent history){
-		history.setObjectId(created.getId());
+	public ObjectId addHistoryFor(ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
+		history.setObjectId(objectReferred.getId());
 		if(entity != null) {
 			history.setEntity(entity.getId());
 		}
-		
-		return this.add(session, history);
+		ObjectId output = this.add(session, history);
+		this.getHens().sendEvents(this.clazzForObjectHistoryIsFor, history);
+		return output;
 	}
-	public ObjectId addHistoryFor(T created, InteractingEntity entity, ObjectHistoryEvent history){
-		return this.addHistoryFor(null, created, entity, history);
+	public ObjectId addHistoryFor(T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
+		return this.addHistoryFor(null, objectReferred, entity, history);
 	}
 	
 	@WithSpan

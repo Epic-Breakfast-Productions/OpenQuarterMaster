@@ -23,6 +23,7 @@ import tech.ebp.oqm.baseStation.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
 import tech.ebp.oqm.baseStation.service.mongo.file.MongoHistoriedFileService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -56,7 +57,8 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		StorageBlockService storageBlockService,
 		ItemCategoryService itemCategoryService,
 		InventoryItemService inventoryItemService,
-		ImageResizeConfig imageResizeConfig
+		ImageResizeConfig imageResizeConfig,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -65,7 +67,8 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			Image.class,
 			false,
 			tempFileService,
-			"image"
+			"image",
+			hens
 		);
 		this.storageBlockService = storageBlockService;
 		this.itemCategoryService = itemCategoryService;

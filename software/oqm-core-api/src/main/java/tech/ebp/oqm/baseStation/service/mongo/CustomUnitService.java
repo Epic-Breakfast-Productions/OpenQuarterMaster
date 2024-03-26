@@ -17,6 +17,7 @@ import tech.ebp.oqm.baseStation.model.units.CustomUnitEntry;
 import tech.ebp.oqm.baseStation.model.units.UnitUtils;
 import tech.ebp.oqm.baseStation.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Unit;
 import java.util.List;
@@ -35,14 +36,16 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database
+		String database,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			CustomUnitEntry.class,
-			false
+			false,
+			hens
 		);
 	}
 	
