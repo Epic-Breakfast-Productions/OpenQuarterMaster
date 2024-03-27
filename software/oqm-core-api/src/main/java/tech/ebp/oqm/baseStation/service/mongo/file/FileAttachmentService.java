@@ -18,6 +18,7 @@ import tech.ebp.oqm.baseStation.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
 import tech.ebp.oqm.baseStation.service.mongo.StorageBlockService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		String database,
 		TempFileService tempFileService,
 		StorageBlockService storageBlockService,
-		InventoryItemService inventoryItemService
+		InventoryItemService inventoryItemService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -51,7 +53,8 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 			FileAttachment.class,
 			false,
 			tempFileService,
-			"fileAttachment"
+			"fileAttachment",
+			hens
 		);
 //		((FileAttachmentObjectService)this.getFileObjectService()).setFileService(this);
 		this.storageBlockService = storageBlockService;

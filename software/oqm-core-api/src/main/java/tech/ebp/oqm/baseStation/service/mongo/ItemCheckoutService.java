@@ -27,6 +27,7 @@ import tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.baseStation.model.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.baseStation.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.AlreadyCheckedInException;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,14 +53,16 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		MongoClient mongoClient,
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
-		InventoryItemService inventoryItemService
+		InventoryItemService inventoryItemService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			ItemCheckout.class,
-			false
+			false,
+			hens
 		);
 		this.inventoryItemService = inventoryItemService;
 	}

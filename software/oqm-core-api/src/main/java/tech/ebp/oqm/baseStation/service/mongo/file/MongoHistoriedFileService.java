@@ -26,6 +26,7 @@ import tech.ebp.oqm.baseStation.rest.file.FileUploadBody;
 import tech.ebp.oqm.baseStation.rest.search.FileSearchObject;
 import tech.ebp.oqm.baseStation.service.TempFileService;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,7 +93,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		Class<T> metadataClazz,
 		boolean allowNullEntityForCreate,
 		TempFileService tempFileService,
-		String fileCollName
+		String fileCollName,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -108,7 +110,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				mongoClient,
 				database,
 				metadataClazz,
-				fileCollName
+				fileCollName,
+				hens
 			);
 	}
 	

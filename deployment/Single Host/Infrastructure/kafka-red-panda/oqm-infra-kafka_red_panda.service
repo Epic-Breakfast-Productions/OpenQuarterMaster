@@ -7,7 +7,7 @@
 # TODO:: figure out better username/password situation
 
 [Unit]
-Description=Apache Kafka server for Open Quartermaster. Version ${version}, using Kafka tagged to "3.7.0".
+Description=Apache Kafka server for Open Quartermaster. Version ${version}, using Red Panda Kafka tagged to "v23.3.9".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -16,9 +16,9 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-Environment="CONTAINER_NAME=oqm-infra-kafka"
-Environment="IMAGE_NAME=apache/kafka"
-Environment="IMAGE_VERSION=3.7.0"
+Environment="CONTAINER_NAME=oqm-infra-kafka-rp"
+Environment="IMAGE_NAME=docker.redpanda.com/redpandadata/redpanda"
+Environment="IMAGE_VERSION=v23.3.9"
 #Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
@@ -30,10 +30,12 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                         --name $CONTAINER_NAME \
                                         --network=oqm-internal \
-                                        -e KAFKA_LISTENERS=LISTENER_FRED://0.0.0.0:9092\
-                                        -e KAFKA_ADVERTISED_LISTENERS=LISTENER_FRED://oqm-infra-kafka:9092\
-                                        -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=LISTENER_FRED:PLAINTEXT\
-                                        $IMAGE_NAME:$IMAGE_VERSION"
+                                        $IMAGE_NAME:$IMAGE_VERSION redpanda start \
+                                        --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092 \
+                                        --advertise-kafka-addr internal://$CONTAINER_NAME:9092,external://localhost:19092 \
+                                        --rpc-addr $CONTAINER_NAME:33145 \
+                                        --advertise-rpc-addr $CONTAINER_NAME:33145 \
+                                        --default-log-level=info"
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
 

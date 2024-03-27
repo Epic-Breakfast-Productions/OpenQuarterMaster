@@ -6,9 +6,12 @@ import tech.ebp.oqm.baseStation.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.baseStation.model.object.FileMainObject;
 import tech.ebp.oqm.baseStation.rest.search.FileSearchObject;
 import tech.ebp.oqm.baseStation.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 /**
  * This is the standard impl of the MongoHistoriedObjectService used to store T.
+ *
+ * TODO:: figure out what this should actually extend
  */
 public class FileObjectService<T extends FileMainObject, S extends FileSearchObject<T>> extends MongoHistoriedObjectService<T, S, CollectionStats> {
 	
@@ -19,14 +22,16 @@ public class FileObjectService<T extends FileMainObject, S extends FileSearchObj
 		MongoClient mongoClient,
 		String database,
 		Class<T> clazz,
-		String objectName
+		String objectName,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			clazz,
-			false
+			false,
+			hens
 		);
 		this.objectName = objectName;
 	}

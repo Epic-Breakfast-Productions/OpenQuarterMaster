@@ -132,9 +132,9 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 				List<File> installers = new ArrayList<>();
 				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../../../software/oqm-core-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/oqm-core-api/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-core-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
 				
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");
@@ -182,7 +182,8 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			case deb -> {
 				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
 				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
-				this.runCommand("docker", "image", "prune");
+				this.runCommand("docker", "image", "prune", "-f");
+				this.runCommand("systemctl", "reset-failed");
 //				this.runCommand("apt-get", "-y", "autoremove");
 			}
 			case rpm -> {

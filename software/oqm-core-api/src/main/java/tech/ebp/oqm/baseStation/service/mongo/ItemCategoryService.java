@@ -17,6 +17,7 @@ import tech.ebp.oqm.baseStation.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTree;
 import tech.ebp.oqm.baseStation.model.rest.tree.itemCategory.ItemCategoryTreeNode;
 import tech.ebp.oqm.baseStation.rest.search.ItemCategorySearch;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.Map;
 import java.util.Set;
@@ -44,14 +45,16 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 		@ConfigProperty(name = "quarkus.mongodb.database")
 		String database,
 		InventoryItemService inventoryItemService,
-		StorageBlockService storageBlockService
+		StorageBlockService storageBlockService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			ItemCategory.class,
-			false
+			false,
+			hens
 		);
 		this.inventoryItemService = inventoryItemService;
 		this.storageBlockService = storageBlockService;

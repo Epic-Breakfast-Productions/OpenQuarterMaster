@@ -7,6 +7,7 @@
 quarkus.http.port=80
 quarkus.http.ssl.port=443
 quarkus.http.insecure-requests=redirect
+quarkus.log.level=INFO
 
 # Files brought over in shared volume
 quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/api/files/publicCert.pem
@@ -23,6 +24,11 @@ smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/p
 # Mongo Config:
 quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
 quarkus.mongodb.database={core.api.mongodb.database}
+
+# Kafka Config:
+mp.messaging.outgoing.events-outgoing.bootstrap.servers=OUTSIDE://{infra.kafka.host}:{infra.kafka.port}
+mp.messaging.outgoing.events-outgoing.connector=smallrye-kafka
+mp.messaging.outgoing.events-outgoing.value.serializer=io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 
 # Jaeger Config:
 quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces

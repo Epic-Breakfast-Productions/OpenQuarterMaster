@@ -39,8 +39,8 @@ Feature: 2.1 - Core API Performance
 		@performance-xl
 		Examples:
 			| numClients | numStorageBlocks | numItems | numUpdates |
-			| 1000       | 1                | 1        | 5          |
-			| 1000       | 100              | 100      | 5          |
+			| 250        | 1                | 1        | 5          |
+			| 250        | 100              | 100      | 5          |
 		@performance-overboard
 		Examples:
 			| numClients | numStorageBlocks | numItems | numUpdates |

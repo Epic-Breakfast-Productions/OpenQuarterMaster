@@ -1,10 +1,17 @@
 package tech.ebp.oqm.baseStation.service.mongo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.kafka.InjectKafkaCompanion;
+import io.quarkus.test.kafka.KafkaCompanionResource;
+import io.smallrye.reactive.messaging.kafka.companion.ConsumerTask;
+import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.baseStation.model.object.ObjectUtils;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.baseStation.testResources.data.TestMainObject;
 import tech.ebp.oqm.baseStation.testResources.data.TestMongoHistoriedService;
 import tech.ebp.oqm.baseStation.testResources.data.TestUserService;
@@ -23,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
+@QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	
 	@Inject
@@ -34,13 +42,16 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	@Inject
 	InteractingEntityService interactingEntityService;
 	
+	@InjectKafkaCompanion
+	KafkaCompanion kafkaCompanion;
+	
 	@Test
 	public void testEmptyHistory(){
 		assertEquals(0, testMongoService.getHistoryService().count());
 	}
 	
 	@Test
-	public void testAdd(){
+	public void testAdd() throws JsonProcessingException {
 		User testUser = testUserService.getTestUser();
 		this.interactingEntityService.add(testUser);
 		
@@ -59,6 +70,17 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		assertNotNull(createEvent.getEntity());
 		assertEquals(testUser.getId(), createEvent.getEntity());
 		
+		ConsumerTask<String, String> createFromAll = this.kafkaCompanion.consumeStrings().fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC, 1);
+		createFromAll.awaitCompletion();
+		assertEquals(1, createFromAll.count());
+		CreateEvent createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAll.getFirstRecord().value(), CreateEvent.class);
+		assertEquals(createEvent, createEventFromMessage);
+		
+		ConsumerTask<String, String> createFromCreate = this.kafkaCompanion.consumeStrings().fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC, 1);
+		createFromCreate.awaitCompletion();
+		assertEquals(1, createFromCreate.count());
+		createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromCreate.getFirstRecord().value(), CreateEvent.class);
+		assertEquals(createEvent, createEventFromMessage);
 	}
-	
+	//TODO:: test rest
 }
