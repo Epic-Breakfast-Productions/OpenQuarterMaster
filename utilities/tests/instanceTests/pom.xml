@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>tech.epic-breakfast-productions.openQuarterMaster</groupId>
-	<artifactId>singleNodeTest</artifactId>
+	<artifactId>instanceTests</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	

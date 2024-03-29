@@ -27,6 +27,7 @@ import tech.ebp.oqm.baseStation.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.baseStation.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.baseStation.service.mongo.search.SearchResult;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,7 +81,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		MongoClient mongoClient,
 		String database,
 		Class<T> clazz,
-		boolean allowNullEntityForCreate
+		boolean allowNullEntityForCreate,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
@@ -93,7 +95,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			objectMapper,
 			mongoClient,
 			database,
-			clazz
+			clazz,
+			hens
 		);
 	}
 	
@@ -320,8 +323,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public ObjectId addHistoryFor(T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.addHistoryFor(null, object, entity, event);
 	}
-	
-	
 	
 	@WithSpan
 	public CreateEvent getCreateEvent(ObjectId objectId){

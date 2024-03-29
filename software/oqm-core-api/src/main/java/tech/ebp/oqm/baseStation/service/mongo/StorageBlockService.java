@@ -22,6 +22,7 @@ import tech.ebp.oqm.baseStation.model.rest.tree.storageBlock.StorageBlockTreeNod
 import tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.baseStation.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
 import java.util.Map;
@@ -51,14 +52,16 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		@ConfigProperty(name = "quarkus.mongodb.database")
 			String database,
 		InventoryItemService inventoryItemService,
-		ItemCheckoutService itemCheckoutService
+		ItemCheckoutService itemCheckoutService,
+		HistoryEventNotificationService hens
 	) {
 		super(
 			objectMapper,
 			mongoClient,
 			database,
 			StorageBlock.class,
-			false
+			false,
+			hens
 		);
 		this.inventoryItemService = inventoryItemService;
 		this.itemCheckoutService = itemCheckoutService;

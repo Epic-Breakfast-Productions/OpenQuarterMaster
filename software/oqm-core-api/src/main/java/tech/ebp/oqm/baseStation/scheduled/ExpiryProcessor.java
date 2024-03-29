@@ -10,7 +10,7 @@ import tech.ebp.oqm.baseStation.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.baseStation.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.baseStation.service.mongo.InventoryItemService;
-import tech.ebp.oqm.baseStation.service.notification.item.ItemEventNotificationDispatchService;
+import tech.ebp.oqm.baseStation.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import static com.mongodb.client.model.Filters.size;
 public class ExpiryProcessor {
 	
 	@Inject
-	ItemEventNotificationDispatchService iends;
+	HistoryEventNotificationService eventNotificationService;
 	
 	@Inject
 	BaseStationInteractingEntity baseStationInteractingEntity;
@@ -55,11 +55,11 @@ public class ExpiryProcessor {
 			List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
 			
 			if (!expiryEvents.isEmpty()) {
-				inventoryItemService.update(cur);
+				this.inventoryItemService.update(cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
 					curEvent.setEntity(this.baseStationInteractingEntity.getId());
-					inventoryItemService.addHistoryFor(cur, null, curEvent);
-					iends.sendEvent(cur, curEvent);//TODO:: handle potential threadedness?
+					this.inventoryItemService.addHistoryFor(cur, null, curEvent);//TODO:: pass BS entity?
+					this.eventNotificationService.sendEvent(this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
 				}
 			}
 		});

@@ -2,6 +2,7 @@ package tech.ebp.oqm.baseStation.service.mongo;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 import com.mongodb.client.model.Sorts;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -76,7 +77,7 @@ class MongoServiceTest extends RunningServerTest {
 		
 		assertEquals(5, this.testMongoService.list().size());
 		assertEquals(this.testMongoService.count(), this.testMongoService.list().size());
-		assertEquals(originals, this.testMongoService.list());
+		assertEquals(Lists.reverse(originals), this.testMongoService.list());
 	}
 	
 	@Test

@@ -31,9 +31,6 @@ service:
       height: 500
       width: ${service.image.resizing.height}
       savedType: "PNG"
-    
-messaging:
-  connector: ""
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -58,7 +55,7 @@ quarkus:
   log:
     level: DEBUG
     console:
-      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
+      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
     category:
       "org.mongodb.driver":
         level: INFO
@@ -110,6 +107,15 @@ quarkus:
       enabled: true
     metrics:
       enabled: true
+
+mp:
+  messaging:
+    outgoing:
+      events-outgoing:
+        connector: smallrye-kafka
+        broadcast: true
+        value:
+          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 
 #  messaging:
 #    outgoing:

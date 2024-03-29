@@ -8,9 +8,11 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.panache.common.Sort;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import lombok.NonNull;
@@ -61,16 +63,26 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	
 	private FindIterable<T> find(ClientSession session, Bson filter) {
 		log.debug("Filter for find: {}", filter);
+		FindIterable<T> output;
+		
 		if (filter != null) {
 			if (session == null) {
-				return getCollection().find(filter);
+				output = getCollection().find(filter);
+			} else {
+				output = getCollection().find(session, filter);
 			}
-			return getCollection().find(session, filter);
+		} else {
+			if (session == null) {
+				output = getCollection().find();
+			} else {
+				output = getCollection().find(session);
+			}
 		}
-		if (session == null) {
-			return getCollection().find();
-		}
-		return getCollection().find(session);
+		
+		Bson sortBson = Sorts.descending("$natural");
+		//TODO:: #571 support providing sort param
+		
+		return output.sort(sortBson);
 	}
 	
 	/**
