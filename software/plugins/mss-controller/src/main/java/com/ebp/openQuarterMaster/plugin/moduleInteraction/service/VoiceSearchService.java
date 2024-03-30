@@ -298,6 +298,7 @@ public class VoiceSearchService {
 		}
 		File itemsFile = new File(this.voiceSearchConfig.container().volumeLoc() + this.slotsDirLoc + "/item");
 		log.debug("Creating items list file: {}", itemsFile);
+		log.trace("Got items: {}", nameSet);
 		itemsFile.getParentFile().mkdirs();
 		itemsFile.createNewFile();
 		try (
