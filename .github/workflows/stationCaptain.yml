@@ -8,25 +8,61 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/Station-Captain/**"
+      - "deployment/Single Host/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/Station-Captain/**"
+      - "deployment/Single Host/Station-Captain/**"
       - ".github/workflows/stationCaptain.yml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/Station-Captain"
+    working-directory: "deployment/Single Host/Station-Captain/"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:  # This workflow contains a single job called "build"
-  buildTest:
+  runPythonUnitTests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12" ]
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/unitTests/"
+    env:
+      NO_SET_MAINCM: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install apt dependencies
+        run: sudo apt-get install python3-cryptography
+      - name: Install pip dependencies
+        run: pip install cryptography
+      - name: Run Unittest
+        run: python3 -m unittest
+#      - name: Install dependencies
+#        run: pip install pytest pytest-md pytest-emoji
+#      - name: Run pytest
+#        uses: pavelzw/pytest-action@v2
+#        with:
+#          verbose: true
+#          emoji: true
+#          job-summary: true
+##          custom-arguments: '-q'
+#          click-to-expand: true
+#          report-title: 'Test Report'
+  
+  buildInstallers:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -45,13 +81,15 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Installers Produced
-          path: "software/Station-Captain/bin"
+          path: "deployment/Single Host/Station-Captain/bin"
 
   # This workflow contains a single job called "build"
   testUbuntu:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       -
@@ -68,7 +106,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Build with Maven
         run: ./mvnw verify -Dtest.installer="deb" -Dtest.os="ubuntu"
-        working-directory: software/Station-Captain/stationCaptainTest
+        working-directory: deployment/Single Host/Station-Captain/stationCaptainTest
         
         # Runs a single command using the runners shell
       -
@@ -77,7 +115,7 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Ubuntu
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Ubuntu
         if: always()
@@ -85,12 +123,14 @@ jobs:  # This workflow contains a single job called "build"
         with:
           name: Ubuntu Cucumber Reports
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/report.json"
   # This workflow contains a single job called "build"
   testFedora:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    defaults:
+      run:
+        working-directory: "deployment/Single Host/Station-Captain/"
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       -
@@ -107,7 +147,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Build with Maven
         run: ./mvnw verify -Dtest.installer="rpm" -Dtest.os="fedora"
-        working-directory: software/Station-Captain/stationCaptainTest
+        working-directory: deployment/Single Host/Station-Captain/stationCaptainTest
       
         # Runs a single command using the runners shell
       -
@@ -116,7 +156,7 @@ jobs:  # This workflow contains a single job called "build"
         uses: actions/upload-artifact@v2
         with:
           name: Cucumber Test Reports Fedora
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/*"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
       -
         name: Cucumber Test Results to Annotation Fedora
         if: always()
@@ -124,4 +164,4 @@ jobs:  # This workflow contains a single job called "build"
         with:
           name: Fedora Cucumber Reports
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: "software/Station-Captain/stationCaptainTest/target/test-reports/report.json"
+          path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/report.json"

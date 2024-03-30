@@ -40,3 +40,13 @@ Users create a custom workflow for items to come into and work through, and fini
 ## Compliance Enforcing plugin
 
  - Plugin to ensure system is up to some spec (fips, hepa, etc)
+
+
+## Old person stuff manager
+
+ - simplified UI to keep track of a lifetime's worth of stuff.
+ - will generation?
+
+## AI Powered Image Searches
+
+ - Search database based on images, using AI to do the find

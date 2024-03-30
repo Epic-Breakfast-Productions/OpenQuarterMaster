@@ -1,0 +1,18 @@
+{
+	"infra": {
+		"keycloak": {
+			"host": "oqm-infra-keycloak",
+			"port": "8115",
+			"adminUser": "oqmAdmin",
+			"adminPass": "<secret>",
+			"postgresUser": "oqm_keycloak_main",
+			"postgresPass": "<secret>",
+			"postgresDb": "oqm_keycloak",
+			"oqmRealmName": "oqm",
+			"externalBaseUri": "https://#{system.hostname}:#{infra.keycloak.port}",
+			"options": {
+				"userSelfRegistration": true
+			}
+		}
+	}
+}

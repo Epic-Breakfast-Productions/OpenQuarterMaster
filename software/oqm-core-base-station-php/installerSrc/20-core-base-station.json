@@ -1,0 +1,10 @@
+{
+	"core": {
+		"depot": {
+			"host": "oqm_core_depot",
+			"httpPort": 80,
+			"httpsPort": 443,
+			"externalBaseUri": "http://#{system.hostname}:#{core.depot.httpPort}"
+		}
+	}
+}

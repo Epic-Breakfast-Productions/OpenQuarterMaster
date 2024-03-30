@@ -19,11 +19,12 @@ body:
       description: What component(s) are part of the bug?
       multiple: true
       options:
+        - Core API
         - Base Station
-        - Station Captain
-        - Infra - Mongo
         - Plugins- *
         - MSS Hardware
+        - SNH - Station Captain
+        - SNH - Infra - *
         
   - type: textarea
     id: what-happened

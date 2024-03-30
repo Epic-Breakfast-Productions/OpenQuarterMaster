@@ -1,0 +1,42 @@
+# Service file for running an instance of Apache Zookeeper.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Zookeeper tags: https://hub.docker.com/r/confluentinc/cp-zookeeper/tags
+
+[Unit]
+Description=Apache Zookeeper server for Open Quartermaster. Version ${version}, using Zookeeper tagged to "1".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+Environment="CONTAINER_NAME=oqm-infra-zookeeper"
+Environment="IMAGE_NAME=confluentinc/cp-zookeeper"
+Environment="IMAGE_VERSION=7.4.3"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/zookeeper/env.list"
+#ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop Zookeeper container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove Zookeeper container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# setup env list file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/zookeeper"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"ZOOKEEPER_CLIENT_PORT=2181\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"ZOOKEEPER_TICK_TIME: 2000\n\" >> $ENV_CONFIG_FILE"
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                        --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
+                                        --env-file $ENV_CONFIG_FILE \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop Zookeeper container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove Zookeeper container'"
+
+[Install]
+WantedBy=multi-user.target

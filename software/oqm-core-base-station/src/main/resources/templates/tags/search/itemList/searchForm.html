@@ -1,0 +1,16 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.ItemListSearch searchObject}!}
+{#include tags/search/searchForm id=id action='/items' showKeywords=true showAttributes=true pagingOptions=searchObject.getPagingOptions(true)}
+{#inputs}
+<div class="mb-3 col col-3">
+    <label for="{id}-itemNameInput" class="form-label">Name</label>
+    <input type="text" class="form-control" name="name" id="{id}-itemNameInput" aria-describedby="{id}-itemListNameInputHelp" value="{searchObject.getName()}">
+    <div id="{id}-itemListNameInputHelp" class="form-text">The name of the item list to find.</div>
+</div>
+{/inputs}
+{/include}

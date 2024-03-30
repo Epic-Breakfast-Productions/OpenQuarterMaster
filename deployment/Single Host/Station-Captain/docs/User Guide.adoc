@@ -1,0 +1,188 @@
+= Open Quarter Master Station Captain Guide
+:toc:
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:sectanchors:
+
+link:README.md[Back]
+
+More information available on link:https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station-Captain[GitHub]
+
+== Introduction
+
+This document is a guide to using the `oqm-captain` utility. This script exists to manage your instance of Open QuarterMaster.
+
+Due to the administrative tasks this script performs, it must be run as root, or with `sudo`.
+
+== Modes
+
+This script supports several methods (modes) of interaction.
+
+=== Interactive
+
+This is the default mode, run when no arguments are passed. This provides a simple, console-based interface. When running from the system app icon, this is the mode that is run.
+
+To navigate, use `arrow keys`.
+
+To confirm an action, hit `enter`.
+
+To select/deselect an option, press `space`.
+
+You can also navigate by clicking on the menu items you want to select.
+
+==== Flow
+
+When starting up, the script performs a quick check to ensure the core system is installed.
+If the core components are not installed, it will prompt you to install them.
+
+TODO more to say here? Update at least?
+
+==== Menu System
+
+This is a quick explanation of the menus in interactive mode, and what the tool allows you to do.
+
+(main menu)
+
+. *Info / Status*
+.. *Installation Status*
+*** Shows how the installed services are running
+*** Shows what versions of the software are running (TODO)
+.. *Host Information*
+*** Shows information about the host, including:
+**** IP addresses
+**** Hardware information
+**** Storage usage
+**** RAM usage
+. *Manage Installation*
+
+.. *Select OQM major version* TODO, later
+
+.. *SSL/HTTPS Certs TODO*
+... *Cert info TODO*
+**** Shows the info about the certs that are currently setup for use
+... *Verify certificates*
+**** Verifies that the certs setup are verifyable and valid for use
+... *Cert mode (self, Let's Encrypt, provided)*
+... *Private Key Location*
+... *Public Cert/Key Location*
+... *Cert mode specific Options*
+**** Self signed Options
+.... *CA Private Key Location*
+.... *Country Name*
+.... *Country Name*
+.... *State or Province Name*
+.... *Locality Name*
+.... *Organization Name*
+.... *Organizational Unit Name*
+**** Let's Encrypt Options
+**** Provided Options
+.... *CA Provided*
+
+.. *Core? TODO*
+... *Ensure installed? (TODO)*
+... *Common config options (TODO)*
+
+.. *Set Email Settings* +
+TODO- document better
+
+*** This menu sets email settings used to send emails from the system
+*** These settings are used by various services as well as the system itself
+*** Also supports testing these settings
+
+.. *User Administration* +
+   Utilities to manage users in the system, and high level setup of how users are treated in the system. +
+   TODO- explain Keycloak and how it works. Links to additional resources.
+... *Goto keycloak admin console* +
+    Shows the link to the admin console, and the credentials to login as the admin.
+... *Toggle self-register* (TODO)
+.. *Plugins* TODO
+.. *Uninstall All* TODO
+
+. *Snapshots* +
+  Snapshots allow you to take a current state of you system, and save it or back it up for later.
+
+.. *Restore from Snapshot* +
+   Restores your system to the state from a given snapshot. Will bring down services momentarily while the restore occurs.
+
+.. *Perform snapshot now*
+   Performs a snapshot. Will bring down services momentarily while the snapshot occurs.
+
+.. *Enable/disable automatic snapshots*
+   Enables or disables snapshots from automatically taking place.
+
+.. *Set Snapshot location*
+   Sets the location the resulting snapshots are placed.
+
+.. *Set number of snapshots to keep*
+   Sets the number of snapshots to keep around. This is meant to preserve disk space.
+
+.. *Set automatic snapshot frequency*
+   Sets how often the automatic snapshots will occur.
+
+. *Cleanup, Maintenance, and Updates*
+
+.. *Updates* +
+   This lets you update your system and change your automatic update settings
+
+... *Perform Updates (OS and OQM)* +
+   This will update your system. +
+   Currently supports both `apt` and `yum` based systems; Debian/Ubuntu, Fedora/RHEL
+
+... *Enable/disable automatic updates* +
+    This will prompt you on your os-specific menu to set automatic updates as enabled or not. +
+    Currently only supports Ubuntu, probably also Debian systems.
+
+.. *Containers*
+
+... *Prune unused container resources*
+
+... *Enable/disable automatic prune*
+
+... *Set prune frequency*
+
+.. *Data Management*
+
+... *Clear ALL Data*
+... *Clear OQM Data* TODO
+... *Clear User Data* TODO
+... *Clear Plugin Data* TODO
+
+.. *Dump Logs* +
+   Dumps logs to an archive, intent to be able to send that file for debugging. Puts them in a subdirectory under where snapshots are placed.
+
+.. *Restart all services*
+*** Restarts all services related to OQM
+*** Recommended do after config changes and during low usage times.
+
+.. *Restart Device*
+*** Does as advertises. Restarts the system that this all runs on.
+*** Recommended when weirder issues occur, and after updates.
+
+. *Captain Settings* TODO
+
+=== Python UI (Planned/TODO)
+
+A more user-friendly interface than the standard menu system. Follows the same menu system and layout.
+
+This is a planned feature, so stay tuned.
+
+=== Command
+
+A command line interface is available for performing operations with a single action.
+
+Use `oqm-captain -h` for information in the available options.
+
+== OQM Config
+
+OQM Config is a secondary utility that sits alongside `oqm-captain`, and helps facilitate a smooth operation. Specifically, like it's name implies, it handles the configuration for the system.
+
+More guide to come in the future.
+
+== Other
+
+=== Additional helpful good-to-know
+
+==== Email results of automatic updates
+
+
