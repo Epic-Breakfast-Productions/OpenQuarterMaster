@@ -2,12 +2,9 @@ package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
 import com.ebp.openQuarterMaster.plugin.config.VoiceSearchConfig;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemVoiceSearchResults;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient;
-import com.ebp.openQuarterMaster.plugin.restClients.searchObj.InventoryItemSearch;
+import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.PullImageResultCallback;
@@ -21,8 +18,9 @@ import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,11 +67,14 @@ public class VoiceSearchService {
 	
 	@RestClient
 	@Getter(AccessLevel.PRIVATE)
-	BaseStationInventoryItemRestClient inventoryItemRestClient;
+	OqmCoreApiClientService coreApiClient;
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemSearchService itemSearchService;
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	KcClientAuthService kcClientAuthService;
 	
 	String sentencesFileLoc;
 	String slotsDirLoc;
@@ -91,7 +92,7 @@ public class VoiceSearchService {
 	
 	@PostConstruct
 	void init() throws IOException, InterruptedException, URISyntaxException {
-		if(!this.voiceSearchConfig.enabled()){
+		if (!this.voiceSearchConfig.enabled()) {
 			log.info("Voice search is disabled in configuration.");
 			return;
 		}
@@ -249,13 +250,13 @@ public class VoiceSearchService {
 		Files.copy(original, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 	}
 	
-	private void assertEnabled(){
-		if(!this.enabled()){
+	private void assertEnabled() {
+		if (!this.enabled()) {
 			throw new VoiceDisabledException();
 		}
 	}
 	
-	public boolean enabled(){
+	public boolean enabled() {
 		return this.getVoiceSearchConfig().enabled();
 	}
 	
@@ -268,8 +269,9 @@ public class VoiceSearchService {
 		log.debug("Creating items slot file.");
 		Set<String> nameSet = new HashSet<>();
 		{
-			ArrayNode allItems = this.getInventoryItemRestClient().searchItems(new InventoryItemSearch());
-			for (Iterator<JsonNode> it = allItems.elements(); it.hasNext(); ) {
+			//TODO:: this should be done better; do paging
+			ObjectNode allItems = this.getCoreApiClient().invItemSearch(this.kcClientAuthService.getAuthString(), InventoryItemSearch.builder().build()).await().indefinitely();
+			for (Iterator<JsonNode> it = allItems.get("results").elements(); it.hasNext(); ) {
 				ObjectNode curItem = (ObjectNode) it.next();
 				String curItemName = curItem.get("name").asText();
 				
@@ -404,8 +406,9 @@ public class VoiceSearchService {
 		//TODO:: ensure intent result is valid
 		
 		
-		InventoryItemSearch search = new InventoryItemSearch();
-		search.setName(intentResult.get("slots").get("item_name").asText());
+		InventoryItemSearch search = InventoryItemSearch.builder()
+										 .name(intentResult.get("slots").get("item_name").asText())
+										 .build();
 		
 		return ItemVoiceSearchResults.from(
 			this.getItemSearchService().searchForItemLocations(
