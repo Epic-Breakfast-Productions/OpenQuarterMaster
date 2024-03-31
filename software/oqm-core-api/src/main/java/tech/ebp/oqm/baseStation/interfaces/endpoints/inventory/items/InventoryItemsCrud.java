@@ -200,8 +200,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = InventoryItem.class
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
 				)
 			)
 		},

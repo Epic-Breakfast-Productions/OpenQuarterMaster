@@ -117,8 +117,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ItemCategory.class
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
 				)
 			)
 		},

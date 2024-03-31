@@ -122,8 +122,8 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ItemList.class
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
 				)
 			)
 		},
