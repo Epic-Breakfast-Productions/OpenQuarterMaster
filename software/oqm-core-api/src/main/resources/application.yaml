@@ -104,23 +104,18 @@ quarkus:
     from: ${runningInfo.fromEmail}
   reactive-messaging:
     health:
-      enabled: true
+      enabled: false
     metrics:
       enabled: true
 
-mp:
-  messaging:
-    outgoing:
-      events-outgoing:
-        connector: smallrye-kafka
-        broadcast: true
-        value:
-          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
-
+#mp:
 #  messaging:
 #    outgoing:
-#      items.add:
-#        connector: ${messaging.connector}
+#      events-outgoing:
+#        connector: smallrye-kafka
+#        broadcast: true
+#        value:
+#          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 
 smallrye:
   jwt:
