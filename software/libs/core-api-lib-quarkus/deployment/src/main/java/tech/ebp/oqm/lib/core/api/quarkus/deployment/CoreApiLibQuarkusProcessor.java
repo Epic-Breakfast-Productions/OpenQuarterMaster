@@ -73,7 +73,7 @@ class CoreApiLibQuarkusProcessor {
 			);
 		}
 		{//Base Station
-			DockerImageName dockerImageName = DockerImageName.parse("ebprod/oqm-core-api:1.0.0");
+			DockerImageName dockerImageName = DockerImageName.parse("ebprod/oqm-core-api:" + config.devservice.coreApiVersion);
 			// You might want to use Quarkus config here to customise the container
 			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(dockerImageName)
 														  .withAccessToHost(true)
