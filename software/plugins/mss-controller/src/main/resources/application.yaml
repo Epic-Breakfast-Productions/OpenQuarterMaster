@@ -9,19 +9,12 @@ voiceSearch:
     image: "synesthesiam/voice2json"
     tag: "latest"
   
-
 quarkus:
   application:
     name: OQM MSS Controller Plugin
   rest-client:
     "com.ebp.openQuarterMaster.plugin.restClients.KeycloakRestClient":
       url: ${quarkus.oidc.auth-server-url}
-      scope: jakarta.inject.Singleton
-    "com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient":
-      url: ${baseStation.baseUrl}
-      scope: jakarta.inject.Singleton
-    "com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient":
-      url: ${baseStation.baseUrl}
       scope: jakarta.inject.Singleton
     logging:
       
@@ -34,7 +27,7 @@ quarkus:
       enabled: true
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
-    info-title: OQM MSS Controller Plugin API
+    info-title: OQM MSS Controller Plugin
     info-version: ${service.apiVersion}
     info-description: API documentation for the Open QuarterMaster Modular Storage System Controller Plugin. Running with service version ${service.version}
     #    info-terms-of-service: <url>
@@ -70,10 +63,37 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: ${baseStation.baseUrl}/?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+  oqmCoreApi:
+    devservice:
+      certPath: ../../../../dev/devTest-cert-cert.pem
+      certKeyPath: ../../../../dev/devTest-cert-key.pem
+  keycloak:
+    devservices:
+      # Required to export realm
+      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
+      realm-path: "../../../../dev/oqm-realm.json"
+      realm-name: "oqm"
+      resource-aliases:
+        systemCert: ../../../../dev/devTest-cert-cert.pem
+        systemCertKey: ../../../../dev/devTest-cert-key.pem
+      resource-mappings:
+        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
+        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+      # TODO:: figure out
+      users:
+        alice: 1!Letmein
+      roles:
+        alice:
+          - "default-roles-oqm"
+          - "inventoryView"
+          - "offline_access"
+          - "itemCheckout"
+          - "inventoryEdit"
+          - "uma_authorization"
+          - "inventoryAdmin"
+          - "user"
   
 "%dev":
-  baseStation:
-    baseUrl: http://oqm-dev.local
   moduleConfig:
     serial:
       modules:
@@ -85,15 +105,19 @@ quarkus:
       engineUri: "unix:///run/user/1000/podman/podman.sock"
   quarkus:
     application:
-      name: ${service.nameShort} - V${service.apiVersion} - DEV
+      name: OQM MSS Controller Plugin - DEV
     http:
       port: 8080
+      ssl-port: 8443
+      ssl:
+        certificate:
+          files: ../../../../dev/devTest-cert-cert.pem
+          key-files: ../../../../dev/devTest-cert-key.pem
     log:
       level: DEBUG
     oidc:
       client-id: oqm-plugin-mss-controller
       credentials:
-        secret: "DG_aGHXd10Ci793NqXokRI0TKqvbRX6w"
-      auth-server-url: http://oqm-dev.local:8115/realms/oqm
+        secret: "**********"
     tls:
       trust-all: true

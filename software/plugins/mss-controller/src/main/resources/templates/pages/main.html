@@ -122,7 +122,7 @@
 			</ul>
 			<ul class="navbar-nav mb-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="{config:['baseStation.baseUrl']}" target="_self">
+					<a class="nav-link" href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}" target="_self">
 						<img src="/media/baseStationBack.svg" alt="" style="padding-top: 0;padding-bottom: 0;height: 1.5em;">
 						Back to Base Station
 					</a>
@@ -312,7 +312,7 @@
 												</button>
 											</div>
 											<div class="col">
-												<a href="{config:['baseStation.baseUrl']}/storage?view={curModuleInfo.getAssociatedStorageBlockId()}">
+												<a href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getAssociatedStorageBlockId()}">
 													View Storage block in Base Station
 												</a>
 											</div>
@@ -339,7 +339,7 @@
 																{#for curBlockNum in curModuleInfo.getBlockNumStream()}
 																	<div class="col m-2 d-grid gap-2" style="min-width: 115px; max-width:115px;">
 																		<div class="btn-group" role="group" aria-label="Basic example">
-																			<a class="btn btn-primary" href="{config:['baseStation.baseUrl']}/storage?view={curModuleInfo.getStorageBlockIdForBlock(curBlockNum)}">
+																			<a class="btn btn-primary" href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getStorageBlockIdForBlock(curBlockNum)}">
 																				{curBlockNum}
 																				<sup>
 																					<i class="bi bi-eye"></i>
@@ -498,7 +498,7 @@
 		let newResultCol = newResultRow.find(".col");
 		
 		let storageLink = $('<a class="" target="_self"></a>');
-		storageLink.prop("href", "{config:['baseStation.baseUrl']}/storage?view=" + storageResult.id);
+		storageLink.prop("href", "{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view=" + storageResult.id);
 		storageLink.text(storageResult.labelText);
 		
 		newResultCol.append(storageLink);
@@ -537,7 +537,7 @@
 			let moduleInfo = $('<p></p>');
 			
 			let moduleViewButton = $('<a href="" target="_self" class="btn btn-primary">View Block in Base Station</a>');
-			moduleViewButton.attr("href", "{config:['baseStation.baseUrl']}/storage?view=" + moduleResult.moduleStorageBlockId);
+			moduleViewButton.attr("href", "{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view=" + moduleResult.moduleStorageBlockId);
 			moduleInfo.append(moduleViewButton);
 			
 			curBody.append(moduleInfo);

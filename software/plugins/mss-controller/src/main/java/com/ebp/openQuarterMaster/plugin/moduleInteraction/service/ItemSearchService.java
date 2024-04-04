@@ -4,18 +4,18 @@ import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemSearchResults;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
-import com.ebp.openQuarterMaster.plugin.restClients.BaseStationInventoryItemRestClient;
-import com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient;
-import com.ebp.openQuarterMaster.plugin.restClients.searchObj.InventoryItemSearch;
+import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -23,14 +23,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class ItemSearchService {
 
-	@RestClient
-	BaseStationInventoryItemRestClient inventoryItemRestClient;
-	
-	@RestClient
-	BaseStationStorageBlockRestClient storageBlockRestClient;
-	
 	@Inject
 	ModuleMaster moduleMaster;
+	
+	@RestClient
+	OqmCoreApiClientService coreApiClientService;
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	KcClientAuthService kcClientAuthService;
 	
 	/**
 	 * TODO:: logic of what storage blocks are in an item search should be in BaseStation
@@ -39,15 +39,15 @@ public class ItemSearchService {
 	 * @return
 	 */
 	public ItemSearchResults searchForItemLocations(InventoryItemSearch itemSearch, boolean doHighlight){
-		ArrayNode itemResultsJson = this.inventoryItemRestClient.searchItems(itemSearch);
+		ObjectNode itemResultsJson = this.coreApiClientService.invItemSearch(this.getKcClientAuthService().getAuthString(), itemSearch).await().indefinitely();
 		ItemSearchResults output = new ItemSearchResults();
 		
-		for(JsonNode curItemJson : itemResultsJson){
+		for(JsonNode curItemJson : itemResultsJson.get("results")){
 			Iterator<String> curStorageBlockIds = curItemJson.get("storageMap").fieldNames();
 			
 			while (curStorageBlockIds.hasNext()){
 				String storageBlockId = curStorageBlockIds.next();
-				ObjectNode storageBlockJson = this.storageBlockRestClient.getBlock(storageBlockId);
+				ObjectNode storageBlockJson = this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), storageBlockId).await().indefinitely();
 				ItemSearchResults.StorageResult storageResult = new ItemSearchResults.StorageResult(storageBlockId, storageBlockJson.get("labelText").asText());
 				Optional<MssModule> inModuleResult = this.moduleMaster.getModuleWithStorageBlock(storageBlockId);
 				
@@ -60,7 +60,7 @@ public class ItemSearchService {
 							moduleInfo.getSerialId(),
 							new ItemSearchResults.ModuleResult(
 								moduleInfo.getAssociatedStorageBlockId(),
-								this.storageBlockRestClient.getBlock(moduleInfo.getAssociatedStorageBlockId())
+								this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), moduleInfo.getAssociatedStorageBlockId()).await().indefinitely()
 									.get("labelText").asText()
 							)
 						);
