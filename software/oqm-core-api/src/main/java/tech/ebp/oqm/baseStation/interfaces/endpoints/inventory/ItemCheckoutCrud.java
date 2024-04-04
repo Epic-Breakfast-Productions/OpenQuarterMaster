@@ -122,7 +122,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of storage blocks, using search parameters."
+		summary = "Gets a list of checkouts, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -131,8 +131,8 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ItemCheckout.class
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
 				)
 			)
 		},

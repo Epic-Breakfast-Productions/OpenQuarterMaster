@@ -124,8 +124,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			@Content(
 				mediaType = "application/json",
 				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = StorageBlock.class
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
 				)
 			)
 		},
