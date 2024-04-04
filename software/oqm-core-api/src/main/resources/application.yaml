@@ -70,6 +70,9 @@ quarkus:
   scheduler:
     metrics:
       enabled: true
+  health:
+    openapi:
+      included: true
   
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:

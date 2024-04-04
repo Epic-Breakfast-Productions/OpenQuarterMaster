@@ -29,6 +29,10 @@ public class IndexUi {
 	@Getter
 	String indexLines;
 	
+	//TODO: determine if we want to do this
+//	@Inject
+//	SmallRyeHealthReporter healthReporter;
+	
 	@Inject
 	IndexUi(
 		@Location("index.html")
@@ -40,7 +44,7 @@ public class IndexUi {
 	@GET
 	@Operation(summary = "Simple index content to lead user to more resources. Same as /index.html.")
 	public String getRoot() {
-		return this.getIndexLines();
+		return this.getIndexLines();// + healthReporter.getHealth().getPayload().get("status");
 	}
 	
 	//Probably overthinking this

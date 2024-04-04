@@ -26,11 +26,15 @@ quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mo
 quarkus.mongodb.database={core.api.mongodb.database}
 
 # Kafka Config:
+{% if infra.kafka is defined %}
 quarkus.reactive-messaging.health.enabled=true
 mp.messaging.outgoing.events-outgoing.bootstrap.servers=OUTSIDE://{infra.kafka.host}:{infra.kafka.port}
 mp.messaging.outgoing.events-outgoing.connector=smallrye-kafka
 mp.messaging.outgoing.events-outgoing.broadcast=true
 mp.messaging.outgoing.events-outgoing.value.serializer=io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+{% else %}
+#    Kafka instance not installed
+{% endif %}
 
 # Jaeger Config:
 quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
