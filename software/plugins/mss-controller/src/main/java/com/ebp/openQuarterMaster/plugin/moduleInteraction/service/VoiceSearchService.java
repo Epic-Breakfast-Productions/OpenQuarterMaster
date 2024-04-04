@@ -72,6 +72,7 @@ public class VoiceSearchService {
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemSearchService itemSearchService;
+	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	KcClientAuthService kcClientAuthService;
@@ -180,7 +181,7 @@ public class VoiceSearchService {
 		this.removeOldContainers(dockerClient);
 		log.debug("Running new voice2json command \"{}\"", (Object[]) commandArgs);
 		
-		//TODO:: this should work, probably not working due to working on podman. Get working with this instead of hand-jamming console commands
+		//TODO:: this should work, probably not working due to running on podman. Get working with this instead of hand-jamming console commands
 		//		CreateContainerResponse container = dockerClient
 		//												.createContainerCmd(this.moduleConfig.container().getFullImageRef())
 		//												.withName(CONTAINER_NAME)

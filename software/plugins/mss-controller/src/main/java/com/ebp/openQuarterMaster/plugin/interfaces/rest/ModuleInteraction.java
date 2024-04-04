@@ -34,13 +34,14 @@ public class ModuleInteraction {
     ) {
         return this.master.getModule(moduleSerialId).sendModuleIdentifyCommand();
     }
+    
     @GET
     @Path("/{blockNum}/identify")
     @RolesAllowed("inventoryView")
     @Produces(MediaType.APPLICATION_JSON)
     public CommandResponse identifyModuleBlock(
         @PathParam("moduleSerialId") String moduleSerialId,
-        @PathParam("blockNum") int blockNum
+        @PathParam("blockNum") Integer blockNum
     ) {
         return this.master.getModule(moduleSerialId).sendModuleBlockIdentifyCommand(blockNum);
     }
