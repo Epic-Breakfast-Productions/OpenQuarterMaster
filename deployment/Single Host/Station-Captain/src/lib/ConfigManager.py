@@ -282,8 +282,12 @@ class ConfigManager:
                 )
         elif isinstance(val, dict):
             for k, v in val.items():
+                newKey = key + "." + k
+                if not key:
+                    newKey = k
+
                 val[k] = self.updateReplacements(
-                    key + "." + k,
+                    newKey,
                     v,
                     generateSecretIfNone,
                     exceptOnNotPresent=exceptOnNotPresent
@@ -337,6 +341,11 @@ class ConfigManager:
             processSecret,
             exceptOnNotPresent
         )
+
+    def getFilledOutData(self):
+        output = dict(self.configData)
+        self.updateReplacements("", output)
+        return output
 
     @staticmethod
     def getArrRef(configKey: str):

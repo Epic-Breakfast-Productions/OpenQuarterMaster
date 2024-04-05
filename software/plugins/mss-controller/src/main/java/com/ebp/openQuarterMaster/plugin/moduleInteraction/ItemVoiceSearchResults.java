@@ -1,12 +1,12 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
-import com.ebp.openQuarterMaster.plugin.restClients.searchObj.InventoryItemSearch;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

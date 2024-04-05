@@ -36,6 +36,11 @@ public class MssSerialModule extends MssModule {
 	}
 	
 	@Override
+	public String getInterfaceType() {
+		return "serialOverUSB";
+	}
+	
+	@Override
 	public Queue<MssUpdate> getUpdates() {
 		//TODO
 		return new LinkedList<>();

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.2.0'
+version '1.2.1-DEV'
 
 repositories {
 	mavenCentral()
@@ -82,7 +82,7 @@ dependencies {
 	// 17.0.1 seems dud, might be related to keycloak issue
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 
-	testImplementation 'org.seleniumhq.selenium:selenium-java:4.18.1'
+	testImplementation 'org.seleniumhq.selenium:selenium-java:4.19.1'
 	testImplementation 'org.testcontainers:selenium:1.19.7'
 	testImplementation 'com.deque:axe-selenium:3.0'
 }

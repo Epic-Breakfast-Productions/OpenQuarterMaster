@@ -1,8 +1,7 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.restClients.BaseStationStorageBlockRestClient;
-import com.ebp.openQuarterMaster.plugin.restClients.searchObj.StorageBlockSearch;
+import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,6 +12,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
+
+import java.util.List;
 
 @Slf4j
 @ApplicationScoped
@@ -42,7 +45,11 @@ public class StorageBlockInteractionService {
 	
 	@RestClient
 	@Getter(AccessLevel.PRIVATE)
-	BaseStationStorageBlockRestClient baseStationStorageRestClient;
+	OqmCoreApiClientService coreApiClient;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	KcClientAuthService kcClientAuthService;
 	
 	private ObjectNode getNewStorageBlockJson() {
 		try {
@@ -92,15 +99,25 @@ public class StorageBlockInteractionService {
 			module.getModuleInfo().getSerialId(),
 			module.getModuleInfo().getNumBlocks()
 		);
-		ArrayNode result = this.getBaseStationStorageRestClient().searchBlocks(new StorageBlockSearch(module));
-		
-		if (result.isEmpty()) {
+		ObjectNode result = this.getCoreApiClient().storageBlockSearch(
+			this.getKcClientAuthService().getAuthString(),
+			StorageBlockSearch.builder()
+				.keywords(List.of(StorageBlockInteractionService.MSS_MODULE_KEYWORD))
+				.attributeKeys(List.of(StorageBlockInteractionService.MSS_MODULE_ID_ATT_KEY))
+				.attributeValues(List.of(module.getModuleInfo().getSerialId()))
+				.build()
+																		 ).await().indefinitely();
+		if (result.get("empty").asBoolean()) {
 			log.debug("Module {} did not exist yet. Creating.", module.getModuleInfo().getSerialId());
 			module.getModuleInfo().setAssociatedStorageBlockId(
-				this.getBaseStationStorageRestClient().postNewStorageBlock(
-						this.getNewModuleStorageBlockJson(module)
-					)
+				this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), this.getNewModuleStorageBlockJson(module))
+					.await().indefinitely()
 					.replaceAll("\"", "")
+				
+//				this.getBaseStationStorageRestClient().postNewStorageBlock(
+//						this.getNewModuleStorageBlockJson(module)
+//					)
+//					.replaceAll("\"", "")
 			);
 			log.info(
 				"Module {} created, new id: {}",
@@ -108,13 +125,13 @@ public class StorageBlockInteractionService {
 				module.getModuleInfo().getAssociatedStorageBlockId()
 			);
 		} else {
-			if (result.size() > 1) {
+			if (result.get("numResults").asInt() > 1) {
 				log.warn(
 					"Module {} search returned multiple results. Only counting the first one.",
 					module.getModuleInfo().getSerialId()
 				);
 			}
-			module.getModuleInfo().setAssociatedStorageBlockId(result.get(0).get("id").asText());
+			module.getModuleInfo().setAssociatedStorageBlockId(result.get("results").get(0).get("id").asText());
 			
 			log.info(
 				"Module {} already existed with id {}",
@@ -127,16 +144,32 @@ public class StorageBlockInteractionService {
 			log.info(
 				"Ensuring module block {}[{}] exists as a block.",
 				module.getModuleInfo().getSerialId(),
-				curBlockNum,
-				module.getModuleInfo().getNumBlocks()
+				curBlockNum
 			);
-			result = this.getBaseStationStorageRestClient().searchBlocks(new StorageBlockSearch(module, curBlockNum));
+			result = this.getCoreApiClient().storageBlockSearch(
+				this.getKcClientAuthService().getAuthString(),
+				StorageBlockSearch.builder()
+					.keywords(List.of(StorageBlockInteractionService.MSS_MODULE_BLOCK_KEYWORD))
+					.attributeKeys(List.of(
+						StorageBlockInteractionService.MSS_MODULE_ID_ATT_KEY,
+						StorageBlockInteractionService.MSS_MODULE_BLOCK_NUM_ATT_KEY
+					))
+					.attributeValues(List.of(
+						module.getModuleInfo().getSerialId(),
+						""+curBlockNum
+					))
+					.build()
+			).await().indefinitely();
 			String curId;
-			if (result.isEmpty()) {
+			if (result.get("empty").asBoolean()) {
 				log.debug("Module block {}[{}] did not exist yet. Creating.", module.getModuleInfo().getSerialId(), curBlockNum);
-				curId = this.getBaseStationStorageRestClient().postNewStorageBlock(
-					this.getNewModuleBlockStorageBlockJson(module, curBlockNum)
-				);
+				curId = this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), this.getNewModuleBlockStorageBlockJson(module, curBlockNum))
+							.await().indefinitely();
+//
+//					this.getBaseStationStorageRestClient().postNewStorageBlock(
+//
+//					this.getNewModuleBlockStorageBlockJson(module, curBlockNum)
+//				);
 				log.info(
 					"Module block {}[{}] created, new id: {}",
 					module.getModuleInfo().getSerialId(),
@@ -144,7 +177,7 @@ public class StorageBlockInteractionService {
 					curId
 				);
 			} else {
-				if (result.size() > 1) {
+				if (result.get("numResults").asInt() > 1) {
 					log.warn(
 						"Module block {}[{}] search returned multiple results. Only counting the first one.",
 						module.getModuleInfo().getSerialId(),
@@ -152,7 +185,7 @@ public class StorageBlockInteractionService {
 					);
 				}
 				
-				curId = result.get(0).get("id").asText();
+				curId = result.get("results").get(0).get("id").asText();
 				
 				log.info(
 					"Module block {}[{}] already existed with id {}",

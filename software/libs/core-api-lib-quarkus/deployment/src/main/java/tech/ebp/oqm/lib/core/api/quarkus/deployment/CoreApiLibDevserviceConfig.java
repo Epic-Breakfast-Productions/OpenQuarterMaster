@@ -13,7 +13,7 @@ import java.util.Optional;
 @ConfigGroup
 public class CoreApiLibDevserviceConfig {
 	/**
-	 * Enable logging to a file.
+	 * Enable devservices
 	 */
 	@WithDefault("true")
 	public boolean enable;
@@ -28,4 +28,9 @@ public class CoreApiLibDevserviceConfig {
 	 */
 	@ConfigItem(name="certKeyPath")
 	public Optional<File> certKeyPath;
+	/**
+	 * The name of the file in which logs will be written.
+	 */
+	@ConfigItem(name="coreApiVersion", defaultValue = "1.2.1-DEV")
+	public String coreApiVersion;
 }

@@ -2,7 +2,10 @@
 #
 # Script to get configuration and replace values
 #
+import os
 import sys
+
+from jinja2 import FileSystemLoader
 
 sys.path.append("lib/")
 from ConfigManager import *
@@ -10,6 +13,7 @@ from ScriptInfos import *
 import json
 import argparse
 import re
+import jinja2
 
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
@@ -46,7 +50,7 @@ elif args.l:
 elif args.g:
     configToGet = args.g[0]
     try:
-        configValue = mainCM.getConfigVal(configToGet, mainCM.configData)
+        configValue = mainCM.getConfigVal(configToGet)
         if isinstance(configValue, (dict, list)):
             configValue = json.dumps(
                 configValue,
@@ -58,15 +62,23 @@ elif args.g:
     print(configValue)
 elif args.t:
     configFileToGet = args.t[0]
-    output = ""
-    try:
-        with open(configFileToGet, 'r') as file:
-            output = file.read()
-    except OSError as e:
-        print("Failed to read file: ", e, file=sys.stderr)
-        exit(EXIT_CANT_READ_FILE)
-    placeholders = re.findall(r'\{(.*?)}', output)
+    configFileToGetPath, configFileToGetFilename = os.path.split(configFileToGet)
 
+    environment = jinja2.Environment(loader=FileSystemLoader(configFileToGetPath))
+    # template = environment.from_string(output)
+    template = environment.get_template(configFileToGetFilename)
+    output = template.render(mainCM.getFilledOutData())
+
+
+    # output = ""
+    # try:
+    #     with open(configFileToGet, 'r') as file:
+    #         output = file.read()
+    # except OSError as e:
+    #     print("Failed to read file: ", e, file=sys.stderr)
+    #     exit(EXIT_CANT_READ_FILE)
+
+    placeholders = re.findall(r'\{(.*?)}', output)
     for curPlaceholder in placeholders:
         # print("debug: resolving placeholder: " + curPlaceholder)
         output = output.replace(
