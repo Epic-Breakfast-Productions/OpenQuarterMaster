@@ -26,6 +26,7 @@ debDir="InfraDeb"
 packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "kafka")
 # Ready for deployment
 packages=("jaeger" "mongo" "postgres" "keycloak" "kafka-red-panda")
+#packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #
 # Clean
