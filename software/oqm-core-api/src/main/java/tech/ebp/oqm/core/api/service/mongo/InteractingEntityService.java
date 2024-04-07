@@ -28,29 +28,23 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch, CollectionStats> {
 	
-	private boolean basicAuthEnabled = false;
+	@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
+	boolean basicAuthEnabled;
 	
 	InteractingEntityService() {//required for DI
-		super(null, null, null, null, null, null);
+		this(null);
 	}
 	
 	@Inject
 	InteractingEntityService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		BaseStationInteractingEntity baseStationInteractingEntityArc,
-		@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
-		boolean basicAuthEnabled
+		BaseStationInteractingEntity baseStationInteractingEntityArc
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			InteractingEntity.class
 		);
-		this.basicAuthEnabled = basicAuthEnabled;
+		if(baseStationInteractingEntityArc == null){
+			return;
+		}
 		//force getting around Arc subclassing out the injected class
 		BaseStationInteractingEntity baseStationInteractingEntity = new BaseStationInteractingEntity(
 			baseStationInteractingEntityArc.getEmail()

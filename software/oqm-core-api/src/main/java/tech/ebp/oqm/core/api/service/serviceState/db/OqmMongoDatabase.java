@@ -15,7 +15,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MongoDatabase extends MainObject {
+public class OqmMongoDatabase extends MainObject {
 	
 	@NotNull
 	private String name;

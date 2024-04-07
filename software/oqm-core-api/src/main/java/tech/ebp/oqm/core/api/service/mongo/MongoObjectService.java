@@ -29,6 +29,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,19 +46,23 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 public abstract class MongoObjectService<T extends MainObject, S extends SearchObject<T>, X extends CollectionStats> extends MongoService<T, S, X> {
 	
+	protected MongoObjectService(String collectionName, Class<T> clazz) {
+		super(collectionName, clazz);
+	}
+	
+	protected MongoObjectService(Class<T> clazz) {
+		super(clazz);
+	}
+	
 	public MongoObjectService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
+		MongoDatabaseService mongoDatabaseService,
 		String collectionName,
-		Class<T> clazz,
-		MongoCollection<T> collection
+		Class<T> clazz
 	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
-	}
-	
-	protected MongoObjectService(ObjectMapper objectMapper, MongoClient mongoClient, String database, Class<T> clazz) {
-		super(objectMapper, mongoClient, database, clazz);
+		super(objectMapper, mongoClient, database, mongoDatabaseService, collectionName, clazz);
 	}
 	
 	private FindIterable<T> find(ClientSession session, Bson filter) {

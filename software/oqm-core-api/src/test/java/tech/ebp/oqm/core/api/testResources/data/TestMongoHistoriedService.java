@@ -13,22 +13,16 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestMainObject, TestMainObjectSearch, CollectionStats> {
 	
-	TestMongoHistoriedService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	
+	public TestMongoHistoriedService(){
+		this(null);
 	}
 	
 	@Inject
 	TestMongoHistoriedService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			TestMainObject.class,
 			false,
 			hens

@@ -10,25 +10,26 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
  *
  * @param <T> The type of object stored.
  */
-@AllArgsConstructor
 @Slf4j
 public abstract class MongoService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> {
 	
@@ -48,50 +49,79 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	/**
 	 * Mapper to help deal with json updates.
 	 */
+	@Inject
 	@Getter(AccessLevel.PROTECTED)
-	private final ObjectMapper objectMapper;
+	ObjectMapper objectMapper;
 	/**
 	 * The MongoDb client.
 	 */
+	@Inject
 	@Getter(AccessLevel.PROTECTED)
-	private final MongoClient mongoClient;
+	MongoClient mongoClient;
+	
 	/**
 	 * The name of the database to access
 	 */
-	protected final String database;
+	@Getter
+	@ConfigProperty(name = "quarkus.mongodb.database")
+	String databasePrefix;
+	
+	@Getter
+	@Inject
+	MongoDatabaseService mongoDatabaseService;
+	
 	/**
 	 * The name of the collection this service is in charge of
 	 */
 	@Getter
 	protected final String collectionName;
+	
 	/**
 	 * The class this collection is in charge of. Used for logging.
 	 */
 	@Getter
 	protected final Class<T> clazz;
+	
 	/**
 	 * The actual mongo collection.
 	 */
 	private MongoCollection<T> collection = null;
 	
+	
+	protected MongoService(
+		String collectionName,
+		Class<T> clazz
+	){
+		this.collectionName = collectionName;
+		this.clazz = clazz;
+	}
+	
+	protected MongoService(Class<T> clazz){
+		this(getCollectionNameFromClass(clazz), clazz);
+	}
+	
 	protected MongoService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
-		String database,
+		String databasePrefix,
+		MongoDatabaseService mongoDatabaseService,
+		String collectionName,
 		Class<T> clazz
 	) {
-		this(
-			objectMapper,
-			mongoClient,
-			database,
-			getCollectionNameFromClass(clazz),
-			clazz,
-			null
-		);
+		this(collectionName, clazz);
+		this.objectMapper = objectMapper;
+		this.mongoClient = mongoClient;
+		this.databasePrefix = databasePrefix;
+		this.mongoDatabaseService = mongoDatabaseService;
 	}
 	
-	protected MongoDatabase getDatabase(){
-		return this.getMongoClient().getDatabase(this.database);
+	/**
+	 * TODO::
+	 * @return
+	 */
+	protected MongoDatabase getMongoDatabase(){
+		log.info("Database service: {}", this.getMongoDatabaseService());
+		return this.getMongoClient().getDatabase(this.databasePrefix);
 	}
 	
 	/**
@@ -103,7 +133,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 */
 	protected MongoCollection<T> getCollection() {
 		if (this.collection == null) {
-			this.collection = this.getDatabase().getCollection(this.collectionName, this.clazz);
+			this.collection = this.getMongoDatabase().getCollection(this.collectionName, this.clazz);
 		}
 		return this.collection;
 	}

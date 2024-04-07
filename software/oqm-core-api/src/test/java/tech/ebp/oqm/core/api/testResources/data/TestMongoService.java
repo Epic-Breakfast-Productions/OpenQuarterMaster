@@ -12,21 +12,9 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class TestMongoService extends MongoObjectService<TestMainObject, TestMainObjectSearch, CollectionStats> {
 	
-	TestMongoService() {//required for DI
-		super(null, null, null, null, null, null);
-	}
-	
-	@Inject
 	TestMongoService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			TestMainObject.class
 		);
 	}

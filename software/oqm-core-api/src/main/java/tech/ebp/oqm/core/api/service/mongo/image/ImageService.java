@@ -14,6 +14,7 @@ import tech.ebp.oqm.core.api.config.ImageResizeConfig;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.Image;
+import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
 import tech.ebp.oqm.core.api.rest.search.ImageSearch;
@@ -36,43 +37,29 @@ import java.util.Set;
 @ApplicationScoped
 public class ImageService extends MongoHistoriedFileService<Image, FileUploadBody, ImageSearch, ImageGet> {
 
-	private ImageResizeConfig imageResizeConfig;
-	private StorageBlockService storageBlockService;
-	private ItemCategoryService itemCategoryService;
-	private InventoryItemService inventoryItemService;
+	@Inject
+	ImageResizeConfig imageResizeConfig;
+	@Inject
+	StorageBlockService storageBlockService;
+	@Inject
+	ItemCategoryService itemCategoryService;
+	@Inject
+	InventoryItemService inventoryItemService;
 	
-	ImageService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	public ImageService() {//for DI
+		this(null);
 	}
 	
 	@Inject
 	ImageService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		TempFileService tempFileService,
-		StorageBlockService storageBlockService,
-		ItemCategoryService itemCategoryService,
-		InventoryItemService inventoryItemService,
-		ImageResizeConfig imageResizeConfig,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			Image.class,
-			false,
-			tempFileService,
 			"image",
+			false,
 			hens
 		);
-		this.storageBlockService = storageBlockService;
-		this.itemCategoryService = itemCategoryService;
-		this.inventoryItemService = inventoryItemService;
-		this.imageResizeConfig = imageResizeConfig;
 		this.allowedMimeTypes = Set.of(
 			"image/png",
 			"image/jpeg",

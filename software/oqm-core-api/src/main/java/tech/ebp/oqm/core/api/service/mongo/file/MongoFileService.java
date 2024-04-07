@@ -14,6 +14,7 @@ import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -71,32 +72,24 @@ import static com.mongodb.client.model.Filters.and;
 public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoService<T, S, X> {
 	
 	GridFSBucket gridFSBucket = null;
+	
 	@Getter(AccessLevel.PUBLIC)
 	Codec<FileMetadata> fileMetadataCodec;
-	@Getter(AccessLevel.PROTECTED)
-	private TempFileService tempFileService;
 	
-	public MongoFileService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		String collectionName,
-		Class<T> clazz,
-		MongoCollection<T> collection
-	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
-	}
+	@Inject
+	@Getter(AccessLevel.PROTECTED)
+	TempFileService tempFileService;
+	
+	@Getter
+	protected String objectName;
 	
 	protected MongoFileService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
 		Class<T> clazz,
-		TempFileService tempFileService
+		String objectName
 	) {
-		super(objectMapper, mongoClient, database, clazz);
-		this.fileMetadataCodec = this.getDatabase().getCodecRegistry().get(FileMetadata.class);
-		this.tempFileService = tempFileService;
+		super(clazz);
+		this.objectName = objectName;
+		this.fileMetadataCodec = this.getMongoDatabase().getCodecRegistry().get(FileMetadata.class);
 	}
 	
 	@PostConstruct
@@ -126,7 +119,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	@Override
 	public String getCollectionName() {
-		return super.getCollectionName();
+		return super.getCollectionName() + "-" + this.getObjectName();
 	}
 	
 	public String getBucketName(){
@@ -135,7 +128,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public GridFSBucket getGridFSBucket() {
 		if (this.gridFSBucket == null) {
-			this.gridFSBucket = GridFSBuckets.create(this.getDatabase(), this.getBucketName());
+			this.gridFSBucket = GridFSBuckets.create(this.getMongoDatabase(), this.getBucketName());
 		}
 		return this.gridFSBucket;
 	}

@@ -30,34 +30,24 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemCategorySearch, CollectionStats, ItemCategoryTreeNode> {
 	
-	private InventoryItemService inventoryItemService;
-	private StorageBlockService storageBlockService;
+	@Inject
+	InventoryItemService inventoryItemService;
+	@Inject
+	StorageBlockService storageBlockService;
 	
-	ItemCategoryService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	public ItemCategoryService(){
+		this(null);
 	}
 	
 	@Inject
 	ItemCategoryService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		InventoryItemService inventoryItemService,
-		StorageBlockService storageBlockService,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			ItemCategory.class,
 			false,
 			hens
 		);
-		this.inventoryItemService = inventoryItemService;
-		this.storageBlockService = storageBlockService;
 	}
 	
 	@Override

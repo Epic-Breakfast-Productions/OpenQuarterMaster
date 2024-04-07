@@ -1,8 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -10,7 +8,6 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
@@ -37,34 +34,25 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, CollectionStats, StorageBlockTreeNode>{
 	
+	@Inject
+	InventoryItemService inventoryItemService;
+	@Inject
+	ItemCheckoutService itemCheckoutService;
 	
-	private InventoryItemService inventoryItemService;
-	private ItemCheckoutService itemCheckoutService;
 	
-	StorageBlockService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	public StorageBlockService(){
+		this(null);
 	}
 	
 	@Inject
 	StorageBlockService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		InventoryItemService inventoryItemService,
-		ItemCheckoutService itemCheckoutService,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			StorageBlock.class,
 			false,
 			hens
 		);
-		this.inventoryItemService = inventoryItemService;
-		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@Override

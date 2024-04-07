@@ -59,38 +59,31 @@ import static com.mongodb.client.model.Filters.exists;
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch, InvItemCollectionStats> {
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	private BaseStationInteractingEntity baseStationInteractingEntity;
-	@Getter(AccessLevel.PRIVATE)
-	private ItemCheckoutService itemCheckoutService;
-	@Getter(AccessLevel.PRIVATE)
-	private HistoryEventNotificationService hens;
+	BaseStationInteractingEntity baseStationInteractingEntity;
 	
-	InventoryItemService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	ItemCheckoutService itemCheckoutService;
+	
+	@Getter(AccessLevel.PRIVATE)
+	HistoryEventNotificationService hens;
+	
+	public InventoryItemService(){
+		this(null);
 	}
 	
 	@Inject
 	InventoryItemService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		BaseStationInteractingEntity baseStationInteractingEntity,
-		ItemCheckoutService itemCheckoutService,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			InventoryItem.class,
 			false,
 			hens
 		);
 		this.hens = hens;
-		this.baseStationInteractingEntity = baseStationInteractingEntity;
-		this.itemCheckoutService = itemCheckoutService;
 	}
 	
 	@WithSpan

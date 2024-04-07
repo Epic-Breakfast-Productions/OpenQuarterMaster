@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.util.List;
 
@@ -43,25 +46,21 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 	
 	private final Class<T> clazzForObjectHistoryIsFor;
+	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	private final HistoryEventNotificationService hens;
+	HistoryEventNotificationService hens;
 	
 	public MongoHistoryService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		Class<T> clazz,
+		MongoDatabaseService mongoDatabaseService,
+		Class<T> clazzForObjectHistoryIsFor,
 		HistoryEventNotificationService hens
 	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			getCollectionNameFromClass(clazz) + COLLECTION_HISTORY_APPEND,
-			ObjectHistoryEvent.class,
-			null
-		);
-		this.clazzForObjectHistoryIsFor = clazz;
+		super(objectMapper, mongoClient, database, mongoDatabaseService, getCollectionNameFromClass(clazzForObjectHistoryIsFor) + COLLECTION_HISTORY_APPEND, ObjectHistoryEvent.class);
+		this.clazzForObjectHistoryIsFor = clazzForObjectHistoryIsFor;
 		this.hens = hens;
 	}
 	

@@ -71,48 +71,20 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	protected Set<String> allowedMimeTypes = new HashSet<>();
 	
 	public MongoHistoriedFileService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		String collectionName,
 		Class<T> clazz,
-		MongoCollection<T> collection,
+		String objectName,
 		boolean allowNullEntityForCreate,
-		MongoHistoriedObjectService<T, S, CollectionStats> fileObjectService
-	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
-		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.fileObjectService = fileObjectService;
-	}
-	
-	protected MongoHistoriedFileService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		Class<T> metadataClazz,
-		boolean allowNullEntityForCreate,
-		TempFileService tempFileService,
-		String fileCollName,
 		HistoryEventNotificationService hens
 	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			metadataClazz,
-			tempFileService
-		);
+		super(clazz, objectName);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.fileObjectService =
-			new FileObjectService<>(
-				objectMapper,
-				mongoClient,
-				database,
-				metadataClazz,
-				fileCollName,
-				hens
-			);
+		this.fileObjectService = new FileObjectService<>(
+			clazz,
+			this.getCollectionName() + "-obj",
+			hens
+		);;
 	}
+	
 	
 	@Override
 	public CollectionStats getStats() {

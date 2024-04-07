@@ -22,22 +22,16 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
-	ItemListService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	
+	public ItemListService(){
+		this(null);
 	}
 	
 	@Inject
 	ItemListService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			ItemList.class,
 			false,
 			hens

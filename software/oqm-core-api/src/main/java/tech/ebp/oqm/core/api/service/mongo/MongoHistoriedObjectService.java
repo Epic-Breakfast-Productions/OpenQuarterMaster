@@ -1,10 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.Valid;
@@ -61,41 +58,33 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	@Getter
 	private MongoHistoryService<T> historyService = null;
 	
-	public MongoHistoriedObjectService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		String collectionName,
-		Class<T> clazz,
-		MongoCollection<T> collection,
-		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService
-	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection);
-		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.historyService = historyService;
-	}
-	
 	protected MongoHistoriedObjectService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
+		String collectionName,
 		Class<T> clazz,
 		boolean allowNullEntityForCreate,
 		HistoryEventNotificationService hens
 	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			clazz
-		);
+		super(collectionName, clazz);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 		this.historyService = new MongoHistoryService<>(
-			objectMapper,
-			mongoClient,
-			database,
+			this.getObjectMapper(),
+			this.getMongoClient(),
+			this.getDatabasePrefix(),
+			this.getMongoDatabaseService(),
 			clazz,
+			hens
+		);
+	}
+	
+	protected MongoHistoriedObjectService(
+		Class<T> clazz,
+		boolean allowNullEntityForCreate,
+		HistoryEventNotificationService hens
+	) {
+		this(
+			getCollectionNameFromClass(clazz),
+			clazz,
+			allowNullEntityForCreate,
 			hens
 		);
 	}
@@ -190,24 +179,24 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	
 	public ObjectId add(@NonNull T object) {
 		//TODO:: tweak see if this works/ passes tests/ test manually
-//		if (!this.allowNullEntityForCreate) {
-//			assertNotNullEntity(entity);
-//		}
+		//		if (!this.allowNullEntityForCreate) {
+		//			assertNotNullEntity(entity);
+		//		}
 		return this.add(object, null);
 	}
 	
 	@WithSpan
 	public List<ObjectId> addBulk(List<T> objects, InteractingEntity entity) {
-		try(
+		try (
 			ClientSession session = this.getMongoClient().startSession();
-		){
+		) {
 			return session.withTransaction(()->{
 				List<ObjectId> output = new ArrayList<>(objects.size());
 				
 				for (T cur : objects) {
 					try {
 						output.add(add(session, cur, entity));
-					} catch(Throwable e){
+					} catch(Throwable e) {
 						session.abortTransaction();
 						throw e;
 					}
@@ -255,7 +244,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	@WithSpan
 	public long removeAll(ClientSession session, InteractingEntity entity) {
 		//TODO:: add history event to each
-		if(session == null) {
+		if (session == null) {
 			return this.getCollection().deleteMany(new BsonDocument()).getDeletedCount();
 		} else {
 			return this.getCollection().deleteMany(session, new BsonDocument()).getDeletedCount();
@@ -285,7 +274,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@WithSpan
-	public List<ObjectHistoryEvent> listHistory(Bson filter, Bson sort, PagingOptions pageOptions){
+	public List<ObjectHistoryEvent> listHistory(Bson filter, Bson sort, PagingOptions pageOptions) {
 		return this.getHistoryService().list(filter, sort, pageOptions);
 	}
 	
@@ -295,27 +284,27 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@WithSpan
-	public SearchResult<ObjectHistoryEvent> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet){
+	public SearchResult<ObjectHistoryEvent> searchHistory(HistorySearch search, boolean defaultPageSizeIfNotSet) {
 		return this.getHistoryService().search(search, defaultPageSizeIfNotSet);
 	}
 	
 	@WithSpan
-	public List<ObjectHistoryEvent> getHistoryFor(ObjectId objectId){
+	public List<ObjectHistoryEvent> getHistoryFor(ObjectId objectId) {
 		return this.getHistoryService().getHistoryFor(objectId);
 	}
 	
 	@WithSpan
-	public List<ObjectHistoryEvent> getHistoryFor(String objectId){
+	public List<ObjectHistoryEvent> getHistoryFor(String objectId) {
 		return this.getHistoryFor(new ObjectId(objectId));
 	}
 	
 	@WithSpan
-	public List<ObjectHistoryEvent> getHistoryFor(T object){
+	public List<ObjectHistoryEvent> getHistoryFor(T object) {
 		return this.getHistoryFor(object.getId());
 	}
 	
 	@WithSpan
-	public ObjectId addHistoryFor(ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event){
+	public ObjectId addHistoryFor(ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.getHistoryService().addHistoryFor(clientSession, object, entity, event);
 	}
 	
@@ -325,23 +314,23 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@WithSpan
-	public CreateEvent getCreateEvent(ObjectId objectId){
+	public CreateEvent getCreateEvent(ObjectId objectId) {
 		CreateEvent output = (CreateEvent) this.getHistoryService().listIterator(
-			Filters.and(
-				Filters.eq("type", EventType.CREATE),
-				Filters.eq("objectId", objectId)
-			),
-			null,
-			null
-		)
-								 .limit(1)
-								 .first();
+				Filters.and(
+					Filters.eq("type", EventType.CREATE),
+					Filters.eq("objectId", objectId)
+				),
+				null,
+				null
+			)
+											   .limit(1)
+											   .first();
 		
 		//TODO:: validate; if null, exception
 		ObjectId reference = output.getEntity();
 		return output;
 	}
 	
-		//TODO:: more aggregate history functions (counts updated since, etc)?
+	//TODO:: more aggregate history functions (counts updated since, etc)?
 	
 }

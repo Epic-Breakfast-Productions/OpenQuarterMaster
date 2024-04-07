@@ -40,31 +40,23 @@ import static com.mongodb.client.model.Filters.or;
 @ApplicationScoped
 public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckout, ItemCheckoutSearch, CollectionStats> {
 	
-	private InventoryItemService inventoryItemService;
+	@Inject
+	InventoryItemService inventoryItemService;
 	
-	ItemCheckoutService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	
+	public ItemCheckoutService(){
+		this(null);
 	}
 	
 	@Inject
 	ItemCheckoutService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		InventoryItemService inventoryItemService,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			ItemCheckout.class,
 			false,
 			hens
 		);
-		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan

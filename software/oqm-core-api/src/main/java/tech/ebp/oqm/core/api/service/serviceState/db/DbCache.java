@@ -20,40 +20,40 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DbCache {
 	
-	private List<MongoDatabase> dbCache;
-	private Map<ObjectId, MongoDatabase> idCacheMap;
-	private Map<String, MongoDatabase> nameCacheMap;
+	private List<OqmMongoDatabase> dbCache;
+	private Map<ObjectId, OqmMongoDatabase> idCacheMap;
+	private Map<String, OqmMongoDatabase> nameCacheMap;
 	
-	public DbCache(List<MongoDatabase> databases){
+	public DbCache(List<OqmMongoDatabase> databases){
 		this(
 			Collections.unmodifiableList(databases),
 			Collections.unmodifiableMap(
-				databases.stream().collect(Collectors.toMap(MongoDatabase::getId, Function.identity()))
+				databases.stream().collect(Collectors.toMap(OqmMongoDatabase::getId, Function.identity()))
 			),
 			Collections.unmodifiableMap(
-				databases.stream().collect(Collectors.toMap(MongoDatabase::getName, Function.identity()))
+				databases.stream().collect(Collectors.toMap(OqmMongoDatabase::getName, Function.identity()))
 			)
 		);
 	}
 	
-	public DbCache(FindIterable<MongoDatabase> databases){
+	public DbCache(FindIterable<OqmMongoDatabase> databases){
 		this(databases.into(new ArrayList<>()));
 	}
 	
-	public Optional<MongoDatabase> getFromId(ObjectId id){
+	public Optional<OqmMongoDatabase> getFromId(ObjectId id){
 		return Optional.ofNullable(this.getIdCacheMap().get(id));
 	}
 	
-	public Optional<MongoDatabase> getFromId(String id){
+	public Optional<OqmMongoDatabase> getFromId(String id){
 		return this.getFromId(new ObjectId(id));
 	}
 	
-	public Optional<MongoDatabase> getFromName(String name){
+	public Optional<OqmMongoDatabase> getFromName(String name){
 		return Optional.ofNullable(this.getNameCacheMap().get(name));
 	}
 	
-	public Optional<MongoDatabase> getFromIdOrName(String nameOrId){
-		Optional<MongoDatabase> output = this.getFromId(nameOrId);
+	public Optional<OqmMongoDatabase> getFromIdOrName(String nameOrId){
+		Optional<OqmMongoDatabase> output = this.getFromId(nameOrId);
 		if(output.isEmpty()){
 			output = this.getFromName(nameOrId);
 		}

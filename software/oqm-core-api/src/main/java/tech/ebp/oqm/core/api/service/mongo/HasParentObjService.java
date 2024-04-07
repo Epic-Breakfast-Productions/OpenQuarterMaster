@@ -27,29 +27,12 @@ HasParentObjService<
 					   >
 	extends MongoHistoriedObjectService<T, S, X>
 {
-	
-	public HasParentObjService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		String collectionName,
-		Class<T> clazz,
-		MongoCollection<T> collection,
-		boolean allowNullEntityForCreate,
-		MongoHistoryService<T> historyService
-	) {
-		super(objectMapper, mongoClient, database, collectionName, clazz, collection, allowNullEntityForCreate, historyService);
+	public HasParentObjService(String collectionName, Class<T> clazz, boolean allowNullEntityForCreate, HistoryEventNotificationService hens) {
+		super(collectionName, clazz, allowNullEntityForCreate, hens);
 	}
 	
-	protected HasParentObjService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
-		Class<T> clazz,
-		boolean allowNullEntityForCreate,
-		HistoryEventNotificationService hens
-	) {
-		super(objectMapper, mongoClient, database, clazz, allowNullEntityForCreate, hens);
+	public HasParentObjService(Class<T> clazz, boolean allowNullEntityForCreate, HistoryEventNotificationService hens) {
+		super(clazz, allowNullEntityForCreate, hens);
 	}
 	
 	@WithSpan

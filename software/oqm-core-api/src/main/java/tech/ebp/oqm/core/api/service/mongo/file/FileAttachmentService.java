@@ -28,34 +28,20 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
 	
-	FileAttachmentService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	public FileAttachmentService(){//for DI.
+		this(null);
 	}
 	
 	@Inject
 	FileAttachmentService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		TempFileService tempFileService,
-		StorageBlockService storageBlockService,
-		InventoryItemService inventoryItemService,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			FileAttachment.class,
-			false,
-			tempFileService,
 			"fileAttachment",
+			false,
 			hens
 		);
-//		((FileAttachmentObjectService)this.getFileObjectService()).setFileService(this);
-		this.storageBlockService = storageBlockService;
-		this.inventoryItemService = inventoryItemService;
 	}
 	
 	@WithSpan

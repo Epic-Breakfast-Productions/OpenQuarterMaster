@@ -15,30 +15,24 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
  */
 public class FileObjectService<T extends FileMainObject, S extends FileSearchObject<T>> extends MongoHistoriedObjectService<T, S, CollectionStats> {
 	
-	private String objectName;
+	private String collectionName;
 	
 	public FileObjectService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String database,
 		Class<T> clazz,
-		String objectName,
+		String collectionName,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			clazz,
 			false,
 			hens
 		);
-		this.objectName = objectName;
+		this.collectionName = collectionName;
 	}
 	
 	@Override
 	public String getCollectionName() {
-		return super.getCollectionName() + this.objectName;
+		return this.collectionName;
 	}
 	
 	/**

@@ -26,23 +26,15 @@ import java.util.List;
 @ApplicationScoped
 public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
-	CustomUnitService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
+	public CustomUnitService(){//for DI
+		this(null);
 	}
 	
 	@Inject
 	CustomUnitService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
 		HistoryEventNotificationService hens
 	) {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			CustomUnitEntry.class,
 			false,
 			hens
