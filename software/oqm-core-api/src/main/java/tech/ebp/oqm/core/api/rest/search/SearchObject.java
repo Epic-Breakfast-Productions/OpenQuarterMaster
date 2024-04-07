@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-public abstract class SearchObject<T extends MainObject> {
+public class SearchObject<T extends MainObject> {
 	//paging
 	@QueryParam("pageSize") Integer pageSize;
 	@QueryParam("pageNum") Integer pageNum;
