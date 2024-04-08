@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.serviceState.db;
 
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -14,9 +13,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
@@ -30,7 +26,7 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 	
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
-	private DbCache databaseCache;
+	private DbCache databaseCache = null;
 	
 	/**
 	 * The name of the database to access
@@ -46,10 +42,6 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 	
 	protected MongoDatabaseService() {
 		super(OqmMongoDatabase.class);
-	}
-	
-	protected MongoDatabase getMongoDatabase(){
-		return this.getMongoClient().getDatabase(this.databasePrefix);
 	}
 	
 	/**
@@ -69,22 +61,22 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 	
 	public void refreshCache(){
 		log.info("Refreshing cache of databases.");
-		this.setDatabaseCache(new DbCache(this.getCollection().find()));
+		this.setDatabaseCache(new DbCache(this.getMongoClient(), this.getCollection().find(), this.getDatabaseCache()));
 	}
 	
-	public List<OqmMongoDatabase> getDatabases(){
+	public List<DbCacheEntry> getDatabases(){
 		return this.getDatabaseCache().getDbCache();
 	}
 	
-	private OqmMongoDatabase getDatabase(@NonNull String idOrName, boolean refreshedCache){
-		Optional<OqmMongoDatabase> cacheResult = this.getDatabaseCache().getFromIdOrName(idOrName);
+	private DbCacheEntry getOqmDatabase(@NonNull String idOrName, boolean refreshedCache){
+		Optional<DbCacheEntry> cacheResult = this.getDatabaseCache().getFromIdOrName(idOrName);
 		
 		if(cacheResult.isEmpty()){
 			if(!refreshedCache){
 				log.info("Cache miss! Refreshing cache.");
 				this.refreshCache();
 				log.info("Cache miss after refresh! Database with name or id \"{}\" not found.", idOrName);
-				return this.getDatabase(idOrName, true);
+				return this.getOqmDatabase(idOrName, true);
 			}
 			throw new NotFoundException("Database not found with name or id \"" + idOrName + "\"");
 		}
@@ -92,12 +84,15 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 		return cacheResult.get();
 	}
 	
-	public OqmMongoDatabase getDatabase(@NonNull String idOrName){
-		return this.getDatabase(idOrName, false);
+	public DbCacheEntry getOqmDatabase(@NonNull String idOrName){
+		return this.getOqmDatabase(idOrName, false);
 	}
 	
-	public ObjectId addDatabase(@NonNull String name, @Nullable Set<String> userIds){
-		OqmMongoDatabase newDatabase = new OqmMongoDatabase(name, userIds);
+	public ObjectId addOqmDatabase(@NonNull String name, @Nullable Set<String> userIds){
+		OqmMongoDatabase newDatabase = OqmMongoDatabase.builder()
+										   .name(name)
+										   .usersAllowed(userIds)
+										   .build();
 		
 		boolean dbNameExists = this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if(dbNameExists){
@@ -106,5 +101,9 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 		}
 		
 		return this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue();
+	}
+	
+	public MongoDatabase getMongoDatabase(@NonNull String idOrName){
+	
 	}
 }

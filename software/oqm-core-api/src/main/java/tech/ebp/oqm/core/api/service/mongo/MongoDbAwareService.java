@@ -19,12 +19,17 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -88,6 +93,8 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 */
 	private MongoCollection<T> collection = null;
 	
+	private Map<ObjectId, MongoCollection<T>> collections = new HashMap<>();
+	
 	
 	protected MongoDbAwareService(
 		String collectionName,
@@ -139,13 +146,13 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		return this.collection;
 	}
 	
-	protected MongoCollection<T> getCollection(OqmMongoDatabase db) {
+	protected MongoCollection<T> getCollection(DbCacheEntry db) {
 		//TODO
 		return null;
 	}
 	
 	protected MongoCollection<T> getCollection(String idOrName) {
-		return this.getCollection(this.getMongoDatabaseService().getDatabase(idOrName));
+		return this.getCollection(this.getMongoDatabaseService().getOqmDatabase(idOrName));
 	}
 	
 	public static TransactionOptions getDefaultTransactionOptions() {
