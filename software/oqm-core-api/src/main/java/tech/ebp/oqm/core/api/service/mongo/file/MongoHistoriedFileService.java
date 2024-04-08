@@ -9,6 +9,7 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -42,9 +43,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public abstract class MongoHistoriedFileService<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends MongoFileService<T
-																																												   , S,
-																																								  CollectionStats,
-																																											   G> {
+																																												  , S,
+																																												  CollectionStats,
+																																												  G>
+{
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
 	
@@ -73,18 +75,25 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	public MongoHistoriedFileService(
 		Class<T> clazz,
 		String objectName,
-		boolean allowNullEntityForCreate,
-		HistoryEventNotificationService hens
+		boolean allowNullEntityForCreate
 	) {
 		super(clazz, objectName);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
-		this.fileObjectService = new FileObjectService<>(
-			clazz,
-			this.getCollectionName() + "-obj",
-			hens
-		);;
 	}
 	
+	@PostConstruct
+	public void setup() {
+		this.fileObjectService = new FileObjectService<>(
+			this.getObjectMapper(),
+			this.getMongoClient(),
+			this.getDatabasePrefix(),
+			this.getMongoDatabaseService(),
+			this.getCollectionName() + "-obj",
+			this.getClazz(),
+			this.isAllowNullEntityForCreate()
+		);
+		this.fileObjectService.setup();
+	}
 	
 	@Override
 	public CollectionStats getStats() {
@@ -92,8 +101,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.getFileObjectService().getStats();
 	}
 	
-	public void assertValidMimeType(FileMetadata fileMetadata){
-		if(!this.getAllowedMimeTypes().isEmpty() && !this.getAllowedMimeTypes().contains(fileMetadata.getMimeType())){
+	public void assertValidMimeType(FileMetadata fileMetadata) {
+		if (!this.getAllowedMimeTypes().isEmpty() && !this.getAllowedMimeTypes().contains(fileMetadata.getMimeType())) {
 			throw new IllegalArgumentException("File with type not allowed given: " + fileMetadata.getMimeType());
 		}
 	}
@@ -226,8 +235,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	public int updateFile(ClientSession clientSession, String id, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		return this.updateFile(clientSession, new ObjectId(id), uploadBody, interactingEntity);
 	}
-		
-		@WithSpan
+	
+	@WithSpan
 	public long removeAll(ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;
@@ -255,7 +264,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return numRemoved.get();
 	}
 	
-	public G removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity){
+	public G removeFile(ClientSession cs, ObjectId objectId, InteractingEntity entity) {
 		//TODO:: this with cs
 		T toRemove = this.getFileObjectService().get(cs, objectId);
 		G output = this.getObjGet(objectId);
@@ -264,8 +273,8 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		GridFSBucket bucket = this.getGridFSBucket();
 		
 		//TODO:: ensure noting is referencing the file
-		if(cs == null){
-			try(ClientSession clientSession = this.getNewClientSession(true)){
+		if (cs == null) {
+			try (ClientSession clientSession = this.getNewClientSession(true)) {
 				bucket.find(clientSession, Filters.eq("filename", toRemove.getGridfsFileName())).forEach(
 					(GridFSFile file)->{
 						bucket.delete(clientSession, file.getId());
@@ -274,7 +283,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				this.getFileObjectService().remove(clientSession, toRemove.getId(), entity);
 				clientSession.commitTransaction();
 			}
-		}else {
+		} else {
 			bucket.find(cs, Filters.eq("filename", toRemove.getGridfsFileName())).forEach(
 				(GridFSFile file)->{
 					bucket.delete(cs, file.getId());

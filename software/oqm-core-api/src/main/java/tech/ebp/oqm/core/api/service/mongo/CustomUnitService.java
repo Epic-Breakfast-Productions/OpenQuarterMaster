@@ -26,19 +26,8 @@ import java.util.List;
 @ApplicationScoped
 public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
-	public CustomUnitService(){//for DI
-		this(null);
-	}
-	
-	@Inject
-	CustomUnitService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			CustomUnitEntry.class,
-			false,
-			hens
-		);
+	CustomUnitService() {
+		super(CustomUnitEntry.class, false);
 	}
 	
 	@PostConstruct

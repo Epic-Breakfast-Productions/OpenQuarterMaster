@@ -44,19 +44,8 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	InventoryItemService inventoryItemService;
 	
 	
-	public ItemCheckoutService(){
-		this(null);
-	}
-	
-	@Inject
-	ItemCheckoutService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			ItemCheckout.class,
-			false,
-			hens
-		);
+	public ItemCheckoutService() {
+		super(ItemCheckout.class, false);
 	}
 	
 	@WithSpan

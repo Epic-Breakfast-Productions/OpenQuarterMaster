@@ -8,6 +8,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ArcContainer;
+import io.quarkus.arc.InstanceHandle;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,6 +41,8 @@ import static com.mongodb.client.model.Filters.eq;
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
  *
+ * TODO:: update this to be injected, one instance to handle all history. Pull from higher up than object service? OR programmatically get Hens: Arc.container().instance(Foo.class).get()
+ *
  * @param <T> The type of object stored.
  */
 @Slf4j
@@ -47,7 +52,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	
 	private final Class<T> clazzForObjectHistoryIsFor;
 	
-	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
@@ -56,12 +60,13 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		MongoClient mongoClient,
 		String database,
 		MongoDatabaseService mongoDatabaseService,
-		Class<T> clazzForObjectHistoryIsFor,
-		HistoryEventNotificationService hens
+		Class<T> clazzForObjectHistoryIsFor
 	) {
 		super(objectMapper, mongoClient, database, mongoDatabaseService, getCollectionNameFromClass(clazzForObjectHistoryIsFor) + COLLECTION_HISTORY_APPEND, ObjectHistoryEvent.class);
 		this.clazzForObjectHistoryIsFor = clazzForObjectHistoryIsFor;
-		this.hens = hens;
+		try(InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)){
+			this.hens = container.get();
+		}
 	}
 	
 	@WithSpan

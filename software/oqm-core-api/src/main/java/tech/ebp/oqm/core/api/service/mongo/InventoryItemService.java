@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -70,20 +72,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
-	public InventoryItemService(){
-		this(null);
-	}
-	
-	@Inject
-	InventoryItemService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			InventoryItem.class,
-			false,
-			hens
-		);
-		this.hens = hens;
+	public InventoryItemService() {
+		super(InventoryItem.class, false);
+		try(InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)){
+			this.hens = container.get();
+		}
 	}
 	
 	@WithSpan

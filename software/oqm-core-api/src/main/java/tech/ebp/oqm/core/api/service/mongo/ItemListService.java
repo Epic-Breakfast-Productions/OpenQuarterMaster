@@ -22,20 +22,8 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
-	
-	public ItemListService(){
-		this(null);
-	}
-	
-	@Inject
-	ItemListService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			ItemList.class,
-			false,
-			hens
-		);
+	public ItemListService() {
+		super(ItemList.class, false);
 	}
 	
 	@Override

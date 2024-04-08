@@ -28,20 +28,8 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
 	
-	public FileAttachmentService(){//for DI.
-		this(null);
-	}
-	
-	@Inject
-	FileAttachmentService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			FileAttachment.class,
-			"fileAttachment",
-			false,
-			hens
-		);
+	public FileAttachmentService() {
+		super(FileAttachment.class, "fileAttachment", false);
 	}
 	
 	@WithSpan

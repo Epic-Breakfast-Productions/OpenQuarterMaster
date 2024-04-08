@@ -27,12 +27,12 @@ HasParentObjService<
 					   >
 	extends MongoHistoriedObjectService<T, S, X>
 {
-	public HasParentObjService(String collectionName, Class<T> clazz, boolean allowNullEntityForCreate, HistoryEventNotificationService hens) {
-		super(collectionName, clazz, allowNullEntityForCreate, hens);
+	public HasParentObjService(String collectionName, Class<T> clazz, boolean allowNullEntityForCreate) {
+		super(collectionName, clazz, allowNullEntityForCreate);
 	}
 	
-	public HasParentObjService(Class<T> clazz, boolean allowNullEntityForCreate, HistoryEventNotificationService hens) {
-		super(clazz, allowNullEntityForCreate, hens);
+	public HasParentObjService(Class<T> clazz, boolean allowNullEntityForCreate) {
+		super(clazz, allowNullEntityForCreate);
 	}
 	
 	@WithSpan

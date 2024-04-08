@@ -38,6 +38,7 @@ import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -89,11 +90,11 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	) {
 		super(clazz);
 		this.objectName = objectName;
-		this.fileMetadataCodec = this.getMongoDatabase().getCodecRegistry().get(FileMetadata.class);
 	}
 	
 	@PostConstruct
 	public void setupBucket(){
+		this.fileMetadataCodec = this.getMongoDatabase().getCodecRegistry().get(FileMetadata.class);
 		//TODO:: https://jira.mongodb.org/browse/JAVA-4887  #51 once this is done, cleanup other modifying session logic
 		// should probably be a TODO to remove this, but unsure how we ever might be able to.
 		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.

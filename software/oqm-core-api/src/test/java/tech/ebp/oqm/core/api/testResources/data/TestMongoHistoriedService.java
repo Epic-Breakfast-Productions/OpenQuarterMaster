@@ -14,19 +14,8 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestMainObject, TestMainObjectSearch, CollectionStats> {
 	
 	
-	public TestMongoHistoriedService(){
-		this(null);
-	}
-	
-	@Inject
-	TestMongoHistoriedService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			TestMainObject.class,
-			false,
-			hens
-		);
+	public TestMongoHistoriedService() {
+		super(TestMainObject.class, false);
 	}
 	
 	@Override

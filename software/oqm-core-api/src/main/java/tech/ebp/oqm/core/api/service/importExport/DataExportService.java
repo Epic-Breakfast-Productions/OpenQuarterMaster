@@ -302,6 +302,7 @@ public class DataExportService {
 				GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut, parameters);
 				TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)
 			) {
+				tOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
 				Files.walkFileTree(dirToArchiveAsPath, new SimpleFileVisitor<>() {
 					@Override
 					public FileVisitResult visitFile(

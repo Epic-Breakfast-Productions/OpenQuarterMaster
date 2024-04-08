@@ -39,20 +39,8 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	@Inject
 	ItemCheckoutService itemCheckoutService;
 	
-	
-	public StorageBlockService(){
-		this(null);
-	}
-	
-	@Inject
-	StorageBlockService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			StorageBlock.class,
-			false,
-			hens
-		);
+	public StorageBlockService() {
+		super(StorageBlock.class, false);
 	}
 	
 	@Override

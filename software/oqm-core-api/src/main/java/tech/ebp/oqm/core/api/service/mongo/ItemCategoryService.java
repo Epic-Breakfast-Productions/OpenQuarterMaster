@@ -35,19 +35,8 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 	@Inject
 	StorageBlockService storageBlockService;
 	
-	public ItemCategoryService(){
-		this(null);
-	}
-	
-	@Inject
-	ItemCategoryService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			ItemCategory.class,
-			false,
-			hens
-		);
+	public ItemCategoryService() {
+		super(ItemCategory.class, false);
 	}
 	
 	@Override
@@ -68,7 +57,7 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 		return new ItemCategoryTree();
 	}
 	
-	public Set<ObjectId> getItemCatsReferencing(ClientSession clientSession, Image image){
+	public Set<ObjectId> getItemCatsReferencing(ClientSession clientSession, Image image) {
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			clientSession,
@@ -95,16 +84,16 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 			null,
 			null
 		).map(ItemCategory::getId).into(refs);
-		if(!refs.isEmpty()){
+		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
 		}
 		
 		refs = this.storageBlockService.getBlocksReferencing(cs, itemCategory);
-		if(!refs.isEmpty()){
+		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
 		}
 		refs = this.inventoryItemService.getItemsReferencing(cs, itemCategory);
-		if(!refs.isEmpty()){
+		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}
 		

@@ -7,6 +7,7 @@ import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 /**
  * This is the standard impl of the MongoHistoriedObjectService used to store T.
@@ -15,19 +16,16 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
  */
 public class FileObjectService<T extends FileMainObject, S extends FileSearchObject<T>> extends MongoHistoriedObjectService<T, S, CollectionStats> {
 	
-	private String collectionName;
-	
 	public FileObjectService(
-		Class<T> clazz,
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		String database,
+		MongoDatabaseService mongoDatabaseService,
 		String collectionName,
-		HistoryEventNotificationService hens
+		Class<T> clazz,
+		boolean allowNullEntityForCreate
 	) {
-		super(
-			clazz,
-			false,
-			hens
-		);
-		this.collectionName = collectionName;
+		super(objectMapper, mongoClient, database, mongoDatabaseService, collectionName, clazz, allowNullEntityForCreate);
 	}
 	
 	@Override

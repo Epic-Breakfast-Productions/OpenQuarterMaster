@@ -14,21 +14,8 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainFileObject, FileUploadBody, TestMainFileObjectSearch, TestMainFileObjectGet> {
 	
-	
-	public TestMongoHistoriedFileService(){
-		this(null);
-	}
-	
-	@Inject
-	TestMongoHistoriedFileService(
-		HistoryEventNotificationService hens
-	) {
-		super(
-			TestMainFileObject.class,
-			"testFile",
-			false,
-			hens
-		);
+	public TestMongoHistoriedFileService() {
+		super(TestMainFileObject.class, "testFile", false);
 	}
 	
 	@Override

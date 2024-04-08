@@ -46,19 +46,11 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	public ImageService() {//for DI
-		this(null);
-	}
-	
-	@Inject
-	ImageService(
-		HistoryEventNotificationService hens
-	) {
+	public ImageService() {
 		super(
 			Image.class,
 			"image",
-			false,
-			hens
+			false
 		);
 		this.allowedMimeTypes = Set.of(
 			"image/png",

@@ -1,9 +1,12 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NonNull;
@@ -25,6 +28,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,31 +65,44 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	protected MongoHistoriedObjectService(
 		String collectionName,
 		Class<T> clazz,
-		boolean allowNullEntityForCreate,
-		HistoryEventNotificationService hens
+		boolean allowNullEntityForCreate
 	) {
 		super(collectionName, clazz);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
+	}
+	
+	protected MongoHistoriedObjectService(
+		ObjectMapper objectMapper,
+		MongoClient mongoClient,
+		String database,
+		MongoDatabaseService mongoDatabaseService,
+		String collectionName,
+		Class<T> clazz,
+		boolean allowNullEntityForCreate
+	) {
+		super(objectMapper, mongoClient, database, mongoDatabaseService, collectionName, clazz);
+		this.allowNullEntityForCreate = allowNullEntityForCreate;
+	}
+	
+	@PostConstruct
+	public void setup(){
 		this.historyService = new MongoHistoryService<>(
 			this.getObjectMapper(),
 			this.getMongoClient(),
 			this.getDatabasePrefix(),
 			this.getMongoDatabaseService(),
-			clazz,
-			hens
+			clazz
 		);
 	}
 	
 	protected MongoHistoriedObjectService(
 		Class<T> clazz,
-		boolean allowNullEntityForCreate,
-		HistoryEventNotificationService hens
+		boolean allowNullEntityForCreate
 	) {
 		this(
 			getCollectionNameFromClass(clazz),
 			clazz,
-			allowNullEntityForCreate,
-			hens
+			allowNullEntityForCreate
 		);
 	}
 	
