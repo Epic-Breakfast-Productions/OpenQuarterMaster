@@ -1,10 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSFindIterable;
@@ -34,11 +31,10 @@ import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
-import tech.ebp.oqm.core.api.service.mongo.MongoService;
+import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -70,7 +66,7 @@ import static com.mongodb.client.model.Filters.and;
  * @param <G>
  */
 @Slf4j
-public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoService<T, S, X> {
+public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoDbAwareService<T, S, X> {
 	
 	GridFSBucket gridFSBucket = null;
 	

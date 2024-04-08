@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
-class MongoServiceTest extends RunningServerTest {
+class MongoDbAwareServiceTest extends RunningServerTest {
 	
 	@Inject
 	TestMongoService testMongoService;

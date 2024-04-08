@@ -28,7 +28,7 @@ public class DatabaseManagementService {
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
 	
-	List<MongoService<?,?,?>> removeList = new ArrayList<>();
+	List<MongoDbAwareService<?,?,?>> removeList = new ArrayList<>();
 	
 	@Inject
 	public DatabaseManagementService(
@@ -67,7 +67,7 @@ public class DatabaseManagementService {
 		try(
 			ClientSession session = this.fileAttachmentService.getNewClientSession(true)
 		){
-			for(MongoService<?,?,?> curService : this.getRemoveList()){
+			for(MongoDbAwareService<?,?,?> curService : this.getRemoveList()){
 				
 				output.put(curService.getCollectionName(), curService.clear(session));
 			}

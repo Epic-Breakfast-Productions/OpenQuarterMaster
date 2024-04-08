@@ -43,7 +43,6 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	
 	public ItemCheckoutService() {
 		super(ItemCheckout.class, false);
 	}

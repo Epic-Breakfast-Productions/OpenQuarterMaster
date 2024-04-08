@@ -1,6 +1,8 @@
 package tech.ebp.oqm.core.api.service.serviceState.db;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import jakarta.annotation.Nullable;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,9 +13,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.MongoService;
+import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
+import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +26,46 @@ import java.util.Set;
 
 @Slf4j
 @ApplicationScoped
-public class MongoDatabaseService extends MongoService<OqmMongoDatabase, SearchObject<OqmMongoDatabase>, CollectionStats> {
+public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase> {
 	
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
 	private DbCache databaseCache;
 	
+	/**
+	 * The name of the database to access
+	 */
+	@Getter
+	@ConfigProperty(name = "quarkus.mongodb.database")
+	String databasePrefix;
+	
+	/**
+	 * The actual mongo collection.
+	 */
+	private MongoCollection<OqmMongoDatabase> collection = null;
+	
 	protected MongoDatabaseService() {
 		super(OqmMongoDatabase.class);
 	}
+	
+	protected MongoDatabase getMongoDatabase(){
+		return this.getMongoClient().getDatabase(this.databasePrefix);
+	}
+	
+	/**
+	 * Gets the collection for this service.
+	 * <p>
+	 * Sets up the collection object if not initialized yet.
+	 *
+	 * @return The Mongo collection for this service.
+	 */
+	protected MongoCollection<OqmMongoDatabase> getCollection() {
+		if (this.collection == null) {
+			this.collection = this.getMongoDatabase().getCollection(OqmMongoDatabase.class.getSimpleName(), OqmMongoDatabase.class);
+		}
+		return this.collection;
+	}
+	
 	
 	public void refreshCache(){
 		log.info("Refreshing cache of databases.");
@@ -71,18 +106,5 @@ public class MongoDatabaseService extends MongoService<OqmMongoDatabase, SearchO
 		}
 		
 		return this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue();
-	}
-	
-	
-	@Override
-	public CollectionStats getStats() {
-		//TODO
-		return null;
-	}
-	
-	@Override
-	public long clear(@NonNull ClientSession session) {
-		//TODO:: actually support?
-		return 0;
 	}
 }

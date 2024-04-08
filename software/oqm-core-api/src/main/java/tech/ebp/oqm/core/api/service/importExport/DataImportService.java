@@ -42,7 +42,7 @@ import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.ItemListService;
-import tech.ebp.oqm.core.api.service.mongo.MongoService;
+import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
 
@@ -224,7 +224,7 @@ public class DataImportService {
 				}
 				session.commitTransaction();
 				return true;
-			}, MongoService.getDefaultTransactionOptions());
+			}, MongoDbAwareService.getDefaultTransactionOptions());
 		} catch(Throwable e){
 			UnitUtils.reInitUnitCollections();
 			

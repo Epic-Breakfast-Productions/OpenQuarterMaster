@@ -24,6 +24,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -31,7 +32,7 @@ import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> {
+public abstract class TopLevelMongoService<T extends MainObject> {
 	
 	public static String getCollectionNameFromClass(Class<?> clazz) {
 		return clazz.getSimpleName();
@@ -66,16 +67,6 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String databasePrefix;
 	
-	@Getter
-	@Inject
-	MongoDatabaseService mongoDatabaseService;
-	
-	/**
-	 * The name of the collection this service is in charge of
-	 */
-	@Getter
-	protected final String collectionName;
-	
 	/**
 	 * The class this collection is in charge of. Used for logging.
 	 */
@@ -88,31 +79,10 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	private MongoCollection<T> collection = null;
 	
 	
-	protected MongoService(
-		String collectionName,
+	protected TopLevelMongoService(
 		Class<T> clazz
 	){
-		this.collectionName = collectionName;
 		this.clazz = clazz;
-	}
-	
-	protected MongoService(Class<T> clazz){
-		this(getCollectionNameFromClass(clazz), clazz);
-	}
-	
-	protected MongoService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		String databasePrefix,
-		MongoDatabaseService mongoDatabaseService,
-		String collectionName,
-		Class<T> clazz
-	) {
-		this(collectionName, clazz);
-		this.objectMapper = objectMapper;
-		this.mongoClient = mongoClient;
-		this.databasePrefix = databasePrefix;
-		this.mongoDatabaseService = mongoDatabaseService;
 	}
 	
 	/**
@@ -120,7 +90,6 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 * @return
 	 */
 	protected MongoDatabase getMongoDatabase(){
-		log.info("Database service: {}", this.getMongoDatabaseService());
 		return this.getMongoClient().getDatabase(this.databasePrefix);
 	}
 	
@@ -133,9 +102,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	 */
 	protected MongoCollection<T> getCollection() {
 		if (this.collection == null) {
-			this.collection = this.getMongoDatabase().getCollection(this.collectionName, this.clazz);
+			this.collection = this.getMongoDatabase().getCollection(getCollectionNameFromClass(this.clazz), this.clazz);
 		}
 		return this.collection;
+	}
+	
+	protected MongoCollection<T> getCollection(OqmMongoDatabase db) {
+		//TODO
+		return null;
 	}
 	
 	public static TransactionOptions getDefaultTransactionOptions() {
@@ -161,24 +135,4 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 		return this.getNewClientSession(false);
 	}
 	
-	/**
-	 * Method to check that an object is [still] valid before applying creation or update.
-	 * <p>
-	 * Meant to be extended to provide functionality. This empty method simply allows ignoring, if desired.
-	 *
-	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
-	 */
-	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
-	}
-	
-	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(X builder){
-		return (X) builder.size(this.getCollection().countDocuments());
-	}
-	
-	/**
-	 * Todo:: extend this per service, subtypes, etc.
-	 */
-	public abstract V getStats();
-	
-	public abstract long clear(@NonNull ClientSession session);
 }
