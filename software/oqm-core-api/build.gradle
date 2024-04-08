@@ -60,7 +60,7 @@ dependencies {
 	implementation 'org.apache.commons:commons-csv:1.10.0'
 	implementation 'org.apache.commons:commons-io:1.3.2'
 	implementation 'commons-codec:commons-codec:1.16.1'
-	implementation 'org.apache.tika:tika-core:2.9.1'
+	implementation 'org.apache.tika:tika-core:2.9.2'
 
 	/*
 	Test Dependencies
