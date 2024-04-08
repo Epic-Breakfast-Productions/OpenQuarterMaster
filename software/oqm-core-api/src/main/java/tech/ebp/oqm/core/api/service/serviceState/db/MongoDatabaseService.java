@@ -103,7 +103,4 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 		return this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue();
 	}
 	
-	public MongoDatabase getMongoDatabase(@NonNull String idOrName){
-	
-	}
 }

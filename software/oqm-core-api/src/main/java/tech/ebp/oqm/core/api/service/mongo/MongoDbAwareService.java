@@ -147,12 +147,17 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 	
 	protected MongoCollection<T> getCollection(DbCacheEntry db) {
-		//TODO
-		return null;
+		if(!this.collections.containsKey(db.getDbId())){
+			this.collections.put(
+				db.getDbId(),
+				db.getMongoDatabase().getCollection(this.collectionName, this.clazz)
+			);
+		}
+		return this.collections.get(db.getDbId());
 	}
 	
-	protected MongoCollection<T> getCollection(String idOrName) {
-		return this.getCollection(this.getMongoDatabaseService().getOqmDatabase(idOrName));
+	protected MongoCollection<T> getCollection(String oqmDbIdOrName) {
+		return this.getCollection(this.getMongoDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
 	
 	public static TransactionOptions getDefaultTransactionOptions() {
