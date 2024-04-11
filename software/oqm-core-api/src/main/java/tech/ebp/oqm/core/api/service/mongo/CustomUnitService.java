@@ -83,5 +83,9 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 		return matchList.get(0);
 	}
 	
-	//TODO:: add
+	public CollectionStats collectionStats() {
+		return CollectionStats.builder()
+				   .size(this.getCollection().countDocuments())
+				   .build();
+	}
 }

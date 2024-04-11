@@ -26,9 +26,18 @@ public class OqmMongoDatabase extends MainObject {
 	@Pattern(regexp = "^([A-Z]|[a-z]|[0-9]|[-_])+$")//TODO:: test
 	private String name;
 	
+	private String displayName = null;
+	
 	@NotNull
 	@Length(max = 256)
 	private String description = "";
 	
 	private Set<@NotNull String> usersAllowed = null;
+	
+	public String getDisplayName(){
+		if(this.displayName == null || this.displayName.isBlank()){
+			return this.getName();
+		}
+		return this.displayName;
+	}
 }

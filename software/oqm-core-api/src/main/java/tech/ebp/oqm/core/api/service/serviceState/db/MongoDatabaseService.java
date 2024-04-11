@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import jakarta.annotation.Nullable;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AccessLevel;
@@ -12,7 +13,9 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
@@ -42,6 +45,27 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 	
 	protected MongoDatabaseService() {
 		super(OqmMongoDatabase.class);
+	}
+	
+	@PostConstruct
+	public void setup(){
+		if(this.getCollection().countDocuments() == 0){
+			log.info("At startup, no oqm databases existed.");
+			
+			if(!ConfigProvider.getConfig().getValue("service.dbs.ifNone.create", Boolean.class)){
+				log.info("Configured to not create default database.");
+			} else {
+				log.info("Adding new database to ensure one exists.");
+				this.addOqmDatabase(
+					OqmMongoDatabase.builder()
+						.name(ConfigProvider.getConfig().getValue("service.dbs.ifNone.name", String.class))
+						.displayName(ConfigProvider.getConfig().getValue("service.dbs.ifNone.displayName", String.class))
+						.description(ConfigProvider.getConfig().getValue("service.dbs.ifNone.description", String.class))
+						.build()
+				);
+			}
+		}
+		this.refreshCache();
 	}
 	
 	/**
@@ -88,19 +112,24 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 		return this.getOqmDatabase(idOrName, false);
 	}
 	
-	public ObjectId addOqmDatabase(@NonNull String name, @Nullable Set<String> userIds){
-		OqmMongoDatabase newDatabase = OqmMongoDatabase.builder()
-										   .name(name)
-										   .usersAllowed(userIds)
-										   .build();
-		
+	public ObjectId addOqmDatabase(OqmMongoDatabase newDatabase){
+		//TODO:: add logic to validator
 		boolean dbNameExists = this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if(dbNameExists){
 			//TODO:: better exception
 			throw new IllegalArgumentException("Database with name \""+newDatabase.getName()+"\" already exists.");
 		}
+		log.info("Creating new database {}", newDatabase.getDisplayName());
+		newDatabase.setId(this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue());
 		
-		return this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue();
+		log.info("Created new database, id: {}", newDatabase.getId());
+		this.refreshCache();
+		return newDatabase.getId();
 	}
 	
+	public CollectionStats collectionStats() {
+		return CollectionStats.builder()
+				   .size(this.getCollection().countDocuments())
+				   .build();
+	}
 }

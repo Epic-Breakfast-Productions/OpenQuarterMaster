@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
+import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -30,6 +31,9 @@ public class LifecycleBean {
 	
 	@Inject
 	TempFileService tempFileService;
+	
+	@Inject
+	MongoDatabaseService dbService;
 	
 	private ZonedDateTime startDateTime;
 	
@@ -81,10 +85,13 @@ public class LifecycleBean {
 		StartupEvent ev
 	) {
 		this.startLogAnnounce();
-		//ensures the unit service bean is initialized, and by extension had existing custom units read in
-		this.customUnitService.count();
+		//ensures the db service bean is initialized, and the extension has had time to init
+		this.dbService.collectionStats();
+		//ensures the unit service bean is initialized, and the extension had existing custom units read in
+		this.customUnitService.collectionStats();
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
+		
 	}
 	
 	void onStop(
