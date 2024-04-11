@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -20,14 +21,16 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Unit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 @Slf4j
 @ApplicationScoped
 public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 	
 	CustomUnitService() {
-		super(CustomUnitEntry.class, false);
+		super(CustomUnitEntry.class);
 	}
 	
 	@PostConstruct
@@ -49,19 +52,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 	}
 	
 	@WithSpan
-	@Override
-	public void ensureObjectValid(boolean newObject, CustomUnitEntry newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
-		//TODO:: ensure name,symbol, tostring? not same as any in default set or held
-	}
-	
-	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
-				   .build();
-	}
-	
-	@WithSpan
 	public long getNextOrderValue() {
 		CustomUnitEntry entry = this.listIterator(null, Sorts.descending("order"), null).first();
 		
@@ -73,14 +63,14 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 	
 	@WithSpan
 	public CustomUnitEntry getFromUnit(ClientSession clientSession, Unit unit) {
-		List<CustomUnitEntry> matchList = this.list(
+		List<CustomUnitEntry> matchList = this.listIterator(
 			clientSession,
 			Filters.eq("unitCreator.symbol", unit.getSymbol()),
 			null,
 			null
-		);
+		).into(new ArrayList<>());
 		
-		if (matchList.size() == 0) {
+		if (matchList.isEmpty()) {
 			throw new DbNotFoundException("Could not find custom unit " + unit, CustomUnitEntry.class);
 		}
 		if (matchList.size() != 1) {
@@ -92,4 +82,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 		
 		return matchList.get(0);
 	}
+	
+	//TODO:: add
 }

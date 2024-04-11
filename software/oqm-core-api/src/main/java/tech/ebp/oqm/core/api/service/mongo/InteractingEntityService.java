@@ -12,6 +12,7 @@ import jakarta.inject.Named;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
@@ -65,13 +66,8 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		}
 	}
 	
-	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
-				   .build();
-	}
 	
-	private Optional<InteractingEntity> getEntityFromDb(SecurityContext securityContext, JsonWebToken jwt) {
+	private Optional<InteractingEntity> get(SecurityContext securityContext, JsonWebToken jwt) {
 		Bson query;
 		if(this.basicAuthEnabled){
 			query = eq("name", securityContext.getUserPrincipal().getName());
@@ -93,10 +89,22 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		);
 	}
 	
+	public InteractingEntity get(ObjectId id){
+		return this.getCollection().find(eq("id", id)).limit(1).first();
+	}
+	
+	protected ObjectId add(InteractingEntity entity){
+		return this.getCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
+	}
+	
+	protected void update(InteractingEntity entity){
+		this.getCollection().findOneAndReplace(eq("_id", entity.getId()), entity);
+	}
+	
 	@WithSpan
-	public InteractingEntity getEntity(SecurityContext context, JsonWebToken jwt) {
+	public InteractingEntity ensureEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
-		Optional<InteractingEntity> returningEntityOp = this.getEntityFromDb(context, jwt);
+		Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
 		if(returningEntityOp.isEmpty()){
 			log.info("New entity interacting with system.");
 			if(this.basicAuthEnabled){
@@ -123,7 +131,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	
 	
 	@WithSpan
-	public InteractingEntity getEntity(ObjectHistoryEvent e) {
+	public InteractingEntity get(ObjectHistoryEvent e) {
 		return this.get(e.getEntity());
 	}
 }

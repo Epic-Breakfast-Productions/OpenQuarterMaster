@@ -6,9 +6,11 @@ import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -19,12 +21,18 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
+
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.and;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -135,4 +143,67 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 		return this.getNewClientSession(false);
 	}
 	
+	private FindIterable<T> find(ClientSession session, Bson filter) {
+		log.debug("Filter for find: {}", filter);
+		FindIterable<T> output;
+		
+		MongoCollection<T> collection = this.getCollection();
+		if (filter != null) {
+			if (session == null) {
+				output = collection.find(filter);
+			} else {
+				output = collection.find(session, filter);
+			}
+		} else {
+			if (session == null) {
+				output = collection.find();
+			} else {
+				output = collection.find(session);
+			}
+		}
+		
+		Bson sortBson = Sorts.descending("$natural");
+		//TODO:: #571 support providing sort param
+		
+		return output.sort(sortBson);
+	}
+	
+	public FindIterable<T> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
+		FindIterable<T> results = this.find(clientSession, filter);
+		
+		if (sort != null) {
+			results = results.sort(sort);
+		}
+		if (pageOptions != null && pageOptions.isDoPaging()) {
+			results = results.skip(pageOptions.getSkipVal()).limit(pageOptions.pageSize);
+		}
+		
+		return results;
+	}
+	
+	public FindIterable<T> listIterator(Bson filter, Bson sort, PagingOptions pageOptions) {
+		return this.listIterator(null, filter, sort, pageOptions);
+	}
+	
+	public FindIterable<T> listIterator() {
+		return this.listIterator(null, null, null, null);
+	}
+	public FindIterable<T> listIterator(ClientSession cs) {
+		return this.listIterator(cs, null, null, null);
+	}
+	
+//	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+//		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+//
+//		List<Bson> filters = searchObject.getSearchFilters();
+//		log.debug("Filters: {}", filters);
+//		Bson filter = (filters.isEmpty() ? null : and(filters));
+//
+//		return this.listIterator(
+//			oqmDbIdOrName,
+//			filter,
+//			searchObject.getSortBson(),
+//			searchObject.getPagingOptions()
+//		);
+//	}
 }
