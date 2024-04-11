@@ -24,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
+public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 	
 	CustomUnitService() {
 		super(CustomUnitEntry.class, false);

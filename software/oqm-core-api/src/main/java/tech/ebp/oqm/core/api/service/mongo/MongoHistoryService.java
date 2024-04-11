@@ -70,7 +70,8 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 	
 	@WithSpan
-	public DeleteEvent isDeleted(ClientSession clientSession, ObjectId id) {
+	public DeleteEvent isDeleted(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
+		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
 		DeleteEvent found;
 		
 		Bson search = and(
@@ -79,12 +80,12 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		);
 		
 		if (clientSession != null) {
-			found = (DeleteEvent) getCollection()
+			found = (DeleteEvent) collection
 						.find(clientSession, search)
 						.limit(1)
 						.first();
 		} else {
-			found = (DeleteEvent) getCollection()
+			found = (DeleteEvent) collection
 						.find(search)
 						.limit(1)
 						.first();
@@ -97,20 +98,21 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return found;
 	}
 	
-	public DeleteEvent isDeleted(ObjectId id) {
-		return this.isDeleted(null, id);
+	public DeleteEvent isDeleted(String oqmDbIdOrName, ObjectId id) {
+		return this.isDeleted(oqmDbIdOrName, null, id);
 	}
 	
 	@WithSpan
-	public ObjectHistoryEvent getLatestHistoryEventFor(ClientSession clientSession, ObjectId id) {
+	public ObjectHistoryEvent getLatestHistoryEventFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
+		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
 		if (clientSession != null) {
-			found = getCollection()
+			found = collection
 						.find(clientSession, eq("objectId", id))
 						.limit(1)
 						.first();
 		} else {
-			found = getCollection()
+			found = collection
 						.find(eq("objectId", id))
 						.limit(1)
 						.first();
@@ -123,20 +125,21 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return found;
 	}
 	
-	public ObjectHistoryEvent getLatestHistoryEventFor(ObjectId id) {
-		return this.getLatestHistoryEventFor(null, id);
+	public ObjectHistoryEvent getLatestHistoryEventFor(String oqmDbIdOrName, ObjectId id) {
+		return this.getLatestHistoryEventFor(oqmDbIdOrName, null, id);
 	}
 	
 	@WithSpan
-	public boolean hasHistoryFor(ClientSession clientSession, ObjectId id) {
+	public boolean hasHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
+		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
 		if (clientSession != null) {
-			found = getCollection()
+			found = collection
 						.find(clientSession, eq("objectId", id))
 						.limit(1)
 						.first();
 		} else {
-			found = getCollection()
+			found = collection
 						.find(eq("objectId", id))
 						.limit(1)
 						.first();
@@ -144,13 +147,14 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return found != null;
 	}
 	
-	public boolean hasHistoryFor(ObjectId id) {
-		return this.hasHistoryFor(null, id);
+	public boolean hasHistoryFor(String oqmDbIdOrName, ObjectId id) {
+		return this.hasHistoryFor(oqmDbIdOrName, null, id);
 	}
 	
 	@WithSpan
-	public List<ObjectHistoryEvent> getHistoryFor(ClientSession clientSession, ObjectId id) {
+	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		List<ObjectHistoryEvent> output = this.list(
+			oqmDbIdOrName,
 			clientSession,
 			eq("objectId", id),
 			null,
@@ -163,36 +167,36 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return output;
 	}
 	
-	public List<ObjectHistoryEvent> getHistoryFor(ObjectId id) {
-		return this.getHistoryFor(null, id);
+	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ObjectId id) {
+		return this.getHistoryFor(oqmDbIdOrName, null, id);
 	}
 	
-	public List<ObjectHistoryEvent> getHistoryFor(ClientSession clientSession, T object) {
-		return this.getHistoryFor(clientSession, object.getId());
+	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ClientSession clientSession, T object) {
+		return this.getHistoryFor(oqmDbIdOrName, clientSession, object.getId());
 	}
 	
-	public List<ObjectHistoryEvent> getHistoryFor(T object) {
-		return this.getHistoryFor(null, object);
+	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, T object) {
+		return this.getHistoryFor(oqmDbIdOrName, null, object);
 	}
 	
 	@WithSpan
-	public ObjectId addHistoryFor(ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
+	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
 		history.setObjectId(objectReferred.getId());
 		if(entity != null) {
 			history.setEntity(entity.getId());
 		}
-		ObjectId output = this.add(session, history);
+		ObjectId output = this.add(oqmDbIdOrName, session, history);
 		this.getHens().sendEvents(this.clazzForObjectHistoryIsFor, history);
 		return output;
 	}
-	public ObjectId addHistoryFor(T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
-		return this.addHistoryFor(null, objectReferred, entity, history);
+	public ObjectId addHistoryFor(String oqmDbIdOrName, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
+		return this.addHistoryFor(oqmDbIdOrName, null, objectReferred, entity, history);
 	}
 	
 	@WithSpan
-	public ObjectId objectCreated(ClientSession session, T created, InteractingEntity entity) {
+	public ObjectId objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity) {
 		try {
-			this.getHistoryFor(session, created);
+			this.getHistoryFor(oqmDbIdOrName, session, created);
 			throw new IllegalStateException(
 				"History already exists for object " + this.clazzForObjectHistoryIsFor.getSimpleName() + " with id: " + created.getId()
 			);
@@ -202,15 +206,16 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		
 		ObjectHistoryEvent history = new CreateEvent(created, entity);
 		
-		return this.addHistoryFor(session, created, entity, history);
+		return this.addHistoryFor(oqmDbIdOrName, session, created, entity, history);
 	}
 	
-	public ObjectId objectCreated(T created, InteractingEntity interactingEntity) {
-		return this.objectCreated(null, created, interactingEntity);
+	public ObjectId objectCreated(String oqmDbIdOrName, T created, InteractingEntity interactingEntity) {
+		return this.objectCreated(oqmDbIdOrName, null, created, interactingEntity);
 	}
 	
 	@WithSpan
 	public ObjectId objectUpdated(
+		String oqmDbIdOrName,
 		ClientSession clientSession,
 		T updated,
 		InteractingEntity entity,
@@ -227,53 +232,52 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 			event.setDescription(description);
 		}
 		
-		return this.addHistoryFor(clientSession, updated, entity, event);
+		return this.addHistoryFor(oqmDbIdOrName, clientSession, updated, entity, event);
 	}
 	
 	@Override
-	public FindIterable<ObjectHistoryEvent> listIterator(ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
-		return super.listIterator(clientSession, filter, (sort != null ? sort : Sorts.descending("timestamp")), pageOptions);
+	public FindIterable<ObjectHistoryEvent> listIterator(String oqmDbIdOrName, ClientSession clientSession, Bson filter, Bson sort, PagingOptions pageOptions) {
+		return super.listIterator(oqmDbIdOrName, clientSession, filter, (sort != null ? sort : Sorts.descending("timestamp")), pageOptions);
 	}
 	
-	public ObjectId objectUpdated(T updated, InteractingEntity entity, ObjectNode updateJson, String description) {
-		return this.objectUpdated(null, updated, entity, updateJson, description);
+	public ObjectId objectUpdated(String oqmDbIdOrName, T updated, InteractingEntity entity, ObjectNode updateJson, String description) {
+		return this.objectUpdated(oqmDbIdOrName, null, updated, entity, updateJson, description);
 	}
 	
-	
-	public ObjectId objectUpdated(ClientSession clientSession, T updated, InteractingEntity entity, ObjectNode updateJson) {
-		return this.objectUpdated(clientSession, updated, entity, updateJson, "");
+	public ObjectId objectUpdated(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity, ObjectNode updateJson) {
+		return this.objectUpdated(oqmDbIdOrName, clientSession, updated, entity, updateJson, "");
 	}
 	
-	public ObjectId objectUpdated(T updated, InteractingEntity entity, ObjectNode updateJson) {
-		return this.objectUpdated(null, updated, entity, updateJson);
+	public ObjectId objectUpdated(String oqmDbIdOrName, T updated, InteractingEntity entity, ObjectNode updateJson) {
+		return this.objectUpdated(oqmDbIdOrName, null, updated, entity, updateJson);
 	}
 	
 	@WithSpan
-	public ObjectId objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity, String description) {
+	public ObjectId objectDeleted(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity, String description) {
 		DeleteEvent event = new DeleteEvent(updated, entity);
 		
 		if(description != null && !description.isBlank()){
 			event.setDescription(description);
 		}
 		
-		return this.addHistoryFor(clientSession, updated, entity, event);
+		return this.addHistoryFor(oqmDbIdOrName, clientSession, updated, entity, event);
 	}
 	
-	public ObjectId objectDeleted(T updated, InteractingEntity entity, String description) {
-		return this.objectDeleted(null, updated, entity, description);
+	public ObjectId objectDeleted(String oqmDbIdOrName, T updated, InteractingEntity entity, String description) {
+		return this.objectDeleted(oqmDbIdOrName, null, updated, entity, description);
 	}
 	
-	public ObjectId objectDeleted(ClientSession clientSession, T updated, InteractingEntity entity) {
-		return this.objectDeleted(clientSession, updated, entity, "");
+	public ObjectId objectDeleted(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity) {
+		return this.objectDeleted(oqmDbIdOrName, clientSession, updated, entity, "");
 	}
 	
-	public ObjectId objectDeleted(T updated, InteractingEntity entity) {
-		return this.objectDeleted(null, updated, entity);
+	public ObjectId objectDeleted(String oqmDbIdOrName, T updated, InteractingEntity entity) {
+		return this.objectDeleted(oqmDbIdOrName, null, updated, entity);
 	}
 	
 	@Override
-	public HistoryCollectionStats getStats() {
-		return super.addBaseStats(HistoryCollectionStats.builder())
+	public HistoryCollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, HistoryCollectionStats.builder())
 				   //TODO:: this
 				   .build();
 	}

@@ -81,29 +81,29 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
 		newOrChangedObject.recalculateDerived();
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
 	@Override
-	public InvItemCollectionStats getStats() {
-		return super.addBaseStats(InvItemCollectionStats.builder())
-				   .numExpired(this.getNumStoredExpired())
-				   .numExpireWarn(this.getNumStoredExpiryWarn())
-				   .numLowStock(this.getNumLowStock())
+	public InvItemCollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, InvItemCollectionStats.builder())
+				   .numExpired(this.getNumStoredExpired(oqmDbIdOrName))
+				   .numExpireWarn(this.getNumStoredExpiryWarn(oqmDbIdOrName))
+				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
 	}
 	
-	private void handleLowStockEvents(InventoryItem item, List<ItemLowStockEvent> lowStockEvents) {
+	private void handleLowStockEvents(String oqmDbIdOrName, InventoryItem item, List<ItemLowStockEvent> lowStockEvents) {
 		if (!lowStockEvents.isEmpty()) {
 			for (ItemLowStockEvent event : lowStockEvents) {
 				
 				event.setEntity(this.baseStationInteractingEntity.getId());
 				
 				this.getHistoryService().addHistoryFor(
-					item, null, event
+					oqmDbIdOrName, item, null, event
 				);
 			}
 			this.getHens().sendEvents(this.getClazz(), lowStockEvents.toArray(new ObjectHistoryEvent[0]));
@@ -111,36 +111,37 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@Override
-	public InventoryItem update(InventoryItem object) throws DbNotFoundException {
+	public InventoryItem update(String oqmDbIdOrName, InventoryItem object) throws DbNotFoundException {
 		List<ItemLowStockEvent> lowStockEvents = object.updateLowStockState();
-		InventoryItem item = super.update(object);
+		InventoryItem item = super.update(oqmDbIdOrName, object);
 		
-		handleLowStockEvents(item, lowStockEvents);
+		this.handleLowStockEvents(oqmDbIdOrName, item, lowStockEvents);
 		
 		return item;
 	}
 	
 	@Override
-	public InventoryItem update(ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
-		InventoryItem item = super.update(id, updateJson, interactingEntity);
+	public InventoryItem update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		InventoryItem item = super.update(oqmDbIdOrName, id, updateJson, interactingEntity);
 		
 		List<ItemLowStockEvent> lowStockEvents = item.updateLowStockState();
 		
-		super.update(item);
+		super.update(oqmDbIdOrName, item);
 		if (!lowStockEvents.isEmpty()) {
-			this.handleLowStockEvents(item, lowStockEvents);
+			this.handleLowStockEvents(oqmDbIdOrName, item, lowStockEvents);
 		}
 		
 		return item;
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
 		T toAdd,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.add(storageBlockId, toAdd, true);
 		} catch(ClassCastException e) {
@@ -149,8 +150,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			throw e;
 		}
 		
-		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemAddEvent(item, entity)
@@ -161,13 +162,14 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
 		UUID storedId,
 		T toAdd,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.add(storageBlockId, storedId, toAdd, true);
 		} catch(ClassCastException e) {
@@ -178,6 +180,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemAddEvent(item, entity)
@@ -189,28 +192,31 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockId,
 		T toAdd,
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.add(this.get(itemId), storageBlockId, toAdd, entity);
+		return this.add(oqmDbIdOrName, this.get(oqmDbIdOrName, itemId), storageBlockId, toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockId,
 		T toAdd,
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
+		return this.add(oqmDbIdOrName, new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockId,
 		UUID storedId,
@@ -218,11 +224,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.add(this.get(itemId), storageBlockId, storedId, toAdd, entity);
+		return this.add(oqmDbIdOrName, this.get(oqmDbIdOrName, itemId), storageBlockId, storedId, toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> add(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockId,
 		String storedId,
@@ -230,16 +237,17 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.add(new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
+		return this.add(oqmDbIdOrName, new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
 		T toSubtract,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.subtract(storageBlockId, toSubtract);
 		} catch(ClassCastException e) {
@@ -249,6 +257,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		}
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemSubEvent(item, entity)
@@ -259,13 +268,14 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockId,
 		UUID storedId,
 		T toSubtract,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.subtract(storageBlockId, storedId, toSubtract);
 		} catch(ClassCastException e) {
@@ -275,6 +285,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		}
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemSubEvent(item, entity)
@@ -286,28 +297,31 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockId,
 		T toAdd,
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.subtract(this.get(itemId), storageBlockId, toAdd, entity);
+		return this.subtract(oqmDbIdOrName, this.get(oqmDbIdOrName, itemId), storageBlockId, toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockId,
 		T toAdd,
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
+		return this.subtract(oqmDbIdOrName, new ObjectId(itemId), new ObjectId(storageBlockId), toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockId,
 		UUID storedId,
@@ -315,11 +329,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.subtract(this.get(itemId), storageBlockId, storedId, toAdd, entity);
+		return this.subtract(oqmDbIdOrName, this.get(oqmDbIdOrName, itemId), storageBlockId, storedId, toAdd, entity);
 	}
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> subtract(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockId,
 		String storedId,
@@ -327,17 +342,18 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		@NotNull
 		InteractingEntity entity
 	) {
-		return this.subtract(new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
+		return this.subtract(oqmDbIdOrName, new ObjectId(itemId), new ObjectId(storageBlockId), UUID.fromString(storedId), toAdd, entity);
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
 		T toTransfer,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.transfer(storageBlockIdFrom, storageBlockIdTo, toTransfer);
 		} catch(ClassCastException e) {
@@ -347,6 +363,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		}
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemTransferEvent(item, entity)
@@ -358,6 +375,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		ObjectId storageBlockIdFrom,
 		UUID storedIdFrom,
@@ -366,7 +384,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		T toTransfer,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.transfer(storageBlockIdFrom, storedIdFrom, storageBlockIdTo, storedIdTo, toTransfer);
 		} catch(ClassCastException e) {
@@ -376,6 +394,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		}
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemTransferEvent(item, entity)
@@ -388,6 +407,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockIdFrom,
 		ObjectId storageBlockIdTo,
@@ -396,7 +416,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.transfer(
-			this.get(itemId),
+			oqmDbIdOrName,
+			this.get(oqmDbIdOrName, itemId),
 			storageBlockIdFrom,
 			storageBlockIdTo,
 			toTransfer,
@@ -406,6 +427,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockIdFrom,
 		String storageBlockIdTo,
@@ -414,6 +436,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.transfer(
+			oqmDbIdOrName,
 			new ObjectId(itemId),
 			new ObjectId(storageBlockIdFrom),
 			new ObjectId(storageBlockIdTo),
@@ -424,6 +447,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		ObjectId storageBlockIdFrom,
 		UUID storedIdFrom,
@@ -434,7 +458,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.transfer(
-			this.get(itemId),
+			oqmDbIdOrName,
+			this.get(oqmDbIdOrName, itemId),
 			storageBlockIdFrom,
 			storedIdFrom,
 			storageBlockIdTo,
@@ -446,6 +471,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> transfer(
+		String oqmDbIdOrName,
 		String itemId,
 		String storageBlockIdFrom,
 		String storedIdFrom,
@@ -456,6 +482,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.transfer(
+			oqmDbIdOrName,
 			new ObjectId(itemId),
 			new ObjectId(storageBlockIdFrom),
 			UUID.fromString(storedIdFrom),
@@ -467,11 +494,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	private <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		String oqmDbIdOrName,
 		InventoryItem<T, C, W> item,
 		AddSubtractTransferAction action,
 		InteractingEntity entity
 	) {
-		this.get(item.getId());//ensure exists
+		this.get(oqmDbIdOrName, item.getId());//ensure exists
 		try {
 			item.apply(action);
 		} catch(ClassCastException e) {
@@ -481,6 +509,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		}
 		
 		this.update(
+			oqmDbIdOrName,
 			item,
 			entity,
 			new ItemTransferEvent(item, entity)
@@ -492,6 +521,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		String oqmDbIdOrName,
 		ObjectId itemId,
 		@NotNull
 		@Valid
@@ -500,7 +530,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.apply(
-			this.get(itemId),
+			oqmDbIdOrName,
+			this.get(oqmDbIdOrName, itemId),
 			action,
 			entity
 		);
@@ -508,6 +539,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	public <T extends Stored, C, W extends StoredWrapper<C, T>> InventoryItem<T, C, W> apply(
+		String oqmDbIdOrName,
 		String itemId,
 		@NotNull
 		@Valid
@@ -516,6 +548,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		InteractingEntity entity
 	) {
 		return this.apply(
+			oqmDbIdOrName,
 			new ObjectId(itemId),
 			action,
 			entity
@@ -523,8 +556,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@WithSpan
-	public List<InventoryItem> getItemsInBlock(ObjectId storageBlockId) {
+	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(
+			oqmDbIdOrName,
 			exists("storageMap." + storageBlockId.toHexString()),
 			null,
 			null
@@ -532,30 +566,31 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@WithSpan
-	public List<InventoryItem> getItemsInBlock(String storageBlockId) {
-		return this.getItemsInBlock(new ObjectId(storageBlockId));
+	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, String storageBlockId) {
+		return this.getItemsInBlock(oqmDbIdOrName, new ObjectId(storageBlockId));
 	}
 	
 	@WithSpan
-	public long getNumStoredExpired() {
-		return this.getSumOfIntField("numExpired");
+	public long getNumStoredExpired(String oqmDbIdOrName) {
+		return this.getSumOfIntField(oqmDbIdOrName, "numExpired");
 	}
 	
 	@WithSpan
-	public long getNumStoredExpiryWarn() {
-		return this.getSumOfIntField("numExpiryWarn");
+	public long getNumStoredExpiryWarn(String oqmDbIdOrName) {
+		return this.getSumOfIntField(oqmDbIdOrName, "numExpiryWarn");
 	}
 	
 	@WithSpan
-	public long getNumLowStock() {
-		return this.getSumOfIntField("numLowStock");
+	public long getNumLowStock(String oqmDbIdOrName) {
+		return this.getSumOfIntField(oqmDbIdOrName,"numLowStock");
 	}
 	
-	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, Image image) {
+	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("imageIds", image.getId()),
 			null,
@@ -563,7 +598,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		).map(InventoryItem::getId).into(list);
 		
 		//TODO:: figure out how to wrap this into the previous query; finding image in stored entries
-		this.listIterator(clientSession).forEach((InventoryItem item)->{
+		this.listIterator(oqmDbIdOrName, clientSession).forEach((InventoryItem item)->{
 			item.getStorageMap().forEach((storageBlockId, storedWrapper)->{
 				List<ObjectId> imageIds;
 				if(storedWrapper instanceof SingleAmountStoredWrapper){
@@ -584,11 +619,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return list;
 	}
 	
-	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, StorageBlock storageBlock) {
+	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, StorageBlock storageBlock) {
 		Set<ObjectId> list = new TreeSet<>();
 		
 		//TODO:: figure out how find with query
-		this.listIterator(clientSession).forEach((InventoryItem item)->{
+		this.listIterator(oqmDbIdOrName, clientSession).forEach((InventoryItem item)->{
 			if(item.getStorageMap().containsKey(storageBlock.getId())){
 				list.add(item.getId());
 			}
@@ -597,12 +632,13 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return list;
 	}
 	
-	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, ItemCategory itemCategory){
+	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, ItemCategory itemCategory){
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("categories", itemCategory.getId()),
 			null,
@@ -611,10 +647,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return list;
 	}
 	
-	public Set<ObjectId> getItemsReferencing(ClientSession clientSession, FileAttachment fileAttachment){
+	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, FileAttachment fileAttachment){
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("attachedFiles", fileAttachment.getId()),
 			null,
@@ -624,10 +661,10 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@Override
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, InventoryItem item) {
-		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, item);
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, item);
 		
-		Set<ObjectId> refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, item);
+		Set<ObjectId> refs = this.itemCheckoutService.getItemCheckoutsReferencing(oqmDbIdOrName, cs, item);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}

@@ -19,12 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class
-HasParentObjService<
-					   T extends MainObject & HasParent,
-					   S extends SearchObject<T>,
-					   X extends CollectionStats,
-					   N extends ParentedMainObjectTreeNode<T>
-					   >
+HasParentObjService<T extends MainObject & HasParent, S extends SearchObject<T>, X extends CollectionStats, N extends ParentedMainObjectTreeNode<T>>
 	extends MongoHistoriedObjectService<T, S, X>
 {
 	public HasParentObjService(String collectionName, Class<T> clazz, boolean allowNullEntityForCreate) {
@@ -36,26 +31,26 @@ HasParentObjService<
 	}
 	
 	@WithSpan
-	public List<T> getTopParents() {
-		return this.list(Filters.exists("parent", false), null, null);
+	public List<T> getTopParents(String oqmDbIdOrName) {
+		return this.list(oqmDbIdOrName, Filters.exists("parent", false), null, null);
 	}
 	
 	@WithSpan
-	public List<T> getChildrenIn(ObjectId parentId) {
-		return this.list(Filters.eq("parent", parentId), null, null);
+	public List<T> getChildrenIn(String oqmDbIdOrName, ObjectId parentId) {
+		return this.list(oqmDbIdOrName, Filters.eq("parent", parentId), null, null);
 	}
 	
 	@WithSpan
-	public List<T> getChildrenIn(String parentId) {
-		return this.getChildrenIn(new ObjectId(parentId));
+	public List<T> getChildrenIn(String oqmDbIdOrName, String parentId) {
+		return this.getChildrenIn(oqmDbIdOrName, new ObjectId(parentId));
 	}
 	
 	protected abstract ParentedMainObjectTree<T, N> getNewTree();
 	
-	public ParentedMainObjectTree<T, N> getTree(Collection<ObjectId> onlyInclude) {
+	public ParentedMainObjectTree<T, N> getTree(String oqmDbIdOrName, Collection<ObjectId> onlyInclude) {
 		ParentedMainObjectTree<T, N> output = this.getNewTree();
 		
-		FindIterable<T> results = getCollection().find();
+		FindIterable<T> results = getCollection(oqmDbIdOrName).find();
 		output.add(results.iterator());
 		
 		if (!onlyInclude.isEmpty()) {

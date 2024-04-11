@@ -38,8 +38,8 @@ public class FileObjectService<T extends FileMainObject, S extends FileSearchObj
 	 * @return
 	 */
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 }

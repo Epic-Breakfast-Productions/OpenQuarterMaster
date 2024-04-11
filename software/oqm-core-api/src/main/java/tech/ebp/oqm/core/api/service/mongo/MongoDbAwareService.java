@@ -124,27 +124,18 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 	
 	/**
-	 * TODO::
-	 * @return
-	 */
-	protected MongoDatabase getMongoDatabase(){
-		log.info("Database service: {}", this.getMongoDatabaseService());
-		return this.getMongoClient().getDatabase(this.databasePrefix);
-	}
-	
-	/**
 	 * Gets the collection for this service.
 	 * <p>
 	 * Sets up the collection object if not initialized yet.
 	 *
 	 * @return The Mongo collection for this service.
 	 */
-	protected MongoCollection<T> getCollection() {
-		if (this.collection == null) {
-			this.collection = this.getMongoDatabase().getCollection(this.collectionName, this.clazz);
-		}
-		return this.collection;
-	}
+//	protected MongoCollection<T> getCollection() {
+//		if (this.collection == null) {
+//			this.collection = this.getMongoDatabase().getCollection(this.collectionName, this.clazz);
+//		}
+//		return this.collection;
+//	}
 	
 	protected MongoCollection<T> getCollection(DbCacheEntry db) {
 		if(!this.collections.containsKey(db.getDbId())){
@@ -190,17 +181,17 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 *
 	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
 	 */
-	public void ensureObjectValid(boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
 	}
 	
-	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(X builder){
-		return (X) builder.size(this.getCollection().countDocuments());
+	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){
+		return (X) builder.size(this.getCollection(oqmDbIdOrName).countDocuments());
 	}
 	
 	/**
 	 * Todo:: extend this per service, subtypes, etc.
 	 */
-	public abstract V getStats();
+	public abstract V getStats(String oqmDbIdOrName);
 	
-	public abstract long clear(@NonNull ClientSession session);
+	public abstract long clear(String oqmDbIdOrName, @NonNull ClientSession session);
 }

@@ -30,7 +30,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @Named("InteractingEntityService")
 @ApplicationScoped
-public class InteractingEntityService extends MongoObjectService<InteractingEntity, InteractingEntitySearch, CollectionStats> {
+public class InteractingEntityService extends TopLevelMongoService<InteractingEntity> {
 	
 	@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
 	boolean basicAuthEnabled;

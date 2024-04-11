@@ -1,7 +1,12 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSFindIterable;
@@ -35,6 +40,7 @@ import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -68,7 +74,7 @@ import static com.mongodb.client.model.Filters.and;
 @Slf4j
 public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoDbAwareService<T, S, X> {
 	
-	GridFSBucket gridFSBucket = null;
+	private Map<ObjectId, GridFSBucket> gridBuckets = new HashMap<>();
 	
 	@Getter(AccessLevel.PUBLIC)
 	Codec<FileMetadata> fileMetadataCodec;
@@ -80,6 +86,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	@Getter
 	protected String objectName;
 	
+	//TODO:: map of db's that have had these collections initted
+	
 	protected MongoFileService(
 		Class<T> clazz,
 		String objectName
@@ -88,14 +96,14 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		this.objectName = objectName;
 	}
 	
-	@PostConstruct
-	public void setupBucket(){
-		this.fileMetadataCodec = this.getMongoDatabase().getCodecRegistry().get(FileMetadata.class);
+	protected void setupBucket(GridFSBucket bucket){
+		log.info("Ensuring bucket setup.");
 		//TODO:: https://jira.mongodb.org/browse/JAVA-4887  #51 once this is done, cleanup other modifying session logic
 		// should probably be a TODO to remove this, but unsure how we ever might be able to.
 		//ensure gridfs bucket storage is initialized. Required to avoid trying to create during a transaction, which is unsupported by Mongodb.
 		this.getFileObjectService();
-		if(this.getGridFSBucket().find().limit(1).first() == null){
+		if(bucket.find().limit(1).first() == null){
+			log.info("Brand new bucket, setting up");
 			FileMetadata metadata = new FileMetadata(
 				"disregard_init_file_disregard",
 				"txt",
@@ -106,11 +114,12 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 			);
 			
 			GridFSUploadOptions ops = this.getUploadOps(metadata);
-			GridFSBucket bucket = this.getGridFSBucket();
 			String filename = "init";
 			
 			ObjectId id = bucket.uploadFromStream(filename, new ByteArrayInputStream("".getBytes()), ops);
 			bucket.delete(id);
+		} else {
+			log.info("Bucket already existent.");
 		}
 	}
 	
@@ -123,11 +132,24 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return this.getCollectionName() + "-grid";
 	}
 	
-	public GridFSBucket getGridFSBucket() {
-		if (this.gridFSBucket == null) {
-			this.gridFSBucket = GridFSBuckets.create(this.getMongoDatabase(), this.getBucketName());
+	public GridFSBucket getGridFSBucket(DbCacheEntry db) {
+		if(!this.gridBuckets.containsKey(db.getDbId())){
+			log.info("Creating new bucket.");
+			GridFSBucket newBucket = GridFSBuckets.create(db.getMongoDatabase(), this.getBucketName());
+			if(this.fileMetadataCodec == null){
+				this.fileMetadataCodec = db.getMongoDatabase().getCodecRegistry().get(FileMetadata.class);
+			}
+			this.setupBucket(newBucket);
+			this.gridBuckets.put(
+				db.getDbId(),
+				newBucket
+			);
 		}
-		return this.gridFSBucket;
+		return this.gridBuckets.get(db.getDbId());
+	}
+	
+	public GridFSBucket getGridFSBucket(String oqmDbIdOrName) {
+		return this.getGridFSBucket(this.getMongoDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
 	
 	protected FileMetadata documentToMetadata(Document doc) {
@@ -141,7 +163,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	
 	public GridFSUploadOptions getUploadOps(FileMetadata metadata) {
 		return new GridFSUploadOptions()
-				   .chunkSizeBytes(1048576)
+				   .chunkSizeBytes(1048576)//TODO:: move to config
 				   .metadata(metadata.toDocument(this.getFileMetadataCodec()));
 	}
 	
@@ -151,103 +173,103 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 */
 	public abstract MongoObjectService<T, S, X> getFileObjectService();
 	
-	public abstract G fileObjToGet(T obj);
+	public abstract G fileObjToGet(String oqmDbIdOrName, T obj);
 	
-	public G getObjGet(ObjectId id) {
-		return this.fileObjToGet(this.getObj(id));
+	public G getObjGet(String dbIdOrName, ObjectId id) {
+		return this.fileObjToGet(dbIdOrName, this.getObj(dbIdOrName, id));
 	}
-	public G getObjGet(String id) {
-		return this.fileObjToGet(this.getObj(id));
+	public G getObjGet(String dbIdOrName, String id) {
+		return this.fileObjToGet(dbIdOrName, this.getObj(dbIdOrName, id));
 	}
-	public T getObj(ObjectId id) {
-		return this.getFileObjectService().get(id);
+	public T getObj(String dbIdOrName, ObjectId id) {
+		return this.getFileObjectService().get(dbIdOrName, id);
 	}
-	public T getObj(String id) {
-		return this.getFileObjectService().get(id);
+	public T getObj(String dbIdOrName, String id) {
+		return this.getFileObjectService().get(dbIdOrName, id);
 	}
 	
-	public SearchResult<G> search(S search){
+	public SearchResult<G> search(String dbIdOrName, S search){
 		List<Bson> filters = search.getSearchFilters();
-//		Bson filter = (filters.isEmpty() ? null : and(filters));
-		FindIterable<T> searchResult = this.getFileObjectService().listIterator(search);
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		FindIterable<T> searchResult = this.getFileObjectService().listIterator(dbIdOrName, search);
 		
 		List<G> results = new ArrayList<>();
 		searchResult
-			.map(this::fileObjToGet)
+			.map(g->this.fileObjToGet(dbIdOrName, g))
 			.into(results);
 		
 		return new SearchResult<>(
 			results,
-			this.getFileObjectService().count(),
+			this.getFileObjectService().count(dbIdOrName, filter),
 			!filters.isEmpty(),
 			search.getPagingOptions()
 		);
 	}
 	
-	public long count(ClientSession clientSession) {
-		return this.getFileObjectService().count(clientSession);
+	public long count(String dbIdOrName, ClientSession clientSession) {
+		return this.getFileObjectService().count(dbIdOrName, clientSession);
 	}
 	
-	public long count() {
-		return this.count(null);
+	public long count(String dbIdOrName) {
+		return this.count(dbIdOrName, null);
 	}
 	
-	public Iterator<T> objectIterator() {
-		return this.getFileObjectService().iterator();
+	public Iterator<T> objectIterator(String dbIdOrName) {
+		return this.getFileObjectService().iterator(dbIdOrName);
 	}
 	
-	public Iterator<GridFSFile> fileIterator() {
-		return this.getGridFSBucket().find().iterator();
+	public Iterator<GridFSFile> fileIterator(String dbIdOrName) {
+		return this.getGridFSBucket(dbIdOrName).find().iterator();
 	}
 	
-	public T getObject(ClientSession clientSession, ObjectId id) {
-		return this.getFileObjectService().get(clientSession, id);
+	public T getObject(String dbIdOrName, ClientSession clientSession, ObjectId id) {
+		return this.getFileObjectService().get(dbIdOrName, clientSession, id);
 	}
 	
-	public T getObject(ObjectId id) {
-		return this.getObject(null, id);
+	public T getObject(String dbIdOrName, ObjectId id) {
+		return this.getObject(dbIdOrName, null, id);
 	}
 	
-	protected String getFileName(ClientSession clientSession, ObjectId id) {
-		return this.getObject(clientSession, id).getGridfsFileName();
+	protected String getFileName(String dbIdOrName, ClientSession clientSession, ObjectId id) {
+		return this.getObject(dbIdOrName, clientSession, id).getGridfsFileName();
 	}
 	
-	protected Bson getFileNameQuery(ClientSession clientSession, ObjectId id) {
-		return Filters.eq("filename", this.getFileName(clientSession, id));
+	protected Bson getFileNameQuery(String dbIdOrName, ClientSession clientSession, ObjectId id) {
+		return Filters.eq("filename", this.getFileName(dbIdOrName, clientSession, id));
 	}
 	
-	public int getNumRevisions(ClientSession clientSession, ObjectId id) {
+	public int getNumRevisions(String dbIdOrName, ClientSession clientSession, ObjectId id) {
 		//TODO:: better/ more efficient way?
-		Bson query = this.getFileNameQuery(clientSession, id);
+		Bson query = this.getFileNameQuery(dbIdOrName, clientSession, id);
 		
 		GridFSFindIterable iterable;
-		
+		GridFSBucket bucket = this.getGridFSBucket(dbIdOrName);
 		if (clientSession == null) {
-			iterable = this.getGridFSBucket().find(query);
+			iterable = bucket.find(query);
 		} else {
-			iterable = this.getGridFSBucket().find(clientSession, query);
+			iterable = bucket.find(clientSession, query);
 		}
 		
 		List<GridFSFile> output = new ArrayList<>();
 		iterable.into(output);
 		return output.size();
 	}
-	public int getLatestVersionNum(ClientSession clientSession, ObjectId id) {
-		return this.getNumRevisions(clientSession, id);
+	public int getLatestVersionNum(String dbIdOrName, ClientSession clientSession, ObjectId id) {
+		return this.getNumRevisions(dbIdOrName, clientSession, id);
 	}
-	public int getLatestVersionNum(String id) {
-		return this.getLatestVersionNum(null, new ObjectId(id));
+	public int getLatestVersionNum(String dbIdOrName, String id) {
+		return this.getLatestVersionNum(dbIdOrName, null, new ObjectId(id));
 	}
 	
-	public List<FileMetadata> getRevisions(ClientSession clientSession, ObjectId id) {
-		Bson query = this.getFileNameQuery(clientSession, id);
+	public List<FileMetadata> getRevisions(String dbIdOrName, ClientSession clientSession, ObjectId id) {
+		Bson query = this.getFileNameQuery(dbIdOrName, clientSession, id);
 		
 		GridFSFindIterable iterable;
-		
+		GridFSBucket bucket = this.getGridFSBucket(dbIdOrName);
 		if (clientSession == null) {
-			iterable = this.getGridFSBucket().find(query);
+			iterable = bucket.find(query);
 		} else {
-			iterable = this.getGridFSBucket().find(clientSession, query);
+			iterable = bucket.find(clientSession, query);
 		}
 		iterable.sort(Sorts.ascending("uploadDate"));
 		
@@ -260,24 +282,24 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return output;
 	}
 	
-	public List<FileMetadata> getRevisions(ObjectId id) {
-		return this.getRevisions(null, id);
+	public List<FileMetadata> getRevisions(String dbIdOrName, ObjectId id) {
+		return this.getRevisions(dbIdOrName, null, id);
 	}
 	
-	public FileMetadata getFileMetadata(ClientSession clientSession, ObjectId id, int revisionNum){
-		return this.getRevisions(clientSession, id).get(revisionNum - 1);
+	public FileMetadata getFileMetadata(String dbIdOrName, ClientSession clientSession, ObjectId id, int revisionNum){
+		return this.getRevisions(dbIdOrName, clientSession, id).get(revisionNum - 1);
 	}
-	public FileMetadata getFileMetadata(String id, int revisionNum){
-		return this.getFileMetadata(null, new ObjectId(id), revisionNum);
+	public FileMetadata getFileMetadata(String dbIdOrName, String id, int revisionNum){
+		return this.getFileMetadata(dbIdOrName, null, new ObjectId(id), revisionNum);
 	}
 	
-	public FileContentsGet getFile(ClientSession clientSession, ObjectId id, int revisionNum) throws IOException {
+	public FileContentsGet getFile(String dbIdOrName, ClientSession clientSession, ObjectId id, int revisionNum) throws IOException {
 		int revisionIndex = revisionNum - 1;
-		T fileObj = this.getObject(clientSession, id);
+		T fileObj = this.getObject(dbIdOrName, clientSession, id);
 		
 		FileContentsGet.Builder<?, ?> outputBuilder = FileContentsGet.builder();
 		
-		List<FileMetadata> revisions = this.getRevisions(clientSession, id);
+		List<FileMetadata> revisions = this.getRevisions(dbIdOrName, clientSession, id);
 		
 		FileMetadata metadata = revisions.get(revisionIndex);
 		outputBuilder.metadata(metadata);
@@ -286,6 +308,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		
 		outputBuilder.contents(
 			this.downloadGridfsFile(
+				dbIdOrName,
 				clientSession,
 				fileObj.getGridfsFileName(),
 				this.getTempFileName(fileObj.getGridfsFileName(), revisionNum),
@@ -294,20 +317,22 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		
 		return outputBuilder.build();
 	}
-	public FileContentsGet getFile(String id, int revisionNum) throws IOException {
-		return this.getFile(null, new ObjectId(id), revisionNum);
+	
+	public FileContentsGet getFile(String dbIdOrName, String id, int revisionNum) throws IOException {
+		return this.getFile(dbIdOrName, null, new ObjectId(id), revisionNum);
 	}
 	
-	protected File downloadGridfsFile(ClientSession clientSession, String filename, String tempFilename, GridFSDownloadOptions options) throws IOException {
+	protected File downloadGridfsFile(String dbIdOrName, ClientSession clientSession, String filename, String tempFilename, GridFSDownloadOptions options) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(tempFilename, this.getCollectionName());
 		
 		if (!tempFile.exists()) {
 			log.info("File needs added to cache: {}", tempFile);
 			try (FileOutputStream os = new FileOutputStream(tempFile)) {
+				GridFSBucket bucket = this.getGridFSBucket(dbIdOrName);
 				if (clientSession == null) {
-					this.getGridFSBucket().downloadToStream(filename, os, options);
+					bucket.downloadToStream(filename, os, options);
 				} else {
-					this.getGridFSBucket().downloadToStream(clientSession, filename, os, options);
+					bucket.downloadToStream(clientSession, filename, os, options);
 				}
 				
 				os.flush();
@@ -331,8 +356,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 * @return
 	 * @throws IOException
 	 */
-	public void getFileContents(ObjectId id, OutputStream os) throws IOException {
-		this.getGridFSBucket().downloadToStream(id, os);
+	public void getFileContents(String dbIdOrName, ObjectId id, OutputStream os) throws IOException {
+		this.getGridFSBucket(dbIdOrName).downloadToStream(id, os);
 	}
 	
 	/**
@@ -340,7 +365,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 * @param clientSession The client session, null if none
 	 * @param objectToRemove The object being removed
 	 */
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession clientSession, T objectToRemove){
+	public Map<String, Set<ObjectId>> getReferencingObjects(String dbIdOrName, ClientSession clientSession, T objectToRemove){
 		return new HashMap<>();
 	}
 	
@@ -349,18 +374,18 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	 * @param clientSession The client session, null if none
 	 * @param objectToRemove The object being removed
 	 */
-	protected void assertNotReferenced(ClientSession clientSession, T objectToRemove){
-		Map<String, Set<ObjectId>> objsWithRefs = this.getReferencingObjects(clientSession, objectToRemove);
+	protected void assertNotReferenced(String dbIdOrName, ClientSession clientSession, T objectToRemove){
+		Map<String, Set<ObjectId>> objsWithRefs = this.getReferencingObjects(dbIdOrName, clientSession, objectToRemove);
 		if(!objsWithRefs.isEmpty()){
 			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
 		}
 	}
 	
 	@Override
-	public long clear(ClientSession session) {
-		this.getGridFSBucket().find().forEach((GridFSFile file)->{
-			this.getGridFSBucket().delete(session, file.getId());
+	public long clear(String dbIdOrName, ClientSession session) {
+		this.getGridFSBucket(dbIdOrName).find().forEach((GridFSFile file)->{
+			this.getGridFSBucket(dbIdOrName).delete(session, file.getId());
 		});
-		return this.getFileObjectService().clear(session);
+		return this.getFileObjectService().clear(dbIdOrName, session);
 	}
 }

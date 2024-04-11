@@ -40,15 +40,15 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, ItemCategory newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemCategory newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 		//TODO:: this
 	}
 	
@@ -57,9 +57,10 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 		return new ItemCategoryTree();
 	}
 	
-	public Set<ObjectId> getItemCatsReferencing(ClientSession clientSession, Image image) {
+	public Set<ObjectId> getItemCatsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("imageIds", image.getId()),
 			null,
@@ -70,12 +71,13 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 	
 	@WithSpan
 	@Override
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, ItemCategory itemCategory) {
-		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, itemCategory);
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, ItemCategory itemCategory) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, itemCategory);
 		
 		Set<ObjectId> refs = new TreeSet<>();
 		
 		this.listIterator(
+			oqmDbIdOrName,
 			cs,
 			eq(
 				"parent",
@@ -88,11 +90,11 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
 		}
 		
-		refs = this.storageBlockService.getBlocksReferencing(cs, itemCategory);
+		refs = this.storageBlockService.getBlocksReferencing(oqmDbIdOrName, cs, itemCategory);
 		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
 		}
-		refs = this.inventoryItemService.getItemsReferencing(cs, itemCategory);
+		refs = this.inventoryItemService.getItemsReferencing(oqmDbIdOrName, cs, itemCategory);
 		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}
