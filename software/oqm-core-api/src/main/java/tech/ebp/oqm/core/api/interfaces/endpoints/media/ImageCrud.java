@@ -45,13 +45,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/media/image")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/media/image")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RequestScoped
 public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, ImageSearch, ImageGet> {
-
+	
 	private static final URI EMPTY_IMAGE_URI;
-
+	
 	static {
 		try {
 			EMPTY_IMAGE_URI = new URI("/media/empty.svg");
@@ -59,7 +59,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@Inject
 	StorageBlockService storageBlockService;
 	@Inject
@@ -68,13 +68,13 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	ItemCategoryService itemCategoryService;
 	@Inject
 	Validator validator;
-
+	
 	@Inject
 	@Getter
 	ImageService fileService;
-
+	
 	@Getter
-	Class<Image> objectClass =  Image.class;
+	Class<Image> objectClass = Image.class;
 	
 	
 	@Override
@@ -427,28 +427,28 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?, ?> service, String id) throws IOException {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
-
-		ImagedMainObject object = service.get(id);
-
+		
+		ImagedMainObject object = service.get(this.getOqmDbIdOrName(), id);
+		
 		if (object == null) {
 			log.info("{} not found.", objTypeName);
 			return Response.status(Response.Status.NOT_FOUND)
 					   .type(MediaType.TEXT_PLAIN_TYPE)
 					   .entity(objTypeName + " not found.").build();
 		}
-
+		
 		if (object.getImageIds().isEmpty()) {
 			log.info("Storage block has no images. Returning blank placeholder image.");
 			return Response
 					   .seeOther(EMPTY_IMAGE_URI)
 					   .build();
 		}
-
+		
 		ObjectId imageId = object.getImageIds().get(0);
 		
 		return this.getRevisionData(imageId.toHexString(), "latest");
 	}
-
+	
 	@GET
 	@Path("for/{object}/{id}")
 	@Operation(
@@ -469,7 +469,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 		@PathParam("id") String id
 	) throws IOException {
 		log.info("Retrieving image for {} of id \"{}\"", object, id);
-
+		
 		switch (object) {
 			case storageBlock -> {
 				return this.getImageFromObject(this.storageBlockService, id);

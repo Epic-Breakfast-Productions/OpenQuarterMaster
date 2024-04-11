@@ -197,19 +197,22 @@ public class UnitsEndpoints extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId createCustomUnit(
+	public Response createCustomUnit(
 		@Valid NewCustomUnitRequest ncur
 	) {
-		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.customUnitService.getNextOrderValue());
-		
-		UnitUtils.registerAllUnits(newUnit);
-		
-		ObjectId id = this.customUnitService.add(
-			newUnit,
-			this.getInteractingEntity()
-		);
-		
-		return id;
+		//TODO
+		return Response.serverError().entity("Not implemented yet.").build();
+//		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.customUnitService.getNextOrderValue());
+//
+//		UnitUtils.registerAllUnits(newUnit);
+//
+//		//TODO::
+//		ObjectId id = this.customUnitService.add(
+//			newUnit,
+//			this.getInteractingEntity()
+//		);
+//
+//		return id;
 	}
 	
 	@GET
@@ -234,7 +237,13 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResult<CustomUnitEntry> getCustomUnits() {
-		return this.customUnitService.search(new CustomUnitSearch());
+	public
+	Response
+	//SearchResult<CustomUnitEntry>
+	getCustomUnits() {
+		//TODO
+		return Response.serverError().entity("Not implemented yet.").build();
+		//TODO::
+//		return this.customUnitService.search(new CustomUnitSearch());
 	}
 }

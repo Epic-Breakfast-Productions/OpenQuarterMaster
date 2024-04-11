@@ -11,6 +11,7 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -141,7 +142,7 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Blocking
 	@DELETE
-	@Path("clearDb")
+	@Path("/db/{oqmDbIdOrName}/clearDb")
 	@Operation(
 		summary = "Manually triggers the process to clear the database."
 	)
@@ -155,8 +156,11 @@ public class InventoryManagement extends EndpointProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
-	public Map<String, Long> clearDatabase() {
-		return this.dbms.clearDb(this.getInteractingEntity());
+	public Map<String, Long> clearDatabase(
+		@PathParam("oqmDbIdOrName")
+		String oqmDbIdOrName
+	) {
+		return this.dbms.clearDb(oqmDbIdOrName, this.getInteractingEntity());
 	}
 	
 	//TODO:: prune histories
