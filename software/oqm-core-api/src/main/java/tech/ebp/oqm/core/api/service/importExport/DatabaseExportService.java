@@ -316,6 +316,8 @@ public class DatabaseExportService {
 						log.error("Failed to create directory for db " + db.getName());
 						throw new IOException("Failed to create directory.");
 					}
+					ObjectUtils.OBJECT_MAPPER.writeValue(new File(thisDbDir, "dbInfo.json"), db);
+
 					databaseFutures.put(db, CompletableFuture.supplyAsync(() -> {
 								String dbId = db.getId().toHexString();
 								StopWatch sw = StopWatch.createStarted();
