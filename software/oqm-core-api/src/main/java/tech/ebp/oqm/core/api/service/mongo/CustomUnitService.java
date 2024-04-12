@@ -27,7 +27,7 @@ import java.util.ListIterator;
 
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
+public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
 	CustomUnitService() {
 		super(CustomUnitEntry.class);
@@ -83,9 +83,4 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry> {
 		return matchList.get(0);
 	}
 	
-	public CollectionStats collectionStats() {
-		return CollectionStats.builder()
-				   .size(this.getCollection().countDocuments())
-				   .build();
-	}
 }

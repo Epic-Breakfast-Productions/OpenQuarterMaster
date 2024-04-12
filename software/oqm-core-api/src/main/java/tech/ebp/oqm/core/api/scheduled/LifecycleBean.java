@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -33,7 +33,7 @@ public class LifecycleBean {
 	TempFileService tempFileService;
 	
 	@Inject
-	MongoDatabaseService dbService;
+	OqmDatabaseService dbService;
 	
 	private ZonedDateTime startDateTime;
 	

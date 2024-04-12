@@ -7,13 +7,11 @@ import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -27,9 +25,10 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.and;
@@ -40,11 +39,7 @@ import static com.mongodb.client.model.Filters.and;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class TopLevelMongoService<T extends MainObject> {
-	
-	public static String getCollectionNameFromClass(Class<?> clazz) {
-		return clazz.getSimpleName();
-	}
+public abstract class TopLevelMongoService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> extends MongoService<T, S, V> {
 	
 	//TODO:: move to constructor?
 	protected static final Validator VALIDATOR;
@@ -61,12 +56,6 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 	@Inject
 	@Getter(AccessLevel.PROTECTED)
 	ObjectMapper objectMapper;
-	/**
-	 * The MongoDb client.
-	 */
-	@Inject
-	@Getter(AccessLevel.PROTECTED)
-	MongoClient mongoClient;
 	
 	/**
 	 * The name of the database to access
@@ -74,12 +63,6 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 	@Getter
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String databasePrefix;
-	
-	/**
-	 * The class this collection is in charge of. Used for logging.
-	 */
-	@Getter
-	protected final Class<T> clazz;
 	
 	/**
 	 * The actual mongo collection.
@@ -90,7 +73,7 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 	protected TopLevelMongoService(
 		Class<T> clazz
 	){
-		this.clazz = clazz;
+		super(clazz);
 	}
 	
 	/**
@@ -192,6 +175,63 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 		return this.listIterator(cs, null, null, null);
 	}
 	
+	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+		
+		List<Bson> filters = searchObject.getSearchFilters();
+		log.debug("Filters: {}", filters);
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		
+		return this.listIterator(
+			filter,
+			searchObject.getSortBson(),
+			searchObject.getPagingOptions()
+		);
+	}
+	
+	public long count(ClientSession clientSession, Bson filter) {
+		MongoCollection<T> collection = this.getCollection();
+		if (filter == null) {
+			if (clientSession == null) {
+				return collection.countDocuments();
+			} else {
+				return collection.countDocuments(clientSession);
+			}
+		}
+		if (clientSession == null) {
+			return collection.countDocuments(filter);
+		} else {
+			return collection.countDocuments(clientSession, filter);
+		}
+	}
+	
+	public long count(Bson filter) {
+		return this.count(null, filter);
+	}
+	
+	@WithSpan
+	public SearchResult<T> search(@NonNull S searchObject) {
+		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
+		
+		List<Bson> filters = searchObject.getSearchFilters();
+		log.debug("Filters: {}", filters);
+		Bson filter = (filters.isEmpty() ? null : and(filters));
+		PagingOptions pagingOptions = searchObject.getPagingOptions();
+		
+		List<T> list = this.listIterator(
+			filter,
+			searchObject.getSortBson(),
+			pagingOptions
+		).into(new ArrayList<>());
+		
+		return new SearchResult<>(
+			list,
+			this.count(filter),
+			!filters.isEmpty(),
+			pagingOptions
+		);
+	}
+	
 //	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
 //		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 //
@@ -206,4 +246,10 @@ public abstract class TopLevelMongoService<T extends MainObject> {
 //			searchObject.getPagingOptions()
 //		);
 //	}
+	
+	public CollectionStats collectionStats() {
+		return CollectionStats.builder()
+				   .size(this.getCollection().countDocuments())
+				   .build();
+	}
 }

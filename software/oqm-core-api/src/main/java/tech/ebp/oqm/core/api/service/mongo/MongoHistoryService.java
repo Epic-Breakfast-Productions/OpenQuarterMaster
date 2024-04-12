@@ -9,9 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
-import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
-import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +29,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.List;
 
@@ -59,10 +57,10 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		MongoDatabaseService mongoDatabaseService,
+		OqmDatabaseService oqmDatabaseService,
 		Class<T> clazzForObjectHistoryIsFor
 	) {
-		super(objectMapper, mongoClient, database, mongoDatabaseService, getCollectionNameFromClass(clazzForObjectHistoryIsFor) + COLLECTION_HISTORY_APPEND, ObjectHistoryEvent.class);
+		super(objectMapper, mongoClient, database, oqmDatabaseService, getCollectionNameFromClass(clazzForObjectHistoryIsFor) + COLLECTION_HISTORY_APPEND, ObjectHistoryEvent.class);
 		this.clazzForObjectHistoryIsFor = clazzForObjectHistoryIsFor;
 		try(InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)){
 			this.hens = container.get();

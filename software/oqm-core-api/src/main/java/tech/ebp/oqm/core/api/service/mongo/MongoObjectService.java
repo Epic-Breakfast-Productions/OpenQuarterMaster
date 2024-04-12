@@ -29,7 +29,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,11 +58,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		MongoDatabaseService mongoDatabaseService,
+		OqmDatabaseService oqmDatabaseService,
 		String collectionName,
 		Class<T> clazz
 	) {
-		super(objectMapper, mongoClient, database, mongoDatabaseService, collectionName, clazz);
+		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz);
 	}
 	
 	private FindIterable<T> find(String oqmDbIdOrName, ClientSession session, Bson filter) {

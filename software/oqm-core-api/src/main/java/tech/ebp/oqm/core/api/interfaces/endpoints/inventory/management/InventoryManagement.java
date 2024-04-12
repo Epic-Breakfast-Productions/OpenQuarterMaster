@@ -61,7 +61,7 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Blocking
 	@GET
-	@Path("export")
+	@Path("db/{oqmDbIdOrName}/export")
 	@Operation(
 		summary = "Creates a bundle of all inventory data stored."
 	)
@@ -80,9 +80,12 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@QueryParam("excludeHistory") boolean excludeHistory
+		@PathParam("oqmDbIdOrName")
+		String oqmDbIdOrName,
+		@QueryParam("excludeHistory")
+		boolean excludeHistory
 	) throws IOException {
-		File outputFile = dataExportService.exportDataToBundle(excludeHistory);
+		File outputFile = dataExportService.exportDataToBundle(oqmDbIdOrName, excludeHistory);
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
 		response.header("Content-Disposition", "attachment;filename=" + outputFile.getName());

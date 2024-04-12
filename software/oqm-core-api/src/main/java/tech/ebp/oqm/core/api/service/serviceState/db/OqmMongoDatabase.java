@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
+import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OqmMongoDatabase extends MainObject {
+public class OqmMongoDatabase extends AttKeywordMainObject {
 	
 	@NotNull
 	@Length(min = 1, max = 15)

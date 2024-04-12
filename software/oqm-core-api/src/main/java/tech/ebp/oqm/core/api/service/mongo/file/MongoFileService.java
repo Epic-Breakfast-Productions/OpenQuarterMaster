@@ -1,12 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
-import com.mongodb.ReadConcern;
-import com.mongodb.ReadPreference;
-import com.mongodb.TransactionOptions;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
 import com.mongodb.client.gridfs.GridFSFindIterable;
@@ -15,7 +10,6 @@ import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -149,7 +143,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	}
 	
 	public GridFSBucket getGridFSBucket(String oqmDbIdOrName) {
-		return this.getGridFSBucket(this.getMongoDatabaseService().getOqmDatabase(oqmDbIdOrName));
+		return this.getGridFSBucket(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
 	
 	protected FileMetadata documentToMetadata(Document doc) {

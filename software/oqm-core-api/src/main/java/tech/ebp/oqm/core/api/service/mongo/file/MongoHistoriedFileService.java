@@ -1,9 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
@@ -24,9 +21,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
 import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
-import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +79,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 			this.getObjectMapper(),
 			this.getMongoClient(),
 			this.getDatabasePrefix(),
-			this.getMongoDatabaseService(),
+			this.getOqmDatabaseService(),
 			this.getCollectionName() + "-obj",
 			this.getClazz(),
 			this.isAllowNullEntityForCreate()

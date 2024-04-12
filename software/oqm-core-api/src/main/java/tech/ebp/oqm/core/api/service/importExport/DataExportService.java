@@ -59,6 +59,7 @@ public class DataExportService {
 	private static final DateFormat fileRevisionTimestampFormat = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss-SSS");
 	
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
+		String oqmDbIdOrName,
 		File tempDir,
 		MongoObjectService<T, S, ?> service,
 		boolean includeHistory
@@ -76,7 +77,7 @@ public class DataExportService {
 				throw new IOException("Failed to create directory.");
 			}
 			
-			Iterator<T> it = service.iterator();
+			Iterator<T> it = service.iterator(oqmDbIdOrName);
 			while (it.hasNext()) {
 				T curObj = it.next();
 				ObjectId curId = curObj.getId();
@@ -99,7 +100,7 @@ public class DataExportService {
 					throw new IOException("Failed to create directory for object history.");
 				}
 				
-				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S, ?>) service).historyIterator();
+				Iterator<ObjectHistoryEvent> hIt = ((MongoHistoriedObjectService<T, S, ?>) service).historyIterator(oqmDbIdOrName);
 				while (hIt.hasNext()) {
 					ObjectHistoryEvent curObj = hIt.next();
 					ObjectId curId = curObj.getId();
@@ -122,6 +123,7 @@ public class DataExportService {
 	}
 	
 	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
+		String oqmDbIdOrName,
 		File tempDir,
 		MongoFileService<T, S, ?, G> fileService,
 		boolean includeHistory
@@ -146,6 +148,7 @@ public class DataExportService {
 			CompletableFuture<Void> future = CompletableFuture.allOf(
 				CompletableFuture.supplyAsync(()->{
 					recordRecords(
+						oqmDbIdOrName,
 						mainDir,
 						fileService.getFileObjectService(),
 						includeHistory
@@ -153,7 +156,7 @@ public class DataExportService {
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					Iterator<GridFSFile> it = fileService.fileIterator();
+					Iterator<GridFSFile> it = fileService.fileIterator(oqmDbIdOrName);
 					
 					while (it.hasNext()) {
 						GridFSFile curGridFile = it.next();
@@ -172,7 +175,7 @@ public class DataExportService {
 							FileOutputStream os = new FileOutputStream(curRevisionFile);
 						) {
 							ObjectUtils.OBJECT_MAPPER.writeValue(curRevisionMetadata, metadata);
-							fileService.getFileContents(curGridFile.getObjectId(), os);
+							fileService.getFileContents(oqmDbIdOrName, curGridFile.getObjectId(), os);
 						} catch(IOException e) {
 							log.error("FAILED to write files: ", e);
 							throw new RuntimeException(e);
@@ -224,7 +227,10 @@ public class DataExportService {
 	ItemCheckoutService itemCheckoutService;
 	
 	@WithSpan
-	public File exportDataToBundle(boolean excludeHistory) throws IOException {
+	public File exportDataToBundle(
+		String oqmDbIdOrName,
+		boolean excludeHistory
+	) throws IOException {
 		log.info("Generating new export bundle.");
 		StopWatch mainSw = StopWatch.createStarted();
 		
@@ -242,35 +248,36 @@ public class DataExportService {
 			
 			CompletableFuture<Void> future = CompletableFuture.allOf(
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.customUnitService, !excludeHistory);
+					//TODO:: custom unit handling
+					recordRecords(oqmDbIdOrName, dirToArchive, this.customUnitService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.fileAttachmentService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.fileAttachmentService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.imageService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.imageService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.itemCategoryService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.itemCategoryService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.storageBlockService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.storageBlockService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.inventoryItemService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.inventoryItemService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.itemListService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.itemListService, !excludeHistory);
 					return null;
 				}),
 				CompletableFuture.supplyAsync(()->{
-					recordRecords(dirToArchive, this.itemCheckoutService, !excludeHistory);
+					recordRecords(oqmDbIdOrName, dirToArchive, this.itemCheckoutService, !excludeHistory);
 					return null;
 				})
 			);

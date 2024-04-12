@@ -8,7 +8,6 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -25,8 +24,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
-import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +35,8 @@ import java.util.Map;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoDbAwareService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> {
+public abstract class MongoDbAwareService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> extends MongoService<T, S, V> {
 	
-	public static String getCollectionNameFromClass(Class<?> clazz) {
-		return clazz.getSimpleName();
-	}
 	
 	//TODO:: move to constructor?
 	protected static final Validator VALIDATOR;
@@ -74,7 +69,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	
 	@Getter
 	@Inject
-	MongoDatabaseService mongoDatabaseService;
+	OqmDatabaseService oqmDatabaseService;
 	
 	/**
 	 * The name of the collection this service is in charge of
@@ -82,11 +77,6 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	@Getter
 	protected final String collectionName;
 	
-	/**
-	 * The class this collection is in charge of. Used for logging.
-	 */
-	@Getter
-	protected final Class<T> clazz;
 	
 	/**
 	 * The actual mongo collection.
@@ -100,8 +90,8 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		String collectionName,
 		Class<T> clazz
 	){
+		super(clazz);
 		this.collectionName = collectionName;
-		this.clazz = clazz;
 	}
 	
 	protected MongoDbAwareService(Class<T> clazz){
@@ -112,7 +102,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String databasePrefix,
-		MongoDatabaseService mongoDatabaseService,
+		OqmDatabaseService oqmDatabaseService,
 		String collectionName,
 		Class<T> clazz
 	) {
@@ -120,7 +110,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		this.objectMapper = objectMapper;
 		this.mongoClient = mongoClient;
 		this.databasePrefix = databasePrefix;
-		this.mongoDatabaseService = mongoDatabaseService;
+		this.oqmDatabaseService = oqmDatabaseService;
 	}
 	
 	/**
@@ -148,7 +138,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 	
 	protected MongoCollection<T> getCollection(String oqmDbIdOrName) {
-		return this.getCollection(this.getMongoDatabaseService().getOqmDatabase(oqmDbIdOrName));
+		return this.getCollection(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
 	
 	public static TransactionOptions getDefaultTransactionOptions() {

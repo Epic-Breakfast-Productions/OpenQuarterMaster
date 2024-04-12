@@ -1,9 +1,7 @@
 package tech.ebp.oqm.core.api.service.serviceState.db;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
@@ -16,16 +14,16 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @ApplicationScoped
-public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase> {
+public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> {
 	
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
@@ -43,7 +41,7 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 	 */
 	private MongoCollection<OqmMongoDatabase> collection = null;
 	
-	protected MongoDatabaseService() {
+	protected OqmDatabaseService() {
 		super(OqmMongoDatabase.class);
 	}
 	
@@ -125,11 +123,5 @@ public class MongoDatabaseService extends TopLevelMongoService<OqmMongoDatabase>
 		log.info("Created new database, id: {}", newDatabase.getId());
 		this.refreshCache();
 		return newDatabase.getId();
-	}
-	
-	public CollectionStats collectionStats() {
-		return CollectionStats.builder()
-				   .size(this.getCollection().countDocuments())
-				   .build();
 	}
 }

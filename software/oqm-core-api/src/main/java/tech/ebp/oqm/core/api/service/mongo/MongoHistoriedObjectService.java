@@ -28,8 +28,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.ebp.oqm.core.api.service.serviceState.db.MongoDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,12 +75,12 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
-		MongoDatabaseService mongoDatabaseService,
+		OqmDatabaseService oqmDatabaseService,
 		String collectionName,
 		Class<T> clazz,
 		boolean allowNullEntityForCreate
 	) {
-		super(objectMapper, mongoClient, database, mongoDatabaseService, collectionName, clazz);
+		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz);
 		this.allowNullEntityForCreate = allowNullEntityForCreate;
 	}
 	
@@ -102,7 +101,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			this.getObjectMapper(),
 			this.getMongoClient(),
 			this.getDatabasePrefix(),
-			this.getMongoDatabaseService(),
+			this.getOqmDatabaseService(),
 			clazz
 		);
 	}
