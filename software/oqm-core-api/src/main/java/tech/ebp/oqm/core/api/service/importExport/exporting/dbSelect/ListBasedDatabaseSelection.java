@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.export.dbSelect;
+package tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

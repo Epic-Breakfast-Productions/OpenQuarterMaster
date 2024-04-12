@@ -1,8 +1,6 @@
-package tech.ebp.oqm.core.api.service.importExport.export.dbSelect;
+package tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect;
 
 import lombok.*;
-
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -10,10 +8,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IncludeDatabaseSelection extends ListBasedDatabaseSelection {
+public class ExcludeDatabaseSelection extends ListBasedDatabaseSelection {
 
     @Override
     public DatabaseSelectionType getDatabaseSelectionType() {
-        return DatabaseSelectionType.INCLUDE;
+        return DatabaseSelectionType.EXCLUDE;
     }
 }

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.importer;
+package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.mongodb.client.ClientSession;
 import lombok.Getter;

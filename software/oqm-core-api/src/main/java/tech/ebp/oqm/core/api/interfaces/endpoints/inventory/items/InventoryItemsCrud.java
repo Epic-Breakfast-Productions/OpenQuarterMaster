@@ -36,7 +36,7 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.service.importExport.csv.InvItemCsvConverter;
+import tech.ebp.oqm.core.api.service.importExport.importing.csv.InvItemCsvConverter;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;

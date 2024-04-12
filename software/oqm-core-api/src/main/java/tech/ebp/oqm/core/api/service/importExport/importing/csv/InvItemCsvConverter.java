@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.csv;
+package tech.ebp.oqm.core.api.service.importExport.importing.csv;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport;
+package tech.ebp.oqm.core.api.service.importExport.importing;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Sorts;
@@ -32,18 +32,13 @@ import tech.ebp.oqm.core.api.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.rest.search.ItemListSearch;
 import tech.ebp.oqm.core.api.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.core.api.service.importExport.importer.GenericFileImporter;
-import tech.ebp.oqm.core.api.service.importExport.importer.GenericImporter;
-import tech.ebp.oqm.core.api.service.importExport.importer.HasParentImporter;
-import tech.ebp.oqm.core.api.service.importExport.importer.UnitImporter;
-import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DataImportExportUtils;
+import tech.ebp.oqm.core.api.service.importExport.importing.importer.GenericFileImporter;
+import tech.ebp.oqm.core.api.service.importExport.importing.importer.GenericImporter;
+import tech.ebp.oqm.core.api.service.importExport.importing.importer.HasParentImporter;
+import tech.ebp.oqm.core.api.service.importExport.importing.importer.UnitImporter;
+import tech.ebp.oqm.core.api.service.mongo.*;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
-import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
-import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
-import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
-import tech.ebp.oqm.core.api.service.mongo.ItemListService;
-import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
-import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
 
 import java.io.BufferedInputStream;
@@ -104,13 +99,16 @@ public class DataImportService {
 		}
 		return List.of();
 	}
-	
+
+	@Inject
+	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	CustomUnitService customUnitService;
 	
 	@Inject
 	ImageService imageService;
+
 	@Inject
 	ItemCategoryService itemItemCategoryService;
 	
@@ -249,6 +247,15 @@ public class DataImportService {
 		InteractingEntity importingEntity
 	) throws IOException {
 		return this.importBundle(body.file, body.fileName, importingEntity);
+	}
+
+	@WithSpan
+	public DataImportResult importBundle(
+			InputStream bundleInputStream,
+			String fileName,
+			InteractingEntity importingEntity
+	) throws IOException {
+
 	}
 	
 }

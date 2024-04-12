@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.importer;
+package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.export.dbSelect;
+package tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect;
 
 import lombok.*;
 
@@ -8,10 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExcludeDatabaseSelection extends ListBasedDatabaseSelection {
+public class IncludeDatabaseSelection extends ListBasedDatabaseSelection {
 
     @Override
     public DatabaseSelectionType getDatabaseSelectionType() {
-        return DatabaseSelectionType.EXCLUDE;
+        return DatabaseSelectionType.INCLUDE;
     }
 }

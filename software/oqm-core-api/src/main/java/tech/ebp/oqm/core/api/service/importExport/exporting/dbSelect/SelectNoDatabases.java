@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.export.dbSelect;
+package tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect;
 
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -7,14 +7,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class SelectAllDatabases extends DatabaseSelection {
+public class SelectNoDatabases extends DatabaseSelection {
     @Override
     public DatabaseSelectionType getDatabaseSelectionType() {
-        return DatabaseSelectionType.ALL;
+        return DatabaseSelectionType.NONE;
     }
 
     @Override
     public boolean isSelected(String databaseIdOrName) {
-        return true;
+        return false;
     }
 }

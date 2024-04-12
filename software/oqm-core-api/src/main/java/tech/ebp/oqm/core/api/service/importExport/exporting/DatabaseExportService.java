@@ -1,8 +1,7 @@
-package tech.ebp.oqm.core.api.service.importExport;
+package tech.ebp.oqm.core.api.service.importExport.exporting;
 
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +9,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
-import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
-import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
-import org.apache.commons.compress.compressors.xz.XZUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.exception.DataExportException;
@@ -24,7 +20,6 @@ import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.TempFileService;
-import tech.ebp.oqm.core.api.service.importExport.export.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.*;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
@@ -46,8 +41,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.zip.Deflater;
+
+import static tech.ebp.oqm.core.api.service.importExport.ImportExportConstants.*;
 
 @Slf4j
 @ApplicationScoped
@@ -278,8 +274,8 @@ public class DatabaseExportService {
 		Path dirToArchiveAsPath = dirToArchive.toPath();
 		File outputFile = new File(dirToArchive.getParentFile(), dirToArchive.getName() + ".tar.gz");
 		outputFile.deleteOnExit();
-		File topLevelDataDir = new File(dirToArchive, "topLevel");
-		File dbDataDir = new File(dirToArchive, "dbs");
+		File topLevelDataDir = new File(dirToArchive, TOP_LEVEL_DIR_NAME);
+		File dbDataDir = new File(dirToArchive, DBS_DIR_NAME);
 
 		if (!topLevelDataDir.mkdir() || !dbDataDir.mkdir()) {
 			log.error("Failed to create directories for top level and dbs.");
@@ -316,7 +312,7 @@ public class DatabaseExportService {
 						log.error("Failed to create directory for db " + db.getName());
 						throw new IOException("Failed to create directory.");
 					}
-					ObjectUtils.OBJECT_MAPPER.writeValue(new File(thisDbDir, "dbInfo.json"), db);
+					ObjectUtils.OBJECT_MAPPER.writeValue(new File(thisDbDir, DB_INFO_FILE_NAME), db);
 
 					databaseFutures.put(db, CompletableFuture.supplyAsync(() -> {
 								String dbId = db.getId().toHexString();
