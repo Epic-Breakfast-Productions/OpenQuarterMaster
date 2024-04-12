@@ -12,8 +12,6 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.core.api.service.TempFileService;
-import tech.ebp.oqm.core.api.service.importExport.DataExportService;
-import tech.ebp.oqm.core.api.service.importExport.DataImportService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
@@ -74,7 +72,7 @@ class DataImportServiceTest extends RunningServerTest {
 	DataImportService dataImportService;
 	
 	@Inject
-	DataExportService dataExportService;
+	DatabaseExportService databaseExportService;
 	
 	@Inject
 	TestUserService testUserService;
@@ -290,7 +288,7 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			//TODO:: rest of item types
 		}
-		File bundle = this.dataExportService.exportDataToBundle(false);
+		File bundle = this.databaseExportService.exportDataToBundle(false);
 		
 		FileUtils.copyFile(bundle, new File("build/export.tar.gz"));
 		

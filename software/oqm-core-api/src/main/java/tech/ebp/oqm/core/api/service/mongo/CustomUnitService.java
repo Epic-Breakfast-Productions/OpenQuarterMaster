@@ -11,9 +11,12 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.rest.search.CustomUnitSearch;
@@ -82,5 +85,15 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		
 		return matchList.get(0);
 	}
-	
+
+	public ObjectId add(@Valid NewCustomUnitRequest ncur){
+		log.info("Adding new custom unit.");
+		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.getNextOrderValue());
+
+		UnitUtils.registerAllUnits(newUnit);
+
+		newUnit.setId(this.getCollection().insertOne(newUnit).getInsertedId().asObjectId().getValue());
+		log.info("New custom unit: {}", newUnit);
+		return newUnit.getId();
+	}
 }

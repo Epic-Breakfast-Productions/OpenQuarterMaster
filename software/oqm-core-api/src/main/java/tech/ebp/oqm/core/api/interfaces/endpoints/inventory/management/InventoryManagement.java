@@ -27,8 +27,9 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.scheduled.ExpiryProcessor;
-import tech.ebp.oqm.core.api.service.importExport.DataExportService;
+import tech.ebp.oqm.core.api.service.importExport.DatabaseExportService;
 import tech.ebp.oqm.core.api.service.importExport.DataImportService;
+import tech.ebp.oqm.core.api.service.importExport.export.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.DatabaseManagementService;
 
 import java.io.File;
@@ -48,7 +49,7 @@ import java.util.Map;
 public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
-	DataExportService dataExportService;
+	DatabaseExportService databaseExportService;
 	
 	@Inject
 	DataImportService dataImportService;
@@ -80,12 +81,9 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@PathParam("oqmDbIdOrName")
-		String oqmDbIdOrName,
-		@QueryParam("excludeHistory")
-		boolean excludeHistory
+			//TODO:: options as bean param? figure this out
 	) throws IOException {
-		File outputFile = dataExportService.exportDataToBundle(oqmDbIdOrName, excludeHistory);
+		File outputFile = databaseExportService.exportDataToBundle(new DataExportOptions());
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
 		response.header("Content-Disposition", "attachment;filename=" + outputFile.getName());

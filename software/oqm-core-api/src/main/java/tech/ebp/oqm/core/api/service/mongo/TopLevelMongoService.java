@@ -83,6 +83,10 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 	protected MongoDatabase getMongoDatabase(){
 		return this.getMongoClient().getDatabase(this.databasePrefix);
 	}
+
+	public String getCollectionName(){
+		return getCollectionNameFromClass(this.clazz);
+	}
 	
 	/**
 	 * Gets the collection for this service.
@@ -93,7 +97,7 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 	 */
 	protected MongoCollection<T> getCollection() {
 		if (this.collection == null) {
-			this.collection = this.getMongoDatabase().getCollection(getCollectionNameFromClass(this.clazz), this.clazz);
+			this.collection = this.getMongoDatabase().getCollection(this.getCollectionName(), this.clazz);
 		}
 		return this.collection;
 	}
