@@ -29,7 +29,6 @@ class CertsUtils:
 
     @staticmethod
     def ensureCaInstalled() -> (bool, str):
-        some: SubjectAlternativeName = x509.load_pem_x509_certificate()
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
         caCertName = os.path.basename(root_ca_cert_path)
@@ -333,11 +332,12 @@ class CertsUtils:
         with (open(publicKeyLoc, "rb") as certFile
               ):
             cert: Certificate = x509.load_pem_x509_certificate(certFile.read())
-            toFind:GeneralName = CertsUtils.getSAN(mainCM.getConfigVal("system.hostname"))
             sanExt = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME) # TODO:: error check
-            results = sanExt.value.get_values_for_type(toFind) #x509.DNSName)
-            if not results:
-                logging.info("No certificate found for system hostname. Refreshing.")
+            sanEntries = sanExt.value.get_values_for_type(x509.DNSName) + sanExt.value.get_values_for_type(x509.IPAddress)
+            toFind = mainCM.getConfigVal("system.hostname")
+
+            if toFind not in sanEntries:
+                logging.info("No certificate found for system hostname set in config. Refreshing.")
                 return CertsUtils.regenCerts()
 
         return True, ""
