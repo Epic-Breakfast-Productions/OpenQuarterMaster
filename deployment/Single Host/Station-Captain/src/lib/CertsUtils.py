@@ -11,6 +11,8 @@ import subprocess
 import os
 import datetime
 from cryptography import x509
+from cryptography.x509 import Certificate, Extensions, SubjectAlternativeName, GeneralName, ExtensionOID
+
 from ConfigManager import *
 from CronUtils import *
 from ServiceUtils import *
@@ -27,6 +29,7 @@ class CertsUtils:
 
     @staticmethod
     def ensureCaInstalled() -> (bool, str):
+        some: SubjectAlternativeName = x509.load_pem_x509_certificate()
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
         caCertName = os.path.basename(root_ca_cert_path)
@@ -106,7 +109,7 @@ class CertsUtils:
         return True, output
 
     @staticmethod
-    def getSAN(san: str):
+    def getSAN(san: str)->GeneralName:
         try:
             return x509.IPAddress(ipaddress.ip_address(san))
         except ValueError:
@@ -324,6 +327,19 @@ class CertsUtils:
                 return False, message
             else:
                 return False, "Invalid value for config cert.certs.systemCert : " + certMode
+
+        # Ensure cert has system.hostname in it
+
+        with (open(publicKeyLoc, "rb") as certFile
+              ):
+            cert: Certificate = x509.load_pem_x509_certificate(certFile.read())
+            toFind:GeneralName = CertsUtils.getSAN(mainCM.getConfigVal("system.hostname"))
+            sanExt = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME) # TODO:: error check
+            results = sanExt.value.get_values_for_type(toFind) #x509.DNSName)
+            if not results:
+                logging.info("No certificate found for system hostname. Refreshing.")
+                return CertsUtils.regenCerts()
+
         return True, ""
 
     AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
