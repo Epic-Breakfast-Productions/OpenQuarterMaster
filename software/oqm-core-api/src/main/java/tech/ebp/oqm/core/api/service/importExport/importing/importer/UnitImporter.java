@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
@@ -25,12 +27,11 @@ import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
-public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSearch, CustomUnitService> {
-	
+public class UnitImporter extends TopLevelImporter<CustomUnitEntry, CustomUnitSearch, CustomUnitService> {
+
+	@Getter(AccessLevel.PRIVATE)
 	@Inject
-	public UnitImporter(CustomUnitService mongoService) {
-		super(mongoService);
-	}
+	CustomUnitService customUnitService;
 	
 	private static boolean isUnitNotFoundJsonException(JsonProcessingException e){
 		return e.getMessage().matches("^Unit string given \\((.*)\\) does not represent any of the possible valid units.(.*)$");
@@ -44,7 +45,7 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 		ObjectId oldId = curObj.getId();
 		ObjectId newId;
 		try {
-			newId = this.getObjectService().add(clientSession, curObj, importingEntity);
+			newId = this.getCustomUnitService().add(clientSession, curObj, importingEntity);
 		} catch(Throwable e) {
 			log.error("Failed to import object: ", e);
 			throw e;
@@ -54,48 +55,7 @@ public class UnitImporter extends ObjectImporter<CustomUnitEntry, CustomUnitSear
 		
 		UnitUtils.registerAllUnits(curObj);
 	}
-	
-	private void readInObject(
-		ClientSession clientSession,
-		File curFile,
-		InteractingEntity importingEntity,
-		Map<String, List<ObjectNode>> needParentMap
-	) throws IOException {
-		CustomUnitEntry curObj;
-		
-		try {
-			curObj = ObjectUtils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class);
-		} catch(JsonProcessingException e) {
-			
-			if (isUnitNotFoundJsonException(e)) {
-				log.info("Got derived unit before parent: {}", e.getMessage());
-				ObjectNode curUnitEntryJson = (ObjectNode) ObjectUtils.OBJECT_MAPPER.readTree(curFile);
-				
-				needParentMap.computeIfAbsent(
-								 curUnitEntryJson.get("unitCreator").get("symbol").asText(),
-								 k->new ArrayList<>()
-							 )
-							 .add(curUnitEntryJson);
-				return;
-			}
-			
-			throw e;
-		}
-		
-		
-		try {
-			this.readInObject(
-				clientSession,
-				curObj,
-				importingEntity
-			);
-		} catch(Throwable e) {
-			log.error("Failed to process object file {}: ", curFile, e);
-			throw e;
-		}
-	}
-	
-	@Override
+
 	protected long readInObjectsImpl(
 		ClientSession clientSession,
 		Path objectDirPath,

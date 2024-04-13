@@ -22,11 +22,11 @@ public abstract class FileImporter<T extends FileMainObject, U extends FileUploa
 	private final M fileService;
 	
 	@Getter
-	private final ObjectImporter<T, S, ?> objectImporter;
+	private final HistoriedObjectImporter<T, S, ?> historiedObjectImporter;
 	
 	protected FileImporter(M fileService){
 		this.fileService = fileService;
-		this.objectImporter = new GenericImporter<T, S>(fileService.getFileObjectService());
+		this.historiedObjectImporter = new GenericImporterHistoried<T, S>(fileService.getFileObjectService());
 	}
 	
 	protected Path getFileObjDirPath(Path directory){

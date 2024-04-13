@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.mongodb.client.ClientSession;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class Importer {
+public abstract class Importer<R> {
 	
 	/**
 	 * Gets all files in a directory that end in "<code>.json</code>"
@@ -36,9 +37,10 @@ public abstract class Importer {
 		}
 	}
 	
-	public abstract long readInObjects(
+	public abstract R readInObjects(
 		ClientSession clientSession,
 		Path directory,
-		InteractingEntity importingEntity
+		InteractingEntity importingEntity,
+		DataImportOptions options
 	) throws IOException;
 }

@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
@@ -96,7 +97,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		return this.get(new ObjectId(id));
 	}
 	
-	protected ObjectId add(InteractingEntity entity){
+	public ObjectId add(@Valid InteractingEntity entity){
 		return this.getCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
 	}
 	

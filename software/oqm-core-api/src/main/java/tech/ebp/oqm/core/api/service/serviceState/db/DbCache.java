@@ -93,4 +93,12 @@ public class DbCache {
 		}
 		return output;
 	}
+
+	public Optional<DbCacheEntry> getFromNew(OqmMongoDatabase newDb){
+		Optional<DbCacheEntry> output = this.getFromId(newDb.getId());
+		if (output.isEmpty()) {
+			output = this.getFromName(newDb.getName());
+		}
+		return output;
+	}
 }

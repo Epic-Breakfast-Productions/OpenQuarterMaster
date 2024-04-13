@@ -16,10 +16,10 @@ import java.nio.file.Path;
 import java.util.List;
 
 @Slf4j
-public class GenericImporter<T extends MainObject, S extends SearchObject<T>> extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
+public class GenericImporterHistoried<T extends MainObject, S extends SearchObject<T>> extends HistoriedObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
 	
 	
-	public GenericImporter(MongoHistoriedObjectService<T, S, ?> mongoService) {
+	public GenericImporterHistoried(MongoHistoriedObjectService<T, S, ?> mongoService) {
 		super(mongoService);
 	}
 	

@@ -124,4 +124,8 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 		this.refreshCache();
 		return newDatabase.getId();
 	}
+
+	public boolean hasDatabase(OqmMongoDatabase newDb){
+		return this.getDatabaseCache().getFromNew(newDb).isPresent();
+	}
 }

@@ -36,7 +36,7 @@ public class GenericFileImporter<T extends FileMainObject, U extends FileUploadB
 	protected long readInObjectsImpl(ClientSession clientSession, Path mainDir, InteractingEntity importingEntity) throws IOException {
 		Path filesDir = mainDir.resolve("files");
 		
-		this.getObjectImporter().readInObjectsImpl(clientSession, mainDir, importingEntity);
+		this.getHistoriedObjectImporter().readInObjectsImpl(clientSession, mainDir, importingEntity);
 		long result = 0;
 		
 		try (
