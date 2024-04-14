@@ -329,8 +329,7 @@ class CertsUtils:
 
         # Ensure cert has system.hostname in it
 
-        with (open(publicKeyLoc, "rb") as certFile
-              ):
+        with (open(publicKeyLoc, "rb") as certFile):
             cert: Certificate = x509.load_pem_x509_certificate(certFile.read())
             sanExt = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME) # TODO:: error check
             sanEntries = sanExt.value.get_values_for_type(x509.DNSName) + sanExt.value.get_values_for_type(x509.IPAddress)
