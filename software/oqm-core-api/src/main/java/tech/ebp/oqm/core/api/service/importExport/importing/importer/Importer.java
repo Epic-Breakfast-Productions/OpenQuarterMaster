@@ -36,11 +36,5 @@ public abstract class Importer<R> {
 					   .collect(Collectors.toList());
 		}
 	}
-	
-	public abstract R readInObjects(
-		ClientSession clientSession,
-		Path directory,
-		InteractingEntity importingEntity,
-		DataImportOptions options
-	) throws IOException;
+
 }

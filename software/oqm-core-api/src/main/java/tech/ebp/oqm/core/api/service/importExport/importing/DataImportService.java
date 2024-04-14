@@ -143,11 +143,14 @@ public class DataImportService {
 	@Inject
 	FileAttachmentService fileAttachmentService;
 
-	private InteractingEntityImporter interactingEntityImporter;
-	private UnitImporter unitImporter;
+	@Inject
+	UnitImporter unitImporter;
+	@Inject
+	InteractingEntityImporter interactingEntityImporter;
+
 	private GenericFileImporter<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> fileImporter;
 	private GenericFileImporter<Image, FileUploadBody, ImageSearch, ImageGet> imageImporter;
-	private HasParentImporterHistoried<ItemCategory, ItemCategorySearch> itemCategoryImporter;//TODO:: will need parent-aware importer like storage block
+	private HasParentImporterHistoried<ItemCategory, ItemCategorySearch> itemCategoryImporter;
 	private HasParentImporterHistoried<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericImporterHistoried<InventoryItem, InventoryItemSearch> itemImporter;
 	private GenericImporterHistoried<ItemList, ItemListSearch> itemListImporter;
@@ -155,8 +158,6 @@ public class DataImportService {
 
 	@PostConstruct
 	public void setup() {
-		this.interactingEntityImporter = new InteractingEntityImporter(this.interactingEntityService);
-		this.unitImporter = new UnitImporter(this.customUnitService);
 		this.itemCategoryImporter = new HasParentImporterHistoried<>(this.itemItemCategoryService);
 		this.storageBlockImporter = new HasParentImporterHistoried<>(this.storageBlockService);
 		this.fileImporter = new GenericFileImporter<>(this.fileAttachmentService);
@@ -259,7 +260,7 @@ public class DataImportService {
 						EntityImportResult entityImportResult = this.interactingEntityImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions);
 						entityIdMap = entityImportResult.getInteractingEntitiesMapped();
 						resultBuilder.entities(entityImportResult);
-						resultBuilder.numUnits(this.unitImporter.readInObjects(session, topLevelDirPath, importingEntity));
+						resultBuilder.numUnits(this.unitImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions));
 						topLevelStopwatch.stop();
 						log.info("Done reading in top level objects. Took {}", topLevelStopwatch);
 					}
@@ -293,13 +294,17 @@ public class DataImportService {
 						resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
 							DbImportResult.Builder dbResultBuilder = DbImportResult.builder();
 
-							dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
-							dbResultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions));
+							try {
+								dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+								dbResultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							} catch (IOException e) {
+								throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
+							}
 
 							return dbResultBuilder.build();
 						}));

@@ -125,6 +125,9 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public FindIterable<T> listIterator(String oqmDbIdOrName, ClientSession cs) {
 		return this.listIterator(oqmDbIdOrName, cs, null, null, null);
 	}
+	public FindIterable<T> listIterator(ObjectId dbId, ClientSession cs) {
+		return this.listIterator(dbId.toHexString(), cs);
+	}
 	
 	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);

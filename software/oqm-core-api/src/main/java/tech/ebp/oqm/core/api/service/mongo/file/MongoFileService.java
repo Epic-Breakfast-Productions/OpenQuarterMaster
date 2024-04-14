@@ -145,6 +145,10 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public GridFSBucket getGridFSBucket(String oqmDbIdOrName) {
 		return this.getGridFSBucket(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
+
+	public GridFSBucket getGridFSBucket(ObjectId oqmDbId) {
+		return this.getGridFSBucket(oqmDbId.toHexString());
+	}
 	
 	protected FileMetadata documentToMetadata(Document doc) {
 		BsonReader reader = new BsonDocumentReader(doc.toBsonDocument());

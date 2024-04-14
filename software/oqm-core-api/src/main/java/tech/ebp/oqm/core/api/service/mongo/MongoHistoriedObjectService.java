@@ -192,6 +192,10 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		
 		return object.getId();
 	}
+
+	public ObjectId add(ObjectId oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
+		return this.add(oqmDbIdOrName.toHexString(), session, object, entity);
+	}
 	
 	public ObjectId add(String oqmDbIdOrName, T object, InteractingEntity interactingEntity) {
 		return this.add(oqmDbIdOrName, null, object, interactingEntity);

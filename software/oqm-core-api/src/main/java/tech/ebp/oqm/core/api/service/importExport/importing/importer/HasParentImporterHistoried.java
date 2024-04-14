@@ -10,6 +10,7 @@ import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
 
@@ -25,24 +26,27 @@ import java.util.Map;
  * TODO:: changeover to generic 'parentImporter' to operate on the HasParent interface
  */
 @Slf4j
-public class HasParentImporterHistoried<T extends MainObject & HasParent, S extends SearchObject<T>> extends HistoriedObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
-	
+public class HasParentImporterHistoried<T extends MainObject & HasParent, S extends SearchObject<T>>
+	extends HistoriedObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
 	
 	public HasParentImporterHistoried(MongoHistoriedObjectService<T, S, ?> mongoService) {
 		super(mongoService);
 	}
 	
 	private void readInObject(
+		ObjectId dbId,
 		ClientSession clientSession,
 		T curObj,
 		InteractingEntity importingEntity,
+		DataImportOptions options,
+		Map<ObjectId, ObjectId> entityIdMap,
 		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) {
 		ObjectId oldId = curObj.getId();
 		ObjectId newId;
 		try {
-			newId = this.getObjectService().add(clientSession, curObj, importingEntity);
+			newId = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
 		} catch(DbModValidationException e){
 			if(e.getMessage().contains("No parent exists")){
 				ObjectId curParent = ((StorageBlock)curObj).getParent();
@@ -60,17 +64,23 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 	}
 	
 	private void readInObject(
+		ObjectId dbId,
 		ClientSession clientSession,
 		File curFile,
 		InteractingEntity importingEntity,
+		DataImportOptions options,
+		Map<ObjectId, ObjectId> entityIdMap,
 		Map<ObjectId, List<T>> needParentMap,
 		List<ObjectId> addedList
 	) throws IOException {
 		try {
 			this.readInObject(
+				dbId,
 				clientSession,
 				ObjectUtils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz()),
 				importingEntity,
+				options,
+				entityIdMap,
 				needParentMap,
 				addedList
 			);
@@ -82,7 +92,12 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 	
 	
 	@Override
-	protected long readInObjectsImpl(ClientSession clientSession, Path objectDirPath, InteractingEntity importingEntity) throws IOException {
+	protected long readInObjectsImpl(
+		ObjectId dbId,
+		ClientSession clientSession, Path objectDirPath, InteractingEntity importingEntity,
+		DataImportOptions options,
+		Map<ObjectId, ObjectId> entityIdMap
+	) throws IOException {
 		List<File> filesForObject = getObjectFiles(objectDirPath);
 		
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);
@@ -90,7 +105,7 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 		Map<ObjectId, List<T>> needParentMap = new HashMap<>();
 		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
-			this.readInObject(clientSession, curObjFile, importingEntity, needParentMap, addedList);
+			this.readInObject(dbId, clientSession, curObjFile, importingEntity, options, entityIdMap, needParentMap, addedList);
 		}
 		
 		if(needParentMap.isEmpty()){
@@ -112,9 +127,12 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 					
 					for(T curObj : toAdd){
 						this.readInObject(
+							dbId,
 							clientSession,
 							curObj,
 							importingEntity,
+							options,
+							entityIdMap,
 							null,
 							newAddedList
 						);
@@ -133,8 +151,7 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 			this.getObjectService().getCollectionName(),
 			sw
 		);
-		
-		
+
 		return filesForObject.size();
 	}
 }

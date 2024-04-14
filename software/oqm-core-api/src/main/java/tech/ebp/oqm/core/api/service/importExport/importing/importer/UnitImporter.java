@@ -15,6 +15,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.rest.search.CustomUnitSearch;
+import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
 
 import java.io.File;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
-public class UnitImporter extends TopLevelImporter<CustomUnitEntry, CustomUnitSearch, CustomUnitService> {
+public class UnitImporter extends TopLevelImporter<Long> {
 
 	@Getter(AccessLevel.PRIVATE)
 	@Inject
@@ -56,14 +57,22 @@ public class UnitImporter extends TopLevelImporter<CustomUnitEntry, CustomUnitSe
 		UnitUtils.registerAllUnits(curObj);
 	}
 
-	protected long readInObjectsImpl(
+	@Override
+	public Path getObjectDirPath(Path topLevelPath) {
+		return topLevelPath.resolve(this.customUnitService.getCollectionName());
+	}
+
+	@Override
+	public Long readInObjectsImpl(
 		ClientSession clientSession,
-		Path objectDirPath,
-		InteractingEntity importingEntity
+		Path directory,
+		InteractingEntity importingEntity,
+		DataImportOptions options
 	) throws IOException {
-		List<File> filesForObject = getObjectFiles(objectDirPath);
+
+		List<File> filesForObject = getObjectFiles(directory);
 		
-		log.info("Found {} files for {} in {}", filesForObject.size(), this.getObjectService().getCollectionName(), objectDirPath);
+		log.info("Found {} files for {} in {}", filesForObject.size(), this.getCustomUnitService().getCollectionName(), directory);
 		Map<String, List<ObjectNode>> needParentMap = new HashMap<>();
 		StopWatch sw = StopWatch.createStarted();
 		for (File curObjFile : filesForObject) {
@@ -105,12 +114,10 @@ public class UnitImporter extends TopLevelImporter<CustomUnitEntry, CustomUnitSe
 		log.info(
 			"Read in {} {} objects in {}",
 			filesForObject.size(),
-			this.getObjectService().getCollectionName(),
+			this.customUnitService.getCollectionName(),
 			sw
 		);
 		
-		return filesForObject.size();
+		return (long)filesForObject.size();
 	}
-	
-	
 }

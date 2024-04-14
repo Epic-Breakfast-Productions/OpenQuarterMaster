@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.mongodb.client.ClientSession;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,15 +22,23 @@ import java.util.stream.Collectors;
 
 public class InteractingEntityImporter extends TopLevelImporter<EntityImportResult> {
 
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	private InteractingEntityService interactingEntityService;
+	InteractingEntityService interactingEntityService;
 
-	public InteractingEntityImporter(InteractingEntityService interactingEntityService) {
-		this.interactingEntityService = interactingEntityService;
+
+	@Override
+	public Path getObjectDirPath(Path topLevelPath) {
+		return topLevelPath.resolve(this.interactingEntityService.getCollectionName());
 	}
 
 	@Override
-	public EntityImportResult readInObjects(ClientSession clientSession, Path directory, InteractingEntity importingEntity, DataImportOptions options) throws IOException {
+	public EntityImportResult readInObjectsImpl(
+		ClientSession clientSession,
+		Path directory,
+		InteractingEntity importingEntity,
+		DataImportOptions options
+	) throws IOException {
 		Path entityDirectory = directory.resolve(this.interactingEntityService.getCollectionName());
 		EntityImportResult.Builder resultBuilder = EntityImportResult.builder();
 		List<InteractingEntity> existentUsers = interactingEntityService.listIterator().into(new ArrayList<>());
