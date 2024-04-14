@@ -55,7 +55,8 @@ This is a quick explanation of the menus in interactive mode, and what the tool 
 **** Storage usage
 **** RAM usage
 . *Manage Installation*
-
+.. *Setup Wizard*
+*** Guides you through the major setup of the system.
 .. *Select OQM major version* TODO, later
 
 .. *SSL/HTTPS Certs TODO*

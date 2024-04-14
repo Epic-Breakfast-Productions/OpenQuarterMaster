@@ -130,10 +130,11 @@ class UserInteraction:
         logging.info("Checking system is setup")
         if not PackageManagement.coreInstalled():
             logging.info("Core setup not installed")
-            code = self.dialog.yesno("Core components are not installed. Install now?", title="Setup")
-            if code == self.dialog.OK:
-                self.dialog.infobox("Installing core components. Please Wait. This can take a few moments.")
-                PackageManagement.installCore()
+            self.dialog.msgbox(
+                "We see that you have not yet installed OQM. You will now be taken through the setup wizard to get started.",
+                title="Core components not installed"
+            )
+            self.setupWizard()
         else:
             logging.info("Core components already installed.")
 
@@ -222,10 +223,11 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Manage Installation Menu",
                 choices=[
-                    ("(1)", "SSL/HTTPS Certs"),
-                    ("(2)", "Set E-mail Settings"),
-                    ("(3)", "User Administration"),
-                    ("(4)", "Plugins")
+                    ("(1)", "Setup Wizard"),
+                    ("(2)", "SSL/HTTPS Certs"),
+                    ("(3)", "Set E-mail Settings"),
+                    ("(4)", "User Administration"),
+                    ("(5)", "Plugins")
                 ]
             )
             UserInteraction.clearScreen()
@@ -233,10 +235,12 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
             if choice == "(1)":
-                self.manageCertsMenu()
+                self.setupWizard()
             if choice == "(2)":
-                self.manageEmailSettings()
+                self.manageCertsMenu()
             if choice == "(3)":
+                self.manageEmailSettings()
+            if choice == "(4)":
                 self.userAdminMenu()
 
         logging.debug("Done running manage install menu.")
@@ -806,5 +810,87 @@ class UserInteraction:
 
         logging.debug("Done running container management menu.")
 
+    def setupWizard(self):
+        logging.debug("Running setup wizard.")
+        self.dialog.msgbox("Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.", title="Setup Wizard")
+
+        # Check if already installed, prompt to uninstall
+        # if PackageManagement.coreInstalled():
+        #     logging.debug("OQM core components already installed.")
+        #     code = self.dialog.yesno(
+        #         "Remove the current installation? \n\nDo this if you want to start fresh.",
+        #         title="Remove current install? - Setup Wizard"
+        #     )
+        #     if code != self.dialog.OK:
+        #         logging.info("User chose not to uninstall the current setup.")
+        #     else:
+        #         logging.info("User chose to uninstall OQM.")
+        #         # TODO:: uninstall, uncomment this
+
+        code = self.dialog.yesno(
+            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today.\n - this is your first time logging into the system\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
+            title="Update system? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to update.")
+        else:
+            logging.info("User chose to update and restart.")
+            self.dialog.infobox("Updating OS/system. Please wait.")
+            result, message = PackageManagement.updateSystem()
+            # TODO:: error check
+            os.system('reboot')
+
+        # Check if not installed, prompt to install
+        if not PackageManagement.coreInstalled():
+            logging.debug("OQM components not yet installed.")
+            code = self.dialog.yesno(
+                "Install core OQM components?",
+                title="Perform core component install? - Setup Wizard"
+            )
+            if code != self.dialog.OK:
+                logging.info("User chose not to install core components.")
+            else:
+                logging.info("User chose to install core components.")
+                self.dialog.infobox("Installing core components. Please wait.")
+                PackageManagement.installCore()
+                self.dialog.msgbox("Core components installed!", title="Setup Wizard")
+
+        # TODO: set simple settings; domain name, run by details, email settings
+
+        code = self.dialog.yesno(
+            "Perform snapshots automatically?\n\nRecommend turning on. This can be managed later in settings.",
+            title="Automatic Snapshots? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to automatically perform snapshots.")
+            SnapshotUtils.disableAutomatic()
+        else:
+            logging.info("User chose to automatically perform snapshots.")
+            SnapshotUtils.enableAutomatic()
+
+        self.dialog.msgbox(
+            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
+            "later in settings.",
+            title="Setup Wizard"
+        )
+        PackageManagement.promptForAutoUpdates()
+
+        code = self.dialog.yesno(
+            "Regenerate certs automatically?\n\nRecommend turning on. This can be managed later in settings.",
+            title="Automatic Certificate Regeneration? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to automatically regenerate certs.")
+            CertsUtils.enableAutoRegenCerts()
+        else:
+            logging.info("User chose to automatically regenerate certs.")
+            CertsUtils.disableAutoRegenCerts()
+
+        # TODO: if not .local, ask to select cert type
+
+        self.dialog.msgbox(
+            "Setup Wizard complete!",
+            title="Setup Wizard"
+        )
 
 ui = UserInteraction()

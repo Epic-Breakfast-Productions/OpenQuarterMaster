@@ -53,6 +53,7 @@ class PackageManagement:
 
     @staticmethod
     def installCore():
+        # TODO:: update with error handling, return
         logging.info("Installing core components.")
         # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("update")
