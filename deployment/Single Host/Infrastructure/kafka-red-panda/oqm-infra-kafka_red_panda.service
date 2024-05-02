@@ -25,10 +25,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'C
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 
-
-#                                        -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://oqm-infra-kafka:9092\
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
-                                        --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                         --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         $IMAGE_NAME:$IMAGE_VERSION redpanda start \
