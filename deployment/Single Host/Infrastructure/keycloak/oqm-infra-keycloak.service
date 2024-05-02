@@ -31,7 +31,6 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'C
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
-#ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/ui.d/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/keycloak/uiEntry.json > /etc/oqm/ui.d/infra-keycloak.json"
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/serviceConfig/infra/keycloak/files/"
@@ -61,7 +60,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -p \"$(oqm-config -g 'infra.keycloak.postgresPass')\""
 ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
 
-ExecStart=/bin/bash -c "/usr/bin/docker run \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --name $CONTAINER_NAME \
                                  --add-host host.docker.internal:host-gateway \
                                  --network=oqm-internal \
@@ -70,10 +69,8 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
                                  $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
-#  --proxy edge --hostname-path=/infra/keycloak/
 
 # Ensure is up
-
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
