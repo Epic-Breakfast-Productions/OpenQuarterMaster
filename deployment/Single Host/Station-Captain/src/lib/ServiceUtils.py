@@ -39,7 +39,7 @@ class ServiceUtils:
     @staticmethod
     def getServiceNames(serviceFilter: str = SERVICE_ALL) -> (bool, [str]):
         logging.info("Getting service names based on filter: %s", serviceFilter)
-        result = subprocess.run(["systemctl", "list-units", "--no-legend", serviceFilter], shell=False, capture_output=True, text=True, check=False)
+        result = subprocess.run(["systemctl", "list-units", "--no-legend", "--all", serviceFilter], shell=False, capture_output=True, text=True, check=False)
 
         if result.returncode != 0:
             logging.warning("Command was unsuccessful. Error code: {0}", result.returncode)
