@@ -24,11 +24,14 @@ class ServiceUtils:
     @staticmethod
     def doServiceCommand(command: ServiceStateCommand, service: str) -> bool:
         logging.info("Performing %s command on service %s", command, service)
-        result = subprocess.run(["systemctl", command.name, service], shell=False, capture_output=True, text=True, check=False)
+        args = ["systemctl", command.name, service]
+        if "*" in service:
+            args.append("--all")
+        result = subprocess.run(args, shell=False, capture_output=True, text=True, check=False)
 
         if result.returncode != 0:
-            logging.warning("Command was unsuccessful. Error code: {0}", result.returncode)
-            logging.debug("Erring command stderr: {0}", result.stderr)
+            # logging.warning("Command was unsuccessful. Error code: {0}", result.returncode)
+            # logging.debug("Erring command stderr: {0}", result.stderr)
             return False
         logging.info("%s Command was successful on %s", command, service)
         return True

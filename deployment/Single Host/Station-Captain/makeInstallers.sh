@@ -128,11 +128,10 @@ fi
 
 oqm-captain --regen-certs
 
-
 if grep -q $group /etc/group ; then
 	echo 'OQM group already existent'
 else
-	echo 'OQM group not yes existent. Creating'
+	echo 'OQM group not yet existent. Creating'
 	groupadd oqm
 	echo 'OQM group created.'
 fi
