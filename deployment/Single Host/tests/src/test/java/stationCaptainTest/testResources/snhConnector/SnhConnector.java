@@ -180,6 +180,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		log.info("Uninstalling OQM");
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
 			case deb -> {
+				this.runCommand("systemctl", "stop", "oqm-*");
 				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
 				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
 				this.runCommand("docker", "image", "prune", "-f");
