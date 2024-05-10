@@ -6,7 +6,7 @@
 	"description": "Depot instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-depot",
 	"dependencies": {
-		"deb": "docker.io, docker"
+		"deb": "docker.io"
 	},
 	"copyright": {
 		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
