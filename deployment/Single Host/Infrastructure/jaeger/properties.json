@@ -1,6 +1,6 @@
 {
 	"packageName":"oqm-infra-jaeger",
-	"version":"1.1.2",
+	"version":"1.2.0",
 	"description":"Jaeger instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger",
 	"configs": [],

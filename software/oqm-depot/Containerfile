@@ -7,5 +7,6 @@ COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 #COPY php.ini /usr/local/etc/php/php.ini-development
 RUN chown -R www-data:www-data /var/www/html && \
     a2enmod ssl && a2enmod socache_shmcb
+# USER www-data
 EXPOSE 80
 EXPOSE 443

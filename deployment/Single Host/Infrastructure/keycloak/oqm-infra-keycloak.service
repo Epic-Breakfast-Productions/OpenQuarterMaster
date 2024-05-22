@@ -10,7 +10,7 @@
 #
 
 [Unit]
-Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "22.0.1".
+Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "24.0".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target
@@ -24,14 +24,13 @@ TimeoutSec=5m
 # setup operating variables
 Environment="CONTAINER_NAME=oqm-infra-keycloak"
 Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
-Environment="IMAGE_VERSION=22.0"
+Environment="IMAGE_VERSION=24.0"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
-#ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/ui.d/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/keycloak/uiEntry.json > /etc/oqm/ui.d/infra-keycloak.json"
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/serviceConfig/infra/keycloak/files/"
@@ -43,6 +42,7 @@ ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_PORT=443\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME_STRICT=false\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB=postgres\n\" >> $ENV_CONFIG_FILE"
@@ -56,24 +56,25 @@ ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceCo
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/privateKey.pem\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config -g cert.certs.keystorePass)\n\" >> $ENV_CONFIG_FILE"
+#ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_LIMITS_MAX_HEADER_SIZE=100k\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_HTTP2=false\n\" >> $ENV_CONFIG_FILE"
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull keycloak image.'"
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -p \"$(oqm-config -g 'infra.keycloak.postgresPass')\""
 ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config -g 'infra.keycloak.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config -g 'infra.keycloak.postgresUser')\" -tXAc \"create database $(oqm-config -g 'infra.keycloak.postgresDb') with encoding 'UTF8';\""
 
-ExecStart=/bin/bash -c "/usr/bin/docker run \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --name $CONTAINER_NAME \
                                  --add-host host.docker.internal:host-gateway \
+                                 --add-host $(oqm-config -g system.hostname):host-gateway \
                                  --network=oqm-internal \
                                  -p $(oqm-config -g 'infra.keycloak.port'):443 \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
-                                 $IMAGE_NAME:$IMAGE_VERSION start-dev --import-realm"
-#  --proxy edge --hostname-path=/infra/keycloak/
+                                 $IMAGE_NAME:$IMAGE_VERSION start --import-realm"
 
 # Ensure is up
-
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
