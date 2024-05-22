@@ -30,6 +30,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 #ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/infra/jaeger/uiEntry.json > /etc/oqm/ui.d/infra-jaeger.json"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
+                                        --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                         --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -e COLLECTOR_OTLP_ENABLED=true \
