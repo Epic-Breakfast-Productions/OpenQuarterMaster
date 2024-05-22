@@ -37,10 +37,10 @@ public class ExpiryProcessor {
 		cron = "{service.item.expiryCheck.cron}",
 		concurrentExecution = Scheduled.ConcurrentExecution.SKIP
 	)
-	public void searchAndProcessExpiring() {
+	public void searchAndProcessExpiring(String oqmDbIdOrName) {
 		log.info("Start processing all held items for newly expired stored.");
 		
-		FindIterable<InventoryItem> it = this.inventoryItemService.listIterator(
+		FindIterable<InventoryItem> it = this.inventoryItemService.listIterator(oqmDbIdOrName,
 			and(
 				not(size("storageMap", 0))
 				//TODO:: figure out better filter
@@ -50,15 +50,16 @@ public class ExpiryProcessor {
 			null,
 			null
 		);
-		
+
+		//TODO:: do with client session
 		it.forEach((InventoryItem cur)->{
 			List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
 			
 			if (!expiryEvents.isEmpty()) {
-				this.inventoryItemService.update(cur);
+				this.inventoryItemService.update(oqmDbIdOrName, cur);
 				for (ItemExpiryEvent curEvent : expiryEvents) {
 					curEvent.setEntity(this.baseStationInteractingEntity.getId());
-					this.inventoryItemService.addHistoryFor(cur, null, curEvent);//TODO:: pass BS entity?
+					this.inventoryItemService.addHistoryFor(oqmDbIdOrName, cur, null, curEvent);//TODO:: pass BS entity?
 					this.eventNotificationService.sendEvent(this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
 				}
 			}

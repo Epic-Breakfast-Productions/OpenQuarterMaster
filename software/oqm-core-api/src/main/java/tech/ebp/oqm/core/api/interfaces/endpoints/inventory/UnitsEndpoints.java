@@ -195,7 +195,7 @@ public class UnitsEndpoints extends EndpointProvider {
     public ObjectId createCustomUnit(
             @Valid NewCustomUnitRequest ncur
     ) {
-        return this.customUnitService.add(ncur);
+        return this.customUnitService.add(null, ncur);
     }
 
     @GET

@@ -6,7 +6,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
 public class ExcludeDatabaseSelection extends ListBasedDatabaseSelection {
 
