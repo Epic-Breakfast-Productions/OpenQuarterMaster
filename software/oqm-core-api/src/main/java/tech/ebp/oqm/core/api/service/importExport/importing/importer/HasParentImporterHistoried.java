@@ -136,8 +136,6 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 							null,
 							newAddedList
 						);
-						
-						
 					}
 				}
 				addedList = newAddedList;

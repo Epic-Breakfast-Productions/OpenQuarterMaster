@@ -86,14 +86,28 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		return matchList.get(0);
 	}
 
-	public ObjectId add(@Valid NewCustomUnitRequest ncur){
+	public ObjectId add(ClientSession cs, @Valid CustomUnitEntry entry){
+		log.info("Adding new custom unit.");
+
+		UnitUtils.registerAllUnits(entry);
+
+		ObjectId id = null;
+		if(cs == null){
+			id = this.getCollection().insertOne(entry).getInsertedId().asObjectId().getValue();
+		} else {
+			id = this.getCollection().insertOne(cs, entry).getInsertedId().asObjectId().getValue();
+		}
+		entry.setId(id);
+
+		log.info("New custom unit: {}", entry);
+		return entry.getId();
+
+	}
+
+	public ObjectId add(ClientSession cs, @Valid NewCustomUnitRequest ncur){
 		log.info("Adding new custom unit.");
 		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.getNextOrderValue());
 
-		UnitUtils.registerAllUnits(newUnit);
-
-		newUnit.setId(this.getCollection().insertOne(newUnit).getInsertedId().asObjectId().getValue());
-		log.info("New custom unit: {}", newUnit);
-		return newUnit.getId();
+		return this.add(cs, newUnit);
 	}
 }
