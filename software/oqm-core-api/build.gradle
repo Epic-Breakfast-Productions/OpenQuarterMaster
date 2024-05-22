@@ -70,7 +70,7 @@ dependencies {
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
-	testImplementation 'net.datafaker:datafaker:2.1.0'
+	testImplementation 'net.datafaker:datafaker:2.2.2'
 	testImplementation 'org.assertj:assertj-core:3.25.3'
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 	testImplementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
