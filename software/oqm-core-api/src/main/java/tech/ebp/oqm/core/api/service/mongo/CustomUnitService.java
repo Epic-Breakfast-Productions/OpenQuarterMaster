@@ -110,4 +110,12 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 
 		return this.add(cs, newUnit);
 	}
+
+	public List<CustomUnitEntry> list(){
+		return this.listIterator(null, Sorts.ascending("order"), null).into(new ArrayList<>());
+	}
+
+	public void removeAll(){
+		this.getCollection().deleteMany(null);
+	}
 }

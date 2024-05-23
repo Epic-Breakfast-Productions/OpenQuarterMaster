@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,9 +98,9 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 			if(!refreshedCache){
 				log.info("Cache miss! Refreshing cache.");
 				this.refreshCache();
-				log.info("Cache miss after refresh! Database with name or id \"{}\" not found.", idOrName);
 				return this.getOqmDatabase(idOrName, true);
 			}
+			log.info("Cache miss after refresh! Database with name or id \"{}\" not found.", idOrName);
 			throw new NotFoundException("Database not found with name or id \"" + idOrName + "\"");
 		}
 		
@@ -127,5 +128,21 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 	public boolean hasDatabase(OqmMongoDatabase newDb){
 		return this.getDatabaseCache().getFromNew(newDb).isPresent();
+	}
+	public boolean hasDatabase(String dbNameOrId){
+		return this.getDatabaseCache().getFromIdOrName(dbNameOrId).isPresent();
+	}
+
+	public boolean ensureDatabase(String dbName){
+		if(this.hasDatabase(dbName)){
+			return false;
+		}
+
+		this.addOqmDatabase(OqmMongoDatabase.builder()
+			.name(dbName)
+			.build()
+		);
+
+		return true;
 	}
 }

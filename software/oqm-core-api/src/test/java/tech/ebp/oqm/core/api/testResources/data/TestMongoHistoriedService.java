@@ -19,8 +19,8 @@ public class TestMongoHistoriedService extends MongoHistoriedObjectService<TestM
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String dbNameOrId) {
+		return super.addBaseStats(dbNameOrId, CollectionStats.builder())
 				   .build();
 	}
 }

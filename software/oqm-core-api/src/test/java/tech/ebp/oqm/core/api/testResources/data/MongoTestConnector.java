@@ -64,6 +64,7 @@ public class MongoTestConnector {
 		log.info("Clearing database of all entries.");
 		long totalDeleted = 0;
 		try (MongoClient client = this.getClient()) {
+			//TODO:: iterate over existent databases
 			MongoDatabase db = client.getDatabase(this.mongoDatabaseName);
 			
 			for (String curCollectionName : db.listCollectionNames()) {

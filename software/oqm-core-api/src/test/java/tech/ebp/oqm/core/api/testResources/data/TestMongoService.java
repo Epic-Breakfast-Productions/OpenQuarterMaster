@@ -20,8 +20,8 @@ public class TestMongoService extends MongoObjectService<TestMainObject, TestMai
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String dbIdOrName) {
+		return super.addBaseStats(dbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 }

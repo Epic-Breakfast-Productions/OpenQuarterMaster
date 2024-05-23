@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
@@ -43,25 +44,25 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	// <editor-fold desc="Count">
 	@Test
 	public void testCollectionEmpty() {
-		assertTrue(this.testMongoService.collectionEmpty());
+		assertTrue(this.testMongoService.collectionEmpty(DEFAULT_TEST_DB_NAME));
 		
-		this.testMongoService.add(new TestMainObject(FAKER.name().name()));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name()));
 		
-		assertFalse(this.testMongoService.collectionEmpty());
+		assertFalse(this.testMongoService.collectionEmpty(DEFAULT_TEST_DB_NAME));
 	}
 	
 	@Test
 	public void testCollectionCount() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name()));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name()));
 		
-		assertEquals(1, this.testMongoService.count());
+		assertEquals(1, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		for (int i = 0; i < 5; i++) {
-			this.testMongoService.add(new TestMainObject().setTestField("hello"));
+			this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject().setTestField("hello"));
 		}
 		
-		assertEquals(6, this.testMongoService.count());
-		assertEquals(5, this.testMongoService.count(eq("testField", "hello")));
+		assertEquals(6, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
+		assertEquals(5, this.testMongoService.count(DEFAULT_TEST_DB_NAME, eq("testField", "hello")));
 	}
 	// </editor-fold>
 	
@@ -71,27 +72,27 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		List<TestMainObject> originals = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
 			TestMainObject cur = new TestMainObject().setTestField("" + i);
-			this.testMongoService.add(cur);
+			this.testMongoService.add(DEFAULT_TEST_DB_NAME, cur);
 			originals.add(cur);
 		}
 		
-		assertEquals(5, this.testMongoService.list().size());
-		assertEquals(this.testMongoService.count(), this.testMongoService.list().size());
-		assertEquals(Lists.reverse(originals), this.testMongoService.list());
+		assertEquals(5, this.testMongoService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(this.testMongoService.count(DEFAULT_TEST_DB_NAME), this.testMongoService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(Lists.reverse(originals), this.testMongoService.list(DEFAULT_TEST_DB_NAME));
 	}
 	
 	@Test
 	public void testListWithArgs() {
 		for (int i = 4; i >= 0; i--) {
-			this.testMongoService.add(new TestMainObject().setTestField("" + i));
+			this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject().setTestField("" + i));
 		}
 		//filter
 		Bson filter = eq("testField", "" + 1);
-		assertEquals(1, this.testMongoService.list(filter, null, null).size());
-		assertEquals(this.testMongoService.count(filter), this.testMongoService.list(filter, null, null).size());
+		assertEquals(1, this.testMongoService.list(DEFAULT_TEST_DB_NAME, filter, null, null).size());
+		assertEquals(this.testMongoService.count(DEFAULT_TEST_DB_NAME, filter), this.testMongoService.list(DEFAULT_TEST_DB_NAME, filter, null, null).size());
 		
 		//sort
-		List<TestMainObject> result = this.testMongoService.list(null, Sorts.ascending("testField"), null);
+		List<TestMainObject> result = this.testMongoService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("testField"), null);
 		int j = 0;
 		for (TestMainObject cur : result) {
 			assertEquals("" + j, cur.getTestField());
@@ -100,7 +101,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		
 		//paging
 		for (int i = 4; i >= 0; i--) {
-			result = this.testMongoService.list(null, Sorts.ascending("testField"), new PagingOptions(1, i + 1));
+			result = this.testMongoService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("testField"), new PagingOptions(1, i + 1));
 			assertEquals(1, result.size());
 			assertEquals("" + i, result.get(0).getTestField());
 		}
@@ -110,6 +111,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testSearchSingleAtt() {
 		for (int i = 4; i >= 0; i--) {
 			this.testMongoService.add(
+				DEFAULT_TEST_DB_NAME,
 				(TestMainObject) new TestMainObject()
 									 .setTestField("" + i)
 									 .setAttributes(Map.of("key", "" + i))
@@ -118,11 +120,10 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		}
 		//test single attribute
 		SearchResult<TestMainObject> result = this.testMongoService.search(
+			DEFAULT_TEST_DB_NAME,
 			(TestMainObjectSearch) new TestMainObjectSearch()
 									   .setAttributeKeys(List.of("key"))
 									   .setAttributeValues(List.of("" + 3))
-			,
-			true
 		);
 		assertEquals(1, result.getNumResultsForEntireQuery());
 		assertEquals("" + 3, result.getResults().get(0).getTestField());
@@ -132,6 +133,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testSearchKeyword() {
 		for (int i = 4; i >= 0; i--) {
 			this.testMongoService.add(
+				DEFAULT_TEST_DB_NAME,
 				(TestMainObject) new TestMainObject()
 									 .setTestField("" + i)
 									 .setAttributes(Map.of("key", "" + i))
@@ -140,6 +142,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		}
 		
 		SearchResult<TestMainObject> result = this.testMongoService.search(
+			DEFAULT_TEST_DB_NAME,
 			(TestMainObjectSearch) new TestMainObjectSearch()
 									   .setKeywords(List.of("" + 3))
 			,
@@ -153,6 +156,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testSearchSingleAttSingleKeyword() {
 		for (int i = 4; i >= 0; i--) {
 			this.testMongoService.add(
+				DEFAULT_TEST_DB_NAME,
 				(TestMainObject) new TestMainObject()
 									 .setTestField("" + i)
 									 .setAttributes(Map.of("key", "" + i))
@@ -161,12 +165,11 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		}
 		//test single attribute
 		SearchResult<TestMainObject> result = this.testMongoService.search(
+			DEFAULT_TEST_DB_NAME,
 			(TestMainObjectSearch) new TestMainObjectSearch()
 									   .setAttributeKeys(List.of("key"))
 									   .setAttributeValues(List.of("" + 3))
 									   .setKeywords(List.of("" + 3))
-			,
-			true
 		);
 		assertEquals(1, result.getNumResultsForEntireQuery());
 		assertEquals("" + 3, result.getResults().get(0).getTestField());
@@ -178,7 +181,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testAddNullObj() {
 		Assert.assertThrows(
 			NullPointerException.class,
-			()->this.testMongoService.add(null)
+			()->this.testMongoService.add(DEFAULT_TEST_DB_NAME, null)
 		);
 	}
 	
@@ -186,14 +189,14 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testAdd() {
 		TestMainObject original = new TestMainObject("Hello world");
 		
-		ObjectId returned = this.testMongoService.add(original);
+		ObjectId returned = this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
-		assertEquals(1, this.testMongoService.count());
+		assertEquals(1, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		assertNotNull(original.getId());
 		assertEquals(returned, original.getId());
 		
-		TestMainObject gotten = this.testMongoService.get(original.getId());
+		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 		
 		assertEquals(original, gotten);
 	}
@@ -206,16 +209,16 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
-		List<ObjectId> returned = this.testMongoService.addBulk(originals);
+		List<ObjectId> returned = this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals);
 		
-		assertEquals(originals.size(), this.testMongoService.count());
+		assertEquals(originals.size(), this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		for (TestMainObject original : originals) {
 			assertNotNull(original.getId());
 			
 			assertTrue(returned.contains(original.getId()));
 			
-			TestMainObject gotten = this.testMongoService.get(original.getId());
+			TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 			
 			assertEquals(original, gotten);
 		}
@@ -232,9 +235,9 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		
 		log.info("Originals: {}", originals);
 		
-		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(originals));
+		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals));
 		
-		assertEquals(0, this.testMongoService.count());
+		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 	}
 	
 	@Test
@@ -248,9 +251,9 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		
 		log.info("Originals: {}", originals);
 		
-		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(originals));
+		assertThrows(ValidationException.class, ()->this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals));
 		
-		assertEquals(0, this.testMongoService.count());
+		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 	}
 	// </editor-fold>
 	
@@ -258,9 +261,9 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testGetByObjectId() {
 		TestMainObject original = new TestMainObject("hello world");
-		this.testMongoService.add(original);
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
-		TestMainObject gotten = this.testMongoService.get(original.getId());
+		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 		
 		assertNotSame(original, gotten);
 		assertEquals(original, gotten);
@@ -269,9 +272,9 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testGetByString() {
 		TestMainObject original = new TestMainObject("hello world");
-		this.testMongoService.add(original);
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
-		TestMainObject gotten = this.testMongoService.get(original.getId().toHexString());
+		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId().toHexString());
 		
 		assertNotSame(original, gotten);
 		assertEquals(original, gotten);
@@ -280,12 +283,12 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testGetByNullObjectId() {
 		TestMainObject original = new TestMainObject("hello world");
-		this.testMongoService.add(original);
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		assertThrows(
 			DbNotFoundException.class,
 			()->{
-				this.testMongoService.get((ObjectId) null);
+				this.testMongoService.get(DEFAULT_TEST_DB_NAME, (ObjectId) null);
 			}
 		);
 	}
@@ -293,12 +296,12 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testGetByRandomObjectId() {
 		TestMainObject original = new TestMainObject("hello world");
-		this.testMongoService.add(original);
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		assertThrows(
 			DbNotFoundException.class,
 			()->{
-				this.testMongoService.get(ObjectId.get());
+				this.testMongoService.get(DEFAULT_TEST_DB_NAME, ObjectId.get());
 			}
 		);
 	}
@@ -308,7 +311,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdate() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "something completely different");
@@ -317,7 +320,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		ArrayNode keywords = update.putArray("keywords");
 		keywords.add("something");
 		
-		TestMainObject result = this.testMongoService.update(original.getId(), update);
+		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
 		
 		assertNotEquals(original, result);
 		assertEquals("something completely different", result.getTestField());
@@ -328,7 +331,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateWithString() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "something completely different");
@@ -337,7 +340,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		ArrayNode keywords = update.putArray("keywords");
 		keywords.add("something");
 		
-		TestMainObject result = this.testMongoService.update(original.getId().toHexString(), update);
+		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId().toHexString(), update);
 		
 		assertNotEquals(original, result);
 		assertEquals("something completely different", result.getTestField());
@@ -348,7 +351,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateInvalidField() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("invalidField", "something");
@@ -356,7 +359,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
 			}
 		);
 	}
@@ -364,7 +367,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateId() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("id", ObjectId.get().toHexString());
@@ -372,7 +375,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
 			}
 		);
 	}
@@ -380,7 +383,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateBadFieldValue() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.put("testField", "");
@@ -388,7 +391,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
 			}
 		);
 	}
@@ -396,7 +399,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateHistory() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.putObject("history");
@@ -404,7 +407,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
 			}
 		);
 	}
@@ -412,7 +415,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testUpdateNonexistantObj() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		update.putObject("history");
@@ -420,7 +423,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			DbNotFoundException.class,
 			()->{
-				this.testMongoService.update(ObjectId.get(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, ObjectId.get(), update);
 			}
 		);
 	}
@@ -430,11 +433,11 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testRemove() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
-		TestMainObject result = this.testMongoService.remove(original.getId());
+		TestMainObject result = this.testMongoService.remove(DEFAULT_TEST_DB_NAME, original.getId());
 		
-		assertEquals(0, this.testMongoService.count());
+		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		assertEquals(original.getId(), result.getId());
 		assertEquals(original.getTestField(), result.getTestField());
 	}
@@ -442,11 +445,11 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testRemoveWithString() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
-		TestMainObject result = this.testMongoService.remove(original.getId().toHexString());
+		TestMainObject result = this.testMongoService.remove(DEFAULT_TEST_DB_NAME, original.getId().toHexString());
 		
-		assertEquals(0, this.testMongoService.count());
+		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		assertEquals(original.getId(), result.getId());
 		assertEquals(original.getTestField(), result.getTestField());
 	}
@@ -454,54 +457,54 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	@Test
 	public void testRemoveNullId() {
 		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(original);
+		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		assertThrows(
 			DbNotFoundException.class,
 			()->{
-				this.testMongoService.remove((ObjectId) null);
+				this.testMongoService.remove(DEFAULT_TEST_DB_NAME, (ObjectId) null);
 			}
 		);
 		
-		assertEquals(1, this.testMongoService.count());
+		assertEquals(1, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 	}
 	// </editor-fold>
 	
 	@Test
 	public void testSumIntFieldIntegerEmpty() {
-		assertEquals(0L, this.testMongoService.getSumOfIntField("intValue"));
+		assertEquals(0L, this.testMongoService.getSumOfIntField(DEFAULT_TEST_DB_NAME, "intValue"));
 	}
 	
 	@Test
 	public void testSumIntFieldIntegerSmall() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5));
 		
-		assertEquals(15L, this.testMongoService.getSumOfIntField("intValue"));
+		assertEquals(15L, this.testMongoService.getSumOfIntField(DEFAULT_TEST_DB_NAME, "intValue"));
 	}
 	
 	@Test
 	public void testSumIntFieldIntegerLarge() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), Integer.MAX_VALUE));
 		
 		assertEquals(
 			(long) Integer.MAX_VALUE * 3L,
-			this.testMongoService.getSumOfIntField("intValue")
+			this.testMongoService.getSumOfIntField(DEFAULT_TEST_DB_NAME, "intValue")
 		);
 	}
 	
 	@Test
 	public void testSumIntFieldLong() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), (long) Integer.MAX_VALUE));
 		
 		assertEquals(
 			(long) Integer.MAX_VALUE * 3L,
-			this.testMongoService.getSumOfIntField("longValue")
+			this.testMongoService.getSumOfIntField(DEFAULT_TEST_DB_NAME, "longValue")
 		);
 	}
 	
@@ -509,31 +512,31 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testSumFloatFieldEmpty() {
 		assertEquals(
 			0.0,
-			this.testMongoService.getSumOfFloatField("floatValue")
+			this.testMongoService.getSumOfFloatField(DEFAULT_TEST_DB_NAME, "floatValue")
 		);
 	}
 	
 	@Test
 	public void testSumFloatField() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
 		
 		assertEquals(
 			16.5,
-			this.testMongoService.getSumOfFloatField("floatValue")
+			this.testMongoService.getSumOfFloatField(DEFAULT_TEST_DB_NAME, "floatValue")
 		);
 	}
 	
 	@Test
 	public void testCo() {
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
-		this.testMongoService.add(new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
+		this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.name().name(), 5.5));
 		
 		assertEquals(
 			CollectionStats.builder().size(3).build(),
-			this.testMongoService.getStats()
+			this.testMongoService.getStats(DEFAULT_TEST_DB_NAME)
 		);
 	}
 	

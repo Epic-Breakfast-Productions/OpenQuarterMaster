@@ -12,8 +12,10 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileAttachmentGet;
 import tech.ebp.oqm.core.api.service.TempFileService;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DataExportOptions;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
 import tech.ebp.oqm.core.api.service.importExport.importing.DataImportService;
+import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
@@ -64,6 +66,7 @@ import java.util.Random;
 
 import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
@@ -112,7 +115,7 @@ class DataImportServiceTest extends RunningServerTest {
 		// add units
 		int unitCount = 0;
 		for (int i = 0; i < 5; i++) {
-			CustomUnitEntry curImage = new CustomUnitEntry(
+			CustomUnitEntry customUnitEntry = new CustomUnitEntry(
 				UnitCategory.Number,
 				unitCount++,
 				new NewBaseCustomUnitRequest(ValidUnitDimension.amount)
@@ -120,12 +123,12 @@ class DataImportServiceTest extends RunningServerTest {
 					.setName(FAKER.name().name())
 					.setSymbol(FAKER.food().dish())
 			);
-			this.customUnitService.add(curImage, testUser);
+			this.customUnitService.add(null, customUnitEntry);
 		}
 		List<CustomUnitEntry> customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
 		for (int i = 0; i < 5; i++) {
-			CustomUnitEntry curImage = new CustomUnitEntry(
+			CustomUnitEntry customUnitEntry = new CustomUnitEntry(
 				UnitCategory.Number,
 				unitCount++,
 				new NewDerivedCustomUnitRequest(
@@ -137,7 +140,7 @@ class DataImportServiceTest extends RunningServerTest {
 					.setName(FAKER.name().name())
 					.setSymbol(FAKER.food().dish())
 			);
-			this.customUnitService.add(curImage, testUser);
+			this.customUnitService.add(null, customUnitEntry);
 		}
 		customUnits = this.customUnitService.list();
 		UnitUtils.registerAllUnits(customUnits);
@@ -153,12 +156,12 @@ class DataImportServiceTest extends RunningServerTest {
 
 			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
 			
-			ObjectId id = this.fileAttachmentService.add(attachment, curFile, testUser);
+			ObjectId id = this.fileAttachmentService.add(DEFAULT_TEST_DB_NAME, attachment, curFile, testUser);
 
 			for(int j = 1; j <= 3; j++){
 				curFile = new File(tempFilesDir, i + "-" + j + ".txt");
 				FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
-				this.fileAttachmentService.updateFile(id, curFile, testUser);
+				this.fileAttachmentService.updateFile(DEFAULT_TEST_DB_NAME, id, curFile, testUser);
 			}
 		}
 		
@@ -171,7 +174,7 @@ class DataImportServiceTest extends RunningServerTest {
 			
 			File imageFile = new File(DataImportServiceTest.class.getResource("/test_image.png").getFile());
 			
-			this.imageService.add(curImage, imageFile, testUser);
+			this.imageService.add(DEFAULT_TEST_DB_NAME, curImage, imageFile, testUser);
 		}
 		
 		//add item category
@@ -187,7 +190,7 @@ class DataImportServiceTest extends RunningServerTest {
 				curCategory.setParent(itemCategoryIds.get(rand.nextInt(itemCategoryIds.size())));
 			}
 			
-			itemCategoryIds.add(this.itemCategoryService.add(curCategory, testUser));
+			itemCategoryIds.add(this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, curCategory, testUser));
 		}
 		//add storage blocks
 		List<ObjectId> storageIds = new ArrayList<>();
@@ -204,7 +207,7 @@ class DataImportServiceTest extends RunningServerTest {
 			
 			storageBlock.getAttributes().put("key", "val");
 			storageBlock.getKeywords().add("hello world");
-			storageIds.add(this.storageBlockService.add(storageBlock, testUser));
+			storageIds.add(this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser));
 		}
 		//add items
 		List<ObjectId> itemIds = new ArrayList<>();
@@ -223,7 +226,7 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			ObjectId newId = this.inventoryItemService.add(item, testUser);
+			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
 			itemIds.add(newId);
 			simpleAmountItems.add(item);
 		}
@@ -243,7 +246,7 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			itemIds.add(this.inventoryItemService.add(item, testUser));
+			itemIds.add(this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser));
 			listAmountItems.add(item);
 		}
 		List<TrackedItem> trackedItems = new ArrayList<>();
@@ -264,7 +267,7 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			ObjectId newId =this.inventoryItemService.add(item, testUser);
+			ObjectId newId =this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
 			itemIds.add(newId);
 			trackedItems.add(item);
 		}
@@ -277,6 +280,7 @@ class DataImportServiceTest extends RunningServerTest {
 				
 				Map.Entry<ObjectId, SingleAmountStoredWrapper> checkingOutEntry = storedEntries.removeFirst();
 				ObjectId checkoutId = this.itemCheckoutService.checkoutItem(
+					DEFAULT_TEST_DB_NAME,
 					ItemCheckoutRequest.builder()
 						.item(checkingOutItem.getId())
 						.checkedOutFrom(checkingOutEntry.getKey())
@@ -290,68 +294,68 @@ class DataImportServiceTest extends RunningServerTest {
 			}
 			//TODO:: rest of item types
 		}
-		File bundle = this.databaseExportService.exportDataToBundle(false);
+		File bundle = this.databaseExportService.exportDataToBundle(DataExportOptions.builder().build());
 		
 		FileUtils.copyFile(bundle, new File("build/export.tar.gz"));
 		
 		
-		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null);
-		this.itemCheckoutService.removeAll(testUser);
-		this.itemCheckoutService.getHistoryService().removeAll();
-		List<InventoryItem> oldItems = this.inventoryItemService.list(null, Sorts.ascending("name"), null);
-		this.inventoryItemService.removeAll(testUser);
-		this.inventoryItemService.getHistoryService().removeAll();
-		List<StorageBlock> oldBlocks = this.storageBlockService.list(null, Sorts.ascending("label"), null);
-		this.storageBlockService.removeAll(testUser);
-		this.storageBlockService.getHistoryService().removeAll();
+		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("checkoutDate"), null);
+		this.itemCheckoutService.removeAll(DEFAULT_TEST_DB_NAME, testUser);
+		this.itemCheckoutService.getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
+		List<InventoryItem> oldItems = this.inventoryItemService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("name"), null);
+		this.inventoryItemService.removeAll(DEFAULT_TEST_DB_NAME, testUser);
+		this.inventoryItemService.getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
+		List<StorageBlock> oldBlocks = this.storageBlockService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("label"), null);
+		this.storageBlockService.removeAll(DEFAULT_TEST_DB_NAME, testUser);
+		this.storageBlockService.getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
 		List<ImageGet> oldImages =
-			this.imageService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+			this.imageService.getFileObjectService().list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("_id"), null)
 				.stream()
 				.map((Image a)->{
-					return imageService.fileObjToGet(a);
+					return imageService.fileObjToGet(DEFAULT_TEST_DB_NAME, a);
 				})
 				.toList();
-		this.imageService.removeAll(null, testUser);
-		this.imageService.getFileObjectService().getHistoryService().removeAll();
-		List<ItemCategory> oldItemCategories = this.itemCategoryService.list(null, Sorts.ascending("name"), null);
-		this.itemCategoryService.removeAll(testUser);
-		this.itemCategoryService.getHistoryService().removeAll();
+		this.imageService.removeAll(DEFAULT_TEST_DB_NAME, null, testUser);
+		this.imageService.getFileObjectService().getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
+		List<ItemCategory> oldItemCategories = this.itemCategoryService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("name"), null);
+		this.itemCategoryService.removeAll(DEFAULT_TEST_DB_NAME, testUser);
+		this.itemCategoryService.getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
 		List<FileAttachmentGet> fileAttachments =
-			this.fileAttachmentService.getFileObjectService().list(null, Sorts.ascending("_id"), null)
+			this.fileAttachmentService.getFileObjectService().list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("_id"), null)
 				.stream()
 				.map((FileAttachment a)->{
-					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(a.getId()));
+					return FileAttachmentGet.fromFileAttachment(a, fileAttachmentService.getRevisions(DEFAULT_TEST_DB_NAME, a.getId()));
 				})
 				.toList();
-		this.fileAttachmentService.removeAll(null, testUser);
-		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll();
+		this.fileAttachmentService.removeAll(DEFAULT_TEST_DB_NAME, null, testUser);
+		this.fileAttachmentService.getFileObjectService().getHistoryService().removeAll(DEFAULT_TEST_DB_NAME);
 		
-		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
-		this.customUnitService.removeAll(testUser);
-		this.customUnitService.getHistoryService().removeAll();
+//		List<CustomUnitEntry> oldUnits = this.customUnitService.list(null, Sorts.ascending("order"), null);
+		List<CustomUnitEntry> oldUnits = this.customUnitService.list();
+		this.customUnitService.removeAll();
 		UnitUtils.reInitUnitCollections();
 		
 		log.info("Size of file bundle: {}", bundle.length());
 		
 		try(InputStream is = new FileInputStream(bundle)) {
-			this.dataImportService.importBundle(is, "test.tar.gz", testUser);
+			this.dataImportService.importBundle(is, "test.tar.gz", testUser, DataImportOptions.builder().build());
 		}
 		
 		assertEquals(oldUnits.size(), this.customUnitService.list().size());
-		assertEquals(oldUnits, this.customUnitService.list(null, Sorts.ascending("order"), null));
+		assertEquals(oldUnits, this.customUnitService.list());
 		
-		assertEquals(oldItems.size(), this.inventoryItemService.list().size());
-		assertEquals(oldItems, this.inventoryItemService.list(null, Sorts.ascending("name"), null));
+		assertEquals(oldItems.size(), this.inventoryItemService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(oldItems, this.inventoryItemService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("name"), null));
 		
-		assertEquals(oldBlocks.size(), this.storageBlockService.list().size());
-		assertEquals(oldBlocks, this.storageBlockService.list(null, Sorts.ascending("label"), null));
+		assertEquals(oldBlocks.size(), this.storageBlockService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(oldBlocks, this.storageBlockService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("label"), null));
 		
 		
-		assertEquals(oldItemCategories.size(), this.itemCategoryService.list().size());
-		assertEquals(oldItemCategories, this.itemCategoryService.list(null, Sorts.ascending("name"), null));
+		assertEquals(oldItemCategories.size(), this.itemCategoryService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(oldItemCategories, this.itemCategoryService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("name"), null));
 		
-		assertEquals(oldCheckedout.size(), this.itemCheckoutService.list().size());
-		assertEquals(oldCheckedout, this.itemCheckoutService.list(null, Sorts.ascending("checkoutDate"), null));
+		assertEquals(oldCheckedout.size(), this.itemCheckoutService.list(DEFAULT_TEST_DB_NAME).size());
+		assertEquals(oldCheckedout, this.itemCheckoutService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("checkoutDate"), null));
 		
 		//TODO:: verify file attachments, images
 //		assertEquals(oldImages.size(), this.imageService.list().size());

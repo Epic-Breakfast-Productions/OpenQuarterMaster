@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
 @Tag("integration")
@@ -123,7 +124,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);
@@ -139,7 +140,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);
@@ -157,7 +158,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 											 .setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);

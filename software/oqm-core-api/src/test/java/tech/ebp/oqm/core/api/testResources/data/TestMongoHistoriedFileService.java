@@ -19,7 +19,7 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 	}
 	
 	@Override
-	public TestMainFileObjectGet fileObjToGet(TestMainFileObject obj) {
-		return TestMainFileObjectGet.fromTestFileObject(obj, this.getRevisions(obj.getId()));
+	public TestMainFileObjectGet fileObjToGet(String dbNameOrId, TestMainFileObject obj) {
+		return TestMainFileObjectGet.fromTestFileObject(obj, this.getRevisions(dbNameOrId, obj.getId()));
 	}
 }

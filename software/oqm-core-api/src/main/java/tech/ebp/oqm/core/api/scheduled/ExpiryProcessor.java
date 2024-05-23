@@ -11,6 +11,8 @@ import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryE
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.List;
 
@@ -30,6 +32,9 @@ public class ExpiryProcessor {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
+
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
 	
 	@WithSpan
 	@Scheduled(
@@ -37,33 +42,39 @@ public class ExpiryProcessor {
 		cron = "{service.item.expiryCheck.cron}",
 		concurrentExecution = Scheduled.ConcurrentExecution.SKIP
 	)
-	public void searchAndProcessExpiring(String oqmDbIdOrName) {
+	public void searchAndProcessExpiring() {
+		//TODO:: mutex lock
+		//TODO:: multithread
 		log.info("Start processing all held items for newly expired stored.");
-		
-		FindIterable<InventoryItem> it = this.inventoryItemService.listIterator(oqmDbIdOrName,
-			and(
-				not(size("storageMap", 0))
-				//TODO:: figure out better filter
-				//  - https://stackoverflow.com/a/26967000/3015723
-				//  - https://stackoverflow.com/a/71999502/3015723
-			),
-			null,
-			null
-		);
+		for(DbCacheEntry curEntry : this.oqmDatabaseService.getDatabases()){
 
-		//TODO:: do with client session
-		it.forEach((InventoryItem cur)->{
-			List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
-			
-			if (!expiryEvents.isEmpty()) {
-				this.inventoryItemService.update(oqmDbIdOrName, cur);
-				for (ItemExpiryEvent curEvent : expiryEvents) {
-					curEvent.setEntity(this.baseStationInteractingEntity.getId());
-					this.inventoryItemService.addHistoryFor(oqmDbIdOrName, cur, null, curEvent);//TODO:: pass BS entity?
-					this.eventNotificationService.sendEvent(this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
+			FindIterable<InventoryItem> it = this.inventoryItemService.listIterator(curEntry.getDbId().toHexString(),
+				and(
+					not(size("storageMap", 0))
+					//TODO:: figure out better filter
+					//  - https://stackoverflow.com/a/26967000/3015723
+					//  - https://stackoverflow.com/a/71999502/3015723
+				),
+				null,
+				null
+			);
+
+			//TODO:: do with client session
+			it.forEach((InventoryItem cur)->{
+				List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
+
+				if (!expiryEvents.isEmpty()) {
+					this.inventoryItemService.update(curEntry.getDbId().toHexString(), cur);
+					for (ItemExpiryEvent curEvent : expiryEvents) {
+						curEvent.setEntity(this.baseStationInteractingEntity.getId());
+						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
+						this.eventNotificationService.sendEvent(this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
+					}
 				}
-			}
-		});
+			});
+		}
+
+
 		log.info("Finished processing all held items for newly expired stored.");
 	}
 }

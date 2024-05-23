@@ -146,10 +146,7 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring() {
-		//TODO:: multithreaded
-		for(DbCacheEntry curDb : this.oqmDatabaseService.getDatabases()) {
-			expiryProcessor.searchAndProcessExpiring(curDb.getDbId().toHexString());
-		}
+		expiryProcessor.searchAndProcessExpiring();
 
 		return Response.ok().build();
 	}

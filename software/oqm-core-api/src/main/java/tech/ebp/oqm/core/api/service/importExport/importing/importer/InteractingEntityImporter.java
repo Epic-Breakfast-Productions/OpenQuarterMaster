@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.mongodb.client.ClientSession;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class InteractingEntityImporter extends TopLevelImporter<EntityImportResult> {
 
 	@Inject
