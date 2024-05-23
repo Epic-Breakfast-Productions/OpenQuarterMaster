@@ -30,6 +30,9 @@ import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportServic
 import tech.ebp.oqm.core.api.service.importExport.importing.DataImportService;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.DatabaseManagementService;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +61,9 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
 	DatabaseManagementService dbms;
+
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
 	
 	@Blocking
 	@GET
@@ -113,7 +119,12 @@ public class InventoryManagement extends EndpointProvider {
 	public Response importData(
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		DataImportResult result = this.dataImportService.importBundle(body, this.getInteractingEntity());
+		DataImportResult result = this.dataImportService.importBundle(
+			body.file,
+			body.fileName,
+			this.getInteractingEntity(),
+			body.options
+		);
 		
 		return Response.ok(result).build();
 	}
@@ -135,8 +146,11 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring() {
-		expiryProcessor.searchAndProcessExpiring();
-		
+		//TODO:: multithreaded
+		for(DbCacheEntry curDb : this.oqmDatabaseService.getDatabases()) {
+			expiryProcessor.searchAndProcessExpiring(curDb.getDbId().toHexString());
+		}
+
 		return Response.ok().build();
 	}
 	
