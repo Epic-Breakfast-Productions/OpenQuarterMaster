@@ -13,6 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.BsonDocument;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -116,6 +117,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 	}
 
 	public void removeAll(){
-		this.getCollection().deleteMany(null);
+		this.getCollection().deleteMany(new BsonDocument());
 	}
 }
