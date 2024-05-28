@@ -113,7 +113,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	
 	public ObjectId addOqmDatabase(OqmMongoDatabase newDatabase){
 		//TODO:: add logic to validator
-		boolean dbNameExists = this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
+		boolean dbNameExists = !this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if(dbNameExists){
 			//TODO:: better exception
 			throw new IllegalArgumentException("Database with name \""+newDatabase.getName()+"\" already exists.");

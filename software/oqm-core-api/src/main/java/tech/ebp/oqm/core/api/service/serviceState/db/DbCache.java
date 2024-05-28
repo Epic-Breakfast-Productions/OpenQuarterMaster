@@ -79,7 +79,10 @@ public class DbCache {
 	}
 	
 	public Optional<DbCacheEntry> getFromId(String id) {
-		return this.getFromId(new ObjectId(id));
+		if(ObjectId.isValid(id)) {
+			return this.getFromId(new ObjectId(id));
+		}
+		return Optional.empty();
 	}
 	
 	public Optional<DbCacheEntry> getFromName(String name) {
