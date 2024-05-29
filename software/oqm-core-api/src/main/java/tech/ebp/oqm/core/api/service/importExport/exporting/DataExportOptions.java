@@ -9,6 +9,10 @@ import tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect.SelectAllDa
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataExportOptions {
+
+    @lombok.Builder.Default
     private Boolean includeHistory = true;
+
+    @lombok.Builder.Default
     private DatabaseSelection databaseSelection = new SelectAllDatabases();
 }

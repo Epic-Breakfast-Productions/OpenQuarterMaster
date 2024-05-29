@@ -17,8 +17,16 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataImportOptions {
+
+	@lombok.Builder.Default
 	private Boolean includeHistory = true;
+
+	@lombok.Builder.Default
 	private DatabaseSelection databaseSelection = new SelectAllDatabases();
+
+	@lombok.Builder.Default
 	private DbImportMergeStrategy dbMergeStrategy = DbImportMergeStrategy.MERGE;
+
+	@lombok.Builder.Default
 	private Set<InteractingEntityMapStrategy> interactingEntityMapStrategies = new HashSet<>(Arrays.stream(InteractingEntityMapStrategy.values()).toList());
 }

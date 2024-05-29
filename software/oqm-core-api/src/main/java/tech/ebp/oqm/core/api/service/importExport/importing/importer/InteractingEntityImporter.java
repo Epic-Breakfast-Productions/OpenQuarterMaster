@@ -41,7 +41,7 @@ public class InteractingEntityImporter extends TopLevelImporter<EntityImportResu
 		InteractingEntity importingEntity,
 		DataImportOptions options
 	) throws IOException {
-		Path entityDirectory = directory.resolve(this.interactingEntityService.getCollectionName());
+//		Path entityDirectory = directory.resolve(this.interactingEntityService.getCollectionName());
 		EntityImportResult.Builder resultBuilder = EntityImportResult.builder();
 		List<InteractingEntity> existentUsers = interactingEntityService.listIterator().into(new ArrayList<>());
 		Set<ObjectId> existentUserIds = existentUsers.stream().map(MainObject::getId).collect(Collectors.toSet());
@@ -51,7 +51,7 @@ public class InteractingEntityImporter extends TopLevelImporter<EntityImportResu
 		Map<ObjectId, ObjectId> oldToNewIds = new HashMap<>();
 		long addedEntityCount = 0;
 
-		for(File curEntityDataFile : getObjectFiles(entityDirectory)){
+		for(File curEntityDataFile : getObjectFiles(directory)){
 			InteractingEntity importingUser = ObjectUtils.OBJECT_MAPPER.readValue(curEntityDataFile, InteractingEntity.class);
 			//if we already have this exact user
 			if(existentUserIds.contains(importingUser.getId())){

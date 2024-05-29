@@ -218,6 +218,7 @@ public class DataImportService {
 		Path dbsDirPath = dbsDir.toPath();
 
 		// check dbs
+		//TODO: dbsDir no existy
 		List<OqmMongoDatabase> databasesToImport = Stream.of(dbsDir.listFiles())
 			.filter(File::isDirectory)
 			.map((File dbDir) -> {
@@ -251,82 +252,79 @@ public class DataImportService {
 		try (
 			ClientSession session = this.imageService.getNewClientSession(true);//shouldn't matter which mongo service to grab session from
 		) {
-			session.withTransaction(() -> {
-				try {
-					Map<ObjectId, ObjectId> entityIdMap;
-					{// import top level data
-						log.info("Reading in top level objects.");
-						StopWatch topLevelStopwatch = StopWatch.createStarted();
-						EntityImportResult entityImportResult = this.interactingEntityImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions);
-						entityIdMap = entityImportResult.getInteractingEntitiesMapped();
-						resultBuilder.entities(entityImportResult);
-						resultBuilder.numUnits(this.unitImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions));
-						topLevelStopwatch.stop();
-						log.info("Done reading in top level objects. Took {}", topLevelStopwatch);
-					}
-
-					Map<OqmMongoDatabase, CompletableFuture<DbImportResult>> resultMap = new HashMap<>();
-
-					// import db data
-					for (OqmMongoDatabase curDb : databasesToImport) {
-						log.info("Importing database {}", curDb);
-						boolean dbAlreadyExistent = oqmDatabaseService.hasDatabase(curDb);
-						if (dbAlreadyExistent) {
-							//determine how to deal with this
-							switch (importOptions.getDbMergeStrategy()) {
-								case MERGE -> {
-									curDb = this.oqmDatabaseService.getOqmDatabase(curDb.getName()).getOqmMongoDatabase();
-								}
-								case RENAME -> {
-									curDb.setName(curDb.getName() + "-" + RandomStringUtils.randomAlphanumeric(3));
-									this.oqmDatabaseService.addOqmDatabase(curDb);
-								}
-								case SKIP, ERROR -> {
-									throw new IllegalStateException("We should not be able to get here");
-								}
-							}
-						} else {//is a new database
-							this.oqmDatabaseService.addOqmDatabase(curDb);
-						}
-
-						Path curDbPath = dbsDirPath.resolve(curDb.getName());
-						OqmMongoDatabase finalCurDb = curDb;//cause dumb
-						resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
-							DbImportResult.Builder dbResultBuilder = DbImportResult.builder();
-
-							try {
-								dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-								dbResultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							} catch (IOException e) {
-								throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
-							}
-
-							return dbResultBuilder.build();
-						}));
-					}
-
-					Map<String, DbImportResult> dbImportResults = new HashMap<>();
-					resultMap.forEach((OqmMongoDatabase db, CompletableFuture<DbImportResult> future) -> {
-						try {
-							dbImportResults.put(db.getName(), future.get());
-						} catch (Throwable e) {
-							throw new DataImportException("Failed to import database \"" + db.getName() + "\" service(s) data.", e);
-						}
-					});
-					resultBuilder.dbResults(dbImportResults);
-
-				} catch (Throwable e) {
-					session.abortTransaction();
-					throw new RuntimeException("A data error prevented import of the bundle: " + e.getMessage(), e);
+			try {
+				Map<ObjectId, ObjectId> entityIdMap;
+				{// import top level data
+					log.info("Reading in top level objects.");
+					StopWatch topLevelStopwatch = StopWatch.createStarted();
+					EntityImportResult entityImportResult = this.interactingEntityImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions);
+					entityIdMap = entityImportResult.getInteractingEntitiesMapped();
+					resultBuilder.entities(entityImportResult);
+					resultBuilder.numUnits(this.unitImporter.readInObjects(session, topLevelDirPath, importingEntity, importOptions));
+					topLevelStopwatch.stop();
+					log.info("Done reading in top level objects. Took {}", topLevelStopwatch);
 				}
-				session.commitTransaction();
-				return true;
-			}, MongoDbAwareService.getDefaultTransactionOptions());
+
+				Map<OqmMongoDatabase, CompletableFuture<DbImportResult>> resultMap = new HashMap<>();
+
+				// import db data
+				for (OqmMongoDatabase curDb : databasesToImport) {
+					log.info("Importing database {}", curDb);
+					boolean dbAlreadyExistent = oqmDatabaseService.hasDatabase(curDb);
+					if (dbAlreadyExistent) {
+						//determine how to deal with this
+						switch (importOptions.getDbMergeStrategy()) {
+							case MERGE -> {
+								curDb = this.oqmDatabaseService.getOqmDatabase(curDb.getName()).getOqmMongoDatabase();
+							}
+							case RENAME -> {
+								curDb.setName(curDb.getName() + "-" + RandomStringUtils.randomAlphanumeric(3));
+								this.oqmDatabaseService.addOqmDatabase(curDb);
+							}
+							case SKIP, ERROR -> {
+								throw new IllegalStateException("We should not be able to get here");
+							}
+						}
+					} else {//is a new database
+						this.oqmDatabaseService.addOqmDatabase(curDb);
+					}
+
+					Path curDbPath = dbsDirPath.resolve(curDb.getName());
+					OqmMongoDatabase finalCurDb = curDb;//cause dumb
+					resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
+						DbImportResult.Builder dbResultBuilder = DbImportResult.builder();
+
+						try {
+							dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						} catch (IOException e) {
+							throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
+						}
+
+						return dbResultBuilder.build();
+					}));
+				}
+
+				Map<String, DbImportResult> dbImportResults = new HashMap<>();
+				resultMap.forEach((OqmMongoDatabase db, CompletableFuture<DbImportResult> future) -> {
+					try {
+						dbImportResults.put(db.getName(), future.get());
+					} catch (Throwable e) {
+						throw new DataImportException("Failed to import database \"" + db.getName() + "\" service(s) data.", e);
+					}
+				});
+				resultBuilder.dbResults(dbImportResults);
+
+			} catch (Throwable e) {
+				session.abortTransaction();
+				throw new RuntimeException("A data error prevented import of the bundle: " + e.getMessage(), e);
+			}
+			session.commitTransaction();
 		}
 
 		return resultBuilder.build();

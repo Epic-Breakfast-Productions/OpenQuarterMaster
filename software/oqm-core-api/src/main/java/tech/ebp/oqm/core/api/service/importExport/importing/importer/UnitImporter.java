@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -50,23 +51,11 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		ClientSession clientSession,
 		CustomUnitEntry curObj,
 		DataImportOptions options,
-		List<CustomUnitEntry> orphanEntries,
 		List<ObjectId> addedList
 	) {
 		ObjectId oldId = curObj.getId();
-		ObjectId newId;
-		try {
-			newId = this.getCustomUnitService().add(clientSession, curObj);
-		} catch(DbModValidationException e){//TODO:: adjust for unit exceptions
-			if(e.getMessage().contains("No parent exists")){
-				orphanEntries.add(curObj);
-				return;
-			}
-			throw e;
-		} catch(Throwable e) {
-			log.error("Failed to import object: ", e);
-			throw e;
-		}
+		ObjectId newId = this.getCustomUnitService().add(clientSession, curObj);
+
 		log.info("Read in object. new id == old? {}", newId.equals(oldId));
 		assert newId.equals(oldId); //TODO:: better check?
 		addedList.add(oldId);
@@ -76,21 +65,26 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		ClientSession clientSession,
 		File curFile,
 		DataImportOptions options,
-		List<CustomUnitEntry> orphanEntries,
+		List<File> orphanEntries,
 		List<ObjectId> addedList
 	) throws IOException {
+		CustomUnitEntry newEntry = null;
 		try {
-			this.readInObject(
-				clientSession,
-				ObjectUtils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class),
-				options,
-				orphanEntries,
-				addedList
-			);
-		} catch(Throwable e){
-			log.error("Failed to process object file {}: ", curFile, e);
-			throw e;
+			newEntry = ObjectUtils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class);
+		} catch(JsonMappingException e){
+			if(e.getMessage().contains("does not represent any of the possible valid units.")){
+				orphanEntries.add(curFile);
+			}
+
+			log.warn("Failed to process object file {}: ", curFile, e);
+			return;
 		}
+		this.readInObject(
+			clientSession,
+			newEntry,
+			options,
+			addedList
+		);
 	}
 
 
@@ -105,7 +99,7 @@ public class UnitImporter extends TopLevelImporter<Long> {
 
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getCustomUnitService().getCollectionName(), directory);
 		StopWatch sw = StopWatch.createStarted();
-		List<CustomUnitEntry> orphanEntries = new ArrayList<>();
+		List<File> orphanEntries = new ArrayList<>();
 		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
 			this.readInObject(clientSession, curObjFile, options, orphanEntries, addedList);
@@ -117,21 +111,10 @@ public class UnitImporter extends TopLevelImporter<Long> {
 			log.info("{} objects need parents.", orphanEntries.size());
 
 			while(!orphanEntries.isEmpty()){
-				List<ObjectId> newAddedList = new ArrayList<>(addedList.size());
-
 				while (!orphanEntries.isEmpty()){
-
-					CustomUnitEntry entry = orphanEntries.remove(0);
-
-					try{
-						addedList.add(
-							this.getCustomUnitService().add(clientSession, entry)
-						);
-					} catch (Exception e){// TODO:: correct exception
-						orphanEntries.add(entry);
-					}
+					File entry = orphanEntries.remove(0);
+					this.readInObject(clientSession, entry, options, orphanEntries, addedList);
 				}
-				addedList = newAddedList;
 			}
 		}
 

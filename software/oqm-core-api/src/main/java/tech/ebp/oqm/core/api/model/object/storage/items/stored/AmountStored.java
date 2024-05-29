@@ -63,7 +63,7 @@ public class AmountStored extends Stored {
 		Quantity result = this.getAmount().subtract(amount.getAmount());
 		
 		if (result.getValue().doubleValue() < 0) {
-			throw new NotEnoughStoredException("Resulting amount less than zero.");
+			throw new NotEnoughStoredException("Resulting amount less than zero. (subtracting "+amount.getAmount()+" from "+this.getAmount()+" resulting in "+result+")");
 		}
 		this.setAmount(result);
 		return this;
