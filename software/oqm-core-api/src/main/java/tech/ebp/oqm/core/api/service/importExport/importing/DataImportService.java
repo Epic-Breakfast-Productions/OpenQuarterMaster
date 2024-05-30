@@ -55,10 +55,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -184,6 +181,7 @@ public class DataImportService {
 		tempArchiveDir.deleteOnExit();
 
 		StopWatch sw = StopWatch.createStarted();
+		long numFiles = 0;
 		log.info("Decompressing given bundle.");
 		try (
 			BufferedInputStream bi = new BufferedInputStream(bundleInputStream);
@@ -206,21 +204,29 @@ public class DataImportService {
 					}
 					// copy TarArchiveInputStream to Path newPath
 					Files.copy(ti, newPath, StandardCopyOption.REPLACE_EXISTING);
+					log.debug("Decompressed file {}", newPath);
+					numFiles++;
 				}
 			}
 		}
 		sw.stop();
-		log.info("Finished decompressing bundle, took {}", sw);
+		log.info("Finished decompressing bundle, numFiles: {}, took {}", numFiles, sw);
 
 		File topLevelDir = new File(tempArchiveDir, TOP_LEVEL_DIR_NAME);
 		Path topLevelDirPath = topLevelDir.toPath();
 		File dbsDir = new File(tempArchiveDir, DBS_DIR_NAME);
 		Path dbsDirPath = dbsDir.toPath();
 
-		// check dbs
-		//TODO: dbsDir no existy
-		List<OqmMongoDatabase> databasesToImport = Stream.of(dbsDir.listFiles())
+
+		Set<File> dbDirs = Arrays.asList(dbsDir.listFiles()).stream()
 			.filter(File::isDirectory)
+			.collect(Collectors.toSet());
+
+		log.info("Database directories found: {}", dbDirs);
+
+		// check dbs
+		//TODO: gracefully handle case of no dbs in bundle
+		List<OqmMongoDatabase> databasesToImport = dbDirs.stream()
 			.map((File dbDir) -> {
 				File dbInfoFile = new File(dbDir, DB_INFO_FILE_NAME);
 				try {

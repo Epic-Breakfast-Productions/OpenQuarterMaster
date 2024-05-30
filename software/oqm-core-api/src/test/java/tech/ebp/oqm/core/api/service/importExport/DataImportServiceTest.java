@@ -334,7 +334,8 @@ class DataImportServiceTest extends RunningServerTest {
 		List<CustomUnitEntry> oldUnits = this.customUnitService.list();
 		this.customUnitService.removeAll();
 		UnitUtils.reInitUnitCollections();
-		
+
+		log.info("Bundle to test: {}", bundle);
 		log.info("Size of file bundle: {}", bundle.length());
 		
 		try(InputStream is = new FileInputStream(bundle)) {

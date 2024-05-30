@@ -267,7 +267,7 @@ public class DatabaseExportService {
 	ItemCheckoutService itemCheckoutService;
 
 	public File exportDataToBundle(DataExportOptions options) throws IOException {
-		log.info("Generating new export bundle.");
+		log.info("Generating new export bundle. Options: {}", options);
 		StopWatch mainSw = StopWatch.createStarted();
 
 		File dirToArchive = this.tempFileService.getTempDir(OQM_EXPORT_PREFIX, TEMP_FOLDER);
@@ -302,8 +302,10 @@ public class DatabaseExportService {
 			log.info("Writing out selected databases");
 			Map<OqmMongoDatabase, CompletableFuture<Void>> databaseFutures = new HashMap<>();
 			{
-				List<OqmMongoDatabase> dbList = this.oqmDatabaseService.listIterator().into(new ArrayList<>())
-						.stream().filter(db -> options.getDatabaseSelection().isSelected(db)).toList();
+				List<OqmMongoDatabase> dbList = this.oqmDatabaseService.listIterator().into(new ArrayList<>());
+
+				log.info("Databases available: {}", dbList);
+				dbList = dbList.stream().filter(db -> options.getDatabaseSelection().isSelected(db)).toList();
 				log.info("Databases to save to export bundle: {}", dbList);
 
 				for (OqmMongoDatabase db : dbList) {
