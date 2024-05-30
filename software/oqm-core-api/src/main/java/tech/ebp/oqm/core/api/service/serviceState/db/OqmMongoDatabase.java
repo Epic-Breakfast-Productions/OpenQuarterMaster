@@ -31,6 +31,7 @@ public class OqmMongoDatabase extends AttKeywordMainObject {
 	
 	@NotNull
 	@Length(max = 256)
+	@lombok.Builder.Default
 	private String description = "";
 	
 	private Set<@NotNull String> usersAllowed = null;
