@@ -71,9 +71,11 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		CustomUnitEntry newEntry = null;
 		try {
 			newEntry = ObjectUtils.OBJECT_MAPPER.readValue(curFile, CustomUnitEntry.class);
-		} catch(JsonMappingException e){
+		} catch(JsonMappingException|IllegalArgumentException e){
 			if(e.getMessage().contains("does not represent any of the possible valid units.")){
 				orphanEntries.add(curFile);
+			} else {
+				throw e;
 			}
 
 			log.warn("Failed to process object file {}: ", curFile, e);
