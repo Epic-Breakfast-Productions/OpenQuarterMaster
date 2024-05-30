@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -111,7 +112,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 		return this.getOqmDatabase(idOrName, false);
 	}
 	
-	public ObjectId addOqmDatabase(OqmMongoDatabase newDatabase){
+	public ObjectId addOqmDatabase(@Valid OqmMongoDatabase newDatabase){
 		//TODO:: add logic to validator
 		boolean dbNameExists = !this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if(dbNameExists){

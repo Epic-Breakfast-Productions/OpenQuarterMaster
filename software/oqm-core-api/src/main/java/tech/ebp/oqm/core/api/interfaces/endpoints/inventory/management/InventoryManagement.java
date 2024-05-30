@@ -5,6 +5,7 @@ import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -16,6 +17,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -36,6 +38,7 @@ import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -172,6 +175,62 @@ public class InventoryManagement extends EndpointProvider {
 		String oqmDbIdOrName
 	) {
 		return this.dbms.clearDb(oqmDbIdOrName, this.getInteractingEntity());
+	}
+
+	@Blocking
+	@POST
+	@Path("db")
+	@Operation(
+		summary = "Add a Database"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addDb(
+		@Valid OqmMongoDatabase body
+	) {
+		log.info("Creating new database from REST call: {}", body);
+		ObjectId result = this.oqmDatabaseService.addOqmDatabase(body);
+		log.info("Created new database from REST call: {}", result);
+
+		return Response.ok(result).build();
+	}
+
+	@Blocking
+	@GET
+	@Path("db")
+	@Operation(
+		summary = "List Databases"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listDatabases() {
+		return Response.ok(this.oqmDatabaseService.listIterator().into(new ArrayList<>())).build();
 	}
 	
 	//TODO:: prune histories
