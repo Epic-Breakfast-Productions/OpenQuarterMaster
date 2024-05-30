@@ -69,13 +69,15 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@Inject
 	@Location("templates/items.csv")
 	Template itemsCsv;
+
+
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
 		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()
-										   .post()
+										   .post("", DEFAULT_TEST_DB_NAME)
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());
@@ -93,7 +95,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(updateData))
 										   .when()
-										   .put(id.toHexString())
+										   .put(DEFAULT_TEST_DB_NAME, id.toHexString())
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());
@@ -202,7 +204,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .multiPart("file", csvData)
 										   .multiPart("fileName", "test.csv")
 										   .when()
-										   .post()
+										   .post("", DEFAULT_TEST_DB_NAME)
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());
