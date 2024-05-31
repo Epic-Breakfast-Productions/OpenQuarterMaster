@@ -56,8 +56,8 @@ public class InventoryItemUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), new ItemCategorySearch()),
-				"searchResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), search),
+				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
+				"searchResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search),
 				"currency", this.coreApiClient.getCurrency(this.getBearerHeaderStr()),
 				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr())
 			)

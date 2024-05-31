@@ -1,35 +1,41 @@
 package tech.ebp.oqm.core.baseStation.service;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.scheduler.Scheduled;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.service.sso.KcClientAuthService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @ApplicationScoped
 public class OqmDatabaseService {
 
-	@Inject
+	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
 
 	@Inject
-	ServiceAccountService serviceAccountService;
+	KcClientAuthService serviceAccountService;
 
 	private final ReentrantLock mutex = new ReentrantLock();
 	private ArrayNode dbs = null;
 
-	@Scheduled(every = "1m")
+	@PostConstruct
+	public void setup(){
+		this.refreshCache();
+	}
+
+	@Scheduled(every = "1m")//instead of this, watch for message? Both?
 	public void refreshCache(){
 		log.info("Refreshing cache of OQM databases.");
 		try {
 			mutex.lock();
-			this.dbs = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getSAToken()).await().indefinitely();
+			this.dbs = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 		} finally {
 			this.mutex.unlock();
 		}

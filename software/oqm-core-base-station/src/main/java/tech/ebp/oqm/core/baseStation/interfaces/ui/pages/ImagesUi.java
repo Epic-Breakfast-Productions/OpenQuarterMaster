@@ -53,7 +53,7 @@ public class ImagesUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"searchResults", this.coreApiClient.imageSearch(this.getBearerHeaderStr(), search)
+				"searchResults", this.coreApiClient.imageSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 			)
 		);
 	}

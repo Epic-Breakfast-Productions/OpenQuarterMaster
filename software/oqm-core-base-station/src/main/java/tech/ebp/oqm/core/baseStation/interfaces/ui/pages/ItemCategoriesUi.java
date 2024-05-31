@@ -54,8 +54,8 @@ public class ItemCategoriesUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), new ItemCategorySearch()),
-				"searchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), search).call((ObjectNode results)->{
+				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
+				"searchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search).call((ObjectNode results)->{
 					return addParentLabelsToSearchResults(results, "name", this.coreApiClient::itemCatGet);
 				})
 			)

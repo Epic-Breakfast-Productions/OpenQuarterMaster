@@ -8,6 +8,7 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.CookieParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.AccessLevel;
@@ -17,11 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
+import tech.ebp.oqm.core.baseStation.service.OqmDatabaseService;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
 
 @Slf4j
 @NoArgsConstructor
 public abstract class RestInterface {
+
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
 	
 	@Getter(AccessLevel.PROTECTED)
 	@Inject
@@ -38,6 +43,9 @@ public abstract class RestInterface {
 	
 	@Getter(AccessLevel.PROTECTED)
 	UserInfo userInfo;
+
+	@CookieParam("oqmDb")
+	String oqmDb;
 	
 	protected boolean hasIdToken() {
 		return this.getIdToken() != null &&
@@ -104,7 +112,7 @@ public abstract class RestInterface {
 			if(curResult.get("hasParent").asBoolean()){
 				hadParents = true;
 				uniJoinBuilder.add(
-					parentGetCall.get(getBearerHeaderStr(), curResult.get("parent").asText())
+					parentGetCall.get(getBearerHeaderStr(), getSelectedDb(), curResult.get("parent").asText())
 						.invoke((ObjectNode storageBlock) ->{
 							((ObjectNode)curResult).set("parentLabel", storageBlock.get(labelKey));
 						})
@@ -119,5 +127,13 @@ public abstract class RestInterface {
 				   .map((list)->{
 					   return results;
 				   });
+	}
+
+	public String getSelectedDb(){
+		if(this.oqmDb == null || this.oqmDb.isBlank()){
+			//TODO: this but smarter?
+			return this.oqmDatabaseService.getDatabases().get(0).get("id").asText();
+		}
+		return this.oqmDb;
 	}
 }

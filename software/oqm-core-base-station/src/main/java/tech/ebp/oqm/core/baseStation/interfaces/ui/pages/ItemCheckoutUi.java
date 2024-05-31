@@ -55,7 +55,7 @@ public class ItemCheckoutUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"searchResults", this.coreApiClient.itemCheckoutSearch(this.getBearerHeaderStr(), search)
+				"searchResults", this.coreApiClient.itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 			)
 		);
 	}

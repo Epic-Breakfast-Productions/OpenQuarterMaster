@@ -106,6 +106,9 @@ quarkus:
   rest-client:
     logging:
       scope: all
+    "tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient":
+      url: ${quarkus.oidc.auth-server-url}
+      scope: jakarta.inject.Singleton
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
       scope: jakarta.inject.Singleton
