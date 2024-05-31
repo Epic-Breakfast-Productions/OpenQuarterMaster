@@ -679,7 +679,7 @@ public interface OqmCoreApiClientService {
 	@Path("db")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ArrayNode> manageDbList();
+	Uni<ArrayNode> manageDbList(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 
 
 //	@GET
