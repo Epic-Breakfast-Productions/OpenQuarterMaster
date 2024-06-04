@@ -10,7 +10,7 @@ public class Constants {
 
 	public static final String INV_DB_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/db/{oqmDbIdOrName}";
 
-	public static final String UNIT_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/inventory/unit";
+	public static final String UNIT_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/unit";
 	public static final String STORAGE_BLOCK_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/storage-block";
 	public static final String INV_ITEM_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item";
 	public static final String ITEM_CAT_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item-category";
