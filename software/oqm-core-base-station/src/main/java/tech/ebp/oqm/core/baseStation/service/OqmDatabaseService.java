@@ -30,12 +30,15 @@ public class OqmDatabaseService {
 		this.refreshCache();
 	}
 
-	@Scheduled(every = "1m")//instead of this, watch for message? Both?
+	//TODO:: instead of this, watch for message? Both?
+	@Scheduled(every = "{service.refreshDbCacheFrequency}")
 	public void refreshCache(){
 		log.info("Refreshing cache of OQM databases.");
 		try {
-			mutex.lock();
-			this.dbs = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+			this.mutex.lock();
+			ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+			this.dbs = newCacheData;
+			log.info("Got new cache of databases: {}", newCacheData);
 		} finally {
 			this.mutex.unlock();
 		}
@@ -43,7 +46,7 @@ public class OqmDatabaseService {
 
 	public ArrayNode getDatabases() {
 		try {
-			mutex.lock();
+			this.mutex.lock();
 			return this.dbs;
 		} finally {
 			this.mutex.unlock();
