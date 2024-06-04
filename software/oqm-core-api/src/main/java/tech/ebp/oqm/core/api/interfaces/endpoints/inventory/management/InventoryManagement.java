@@ -5,17 +5,19 @@ import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -26,12 +28,17 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.scheduled.ExpiryProcessor;
-import tech.ebp.oqm.core.api.service.importExport.DataExportService;
-import tech.ebp.oqm.core.api.service.importExport.DataImportService;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
+import tech.ebp.oqm.core.api.service.importExport.importing.DataImportService;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.DatabaseManagementService;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -47,7 +54,7 @@ import java.util.Map;
 public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
-	DataExportService dataExportService;
+	DatabaseExportService databaseExportService;
 	
 	@Inject
 	DataImportService dataImportService;
@@ -57,10 +64,13 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
 	DatabaseManagementService dbms;
+
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
 	
 	@Blocking
 	@GET
-	@Path("export")
+	@Path("db/{oqmDbIdOrName}/export")
 	@Operation(
 		summary = "Creates a bundle of all inventory data stored."
 	)
@@ -79,9 +89,9 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@QueryParam("excludeHistory") boolean excludeHistory
+			//TODO:: options as bean param? figure this out
 	) throws IOException {
-		File outputFile = dataExportService.exportDataToBundle(excludeHistory);
+		File outputFile = databaseExportService.exportDataToBundle(new DataExportOptions());
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
 		response.header("Content-Disposition", "attachment;filename=" + outputFile.getName());
@@ -112,7 +122,12 @@ public class InventoryManagement extends EndpointProvider {
 	public Response importData(
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		DataImportResult result = this.dataImportService.importBundle(body, this.getInteractingEntity());
+		DataImportResult result = this.dataImportService.importBundle(
+			body.file,
+			body.fileName,
+			this.getInteractingEntity(),
+			body.options
+		);
 		
 		return Response.ok(result).build();
 	}
@@ -135,13 +150,13 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring() {
 		expiryProcessor.searchAndProcessExpiring();
-		
+
 		return Response.ok().build();
 	}
 	
 	@Blocking
 	@DELETE
-	@Path("clearDb")
+	@Path("/db/{oqmDbIdOrName}/clearDb")
 	@Operation(
 		summary = "Manually triggers the process to clear the database."
 	)
@@ -155,8 +170,67 @@ public class InventoryManagement extends EndpointProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
-	public Map<String, Long> clearDatabase() {
-		return this.dbms.clearDb(this.getInteractingEntity());
+	public Map<String, Long> clearDatabase(
+		@PathParam("oqmDbIdOrName")
+		String oqmDbIdOrName
+	) {
+		return this.dbms.clearDb(oqmDbIdOrName, this.getInteractingEntity());
+	}
+
+	@Blocking
+	@POST
+	@Path("db")
+	@Operation(
+		summary = "Add a Database"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addDb(
+		@Valid OqmMongoDatabase body
+	) {
+		log.info("Creating new database from REST call: {}", body);
+		ObjectId result = this.oqmDatabaseService.addOqmDatabase(body);
+		log.info("Created new database from REST call: {}", result);
+
+		return Response.ok(result).build();
+	}
+
+	@Blocking
+	@GET
+	@Path("db")
+	@Operation(
+		summary = "List Databases"
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listDatabases() {
+		return Response.ok(this.oqmDatabaseService.listIterator().into(new ArrayList<>())).build();
 	}
 	
 	//TODO:: prune histories

@@ -6,7 +6,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 /**
  * This is the standard impl of the MongoHistoriedObjectService used to store T.
@@ -15,30 +15,21 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
  */
 public class FileObjectService<T extends FileMainObject, S extends FileSearchObject<T>> extends MongoHistoriedObjectService<T, S, CollectionStats> {
 	
-	private String objectName;
-	
 	public FileObjectService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
 		String database,
+		OqmDatabaseService oqmDatabaseService,
+		String collectionName,
 		Class<T> clazz,
-		String objectName,
-		HistoryEventNotificationService hens
+		boolean allowNullEntityForCreate
 	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			clazz,
-			false,
-			hens
-		);
-		this.objectName = objectName;
+		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz, allowNullEntityForCreate);
 	}
 	
 	@Override
 	public String getCollectionName() {
-		return super.getCollectionName() + this.objectName;
+		return this.collectionName;
 	}
 	
 	/**
@@ -46,8 +37,8 @@ public class FileObjectService<T extends FileMainObject, S extends FileSearchObj
 	 * @return
 	 */
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 }

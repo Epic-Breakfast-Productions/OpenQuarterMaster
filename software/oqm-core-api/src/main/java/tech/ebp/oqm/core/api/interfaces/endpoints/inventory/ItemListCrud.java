@@ -34,7 +34,7 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import java.util.List;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/item-list")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item-list")
 @Tags({@Tag(name = "Item Lists", description = "Endpoints for managing Item Lists.")})
 @RequestScoped
 public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
@@ -359,6 +359,6 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 		@PathParam("itemId") String itemId,
 		ItemListAction action
 	) {
-		return ((ItemListService) this.getObjectService()).addAction(listId, itemId, action, this.getInteractingEntity());
+		return ((ItemListService) this.getObjectService()).addAction(this.getOqmDbIdOrName(), listId, itemId, action, this.getInteractingEntity());
 	}
 }

@@ -28,8 +28,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-opentelemetry'
+    implementation 'io.quarkus:quarkus-scheduler'
 
-    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:1.0.0-SNAPSHOT'
+    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.0.0-SNAPSHOT'
 
     implementation 'org.apache.commons:commons-io:1.3.2'
 

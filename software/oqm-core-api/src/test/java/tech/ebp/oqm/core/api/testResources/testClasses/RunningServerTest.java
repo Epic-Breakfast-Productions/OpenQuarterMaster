@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.testResources.testClasses;
 
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.MongoTestConnector;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.OurTestDescription;
@@ -27,13 +29,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
+
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 //@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
-	
+
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
+
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){
+
+		this.oqmDatabaseService.ensureDatabase(DEFAULT_TEST_DB_NAME);
+
 		if(SeleniumGridServerManager.RECORD) {
 			TestResourceLifecycleManager.BROWSER_CONTAINER.beforeTest(
 				new OurTestDescription(testInfo)

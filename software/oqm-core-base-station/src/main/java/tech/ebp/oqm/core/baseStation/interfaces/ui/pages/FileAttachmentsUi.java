@@ -54,7 +54,7 @@ public class FileAttachmentsUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"searchResults", this.coreApiClient.fileAttachmentSearch(this.getBearerHeaderStr(), search)
+				"searchResults", this.coreApiClient.fileAttachmentSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 			)
 		);
 	}

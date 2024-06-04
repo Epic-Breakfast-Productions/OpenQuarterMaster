@@ -48,12 +48,12 @@ public class OverviewUi extends UiProvider {
 	public Uni<Response> overview() {
 		return this.getUni(
 			Map.of(
-				"itemCollectionStats", this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr()),
-				"storageCollectionStats", this.coreApiClient.storageBlockCollectionStats(this.getBearerHeaderStr()),
-				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), Searches.BLOCK_PARENT_SEARCH),
-				"expiredResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_EXPIRED_SEARCH),
-				"expiryWarnResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_EXPIRY_WARN_SEARCH),
-				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), Searches.ITEM_LOW_STOCK_SEARCH)
+				"itemCollectionStats", this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb()),
+				"storageCollectionStats", this.coreApiClient.storageBlockCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb()),
+				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), Searches.BLOCK_PARENT_SEARCH),
+				"expiredResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), Searches.ITEM_EXPIRED_SEARCH),
+				"expiryWarnResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), Searches.ITEM_EXPIRY_WARN_SEARCH),
+				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), Searches.ITEM_LOW_STOCK_SEARCH)
 			)
 		);
 	}

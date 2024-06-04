@@ -22,77 +22,59 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
 	
-	ItemListService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
-	@Inject
-	ItemListService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			ItemList.class,
-			false,
-			hens
-		);
+	public ItemListService() {
+		super(ItemList.class, false);
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, ItemList list, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, list, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemList list, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, list, clientSession);
 		//TODO:: no duplicate names?
 		
 	}
 	
-	public ItemList addAction(ObjectId listId, ObjectId itemId, ItemListAction action, InteractingEntity entity){
-		ItemList list = this.get(listId);
+	public ItemList addAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, ItemListAction action, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
 		
 		list.getItemActions(itemId).add(action);
 		
 		ItemListActionAddEvent event = new ItemListActionAddEvent(list, entity);
 		event.setItemId(itemId);
 		
-		this.update(list, entity, event);
+		this.update(oqmDbIdOrName, list, entity, event);
 		
 		return list;
 	}
 	
-	public ItemList addAction(String listId, String itemId, ItemListAction action, InteractingEntity entity) {
-		return this.addAction(new ObjectId(listId), new ObjectId(itemId), action, entity);
+	public ItemList addAction(String oqmDbIdOrName, String listId, String itemId, ItemListAction action, InteractingEntity entity) {
+		return this.addAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), action, entity);
 	}
 	
-	public ItemList remAction(ObjectId listId, ObjectId itemId, int index, InteractingEntity entity){
-		ItemList list = this.get(listId);
+	public ItemList remAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
 		//TODO
 		return list;
 	}
 	
-	public ItemList remAction(String listId, String itemId, int index, InteractingEntity entity) {
-		return this.remAction(new ObjectId(listId), new ObjectId(itemId), index, entity);
+	public ItemList remAction(String oqmDbIdOrName, String listId, String itemId, int index, InteractingEntity entity) {
+		return this.remAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), index, entity);
 	}
 	
-	public ItemList updateAction(ObjectId listId, ObjectId itemId, int index, JsonObject updateJson, InteractingEntity entity){
-		ItemList list = this.get(listId);
+	public ItemList updateAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, JsonObject updateJson, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
 		//TODO
 		return list;
 	}
 	
-	public ItemList updateAction(String listId, String itemId, int index, JsonObject updateJson, InteractingEntity entity) {
-		return this.updateAction(new ObjectId(listId), new ObjectId(itemId), index, updateJson, entity);
+	public ItemList updateAction(String oqmDbIdOrName, String listId, String itemId, int index, JsonObject updateJson, InteractingEntity entity) {
+		return this.updateAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), index, updateJson, entity);
 	}
 	
 }

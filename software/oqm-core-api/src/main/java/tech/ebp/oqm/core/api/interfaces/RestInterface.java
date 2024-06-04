@@ -62,7 +62,7 @@ public abstract class RestInterface {
 				log.warn("Request with Auth made without HTTPS");
 			}
 			
-			this.interactingEntity = this.getInteractingEntityService().getEntity(this.getSecurityContext(), this.getUserToken());
+			this.interactingEntity = this.getInteractingEntityService().ensureEntity(this.getSecurityContext(), this.getUserToken());
 			
 			log.info("Processing request with Auth; interacting entity: {}", interactingEntity);
 			return Optional.of(this.interactingEntity);
