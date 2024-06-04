@@ -139,6 +139,37 @@
                     <div class="tab-pane fade" id="databasesContent" role="tabpanel" aria-labelledby="databasesTab">
                         <h2>Databases</h2>
 
+                        <div class="accordion mb-3" id="addDbAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="addDbAccordionHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addDbAccordionContent" aria-expanded="true" aria-controls="addDbAccordionContent">
+                                        {#icons/add}{/icons/add} Add Database
+                                    </button>
+                                </h2>
+                                <div id="addDbAccordionContent" class="accordion-collapse collapse" aria-labelledby="addDbAccordionHeading" data-bs-parent="#addDbAccordion">
+                                    <h5>
+                                        Add Database
+                                    </h5>
+                                    <div id="addDatabaseFormMessages"></div>
+                                    <form id="addDatabaseForm">
+                                        <div class="mb-3">
+                                            <label for="addDatabaseFormNameInput" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="addDatabaseFormNameInput" placeholder="Name" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="addDatabaseFormDisplayNameInput" class="form-label">Display Name</label>
+                                            <input type="text" class="form-control" id="addDatabaseFormDisplayNameInput" placeholder="Display Name">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="addDatabaseFormDescriptionInput" class="form-label">Description</label>
+                                            <input type="text" class="form-control" id="addDatabaseFormDescriptionInput" placeholder="Description">
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Add Database</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
@@ -167,35 +198,6 @@
                                     </tr>
                                 {/let}
                             {/for}
-
-                            </tbody>
-                            <tfoot class="table-group-divider">
-                            <tr>
-                                <td colspan="4">
-                                    <h5>
-                                        Add Database
-                                    </h5>
-                                    <div id="addDatabaseFormMessages">
-
-                                    </div>
-                                    <form id="addDatabaseForm">
-                                        <div class="mb-3">
-                                            <label for="addDatabaseFormNameInput" class="form-label">Name</label>
-                                            <input type="text" class="form-control" id="addDatabaseFormNameInput" placeholder="Name" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="addDatabaseFormDisplayNameInput" class="form-label">Display Name</label>
-                                            <input type="text" class="form-control" id="addDatabaseFormDisplayNameInput" placeholder="Display Name">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="addDatabaseFormDescriptionInput" class="form-label">Description</label>
-                                            <input type="text" class="form-control" id="addDatabaseFormDescriptionInput" placeholder="Description">
-                                        </div>
-                                        <button type="submit" class="btn btn-success">Add Database</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            </tfoot>
                         </table>
                     </div>
 					<div class="tab-pane fade" id="importExportContent" role="tabpanel" aria-labelledby="importExportTab">
