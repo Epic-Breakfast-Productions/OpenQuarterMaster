@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -10,9 +11,13 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.BsonDocument;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.rest.search.CustomUnitSearch;
@@ -20,33 +25,16 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Unit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
+public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
 	
-	CustomUnitService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
-	@Inject
-	CustomUnitService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			CustomUnitEntry.class,
-			false,
-			hens
-		);
+	CustomUnitService() {
+		super(CustomUnitEntry.class);
 	}
 	
 	@PostConstruct
@@ -68,19 +56,6 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 	}
 	
 	@WithSpan
-	@Override
-	public void ensureObjectValid(boolean newObject, CustomUnitEntry newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
-		//TODO:: ensure name,symbol, tostring? not same as any in default set or held
-	}
-	
-	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
-				   .build();
-	}
-	
-	@WithSpan
 	public long getNextOrderValue() {
 		CustomUnitEntry entry = this.listIterator(null, Sorts.descending("order"), null).first();
 		
@@ -92,14 +67,14 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 	
 	@WithSpan
 	public CustomUnitEntry getFromUnit(ClientSession clientSession, Unit unit) {
-		List<CustomUnitEntry> matchList = this.list(
+		List<CustomUnitEntry> matchList = this.listIterator(
 			clientSession,
 			Filters.eq("unitCreator.symbol", unit.getSymbol()),
 			null,
 			null
-		);
+		).into(new ArrayList<>());
 		
-		if (matchList.size() == 0) {
+		if (matchList.isEmpty()) {
 			throw new DbNotFoundException("Could not find custom unit " + unit, CustomUnitEntry.class);
 		}
 		if (matchList.size() != 1) {
@@ -110,5 +85,38 @@ public class CustomUnitService extends MongoHistoriedObjectService<CustomUnitEnt
 		}
 		
 		return matchList.get(0);
+	}
+
+	public ObjectId add(ClientSession cs, @Valid CustomUnitEntry entry){
+		log.info("Adding new custom unit.");
+
+		UnitUtils.registerAllUnits(entry);
+
+		ObjectId id = null;
+		if(cs == null){
+			id = this.getCollection().insertOne(entry).getInsertedId().asObjectId().getValue();
+		} else {
+			id = this.getCollection().insertOne(cs, entry).getInsertedId().asObjectId().getValue();
+		}
+		entry.setId(id);
+
+		log.info("New custom unit: {}", entry);
+		return entry.getId();
+
+	}
+
+	public ObjectId add(ClientSession cs, @Valid NewCustomUnitRequest ncur){
+		log.info("Adding new custom unit.");
+		CustomUnitEntry newUnit = ncur.toCustomUnitEntry(this.getNextOrderValue());
+
+		return this.add(cs, newUnit);
+	}
+
+	public List<CustomUnitEntry> list(){
+		return this.listIterator(null, Sorts.ascending("order"), null).into(new ArrayList<>());
+	}
+
+	public void removeAll(){
+		this.getCollection().deleteMany(new BsonDocument());
 	}
 }

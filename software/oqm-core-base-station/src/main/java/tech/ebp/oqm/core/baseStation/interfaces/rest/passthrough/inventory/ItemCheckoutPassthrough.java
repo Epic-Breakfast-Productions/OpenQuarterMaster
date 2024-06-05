@@ -57,7 +57,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	public Uni<String> create(
 		ObjectNode itemCheckoutRequest
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutCreate(this.getBearerHeaderStr(), itemCheckoutRequest);
+		return this.getOqmCoreApiClient().itemCheckoutCreate(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutRequest);
 	}
 	
 	@PUT
@@ -83,7 +83,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@PathParam("id") String id,
 		ObjectNode checkInDetails
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutCheckin(this.getBearerHeaderStr(), id, checkInDetails);
+		return this.getOqmCoreApiClient().itemCheckoutCheckin(this.getBearerHeaderStr(), this.getSelectedDb(), id, checkInDetails);
 	}
 	
 	@GET
@@ -113,7 +113,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("showItem") String shotItem
 	) {
 		return this.processSearchResults(
-			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), itemCheckoutSearch),
+			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch),
 			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(inputIdPrepend)),
 			acceptType,
 			searchFormId,
@@ -153,7 +153,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> get(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutGet(this.getBearerHeaderStr(), id);
+		return this.getOqmCoreApiClient().itemCheckoutGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 	
 	@PUT
@@ -189,7 +189,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), id, updates);
+		return this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
 	}
 	
 	@DELETE
@@ -223,7 +223,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> delete(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutDelete(this.getBearerHeaderStr(), id);
+		return this.getOqmCoreApiClient().itemCheckoutDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 	
 	//<editor-fold desc="History">
@@ -258,7 +258,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCheckoutGetHistoryForObject(this.getBearerHeaderStr(), id, searchObject);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCheckoutGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
@@ -284,7 +284,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutSearchHistory(this.getBearerHeaderStr(), searchObject);
+		return this.getOqmCoreApiClient().itemCheckoutSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
 	}
 	
 }

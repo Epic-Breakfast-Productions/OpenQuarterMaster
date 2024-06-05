@@ -25,6 +25,7 @@ service:
   tempDir: "/tmp/oqm-baseStation"
   dateTimeFormat:
     default: "MM/dd/YYYY hh:mm:ss a (z)"
+  refreshDbCacheFrequency: "30s"
 
 productLookup:
   providers:
@@ -106,6 +107,9 @@ quarkus:
   rest-client:
     logging:
       scope: all
+    "tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient":
+      url: ${quarkus.oidc.auth-server-url}
+      scope: jakarta.inject.Singleton
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
       scope: jakarta.inject.Singleton
@@ -241,5 +245,4 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-
-  
+    refreshDbCacheFrequency: "5m"

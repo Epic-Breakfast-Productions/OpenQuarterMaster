@@ -14,33 +14,12 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 @ApplicationScoped
 public class TestMongoHistoriedFileService extends MongoHistoriedFileService<TestMainFileObject, FileUploadBody, TestMainFileObjectSearch, TestMainFileObjectGet> {
 	
-	TestMongoHistoriedFileService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
-	@Inject
-	TestMongoHistoriedFileService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		TempFileService tempFileService,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			TestMainFileObject.class,
-			false,
-			tempFileService,
-			"testFile",
-			hens
-		);
+	public TestMongoHistoriedFileService() {
+		super(TestMainFileObject.class, "testFile", false);
 	}
 	
 	@Override
-	public TestMainFileObjectGet fileObjToGet(TestMainFileObject obj) {
-		return TestMainFileObjectGet.fromTestFileObject(obj, this.getRevisions(obj.getId()));
+	public TestMainFileObjectGet fileObjToGet(String dbNameOrId, TestMainFileObject obj) {
+		return TestMainFileObjectGet.fromTestFileObject(obj, this.getRevisions(dbNameOrId, obj.getId()));
 	}
 }

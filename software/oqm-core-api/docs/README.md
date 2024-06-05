@@ -3,7 +3,9 @@
 [Back](../README.md)
 
  - [Admin Guide](AdminGuide.md)
- - [Building and Deployment](BuildingAndDeployment.adoc)
+ - [CustomUnits](customUnits.md)
+ - [Databases](database.md)
  - [Data Model](DataModel.md)
- - [Development Getting Started](DevelopmentGettingStarted.md)
+ - [Messaging](messaging.md)
+ - [Metrics and Observability](metricsAndObservability.md)
  - [Users And Auth](UsersAndAuth.md)

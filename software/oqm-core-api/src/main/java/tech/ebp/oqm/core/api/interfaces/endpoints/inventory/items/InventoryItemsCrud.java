@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
@@ -37,7 +36,7 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.service.importExport.csv.InvItemCsvConverter;
+import tech.ebp.oqm.core.api.service.importExport.importing.csv.InvItemCsvConverter;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
@@ -48,13 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/item")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
 	
-	@Inject
-	ObjectMapper objectMapper;
 	@Inject
 	InvItemCsvConverter invItemCsvConverter;
 	
@@ -129,15 +126,15 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 				items.addAll(this.invItemCsvConverter.csvIsToItems(body.file));
 				break;
 			case "json":
-				JsonNode json = this.objectMapper.readTree(body.file);
+				JsonNode json = this.getObjectMapper().readTree(body.file);
 				
 				if (json.isObject()) {
-					json = this.objectMapper.createArrayNode().add(json);
+					json = this.getObjectMapper().createArrayNode().add(json);
 				}
 				
 				while (!(json).isEmpty()) {
 					JsonNode curItemJson = ((ArrayNode) json).remove(0);
-					items.add(this.objectMapper.treeToValue(curItemJson, InventoryItem.class));
+					items.add(this.getObjectMapper().treeToValue(curItemJson, InventoryItem.class));
 				}
 				
 				break;
@@ -151,6 +148,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 			while (!items.isEmpty()) {
 				results.add(
 					this.getObjectService().add(
+						this.getOqmDbIdOrName(),
 						session,
 						items.remove(0),
 						this.getInteractingEntity()
@@ -455,9 +453,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		JsonNode addObject
 	) throws JsonProcessingException {
 		log.info("Adding to item");
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).add(
+			this.getOqmDbIdOrName(),
 			itemId,
 			storageBlockId,
 			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
@@ -499,7 +498,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		JsonNode addObject
 	) throws JsonProcessingException {
 		log.info("Adding to item");
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).add(
 			itemId,
@@ -542,9 +541,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode subtractObject
 	) throws JsonProcessingException {
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).subtract(
+			this.getOqmDbIdOrName(),
 			itemId,
 			storageBlockId,
 			(Stored) ObjectUtils.OBJECT_MAPPER.treeToValue(
@@ -585,7 +585,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode subtractObject
 	) throws JsonProcessingException {
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).subtract(
 			itemId,
@@ -629,9 +629,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("storageBlockIdTo") String storageBlockIdTo,
 		JsonNode transferObject
 	) throws JsonProcessingException {
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).transfer(
+			this.getOqmDbIdOrName(),
 			itemId,
 			storageBlockIdFrom,
 			storageBlockIdTo,
@@ -675,9 +676,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("storedIdTo") String storedIdTo,
 		JsonNode transferObject
 	) throws JsonProcessingException {
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).transfer(
+			this.getOqmDbIdOrName(),
 			itemId,
 			storageBlockIdFrom,
 			storedIdFrom,
@@ -728,9 +730,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("itemId") String itemId,
 		AddSubtractTransferAction action
 	) throws JsonProcessingException {
-		InventoryItem item = this.getObjectService().get(itemId);
+		InventoryItem item = this.getObjectService().get(this.getOqmDbIdOrName(), itemId);
 		
 		item = ((InventoryItemService) this.getObjectService()).apply(
+			this.getOqmDbIdOrName(),
 			itemId,
 			action,
 			this.getInteractingEntity()
@@ -765,7 +768,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public Response getInventoryItemsInBlock(
 		@PathParam("storageBlockId") String storageBlockId
 	) {
-		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(storageBlockId)).build();
+		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(this.getOqmDbIdOrName(), storageBlockId)).build();
 	}
 	
 }
