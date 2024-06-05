@@ -16,6 +16,6 @@ spec:
         app: oqm-core-depot
     spec:
       containers:
-        - image: docker.io/ebprod/oqm-core-depot:1.1.0-dev
+        - image: docker.io/ebprod/oqm-core-depot:1.1.1-dev
           name: oqm-core-depot
           resources: {}
