@@ -39,11 +39,11 @@ public class OqmDatabaseService {
 	@Scheduled(every = "{service.refreshDbCacheFrequency}")
 	public void refreshCache(){
 		log.info("Refreshing cache of OQM databases.");
+		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+		log.info("Got new cache of databases: {}", newCacheData);
 		try {
 			this.mutex.lock();
-			ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 			this.dbs = newCacheData;
-			log.info("Got new cache of databases: {}", newCacheData);
 		} finally {
 			this.mutex.unlock();
 		}
