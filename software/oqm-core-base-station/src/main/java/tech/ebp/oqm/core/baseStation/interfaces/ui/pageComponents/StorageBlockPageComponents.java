@@ -41,7 +41,7 @@ public class StorageBlockPageComponents extends PageComponentProvider {
 	@Path("treeItem")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response overview() {
-		JsonNode itemStats = this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr()).await().indefinitely();
+		JsonNode itemStats = this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb()).await().indefinitely();
 		
 		log.debug("Item stats json: {}", itemStats);
 		

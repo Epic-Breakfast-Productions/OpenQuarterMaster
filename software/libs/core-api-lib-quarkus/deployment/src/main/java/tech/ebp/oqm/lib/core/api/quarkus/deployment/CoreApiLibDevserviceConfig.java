@@ -19,18 +19,20 @@ public class CoreApiLibDevserviceConfig {
 	public boolean enable;
 	
 	/**
-	 * The name of the file in which logs will be written.
+	 * The path of the public key file
 	 */
 	@ConfigItem(name="certPath")
 	public Optional<File> certPath;
+
 	/**
-	 * The name of the file in which logs will be written.
+	 * The path of the private key file
 	 */
 	@ConfigItem(name="certKeyPath")
 	public Optional<File> certKeyPath;
+
 	/**
-	 * The name of the file in which logs will be written.
+	 * The version/ tag of the core api container image
 	 */
-	@ConfigItem(name="coreApiVersion", defaultValue = "1.2.1-DEV")
+	@ConfigItem(name="coreApiVersion", defaultValue = "2.0.0-DEV")
 	public String coreApiVersion;
 }

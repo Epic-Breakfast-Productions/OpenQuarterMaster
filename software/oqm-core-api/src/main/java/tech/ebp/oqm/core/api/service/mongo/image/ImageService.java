@@ -1,15 +1,12 @@
 package tech.ebp.oqm.core.api.service.mongo.image;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.config.ImageResizeConfig;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -17,12 +14,10 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
 import tech.ebp.oqm.core.api.rest.search.ImageSearch;
-import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -36,43 +31,21 @@ import java.util.Set;
 @ApplicationScoped
 public class ImageService extends MongoHistoriedFileService<Image, FileUploadBody, ImageSearch, ImageGet> {
 
-	private ImageResizeConfig imageResizeConfig;
-	private StorageBlockService storageBlockService;
-	private ItemCategoryService itemCategoryService;
-	private InventoryItemService inventoryItemService;
-	
-	ImageService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
 	@Inject
-	ImageService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		TempFileService tempFileService,
-		StorageBlockService storageBlockService,
-		ItemCategoryService itemCategoryService,
-		InventoryItemService inventoryItemService,
-		ImageResizeConfig imageResizeConfig,
-		HistoryEventNotificationService hens
-	) {
+	ImageResizeConfig imageResizeConfig;
+	@Inject
+	StorageBlockService storageBlockService;
+	@Inject
+	ItemCategoryService itemCategoryService;
+	@Inject
+	InventoryItemService inventoryItemService;
+	
+	public ImageService() {
 		super(
-			objectMapper,
-			mongoClient,
-			database,
 			Image.class,
-			false,
-			tempFileService,
 			"image",
-			hens
+			false
 		);
-		this.storageBlockService = storageBlockService;
-		this.itemCategoryService = itemCategoryService;
-		this.inventoryItemService = inventoryItemService;
-		this.imageResizeConfig = imageResizeConfig;
 		this.allowedMimeTypes = Set.of(
 			"image/png",
 			"image/jpeg",
@@ -114,7 +87,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	}
 	
 	@Override
-	public ObjectId add(ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
+	public ObjectId add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
 		File usingImage;
 		if(this.imageResizeConfig.enabled()) {
 			usingImage = this.getTempFileService().getTempFile(
@@ -131,40 +104,40 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			usingImage = origImage;
 		}
 		
-		return super.add(clientSession, fileObject, usingImage, fileName, interactingEntity);
+		return super.add(oqmDbIdOrName, clientSession, fileObject, usingImage, fileName, interactingEntity);
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 	}
 	
 	@Override
-	public ImageGet fileObjToGet(Image obj) {
-		return ImageGet.fromImage(obj, this.getRevisions(obj.getId()));
+	public ImageGet fileObjToGet(String oqmDbIdOrName, Image obj) {
+		return ImageGet.fromImage(obj, this.getRevisions(oqmDbIdOrName, obj.getId()));
 	}
 	
 	@WithSpan
 	@Override
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, Image objectToRemove) {
-		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, objectToRemove);
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, Image objectToRemove) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, objectToRemove);
 		
-		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(cs, objectToRemove);
+		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
 		}
-		refs = this.inventoryItemService.getItemsReferencing(cs, objectToRemove);
+		refs = this.inventoryItemService.getItemsReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}
-		refs = this.itemCategoryService.getItemCatsReferencing(cs, objectToRemove);
+		refs = this.itemCategoryService.getItemCatsReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.itemCategoryService.getClazz().getSimpleName(), refs);
 		}

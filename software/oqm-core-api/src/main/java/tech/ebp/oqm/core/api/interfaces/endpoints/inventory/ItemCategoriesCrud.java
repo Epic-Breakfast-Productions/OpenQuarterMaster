@@ -33,7 +33,7 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import java.util.List;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/item-category")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item-category")
 @Tags({@Tag(name = "Item Categories", description = "Endpoints for managing Item Categories.")})
 @RequestScoped
 public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCategorySearch> {
@@ -282,7 +282,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 		//for actual queries
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
-		return (ItemCategoryTree)this.getObjectService().getTree(onlyInclude);
+		return (ItemCategoryTree)this.getObjectService().getTree(this.getOqmDbIdOrName(), onlyInclude);
 	}
 	
 	

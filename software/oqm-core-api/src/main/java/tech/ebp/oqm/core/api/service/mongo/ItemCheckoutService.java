@@ -40,49 +40,29 @@ import static com.mongodb.client.model.Filters.or;
 @ApplicationScoped
 public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckout, ItemCheckoutSearch, CollectionStats> {
 	
-	private InventoryItemService inventoryItemService;
-	
-	ItemCheckoutService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
 	@Inject
-	ItemCheckoutService(
-		//            Validator validator,
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		InventoryItemService inventoryItemService,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			ItemCheckout.class,
-			false,
-			hens
-		);
-		this.inventoryItemService = inventoryItemService;
+	InventoryItemService inventoryItemService;
+	
+	public ItemCheckoutService() {
+		super(ItemCheckout.class, false);
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, ItemCheckout newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemCheckout newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 		//TODO:: this
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 	
-	public ObjectId checkoutItem(ItemCheckoutRequest request, InteractingEntity entity){
+	public ObjectId checkoutItem(String oqmDbIdOrName, ItemCheckoutRequest request, InteractingEntity entity){
 		log.info("Checking out item: {}", request);
-		InventoryItem item = this.inventoryItemService.get(request.getItem());
+		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, request.getItem());
 		
 		Stored result;
 		try {
@@ -102,8 +82,8 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		
 		ObjectId newId;
 		try(ClientSession cs = this.getNewClientSession(true)){
-			newId = this.add(cs, itemCheckout, entity);
-			this.inventoryItemService.update(cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
+			newId = this.add(oqmDbIdOrName, cs, itemCheckout, entity);
+			this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
 			cs.commitTransaction();
 		}
 		
@@ -111,11 +91,12 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	}
 	
 	public ItemCheckout checkinItem(
+		String oqmDbIdOrName,
 		ObjectId checkoutId,
 		@NonNull @Valid CheckInDetails checkInDetails,
 		InteractingEntity entity
 	) {
-		ItemCheckout checkout = this.get(checkoutId);
+		ItemCheckout checkout = this.get(oqmDbIdOrName, checkoutId);
 		
 		if(!checkout.isStillCheckedOut()){
 			throw new AlreadyCheckedInException("Checkout with id " + checkout.getId().toHexString() + " already checked in.");
@@ -125,15 +106,15 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		InventoryItem item = null;
 		
 		if(checkInDetails instanceof ReturnCheckin){
-			item = this.inventoryItemService.get(checkout.getItem());
+			item = this.inventoryItemService.get(oqmDbIdOrName, checkout.getItem());
 			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
 		}
 		
 		try(ClientSession cs = this.getNewClientSession(true)){
 			if(item != null) {
-				this.inventoryItemService.update(cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
 			}
-			this.update(cs, checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+			this.update(oqmDbIdOrName, cs, checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
 			cs.commitTransaction();
 		}
 		
@@ -142,9 +123,10 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	
 	//TODO:: prevent updates to those that are already checked in
 	
-	public Set<ObjectId> getItemCheckoutsReferencing(ClientSession clientSession, StorageBlock storageBlock){
+	public Set<ObjectId> getItemCheckoutsReferencing(String oqmDbIdOrName, ClientSession clientSession, StorageBlock storageBlock){
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			or(
 				eq("checkedOutFrom", storageBlock.getId()),
@@ -156,9 +138,10 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		return list;
 	}
 	
-	public Set<ObjectId> getItemCheckoutsReferencing(ClientSession clientSession, InventoryItem<?, ?, ?> item){
+	public Set<ObjectId> getItemCheckoutsReferencing(String oqmDbIdOrName, ClientSession clientSession, InventoryItem<?, ?, ?> item){
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("item", item.getId()),
 			null,
@@ -167,9 +150,10 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		return list;
 	}
 	
-	public Set<ObjectId> getItemCheckoutsReferencing(ClientSession clientSession, InteractingEntity entity){
+	public Set<ObjectId> getItemCheckoutsReferencing(String oqmDbIdOrName, ClientSession clientSession, InteractingEntity entity){
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("checkedOutFor.userId", entity.getId()),
 			null,

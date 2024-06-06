@@ -29,6 +29,8 @@ quarkus.oidc.auth-server-url=https://{system.hostname}:{infra.keycloak.port}/rea
 quarkus.oqmCoreApi.coreApiBaseUri={core.api.externalBaseUri}
 quarkus.rest-client.oqmCoreApi.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
 quarkus.rest-client.oqmCoreApi.trust-store-password={cert.certs.keystorePass}
+quarkus.rest-client."tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient".trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+quarkus.rest-client."tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient".trust-store-password={cert.certs.keystorePass}
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
