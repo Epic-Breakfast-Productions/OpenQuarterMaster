@@ -12,6 +12,11 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Service to cache oqm db entries.
+ *
+ * Maybe move to core api extension?
+ */
 @Slf4j
 @ApplicationScoped
 public class OqmDatabaseService {
@@ -45,6 +50,7 @@ public class OqmDatabaseService {
 	}
 
 	public ArrayNode getDatabases() {
+		log.info("Getting cached OQM databases.");
 		try {
 			this.mutex.lock();
 			return this.dbs;

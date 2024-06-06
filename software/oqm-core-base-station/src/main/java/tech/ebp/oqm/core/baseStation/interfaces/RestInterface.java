@@ -25,6 +25,9 @@ import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
 @NoArgsConstructor
 public abstract class RestInterface {
 
+	/**
+	 * For normal use, don't use this. use the `oqmDatabases`
+	 */
 	@Inject
 	@Getter(AccessLevel.PROTECTED)
 	OqmDatabaseService oqmDatabaseService;
@@ -47,6 +50,9 @@ public abstract class RestInterface {
 
 	@CookieParam("oqmDb")
 	String oqmDb;
+
+	@Getter(AccessLevel.PROTECTED)
+	ArrayNode oqmDatabases;
 
 	protected boolean hasIdToken() {
 		return this.getIdToken() != null &&
@@ -102,6 +108,7 @@ public abstract class RestInterface {
 
 	@PostConstruct
 	void initialLogAndEntityProcess() {
+		this.oqmDatabases = this.oqmDatabaseService.getDatabases();
 		this.logRequestAndProcessEntity();
 	}
 
@@ -134,7 +141,7 @@ public abstract class RestInterface {
 	public String getSelectedDb() {
 		if (this.oqmDb == null || this.oqmDb.isBlank()) {
 			//TODO: this but smarter?
-			return this.oqmDatabaseService.getDatabases().get(0).get("id").asText();
+			return this.getOqmDatabases().get(0).get("id").asText();
 		}
 		return this.oqmDb;
 	}
