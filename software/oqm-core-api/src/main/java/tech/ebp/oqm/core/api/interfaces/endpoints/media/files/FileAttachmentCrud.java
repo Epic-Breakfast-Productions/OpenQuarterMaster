@@ -35,7 +35,7 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import java.io.IOException;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/media/fileAttachment")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/media/fileAttachment")
 @Tags({@Tag(name = "File Attachments", description = "Endpoints for File Attachments.")})
 @RequestScoped
 public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> {
@@ -240,11 +240,15 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		String id,
 		ObjectNode updates
 	) {
-		return this.getFileService().fileObjToGet(this.getFileService().getFileObjectService().update(
-			id,
-			updates,
-			this.getInteractingEntity()
-		));
+		return this.getFileService().fileObjToGet(
+			this.getOqmDbIdOrName(),
+			this.getFileService().getFileObjectService().update(
+				this.getOqmDbIdOrName(),
+				id,
+				updates,
+				this.getInteractingEntity()
+			)
+		);
 	}
 	
 	@Path("{id}/revision/{rev}")

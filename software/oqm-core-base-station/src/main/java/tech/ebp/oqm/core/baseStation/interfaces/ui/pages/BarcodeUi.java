@@ -51,7 +51,7 @@ public class BarcodeUi extends UiProvider {
 		this.ensureSearchDefaults(search);
 		
 		return this.getUni(Map.of(
-			"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), new ItemCategorySearch())
+			"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch())
 		));
 	}
 	

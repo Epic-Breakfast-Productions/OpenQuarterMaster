@@ -31,6 +31,12 @@ service:
       height: 500
       width: ${service.image.resizing.height}
       savedType: "PNG"
+  dbs:
+    ifNone:
+      create: true
+      name: "default"
+      displayName: "Default"
+      description: "The default database, automatically created if there are no other databases at startup."
 
 # TODO:: move this into `service` config
 runningInfo:

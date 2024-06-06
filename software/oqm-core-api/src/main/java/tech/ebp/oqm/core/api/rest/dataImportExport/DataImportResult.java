@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @SuperBuilder
@@ -16,16 +20,10 @@ public class DataImportResult {
 	
 	@lombok.Builder.Default
 	private long numUnits = 0;
+
 	@lombok.Builder.Default
-	private long numImages = 0;
+	private EntityImportResult entities = new EntityImportResult();
+
 	@lombok.Builder.Default
-	private long numFileAttachments = 0;
-	@lombok.Builder.Default
-	private long numItemCategories = 0;
-	@lombok.Builder.Default
-	private long numStorageBlocks = 0;
-	@lombok.Builder.Default
-	private long numInventoryItems = 0;
-	@lombok.Builder.Default
-	private long numItemLists = 0;
+	private Map<String, DbImportResult> dbResults = new HashMap<>();
 }

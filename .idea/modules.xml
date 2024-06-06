@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/OpenQuarterMaster.iml" filepath="$PROJECT_DIR$/.idea/OpenQuarterMaster.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/open-qm-base-station.main.iml" filepath="$PROJECT_DIR$/.idea/modules/open-qm-base-station.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/open-qm-base-station.test.iml" filepath="$PROJECT_DIR$/.idea/modules/open-qm-base-station.test.iml" />
     </modules>
   </component>
 </project>

@@ -18,7 +18,6 @@ import java.util.Map;
 @Getter(AccessLevel.PRIVATE)
 public class DatabaseManagementService {
 	
-	CustomUnitService customUnitService;
 	FileAttachmentService fileAttachmentService;
 	ImageService imageService;
 	InteractingEntityService interactingEntityService;
@@ -28,11 +27,10 @@ public class DatabaseManagementService {
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
 	
-	List<MongoService<?,?,?>> removeList = new ArrayList<>();
+	List<MongoDbAwareService<?,?,?>> removeList = new ArrayList<>();
 	
 	@Inject
 	public DatabaseManagementService(
-		CustomUnitService customUnitService,
 		FileAttachmentService fileAttachmentService,
 		ImageService imageService,
 		InteractingEntityService interactingEntityService,
@@ -48,7 +46,6 @@ public class DatabaseManagementService {
 		this.storageBlockService = storageBlockService;
 		this.itemCategoryService = itemCategoryService;
 		this.fileAttachmentService = fileAttachmentService;
-		this.customUnitService = customUnitService;
 		this.imageService = imageService;
 		this.interactingEntityService = interactingEntityService;
 		
@@ -58,18 +55,22 @@ public class DatabaseManagementService {
 		this.removeList.add(this.getStorageBlockService());
 		this.removeList.add(this.getItemCategoryService());
 		this.removeList.add(this.getFileAttachmentService());
-		this.removeList.add(this.getCustomUnitService());
 		this.removeList.add(this.getImageService());
 	}
 	
-	public Map<String, Long> clearDb(InteractingEntity performingEntity){
+	/**
+	 * @param oqmDbIdOrName
+	 * @param performingEntity
+	 * @return
+	 */
+	public Map<String, Long> clearDb(String oqmDbIdOrName, InteractingEntity performingEntity){
 		Map<String, Long> output = new HashMap<>();
 		try(
 			ClientSession session = this.fileAttachmentService.getNewClientSession(true)
 		){
-			for(MongoService<?,?,?> curService : this.getRemoveList()){
+			for(MongoDbAwareService<?,?,?> curService : this.getRemoveList()){
 				
-				output.put(curService.getCollectionName(), curService.clear(session));
+				output.put(curService.getCollectionName(), curService.clear(oqmDbIdOrName, session));
 			}
 			
 			//TODO:: add to admin action log (need to make that)

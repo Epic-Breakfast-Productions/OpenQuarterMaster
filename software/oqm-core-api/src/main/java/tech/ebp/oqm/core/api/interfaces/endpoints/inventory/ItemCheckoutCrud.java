@@ -36,7 +36,7 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/item-checkout")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item-checkout")
 @Tags({@Tag(name = "Item Checkout", description = "Endpoints for managing Item Checkouts.")})
 @RequestScoped
 public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheckoutSearch> {
@@ -81,7 +81,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 			);
 		}
 		
-		return this.getObjectService().checkoutItem(itemCheckoutRequest, entity);
+		return this.getObjectService().checkoutItem(this.getOqmDbIdOrName(), itemCheckoutRequest, entity);
 	}
 	
 	@PUT
@@ -108,11 +108,10 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ItemCheckout checkin(
-		@Context SecurityContext securityContext,
 		@PathParam("id") String id,
 		@Valid CheckInDetails checkInDetails
 	) {
-		return this.getObjectService().checkinItem(new ObjectId(id), checkInDetails, this.getInteractingEntity());
+		return this.getObjectService().checkinItem(this.getOqmDbIdOrName(), new ObjectId(id), checkInDetails, this.getInteractingEntity());
 	}
 	
 	@GET

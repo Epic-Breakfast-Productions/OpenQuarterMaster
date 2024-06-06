@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
@@ -101,26 +102,26 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 		StorageBlock storageBlock = this.getTestObject();
 		Map<String, Set<ObjectId>> expectedRefs = new HashMap<>();
 		
-		this.storageBlockService.add(storageBlock, testUser);
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser);
 		{//setup referencing data
 			//parent
 			StorageBlock subBlock = this.getTestObject();
 			subBlock.setParent(storageBlock.getId());
-			ObjectId subBlockId = this.storageBlockService.add(subBlock, testUser);
+			ObjectId subBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, subBlock, testUser);
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(subBlockId)));
 			
 			//Inventory item, basic
-			this.inventoryItemService.add(new SimpleAmountItem().setName(FAKER.name().name()), testUser);
+			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, new SimpleAmountItem().setName(FAKER.name().name()), testUser);
 			
 			SimpleAmountItem sai = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name());
 			sai.getStoredForStorage(storageBlock.getId());
-			ObjectId itemId = this.inventoryItemService.add(sai, testUser);
+			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 		}
 		
 		DbDeleteRelationalException exception = assertThrows(
 			DbDeleteRelationalException.class,
-			()->this.storageBlockService.remove(storageBlock.getId(), testUser)
+			()->this.storageBlockService.remove(DEFAULT_TEST_DB_NAME, storageBlock.getId(), testUser)
 		);
 		
 		log.info("Referenced objects: {}", exception.getObjectsReferencing());

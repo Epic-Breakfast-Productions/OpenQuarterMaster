@@ -27,6 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
@@ -48,7 +49,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testEmptyHistory(){
-		assertEquals(0, testMongoService.getHistoryService().count());
+		assertEquals(0, testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 	}
 	
 	@Test
@@ -57,12 +58,13 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		this.interactingEntityService.add(testUser);
 		
 		ObjectId objectId = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
 			new TestMainObject(FAKER.lorem().paragraph()),
 			testUser
 		);
 		
-		assertEquals(1, this.testMongoService.getHistoryService().count());
-		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(objectId);
+		assertEquals(1, this.testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
+		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, objectId);
 		assertEquals(1, events.size());
 		
 		CreateEvent createEvent = (CreateEvent) events.get(0);
