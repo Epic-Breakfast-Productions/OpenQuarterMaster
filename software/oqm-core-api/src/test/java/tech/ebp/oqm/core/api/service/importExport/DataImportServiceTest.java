@@ -5,7 +5,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
@@ -24,7 +23,6 @@ import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
-import tech.ebp.oqm.core.api.testResources.RetryRule;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
@@ -100,10 +98,8 @@ class DataImportServiceTest extends RunningServerTest {
 	ItemCheckoutService itemCheckoutService;
 	@Inject
 	TempFileService tempFileService;
-	
-	@Rule
-	public RetryRule retryRule = new RetryRule(3);
-	
+
+	// TODO:: fix flakiness. https://www.baeldung.com/junit-5-repeated-test
 	@Test
 	public void testImportService() throws IOException {
 		User testUser = testUserService.getTestUser(true);
