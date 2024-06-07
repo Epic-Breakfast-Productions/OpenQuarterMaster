@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
@@ -77,12 +78,12 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
 		
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
 		
-		List<InventoryItem> list = inventoryItemService.list();
+		List<InventoryItem> list = inventoryItemService.list(DEFAULT_TEST_DB_NAME);
 		log.info("num in collection: {}", list.size());
 		assertEquals(1, list.size(), "Unexpected number of objects in collection.");
 	}
@@ -92,12 +93,12 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new AmountStored(0, item.getUnit()));
 		
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
 		
-		List<InventoryItem> list = inventoryItemService.list();
+		List<InventoryItem> list = inventoryItemService.list(DEFAULT_TEST_DB_NAME);
 		log.info("num in collection: {}", list.size());
 		assertEquals(1, list.size(), "Unexpected number of objects in collection.");
 	}
@@ -108,12 +109,12 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 											 .setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new TrackedStored(FAKER.commerce().productName()));
 		
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
 		
-		List<InventoryItem> list = inventoryItemService.list();
+		List<InventoryItem> list = inventoryItemService.list(DEFAULT_TEST_DB_NAME);
 		log.info("num in collection: {}", list.size());
 		assertEquals(1, list.size(), "Unexpected number of objects in collection.");
 	}
@@ -122,14 +123,14 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testUpdateSimpleAmountItemJson(){
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);
 		
-		SimpleAmountItem item2 = (SimpleAmountItem) this.inventoryItemService.update(id, update);
+		SimpleAmountItem item2 = (SimpleAmountItem) this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, id, update);
 		
 		assertEquals(newName, item2.getName());
 	}
@@ -138,14 +139,14 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testUpdateListAmountItemJson(){
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new AmountStored(0, item.getUnit()));
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);
 		
-		ListAmountItem item2 = (ListAmountItem) this.inventoryItemService.update(id, update);
+		ListAmountItem item2 = (ListAmountItem) this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, id, update);
 		
 		assertEquals(newName, item2.getName());
 	}
@@ -156,14 +157,14 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new TrackedStored(FAKER.commerce().productName()));
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
 		
 		update.put("name", newName);
 		
-		TrackedItem item2 = (TrackedItem) this.inventoryItemService.update(id, update);
+		TrackedItem item2 = (TrackedItem) this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, id, update);
 		
 		assertEquals(newName, item2.getName());
 	}
@@ -187,9 +188,9 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testStoreItemWithNulledStorageBlockKey(){
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(new ObjectId(new byte[12]), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
-		ObjectId id = this.inventoryItemService.add(item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
-		SimpleAmountItem returned = (SimpleAmountItem) this.inventoryItemService.get(id);
+		SimpleAmountItem returned = (SimpleAmountItem) this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, id);
 		assertEquals(item, returned);
 	}
 	

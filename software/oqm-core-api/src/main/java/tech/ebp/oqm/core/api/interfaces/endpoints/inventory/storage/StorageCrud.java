@@ -36,7 +36,7 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import java.util.List;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/inventory/storage-block")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/storage-block")
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
 @RequestScoped
 public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSearch> {
@@ -309,7 +309,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 		//for actual queries
 		@QueryParam("onlyInclude") List<ObjectId> onlyInclude
 	) {
-		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(onlyInclude);
+		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(this.getOqmDbIdOrName(), onlyInclude);
 	}
 	
 	

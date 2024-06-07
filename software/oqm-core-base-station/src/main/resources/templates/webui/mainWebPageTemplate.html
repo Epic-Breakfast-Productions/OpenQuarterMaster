@@ -58,6 +58,21 @@ Ingests:
 		<div class="collapse navbar-collapse" id="navbarColor03">
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
+					<form class="d-flex me-auto" method="get" action="/items" id="navDbSelectForm">
+						<div class="input-group">
+							<span class="input-group-text" id="" title="Database Selected">{#icons/database}{/icons/database}</span>
+							<!-- Selected db: {selectedOqmDb} -->
+							<select class="form-select" id="navDatabaseSelector" aria-label="Database Selection" style="max-width: 140px;" onchange="OqmDbUtils.newDbSelected();">
+								{#for curOqmDb in oqmDbs}
+									{#let curId=curOqmDb.get("id").asText()}
+										<option value="{curId}" {#if curId.equals(selectedOqmDb)}selected{/if}>{curOqmDb.get("displayName").asText()}</option>
+									{/let}
+								{/for}
+							</select>
+						</div>
+					</form>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
 						{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
 						{#if page is 'overview'}
@@ -352,7 +367,7 @@ Ingests:
 <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/luxon/3.3.0/luxon.min.js"></script>
-<script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
+<script src="/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>
 <script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="/res/js/spinnerHelpers.js"></script>
@@ -361,6 +376,7 @@ Ingests:
 <script src="/res/js/dselectHelpers.js"></script>
 <script src="/res/js/rest.js"></script>
 <script src="/res/js/timeHelpers.js"></script>
+<script src="/res/js/OqmDb.js"></script>
 <script src="/res/js/main.js"></script>
 <script src="/res/js/icons.js"></script>
 <script src="/res/js/links.js"></script>

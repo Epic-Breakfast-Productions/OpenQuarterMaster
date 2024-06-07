@@ -55,8 +55,8 @@ public class StorageBlockUi extends UiProvider {
 			this.setupPageTemplate()
 				.data("showSearch", false),
 			Map.of(
-				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), new ItemCategorySearch()),
-				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), search).call((ObjectNode results)->{
+				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
+				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search).call((ObjectNode results)->{
 					return addParentLabelsToSearchResults(results, "labelText", this.coreApiClient::storageBlockGet);
 				})
 			)

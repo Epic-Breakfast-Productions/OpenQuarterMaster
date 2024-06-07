@@ -10,12 +10,16 @@ import com.mongodb.client.model.Filters;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.api.service.mongo.utils.AnyMapCodecProvider;
 import tech.ebp.oqm.core.api.service.mongo.utils.CustomCodecProvider;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
+
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -64,28 +68,39 @@ public class MongoTestConnector {
 		log.info("Clearing database of all entries.");
 		long totalDeleted = 0;
 		try (MongoClient client = this.getClient()) {
-			MongoDatabase db = client.getDatabase(this.mongoDatabaseName);
-			
-			for (String curCollectionName : db.listCollectionNames()) {
-				log.info("Clearing collection {}", curCollectionName);
-				MongoCollection<?> collection = db.getCollection(curCollectionName);
-				
-				long deletedCount = collection.deleteMany(Filters.empty()).getDeletedCount();
-				totalDeleted += deletedCount;
-				
-				log.info("Deleted {} records from {}", deletedCount, curCollectionName);
-				
-				long numLeft = collection.countDocuments();
-				if (numLeft > 0) {
-					throw new IllegalStateException(
-						"FAILED to clean collection \"" +
-						numLeft +
-						"\" after tests, " +
-						numLeft +
-						" records left."
-					);
+			for(Document curDbDoc : client.listDatabases()){
+				String curDbName = curDbDoc.getString("name");
+
+				if(!curDbName.startsWith(this.mongoDatabaseName) && !curDbName.equals(DEFAULT_TEST_DB_NAME)){
+					log.debug("Skipping clearing db: {}", curDbName);
+					continue;
 				}
-				
+
+				log.info("Deleting database {}", curDbName);
+
+				MongoDatabase db = client.getDatabase(curDbName);
+
+				for (String curCollectionName : db.listCollectionNames()) {
+					log.info("Clearing collection {}", curCollectionName);
+					MongoCollection<?> collection = db.getCollection(curCollectionName);
+
+					long deletedCount = collection.deleteMany(Filters.empty()).getDeletedCount();
+					totalDeleted += deletedCount;
+
+					log.info("Deleted {} records from {}", deletedCount, curCollectionName);
+
+					long numLeft = collection.countDocuments();
+					if (numLeft > 0) {
+						throw new IllegalStateException(
+							"FAILED to clean collection \"" +
+								numLeft +
+								"\" after tests, " +
+								numLeft +
+								" records left."
+						);
+					}
+
+				}
 			}
 		}
 		log.info("Finished clearing database. Deleted {} records.", totalDeleted);

@@ -20,7 +20,9 @@ Environment="CONTAINER_NAME=oqm-infra-mongo"
 Environment="IMAGE_NAME=mongo"
 Environment="IMAGE_VERSION=7"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
+Environment="DATA_DIR=/db/mongo"
 
+ExecStartPre=/bin/bash -c "echo data dir: $(oqm-config -g 'system.dataDir')$DATA_DIR"
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
@@ -29,21 +31,26 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/mongodb"
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chown oqm $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> $ENV_CONFIG_FILE"
 #ExecStartPre=/bin/bash -c "printf printf \"%s\n\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\""
-ExecStartPre=/bin/bash -c "mkdir -p /data/oqm/db/mongo/"
-ExecStartPre=/bin/bash -c "touch /data/oqm/db/mongo/keyfile"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config -g 'system.dataDir')$DATA_DIR"
+ExecStartPre=/bin/bash -c "chown -R oqm $(oqm-config -g 'system.dataDir')$DATA_DIR"
+ExecStartPre=/bin/bash -c "touch $(oqm-config -g 'system.dataDir')$DATA_DIR/keyfile"
+ExecStartPre=/bin/bash -c "chown oqm $(oqm-config -g 'system.dataDir')$DATA_DIR/keyfile"
 ExecStartPre=/bin/bash -c "chmod 600 /data/oqm/db/mongo/keyfile"
-ExecStartPre=/bin/bash -c "printf \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\" > /data/oqm/db/mongo/keyfile"
+ExecStartPre=/bin/bash -c "printf \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\" > $(oqm-config -g 'system.dataDir')$DATA_DIR/keyfile"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --rm \
+                                 --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                  --name $CONTAINER_NAME \
                                  --network=oqm-internal \
-                                 -v /data/oqm/db/mongo/:/data/db  \
-                                 --env-file /tmp/oqm/serviceConfig/infra/mongodb/env.list \
+                                 -v $(oqm-config -g 'system.dataDir')$DATA_DIR/:/data/db  \
+                                 --env-file $ENV_CONFIG_FILE \
                                  $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \

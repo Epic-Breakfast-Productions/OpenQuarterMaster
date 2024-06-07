@@ -56,7 +56,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getInventoryItemsInBlock(
+	public Response getInteractingEntityReference(
 		@PathParam("entityId") String entityId
 	) {
 		return Response.ok(

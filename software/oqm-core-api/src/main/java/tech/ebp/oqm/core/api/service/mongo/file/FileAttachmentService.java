@@ -28,58 +28,32 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
 	
-	FileAttachmentService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
-	@Inject
-	FileAttachmentService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-		String database,
-		TempFileService tempFileService,
-		StorageBlockService storageBlockService,
-		InventoryItemService inventoryItemService,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			FileAttachment.class,
-			false,
-			tempFileService,
-			"fileAttachment",
-			hens
-		);
-//		((FileAttachmentObjectService)this.getFileObjectService()).setFileService(this);
-		this.storageBlockService = storageBlockService;
-		this.inventoryItemService = inventoryItemService;
+	public FileAttachmentService() {
+		super(FileAttachment.class, "fileAttachment", false);
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, newOrChangedObject, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 	}
 	
 	@Override
-	public FileAttachmentGet fileObjToGet(FileAttachment obj) {
-		return FileAttachmentGet.fromFileAttachment(obj, this.getRevisions(obj.getId()));
+	public FileAttachmentGet fileObjToGet(String oqmDbIdOrName, FileAttachment obj) {
+		return FileAttachmentGet.fromFileAttachment(obj, this.getRevisions(oqmDbIdOrName, obj.getId()));
 	}
 	
 	@WithSpan
 	@Override
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, FileAttachment objectToRemove) {
-		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, objectToRemove);
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, FileAttachment objectToRemove) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, objectToRemove);
 		
-		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(cs, objectToRemove);
+		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
 		}
 		
-		refs = this.inventoryItemService.getItemsReferencing(cs, objectToRemove);
+		refs = this.inventoryItemService.getItemsReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}

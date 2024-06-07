@@ -102,10 +102,10 @@ public class BarcodeCreation extends ApiProvider {
 		ObjectNode item = null;
 		switch (object) {
 			case "storageBlock":
-				label = this.coreApiClientService.storageBlockGet(this.getBearerHeaderStr(), id).await().indefinitely().get("labelText").asText();
+				label = this.coreApiClientService.storageBlockGet(this.getBearerHeaderStr(), this.getSelectedDb(), id).await().indefinitely().get("labelText").asText();
 				break;
 			case "item":
-				item = this.coreApiClientService.invItemGet(this.getBearerHeaderStr(), id).await().indefinitely();
+				item = this.coreApiClientService.invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id).await().indefinitely();
 				label = item.get("name").asText();
 				break;
 			default:
@@ -173,7 +173,7 @@ public class BarcodeCreation extends ApiProvider {
 	public Response getItemBarcode(
 		@NonNull @PathParam("id") String id
 	) {
-		ObjectNode item = this.coreApiClientService.invItemGet(this.getBearerHeaderStr(), id).await().indefinitely();
+		ObjectNode item = this.coreApiClientService.invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id).await().indefinitely();
 		String barcode = item.get("barcode").asText();
 		
 		if (barcode == null || barcode.isBlank()) {

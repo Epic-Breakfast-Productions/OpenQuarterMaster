@@ -28,20 +28,24 @@ class CertsUtils:
     """
 
     @staticmethod
-    def ensureCaInstalled() -> (bool, str):
+    def ensureCaInstalled(force: bool = False) -> (bool, str):
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
         caCertName = os.path.basename(root_ca_cert_path)
 
         # Install in system location
         updatePrevious = False
+        if force:
+            updatePrevious = True
+
         if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
             updatePrevious = True
             os.remove("/usr/local/share/ca-certificates/" + caCertName)
         if os.path.exists("/etc/ssl/certs/" + caCertName):
             updatePrevious = True
             os.remove("/etc/ssl/certs/" + caCertName)
-        if updatePrevious:
+
+        if force or updatePrevious:
             output += f"Removed previously installed root CA from system: {caCertName}\n\n"
             result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
 
