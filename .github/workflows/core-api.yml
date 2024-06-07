@@ -1,0 +1,175 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI - Core - API
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ "**" ]
+    paths:
+      - "software/oqm-core-api/**"
+      - ".github/workflows/core-api.yml"
+  pull_request:
+    branches: [ "**" ]
+    paths:
+      - "software/oqm-core-api/**"
+      - ".github/workflows/core-api.yml"
+  workflow_call:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+defaults:
+  run:
+    working-directory: "software/oqm-core-api"
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    uses: ./wf-gradleBuild.yaml
+    with:
+      path: "software/oqm-core-api"
+
+
+#  # This workflow contains a single job called "build"
+#  buildTest:
+#    # The type of runner that the job will run on
+#    runs-on: ubuntu-latest
+#    # Steps represent a sequence of tasks that will be executed as part of the job
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '17'
+#          distribution: 'adopt'
+#      - uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: check
+#          build-root-directory: "software/oqm-core-api"
+#      - name: Archive code coverage results
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: Code Coverage Report
+#          path: "software/oqm-core-api/build/jacoco-report"
+#      - name: Archive Test Report
+#        env:
+#          NODE_OPTIONS: "--max_old_space_size=4096"
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: Test Report
+#          path: "software/oqm-core-api/build/reports/tests/test"
+#      # https://github.com/marketplace/actions/test-reporter
+#      - name: Test Report
+#        uses: dorny/test-reporter@v1
+#        env:
+#          NODE_OPTIONS: "--max_old_space_size=4096"
+#        if: success() || failure()    # run this step even if previous step failed
+#        with:
+#          name: Test Report            # Name of the check run which will be created
+#          path: "software/oqm-core-base-station/build/test-results/test/*.xml"    # Path to test results
+#          reporter: java-junit        # Format of test results
+#      - name: Archive Selenium Recordings
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: Selenium Recordings
+#          path: "software/oqm-core-base-station/build/seleniumRecordings"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#  integrationTest:
+#    # The type of runner that the job will run on
+#    runs-on: ubuntu-latest
+#    # Steps represent a sequence of tasks that will be executed as part of the job
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#      # Runs a single command using the runners shell
+#      - run: ./gradlew publishToMavenLocal
+#        working-directory: "software/libs/open-qm-core"
+#      - run: ./gradlew publishToMavenLocal
+#        working-directory: "software/libs/open-qm-driver"
+#      - uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: quarkusIntTest
+#          build-root-directory: "software/oqm-core-base-station"
+#      # https://github.com/marketplace/actions/test-reporter
+#      - name: Integration Test Report
+#        uses: dorny/test-reporter@v1
+#        if: success() || failure()    # run this step even if previous step failed
+#        with:
+#          name: Integration Test Report            # Name of the check run which will be created
+#          path: "software/oqm-core-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
+#          reporter: java-junit        # Format of test results
+#      - name: Archive Integration Test Report
+#        uses: actions/upload-artifact@v2
+#        if: success() || failure()
+#        with:
+#          name: Integration Test Report
+#          path: "software/oqm-core-base-station/build/reports/tests/quarkusIntTest"
+
+
+
+#  integrationTestNative:
+#    # The type of runner that the job will run on
+#    runs-on: ubuntu-latest
+#    # Steps represent a sequence of tasks that will be executed as part of the job
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#      # Runs a single command using the runners shell
+#      - run: ./gradlew publishToMavenLocal
+#        working-directory: "software/libs/open-qm-core"
+#      - run: ./gradlew publishToMavenLocal
+#        working-directory: "software/libs/open-qm-driver"
+#      - uses: gradle/gradle-build-action@v2
+#        with:
+#          arguments: quarkusIntTest -Dquarkus.package.type=native -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
+#          build-root-directory: "software/oqm-core-base-station"
+#      # https://github.com/marketplace/actions/test-reporter
+#      - name: Native Integration Test Report
+#        uses: dorny/test-reporter@v1
+#        if: success() || failure()    # run this step even if previous step failed
+#        with:
+#          name: Native Integration Test Report            # Name of the check run which will be created
+#          path: "software/oqm-core-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
+#          reporter: java-junit        # Format of test results
+#      - name: Archive Native Integration Test Report
+#        uses: actions/upload-artifact@v2
+#        if: success() || failure()
+#        with:
+#          name: Native Integration Test Report
+#          path: "software/oqm-core-base-station/build/reports/tests/quarkusIntTest"
+
+          
+#      - name: Publish Unit Test Results
+#        uses: EnricoMi/publish-unit-test-result-action@v1.3
+#        if: always()
+#        with:
+#          github_token: "${{ secrets.GITHUB_TOKEN }}"
+#          files: "software/oqm-core-base-station/build/test-results/**/*.xml"
