@@ -1,8 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -10,7 +8,6 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
@@ -37,46 +34,25 @@ import static com.mongodb.client.model.Filters.eq;
 @ApplicationScoped
 public class StorageBlockService extends HasParentObjService<StorageBlock, StorageBlockSearch, CollectionStats, StorageBlockTreeNode>{
 	
-	
-	private InventoryItemService inventoryItemService;
-	private ItemCheckoutService itemCheckoutService;
-	
-	StorageBlockService() {//required for DI
-		super(null, null, null, null, null, null, false, null);
-	}
-	
 	@Inject
-	StorageBlockService(
-		ObjectMapper objectMapper,
-		MongoClient mongoClient,
-		@ConfigProperty(name = "quarkus.mongodb.database")
-			String database,
-		InventoryItemService inventoryItemService,
-		ItemCheckoutService itemCheckoutService,
-		HistoryEventNotificationService hens
-	) {
-		super(
-			objectMapper,
-			mongoClient,
-			database,
-			StorageBlock.class,
-			false,
-			hens
-		);
-		this.inventoryItemService = inventoryItemService;
-		this.itemCheckoutService = itemCheckoutService;
+	InventoryItemService inventoryItemService;
+	@Inject
+	ItemCheckoutService itemCheckoutService;
+	
+	public StorageBlockService() {
+		super(StorageBlock.class, false);
 	}
 	
 	@Override
-	public CollectionStats getStats() {
-		return super.addBaseStats(CollectionStats.builder())
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
-		super.ensureObjectValid(newObject, storageBlock, clientSession);
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, storageBlock, clientSession);
 		
 		Bson parentFilter = and(
 			eq("label", storageBlock.getLabel()),
@@ -86,12 +62,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		
 		//TODO:: remember what this does and why
 		if(newObject){
-			long count = this.count(clientSession, parentFilter);
+			long count = this.count(oqmDbIdOrName, clientSession, parentFilter);
 			if(count > 0){
 				throw new DbModValidationException("");
 			}
 		} else {
-			List<StorageBlock> results = this.list(clientSession, parentFilter, null, null);
+			List<StorageBlock> results = this.list(oqmDbIdOrName, clientSession, parentFilter, null, null);
 			
 			if(!results.isEmpty()){
 				if(results.size() > 1 || !results.get(0).getId().equals(storageBlock.getId())){
@@ -109,7 +85,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			//exists
 			StorageBlock curParent;
 			try {
-				curParent = this.get(clientSession, storageBlock.getParent());
+				curParent = this.get(oqmDbIdOrName, clientSession, storageBlock.getParent());
 			} catch(DbNotFoundException e){
 				throw new DbModValidationException("No parent exists for parent given.", e);
 			}
@@ -118,12 +94,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 				if(storageBlock.getId().equals(curParent.getParent())){
 					throw new DbModValidationException("Not allowed to make parental loop.");
 				}
-				curParent = this.get(clientSession, curParent.getParent());
+				curParent = this.get(oqmDbIdOrName, clientSession, curParent.getParent());
 			}
 			
 		}
 		
-		{//check that parent isn't an infinite loop
+		{//TODO:: check that parent isn't an infinite loop
 		
 		}
 	}
@@ -139,11 +115,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	 * @param image
 	 * @return
 	 */
-	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, Image image){
+	public Set<ObjectId> getBlocksReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image){
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			//			elemMatch("imageIds", eq(image.getId())),
 			eq("imageIds", image.getId()),
@@ -153,12 +130,13 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		return list;
 	}
 	
-	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, ItemCategory itemCategory){
+	public Set<ObjectId> getBlocksReferencing(String oqmDbIdOrName, ClientSession clientSession, ItemCategory itemCategory){
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("storedCategories", itemCategory.getId()),
 			null,
@@ -167,10 +145,11 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		return list;
 	}
 	
-	public Set<ObjectId> getBlocksReferencing(ClientSession clientSession, FileAttachment fileAttachment){
+	public Set<ObjectId> getBlocksReferencing(String oqmDbIdOrName, ClientSession clientSession, FileAttachment fileAttachment){
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			clientSession,
 			eq("attachedFiles", fileAttachment.getId()),
 			null,
@@ -181,11 +160,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	
 	@WithSpan
 	@Override
-	public Map<String, Set<ObjectId>> getReferencingObjects(ClientSession cs, StorageBlock storageBlock) {
-		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(cs, storageBlock);
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, StorageBlock storageBlock) {
+		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, storageBlock);
 		
 		Set<ObjectId> refs = new TreeSet<>();
 		this.listIterator(
+			oqmDbIdOrName,
 			cs,
 			eq(
 				"parent",
@@ -198,12 +178,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 			objsWithRefs.put(this.getClazz().getSimpleName(), refs);
 		}
 		
-		refs = this.inventoryItemService.getItemsReferencing(cs, storageBlock);
+		refs = this.inventoryItemService.getItemsReferencing(oqmDbIdOrName, cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.inventoryItemService.getClazz().getSimpleName(), refs);
 		}
 		
-		refs = this.itemCheckoutService.getItemCheckoutsReferencing(cs, storageBlock);
+		refs = this.itemCheckoutService.getItemCheckoutsReferencing(oqmDbIdOrName, cs, storageBlock);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}

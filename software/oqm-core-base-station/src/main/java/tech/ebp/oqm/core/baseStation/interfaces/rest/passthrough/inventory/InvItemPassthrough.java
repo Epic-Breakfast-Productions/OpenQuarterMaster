@@ -53,7 +53,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	public Uni<String> create(
 		ObjectNode item
 	) {
-		return this.getOqmCoreApiClient().invItemCreate(this.getBearerHeaderStr(), item);
+		return this.getOqmCoreApiClient().invItemCreate(this.getBearerHeaderStr(), this.getSelectedDb(), item);
 	}
 	
 	@POST
@@ -80,7 +80,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	public Uni<ArrayNode> importData(
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
-		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), body);
+		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), this.getSelectedDb(), body);
 	}
 	
 	@Path("stats")
@@ -99,7 +99,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	@WithSpan
 	public Uni<ObjectNode> getCollectionStats(
 	) {
-		return this.getOqmCoreApiClient().invItemCollectionStats(this.getBearerHeaderStr());
+		return this.getOqmCoreApiClient().invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb());
 	}
 	
 	@GET
@@ -124,7 +124,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		//for actual queries
 		@BeanParam InventoryItemSearch itemSearch
 	) {
-		return this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), itemSearch);
+		return this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch);
 	}
 	
 	@Path("{id}")
@@ -158,7 +158,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> get(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().invItemGet(this.getBearerHeaderStr(), id);
+		return this.getOqmCoreApiClient().invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 	
 	@PUT
@@ -194,7 +194,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return this.getOqmCoreApiClient().invItemUpdate(this.getBearerHeaderStr(), id, updates);
+		return this.getOqmCoreApiClient().invItemUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
 	}
 	
 	@DELETE
@@ -228,7 +228,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> delete(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().invItemDelete(this.getBearerHeaderStr(), id);
+		return this.getOqmCoreApiClient().invItemDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 	
 	@GET
@@ -262,7 +262,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().invItemGetHistoryForObject(this.getBearerHeaderStr(), id, searchObject);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().invItemGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
@@ -288,7 +288,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.getOqmCoreApiClient().invItemSearchHistory(this.getBearerHeaderStr(), searchObject);
+		return this.getOqmCoreApiClient().invItemSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
 	}
 	
 //	@GET
@@ -340,7 +340,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode addObject
 	) {
-		return this.getOqmCoreApiClient().invItemAddStoredInventoryItem(this.getBearerHeaderStr(), itemId, storageBlockId, addObject);
+		return this.getOqmCoreApiClient().invItemAddStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockId, addObject);
 	}
 	
 	@PUT
@@ -367,7 +367,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode addObject
 	) throws JsonProcessingException {
-		return this.getOqmCoreApiClient().invItemAddStoredInventoryItemToStored(this.getBearerHeaderStr(), itemId, storedId, storageBlockId, addObject);
+		return this.getOqmCoreApiClient().invItemAddStoredInventoryItemToStored(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storedId, storageBlockId, addObject);
 	}
 	
 	@DELETE
@@ -393,7 +393,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("storageBlockId") String storageBlockId,
 		JsonNode subtractObject
 	) {
-		return this.getOqmCoreApiClient().invItemSubtractStoredInventoryItem(this.getBearerHeaderStr(), itemId, storageBlockId, subtractObject);
+		return this.getOqmCoreApiClient().invItemSubtractStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockId, subtractObject);
 	}
 	
 	@DELETE
@@ -447,7 +447,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("storageBlockIdTo") String storageBlockIdTo,
 		JsonNode transferObject
 	) {
-		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), itemId, storageBlockIdFrom, storageBlockIdTo, transferObject);
+		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockIdFrom, storageBlockIdTo, transferObject);
 	}
 	
 	@PUT
@@ -476,7 +476,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("storedIdTo") String storedIdTo,
 		JsonNode transferObject
 	) {
-		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), itemId, storageBlockIdFrom, storedIdFrom, storageBlockIdTo, storedIdTo,
+		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockIdFrom, storedIdFrom, storageBlockIdTo, storedIdTo,
 			transferObject);
 	}
 	
@@ -511,6 +511,6 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@PathParam("itemId") String itemId,
 		ObjectNode action
 	) {
-		return this.getOqmCoreApiClient().invItemApplyAddSubtractTransfer(this.getBearerHeaderStr(), itemId, action);
+		return this.getOqmCoreApiClient().invItemApplyAddSubtractTransfer(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, action);
 	}
 }

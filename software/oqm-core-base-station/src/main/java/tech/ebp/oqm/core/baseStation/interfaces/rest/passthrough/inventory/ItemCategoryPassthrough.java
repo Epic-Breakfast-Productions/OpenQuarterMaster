@@ -24,7 +24,7 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 	
 	@POST
 	public Uni<Response> addItemCategory(ObjectNode newItemCategory) {
-		return this.getOqmCoreApiClient().itemCatAdd(this.getBearerHeaderStr(), newItemCategory)
+		return this.getOqmCoreApiClient().itemCatAdd(this.getBearerHeaderStr(), this.getSelectedDb(), newItemCategory)
 				   .map(output->Response.ok(output).build()
 				   );
 	}
@@ -33,7 +33,7 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> getItemCategory(@BeanParam ItemCategorySearch itemCategorySearch) {
 		//TODO:: handle HTML return for searches
-		return this.getOqmCoreApiClient().itemCatSearch(this.getBearerHeaderStr(), itemCategorySearch)
+		return this.getOqmCoreApiClient().itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCategorySearch)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -42,7 +42,7 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 	@GET
 	@Path("{catId}")
 	public Uni<Response> getItemCategory(@PathParam("catId") String itemCategoryId) {
-		return this.getOqmCoreApiClient().itemCatGet(this.getBearerHeaderStr(), itemCategoryId)
+		return this.getOqmCoreApiClient().itemCatGet(this.getBearerHeaderStr(), this.getSelectedDb(), itemCategoryId)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -57,14 +57,14 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCatGetHistory(this.getBearerHeaderStr(), catId, historySearch);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCatGetHistory(this.getBearerHeaderStr(), this.getSelectedDb(), catId, historySearch);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
 	@PUT
 	@Path("/{id}")
 	public Uni<Response> itemCategoryUpdate(@PathParam("id") String id, ObjectNode updates){
-		return this.getOqmCoreApiClient().itemCatUpdate(this.getBearerHeaderStr(), id, updates)
+		return this.getOqmCoreApiClient().itemCatUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -74,7 +74,7 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Uni<Response> itemCategoryDelete(@PathParam("id") String id){
-		return this.getOqmCoreApiClient().itemCatDelete(this.getBearerHeaderStr(), id)
+		return this.getOqmCoreApiClient().itemCatDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -84,7 +84,7 @@ public class ItemCategoryPassthrough extends PassthroughProvider {
 	@Path("/tree")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> getItemCategoryTree(@QueryParam("onlyInclude") List<String> onlyInclude) {
-		return this.getOqmCoreApiClient().itemCatTree(this.getBearerHeaderStr(), onlyInclude)
+		return this.getOqmCoreApiClient().itemCatTree(this.getBearerHeaderStr(), this.getSelectedDb(), onlyInclude)
 				   .map(output->
 							Response.ok(output).build()
 				   );

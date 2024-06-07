@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
 @Tag("integration")
@@ -68,13 +69,15 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@Inject
 	@Location("templates/items.csv")
 	Template itemsCsv;
+
+
 	
 	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
 		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(item))
 										   .when()
-										   .post()
+										   .post("", DEFAULT_TEST_DB_NAME)
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());
@@ -92,7 +95,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .contentType(ContentType.JSON)
 										   .body(objectMapper.writeValueAsString(updateData))
 										   .when()
-										   .put(id.toHexString())
+										   .put(DEFAULT_TEST_DB_NAME, id.toHexString())
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());
@@ -123,7 +126,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);
@@ -139,7 +142,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);
@@ -157,7 +160,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 											 .setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
-		InventoryItem stored = inventoryItemService.get(returned);
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
 		assertNotNull(stored);
 		
 		item.setId(returned);
@@ -201,7 +204,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .multiPart("file", csvData)
 										   .multiPart("fileName", "test.csv")
 										   .when()
-										   .post()
+										   .post("", DEFAULT_TEST_DB_NAME)
 										   .then();
 		
 		response.statusCode(Response.Status.OK.getStatusCode());

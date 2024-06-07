@@ -1,11 +1,14 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -29,6 +32,14 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MainObjectProvider<T extends MainObject, S extends SearchObject<T>> extends ObjectProvider {
+	
+	@Getter
+	@PathParam("oqmDbIdOrName")
+	String oqmDbIdOrName;
+	
+	@Getter
+	@Inject
+	ObjectMapper objectMapper;
 	
 	public abstract Class<T> getObjectClass();
 	
@@ -64,7 +75,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output = this.getObjectService().add(object, this.getInteractingEntity());
+		ObjectId output = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
 		
 		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
 		return output;
@@ -76,13 +87,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(objects, this.getInteractingEntity());
+		List<ObjectId> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
 	
 	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
-		SearchResult<T> searchResult = this.getObjectService().search(searchObject, false);
+		SearchResult<T> searchResult = this.getObjectService().search(this.getOqmDbIdOrName(), searchObject, false);
 		return this.getSearchResultResponseBuilder(searchResult);
 	}
 	
@@ -157,7 +168,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
 		log.info("Retrieving object with id {}", id);
-		T output = this.getObjectService().get(id);
+		T output = this.getObjectService().get(this.getOqmDbIdOrName(), id);
 		
 		log.info("{} found with id {}", this.getObjectClass().getSimpleName(), id);
 		return output;
@@ -183,7 +194,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 //	@WithSpan
 	public CollectionStats getCollectionStats(
 	) {
-		return this.getObjectService().getStats();
+		return this.getObjectService().getStats(this.getOqmDbIdOrName());
 	}
 	
 	//	@PUT
@@ -227,7 +238,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
-		T updated = this.getObjectService().update(id, updates, this.getInteractingEntity());
+		T updated = this.getObjectService().update(this.getOqmDbIdOrName(), id, updates, this.getInteractingEntity());
 		
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;
@@ -271,7 +282,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		String id
 	) {
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
-		T output = this.getObjectService().remove(id, this.getInteractingEntity());
+		T output = this.getObjectService().remove(this.getOqmDbIdOrName(), id, this.getInteractingEntity());
 		
 		log.info("{} found, deleted.", output.getClass().getSimpleName());
 		return output;
@@ -316,7 +327,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
 		searchObject.setObjectId(new ObjectId(id));
-		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(searchObject, false);
+		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
@@ -355,7 +366,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Searching for objects with: {}", searchObject);
 		
-		return this.getObjectService().searchHistory(searchObject, false);
+		return this.getObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 	}
 	//</editor-fold>
 }

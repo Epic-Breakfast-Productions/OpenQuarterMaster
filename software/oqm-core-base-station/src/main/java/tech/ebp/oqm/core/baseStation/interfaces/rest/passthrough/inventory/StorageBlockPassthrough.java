@@ -45,7 +45,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	
 	@POST
 	public Uni<Response> addStorageBlock(ObjectNode newStorageBlock) {
-		return this.getOqmCoreApiClient().storageBlockAdd(this.getBearerHeaderStr(), newStorageBlock)
+		return this.getOqmCoreApiClient().storageBlockAdd(this.getBearerHeaderStr(), this.getSelectedDb(), newStorageBlock)
 				   .map(output->Response.ok(output).build()
 				   );
 	}
@@ -60,7 +60,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
 		return this.processSearchResults(
-			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), storageBlockSearch).call((ObjectNode results)->{
+			this.getOqmCoreApiClient().storageBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), storageBlockSearch).call((ObjectNode results)->{
 				return addParentLabelsToSearchResults(results, "labelText", this.getOqmCoreApiClient()::storageBlockGet);
 			}),
 			this.searchResultTemplate,
@@ -74,7 +74,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@GET
 	@Path("{blockId}")
 	public Uni<Response> getStorageBlock(@PathParam("blockId") String storageBlockId) {
-		return this.getOqmCoreApiClient().storageBlockGet(this.getBearerHeaderStr(), storageBlockId)
+		return this.getOqmCoreApiClient().storageBlockGet(this.getBearerHeaderStr(), this.getSelectedDb(), storageBlockId)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -90,7 +90,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().storageBlockGetHistory(this.getBearerHeaderStr(), storageBlockId, historySearch);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().storageBlockGetHistory(this.getBearerHeaderStr(), this.getSelectedDb(), storageBlockId, historySearch);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
@@ -98,7 +98,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@Path("/tree")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Uni<Response> storageBlockTree(@QueryParam("onlyInclude") List<String> onlyInclude) {
-		return this.getOqmCoreApiClient().storageBlockTree(this.getBearerHeaderStr(), onlyInclude)
+		return this.getOqmCoreApiClient().storageBlockTree(this.getBearerHeaderStr(), this.getSelectedDb(), onlyInclude)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -107,7 +107,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@PUT
 	@Path("/{id}")
 	public Uni<Response> storageBlockUpdate(@PathParam("id") String id, ObjectNode updates) {
-		return this.getOqmCoreApiClient().storageBlockUpdate(this.getBearerHeaderStr(), id, updates)
+		return this.getOqmCoreApiClient().storageBlockUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates)
 				   .map(output->
 							Response.ok(output).build()
 				   );
@@ -117,7 +117,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Uni<Response> storageBlockDelete(@PathParam("id") String id) {
-		return this.getOqmCoreApiClient().storageBlockDelete(this.getBearerHeaderStr(), id)
+		return this.getOqmCoreApiClient().storageBlockDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id)
 				   .map(output->
 							Response.ok(output).build()
 				   );

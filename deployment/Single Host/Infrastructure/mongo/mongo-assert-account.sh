@@ -8,8 +8,9 @@ fi
 
 adminUser="$(oqm-config -g 'infra.mongodb.adminUser')"
 adminPass="$(oqm-config -g 'infra.mongodb.adminPass')"
+# TODO:: add flag to enable more admin level rather than
 # TODO:: each step, assert worked
-docker exec oqm-infra-mongo mongosh admin -u "$adminUser" -p "$adminPass" --eval "db.createUser({user: \"$usernameToAssert\", pwd: \"$passwordToAssert\", roles: []})"
+docker exec oqm-infra-mongo mongosh admin -u "$adminUser" -p "$adminPass" --eval "db.createUser({user: \"$usernameToAssert\", pwd: \"$passwordToAssert\", roles: [\"dbAdminAnyDatabase\", \"readWriteAnyDatabase\"]})"
 docker exec oqm-infra-mongo mongosh admin -u "$usernameToAssert" -p "$passwordToAssert" --eval "db.getSiblingDB('$databaseToAssert');"
 docker exec oqm-infra-mongo mongosh admin -u "$adminUser" -p "$adminPass" --eval "db.grantRolesToUser(\"$usernameToAssert\",[{role:\"dbOwner\", db: \"$databaseToAssert\"}])"
 

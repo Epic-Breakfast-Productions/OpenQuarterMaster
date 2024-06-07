@@ -14,8 +14,6 @@ quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/api/files/publicC
 quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/api/files/privateKey.pem
 quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/api/files/keystore.p12
 quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
-quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/api/files/keystore.p12
-quarkus.oidc.tls.trust-store-password={cert.certs.keystorePass}
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
