@@ -68,7 +68,7 @@ public class ExpiryProcessor {
 					for (ItemExpiryEvent curEvent : expiryEvents) {
 						curEvent.setEntity(this.baseStationInteractingEntity.getId());
 						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
-						this.eventNotificationService.sendEvent(this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
+						this.eventNotificationService.sendEvent(curEntry.getDbId(), this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
 					}
 				}
 			});

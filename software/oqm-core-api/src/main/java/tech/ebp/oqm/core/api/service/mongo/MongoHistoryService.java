@@ -184,7 +184,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 			history.setEntity(entity.getId());
 		}
 		ObjectId output = this.add(oqmDbIdOrName, session, history);
-		this.getHens().sendEvents(this.clazzForObjectHistoryIsFor, history);
+		this.getHens().sendEvents(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(), this.clazzForObjectHistoryIsFor, history);
 		return output;
 	}
 	public ObjectId addHistoryFor(String oqmDbIdOrName, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){
