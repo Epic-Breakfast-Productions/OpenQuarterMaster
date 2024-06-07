@@ -23,6 +23,7 @@ import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
@@ -98,6 +99,8 @@ class DataImportServiceTest extends RunningServerTest {
 	ItemCheckoutService itemCheckoutService;
 	@Inject
 	TempFileService tempFileService;
+	@Inject
+	OqmDatabaseService oqmDatabaseService;
 
 	// TODO:: fix flakiness. https://www.baeldung.com/junit-5-repeated-test
 	@Test
@@ -122,7 +125,7 @@ class DataImportServiceTest extends RunningServerTest {
 			this.customUnitService.add(null, customUnitEntry);
 		}
 		List<CustomUnitEntry> customUnits = this.customUnitService.list();
-		UnitUtils.registerAllUnits(customUnits);
+
 		for (int i = 0; i < 5; i++) {
 			CustomUnitEntry customUnitEntry = new CustomUnitEntry(
 				UnitCategory.Number,
@@ -139,7 +142,7 @@ class DataImportServiceTest extends RunningServerTest {
 			this.customUnitService.add(null, customUnitEntry);
 		}
 		customUnits = this.customUnitService.list();
-		UnitUtils.registerAllUnits(customUnits);
+		log.info("Custom units ({}): {}", customUnits.size(), customUnits);
 		
 		File tempFilesDir = this.tempFileService.getTempDir("import-test-files", null);
 		for (int i = 0; i < 5; i++) {
@@ -160,6 +163,7 @@ class DataImportServiceTest extends RunningServerTest {
 				this.fileAttachmentService.updateFile(DEFAULT_TEST_DB_NAME, id, curFile, testUser);
 			}
 		}
+		log.info("Dbs mid adding: {}", this.oqmDatabaseService.listIterator().into(new ArrayList<>()));
 		
 		//Add images
 		for (int i = 0; i < 5; i++) {
@@ -215,7 +219,7 @@ class DataImportServiceTest extends RunningServerTest {
 			item.setUnit(customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit());
 			for (int j = 0; j < 5; j++) {
 				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(abs(rand.nextInt()), item.getUnit())
+					.setAmount(abs(rand.nextInt() + 1), item.getUnit())
 					.setCondition(rand.nextInt(100))
 					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
 					.setConditionNotes(FAKER.lorem().paragraph());
