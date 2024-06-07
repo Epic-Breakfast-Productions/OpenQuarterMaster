@@ -27,6 +27,10 @@ jobs:
     uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
       path: "software/oqm-core-api"
+  unitTest:
+    uses: ./.github/workflows/wf-gradleUnitTest.yaml
+    with:
+      path: "software/oqm-core-api"
 
 
 #  # This workflow contains a single job called "build"

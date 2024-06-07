@@ -1,4 +1,4 @@
-name: WF - Gradle Build
+name: WF - Gradle Unit Test
 on:
   workflow_call:
     inputs:
@@ -17,5 +17,5 @@ jobs:
           distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: build -x test
+          arguments: test
           build-root-directory: ${{ inputs.path }}
