@@ -23,6 +23,8 @@ defaults:
     working-directory: "software/oqm-core-api"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  setup:
+    uses: ./.github/workflows/wf-setup.yaml
   build:
     uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
