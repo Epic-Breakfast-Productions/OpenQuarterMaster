@@ -44,7 +44,7 @@ public class IndexUi {
 	@GET
 	@Operation(summary = "Simple index content to lead user to more resources. Same as /index.html.")
 	public String getRoot() {
-		return this.getIndexLines();// + healthReporter.getHealth().getPayload().get("status");
+		return this.getIndexLines();
 	}
 	
 	//Probably overthinking this
