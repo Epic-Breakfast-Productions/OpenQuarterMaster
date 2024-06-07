@@ -439,10 +439,10 @@ Architecture: all
 Maintainer: EBP
 Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2
 Filename: ./oqm-manager-station+captain_2.2.1_all.deb
-Size: 39944
-MD5sum: 23ac05373f89b0ac875b0e28c1ecb8e1
-SHA1: 4040591c8893aea1719246dbb9a9409f9fb261f2
-SHA256: 8d2d8ebe4cafb1d42d1ec29ba8f672a0fc4d850c829550b965db8202c32c2685
+Size: 39968
+MD5sum: f339e325cfa716607fdb33947eb4a95c
+SHA1: d02277ef81cde87f8c77c1049f625359a2d7ef7f
+SHA256: ccd31105954a0a0354d049c36faee3a178a0d1c9bc97f8bbddf778db53cf51fb
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
