@@ -6,7 +6,7 @@ on:
         required: true
         type: string
 jobs:
-  build:
+  quarkusIntTest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
