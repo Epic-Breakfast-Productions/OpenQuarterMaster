@@ -2,147 +2,82 @@
 
 [Back](README.md)
 
-This guide explains how users are authenticated in this system.
+This guide explains how users are authenticated in this system component.
 
-- https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+In short, you have two options;
 
-## Authentication
+ - JWT- based RBAC (preferred, standard)
+ - Basic Auth (NOT preferred, for testing and simple, secure environment usecases only)
 
-The endpoints on this server are protected by RBAC controls, utilizing JWT's.
+## JWT
 
-If the config value `service.authMode` is set to `SELF`, then the service itself will provide those tokens and user
-management.
+As stated, [JWT](https://jwt.io/) based auth is the standard and preferred method for authenticating with this service.
+JWT's provide simplicity and security in a distributed software model. In our ecosystem, when accessing the web ui's, those ui services sign users into the [OIDC](https://openid.net/developers/how-connect-works/) provider (in the standard single-node deployment, that is [Keycloak](../../../deployment/Single%20Host/Infrastructure/keycloak)). This gives the uis a jwt, which is then passed onto this backend service to perform actions.
 
-If the config value is `EXTERNAL`, then the service assumes an external credential provider is at play and won't perform
-user management.
+### Configuration & References
 
-### JWT
+All configuration options for the JWT setup can be found in Quarkus' documentation:
 
-- https://quarkus.io/guides/security-keycloak-authorization
-- https://quarkus.io/guides/security-openid-connect-web-authentication
-- https://quarkus.io/guides/security-oauth2
+ - Quarkus JWT plugin guide: https://quarkus.io/guides/security-jwt
+   - Config reference for that plugin: https://quarkus.io/guides/security-jwt#configuration-reference
+ - Single node host jwt configuration (Under "jwt verification"): [core-api-config.list](../installerSrc/core-api-config.list)
 
-#### Claims
+### Calling an endpoint with JWT
 
-The following claims are considered in this application:
+Providing a JWT is easy. Simply provide the `Authorization` header with the value: `Bearer <token>`
 
-|   Claim name | Short for         | TL;DR/ Description/ Data description                                                             | Usage in SELF auth mode | Usage in EXTERNAL auth mode                       |
-|-------------:|-------------------|:-------------------------------------------------------------------------------------------------|:------------------------|:--------------------------------------------------|
-|          sub | Subject           | Subject of JWT, is the user's id String                                                          | -                       | Used as the value for `User.external ids`         |
-|          iss | Issuer            | The issuer of the JWT, The entity that issued the token.                                         | -                       | Used as the key for `User.external ids`           |
-|          upn | userPrincipalName | The user's sign-in name. Username.                                                               | -                       | Used as the value for                             |
-|        email |                   | The user's email.                                                                                | -                       | Used as the user's email in the internal db.      |
-|        title |                   | The user's title.                                                                                | -                       | Used as the user's title in the internal db.      |
-|   given_name |                   | The user's given/ first name.                                                                    | -                       | Used as the user's first name in the internal db. |
-|  family_name |                   | The user's family/ last name.                                                                    | -                       | Used as the user's last name in the internal db.  |
-| roleMappings |                   | Unused                                                                                           | -                       | -                                                 |
-|       groups |                   | The roles for what the user should be allowed to do                                              | -                       | -                                                 |
-|          aud | audience          | The audience for the token; Recipient for which the JWT is intended. User identification string. | -                       | -                                                 |
-|    auth_time |                   | The epoch time of when the authorization happened                                                | -                       | -                                                 |
-|          exp | expiration time   | The epoch time of when the token will expire                                                     | -                       | -                                                 |
-|          jti | JWT ID            | Unique ID of the token, allows revocation of the token or for it to only be used once.           | -                       |                                                   |
+Below is an example with curl:
 
-References:
+```bash
+curl -X 'GET' \
+  'http://localhost:8080/api/v1/inventory/item' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer ${TOKEN}'
+```
 
-- https://auth0.com/docs/security/tokens/json-web-tokens/json-web-token-claims
+## Basic
 
-### For External Auth
+Basic auth is, well, pretty basic and therefore insecure. It consists of plaintext credentials sent in a base64 encoded string.
 
-For the service to work with `service.authMode` set to `EXTERNAL`:
+> [!WARNING]  
+> We **_strongly_** recommend not using basic authentication in production or public-facing situations.
+> It is not secure or sustainable in a real working environment.
+> We support this feature because:
+>  1. It is easy to provide, optionally based on configuration (default is not to activate)
+>  2. Makes development easier, as we use frameworkk tooling to abstract out authentication methods.
+>  3. We can visualize edge cases where it could be useful
 
-- service needs the `mp.jwt.verify.publickey` set to the public key cert from the issuer of the jwt tokens
-- Tokens need to be provided with all claims listed above
+### Configuration & References
 
-#### Setting up for Keycloak Realm
+ - Mozilla docs on basic auth: https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme
+ - Quarkus docs:
+   - https://quarkus.io/guides/security-basic-authentication-howto
 
-1. Have a realm (in tests, called `apps`). Operate under this realm.
-2. Add a client. Client type should be `OpenId Connect`. Used for testing, id is `quartermaster`, with name "Open
-   QuarterMaster"
-3. In tests, we used thee capability configs:
-   ![img_2.png](img_2.png)
-3. Ensure Valid redirect URIs
-    4. URL's used for testing:
-       ![img_1.png](img_1.png)
-4. Ensure all roles added
-   from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java
-   under "roles"
-5. Setup mappers (Under Clients -> quartermaster-> clientScopes -> quartermaster-dedicated ): ![img.png](img.png)
-    1. A `client roles` mapper, with token claim name `groups`
+Configuration example:
 
-#### (New) Steps for setting up keycloak Realm
+```yaml
+quarkus:
+  smallrye-jwt:
+     enabled: false
+  security:
+    users:
+      embedded:
+        enabled: true
+        plain-text: true
+        users:
+          joe: "password"
+          adminBob: "password"
+        roles:
+          joe: "inventoryView,inventoryEdit"
+          adminBob: "inventoryView,inventoryEdit,inventoryAdmin"
+```
 
-- https://www.baeldung.com/keycloak-user-registration
+### Calling an endpoint with Basic
 
-1. Enter Keycloak Admin Console
-2. Under realm dropdown, hit "Create Realm". Name it `oqm`.
-3. Realm Settings -> General
-    1. Realm ID changed to `oqm`
-    2. Display name and HTML Display name set to `Open QuarterMaster`
-    3. User-managed access turned on
-    4. Hit "Save"
-4. Realm Settings -> Login. Turn on:
-    - User Registration
-    - Forgot Password
-    - Remember Me
-    - Email as Username?
-    - Edit Username
-5. Authentication -> Policies -> Password Policy. Add the following policies:
-    - Minimum Length of 8
-    - Not username
-    - Not email
-    - Special chars
-    - Uppercase letters
-    - Lowercase letters
-    - Digits
-6. Create Client
-    1. Clients -> Create Client
-    2. Client id: `oqm-app`
-    3. Name: `Open QuarterMaster App`
-    4. Always display in UI
-    5. Client authentication on
-    6. "Standard flow", "Direct access grants", "Implicit flow", and "Service Account Roles" all on
-    7. Valid redirect URIs: `*`
-    8. Valid post logout redirect URIs: `+`
-    9. Create
-7. Add all roles
-   from https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/libs/open-qm-core/src/main/java/tech/ebp/oqm/lib/core/rest/auth/roles/Roles.java
-   - `inventoryAdmin` -> `Role to enable inventory administration. Can import/export inventory data.`
-   - `inventoryView` -> `Role to enable viewing inventory.`
-   - `inventoryEdit` -> `Role to enable editing inventory.`
-   - `itemCheckout` -> `Role to enable checking out (and back in) items.`
-8. Add groups with roles:
-   - `users`
-       - `inventoryView`
-       - `inventoryEdit`
-       - `itemCheckout`
-   - `admins` as child group of `users`
-       - `inventoryAdmin`
-9. Realm Settings -> User Registration -> Default Groups
-   1. Add `admins` to default group
-10. Clients -> oqm-app -> Settings -> Logout Settings. Turn off "Front Channel Logout"
-11. Clients -> oqm-app -> Client Scopes, set `microprofile-jwt` to "default"
-12. Client Scopes -> Set `microprofile-jwt` to "default"
-13. Setup Service Account Roles
-    1. Clients -> oqm-app -> Service Accounts Roles
-    2. Add all appropriate roles
-14. Set appropriate timeouts
-    1. Realm Settings -> Sessions
-       - `SSO Session Idle` = `1 hours`
-       - `SSO Session Max` = `10 hours`
-       - `SSO Session Idle Remember Me` = `8 days`
-       - `SSO Session Max Remember Me` = `30 days`
-       - `Client Session Idle` = `0 minutes`
-       - `Client Session Max` = `0 minutes`
-    2. Realm Settings -> Tokens
-       - Set "Access Tokens" -> "Access Token Lifespan" to 25 Minutes
-
-
-## User Roles
-
-| Role           | Description                                                                            |
-|----------------|:---------------------------------------------------------------------------------------|
-| user           | Given to everyone; required for any access.                                            |
-| userAdmin      | Required to look up or modify users beyond one's own. Given to the first created user. |
-| inventoryView  | Required to view inventory related resources; Items, Storage Blocks, Images.           |
-| inventoryEdit  | Required to make edits to inventory related resources; Items, Storage Blocks, Images.  |
-| inventoryAdmin | Required to make admin actions to the inventory data stored.                           |
+```bash
+TOKEN=$(base64 "user:pass")
+curl -X 'GET' \
+  'http://localhost:8080/api/v1/inventory/item' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Basic ${TOKEN}'
+```

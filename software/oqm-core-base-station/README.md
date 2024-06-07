@@ -1,5 +1,14 @@
 # oqm-core-base-station
 
+TODOS for database:
+
+ - make utility to get, cache dbs
+ - Make utility to handle selecting database
+ - make utility to handle case of no databases available to user
+
+
+
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .

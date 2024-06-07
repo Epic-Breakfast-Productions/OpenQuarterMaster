@@ -37,7 +37,6 @@ ExecStartPre=/bin/bash -c "chmod 755 /tmp/oqm/serviceConfig/core/depot/files"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
-                                        --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                         -p 80:80 -p 443:443 \
                                         -v /etc/oqm/ui.d/:/etc/oqm/ui.d/:ro \
                                         -v /tmp/oqm/serviceConfig/core/depot/files/:/etc/oqm/certs/:ro \

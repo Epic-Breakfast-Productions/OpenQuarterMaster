@@ -87,7 +87,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
 		return this.processSearchResults(
-			this.oqmCoreApiClient.imageSearch(this.getBearerHeaderStr(), searchObject),
+			this.oqmCoreApiClient.imageSearch(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject),
 			this.searchResultTemplate,
 			acceptType,
 			searchFormId,
@@ -117,7 +117,7 @@ public class ImagePassthrough extends PassthroughProvider {
 	public Uni<String> add(
 		@BeanParam FileUploadBody body
 	) throws IOException {
-		return this.oqmCoreApiClient.imageAdd(this.getBearerHeaderStr(), body);
+		return this.oqmCoreApiClient.imageAdd(this.getBearerHeaderStr(), this.getSelectedDb(), body);
 	}
 	
 	@Path("{id}")
@@ -153,7 +153,7 @@ public class ImagePassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> get(
 		@PathParam("id") String id
 	) {
-		return this.oqmCoreApiClient.imageGet(this.getBearerHeaderStr(), id);
+		return this.oqmCoreApiClient.imageGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 	
 	@PUT
@@ -194,7 +194,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		@PathParam("id") String id,
 		@BeanParam FileUploadBody body
 	) {
-		return this.oqmCoreApiClient.imageUpdateFile(this.getBearerHeaderStr(), id, body);
+		return this.oqmCoreApiClient.imageUpdateFile(this.getBearerHeaderStr(), this.getSelectedDb(), id, body);
 	}
 	
 	@PUT
@@ -236,7 +236,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		String id,
 		ObjectNode updates
 	) {
-		return this.oqmCoreApiClient.imageUpdateObj(this.getBearerHeaderStr(), id, updates);
+		return this.oqmCoreApiClient.imageUpdateObj(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
 	}
 	
 	@Path("{id}/revision/{rev}")
@@ -275,7 +275,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		@PathParam("rev")
 		String revision
 	) {
-		return this.oqmCoreApiClient.imageGetRevision(this.getBearerHeaderStr(), id, revision);
+		return this.oqmCoreApiClient.imageGetRevision(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision);
 	}
 	
 	@Path("{id}/revision/{rev}/data")
@@ -314,7 +314,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		@PathParam("rev")
 		String revision
 	) {
-		return this.oqmCoreApiClient.imageGetRevisionData(this.getBearerHeaderStr(), id, revision);
+		return this.oqmCoreApiClient.imageGetRevisionData(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision);
 	}
 	
 	@GET
@@ -350,7 +350,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().imageGetHistoryForObject(this.getBearerHeaderStr(), id, historySearch);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().imageGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, historySearch);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
 	
@@ -374,13 +374,13 @@ public class ImagePassthrough extends PassthroughProvider {
 	public Uni<ObjectNode> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.oqmCoreApiClient.imageSearchHistory(this.getBearerHeaderStr(), searchObject);
+		return this.oqmCoreApiClient.imageSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
 	}
 	
 	@GET
 	@Path("/for/{type}/{id}")
 	public Uni<Response> imageForObj(@PathParam("type") String type,  @PathParam("id") String objId){
-		return this.oqmCoreApiClient.imageForObject(this.getBearerHeaderStr(), type, objId);
+		return this.oqmCoreApiClient.imageForObject(this.getBearerHeaderStr(), this.getSelectedDb(), type, objId);
 	}
 	
 }

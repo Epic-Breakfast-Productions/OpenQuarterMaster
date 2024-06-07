@@ -3,6 +3,7 @@ from enum import Enum
 from ConfigManager import *
 from ServiceUtils import *
 from CronUtils import *
+from CertsUtils import *
 import logging
 import subprocess
 import datetime
@@ -43,6 +44,7 @@ class SnapshotUtils:
         compilingDir = ScriptInfo.TMP_DIR + "/snapshots/" + snapshotName
         compilingConfigsDir = os.path.join(compilingDir, "config/configs")
         compilingSecretsDir = os.path.join(compilingDir, "config/secrets")
+        compilingCertsDir = os.path.join(compilingDir, "certs")
         compilingServiceConfigsDir = os.path.join(compilingDir, "serviceConfigs")
         compilingDataDir = os.path.join(compilingDir, "data")
 
@@ -56,6 +58,7 @@ class SnapshotUtils:
             try:
                 os.makedirs(compilingConfigsDir)
                 os.makedirs(compilingSecretsDir)
+                os.makedirs(compilingCertsDir)
                 os.makedirs(compilingServiceConfigsDir)
                 os.makedirs(compilingDataDir)
                 os.makedirs(snapshotLocation, exist_ok=True)
@@ -71,6 +74,14 @@ class SnapshotUtils:
                 shutil.copytree(ScriptInfo.CONFIG_DIR + "/configs", compilingConfigsDir, dirs_exist_ok=True)
                 shutil.copytree(ScriptInfo.CONFIG_DIR + "/secrets", compilingSecretsDir, dirs_exist_ok=True)
                 shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
+                # copy certs
+                certs = mainCM.getConfigVal("cert.certs")
+                for cert in certs:
+                    certPath = certs[cert]
+                    # print(f"Cert: {cert}/{certPath}")
+                    if "Pass" in cert:
+                        continue
+                    shutil.copyfile(certPath, compilingCertsDir + "/" + cert)
 
                 logging.info("Running individual snapshots.")
                 for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
@@ -159,6 +170,17 @@ class SnapshotUtils:
                 if result.returncode != 0:
                     logging.error("FAILED to run snapshot restore script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
                     logging.debug("Erring script err output: %s", result.stderr)
+
+            mainCM.rereadConfigData()
+
+            # load in certs
+            certs = mainCM.getConfigVal("cert.certs")
+            for cert in certs:
+                if "Pass" in cert:
+                    continue
+                # TODO:: broke here
+                shutil.copyfile(extractionDir + "/certs/" + cert, certs[cert])
+            CertsUtils.ensureCaInstalled(True)
 
             ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         finally:
