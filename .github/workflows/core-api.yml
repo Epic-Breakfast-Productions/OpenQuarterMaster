@@ -24,7 +24,7 @@ defaults:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    uses: ./wf-gradleBuild.yaml
+    uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
       path: "software/oqm-core-api"
 
