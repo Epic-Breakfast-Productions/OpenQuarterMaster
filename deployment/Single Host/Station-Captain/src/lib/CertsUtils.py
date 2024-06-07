@@ -35,12 +35,16 @@ class CertsUtils:
 
         # Install in system location
         updatePrevious = False
-        if force or os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
+        if force:
+            updatePrevious = True
+
+        if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
             updatePrevious = True
             os.remove("/usr/local/share/ca-certificates/" + caCertName)
-        if force or os.path.exists("/etc/ssl/certs/" + caCertName):
+        if os.path.exists("/etc/ssl/certs/" + caCertName):
             updatePrevious = True
             os.remove("/etc/ssl/certs/" + caCertName)
+
         if force or updatePrevious:
             output += f"Removed previously installed root CA from system: {caCertName}\n\n"
             result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
