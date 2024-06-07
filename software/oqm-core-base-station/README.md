@@ -2,8 +2,7 @@
 
 TODOS for database:
 
- - make utility to get, cache dbs
- - Make utility to handle selecting database
+ - handle oqm db selected not present
  - make utility to handle case of no databases available to user
 
 

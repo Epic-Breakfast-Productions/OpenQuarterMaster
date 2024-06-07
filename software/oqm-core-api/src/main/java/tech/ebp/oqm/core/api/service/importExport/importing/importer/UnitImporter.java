@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.service.importExport.importing.importer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,21 +12,15 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
-import tech.ebp.oqm.core.api.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
@@ -47,7 +40,7 @@ public class UnitImporter extends TopLevelImporter<Long> {
 	}
 
 
-	private void readInObject(
+	private void readInUnit(
 		ClientSession clientSession,
 		CustomUnitEntry curObj,
 		DataImportOptions options,
@@ -61,7 +54,7 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		addedList.add(oldId);
 	}
 
-	private void readInObject(
+	private void readInUnit(
 		ClientSession clientSession,
 		File curFile,
 		DataImportOptions options,
@@ -75,13 +68,14 @@ public class UnitImporter extends TopLevelImporter<Long> {
 			if(e.getMessage().contains("does not represent any of the possible valid units.")){
 				orphanEntries.add(curFile);
 			} else {
+				log.warn("Does not look like an exception dealing with not having a parent unit.");
 				throw e;
 			}
 
 			log.warn("Failed to process object file {}: ", curFile, e);
 			return;
 		}
-		this.readInObject(
+		this.readInUnit(
 			clientSession,
 			newEntry,
 			options,
@@ -104,7 +98,7 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		List<File> orphanEntries = new ArrayList<>();
 		List<ObjectId> addedList = new ArrayList<>();
 		for (File curObjFile : filesForObject) {
-			this.readInObject(clientSession, curObjFile, options, orphanEntries, addedList);
+			this.readInUnit(clientSession, curObjFile, options, orphanEntries, addedList);
 		}
 
 		if(orphanEntries.isEmpty()){
@@ -115,7 +109,7 @@ public class UnitImporter extends TopLevelImporter<Long> {
 			while(!orphanEntries.isEmpty()){
 				while (!orphanEntries.isEmpty()){
 					File entry = orphanEntries.remove(0);
-					this.readInObject(clientSession, entry, options, orphanEntries, addedList);
+					this.readInUnit(clientSession, entry, options, orphanEntries, addedList);
 				}
 			}
 		}

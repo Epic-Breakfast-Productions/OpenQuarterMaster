@@ -102,7 +102,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 
 		log.info("New custom unit: {}", entry);
 		return entry.getId();
-
 	}
 
 	public ObjectId add(ClientSession cs, @Valid NewCustomUnitRequest ncur){

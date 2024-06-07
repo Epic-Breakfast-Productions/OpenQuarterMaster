@@ -106,7 +106,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					oqmDbIdOrName, item, null, event
 				);
 			}
-			this.getHens().sendEvents(this.getClazz(), lowStockEvents.toArray(new ObjectHistoryEvent[0]));
+			this.getHens().sendEvents(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(), this.getClazz(), lowStockEvents.toArray(new ObjectHistoryEvent[0]));
 		}
 	}
 	

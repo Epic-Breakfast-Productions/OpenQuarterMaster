@@ -41,7 +41,7 @@ public abstract class RunningServerTest extends WebServerTest {
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){
-
+		this.oqmDatabaseService.refreshCache();
 		this.oqmDatabaseService.ensureDatabase(DEFAULT_TEST_DB_NAME);
 
 		if(SeleniumGridServerManager.RECORD) {
