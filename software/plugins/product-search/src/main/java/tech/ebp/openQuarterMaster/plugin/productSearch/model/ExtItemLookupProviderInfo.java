@@ -20,14 +20,14 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	
 	@NotNull
 	@NonNull
-	@Builder.Default
+	@lombok.Builder.Default
 	private String description = "";
 	
 	@NotNull
 	@NonNull
 	private String cost;
-	
-	@Builder.Default
+
+	@lombok.Builder.Default
 	private boolean acceptsContributions = false;
 	
 	@NotNull
