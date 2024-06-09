@@ -116,6 +116,14 @@ public class ExtItemLookupService {
 								   .serviceErrs(errList)
 								   .build();
 	}
+
+	public Map<String, List<ExtItemLookupProviderInfo>> getAllProviderInfo(){
+		return Map.of(
+			"product", this.getProductProviderInfo(),
+			"lego", this.getLegoProviderInfo(),
+			"webpage", this.getSupportedPageScanInfo()
+		);
+	}
 	
 	@WithSpan
 	public ExtItemLookupResults searchBarcode(String barcode) {

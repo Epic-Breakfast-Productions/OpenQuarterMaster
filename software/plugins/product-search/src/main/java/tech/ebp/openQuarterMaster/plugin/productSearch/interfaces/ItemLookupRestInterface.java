@@ -35,6 +35,28 @@ public class ItemLookupRestInterface {
 	ExtItemLookupService productLookupService;
 
 	@GET
+	@Path("/providers")
+	@Operation(
+		summary = "Gets all supported providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON,
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
+			)
+		)
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response allProviderInfo() {
+		return Response.ok(this.productLookupService.getAllProviderInfo()).build();
+	}
+
+	@GET
 	@Path("/product/providers")
 	@Operation(
 		summary = "Gets information on supported product search providers."
