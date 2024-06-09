@@ -20,16 +20,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
+/**
+ * Rebrickable search service.
+ * <p>
+ * API docs:
+ * - <a href="https://rebrickable.com/api/">...</a>
+ */
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor
 public class RebrickableService extends LegoLookupService {
-	
+
 	@Getter
 	ExtItemLookupProviderInfo providerInfo;
 	RebrickableLookupClient rebrickableLookupClient;
 	private String apiKey;
-	
+
 	@Inject
 	public RebrickableService(
 		@RestClient
@@ -51,16 +57,16 @@ public class RebrickableService extends LegoLookupService {
 	) {
 		this.rebrickableLookupClient = rebrickableLookupClient;
 		this.apiKey = apiKey;
-		
+
 		ExtItemLookupProviderInfo.Builder infoBuilder = ExtItemLookupProviderInfo
-																				 .builder()
-																				 .displayName(displayName)
-																				 .description(description)
-																				 .acceptsContributions(acceptsContributions)
-																				 .homepage(homepage)
-																				 .cost(cost);
-		
-		if(apiKey == null || apiKey.isBlank()){
+			.builder()
+			.displayName(displayName)
+			.description(description)
+			.acceptsContributions(acceptsContributions)
+			.homepage(homepage)
+			.cost(cost);
+
+		if (apiKey == null || apiKey.isBlank()) {
 			log.warn("API key for {} was null or blank.", displayName);
 			infoBuilder.enabled(false);
 			this.apiKey = null;
@@ -68,35 +74,36 @@ public class RebrickableService extends LegoLookupService {
 			infoBuilder.enabled(enabled);
 			this.apiKey = apiKey;
 		}
-		
+
 		this.providerInfo = infoBuilder.build();
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return this.providerInfo.isEnabled() && this.apiKey != null && !this.apiKey.isBlank();
 	}
-	
+
 	@WithSpan
 	@Override
 	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
+		log.info("Search results: {}", results);
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder()
-																			 .source(this.getProviderInfo().getDisplayName())
-															  .brand("LEGO");
-		
+			.source(this.getProviderInfo().getDisplayName())
+			.brand("LEGO");
+
 		Map<String, String> attributes = new HashMap<>();
-		
+
 		for (Iterator<Map.Entry<String, JsonNode>> iter = results.fields(); iter.hasNext(); ) {
 			Map.Entry<String, JsonNode> curField = iter.next();
 			String curFieldName = curField.getKey();
 			String curFieldVal = curField.getValue().asText();
-			
+
 			//TODO:: handle images
-			
+
 			if (curField.getValue().isNull() || curFieldVal == null || curFieldVal.isBlank()) {
 				continue;
 			}
-			
+
 			switch (curFieldName) {
 				case "name":
 					resultBuilder.name(curFieldVal);
@@ -106,12 +113,12 @@ public class RebrickableService extends LegoLookupService {
 					attributes.put(curFieldName, curFieldVal);
 			}
 		}
-		
+
 		resultBuilder.attributes(attributes);
-		
+
 		return List.of(resultBuilder.build());
 	}
-	
+
 	@WithSpan
 	@Override
 	protected CompletionStage<JsonNode> performPartNumberSearchCall(String partNum) {

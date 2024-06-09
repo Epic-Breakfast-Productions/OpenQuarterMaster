@@ -19,6 +19,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletionStage;
 
+/**
+ *
+ * - https://www.barcodelookup.com/api
+ */
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor

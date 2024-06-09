@@ -19,6 +19,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletionStage;
 
+/**
+ *  - https://gtinsearch.org/
+ */
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor

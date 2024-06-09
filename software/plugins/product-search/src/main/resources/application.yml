@@ -43,9 +43,6 @@ quarkus:
   rest-client:
     logging:
       scope: all
-    "tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient":
-      url: ${quarkus.oidc.auth-server-url}
-      scope: jakarta.inject.Singleton
     upc-barcodelookup-com:
       url: ${productLookup.providers.barcodelookup-com.url}
       scope: jakarta.inject.Singleton
@@ -59,3 +56,25 @@ quarkus:
       url: ${productLookup.providers.rebrickable.url}
       scope: jakarta.inject.Singleton
 
+"%dev":
+  productLookup:
+    providers:
+      rebrickable:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+        apiKey: devKey
+      upcitemdb:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+      datakick:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+#      barcodelookup-com:
+#        apiKey: lkfq4uims1wjqr9loee34p0too6efw
+
+  quarkus:
+    log:
+      level: DEBUG
+    wiremock:
+      devservices:
+        enabled: true
+        reload: true
+        files-mapping: ../../../../dev/wmMapping
+        global-response-templating: true

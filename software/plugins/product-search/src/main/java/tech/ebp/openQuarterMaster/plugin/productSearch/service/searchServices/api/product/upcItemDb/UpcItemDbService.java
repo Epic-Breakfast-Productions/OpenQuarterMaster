@@ -19,6 +19,11 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletionStage;
 
+/**
+ *
+ * - Docs: https://www.upcitemdb.com/wp/docs/main/development/getting-started/
+ * - Trial docs: https://www.upcitemdb.com/api/explorer#!/lookup/get_trial_lookup
+ */
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor
