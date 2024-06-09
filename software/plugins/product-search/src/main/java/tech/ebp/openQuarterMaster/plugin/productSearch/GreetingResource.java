@@ -1,4 +1,4 @@
-package tech.ebp.openQuarterMaster;
+package tech.ebp.openQuarterMaster.plugin.productSearch;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
