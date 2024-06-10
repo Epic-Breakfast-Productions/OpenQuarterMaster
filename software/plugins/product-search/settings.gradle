@@ -8,4 +8,4 @@ pluginManagement {
         id "${quarkusPluginId}" version "${quarkusPluginVersion}"
     }
 }
-rootProject.name='oqm-plugin-product_search'
+rootProject.name='oqm-plugin-ext_item_search'

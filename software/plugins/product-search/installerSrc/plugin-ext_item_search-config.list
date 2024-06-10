@@ -1,0 +1,27 @@
+#
+# The Main config for Base Station. Do not edit. To adjust configuration, edit:
+# /etc/oqm/serviceConfig/plugin/external-item-search/user-config.list
+#
+
+# Basic configs
+quarkus.http.port=80
+quarkus.http.ssl.port=443
+quarkus.http.insecure-requests=redirect
+quarkus.log.level=INFO
+
+# Files brought over in shared volume
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/plugin/external-item-search/files/privateKey.pem
+quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/plugin/external-item-search/files/keystore.p12
+quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
+
+# jwt verification
+#smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
+#smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
+
+# Jaeger Config:
+quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+
+# Lookup config
+
