@@ -123,7 +123,7 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postrm"
 systemctl daemon-reload
 # Remove docker image
 if [[ "$(docker images -q oqm-core-api 2> /dev/null)" != "" ]]; then
-        docker rmi oqm_base_station
+        docker rmi oqm-core-api
         echo "Removed docker image."
 else
         echo "Docker image was already gone."
