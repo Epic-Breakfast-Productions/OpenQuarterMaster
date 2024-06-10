@@ -11,7 +11,7 @@ class BootTest {
     @Test
     void testHelloEndpoint() {
         given()
-          .when().get("/api/v1/externalItemLookup/product/providers")
+          .when().get("/api/v1/providers")
           .then()
              .statusCode(200);
     }

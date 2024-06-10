@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
-@Path("/api/v1/externalItemLookup")
+@Path("/api/v1")
 @Tags({@Tag(name = "External Item Lookup", description = "Endpoints for searching for items from other places.")})
 @RequestScoped
 public class ItemLookupRestInterface {
@@ -57,53 +57,7 @@ public class ItemLookupRestInterface {
 	}
 
 	@GET
-	@Path("/product/providers")
-	@Operation(
-		summary = "Gets information on supported product search providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response providerInfo() {
-		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
-	}
-
-	@GET
-	@Path("/product/providers/enabled")
-	@Operation(
-		summary = "Gets information on supported and enabled product search providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response enabledProviderInfo() {
-		return Response.ok(
-			this.productLookupService.getProductProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
-		).build();
-	}
-
-	@GET
-	@Path("product/barcode/{barcode}")
+	@Path("barcode/{barcode}")
 	@Operation(
 		summary = "Searches enabled providers for the barcode given."
 	)
@@ -126,7 +80,7 @@ public class ItemLookupRestInterface {
 	}
 
 	@GET
-	@Path("webpage/scrape/{webpage}")
+	@Path("webpage-scrape/{webpage}")
 	@Operation(
 		summary = "Scans the given webpage for product details."
 	)
@@ -149,55 +103,9 @@ public class ItemLookupRestInterface {
 	}
 
 	@GET
-	@Path("/webpage/providers")
-	@Operation(
-		summary = "Gets information on supported web scraping providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response webScrapeProviderInfo() {
-		return Response.ok(this.productLookupService.getSupportedPageScanInfo()).build();
-	}
-
-	@GET
-	@Path("/webpage/providers/enabled")
-	@Operation(
-		summary = "Gets information on supported and enabled web scraping providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response enablesWebScrapeProviderInfo() {
-		return Response.ok(
-			this.productLookupService.getSupportedPageScanInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
-		).build();
-	}
-
-	@GET
 	@Path("lego/part/{partNo}")
 	@Operation(
-		summary = "Searches enabled providers for the barcode given."
+		summary = "Searches enabled providers for the lego part number."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -217,49 +125,4 @@ public class ItemLookupRestInterface {
 		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
 	}
 
-	@GET
-	@Path("/lego/providers")
-	@Operation(
-		summary = "Gets information on supported lego search providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response legoProviderInfo() {
-		return Response.ok(this.productLookupService.getLegoProviderInfo()).build();
-	}
-
-	@GET
-	@Path("/lego/providers/enabled")
-	@Operation(
-		summary = "Gets information on supported and enabled lego search providers."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response enabledLegoProviderInfo() {
-		return Response.ok(
-			this.productLookupService.getLegoProviderInfo().stream().filter(ExtItemLookupProviderInfo::isEnabled)
-		).build();
-	}
 }
