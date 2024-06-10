@@ -3,7 +3,7 @@ productLookup:
   providers:
     barcodelookup-com:
       displayName: BarcodeLookup.com
-      description: Comprehensive database of products, but a paid service.
+      description: Comprehensive database of products, but a paid service. Can get a 2-week trial API key.
       cost: Paid
       acceptsContributions: true
       homepage: https://www.barcodelookup.com/
@@ -66,8 +66,9 @@ quarkus:
         url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
       datakick:
         url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
-#      barcodelookup-com:
-#        apiKey: lkfq4uims1wjqr9loee34p0too6efw
+      barcodelookup-com:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+        apiKey: devKey
 
   quarkus:
     log:
