@@ -126,14 +126,14 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postrm"
 
 systemctl daemon-reload
 # Remove docker image
-if [[ "$(docker images -q oqm_base_station 2> /dev/null)" != "" ]]; then
-        docker rmi oqm_base_station
+if [[ "$(docker images -q oqm-core-base_station 2> /dev/null)" != "" ]]; then
+        docker rmi oqm-core-base_station
         echo "Removed docker image."
 else
         echo "Docker image was already gone."
 fi
-if [ $( docker ps -a | grep oqm_base_station | wc -l ) -gt 0 ]; then
-        docker rm oqm_base_station
+if [ $( docker ps -a | grep oqm-core-base_station | wc -l ) -gt 0 ]; then
+        docker rm oqm-core-base_station
         echo "Removed docker container."
 else
         echo "Docker container was already gone."
