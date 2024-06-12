@@ -29,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Tags({@Tag(name = "Passthrough")})
 public abstract class PassthroughProvider extends ApiProvider {
 	public static final String PASSTHROUGH_API_ROOT = API_ROOT + "/passthrough";
-	
+	public static final String PASSTHROUGH_API_PLUGIN_ROOT = PASSTHROUGH_API_ROOT + "/plugin";
+
 	@Getter
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClient;
