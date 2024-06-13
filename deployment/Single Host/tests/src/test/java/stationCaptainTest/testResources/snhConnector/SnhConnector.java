@@ -180,18 +180,18 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		log.info("Uninstalling OQM");
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
 			case deb -> {
-				this.runCommand("systemctl", "stop", "oqm-*");
-				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
-				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
-				this.runCommand("docker", "image", "prune", "-f");
-				this.runCommand("systemctl", "reset-failed");
+				this.runCommand("systemctl", "stop", "oqm-*").assertSuccess("Stop OQM services");
+//				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*").assertSuccess("Remove old OQM versions");
+				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*").assertSuccess("Remove OQM packages");
+				this.runCommand("docker", "image", "prune", "-f").assertSuccess("Prune docker images");
+				this.runCommand("systemctl", "reset-failed").assertSuccess("Reset systemd");
 //				this.runCommand("apt-get", "-y", "autoremove");
 			}
 			case rpm -> {
 				//TODO
 			}
 		}
-		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm");
+		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm").assertSuccess("Remove OQM directories");
 	}
 	
 	
