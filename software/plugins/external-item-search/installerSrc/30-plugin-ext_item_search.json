@@ -1,7 +1,8 @@
 {
-	"core": {
-		"api": {
-			"host": "oqm_plugin_ext_item_search"
+	"plugin": {
+		"externalItemSearch": {
+			"host": "oqm-plugin-ext_item_search",
+			"baseUrl": "http://#{plugin.externalItemSearch.host}"
 		}
 	}
 }
