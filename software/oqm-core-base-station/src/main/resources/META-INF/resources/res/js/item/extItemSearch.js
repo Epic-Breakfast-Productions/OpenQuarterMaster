@@ -327,7 +327,7 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({
-		url: "/api/passthrough/plugin/itemLookup/product/barcode/" + barcodeText,
+		url: "/api/passthrough/plugin/itemLookup/barcode/" + barcodeText,
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data);
 		},
