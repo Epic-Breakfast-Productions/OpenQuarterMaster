@@ -18,9 +18,11 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/interacting-entity")
@@ -59,8 +61,15 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	public Response getInteractingEntityReference(
 		@PathParam("entityId") String entityId
 	) {
+		InteractingEntity entity = this.interactingEntityService.get(entityId);
+
+		if(entity == null){
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		log.info("Getting reference for entity {} (from id {})", entity, entityId);
 		return Response.ok(
-			new InteractingEntityReference(this.interactingEntityService.get(entityId))
+			new InteractingEntityReference(entity)
 		).build();
 	}
 }

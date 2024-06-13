@@ -91,8 +91,9 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	}
 	
 	public InteractingEntity get(ObjectId id){
-		return this.getCollection().find(eq("id", id)).limit(1).first();
+		return this.getCollection().find(eq("_id", id)).limit(1).first();
 	}
+
 	public InteractingEntity get(String id){
 		return this.get(new ObjectId(id));
 	}
