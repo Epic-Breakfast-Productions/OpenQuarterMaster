@@ -3,6 +3,7 @@
         <div class="col" id="addEditItemFormMessages">
         </div>
     </div>
+    {#if config:['quarkus.rest-client.externalItemSearch.url'] != " "}
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
@@ -10,6 +11,7 @@
             </button>
         </div>
     </div>
+    {/if}
     <div class="row">
         <div class="col-6 card p-0" id="addEditProductSearchPane">
             <div class="card-header">

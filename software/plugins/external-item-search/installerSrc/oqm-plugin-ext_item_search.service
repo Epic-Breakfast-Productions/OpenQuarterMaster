@@ -20,7 +20,7 @@ TimeoutSec=5m
 Environment="CONTAINER_NAME=oqm-plugin-ext_item_search"
 Environment="IMAGE_NAME=ebprod/oqm-plugin-ext_item_search"
 Environment="IMAGE_VERSION=${version}"
-Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/oqm-plugin-ext_item_search.list"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/plugin-ext_item_search-config.list"
 Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search/oqm-plugin-ext_item_search.list"
 Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search/user-config.list"
@@ -36,7 +36,7 @@ ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/
 
 # Create filled out configuration
 #ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
-ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/api/"
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/plugin/external-item-search/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"

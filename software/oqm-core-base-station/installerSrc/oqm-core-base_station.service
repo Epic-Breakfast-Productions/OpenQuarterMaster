@@ -47,7 +47,7 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
-ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -p $(oqm-config -g core.baseStation.httpsPort):443 \
                                         -p $(oqm-config -g core.baseStation.httpPort):80 \
