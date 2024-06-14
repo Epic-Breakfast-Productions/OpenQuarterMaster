@@ -18,5 +18,15 @@ const StoredTypeUtils = {
 				return whenTracked();
 			}
 		}
+	},
+	storedTypeToDisplay(storedType){
+		if (storedType === "AMOUNT_SIMPLE") {
+			return "Amount Simple";
+		} else if (storedType === "AMOUNT_LIST") {
+			return "Amount List";
+		} else if (storedType === "TRACKED") {
+			return "Tracked";
+		}
+		return "FAIL";
 	}
 };
