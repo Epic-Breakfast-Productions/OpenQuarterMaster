@@ -74,6 +74,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/wildfly/common/wildfly-common/1.7.0.Final/wildfly-common-1.7.0.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jboss/threads/jboss-threads/3.6.1.Final/jboss-threads-3.6.1.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/io/quarkus/quarkus-bom/3.11.0/quarkus-bom-3.11.0.pom" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar" />
           <entry name="$MAVEN_REPOSITORY$/io/quarkus/quarkus-extension-processor/3.11.0/quarkus-extension-processor-3.11.0.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jboss/jdeparser/jdeparser/2.0.3.Final/jdeparser-2.0.3.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jsoup/jsoup/1.15.3/jsoup-1.15.3.jar" />
@@ -136,6 +137,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/wildfly/common/wildfly-common/1.7.0.Final/wildfly-common-1.7.0.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jboss/threads/jboss-threads/3.6.1.Final/jboss-threads-3.6.1.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/io/quarkus/quarkus-bom/3.11.0/quarkus-bom-3.11.0.pom" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.20/lombok-1.18.20.jar" />
         </processorPath>
         <module name="core-api-lib-quarkus-deployment" />
       </profile>
