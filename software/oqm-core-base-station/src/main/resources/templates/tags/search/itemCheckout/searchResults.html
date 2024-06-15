@@ -21,12 +21,12 @@
   </tr>
   <tr>
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
-    <th scope="col">Status</th>
+    <th scope="col" style="width: 75px;">Status</th>
     <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
     <th scope="col">For</th>
     <th scope="col">By</th>
     <th scope="col">Due Back</th>
-    <th scope="col" width="125px">Actions</th>
+    <th scope="col" style="width: 125px;">Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -58,7 +58,7 @@
       {/if}
       </td>
     <td>
-      {#links/storageBlock storageBlock=result.get("checkedOutFrom").asText()}{/links/storageBlock}
+      {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
     </td>
     <td>
       {#when result.get("checkedOutFor").asText()}

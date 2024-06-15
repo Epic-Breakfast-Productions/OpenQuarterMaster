@@ -21,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.PassthroughProvider;
+import tech.ebp.oqm.core.baseStation.service.modelTweak.SearchResultTweak;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCheckoutSearch;
 
@@ -30,12 +31,15 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCh
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemCheckoutPassthrough extends PassthroughProvider {
-	
+
 	@Getter
 	@Inject
 	@Location("tags/search/itemCheckout/searchResults")
 	Template searchResultTemplate;
-	
+
+	@Inject
+	SearchResultTweak searchResultTweak;
+
 	@POST
 	@Operation(
 		summary = "Checks out an item."
@@ -59,7 +63,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutCreate(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutRequest);
 	}
-	
+
 	@PUT
 	@Path("{id}/checkin")
 	@Operation(
@@ -85,7 +89,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutCheckin(this.getBearerHeaderStr(), this.getSelectedDb(), id, checkInDetails);
 	}
-	
+
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -113,7 +117,8 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("showItem") String shotItem
 	) {
 		return this.processSearchResults(
-			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch),
+			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
+				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr())),
 			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(inputIdPrepend)),
 			acceptType,
 			searchFormId,
@@ -121,7 +126,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 			inputIdPrepend
 		);
 	}
-	
+
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -155,7 +160,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
-	
+
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -191,7 +196,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
 	}
-	
+
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -225,7 +230,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
-	
+
 	//<editor-fold desc="History">
 	@GET
 	@Path("{id}/history")
@@ -261,7 +266,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCheckoutGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
 		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
-	
+
 	@GET
 	@Path("history")
 	@Operation(
@@ -286,5 +291,5 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
 	}
-	
+
 }
