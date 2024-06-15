@@ -53,11 +53,17 @@ const StoredEdit = {
 	 */
 	getAmountStoredFormElements(headerId = null, toRemoveId = null, fullForm = true) {
 		//TODO:: add elements from params in a safe way
+
+		let onChange = '';
+		if(headerId != null){
+			onChange = 'ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')'
+		}
+
 		let output = $('<div class="amountStoredFormElements">' +
 			'<input type="hidden" name="storedType" value="AMOUNT"/>'+
 			'<div class="input-group mt-2 mb-3">\n' +
-			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">\n' +
-			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="ItemAddEdit.addEditUpdateStoredHeader(\'' + headerId + '\')">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
+			'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required onchange="'+onChange+'">\n' +
+			'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" onchange="'+onChange+'">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
 			'</div>' +
 			'</div>');
 		if(fullForm) {

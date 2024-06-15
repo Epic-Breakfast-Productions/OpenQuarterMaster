@@ -9,6 +9,12 @@ const ItemCheckout = {
 	itemIdInput: $("#itemCheckoutFormItemIdInput"),
 	storageFromIdInput: $("#itemCheckoutFormCheckedOutFromIdInput"),
 	toCheckoutInput: $("#itemCheckoutFormToCheckoutInput"),
+	storedIdInput: $("#itemCheckoutFormStoredIdInput"),
+	amountContainer: $("#itemCheckoutAmountContainer"),
+	amountEnableCheck: $("#itemCheckoutAmountEnableCheck"),
+	amountInputContainer: $("#itemCheckoutAmountInputContainer"),
+	amountAmountInput: $("#itemCheckoutAmountAmountInput"),
+	amountUnitInput: $("#itemCheckoutAmountUnitInput"),
 	dueBackInput: $("#itemCheckoutFormDueBackInput"),
 	forSelectInput: $('#itemCheckoutFormForSelectInput'),
 	forAnotherOqmUserContainer: $('#itemCheckoutFormForAnotherOqmUserContainer'),
@@ -40,6 +46,11 @@ const ItemCheckout = {
 		this.messages.text('');
 		this.itemIdInput.val("");
 		this.toCheckoutInput.val("");
+		this.storedIdInput.val("");
+		// this.amountContainer.text("");
+		this.amountContainer.hide();
+		this.amountEnableCheck.prop('checked', false);
+		this.partialAmountCheckChanged();
 		this.dueBackInput.val("");
 		this.forSelectInput.val("self");
 		this.setForView();
@@ -49,6 +60,17 @@ const ItemCheckout = {
 		this.notesInput.val("");
 		this.keywords.text("");
 		this.atts.text("");
+	},
+	partialAmountCheckChanged(){
+		let checked = this.amountEnableCheck.prop("checked");
+
+		if(checked){
+			console.log("Specifying partial amount.");
+			this.amountInputContainer.show();
+		} else {
+			console.log("Specifying not partial amount.");
+			this.amountInputContainer.hide();
+		}
 	},
 	setupCheckoutItemModal(stored, itemId, storageId){
 		console.log("Setting up item checkout form for stored: " + JSON.stringify(stored) + " - from Item " + itemId + "/"+storageId);
@@ -64,6 +86,18 @@ const ItemCheckout = {
 		this.itemIdInput.val(itemId);
 		this.storageFromIdInput.val(storageId);
 		this.toCheckoutInput.val(JSON.stringify(stored));
+		this.storedIdInput.val(stored.id);
+
+		console.log("Stored type: ", stored.storedType);
+
+		if(stored.storedType === "AMOUNT"){
+			//TODO:: set max to current amount stored?
+			UnitUtils.updateCompatibleUnits(stored.amount.unit.string, this.amountInputContainer);
+
+			this.amountContainer.show();
+		} else {
+			console.log("Did not need to show amount to checkout form components.");
+		}
 
 		this.storedDetails.append(
 			StoredView.getStoredViewContent(
@@ -73,6 +107,7 @@ const ItemCheckout = {
 				false,
 				false,
 				false,
+				true,
 				true
 			)
 		);
@@ -92,6 +127,20 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 		"reason": ItemCheckout.reasonInput.val(),
 		"notes": ItemCheckout.notesInput.val()
 	}
+
+	if(checkoutRequestData.toCheckout.storedType === "AMOUNT" && ItemCheckout.amountEnableCheck.prop("checked")){
+		let newStored = {
+			"id": checkoutRequestData.toCheckout.id,
+			"storedType": "AMOUNT",
+			"amount": UnitUtils.getQuantityObj(
+				ItemCheckout.amountAmountInput.val(),
+				ItemCheckout.amountUnitInput.val()
+			)
+		};
+		checkoutRequestData.toCheckout = newStored;
+	}
+
+
 	KeywordAttEdit.addKeywordAttData(checkoutRequestData, ItemCheckout.keywords, ItemCheckout.atts);
 
 	//TODO:: checkedOutFor
