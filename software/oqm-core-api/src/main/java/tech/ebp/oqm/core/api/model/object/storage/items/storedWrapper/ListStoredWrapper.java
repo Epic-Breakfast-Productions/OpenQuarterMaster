@@ -10,6 +10,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 
 import java.time.Duration;
@@ -65,6 +66,7 @@ public abstract class ListStoredWrapper<S extends Stored>
 	
 	@Override
 	public S subtractStored(S stored) throws NotEnoughStoredException {
+		//TODO:: thing happens here
 		boolean result = this.remove(stored);
 		if (!result) {
 			throw new NotEnoughStoredException("Stored to remove was not held.");
@@ -124,20 +126,35 @@ public abstract class ListStoredWrapper<S extends Stored>
 	
 	//	@Override
 	public boolean add(@NotNull S s) {
-		boolean output = this.getStored().add(s);
-		if (output) {
+		boolean added = false;
+		if(s instanceof AmountStored && this.hasStoredWithId(s.getId())){
+			AmountStored stored = (AmountStored) this.getStoredWithId(s.getId());
+			stored.add((AmountStored) s);
+			added = true;
+		} else {
+			added = this.getStored().add(s);
+		}
+
+		if (added) {
 			this.recalcDerived();
 		}
-		return output;
+		return added;
 	}
 	
 	//	@Override
-	public boolean remove(Object o) {
-		boolean output = this.getStored().remove(o);
-		if (output) {
+	public boolean remove(@NotNull S s) {
+		boolean removed = this.getStored().remove(s);
+
+		if(!removed && s instanceof AmountStored && this.hasStoredWithId(s.getId())){
+			AmountStored stored = (AmountStored) this.getStoredWithId(s.getId());
+			stored.subtract((AmountStored) s);
+			removed = true;
+		}
+
+		if (removed) {
 			this.recalcDerived();
 		}
-		return output;
+		return removed;
 	}
 	
 	//	@Override
