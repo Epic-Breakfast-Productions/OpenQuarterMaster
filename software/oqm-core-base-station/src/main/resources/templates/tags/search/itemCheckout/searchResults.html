@@ -72,8 +72,13 @@
       {!{#interactingEntityRef entityRef=cdi:ItemCheckoutService.getCreateEvent(result.getId()).getEntity()}{/interactingEntityRef}!}
     </td>
     <td>
-      {! TODO:: special styling !}
-      {result.get("dueBack").asText()}
+      {#let dueBack=result.get("dueBack").asText()}
+        {#if dueBack == 'null'}
+          N/A
+        {#else}
+          {cdi:DateTimeService.formatForUi(dueBack)}
+        {/if}
+      {/let}
     </td>
     {#if actionType == 'full'}
     <td>
