@@ -61,6 +61,7 @@ public class ItemCheckoutUi extends UiProvider {
 			Map.of(
 				"searchResults", this.coreApiClient.itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 					.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr()))
+					.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 			)
 		);
 	}

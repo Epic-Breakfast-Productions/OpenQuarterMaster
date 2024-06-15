@@ -118,7 +118,9 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
-				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr())),
+				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr()))
+				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+			,
 			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(inputIdPrepend)),
 			acceptType,
 			searchFormId,

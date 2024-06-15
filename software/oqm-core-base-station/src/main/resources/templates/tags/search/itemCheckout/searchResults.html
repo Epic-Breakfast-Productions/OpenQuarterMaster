@@ -47,7 +47,7 @@
   <tr class="align-middle">
     {#if showItem}
     <td>
-      {#links/inventoryItem inventoryItem=result.get("item").asText()}{/links/inventoryItem}
+      {#links/inventoryItem inventoryItem=result.get("item").asText() itemName=result.get("item-name").asText()}{/links/inventoryItem}
     </td>
     {/if}
       <td class="table-{#if result.get("stillCheckedOut").asBoolean()}active{#else}success{/if}">
@@ -61,11 +61,15 @@
       {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
     </td>
     <td>
-      {#when result.get("checkedOutFor").asText()}
+      {#let checkedOutFor=result.get("checkedOutFor") }
+      {#when checkedOutFor.get("type").asText()}
       {#is "OQM_ENTITY"}
-      {#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}
+        {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
       {#is "EXT_SYS_USER"}
+        {checkedOutFor.get("name")} /
+        {checkedOutFor.get("externalId")}
       {/when}
+      {/let}
     </td>
     <td>
 		SOME USER
