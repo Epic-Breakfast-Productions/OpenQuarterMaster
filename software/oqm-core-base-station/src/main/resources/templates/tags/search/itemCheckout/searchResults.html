@@ -72,8 +72,7 @@
       {/let}
     </td>
     <td>
-		SOME USER
-      {!{#interactingEntityRef entityRef=cdi:ItemCheckoutService.getCreateEvent(result.getId()).getEntity()}{/interactingEntityRef}!}
+      {#interactingEntityRef entityRef=result.get("creatorRef")}{/interactingEntityRef}
     </td>
     <td>
       {#let dueBack=result.get("dueBack").asText()}
