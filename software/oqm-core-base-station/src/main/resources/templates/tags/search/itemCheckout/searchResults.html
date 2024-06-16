@@ -64,7 +64,7 @@
       {#let checkedOutFor=result.get("checkedOutFor") }
       {#when checkedOutFor.get("type").asText()}
       {#is "OQM_ENTITY"}
-        {!{#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}!}
+        {#interactingEntityRef entityRef=result.get("checkedOutFor").get("entityRef")}{/interactingEntityRef}
       {#is "EXT_SYS_USER"}
         {checkedOutFor.get("name")} /
         {checkedOutFor.get("externalId")}

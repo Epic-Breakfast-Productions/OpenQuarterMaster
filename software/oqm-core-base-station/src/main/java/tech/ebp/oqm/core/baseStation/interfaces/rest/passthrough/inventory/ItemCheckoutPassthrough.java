@@ -114,14 +114,16 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId,
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend,
-		@HeaderParam("showItem") String shotItem
+		@HeaderParam("showItem") String showItem
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
 				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+				.call(results -> searchResultTweak.addCreatedByInteractingEntityRefToCheckoutSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr()))
+				.call(results -> searchResultTweak.addInteractingEntityRefToCheckoutSearchResult(results, this.getBearerHeaderStr()))
 			,
-			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(inputIdPrepend)),
+			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(showItem)),
 			acceptType,
 			searchFormId,
 			otherModalId,
