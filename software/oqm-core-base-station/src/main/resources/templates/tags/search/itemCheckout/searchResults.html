@@ -15,14 +15,14 @@
 !}
   <thead>
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
     <th scope="col" style="width: 75px;">Status</th>
-    {!<th scope="col">Amount</th>!}
+    <th scope="col">Amount</th>
     <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
     <th scope="col">For</th>
     <th scope="col">By</th>
@@ -33,7 +33,7 @@
   <tbody>
   {#if searchResults.get("empty").asBoolean()}
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       <h2>
         No Checkouts Found
       </h2>
@@ -58,6 +58,13 @@
         {#icons/checkin}{/icons/checkin} In
       {/if}
       </td>
+    <td>
+      {#if result.get("checkedOut").get("storedType").asText() == "AMOUNT"}
+        {#amountDisplay amount=result.get("checkedOut").get("amount")}{/amountDisplay}
+      {#else}
+        1
+      {/if}
+    </td>
     <td>
       {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
     </td>
@@ -119,7 +126,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
