@@ -22,6 +22,7 @@
   <tr>
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
     <th scope="col" style="width: 75px;">Status</th>
+    {!<th scope="col">Amount</th>!}
     <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
     <th scope="col">For</th>
     <th scope="col">By</th>
@@ -105,10 +106,10 @@
         {#icons/select}{/icons/select} Select
       </button>
     </td>
-    {#else if actionType == 'viewLink'}
+    {#else if actionType == 'viewCheckin'}
     <td>
-      {#links/itemCheckoutButton id=result.getId()}{/links/itemCheckoutButton}
-      <a href="/itemCheckout?checkin={id}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
+      {#links/itemCheckoutButton id=result.get("id").asText()}{/links/itemCheckoutButton}
+      <a href="/itemCheckout?checkin={result.get("id").asText()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
     </td>
     {/if}
   </tr>

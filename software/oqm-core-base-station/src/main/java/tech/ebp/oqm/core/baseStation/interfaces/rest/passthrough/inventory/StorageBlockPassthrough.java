@@ -67,7 +67,8 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 			acceptType,
 			searchFormId,
 			otherModalId,
-			inputIdPrepend
+			inputIdPrepend,
+			"select"
 		);
 	}
 	
