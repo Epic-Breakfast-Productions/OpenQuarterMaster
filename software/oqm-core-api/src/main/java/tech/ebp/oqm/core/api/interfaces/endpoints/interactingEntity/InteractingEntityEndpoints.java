@@ -66,6 +66,37 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	}
 	
 	@GET
+	@Path("{entityId}")
+	@Operation(
+		summary = "Gets an interacting entity."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				type = SchemaType.ARRAY,
+				implementation = InventoryItem.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to get.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Authenticated
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getInteractingEntity(
+		@PathParam("entityId") String entityId
+	) {
+		return Response.ok(
+			this.interactingEntityService.get(entityId)
+		).build();
+	}
+
+	@GET
 	@Path("{entityId}/reference")
 	@Operation(
 		summary = "Gets the reference object for an interacting entity."
