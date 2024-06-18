@@ -50,6 +50,9 @@ ui:
   history:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  interactingEntity:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   itemCategory:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}

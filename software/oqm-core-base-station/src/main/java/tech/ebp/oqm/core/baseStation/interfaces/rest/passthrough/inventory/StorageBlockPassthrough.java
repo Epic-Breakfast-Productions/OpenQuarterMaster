@@ -40,7 +40,7 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 	
 	@Getter
 	@Inject
-	@Location("tags/search/storage/storageSearchResults")
+	@Location("tags/search/storage/searchResults")
 	Template searchResultTemplate;
 	
 	@POST
