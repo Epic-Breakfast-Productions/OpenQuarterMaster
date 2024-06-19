@@ -42,5 +42,7 @@
 		"providedMode": {
 			"caProvided": true
 		}
+	},
+	"plugin": {
 	}
 }

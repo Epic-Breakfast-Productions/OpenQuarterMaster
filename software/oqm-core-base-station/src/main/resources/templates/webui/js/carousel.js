@@ -59,16 +59,17 @@ const Carousel = {
 		carousel.carousel();
 	},
 	async setCarouselImagesFromIds(imageIds, carousel) {
-		// console.log("Getting item data for storage block \"" + blockId + "\"");
+		console.log("Adding images to carousel: ", imageIds);
 		return new Promise(async (done, fail) => {
 			var ajaxPromises = []
 			var carouselData = [];
 
 			imageIds.forEach(function (id, i) {
+				console.debug("Adding image to carousel: ", id);
 				ajaxPromises.push(
 					Rest.call({ //TODO:: move to getter
 						spinnerContainer: carousel[0],
-						url: "/api/v1/media/image/" + id,
+						url: "/api/passthrough/media/image/" + id,
 						async: false,
 						done: function (data) {
 							carouselData[i] = {

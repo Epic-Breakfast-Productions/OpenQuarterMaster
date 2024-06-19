@@ -1,17 +1,8 @@
 {!{@org.bson.types.ObjectId entityRef}!}
 {!{#let entity = cdi:InteractingEntityService.get(entityRef)}!}
-<a href="/entityView/{entityRef.get("id").asText()}" class="text-decoration-none entityViewLink" target="_blank">
+<a href="/interactingEntity?view={entityRef.get("id").asText()}" class="text-decoration-none entityViewLink" target="_blank">
 	<span class="entityViewSymbol">
-		{#switch entityRef.get("type").asText()}
-			{#case "USER"}
-				{#icons/user}{/icons/user}
-			{#case "SERVICE_GENERAL"}
-				{#icons/extService}{/icons/extService}
-			{#case "SERVICE_PLUGIN"}
-				{#icons/extService}{/icons/extService}
-			{#case "BASE_STATION"}
-				{#icons/baseStation}{/icons/baseStation}
-		{/switch}
+		{#icons/interactingEntityType type=entityRef.get("type").asText()}{/icons/interactingEntityType}
 	</span>
 	<span class="entityViewName">
 		{entityRef.get("name").asText()}

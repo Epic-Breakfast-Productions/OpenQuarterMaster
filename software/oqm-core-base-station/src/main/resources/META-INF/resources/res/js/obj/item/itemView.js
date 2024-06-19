@@ -232,7 +232,7 @@ const ItemView = {
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
 				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
-				ItemView.itemViewStorageType.text(itemData.storageType);
+				ItemView.itemViewStorageType.text(StoredTypeUtils.storedTypeToDisplay(itemData.storageType));
 				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
 				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
@@ -349,7 +349,7 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 		failNoResponseCheckStatus: true,
 		extraHeaders: {
 			"accept": "text/html",
-			"actionType": "viewLink",
+			"actionType": "viewCheckin",
 			"searchFormId": "itemViewCheckoutSearchForm",
 			"showItemCol": false
 		},

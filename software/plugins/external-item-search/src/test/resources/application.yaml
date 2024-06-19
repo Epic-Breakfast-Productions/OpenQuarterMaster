@@ -1,0 +1,23 @@
+
+productLookup:
+  providers:
+    rebrickable:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+      apiKey: devKey
+    upcitemdb:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+    datakick:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+    barcodelookup-com:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+      apiKey: devKey
+
+quarkus:
+  log:
+    level: DEBUG
+  wiremock:
+    devservices:
+      enabled: true
+      reload: true
+      files-mapping: dev/wmMapping
+      global-response-templating: true
