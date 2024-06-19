@@ -15,7 +15,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 Environment="CONTAINER_NAME=oqm-infra-mongo"
 Environment="IMAGE_NAME=mongo"
 Environment="IMAGE_VERSION=7"
