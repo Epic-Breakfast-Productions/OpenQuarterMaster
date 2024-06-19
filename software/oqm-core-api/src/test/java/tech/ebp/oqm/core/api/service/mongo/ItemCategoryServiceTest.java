@@ -46,13 +46,11 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 	ItemCategoryServiceTest(
 		ItemCategoryService itemCategoryService,
 		ItemCategoryTestObjectCreator itemCategoryTestObjectCreator,
-		TestUserService testUserService,
 		InventoryItemService inventoryItemService,
 		StorageBlockService storageBlockService
 	) {
 		this.itemCategoryService = itemCategoryService;
 		this.itemCategoryTestObjectCreator = itemCategoryTestObjectCreator;
-		this.testUserService = testUserService;
 		
 		this.inventoryItemService = inventoryItemService;
 		this.storageBlockService = storageBlockService;
@@ -103,7 +101,7 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 	@Ignore
 	@Test
 	public void testDeleteWithRelational(){
-		User testUser = this.testUserService.getTestUser();
+		User testUser = this.getTestUserService().getTestUser();
 		ItemCategory itemCategory = this.getTestObject();
 		Map<String, Set<ObjectId>> expectedRefs = new HashMap<>();
 		

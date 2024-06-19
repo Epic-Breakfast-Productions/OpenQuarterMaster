@@ -51,12 +51,16 @@ import java.util.UUID;
  * }
  */
 @Slf4j
-@ApplicationScoped
 public class TestUserService {
 	private final static Faker FAKER = new Faker();
 	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
 	public static final String TEST_JWT_ATT_KEY = "TEST_JWT";
 	private static final String TEST_EXTERN_ID_ATT_KEY = "TEST_KEYCLOAK_ID";
+
+	private final static TestUserService INSTANCE = new TestUserService();
+	public static TestUserService getInstance() {
+		return INSTANCE;
+	}
 	
 	private final String jwtIssuer = ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class);
 	

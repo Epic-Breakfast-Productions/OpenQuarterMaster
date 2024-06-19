@@ -43,9 +43,6 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	TestMongoHistoriedService testMongoService;
 	
 	@Inject
-	TestUserService testUserService;
-	
-	@Inject
 	InteractingEntityService interactingEntityService;
 	
 	@InjectKafkaCompanion
@@ -58,7 +55,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testAdd() throws JsonProcessingException {
-		User testUser = testUserService.getTestUser();
+		User testUser = this.getTestUserService().getTestUser();
 		this.interactingEntityService.add(testUser);
 		
 		ObjectId objectId = this.testMongoService.add(

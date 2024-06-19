@@ -1,6 +1,8 @@
 package tech.ebp.oqm.core.api.testResources.testClasses;
 
+import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.MongoTestConnector;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
@@ -29,20 +32,27 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static io.restassured.RestAssured.given;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
+import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 //@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
 
-	@Inject
-	OqmDatabaseService oqmDatabaseService;
+	@Getter
+	TestUserService testUserService = TestUserService.getInstance();
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){
-		this.oqmDatabaseService.refreshCache();
-		this.oqmDatabaseService.ensureDatabase(DEFAULT_TEST_DB_NAME);
+		User adminUser = this.getTestUserService().getTestUser(true);
+		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
+			.basePath("")
+			.get("/api/v1/inventory/manage/db/refreshCache").then().statusCode(200);
+		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
+			.basePath("")
+			.put("/api/v1/inventory/manage/db/ensure/" + DEFAULT_TEST_DB_NAME).then().statusCode(200);
 
 		if(SeleniumGridServerManager.RECORD) {
 			TestResourceLifecycleManager.BROWSER_CONTAINER.beforeTest(

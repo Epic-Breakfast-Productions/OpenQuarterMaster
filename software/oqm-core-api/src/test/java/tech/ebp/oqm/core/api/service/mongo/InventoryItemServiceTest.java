@@ -40,12 +40,10 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	@Inject
 	InventoryItemServiceTest(
 		InventoryItemService inventoryItemService,
-		InventoryItemTestObjectCreator itemTestObjectCreator,
-		TestUserService testUserService
+		InventoryItemTestObjectCreator itemTestObjectCreator
 	) {
 		this.inventoryItemService = inventoryItemService;
 		this.itemTestObjectCreator = itemTestObjectCreator;
-		this.testUserService = testUserService;
 	}
 	
 	@Override
@@ -78,7 +76,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
 		
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
@@ -93,7 +91,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new AmountStored(0, item.getUnit()));
 		
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
@@ -109,7 +107,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 											 .setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new TrackedStored(FAKER.commerce().productName()));
 		
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		assertNotNull(item.getId());
 		assertEquals(id, item.getId());
@@ -123,7 +121,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testUpdateSimpleAmountItemJson(){
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
@@ -139,7 +137,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testUpdateListAmountItemJson(){
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new AmountStored(0, item.getUnit()));
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
@@ -157,7 +155,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
 		item.add(ObjectId.get(), new TrackedStored(FAKER.commerce().productName()));
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		ObjectNode update = ObjectUtils.OBJECT_MAPPER.valueToTree(item);
 		String newName = item.getName() + " new";
@@ -188,7 +186,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testStoreItemWithNulledStorageBlockKey(){
 		SimpleAmountItem item = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.commerce().productName());
 		item.getStorageMap().put(new ObjectId(new byte[12]), new SingleAmountStoredWrapper(new AmountStored(0, item.getUnit())));
-		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		ObjectId id = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, this.getTestUserService().getTestUser());
 		
 		SimpleAmountItem returned = (SimpleAmountItem) this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, id);
 		assertEquals(item, returned);

@@ -6,14 +6,8 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -204,7 +198,36 @@ public class InventoryManagement extends EndpointProvider {
 		log.info("Creating new database from REST call: {}", body);
 		ObjectId result = this.oqmDatabaseService.addOqmDatabase(body);
 		log.info("Created new database from REST call: {}", result);
+		return Response.ok(result).build();
+	}
 
+	@Blocking
+	@PUT
+	@Path("db/ensure/{dbName}")
+	@Operation(
+		summary = "Ensures a Database with a particular name exists."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response ensureDb(
+		@PathParam("dbName") String dbName
+	) {
+		log.info("Creating new database from REST call: {}", dbName);
+		boolean result = this.oqmDatabaseService.ensureDatabase(dbName);
+		log.info("Created new database from REST call: {}", result);
 		return Response.ok(result).build();
 	}
 
@@ -231,6 +254,32 @@ public class InventoryManagement extends EndpointProvider {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listDatabases() {
 		return Response.ok(this.oqmDatabaseService.listIterator().into(new ArrayList<>())).build();
+	}
+
+	@Blocking
+	@GET
+	@Path("db/refreshCache")
+	@Operation(
+		summary = "Refreshes the internal database cache."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Database added.",
+		content = @Content(
+			mediaType = MediaType.APPLICATION_JSON
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response refreshDbCache() {
+		this.oqmDatabaseService.refreshCache();
+		return Response.ok().build();
 	}
 	
 	//TODO:: prune histories
