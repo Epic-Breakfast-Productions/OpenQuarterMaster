@@ -152,9 +152,6 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 
 	KeywordAttEdit.addKeywordAttData(checkoutRequestData, ItemCheckout.keywords, ItemCheckout.atts);
 
-	//TODO:: checkedOutFor
-	//TODO:: adjusting the amount checked out for AMOUNT_STORED
-
 	await Rest.call({
 		url: Rest.passRoot + "/inventory/item-checkout",
 		method: "POST",
