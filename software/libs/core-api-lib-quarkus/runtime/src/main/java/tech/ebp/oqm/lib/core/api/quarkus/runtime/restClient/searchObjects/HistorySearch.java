@@ -1,14 +1,16 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
 import jakarta.ws.rs.QueryParam;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @ToString(callSuper = true)
 @Getter
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class HistorySearch extends SearchObject {
 	
 	@Setter

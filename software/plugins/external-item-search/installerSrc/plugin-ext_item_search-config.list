@@ -6,7 +6,7 @@
 # Basic configs
 quarkus.http.port=80
 quarkus.http.ssl.port=443
-quarkus.http.insecure-requests=redirect
+quarkus.http.insecure-requests=enabled
 quarkus.log.level=INFO
 
 # Files brought over in shared volume

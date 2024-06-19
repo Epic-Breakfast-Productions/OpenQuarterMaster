@@ -29,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Tags({@Tag(name = "Passthrough")})
 public abstract class PassthroughProvider extends ApiProvider {
 	public static final String PASSTHROUGH_API_ROOT = API_ROOT + "/passthrough";
-	
+	public static final String PASSTHROUGH_API_PLUGIN_ROOT = PASSTHROUGH_API_ROOT + "/plugin";
+
 	@Getter
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClient;
@@ -106,7 +107,8 @@ public abstract class PassthroughProvider extends ApiProvider {
 		String acceptType,
 		String searchFormId,
 		String otherModalId,
-		String inputIdPrepend
+		String inputIdPrepend,
+		String actionType
 	) {
 		if (MediaType.TEXT_HTML.equals(acceptType)) {
 			return searchUni.map(
@@ -114,7 +116,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 					log.debug("Final result of history search: {}", endResults);
 					return Response.ok(
 						searchResultTemplate
-							.data("actionType", "select")
+							.data("actionType", actionType)
 							.data("searchFormId", searchFormId)
 							.data("otherModalId", otherModalId)
 							.data("inputIdPrepend", inputIdPrepend)
@@ -136,7 +138,8 @@ public abstract class PassthroughProvider extends ApiProvider {
 		String acceptType,
 		String searchFormId,
 		String otherModalId,
-		String inputIdPrepend
+		String inputIdPrepend,
+		String actionType
 	) {
 		return this.processSearchResults(
 			searchUni,
@@ -144,7 +147,8 @@ public abstract class PassthroughProvider extends ApiProvider {
 			acceptType,
 			searchFormId,
 			otherModalId,
-			inputIdPrepend
+			inputIdPrepend,
+			actionType
 		);
 	}
 }

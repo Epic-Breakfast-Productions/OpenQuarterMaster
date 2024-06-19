@@ -1,0 +1,17 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch searchObject}!}
+{#include tags/search/searchForm id=id action='/interactingEntity' showKeywords=true showAttributes=true defaultPageSize=config:['ui.interactingEntity.search.defaultPageSize']}
+	{#inputs}
+		<div class="mb-3 col col-3">
+			<label for="{id}-nameInput" class="form-label">Name</label>
+			<input type="text" class="form-control" name="name" id="{id}-nameInput" aria-describedby="{id}-nameInputHelp">
+			<div id="{id}-nameInputHelp" class="form-text">The name of the entity to find.</div>
+		</div>
+		<!-- TODO:: type -->
+	{/inputs}
+{/include}

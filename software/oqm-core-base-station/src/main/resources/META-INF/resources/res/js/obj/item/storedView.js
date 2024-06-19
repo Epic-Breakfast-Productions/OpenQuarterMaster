@@ -12,9 +12,9 @@ const StoredView = {
 		}
 		return "";
 	},
-	getStorageBlockAmountHeldView(stored) {
+	getStorageBlockAmountHeldView(stored, showCurrently = false) {
 		if (stored.storedType.includes("AMOUNT")) {
-			return StoredView.getBlockViewCell("Stored", stored.amount.value + stored.amount.unit.symbol);
+			return StoredView.getBlockViewCell((showCurrently?"Currently ":"") + "Stored:", stored.amount.value + stored.amount.unit.symbol);
 		}
 		return "";
 	},
@@ -95,7 +95,8 @@ const StoredView = {
 		index = false,
 		includeStoredLink = false,
 		includeCheckoutLink = false,
-		includeIdentifier = false
+		includeIdentifier = false,
+		showCurrentlyStored = false
 	) {
 		console.log("Getting stored view html for "+JSON.stringify(stored))
 		let newContent = $('<div class="row storedViewRow"></div>');
@@ -119,7 +120,7 @@ const StoredView = {
 		}
 
 		newContent.append(
-			StoredView.getStorageBlockAmountHeldView(stored),
+			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
 			StoredView.getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),

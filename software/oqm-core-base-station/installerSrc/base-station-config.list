@@ -35,3 +35,17 @@ quarkus.rest-client."tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClien
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
 runningInfo.depotUri={core.depot.externalBaseUri}
+
+
+#
+# Plugins
+#
+
+# External Item Search
+{% if plugin.externalItemSearch is defined %}
+quarkus.rest-client.externalItemSearch.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+quarkus.rest-client.externalItemSearch.trust-store-password={cert.certs.keystorePass}
+quarkus.rest-client.externalItemSearch.url={plugin.externalItemSearch.baseUrl}
+{% else %}
+#  External item search plugin not installed
+{% endif %}

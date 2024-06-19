@@ -140,6 +140,9 @@ public abstract class RestInterface {
 
 	public String getSelectedDb() {
 		if (this.oqmDb == null || this.oqmDb.isBlank()) {
+			if(this.oqmDatabases == null || this.oqmDatabases.isEmpty()){
+				throw new IllegalStateException("Cannot have no databases.");
+			}
 			//TODO: this but smarter?
 			return this.getOqmDatabases().get(0).get("id").asText();
 		}

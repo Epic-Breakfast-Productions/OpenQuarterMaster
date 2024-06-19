@@ -1,0 +1,8 @@
+{
+	"plugin": {
+		"externalItemSearch": {
+			"host": "oqm-plugin-ext-item-search",
+			"baseUrl": "http://#{plugin.externalItemSearch.host}"
+		}
+	}
+}
