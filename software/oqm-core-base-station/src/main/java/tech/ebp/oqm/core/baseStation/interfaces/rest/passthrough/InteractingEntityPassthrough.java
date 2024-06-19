@@ -31,7 +31,15 @@ public class InteractingEntityPassthrough extends PassthroughProvider {
 	@Inject
 	@Location("tags/interactingEntityRef.html")
 	Template historyTemplate;
-	
+
+	@GET
+	@Path("/{id}")
+	public Uni<ObjectNode> getInteractingEntity(
+		@PathParam("id") String id
+	) {
+		return this.getOqmCoreApiClient().interactingEntityGet(this.getBearerHeaderStr(), id);
+	}
+
 	@GET
 	@Path("/{id}/reference")
 	public Uni<Response> getInteractingEntityReference(

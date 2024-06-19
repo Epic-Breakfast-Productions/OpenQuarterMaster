@@ -87,7 +87,8 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 			acceptType,
 			searchFormId,
 			otherModalId,
-			inputIdPrepend
+			inputIdPrepend,
+			"select"
 		);
 	}
 	

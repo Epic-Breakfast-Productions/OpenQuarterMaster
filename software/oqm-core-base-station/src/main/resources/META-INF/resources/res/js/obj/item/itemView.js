@@ -349,7 +349,7 @@ ItemView.checkoutSearchForm.on("submit", function(e){
 		failNoResponseCheckStatus: true,
 		extraHeaders: {
 			"accept": "text/html",
-			"actionType": "viewLink",
+			"actionType": "viewCheckin",
 			"searchFormId": "itemViewCheckoutSearchForm",
 			"showItemCol": false
 		},

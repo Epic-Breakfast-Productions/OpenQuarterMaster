@@ -28,6 +28,7 @@ const ItemCheckoutView = {
 	checkinDetailsLossReason: $("#itemCheckoutViewCheckinDetailsLossReason"),
 	checkinDetailsCheckedIntoContainer: $("#itemCheckoutViewCheckinDetailsCheckedIntoContainer"),
 	checkinDetailsCheckedInto: $("#itemCheckoutViewCheckinDetailsCheckedInto"),
+	checkinDetailsCheckedInBy: $("#itemCheckoutViewCheckinDetailsCheckedInBy"),
 	checkinButton: $("#itemCheckoutViewCheckinButton"),
 
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
@@ -89,6 +90,18 @@ const ItemCheckoutView = {
 				let promises = [];
 
 				//TODO:: get create history event for checkout to show who checked out, enabled by #332
+				promises.push(Rest.call({
+					url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId + "/history?eventType=CREATE",
+					method: "GET",
+					async: false,
+					failMessagesDiv: ItemCheckin.messages,
+					done: function (checkoutData) {
+						console.log("Checkout history for creates: ", checkoutData);
+						EntityRef.getEntityRef(checkoutData.results[0].entity, function(entityRefHtml){
+							ItemCheckoutView.checkedOutByLabel.html(entityRefHtml);
+						});
+					}
+				}))
 
 				switch (checkoutData.checkedOutFor.type){
 					case "OQM_ENTITY":
@@ -177,7 +190,6 @@ const ItemCheckoutView = {
 				);
 
 				if(!checkoutData.stillCheckedOut){
-					//TODO:: checked in by, enabled by #332
 					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
 					ItemCheckoutView.checkinDetailsTime.text(checkoutData.checkInDetails.checkinDateTime);
 					KeywordAttUtils.processKeywordDisplay(ItemCheckoutView.checkinDetailsKeywordsSection, checkoutData.checkInDetails.keywords);
@@ -211,6 +223,19 @@ const ItemCheckoutView = {
 							}
 							break;
 					}
+
+					promises.push(Rest.call({
+						url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId + "/history?eventType=ITEM_CHECKIN",
+						method: "GET",
+						async: false,
+						failMessagesDiv: ItemCheckin.messages,
+						done: function (checkoutData) {
+							console.log("Checkout history for checkins: ", checkoutData);
+							EntityRef.getEntityRef(checkoutData.results[0].entity, function(entityRefHtml){
+								ItemCheckoutView.checkinDetailsCheckedInBy.html(entityRefHtml);
+							});
+						}
+					}))
 
 					ItemCheckoutView.checkinDetailsContainer.show();
 				}

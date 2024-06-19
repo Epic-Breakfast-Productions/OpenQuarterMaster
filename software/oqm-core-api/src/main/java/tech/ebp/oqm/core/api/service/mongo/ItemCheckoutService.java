@@ -109,12 +109,13 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 			item = this.inventoryItemService.get(oqmDbIdOrName, checkout.getItem());
 			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
 		}
-		
+
+		ItemCheckinEvent event = new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId());
 		try(ClientSession cs = this.getNewClientSession(true)){
 			if(item != null) {
-				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, event);
 			}
-			this.update(oqmDbIdOrName, cs, checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+			this.update(oqmDbIdOrName, cs, checkout, entity, event);
 			cs.commitTransaction();
 		}
 		

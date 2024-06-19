@@ -114,7 +114,8 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId,
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend,
-		@HeaderParam("showItem") String showItem
+		@HeaderParam("showItem") String showItem,
+		@HeaderParam("actionType") String actionType
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
@@ -127,7 +128,8 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 			acceptType,
 			searchFormId,
 			otherModalId,
-			inputIdPrepend
+			inputIdPrepend,
+			actionType
 		);
 	}
 

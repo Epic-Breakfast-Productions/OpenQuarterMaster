@@ -140,6 +140,15 @@ ItemCheckout.itemCheckoutForm.submit(async function (event) {
 		checkoutRequestData.toCheckout = newStored;
 	}
 
+	if(ItemCheckout.forSelectInput.val() === "extUser"){
+		checkoutRequestData.checkedOutFor = {};
+		checkoutRequestData.checkedOutFor.type = "EXT_SYS_USER";
+		checkoutRequestData.checkedOutFor.externalId = ItemCheckout.forExternalUserIdInput.val();
+		checkoutRequestData.checkedOutFor.name = ItemCheckout.forExternalUserNameInput.val();
+	} else if (ItemCheckout.forSelectInput.val() === "otherOqmUser"){
+		//TODO:: this
+	}
+
 
 	KeywordAttEdit.addKeywordAttData(checkoutRequestData, ItemCheckout.keywords, ItemCheckout.atts);
 
