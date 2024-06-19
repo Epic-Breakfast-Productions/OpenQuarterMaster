@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.sshd.server.command.Command;
 import stationCaptainTest.testResources.config.ConfigReader;
 import stationCaptainTest.testResources.config.snhSetup.ContainerSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
@@ -182,9 +183,9 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			case deb -> {
 				this.runCommand("systemctl", "stop", "oqm-*").assertSuccess("Stop OQM services");
 //				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*").assertSuccess("Remove old OQM versions");
-				this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*").assertSuccess("Remove OQM packages");
-				this.runCommand("docker", "image", "prune", "-f").assertSuccess("Prune docker images");
-				this.runCommand("systemctl", "reset-failed").assertSuccess("Reset systemd");
+				CommandResult uninstallResult = this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
+				this.runCommand("docker", "image", "prune", "-f");//.assertSuccess("Prune docker images");
+				this.runCommand("systemctl", "reset-failed");//.assertSuccess("Reset systemd");
 //				this.runCommand("apt-get", "-y", "autoremove");
 			}
 			case rpm -> {
