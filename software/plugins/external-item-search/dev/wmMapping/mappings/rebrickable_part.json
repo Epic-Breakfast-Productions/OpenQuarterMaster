@@ -1,0 +1,46 @@
+{
+  "request": {
+    "urlPathPattern": "/rebrickable/api/v3/lego/parts/.*",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "part_num": "{{request.pathSegments.[5]}}",
+      "name": "Technic Turntable 5 x 5 Top with 5 Pin Holes",
+      "part_cat_id": 26,
+      "year_from": 2022,
+      "year_to": 2022,
+      "part_url": "https://rebrickable.com/parts/01936/technic-turntable-5-x-5-top-with-5-pin-holes/",
+      "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6399646.jpg",
+      "prints": [],
+      "molds": [],
+      "alternates": [],
+      "external_ids": {
+        "BrickLink": [
+          "1936"
+        ],
+        "BrickOwl": [
+          "1125979"
+        ],
+        "Brickset": [
+          "1936"
+        ],
+        "LDraw": [
+          "1936"
+        ],
+        "LEGO": [
+          "1936"
+        ]
+      },
+      "print_of": null
+    }
+  }
+}
+
+
+
+

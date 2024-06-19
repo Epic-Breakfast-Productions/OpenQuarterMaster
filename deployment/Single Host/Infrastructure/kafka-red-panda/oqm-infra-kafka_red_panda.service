@@ -16,6 +16,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
+TimeoutStartSec=600
 Environment="CONTAINER_NAME=oqm-infra-kafka-rp"
 Environment="IMAGE_NAME=docker.redpanda.com/redpandadata/redpanda"
 Environment="IMAGE_VERSION=v23.3.9"

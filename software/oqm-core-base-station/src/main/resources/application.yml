@@ -27,44 +27,6 @@ service:
     default: "MM/dd/YYYY hh:mm:ss a (z)"
   refreshDbCacheFrequency: "30s"
 
-productLookup:
-  providers:
-    barcodelookup-com:
-      displayName: BarcodeLookup.com
-      description: Comprehensive database of products, but a paid service.
-      cost: Paid
-      acceptsContributions: true
-      homepage: https://www.barcodelookup.com/
-      enabled: true
-      url: https://api.barcodelookup.com/
-      apiKey: " "
-    datakick:
-      displayName: Datakick
-      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
-      cost: Free
-      acceptsContributions: true
-      homepage: https://gtinsearch.org/
-      enabled: true
-      url: https://www.gtinsearch.org
-    upcitemdb:
-      displayName: upcitemdb.com
-      description: A lookup database with good number of records, and a free tier with 100 requests per day.
-      cost: Free tier, Paid
-      acceptsContributions: false
-      homepage: https://www.upcitemdb.com/
-      enabled: true
-      url: https://api.upcitemdb.com
-      apiKey: " "
-    rebrickable:
-      displayName: Rebrickable
-      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
-      cost: Free
-      acceptsContributions: false
-      homepage: https://rebrickable.com
-      enabled: true
-      url: https://rebrickable.com
-      apiKey: " "
-
 # TODO:: move this into `service` config
 runningInfo:
   protocol: http
@@ -86,6 +48,9 @@ ui:
     search:
       defaultPageSize: 16
   history:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  interactingEntity:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
   itemCategory:
@@ -110,17 +75,8 @@ quarkus:
     "tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient":
       url: ${quarkus.oidc.auth-server-url}
       scope: jakarta.inject.Singleton
-    upc-barcodelookup-com:
-      url: ${productLookup.providers.barcodelookup-com.url}
-      scope: jakarta.inject.Singleton
-    upc-datakick:
-      url: ${productLookup.providers.datakick.url}
-      scope: jakarta.inject.Singleton
-    upc-upcitemdb:
-      url: ${productLookup.providers.upcitemdb.url}
-      scope: jakarta.inject.Singleton
-    lego-rebrickable:
-      url: ${productLookup.providers.rebrickable.url}
+    externalItemSearch:
+      url: " "
       scope: jakarta.inject.Singleton
   log:
     level: DEBUG
@@ -170,6 +126,7 @@ quarkus:
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   oqmCoreApi:
     devservice:
+      coreApiVersion: 2.1.0-DEV
       certPath: ../../../../dev/devTest-cert-cert.pem
       certKeyPath: ../../../../dev/devTest-cert-key.pem
       

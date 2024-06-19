@@ -1,0 +1,94 @@
+# Service file for running an instance of the Open QuarterMaster Base Station.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
+#
+[Unit]
+Description=Open QuarterMaster Plugin - External Item Search. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugin/external-item-search
+After=docker.service
+Wants=network-online.target
+Wants=oqm-infra-jaeger.service
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+# Setup operating variables
+Environment="CONTAINER_NAME=oqm-plugin-ext-item-search"
+Environment="IMAGE_NAME=ebprod/oqm-plugin-ext_item_search"
+Environment="IMAGE_VERSION=${version}"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/plugin-ext_item_search-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search/oqm-plugin-ext_item_search.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search/user-config.list"
+
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+# Ensure previous runs gone
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop ext item search container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove ext item search container'"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/privateKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/keystore.p12"
+
+# Create filled out configuration
+#ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/plugin/external-item-search/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
+
+# Pull image as separate task
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# Run Base Station
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
+                                        -v /etc/oqm/serviceConfig/plugin/external-item-search/files:/etc/oqm/serviceConfig/plugin/external-item-search/files:ro \
+                                        --env-file $MAIN_CONFIG_FILE \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+# Ensure is up
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
+                                if [ \"$status\" == \"true\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            hostname=\"$(oqm-config -g system.hostname)\"; \
+                            port=\"$(oqm-config -g core.api.httpsPort)\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                sleep 1s; \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
+                                if [ \"$status\" != \"true\" ]; then \
+                                    echo \"Container was stopped!\"; \
+                                    exit 1; \
+                                fi; \
+                                hcGet=\"$(/usr/bin/curl \"https://$hostname:$port/q/health\")\"; \
+                                echo \"Health check get: $hcGet\"; \
+                                status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
+                                echo \"Status: $status\"; \
+                                if [ \"$status\" = \"UP\" ]; then \
+                                    echo \"External Item Search Plugin running and available!\"; \
+                                    running=\"true\"; \
+                                fi \
+                            done \
+                            "
+# Remove from docker
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop ext item search container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove ext item search container'"
+
+[Install]
+WantedBy=multi-user.target

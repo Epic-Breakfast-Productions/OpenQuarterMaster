@@ -38,6 +38,6 @@ public class ItemCheckinEvent extends ObjectHistoryEvent {
 	
 	@Override
 	public EventType getType() {
-		return EventType.ITEM_CHECKOUT;
+		return EventType.ITEM_CHECKIN;
 	}
 }

@@ -1,0 +1,96 @@
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.object.storage.storageBlock.StorageBlock> searchResults}!}
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - storageService - the service to get storage blocks
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectStorageBlock('<block name>', '<block id>', '<inputIdPrepend>')" on the select button
+!}
+<thead>
+<tr>
+  <td colspan="6" class="text-center">
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+  </td>
+</tr>
+<tr>
+  <th scope="col" class="searchResultImageCol">Image</th>
+  <th scope="col">Label/Nickname</th>
+  <th scope="col">Location</th>
+  <th scope="col">Parent</th>
+  <th scope="col">Capacity</th>
+  <th scope="col" width="125px">Actions</th>
+</tr>
+</thead>
+<tbody>
+{#if searchResults.get("empty").asBoolean()}
+<tr>
+  <td colspan="6" class="text-center">
+    <h2>
+      No Storage Blocks
+    </h2>
+    {#if actionType == 'full'}
+    <div class="col d-grid gap-2">
+      <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+              data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+        {#icons/add}{/icons/add} Add Storage Block
+      </button>
+    </div>
+  {/if}
+  </td>
+</tr>
+{#else}
+{#for result in searchResults.get("results")}
+{#let id=result.get("id").asText() label=result.get("labelText").asText()}
+<tr class="storageBlockResultRow align-middle">
+  <td>
+    {#if !result.get("imageIds").isEmpty()}
+      <img src="/api/passthrough/media/image/for/storageBlock/{id}" class="searchResultImage" alt="Image for {label}">
+    {/if}
+  </td>
+  <td>{label}</td>
+  <td>{result.get("location").asText()}</td>
+  <td>
+    {#if result.get("hasParent").asBoolean()}
+      {result.get("parentLabel").asText()}
+    {/if}
+  </td>
+  <td></td>
+  {#if actionType == 'full'}
+  <td>
+    <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{id}');">
+      {#icons/view}{/icons/view}
+    </button>
+    <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{id}');">
+      {#icons/edit}{/icons/edit}
+    </button>
+    <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeStorageBlock('{id}');">
+      {#icons/remove}{/icons/remove}
+    </button>
+    {#else if actionType == 'select'}
+  <td class="d-grid gap-2">
+    <button type="button" class="btn btn-sm btn-success" title="Select {label}"
+            data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+            onclick="StorageSearchSelect.selectStorageBlock('{label}', '{id}', '{inputIdPrepend}');">
+      {#icons/select}{/icons/select} Select
+    </button>
+    {/if}
+  </td>
+</tr>
+{/let}
+{/for}
+{/if}
+</tbody>
+<tfoot>
+<tr>
+  <td colspan="6" class="text-center">
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+  </td>
+</tr>
+</tfoot>

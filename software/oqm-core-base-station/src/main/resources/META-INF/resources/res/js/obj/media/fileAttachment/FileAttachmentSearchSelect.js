@@ -44,7 +44,7 @@ const FileAttachmentSearchSelect = {
 		fileIdList.forEach(function (curId){
 			Rest.call({
 				spinnerContainer: null,
-				url: Rest.passRoot + "/media/fileAttachments/" + curId,
+				url: Rest.passRoot + "/media/fileAttachment/" + curId,
 				failMessagesDiv: failMessagesDiv,
 				done: async function (data) {
 					FileAttachmentSearchSelect.selectFile(curId, data.revisions[0].origName);

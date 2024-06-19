@@ -88,14 +88,14 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
                                 if [ \"$status\" = \"UP\" ]; then \
-                                    echo \"Base Station running and available!\"; \
+                                    echo \"Core API running and available!\"; \
                                     running=\"true\"; \
                                 fi \
                             done \
                             "
 # Remove from docker
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
 
 [Install]
 WantedBy=multi-user.target

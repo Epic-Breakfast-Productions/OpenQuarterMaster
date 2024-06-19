@@ -1,0 +1,103 @@
+service:
+  version: ${quarkus.application.version}
+  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+
+
+productLookup:
+  providers:
+    barcodelookup-com:
+      displayName: BarcodeLookup.com
+      description: Comprehensive database of products, but a paid service. Can get a 2-week trial API key.
+      cost: Paid
+      acceptsContributions: true
+      homepage: https://www.barcodelookup.com/
+      enabled: true
+      url: https://api.barcodelookup.com/
+      apiKey: " "
+    datakick:
+      displayName: Datakick
+      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
+      cost: Free
+      acceptsContributions: true
+      homepage: https://gtinsearch.org/
+      enabled: true
+      url: https://www.gtinsearch.org
+    upcitemdb:
+      displayName: upcitemdb.com
+      description: A lookup database with good number of records, and a free tier with 100 requests per day.
+      cost: Free tier, Paid
+      acceptsContributions: false
+      homepage: https://www.upcitemdb.com/
+      enabled: true
+      url: https://api.upcitemdb.com
+      apiKey: " "
+    rebrickable:
+      displayName: Rebrickable
+      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
+      cost: Free
+      acceptsContributions: false
+      homepage: https://rebrickable.com
+      enabled: true
+      url: https://rebrickable.com
+      apiKey: " "
+
+quarkus:
+  application:
+#    name: ${service.nameShort} - V${service.apiVersion}
+  rest-client:
+    logging:
+      scope: all
+    upc-barcodelookup-com:
+      url: ${productLookup.providers.barcodelookup-com.url}
+      scope: jakarta.inject.Singleton
+    upc-datakick:
+      url: ${productLookup.providers.datakick.url}
+      scope: jakarta.inject.Singleton
+    upc-upcitemdb:
+      url: ${productLookup.providers.upcitemdb.url}
+      scope: jakarta.inject.Singleton
+    lego-rebrickable:
+      url: ${productLookup.providers.rebrickable.url}
+      scope: jakarta.inject.Singleton
+  smallrye-openapi:
+    info-title: External Item Search API
+    info-version: ${quarkus.application.version}
+    info-description: API documentation for the External Item Search Plugin.
+    #    info-terms-of-service: <url>
+    info-contact-email: greg@epic-breakfast-productions.tech
+    info-contact-name: EBP
+    info-contact-url: ${service.gitLink}
+    info-license-name: GNU General Public License v3.0
+    info-license-url: ${service.gitLink}/blob/main/LICENSE
+  swagger-ui:
+    always-include: true
+    title: External Item Search v${quarkus.application.version}
+    theme: flattop
+    footer: With ❤️, EBP
+  health:
+    openapi:
+      included: true
+
+"%dev":
+  productLookup:
+    providers:
+      rebrickable:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+        apiKey: devKey
+      upcitemdb:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+      datakick:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+      barcodelookup-com:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+        apiKey: devKey
+
+  quarkus:
+    log:
+      level: DEBUG
+    wiremock:
+      devservices:
+        enabled: true
+        reload: true
+        files-mapping: ../../../../dev/wmMapping
+        global-response-templating: true
