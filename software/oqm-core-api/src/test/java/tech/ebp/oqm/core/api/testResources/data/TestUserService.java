@@ -96,7 +96,11 @@ public class TestUserService {
 				.claim(Claims.preferred_username, testUser.getName())
 				.claim("name", testUser.getName())
 				.subject(testUser.getIdFromAuthProvider())
-				.sign();
+				.sign(
+					ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class)
+				)
+
+			;
 		return token;
 	}
 	

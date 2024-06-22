@@ -13,4 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusIntegrationTest
 public class UiGetTestIT extends UiGetTest {
 
+	@Test
+	public void testHealth(){
+		given()
+			.get("/q/health")
+			.then()
+			.statusCode(200);
+	}
 }
