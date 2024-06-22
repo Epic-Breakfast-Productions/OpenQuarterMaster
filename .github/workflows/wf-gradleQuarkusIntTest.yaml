@@ -5,6 +5,13 @@ on:
       path:
         required: true
         type: string
+      containerBased:
+        required: true
+        type: choice
+        options:
+          - true
+          - false
+
 jobs:
   quarkusIntTest:
     runs-on: ubuntu-latest
@@ -17,5 +24,5 @@ jobs:
           distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: quarkusIntTest
+          arguments: quarkusIntTest -x test -Pquarkus.container-image.build=${{ inputs.containerBased }}
           build-root-directory: ${{ inputs.path }}
