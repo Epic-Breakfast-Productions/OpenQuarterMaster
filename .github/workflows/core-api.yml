@@ -32,7 +32,7 @@ jobs:
     with:
       path: "software/oqm-core-api"
   intTest:
-    uses: ./.github/workflows/wf-gradleUnitTest.yaml
+    uses: ./.github/workflows/wf-gradleIntTest.yaml
     strategy:
       matrix:
         containerBased: [ true, false ]
