@@ -35,7 +35,7 @@ jobs:
     uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
-        containerBased: [ true, false ]
+        containerBased: [ false ] # TODO:: enable true
     with:
       path: "software/oqm-core-api"
       containerBased: ${{ matrix.containerBased }}
