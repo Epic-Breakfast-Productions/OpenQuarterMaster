@@ -17,6 +17,8 @@ externalService:
 #  connector: smallrye-amqp
   
 quarkus:
+  test:
+    integration-test-profile: intTest
   http:
     port: 8081
   log:
@@ -42,8 +44,6 @@ mp:
   jwt:
     verify:
       issuer: "oqm-test"
-      privatekey:
-        location: dev/devTest-cert-key.pem
       publickey:
         location: dev/devTest-cert-cert.pem
 smallrye:
@@ -68,5 +68,3 @@ test:
     item:
       expiryCheck:
         cron: 0/5 0 0 ? * * * # every 5 seconds
-
-

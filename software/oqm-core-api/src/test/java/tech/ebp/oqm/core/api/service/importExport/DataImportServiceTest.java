@@ -79,9 +79,6 @@ class DataImportServiceTest extends RunningServerTest {
 	DatabaseExportService databaseExportService;
 	
 	@Inject
-	TestUserService testUserService;
-	
-	@Inject
 	InteractingEntityService interactingEntityService;
 	@Inject
 	CustomUnitService customUnitService;
@@ -105,7 +102,7 @@ class DataImportServiceTest extends RunningServerTest {
 	// TODO:: fix flakiness. https://www.baeldung.com/junit-5-repeated-test
 	@Test
 	public void testImportService() throws IOException {
-		User testUser = testUserService.getTestUser(true);
+		User testUser = this.getTestUserService().getTestUser(true);
 		this.interactingEntityService.add(testUser);
 		Random rand = new SecureRandom();
 		

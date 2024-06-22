@@ -5,5 +5,4 @@ import tech.ebp.oqm.core.api.testResources.ui.WebDriverWrapper;
 
 @Tag("ui")
 public abstract class WebUiTest extends RunningServerTest {
-	protected WebDriverWrapper webDriverWrapper = new WebDriverWrapper();
 }

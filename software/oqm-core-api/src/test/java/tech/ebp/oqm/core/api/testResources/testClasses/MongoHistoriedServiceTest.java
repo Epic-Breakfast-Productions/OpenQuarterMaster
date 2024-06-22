@@ -14,9 +14,7 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends MongoHistoriedObjectService<T, ?, ?>> extends RunningServerTest {
-	
-	protected TestUserService testUserService;
-	
+
 	protected abstract T getTestObject();
 	
 	protected T getTestObject(boolean withObjectId) {
