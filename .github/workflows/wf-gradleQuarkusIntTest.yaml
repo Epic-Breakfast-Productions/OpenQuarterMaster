@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: success() || failure()    # run this step even if previous step failed
         with:
-          name: "Integration Test Report (Container: ${{ inputs.containerBased }})"
+          name: "Integration Test Report (Container ${{ inputs.containerBased }})"
           path: "${{ inputs.path }}/build/reports/tests/quarkusIntTest"
       # https://github.com/marketplace/actions/test-reporter
       - name: "Integration Test Report (Container: ${{ inputs.containerBased }})"
