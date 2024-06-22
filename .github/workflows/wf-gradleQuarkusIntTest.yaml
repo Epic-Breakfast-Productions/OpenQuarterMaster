@@ -7,10 +7,7 @@ on:
         type: string
       containerBased:
         required: true
-        type: choice
-        options:
-          - true
-          - false
+        type: string
 
 jobs:
   quarkusIntTest:
