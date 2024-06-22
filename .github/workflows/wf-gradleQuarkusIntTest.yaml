@@ -32,7 +32,7 @@ jobs:
           name: Test Report
           path: "${{ inputs.path }}/build/reports/tests/quarkusIntTest"
       # https://github.com/marketplace/actions/test-reporter
-      - name: Test Report
+      - name: "Integration Test Report (Container: ${{ inputs.containerBased }})"
         uses: dorny/test-reporter@v1
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"

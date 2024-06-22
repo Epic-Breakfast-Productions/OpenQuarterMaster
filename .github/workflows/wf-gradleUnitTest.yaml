@@ -24,12 +24,12 @@ jobs:
         with:
           name: Code Coverage Report
           path: "${{ inputs.path }}/build/jacoco-report"
-      - name: Archive Test Report
+      - name: Archive Unit Test Report
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         uses: actions/upload-artifact@v2
         with:
-          name: Test Report
+          name: Unit Test Report
           path: "${{ inputs.path }}/build/reports/tests/test"
       # https://github.com/marketplace/actions/test-reporter
       - name: Test Report
