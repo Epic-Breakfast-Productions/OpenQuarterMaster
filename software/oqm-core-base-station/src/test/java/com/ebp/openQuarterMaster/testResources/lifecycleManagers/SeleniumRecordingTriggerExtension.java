@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.testResources.lifecycleManagers;
+package com.ebp.openQuarterMaster.testResources.lifecycleManagers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterEachCallback;

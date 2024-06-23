@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.testResources.ui.assertions;
+package com.ebp.openQuarterMaster.testResources.ui.assertions;
 
 import tech.ebp.oqm.core.api.testResources.ui.WebDriverWrapper;
 

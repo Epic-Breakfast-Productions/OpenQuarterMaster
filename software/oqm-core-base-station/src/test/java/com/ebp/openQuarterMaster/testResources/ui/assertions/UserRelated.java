@@ -1,12 +1,10 @@
-package tech.ebp.oqm.core.api.testResources.ui.assertions;
+package com.ebp.openQuarterMaster.testResources.ui.assertions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.testResources.ui.WebDriverWrapper;
 import tech.ebp.oqm.core.api.testResources.ui.pages.General;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-
-import static org.junit.Assert.assertEquals;
 
 @Slf4j
 public class UserRelated {

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.testResources.ui.pages;
+package com.ebp.openQuarterMaster.testResources.ui.pages;
 
 import org.openqa.selenium.By;
 

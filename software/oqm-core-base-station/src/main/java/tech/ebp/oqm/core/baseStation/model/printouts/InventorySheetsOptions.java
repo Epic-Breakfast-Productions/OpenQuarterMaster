@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.printouts;
+package tech.ebp.oqm.core.baseStation.model.printouts;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;

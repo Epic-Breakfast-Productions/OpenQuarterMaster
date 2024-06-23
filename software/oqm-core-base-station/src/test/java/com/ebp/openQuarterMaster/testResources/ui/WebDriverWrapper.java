@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.testResources.ui;
+package com.ebp.openQuarterMaster.testResources.ui;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,13 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import tech.ebp.oqm.core.api.testResources.ui.assertions.UserRelated;
-import tech.ebp.oqm.core.api.testResources.ui.pages.General;
-import tech.ebp.oqm.core.api.testResources.ui.pages.KeycloakLogin;
-import tech.ebp.oqm.core.api.testResources.ui.pages.Root;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 
 import java.time.Duration;
 import java.util.List;
