@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.file;
+package tech.ebp.oqm.core.api.model.rest.media.file;
 
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.core.MediaType;

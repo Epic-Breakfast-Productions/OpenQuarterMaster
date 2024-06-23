@@ -1,16 +1,12 @@
-package tech.ebp.oqm.core.api.rest.search;
+package tech.ebp.oqm.core.api.model.rest.search;
 
-import com.mongodb.client.model.Filters;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.*;

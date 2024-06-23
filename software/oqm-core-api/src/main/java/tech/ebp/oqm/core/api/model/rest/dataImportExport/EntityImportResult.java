@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.dataImportExport;
+package tech.ebp.oqm.core.api.model.rest.dataImportExport;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -18,9 +18,8 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
 @Slf4j

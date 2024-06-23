@@ -24,7 +24,7 @@ import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitCategory;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.units.ValidUnitDimension;
-import tech.ebp.oqm.core.api.rest.search.CustomUnitSearch;
+import tech.ebp.oqm.core.api.model.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 

@@ -2,7 +2,7 @@ package tech.ebp.oqm.core.api.service.mongo.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 /**
  * Object to describe paging options.

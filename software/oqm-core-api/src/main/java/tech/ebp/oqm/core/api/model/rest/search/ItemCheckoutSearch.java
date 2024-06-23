@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.search;
+package tech.ebp.oqm.core.api.model.rest.search;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;

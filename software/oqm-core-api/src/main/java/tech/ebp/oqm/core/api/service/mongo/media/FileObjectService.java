@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
-import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.FileSearchObject;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 

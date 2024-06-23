@@ -1,13 +1,10 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
@@ -20,9 +17,8 @@ import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.Optional;
 

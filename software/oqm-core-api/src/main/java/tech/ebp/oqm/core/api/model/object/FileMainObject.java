@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
+import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 
 import java.util.List;
 import java.util.Map;

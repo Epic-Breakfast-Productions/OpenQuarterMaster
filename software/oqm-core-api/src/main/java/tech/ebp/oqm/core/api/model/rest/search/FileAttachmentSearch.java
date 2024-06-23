@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.search;
+package tech.ebp.oqm.core.api.model.rest.search;
 
 import lombok.Getter;
 import lombok.ToString;

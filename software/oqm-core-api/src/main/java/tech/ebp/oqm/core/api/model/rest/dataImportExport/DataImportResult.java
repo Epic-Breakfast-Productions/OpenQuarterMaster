@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.rest.dataImportExport;
+package tech.ebp.oqm.core.api.model.rest.dataImportExport;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.bson.types.ObjectId;
 
 import java.util.HashMap;
 import java.util.Map;
