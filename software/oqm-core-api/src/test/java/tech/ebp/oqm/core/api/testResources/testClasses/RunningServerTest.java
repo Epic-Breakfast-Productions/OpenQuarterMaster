@@ -71,6 +71,15 @@ public abstract class RunningServerTest extends WebServerTest {
 			log.info("Mongo not started.");
 		} else {
 			MongoTestConnector.getInstance().clearDb();
+
+			// this might be required for
+//			if("intTest".equals(ConfigProvider.getConfig().getValue("quarkus.profile", String.class))){
+//				setupJwtCall(given(), this.getTestUserService().getUserToken(this.getTestUserService().getTestUser(true)))
+//					.basePath("")
+//					.delete("/api/v1/inventory/manage/db/" + DEFAULT_TEST_DB_NAME+ "/clearDb").then().statusCode(200);
+//			} else {
+//				MongoTestConnector.getInstance().clearDb();
+//			}
 		}
 		
 		if(SeleniumGridServerManager.RECORD) {
