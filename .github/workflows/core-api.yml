@@ -31,3 +31,12 @@ jobs:
     uses: ./.github/workflows/wf-gradleUnitTest.yaml
     with:
       path: "software/oqm-core-api"
+  intTest:
+    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
+    strategy:
+      matrix:
+        containerBased: [ false ] # TODO:: enable true
+    with:
+      path: "software/oqm-core-api"
+      containerBased: ${{ matrix.containerBased }}
+

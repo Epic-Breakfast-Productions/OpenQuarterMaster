@@ -24,20 +24,20 @@ jobs:
         with:
           name: Code Coverage Report
           path: "${{ inputs.path }}/build/jacoco-report"
-      - name: Archive Test Report
+      - name: Archive Unit Test Report
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         uses: actions/upload-artifact@v2
         with:
-          name: Test Report
+          name: Unit Test Report
           path: "${{ inputs.path }}/build/reports/tests/test"
       # https://github.com/marketplace/actions/test-reporter
-      - name: Test Report
+      - name: Unit Test Report
         uses: dorny/test-reporter@v1
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
         if: success() || failure()    # run this step even if previous step failed
         with:
-          name: Test Report            # Name of the check run which will be created
+          name: Unit Test Report            # Name of the check run which will be created
           path: "${{ inputs.path }}/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
