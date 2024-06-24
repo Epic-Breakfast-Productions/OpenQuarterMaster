@@ -4,7 +4,7 @@ service:
     email: test@test.org
     phone: 999-888-7777
     website: https://test.org
-  tempDir: "/tmp/oqmTest/baseStation"
+  tempDir: "/tmp/oqmTest/core/api"
 
 externalService:
   extServices:
