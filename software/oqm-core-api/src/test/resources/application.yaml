@@ -60,8 +60,6 @@ smallrye:
 
 test:
   profile: test
-  selenium:
-    defaultWait: 10 # seconds
         
 "%quickExpiryCheck":
   service:
