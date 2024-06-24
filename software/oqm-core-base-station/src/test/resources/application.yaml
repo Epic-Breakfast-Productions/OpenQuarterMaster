@@ -12,7 +12,7 @@ quarkus:
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
   http:
-    port: 8080
+    port: 8081
 #    ssl-port: 8443
 #    ssl:
 #      certificate:
@@ -33,6 +33,7 @@ quarkus:
       start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
       realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
+      hostname: "host.testcontainers.internal"
       resource-aliases:
         systemCert: dev/devTest-cert-cert.pem
         systemCertKey: dev/devTest-cert-key.pem
@@ -50,3 +51,7 @@ service:
     website: http://devlopment.dev
     logo: ../../../../dev/developers.jpeg
   refreshDbCacheFrequency: "5m"
+
+test:
+  selenium:
+    defaultWait: 10 # seconds

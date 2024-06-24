@@ -27,7 +27,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 	private BrowserWebDriverContainer<?> browserWebDriverContainer = null;
 	private Optional<String> containerNetworkId;
 	
-	private boolean uiTest = false;
+	private boolean uiTest = true;
 	
 	@Getter
 	private WebDriver driver = null;
@@ -46,7 +46,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 												 .withCapabilities(new FirefoxOptions())
 												 .withReuse(false)
 												 .withAccessToHost(true)
-//												 .withNetworkAliases("host.docker.internal:localhost")
+												 .withNetworkAliases("localhost:"+Utils.HOST_TESTCONTAINERS_INTERNAL)
 			;
 			
 			if (RECORD) {
@@ -79,6 +79,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 			log.info("Selenium grid server already running.");
 		}
 		return Map.of(
+			//
 			"runningInfo.hostname",
 			Utils.HOST_TESTCONTAINERS_INTERNAL
 			
@@ -130,7 +131,7 @@ public class SeleniumGridServerManager implements QuarkusTestResourceLifecycleMa
 	@Override
 	public void init(Map<String, String> initArgs) {
 		QuarkusTestResourceLifecycleManager.super.init(initArgs);
-		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(TestResourceLifecycleManager.UI_TEST_ARG, Boolean.toString(this.uiTest)));
+//		this.uiTest = Boolean.parseBoolean(initArgs.getOrDefault(TestResourceLifecycleManager.UI_TEST_ARG, Boolean.toString(this.uiTest)));
 	}
 	
 	@Override

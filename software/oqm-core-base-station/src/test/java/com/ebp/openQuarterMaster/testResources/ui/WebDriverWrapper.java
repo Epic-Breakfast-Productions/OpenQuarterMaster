@@ -2,6 +2,7 @@ package com.ebp.openQuarterMaster.testResources.ui;
 
 import com.ebp.openQuarterMaster.testResources.TestUser;
 import com.ebp.openQuarterMaster.testResources.TestUserService;
+import com.ebp.openQuarterMaster.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.testResources.ui.assertions.UserRelated;
 import com.ebp.openQuarterMaster.testResources.ui.pages.General;
 import com.ebp.openQuarterMaster.testResources.ui.pages.KeycloakLogin;
@@ -30,7 +31,7 @@ public class WebDriverWrapper {
 	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("quarkus.oidc.auth-server-url", String.class);
 	
 	public WebDriverWrapper(){
-//		this.webDriver = TestResourceLifecycleManager.getWebDriver();
+		this.webDriver = TestResourceLifecycleManager.getWebDriver();
 	}
 	
 	public void cleanup() {
