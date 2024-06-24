@@ -1,6 +1,11 @@
 package com.ebp.openQuarterMaster.testResources.ui;
 
+import com.ebp.openQuarterMaster.testResources.TestUser;
+import com.ebp.openQuarterMaster.testResources.TestUserService;
+import com.ebp.openQuarterMaster.testResources.ui.assertions.UserRelated;
 import com.ebp.openQuarterMaster.testResources.ui.pages.General;
+import com.ebp.openQuarterMaster.testResources.ui.pages.KeycloakLogin;
+import com.ebp.openQuarterMaster.testResources.ui.pages.Root;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -104,33 +109,33 @@ public class WebDriverWrapper {
 		}
 	}
 	
-//	public void loginUser(User testUser) {
-//		log.info("Logging in user {}.", testUser.getUsername());
-//		this.goToIndex();
-//
-//		this.waitForPageLoad();
-//
-//		log.info("Logging in via external means.");
-//		this.getWebDriver().findElement(Root.CONTINUE_LINK).click();
-//
-//		log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
-//
-//		this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
-//		this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
-//
-//		this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
-//
-//		this.waitForPageLoad();
-//		//TODO:: log page messages
-//
-//		UserRelated.assertUserLoggedIn(this, testUser);
-//
-//		log.info("Logged in user.");
-//	}
-//
-//	public void logoutUser() {
-//		this.getWebDriver().findElement(General.USERNAME_DISPLAY).click();
-//		this.getWebDriver().findElement(General.LOGOUT_BUTTON).click();
-//		this.waitForPageLoad();
-//	}
+	public void loginUser(TestUser testUser) {
+		log.info("Logging in user {}.", testUser.getUsername());
+		this.goToIndex();
+
+		this.waitForPageLoad();
+
+		log.info("Logging in via external means.");
+		this.getWebDriver().findElement(Root.CONTINUE_LINK).click();
+
+		log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
+
+		this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+		this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getPassword());
+
+		this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
+
+		this.waitForPageLoad();
+		//TODO:: log page messages
+
+		UserRelated.assertUserLoggedIn(this, testUser);
+
+		log.info("Logged in user.");
+	}
+
+	public void logoutUser() {
+		this.getWebDriver().findElement(General.USERNAME_DISPLAY).click();
+		this.getWebDriver().findElement(General.LOGOUT_BUTTON).click();
+		this.waitForPageLoad();
+	}
 }
