@@ -8,9 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.core.api.testResources.data.MongoTestConnector;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -19,26 +16,24 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static io.restassured.RestAssured.given;
-import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
-import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 //@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
 
-	@Getter
-	TestUserService testUserService = TestUserService.getInstance();
+//	@Getter
+//	TestUserService testUserService = TestUserService.getInstance();
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){
-		User adminUser = this.getTestUserService().getTestUser(true);
-		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
-			.basePath("")
-			.get("/api/v1/inventory/manage/db/refreshCache").then().statusCode(200);
-		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
-			.basePath("")
-			.put("/api/v1/inventory/manage/db/ensure/" + DEFAULT_TEST_DB_NAME).then().statusCode(200);
+//		User adminUser = this.getTestUserService().getTestUser(true);
+//		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
+//			.basePath("")
+//			.get("/api/v1/inventory/manage/db/refreshCache").then().statusCode(200);
+//		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
+//			.basePath("")
+//			.put("/api/v1/inventory/manage/db/ensure/" + DEFAULT_TEST_DB_NAME).then().statusCode(200);
 
 //		if(SeleniumGridServerManager.RECORD) {
 //			TestResourceLifecycleManager.BROWSER_CONTAINER.beforeTest(
@@ -56,7 +51,7 @@ public abstract class RunningServerTest extends WebServerTest {
 		if(ConfigProvider.getConfig().getOptionalValue("quarkus.mongodb.connection-string", String.class).isEmpty()){
 			log.info("Mongo not started.");
 		} else {
-			MongoTestConnector.getInstance().clearDb();
+//			MongoTestConnector.getInstance().clearDb();
 
 			// this might be required for
 //			if("intTest".equals(ConfigProvider.getConfig().getValue("quarkus.profile", String.class))){

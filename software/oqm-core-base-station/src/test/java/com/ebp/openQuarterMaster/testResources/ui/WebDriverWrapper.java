@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.testResources.ui;
 
+import com.ebp.openQuarterMaster.testResources.ui.pages.General;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -24,7 +25,7 @@ public class WebDriverWrapper {
 	private final String keycloakInteractionBase = ConfigProvider.getConfig().getValue("quarkus.oidc.auth-server-url", String.class);
 	
 	public WebDriverWrapper(){
-		this.webDriver = TestResourceLifecycleManager.getWebDriver();
+//		this.webDriver = TestResourceLifecycleManager.getWebDriver();
 	}
 	
 	public void cleanup() {
@@ -39,7 +40,7 @@ public class WebDriverWrapper {
 		log.debug("Last Page html: \n{}", driver.getPageSource());
 		
 		if(isLoggedIn()) {
-			this.logoutUser();
+//			this.logoutUser();
 		}
 		//http://auth-server/auth/realms/{realm-name}/protocol/openid-connect/logout?redirect_uri=encodedRedirectUri
 //		String logoutUrl = this.keycloakInteractionBase + "/protocol/openid-connect/logout";
@@ -103,33 +104,33 @@ public class WebDriverWrapper {
 		}
 	}
 	
-	public void loginUser(User testUser) {
-		log.info("Logging in user {}.", testUser.getUsername());
-		this.goToIndex();
-		
-		this.waitForPageLoad();
-		
-		log.info("Logging in via external means.");
-		this.getWebDriver().findElement(Root.CONTINUE_LINK).click();
-		
-		log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
-		
-		this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
-		this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
-		
-		this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
-		
-		this.waitForPageLoad();
-		//TODO:: log page messages
-		
-		UserRelated.assertUserLoggedIn(this, testUser);
-		
-		log.info("Logged in user.");
-	}
-	
-	public void logoutUser() {
-		this.getWebDriver().findElement(General.USERNAME_DISPLAY).click();
-		this.getWebDriver().findElement(General.LOGOUT_BUTTON).click();
-		this.waitForPageLoad();
-	}
+//	public void loginUser(User testUser) {
+//		log.info("Logging in user {}.", testUser.getUsername());
+//		this.goToIndex();
+//
+//		this.waitForPageLoad();
+//
+//		log.info("Logging in via external means.");
+//		this.getWebDriver().findElement(Root.CONTINUE_LINK).click();
+//
+//		log.info("Went to keycloak at: {}", this.getWebDriver().getCurrentUrl());
+//
+//		this.waitFor(KeycloakLogin.USERNAME_INPUT).sendKeys(testUser.getUsername());
+//		this.findElement(KeycloakLogin.PASSWORD_INPUT).sendKeys(testUser.getAttributes().get(TestUserService.TEST_PASSWORD_ATT_KEY));
+//
+//		this.findElement(KeycloakLogin.LOGIN_BUTTON).click();
+//
+//		this.waitForPageLoad();
+//		//TODO:: log page messages
+//
+//		UserRelated.assertUserLoggedIn(this, testUser);
+//
+//		log.info("Logged in user.");
+//	}
+//
+//	public void logoutUser() {
+//		this.getWebDriver().findElement(General.USERNAME_DISPLAY).click();
+//		this.getWebDriver().findElement(General.LOGOUT_BUTTON).click();
+//		this.waitForPageLoad();
+//	}
 }

@@ -45,6 +45,7 @@ dependencies {
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'net.datafaker:datafaker:2.2.2'
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
     testImplementation 'org.testcontainers:selenium:1.19.8'
     testImplementation 'com.deque:axe-selenium:3.0'
