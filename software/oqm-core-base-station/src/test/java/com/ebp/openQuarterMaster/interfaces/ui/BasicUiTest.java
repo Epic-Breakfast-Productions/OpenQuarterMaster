@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Test;
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 public class BasicUiTest extends WebUiTest {
 
-	@Test
-	public void testPageOverview() {
-		// TODO:: need to tell keycloak devservice to use testcontainer hostname
-		this.getWebDriverWrapper().goTo("");
-	}
+	//TODO:: need to figure out how to deal with hostnames in docker
+//	@Test
+//	public void testPageOverview() throws InterruptedException {
+////		Thread.sleep(5*60*1000);
+//		// TODO:: need to tell keycloak devservice to use testcontainer hostname
+//		this.getWebDriverWrapper().goTo("");
+//	}
 
 	//TODO:: page lookover test
 }
