@@ -18,6 +18,11 @@ public class ObjectHistoryEventTest extends BasicTest {
 		public EventType getType() {
 			return EventType.CREATE;
 		}
+
+		@Override
+		public int getSchemaVersion() {
+			return 1;
+		}
 	}
 	
 	@Test

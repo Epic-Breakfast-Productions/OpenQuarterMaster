@@ -17,6 +17,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @ToString(callSuper = true)
 @BsonDiscriminator
 public class ItemListActionUpdateEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
+
 	public ItemListActionUpdateEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
 	}
@@ -30,5 +32,10 @@ public class ItemListActionUpdateEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_LIST_ACTION_UPDATE;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

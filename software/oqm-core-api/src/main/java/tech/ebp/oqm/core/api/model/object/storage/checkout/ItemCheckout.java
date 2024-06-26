@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemCheckout extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	/**
 	 * When these item(s) were checked out
@@ -81,4 +82,9 @@ public class ItemCheckout extends AttKeywordMainObject {
 	public boolean isStillCheckedOut(){
 		return this.checkInDetails == null;
 	};
+
+	@Override
+	public int getSchemaVersion() {
+		return 1;
+	}
 }

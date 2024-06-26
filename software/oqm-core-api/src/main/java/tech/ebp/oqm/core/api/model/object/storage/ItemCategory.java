@@ -25,6 +25,7 @@ import java.awt.*;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class ItemCategory extends ImagedMainObject implements HasParent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
@@ -53,5 +54,10 @@ public class ItemCategory extends ImagedMainObject implements HasParent {
 		return (r * 0.299 + g * 0.587 + b * 0.114) > 186
 				   ? Color.BLACK
 				   : Color.WHITE;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

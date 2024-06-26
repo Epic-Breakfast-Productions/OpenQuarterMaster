@@ -24,6 +24,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
 public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStored>, ListAmountStoredWrapper> {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@Override
 	public StorageType getStorageType() {
@@ -70,5 +71,10 @@ public class ListAmountItem extends InventoryItem<AmountStored, List<AmountStore
 		);
 		
 		return this.getValueOfStored();
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

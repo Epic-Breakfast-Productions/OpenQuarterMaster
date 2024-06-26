@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 @ToString(callSuper = true)
 @ValidHeldStoredUnits
 public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, SingleAmountStoredWrapper> {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@Override
 	public StorageType getStorageType() {
@@ -64,5 +65,9 @@ public class SimpleAmountItem extends InventoryItem<AmountStored, AmountStored, 
 		
 		return this.getValueOfStored();
 	}
-	
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
+	}
 }
