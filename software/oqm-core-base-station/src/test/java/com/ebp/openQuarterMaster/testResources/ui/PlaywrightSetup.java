@@ -13,7 +13,7 @@ public class PlaywrightSetup implements Closeable {
 
 	@Getter
 	private static final PlaywrightSetup INSTANCE = new PlaywrightSetup();
-	public static final Path RECORDINGS_DIR = Path.of("build/testRecordings/");
+	public static final Path RECORDINGS_DIR = Path.of("build/test-results/test/ui/");
 
 
 	@Getter

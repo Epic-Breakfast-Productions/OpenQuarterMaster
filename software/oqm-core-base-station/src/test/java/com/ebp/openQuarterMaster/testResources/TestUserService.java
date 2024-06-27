@@ -59,8 +59,6 @@ public class TestUserService {
 		return INSTANCE;
 	}
 	
-	private final String jwtIssuer = ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class);
-	
 //	quarkus.oidc.application-type=hybrid
 //	quarkus.oidc.auth-server-url=http://localhost:32769/realms/oqm
 //	quarkus.oidc.client-id=oqm-app
