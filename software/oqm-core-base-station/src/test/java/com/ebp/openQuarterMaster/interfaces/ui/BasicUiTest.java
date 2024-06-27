@@ -6,8 +6,6 @@ import com.ebp.openQuarterMaster.testResources.ui.WebDriverWrapper;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
-import io.quarkiverse.playwright.InjectPlaywright;
-import io.quarkiverse.playwright.WithPlaywright;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,20 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @QuarkusTest
-@WithPlaywright()
-//@QuarkusTestResource(TestResourceLifecycleManager.class)
 public class BasicUiTest extends WebUiTest {
-
-	@InjectPlaywright
-	BrowserContext context;
 
 	@TestHTTPResource("/")
 	URL index;
 
-	//TODO:: need to figure out how to deal with hostnames in docker
 	@Test
-	public void testPageOverview() throws InterruptedException {
-		final Page page = context.newPage();
+	public void testPageOverview() {
+		final Page page = this.getContext().newPage();
 		Response response = page.navigate(index.toString());
 		assertEquals("OK", response.statusText());
 

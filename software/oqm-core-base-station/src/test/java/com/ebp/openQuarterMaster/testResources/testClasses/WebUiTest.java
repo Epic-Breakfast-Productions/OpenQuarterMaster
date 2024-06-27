@@ -1,29 +1,39 @@
 package com.ebp.openQuarterMaster.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.testResources.OurTestDescription;
-import com.ebp.openQuarterMaster.testResources.lifecycleManagers.SeleniumGridServerManager;
-import com.ebp.openQuarterMaster.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import com.ebp.openQuarterMaster.testResources.ui.WebDriverWrapper;
+import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Playwright;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.*;
 
 import java.util.Optional;
 
 /**
  * TODO:: move to use playwright
  *  - https://playwright.dev/java/docs/videos
- *
- *
- *
  */
 @Slf4j
 @Tag("ui")
 public abstract class WebUiTest extends RunningServerTest {
+
+	@Getter
+	private BrowserContext context;
+
+
+	@BeforeEach
+	public void beforeEachUi(TestInfo testInfo) {
+		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
+
+		this.context = PlaywrightSetup.getINSTANCE().getBrowser().newContext(newContextOptions);
+	}
+
+	@AfterEach
+	public void afterEachUi(TestInfo testInfo) {
+		this.context.close();
+	}
 
 //	@Getter(AccessLevel.PROTECTED)
 //	private WebDriverWrapper webDriverWrapper = new WebDriverWrapper();

@@ -50,7 +50,8 @@ dependencies {
     testImplementation 'org.testcontainers:selenium:1.19.8'
     //TODO:: find the updated iteration of this
     testImplementation 'com.deque:axe-selenium:3.0'
-    testImplementation 'io.quarkiverse.playwright:quarkus-playwright:1.0.0'
+
+    implementation 'com.microsoft.playwright:playwright:1.44.0'
 }
 
 java {
