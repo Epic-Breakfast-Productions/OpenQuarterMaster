@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI - Server - Base Station
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ "**" ]
+    paths:
+      - "software/oqm-core-base-station/**"
+      - ".github/workflows/core-baseStation.yml"
+  pull_request:
+    branches: [ "**" ]
+    paths:
+      - "software/oqm-core-base-station/**"
+      - ".github/workflows/core-baseStation.yml"
+  workflow_call:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+defaults:
+  run:
+    working-directory: "software/oqm-core-base-station"
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    uses: ./.github/workflows/wf-gradleBuild.yaml
+    with:
+      path: "software/oqm-core-api"
+  unitTest:
+    uses: ./.github/workflows/wf-gradleUnitTest.yaml
+    with:
+      path: "software/oqm-core-api"
+  intTest:
+    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
+    strategy:
+      matrix:
+        containerBased: [ false ] # TODO:: enable true
+    with:
+      path: "software/oqm-core-api"
+      containerBased: ${{ matrix.containerBased }}
