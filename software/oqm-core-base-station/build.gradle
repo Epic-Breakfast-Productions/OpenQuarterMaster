@@ -49,10 +49,9 @@ dependencies {
     testImplementation 'net.datafaker:datafaker:2.2.2'
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.21.0'
     testImplementation 'org.testcontainers:selenium:1.19.8'
-    //TODO:: find the updated iteration of this
-    testImplementation 'com.deque:axe-selenium:3.0'
 
     implementation 'com.microsoft.playwright:playwright:1.44.0'
+    implementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 
 java {

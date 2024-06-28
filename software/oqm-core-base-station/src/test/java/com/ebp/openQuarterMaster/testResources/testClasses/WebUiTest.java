@@ -3,10 +3,8 @@ package com.ebp.openQuarterMaster.testResources.testClasses;
 import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
 import com.ebp.openQuarterMaster.testResources.testUsers.TestUserService;
 import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.ScreenSize;
 import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +17,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Tag("ui")
@@ -57,9 +56,12 @@ public abstract class WebUiTest extends RunningServerTest {
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
 		this.curTestUiResultDir = getCurTestDir(testInfo);
-		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions();
-
-		newContextOptions.setRecordVideoDir(this.curTestUiResultDir);
+		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
+			.setRecordVideoDir(this.curTestUiResultDir)
+			.setScreenSize(1920,1080)
+			.setRecordVideoSize(1920,1080)
+			.setViewportSize(1920,1080)
+			;
 
 		this.context = PlaywrightSetup.getINSTANCE().getBrowser().newContext(newContextOptions);
 	}
@@ -77,18 +79,60 @@ public abstract class WebUiTest extends RunningServerTest {
 				outputStream.write(curPage.content().getBytes());
 			}
 		}
-		Thread.sleep(1_500);
+		Thread.sleep(1_000);
 		this.context.close();
 	}
 
 	protected Page getLoggedInPage(TestUser user, String page){
 		Page output = this.getContext().newPage();
-		Response response = output.navigate(this.getIndex().toString() + page);
+
+		if(page.startsWith("/")){
+			page = page.substring(1);
+		}
+
+		String url = this.getIndex().toString() + page;
+		log.info("Navigating to {}", url);
+		Response response = output.navigate(url);
 
 		assertEquals("OK", response.statusText());
 		output.waitForLoadState();
 
-		//TODO:: determine if logged in. If not, login with test user.
+		if(output.title().contains("Sign in to Open QuarterMaster")){
+			log.info("Need to log in user.");
+
+			Locator locator = output.locator("#password");
+			locator.fill(user.getPassword());
+			locator = output.locator("#username");
+			locator.fill(user.getUsername());
+
+			output.locator("#kc-login").click();
+			output.waitForLoadState();
+
+			if(!output.locator("#topOqmLogo").isVisible()){
+				if(!output.getByText("Invalid username or password.").isVisible()){
+					throw new IllegalStateException("Not logged in but not where we thought.");
+				}
+				output.locator("#kc-registration").locator("a").click();
+				output.waitForLoadState();
+
+				output.locator("#firstName").fill(user.getFirstname());
+				output.locator("#lastName").fill(user.getLastname());
+				output.locator("#email").fill(user.getEmail());
+				output.locator("#username").fill(user.getUsername());
+				output.locator("#password").fill(user.getPassword());
+				output.locator("#password-confirm").fill(user.getPassword());
+
+				output.locator("#kc-form-buttons").locator(".pf-c-button").click();
+				output.waitForLoadState();
+
+			}
+
+			if(!output.locator("#topOqmLogo").isVisible()){
+				throw new IllegalStateException("Not logged in.");
+			}
+		} else {
+			log.info("Was already logged in?");
+		}
 
 		return output;
 	}

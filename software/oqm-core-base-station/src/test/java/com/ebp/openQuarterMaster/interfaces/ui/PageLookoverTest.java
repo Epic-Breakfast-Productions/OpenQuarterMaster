@@ -35,8 +35,16 @@ public class PageLookoverTest extends WebUiTest {
 		List<Arguments> output = new ArrayList<>();
 
 		output.addAll(iterationsOnPage("/overview"));
-		output.addAll(iterationsOnPage("/items"));
 		output.addAll(iterationsOnPage("/storage"));
+		output.addAll(iterationsOnPage("/items"));
+		output.addAll(iterationsOnPage("/itemCategories"));
+		output.addAll(iterationsOnPage("/itemCheckout"));
+		output.addAll(iterationsOnPage("/you"));
+		output.addAll(iterationsOnPage("/inventoryAdmin"));
+		output.addAll(iterationsOnPage("/images"));
+		output.addAll(iterationsOnPage("/files"));
+		output.addAll(iterationsOnPage("/codes"));
+		output.addAll(iterationsOnPage("/help"));
 
 		return output.stream();
 	}
@@ -50,8 +58,7 @@ public class PageLookoverTest extends WebUiTest {
 	) {
 		log.info("Testing {} page can load with test user {} and data present={}", pageEndpoint, testUser, dataPresent);
 
-		Page page = this.getLoggedInPage(testUser, pageEndpoint);
-
+		this.getLoggedInPage(testUser, pageEndpoint);
 	}
 
 	//TODO:: page lookover test
