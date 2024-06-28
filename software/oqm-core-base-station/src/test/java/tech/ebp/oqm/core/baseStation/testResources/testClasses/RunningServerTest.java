@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.testResources.testClasses;
+package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

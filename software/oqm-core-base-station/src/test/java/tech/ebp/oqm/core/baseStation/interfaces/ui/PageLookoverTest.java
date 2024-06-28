@@ -1,9 +1,8 @@
-package com.ebp.openQuarterMaster.interfaces.ui;
+package tech.ebp.oqm.core.baseStation.interfaces.ui;
 
-import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
-import com.ebp.openQuarterMaster.testResources.testClasses.WebUiTest;
-import com.ebp.openQuarterMaster.testResources.testUsers.TestUserService;
-import com.microsoft.playwright.Page;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
+import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,6 +59,4 @@ public class PageLookoverTest extends WebUiTest {
 
 		this.getLoggedInPage(testUser, pageEndpoint);
 	}
-
-	//TODO:: page lookover test
 }

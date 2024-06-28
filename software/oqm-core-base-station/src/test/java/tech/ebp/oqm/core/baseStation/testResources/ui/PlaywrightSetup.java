@@ -1,9 +1,10 @@
-package com.ebp.openQuarterMaster.testResources.ui;
+package tech.ebp.oqm.core.baseStation.testResources.ui;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Playwright;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 import java.io.Closeable;
 import java.nio.file.Path;
@@ -13,7 +14,7 @@ public class PlaywrightSetup implements Closeable {
 
 	@Getter
 	private static final PlaywrightSetup INSTANCE = new PlaywrightSetup();
-	public static final Path RECORDINGS_DIR = Path.of("build/test-results/test/ui/");
+	public static final Path RECORDINGS_DIR = Path.of("build/test-results/"+ ConfigProvider.getConfig().getValue("quarkus.profile", String.class) +"/ui/");
 
 
 	@Getter

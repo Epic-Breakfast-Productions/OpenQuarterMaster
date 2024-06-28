@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.testResources.testClasses;
+package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
 import net.datafaker.Faker;
 import org.junit.jupiter.api.parallel.Execution;

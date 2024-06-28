@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.testResources.testUsers;
+package tech.ebp.oqm.core.baseStation.testResources.testUsers;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

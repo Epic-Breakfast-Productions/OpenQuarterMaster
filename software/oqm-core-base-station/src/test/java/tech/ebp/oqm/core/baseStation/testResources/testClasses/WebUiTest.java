@@ -1,10 +1,9 @@
-package com.ebp.openQuarterMaster.testResources.testClasses;
+package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
-import com.ebp.openQuarterMaster.testResources.testUsers.TestUserService;
-import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
+import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup;
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.ScreenSize;
 import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +78,7 @@ public abstract class WebUiTest extends RunningServerTest {
 				outputStream.write(curPage.content().getBytes());
 			}
 		}
-		Thread.sleep(1_000);
+		Thread.sleep(750);
 		this.context.close();
 	}
 

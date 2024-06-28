@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.interfaces.ui;
+package tech.ebp.oqm.core.baseStation.interfaces.ui;
 
-import com.ebp.openQuarterMaster.testResources.testClasses.WebUiTest;
+import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

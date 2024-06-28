@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.testResources.lifecycle;
+package tech.ebp.oqm.core.baseStation.testResources.lifecycle;
 
-import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
+import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup;
 import org.apache.commons.io.FileUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
