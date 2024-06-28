@@ -1,32 +1,16 @@
 package com.ebp.openQuarterMaster.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.testResources.OurTestDescription;
-import com.ebp.openQuarterMaster.testResources.lifecycleManagers.SeleniumGridServerManager;
-import com.ebp.openQuarterMaster.testResources.lifecycleManagers.TestResourceLifecycleManager;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static io.restassured.RestAssured.given;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
-//@ExtendWith(SeleniumRecordingTriggerExtension.class)
 public abstract class RunningServerTest extends WebServerTest {
-
-//	@Getter
-//	TestUserService testUserService = TestUserService.getInstance();
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){

@@ -1,11 +1,11 @@
 package com.ebp.openQuarterMaster.testResources.lifecycle;
 
 import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
+import org.apache.commons.io.FileUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 
