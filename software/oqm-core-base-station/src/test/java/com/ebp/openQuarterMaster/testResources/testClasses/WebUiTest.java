@@ -1,7 +1,7 @@
 package com.ebp.openQuarterMaster.testResources.testClasses;
 
-import com.ebp.openQuarterMaster.testResources.TestUser;
-import com.ebp.openQuarterMaster.testResources.TestUserService;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUserService;
 import com.ebp.openQuarterMaster.testResources.ui.PlaywrightSetup;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,9 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class WebUiTest extends RunningServerTest {
 
 	private static Path getCurTestDir(TestInfo testInfo){
-		return PlaywrightSetup.RECORDINGS_DIR
-			.resolve(testInfo.getTestClass().get().getName())
-			.resolve(testInfo.getDisplayName());
+		log.debug("Display name: {}", testInfo.getDisplayName());
+
+		Path output = PlaywrightSetup.RECORDINGS_DIR.resolve(testInfo.getTestClass().get().getName());
+
+		if(testInfo.getDisplayName().startsWith("[")){
+			return output.resolve(testInfo.getTestMethod().get().getName())
+				.resolve(testInfo.getDisplayName().replaceAll("/", ""));
+		} else {
+			return output.resolve(testInfo.getDisplayName().replaceAll("\\(\\)", ""));
+		}
 	}
 
 	protected static Page.ScreenshotOptions getScreenshotOptions() {
@@ -71,16 +77,18 @@ public abstract class WebUiTest extends RunningServerTest {
 				outputStream.write(curPage.content().getBytes());
 			}
 		}
-		Thread.sleep(5_000);
+		Thread.sleep(1_500);
 		this.context.close();
 	}
 
-	protected Page getLoggedInPage(TestUser user){
+	protected Page getLoggedInPage(TestUser user, String page){
 		Page output = this.getContext().newPage();
-		Response response = output.navigate(this.getIndex().toString());
+		Response response = output.navigate(this.getIndex().toString() + page);
 
 		assertEquals("OK", response.statusText());
 		output.waitForLoadState();
+
+		//TODO:: determine if logged in. If not, login with test user.
 
 		return output;
 	}

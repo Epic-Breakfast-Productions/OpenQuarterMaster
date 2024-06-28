@@ -1,16 +1,18 @@
 package com.ebp.openQuarterMaster.interfaces.ui;
 
-import com.ebp.openQuarterMaster.testResources.TestUser;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
 import com.ebp.openQuarterMaster.testResources.testClasses.WebUiTest;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUserService;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
-import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.net.URL;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,10 +20,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 public class PageLookoverTest extends WebUiTest {
 
-	@Test
-	public void testPageOverview() {
-		TestUser testUser = this.getTestUserService().getTestUser();
-		final Page page = this.getLoggedInPage(testUser);
+	private static List<Arguments> iterationsOnPage(String page){
+		List<Arguments> output = new ArrayList<>();
+
+		for(TestUser curTestUser : TestUserService.getInstance().getAllTestUsers()){
+			output.add(Arguments.of(page, curTestUser, false));
+			output.add(Arguments.of(page, curTestUser, true));
+		}
+
+		return output;
+	}
+
+	public static Stream<Arguments> pages(){
+		List<Arguments> output = new ArrayList<>();
+
+		output.addAll(iterationsOnPage("/overview"));
+		output.addAll(iterationsOnPage("/items"));
+		output.addAll(iterationsOnPage("/storage"));
+
+		return output.stream();
+	}
+
+	@ParameterizedTest
+	@MethodSource("pages")
+	public void lookoverTest(
+		String pageEndpoint,
+		TestUser testUser,
+		boolean dataPresent
+	) {
+		log.info("Testing {} page can load with test user {} and data present={}", pageEndpoint, testUser, dataPresent);
+
+		Page page = this.getLoggedInPage(testUser, pageEndpoint);
 
 	}
 

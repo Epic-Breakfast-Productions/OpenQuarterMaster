@@ -1,6 +1,6 @@
 package com.ebp.openQuarterMaster.testResources.ui.assertions;
 
-import com.ebp.openQuarterMaster.testResources.TestUser;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
 import com.ebp.openQuarterMaster.testResources.ui.WebDriverWrapper;
 import com.ebp.openQuarterMaster.testResources.ui.pages.General;
 import lombok.extern.slf4j.Slf4j;

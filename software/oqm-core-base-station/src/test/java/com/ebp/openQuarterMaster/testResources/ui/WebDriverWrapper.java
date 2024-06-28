@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.testResources.ui;
 
-import com.ebp.openQuarterMaster.testResources.TestUser;
-import com.ebp.openQuarterMaster.testResources.TestUserService;
+import com.ebp.openQuarterMaster.testResources.testUsers.TestUser;
 import com.ebp.openQuarterMaster.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import com.ebp.openQuarterMaster.testResources.ui.assertions.UserRelated;
 import com.ebp.openQuarterMaster.testResources.ui.pages.General;

@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.testResources;
+package com.ebp.openQuarterMaster.testResources.testUsers;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,14 @@ public class TestUser {
 
 	public String firstname;
 	public String lastname;
-	public String username;
+	public String username = null;
 	public String email;
 	public String password;
+
+	public String getUsername(){
+		if(username == null){
+			return this.firstname + "." + this.lastname;
+		}
+		return this.username;
+	}
 }
