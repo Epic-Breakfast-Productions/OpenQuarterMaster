@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI - Server - Base Station
+name: CI - Core - Base Station
 
 # Controls when the workflow will run
 on:
@@ -26,16 +26,16 @@ jobs:
   build:
     uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
-      path: "software/oqm-core-api"
+      path: "software/oqm-core-base-station"
   unitTest:
     uses: ./.github/workflows/wf-gradleUnitTest.yaml
     with:
-      path: "software/oqm-core-api"
+      path: "software/oqm-core-base-station"
   intTest:
     uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
         containerBased: [ false ] # TODO:: enable true
     with:
-      path: "software/oqm-core-api"
+      path: "software/oqm-core-base-station"
       containerBased: ${{ matrix.containerBased }}
