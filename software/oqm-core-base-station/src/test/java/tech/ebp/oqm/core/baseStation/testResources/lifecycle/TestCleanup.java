@@ -26,6 +26,6 @@ public class TestCleanup implements TestExecutionListener {
 	public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
 		TestExecutionListener.super.executionFinished(testIdentifier, testExecutionResult);
 
-		PlaywrightSetup.getINSTANCE().close();
+		PlaywrightSetup.getInstance().close();
 	}
 }

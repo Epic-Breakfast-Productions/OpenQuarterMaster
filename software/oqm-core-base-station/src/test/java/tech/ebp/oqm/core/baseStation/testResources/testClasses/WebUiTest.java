@@ -62,7 +62,7 @@ public abstract class WebUiTest extends RunningServerTest {
 			.setViewportSize(1920,1080)
 			;
 
-		this.context = PlaywrightSetup.getINSTANCE().getBrowser().newContext(newContextOptions);
+		this.context = PlaywrightSetup.getInstance().getBrowser().newContext(newContextOptions);
 	}
 
 	@AfterEach
