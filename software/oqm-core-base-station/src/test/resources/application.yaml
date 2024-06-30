@@ -3,21 +3,10 @@ quarkus:
     name: ${service.nameShort} - V${service.apiVersion} - TEST
   log:
     level: DEBUG
-#  opentelemetry:
-#    enabled: true
-#    tracer:
-#      exporter:
-#        otlp:
-#          endpoint: http://localhost:8096
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
   http:
     port: 8081
-#    ssl-port: 8443
-#    ssl:
-#      certificate:
-#        files: ../../../../dev/devTest-cert-cert.pem
-#        key-files: ../../../../dev/devTest-cert-key.pem
   oqmCoreApi:
     devservice:
       certPath: dev/devTest-cert-cert.pem
@@ -33,7 +22,6 @@ quarkus:
       start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
       realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
-#      hostname: "host.testcontainers.internal"
       resource-aliases:
         systemCert: dev/devTest-cert-cert.pem
         systemCertKey: dev/devTest-cert-key.pem
