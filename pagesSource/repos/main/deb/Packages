@@ -531,10 +531,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0)
 Filename: ./oqm-plugin-ext+item+search_1.0.0_all.deb
-Size: 3500
-MD5sum: d40c5abbbae85c404ab08e243f4b850d
-SHA1: 60acfab03d04b81c41d8bfa0f07881fb151d45ce
-SHA256: a8b50e87aff935402c9961a29219f42e9180f272b67eb271abfcba469c3c79c8
+Size: 3502
+MD5sum: f185000d1e3dedc0d9eba96ea0690adf
+SHA1: 31fce82f26b92507e3df49db19773eff05f1ee82
+SHA256: d148e0b26dfb7997434340cc7cd88c3ee9831b5c36324406d9293be072a84465
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
 Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
