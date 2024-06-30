@@ -3,21 +3,10 @@ quarkus:
     name: ${service.nameShort} - V${service.apiVersion} - TEST
   log:
     level: DEBUG
-#  opentelemetry:
-#    enabled: true
-#    tracer:
-#      exporter:
-#        otlp:
-#          endpoint: http://localhost:8096
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
   http:
-    port: 8080
-#    ssl-port: 8443
-#    ssl:
-#      certificate:
-#        files: ../../../../dev/devTest-cert-cert.pem
-#        key-files: ../../../../dev/devTest-cert-key.pem
+    port: 8081
   oqmCoreApi:
     devservice:
       certPath: dev/devTest-cert-cert.pem

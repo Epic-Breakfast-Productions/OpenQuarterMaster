@@ -22,7 +22,7 @@ const UnitUtils = {
 		return output;
 	},
 	//TODO:: review usage of ItemAddEdit.compatibleUnitOptions, and where it/this function should live
-	updateCompatibleUnits(unitToCompatWith, containerToSearch) {
+	updateCompatibleUnits(unitToCompatWith, containerToSearch = null) {
 		Rest.call({
 			url: Rest.passRoot + "/inventory/unit/compatibility/" + unitToCompatWith,
 			extraHeaders: {accept: "text/html"},
@@ -32,11 +32,13 @@ const UnitUtils = {
 			done: function (data) {
 				ItemAddEdit.compatibleUnitOptions = data;
 
-				containerToSearch.find(".unitInput").each(function (i, selectInput) {
-					var selectInputJq = $(selectInput);
-					selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
-					selectInputJq.change();
-				});
+				if(containerToSearch != null) {
+					containerToSearch.find(".unitInput").each(function (i, selectInput) {
+						var selectInputJq = $(selectInput);
+						selectInputJq.html(ItemAddEdit.compatibleUnitOptions);
+						selectInputJq.change();
+					});
+				}
 			}
 		});
 	},

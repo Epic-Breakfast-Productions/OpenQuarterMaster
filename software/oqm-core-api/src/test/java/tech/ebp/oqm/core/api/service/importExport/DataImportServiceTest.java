@@ -24,7 +24,6 @@ import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
@@ -169,7 +168,7 @@ class DataImportServiceTest extends RunningServerTest {
 			curImage.getAttributes().put("key", "val");
 			curImage.getKeywords().add("hello world");
 			
-			File imageFile = new File(DataImportServiceTest.class.getResource("/test_image.png").getFile());
+			File imageFile = new File(DataImportServiceTest.class.getResource("/testFiles/test_image.png").getFile());
 			
 			this.imageService.add(DEFAULT_TEST_DB_NAME, curImage, imageFile, testUser);
 		}
@@ -338,7 +337,9 @@ class DataImportServiceTest extends RunningServerTest {
 		try(InputStream is = new FileInputStream(bundle)) {
 			this.dataImportService.importBundle(is, "test.tar.gz", testUser, DataImportOptions.builder().build());
 		}
-		
+
+		//TODO:: catch assertion exception, write both lists out to file
+
 		assertEquals(oldUnits.size(), this.customUnitService.list().size());
 		assertEquals(oldUnits, this.customUnitService.list());
 		

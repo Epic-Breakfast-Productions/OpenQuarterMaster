@@ -24,9 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestHTTPEndpoint(UnitsEndpoints.class)
 class UnitsEndpointsTest extends RunningServerTest {
 	
-	@ConfigProperty(name = "service.ops.currency")
-	Currency currency;
-	
 	public static Stream<Arguments> getUnitsArgs() {
 		return UnitUtils.UNIT_LIST.stream().map(Arguments::of);
 	}

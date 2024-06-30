@@ -15,11 +15,10 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.rest.search.OqmMongoDbSearch;
+import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 

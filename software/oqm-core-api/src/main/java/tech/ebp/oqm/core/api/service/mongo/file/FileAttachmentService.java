@@ -1,22 +1,16 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileAttachmentGet;
-import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
-import tech.ebp.oqm.core.api.rest.search.FileAttachmentSearch;
-import tech.ebp.oqm.core.api.service.TempFileService;
+import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
+import tech.ebp.oqm.core.api.model.rest.search.FileAttachmentSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.Map;
 import java.util.Set;

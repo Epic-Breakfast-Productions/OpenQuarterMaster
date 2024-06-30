@@ -1,9 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
@@ -16,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
@@ -38,7 +35,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.amountStor
 import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.trackedStored.TrackedMapStoredWrapper;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.core.api.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 

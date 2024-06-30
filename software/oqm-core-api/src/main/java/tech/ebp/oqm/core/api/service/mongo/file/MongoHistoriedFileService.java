@@ -19,8 +19,8 @@ import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
-import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
-import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
+import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
+import tech.ebp.oqm.core.api.model.rest.search.FileSearchObject;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 
 import java.io.File;

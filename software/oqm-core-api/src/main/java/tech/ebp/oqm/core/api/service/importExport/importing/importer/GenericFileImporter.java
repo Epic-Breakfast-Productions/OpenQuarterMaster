@@ -11,8 +11,8 @@ import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
-import tech.ebp.oqm.core.api.rest.file.FileUploadBody;
-import tech.ebp.oqm.core.api.rest.search.FileSearchObject;
+import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
+import tech.ebp.oqm.core.api.model.rest.search.FileSearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
 

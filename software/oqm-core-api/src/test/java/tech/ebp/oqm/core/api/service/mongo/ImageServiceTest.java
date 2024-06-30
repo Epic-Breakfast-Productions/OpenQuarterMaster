@@ -132,9 +132,9 @@ class ImageServiceTest { //extends MongoHistoriedFileServiceTest<Image, ImageSer
 	
 	public static Stream<Arguments> getTestImages() {
 		return Stream.of(
-			Arguments.of("/test_image.png"),
+			Arguments.of("/testFiles/test_image.png"),
 			//			Arguments.of("/test_image_big.png"),
-			Arguments.of("/test_image_big_tall.png")
+			Arguments.of("/testFiles/test_image_big_tall.png")
 		);
 	}
 	

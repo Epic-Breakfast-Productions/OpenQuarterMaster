@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.core.api.model.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
@@ -35,7 +35,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.amountStor
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
-import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.InventoryItemsCrud;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
