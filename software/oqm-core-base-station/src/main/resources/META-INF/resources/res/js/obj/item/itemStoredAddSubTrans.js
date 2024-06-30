@@ -89,13 +89,11 @@ const ItemStoredAddSubTransfer = {
 				content = StoredEdit.getAmountStoredFormElements(
 					null, null, fullAmountForm
 				);
-				//TODO:: update unit select with units compatible with unit
 			},
 			function () {
 				content = StoredEdit.getAmountStoredFormElements(
 					null, null, fullAmountForm
 				);
-				//TODO:: update unit select with units compatible with unit
 			},
 			function () {
 				content = StoredEdit.getTrackedStoredFormElements(

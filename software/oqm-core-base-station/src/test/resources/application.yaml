@@ -51,7 +51,3 @@ service:
     website: http://devlopment.dev
     logo: ../../../../dev/developers.jpeg
   refreshDbCacheFrequency: "5m"
-
-test:
-  selenium:
-    defaultWait: 10 # seconds
