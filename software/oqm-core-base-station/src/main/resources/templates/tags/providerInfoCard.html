@@ -1,32 +1,27 @@
-{!
-Ingests:
-- id
-- carouselCss
-!}
 <div class="col-3 card p-0 m-1">
     <div class="card-header">
-        <a href="{providerInfo.getHomepage()}" target="_blank">
-            {providerInfo.getDisplayName()}
+        <a href="{providerInfo.get("homepage").asText()}" target="_blank">
+            {providerInfo.get("displayName").asText()}
         </a>
     </div>
     <ul class="list-group list-group-flush">
-        {#if !providerInfo.getCost().isBlank()}
+        {#if !providerInfo.get("cost").asText().isBlank()}
             <li class="list-group-item">
-                {#icons/icon icon='cash-stack'}{/icons/icon} {providerInfo.getCost()}
+                {#icons/icon icon='cash-stack'}{/icons/icon} {providerInfo.get("cost").asText()}
             </li>
         {/if}
         <li class="list-group-item">
-            {#icons/icon icon='globe'}{/icons/icon} {providerInfo.isAcceptsContributions() ? 'Accepts contributions' : 'No community input'}
+            {#icons/icon icon='globe'}{/icons/icon} {providerInfo.get("acceptsContributions").asBoolean() ? 'Accepts contributions' : 'No community input'}
         </li>
         <li class="list-group-item">
-            {#if providerInfo.isEnabled()}
+            {#if providerInfo.get("enabled").asBoolean()}
                 {#icons/icon icon='check-circle'}{/icons/icon} Enabled
             {#else}
                 {#icons/icon icon='x-circle'}{/icons/icon} Disabled
             {/if}
         </li>
-        {#if !providerInfo.getDescription().isBlank()}
-            <li class="list-group-item">{providerInfo.getDescription()}</li>
+        {#if !providerInfo.get("description").asText().isBlank()}
+            <li class="list-group-item">{providerInfo.get("description").asText()}</li>
         {/if}
     </ul>
 </div>

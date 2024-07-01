@@ -21,12 +21,6 @@
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
-						data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
-						aria-controls="itemSearchProvidersContent" aria-selected="false">Search Providers
-				</button>
-			</li>
-			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="itemListsTab" data-bs-toggle="tab"
 						data-bs-target="#itemListsContent" type="button" role="tab"
 						aria-controls="itemListsContent" aria-selected="false">Item Lists
@@ -36,6 +30,12 @@
 				<button class="nav-link" id="apiTab" data-bs-toggle="tab"
 						data-bs-target="#apiContent" type="button" role="tab"
 						aria-controls="apiContent" aria-selected="false">API
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
+						data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
+						aria-controls="itemSearchProvidersContent" aria-selected="false">Search Providers
 				</button>
 			</li>
 		</ul>
@@ -77,6 +77,7 @@
 					href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc#product-search-providers">our
 				documentation on Github</a>
 		</p>
+			{#if extSearchEnabled}
 		<hr/>
 		<h3>
 			Products
@@ -85,10 +86,10 @@
 			Services to search for Products by UPC/Barcode
 		</p>
 		<div class="row">
-			{!{#for productProvider in productProviderInfoList}!}
-				{!{#providerInfoCard providerInfo=productProvider}!}
-				{!{/providerInfoCard}!}
-			{!{/for}!}
+			{#for productProvider in allProviderInfo.get("product")}
+				{#providerInfoCard providerInfo=productProvider}
+				{/providerInfoCard}
+			{/for}
 		</div>
 		<hr />
 		<h3>
@@ -98,10 +99,10 @@
 			These websites are supported to glean data from. The intent is for you to enter a specific product's page.
 		</p>
 		<div class="row">
-		{!{#for productProvider in supportedPageScanInfoList}!}
-			{!{#providerInfoCard providerInfo=productProvider}!}
-			{!{/providerInfoCard}!}
-		{!{/for}!}
+		{#for productProvider in allProviderInfo.get("webpage")}
+			{#providerInfoCard providerInfo=productProvider}
+			{/providerInfoCard}
+		{/for}
 		</div>
 		<hr />
 		<h3>
@@ -111,12 +112,16 @@
 			This describes the external services to search for Lego(tm) bricks.
 		</p>
 		<div class="row">
-		{!{#for productProvider in legoProviderInfoList}!}
-			{!{#providerInfoCard providerInfo=productProvider}!}
-			{!{/providerInfoCard}!}
-		{!{/for}!}
+			{#for productProvider in allProviderInfo.get("lego")}
+				{#providerInfoCard providerInfo=productProvider}
+				{/providerInfoCard}
+			{/for}
 		</div>
-		
+				{#else}
+				<div class="alert alert-warning" role="alert">
+					This feature is not currently enabled. Enable it by installing the External Item Search plugin.
+				</div>
+			{/if}
 		</div>
 		<div class="tab-pane fade" id="itemListsContent" role="tabpanel" aria-labelledby="itemListsTab">
 			<h2>

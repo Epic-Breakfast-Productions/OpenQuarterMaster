@@ -261,11 +261,13 @@ const ItemStoredAddSubTransfer = {
 	setupForItem(itemId) {
 		this.resetForms();
 		this.formItemImg.attr("src", Rest.passRoot + "/media/image/for/item/" + itemId);
+
 		Rest.call({
 			// spinnerContainer: null,
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
 			done: async function (itemData) {
+				UnitUtils.updateCompatibleUnits(itemData.unit.string);
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItemType", itemData.storageType);
 				ItemStoredAddSubTransfer.formItemNameLabel.text(itemData.name);

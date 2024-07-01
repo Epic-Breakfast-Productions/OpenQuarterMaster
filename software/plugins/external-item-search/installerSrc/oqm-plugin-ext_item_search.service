@@ -76,7 +76,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl \"https://$hostname:$port/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/docker exec $CONTAINER_NAME /usr/bin/curl \"http://localhost/q/health\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
