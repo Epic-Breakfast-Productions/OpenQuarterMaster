@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.upgrade;
+package tech.ebp.oqm.core.api.service.schemaVersioning;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;

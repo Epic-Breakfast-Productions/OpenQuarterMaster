@@ -98,4 +98,5 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
 	}
+
 }

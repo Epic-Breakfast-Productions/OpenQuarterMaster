@@ -1,20 +1,19 @@
-package tech.ebp.oqm.core.api.model.object.upgrade;
+package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
-import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.exception.VersionBumperListIncontiguousException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.Versionable;
-import tech.ebp.oqm.core.api.model.object.storage.items.AmountItem;
+import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
+import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectVersionBumper;
 
 import java.time.Duration;
 import java.util.*;
@@ -26,29 +25,6 @@ import java.util.*;
  */
 @Slf4j
 public abstract class ObjectUpgrader<T extends Versionable> {
-
-	private static Map<Class<?>, ObjectUpgrader<?>> instanceMap = new HashMap<>();
-
-	public static void clearInstanceMap(){
-		instanceMap = new HashMap<>();
-	}
-
-	public static <C extends Versionable> ObjectUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
-		ObjectUpgrader<C> output = null;
-
-		if(instanceMap.containsKey(clazz)){
-			output = (ObjectUpgrader<C>) instanceMap.get(clazz);
-		} else if(clazz.equals(AmountItem.class)){
-			//output = ; TODO
-			instanceMap.put(clazz, output);
-		}
-		//TODO:: rest
-
-		if(output == null) {
-			throw new ClassUpgraderNotFoundException(clazz);
-		}
-		return output;
-	}
 
 	@Getter
 	private final SortedSet<ObjectVersionBumper<T>> versionBumpers;
@@ -89,9 +65,9 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 	}
 
 
-	public UpgradeResult<T> upgrade(JsonNode oldObj){
+	public ObjectUpgradeResult<T> upgrade(JsonNode oldObj){
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
-		UpgradeResult.Builder<T> resultBuilder = UpgradeResult.builder();
+		ObjectUpgradeResult.Builder<T> resultBuilder = ObjectUpgradeResult.builder();
 		resultBuilder.oldVersion(curVersion);
 
 		JsonNode upgradedJson = oldObj.deepCopy();
@@ -117,7 +93,7 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		return resultBuilder.build();
 	}
 
-	public UpgradeResult<T> upgrade(Document oldObj) throws JsonProcessingException {
+	public ObjectUpgradeResult<T> upgrade(Document oldObj) throws JsonProcessingException {
 		return this.upgrade(
 			ObjectUtils.OBJECT_MAPPER.readTree(
 				oldObj.toJson(

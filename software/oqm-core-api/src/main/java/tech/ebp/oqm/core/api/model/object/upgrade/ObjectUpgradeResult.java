@@ -1,18 +1,15 @@
 package tech.ebp.oqm.core.api.model.object.upgrade;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 
 import java.time.Duration;
 
 @Data
-@AllArgsConstructor
+@Setter(AccessLevel.PRIVATE)
 @Builder
-public class UpgradeResult<T extends Versionable> {
+public class ObjectUpgradeResult<T extends Versionable> {
 
 	@NotNull
 	@NonNull
@@ -20,7 +17,7 @@ public class UpgradeResult<T extends Versionable> {
 
 	@NotNull
 	@NonNull
-	private Duration timeToUpgrade;
+	private Duration timeTaken;
 
 	private int oldVersion;
 

@@ -137,7 +137,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		return this.collections.get(db.getDbId());
 	}
 	
-	protected MongoCollection<T> getCollection(String oqmDbIdOrName) {
+	public MongoCollection<T> getCollection(String oqmDbIdOrName) {
 		return this.getCollection(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName));
 	}
 	
