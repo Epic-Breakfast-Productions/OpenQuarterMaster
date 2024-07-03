@@ -16,6 +16,7 @@ class PackageManagement:
     """
     BASE_STATION_PACKAGE = "oqm-core-base+station"
     ALL_OQM = "oqm-*"
+    OQM_PLUGINS = "oqm-plugin-*"
     SYSTEM_PACKAGE_MANAGER = None
 
     @staticmethod
@@ -25,7 +26,8 @@ class PackageManagement:
         logging.debug("Determining the system's package manager.")
 
         systemReleaseInfo = platform.freedesktop_os_release()
-        if ("ID_LIKE" in systemReleaseInfo and systemReleaseInfo['ID_LIKE'].casefold() == "debian".casefold()) or systemReleaseInfo['ID'].casefold() == "Debian".casefold():
+        if ("ID_LIKE" in systemReleaseInfo and systemReleaseInfo['ID_LIKE'].casefold() == "debian".casefold()) or \
+                systemReleaseInfo['ID'].casefold() == "Debian".casefold():
             PackageManagement.SYSTEM_PACKAGE_MANAGER = "apt"
 
         logging.info("Determined system using %s", PackageManagement.SYSTEM_PACKAGE_MANAGER)
@@ -72,7 +74,8 @@ class PackageManagement:
                 return False, result.stderr
             logging.debug("Upgrading apt packages.")
             subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
-            result = subprocess.run(["apt-get", "dist-upgrade"], shell=False, capture_output=False, text=True, check=False)
+            result = subprocess.run(["apt-get", "dist-upgrade"], shell=False, capture_output=False, text=True,
+                                    check=False)
             if result.returncode != 0:
                 logging.error("Failed to run upgrade command: %s", result.stderr)
                 return False, result.stderr
@@ -90,7 +93,8 @@ class PackageManagement:
     def promptForAutoUpdates() -> (bool, str):
         if "Ubuntu" in platform.version():
             logging.debug("Prompting user through unattended-upgrades.")
-            subprocess.run(["dpkg-reconfigure", "-plow", "unattended-upgrades"], shell=False, capture_output=False, text=True, check=True)
+            subprocess.run(["dpkg-reconfigure", "-plow", "unattended-upgrades"], shell=False, capture_output=False,
+                           text=True, check=True)
             logging.info("Done.")
             # TODO:: doublecheck automatic restart, setting alert email
         else:
@@ -98,13 +102,48 @@ class PackageManagement:
         return True, None
 
     @staticmethod
-    def getInstalledPackages() -> (bool, str):
-        logging.debug("Ensuring core components are installed.")
-        # TODO:: will likely need updated for yum
-        result = PackageManagement.runPackageCommand("list", PackageManagement.ALL_OQM, "-qq")
+    def getOqmPackagesStr(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+        logging.debug("Getting OQM packages.")
+        result = PackageManagement.runPackageCommand("list", filter, "-qq")
         logging.debug("Output of listing core components: " + result.stdout)
         logging.debug("Error Output of listing core components: " + result.stderr)
 
-        result = os.linesep.join([s for s in result.stdout.splitlines() if "installed" in s])
+        result = result.stdout
+        output = []
+        for curLine in result.splitlines():
+            if installed:
+                if "installed" in curLine:
+                    output.append(curLine)
+                continue
+            if notInstalled:
+                if not "installed" in curLine:
+                    output.append(curLine)
+        return os.linesep.join(output)
 
+    @staticmethod
+    def getPluginDisplayName(package:str):
+        return package.split("-")[3].replace("+", " ")
+
+    @staticmethod
+    def packageLineToArray(curLine:str) -> (dict):
+        output = {}
+
+        output['package'] = curLine.split("/")[0]
+        lineParts = curLine.split(" ")
+        output['version'] = lineParts[1]
+        output['installed'] = "installed" in lineParts[3]
+
+        return output
+
+    @staticmethod
+    def getOqmPackagesList(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+        logging.debug("Getting OQM packages.")
+        result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
+        result = result.splitlines()
+        result = map(PackageManagement.packageLineToArray,result)
         return result
+
+    @staticmethod
+    def ensureOnlyPluginsInstalled(pluginList:list) -> (bool, str):
+        logging.debug("Ensuring only plugins in list installed.")
+        # TODO:: this

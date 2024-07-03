@@ -30,11 +30,8 @@ class UserInteraction:
     TALL_HEIGHT = 50
 
     def __init__(self):
-        self.dialog = Dialog(
-            dialog="dialog",
-            autowidgetsize=True,
+        self.dialog = Dialog(dialog="dialog", autowidgetsize=True)
 
-        )
         self.dialog.set_background_title(ScriptInfo.SCRIPT_TITLE)
         self.dialog.__setattr__("hfile", "oqm-station-captain-help.txt")
 
@@ -147,9 +144,10 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Info / Status"),
                     ("(2)", "Manage Installation"),
-                    ("(3)", "Snapshots"),
-                    ("(4)", "Cleanup, Maintenance, and Updates"),
-                    ("(5)", "Captain Settings"),
+                    ("(3)", "Plugins"),
+                    ("(4)", "Snapshots"),
+                    ("(5)", "Cleanup, Maintenance, and Updates"),
+                    # ("(6)", "Captain Settings"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -161,9 +159,9 @@ class UserInteraction:
                 self.infoStatusMenu()
             if choice == "(2)":
                 self.manageInstallationMenu()
-            if choice == "(3)":
-                self.snapshotsMenu()
             if choice == "(4)":
+                self.snapshotsMenu()
+            if choice == "(5)":
                 self.cleanMaintUpdatesMenu()
 
         logging.debug("Done running main menu.")
@@ -226,8 +224,7 @@ class UserInteraction:
                     ("(1)", "Setup Wizard"),
                     ("(2)", "SSL/HTTPS Certs"),
                     ("(3)", "Set E-mail Settings"),
-                    ("(4)", "User Administration"),
-                    ("(5)", "Plugins")
+                    ("(4)", "User Administration")
                 ]
             )
             UserInteraction.clearScreen()
@@ -268,11 +265,16 @@ class UserInteraction:
                 choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
                 choices.append(("(8)", "CA Private Key Location"))
                 choices.append(("(9)", "CA Public Cert/Key Location"))
-                choices.append(("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
-                choices.append(("(11)", f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
-                choices.append(("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
-                choices.append(("(13)", f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
-                choices.append(("(14)", f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
+                choices.append(
+                    ("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
+                choices.append(("(11)",
+                                f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
+                choices.append(
+                    ("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
+                choices.append(("(13)",
+                                f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
+                choices.append(("(14)",
+                                f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
             if certMode == "letsEncrypt":
                 logging.debug("Setting up menu for let's encrypt mode")
                 accepted = mainCM.getConfigVal('cert.letsEncryptMode.acceptTerms')
@@ -287,7 +289,8 @@ class UserInteraction:
                 logging.debug("Setting up menu for provided mode")
                 choices.append(("(8)", "CA Private Key Location"))
                 choices.append(("(9)", "CA Public Cert/Key Location"))
-                choices.append(("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
+                choices.append(
+                    ("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
                 if mainCM.getConfigVal('cert.providedMode.caProvided'):
                     choices.append(("(17)", "Install CA on host"))
 
@@ -303,12 +306,20 @@ class UserInteraction:
 
             if choice == "(1)":
                 logging.debug("Showing current cert information")
-                certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout, title="System Cert Info")
+                certInfoReturn = subprocess.run(
+                    ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False,
+                    capture_output=True, text=True, check=False)
+                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout,
+                                      title="System Cert Info")
 
-                if mainCM.getConfigVal("cert.mode") == "self" or (mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal("cert.providedMode.caProvided")):
-                    certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout, title="CA Cert Info")
+                if mainCM.getConfigVal("cert.mode") == "self" or (
+                        mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal(
+                        "cert.providedMode.caProvided")):
+                    certInfoReturn = subprocess.run(
+                        ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False,
+                        capture_output=True, text=True, check=False)
+                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout,
+                                          title="CA Cert Info")
 
             if choice == "(2)":
                 logging.debug("Verifying current cert setup (TODO)")
@@ -425,7 +436,8 @@ class UserInteraction:
                 caProvided = False
                 if code == self.dialog.OK:
                     caProvided = True
-                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided,
+                                          ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
                 mainCM.rereadConfigData()
             if choice == "(17)":
                 logging.debug("Installing CA on host")
@@ -690,7 +702,8 @@ class UserInteraction:
                     else:
                         logging.info("User chose not to take a preemptive snapshot.")
 
-                    code = self.dialog.yesno("Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
+                    code = self.dialog.yesno(
+                        "Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
                     if code != self.dialog.OK:
                         logging.info("User chose not to do the restore after all.")
                         continue
@@ -702,7 +715,8 @@ class UserInteraction:
                 if not result:
                     self.dialog.msgbox(report, title="Error taking Snapshot")
                 else:
-                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report, title="Snapshot successful")
+                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report,
+                                       title="Snapshot successful")
             if choice == "(3)":
                 if SnapshotUtils.isAutomaticEnabled():
                     SnapshotUtils.disableAutomatic()
@@ -779,7 +793,8 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Prune unused container resources"),
                     ("(2)",
-                     ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
+                     (
+                         "Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
                     ("(3)", "Set prune frequency"),
                 ]
             )
@@ -812,7 +827,9 @@ class UserInteraction:
 
     def setupWizard(self):
         logging.debug("Running setup wizard.")
-        self.dialog.msgbox("Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.", title="Setup Wizard")
+        self.dialog.msgbox(
+            "Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.",
+            title="Setup Wizard")
 
         # Check if already installed, prompt to uninstall
         # if PackageManagement.coreInstalled():
@@ -892,5 +909,55 @@ class UserInteraction:
             "Setup Wizard complete!",
             title="Setup Wizard"
         )
+
+    def pluginsMenu(self):
+        logging.debug("Running Plugins menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Plugins Menu",
+                choices=[
+                    ("(1)", "Review Plugins"),
+                    ("(2)", "Select Plugins")
+                ]
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+            if choice == "(1)":
+                self.setupWizard()
+            if choice == "(2)":
+                self.selectPluginsMenu()
+
+        logging.debug("Done running manage install menu.")
+
+    @staticmethod
+    def mapPluginSelection(pluginFromPm):
+        return (
+            pluginFromPm['package'],
+            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            pluginFromPm['installed']
+        )
+
+    def getPluginSelectionArray(self):
+        logging.debug("Getting plugin selection array")
+        plugins = PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS)
+        return map(UserInteraction.mapPluginSelection, plugins)
+
+    def selectPluginsMenu(self):
+        # https://pythondialog.sourceforge.io/doc/widgets.html#build-list
+        code, installedPluginSelection = self.dialog.buildlist(
+            title="Select Installed Plugins",
+            text="Select which plugins to be installed. To be installed on right, not to be installed on left.",
+            visit_items=True,
+            items=self.getPluginSelectionArray()
+        )
+        if code != self.dialog.OK:
+            return
+        #TODO:: indicate to user
+        PackageManagement.ensureOnlyPluginsInstalled(installedPluginSelection)
+        # TODO:: tell user success
+
 
 ui = UserInteraction()

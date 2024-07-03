@@ -27,7 +27,8 @@ These installers can be used to install the `oqm-captain` management script.
 
 ==== First time run
 
-If the Open Quarter Base station package is not installed, the script will prompt the user if they want it installed.
+If the Open Quarter Base station package is not installed, the script will prompt the user with a setup wizard. The user
+can choose to use this wizard to help them get started.
 
 If no, continue to the menu.
 
