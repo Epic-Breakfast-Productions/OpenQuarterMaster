@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -32,11 +33,11 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	
 	@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
 	boolean basicAuthEnabled;
+
+	private final ReentrantLock ensureUserLock = new ReentrantLock();
 	
 	public InteractingEntityService() {
 		super(InteractingEntity.class);
-		
-		
 	}
 	
 	@PostConstruct
@@ -105,28 +106,32 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	@WithSpan
 	public InteractingEntity ensureEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
-		Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
-		if(returningEntityOp.isEmpty()){
-			log.info("New entity interacting with system.");
-			if(this.basicAuthEnabled){
-				entity = InteractingEntity.createEntity(context);
+		try{ //TODO:: test this for performance. Any way around making the whole thing a critical section?
+			this.ensureUserLock.lock();
+
+			Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
+			if(returningEntityOp.isEmpty()){
+				log.info("New entity interacting with system.");
+				if(this.basicAuthEnabled){
+					entity = InteractingEntity.createEntity(context);
+				} else {
+					entity = InteractingEntity.createEntity(jwt);
+				}
 			} else {
-				entity = InteractingEntity.createEntity(jwt);
-				
+				log.debug("Existing entity interacting with system.");
+				entity = returningEntityOp.get();
 			}
-			
-		} else {
-			log.info("Returning entity interacting with system.");
-			entity = returningEntityOp.get();
+
+			if(entity.getId() == null){
+				this.add(entity);
+			} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
+				this.update(entity);
+				log.info("Entity has been updated.");
+			}
+		} finally {
+			this.ensureUserLock.unlock();
 		}
-		
-		if(entity.getId() == null){
-			this.add(entity);
-		} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
-			this.update(entity);
-			log.info("Entity has been updated.");
-		}
-		
+
 		return entity;
 	}
 	
