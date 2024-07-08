@@ -3,6 +3,7 @@ import subprocess
 import logging
 import platform
 
+from ServiceUtils import *
 
 class PackageManagement:
     """
@@ -54,7 +55,36 @@ class PackageManagement:
         return "installed" in result.stdout
 
     @staticmethod
+    def installPackages(packages:list) -> (bool, str):
+        logging.info("Installing packages: %s", packages)
+        command:list = ["apt-get", "install", "-y"]
+        command.extend(packages)
+        result = subprocess.run(
+            command,
+            shell=False, capture_output=True, text=True, check=False
+        )
+        if result.returncode != 0:
+            logging.error("Failed to run install packages command: %s", result.stderr)
+            return False, result.stderr
+        return True
+
+    @staticmethod
+    def removePackages(packages:list) -> (bool, str):
+        logging.info("Removing packages: %s", packages)
+        command:list = ["apt-get", "remove", "-y", "--purge"]
+        command.extend(packages)
+        result = subprocess.run(
+            command,
+            shell=False, capture_output=True, text=True, check=False
+        )
+        if result.returncode != 0:
+            logging.error("Failed to run remove packages command: %s", result.stderr)
+            return False, result.stderr
+        return True
+
+    @staticmethod
     def installCore():
+        # TODO:: update to use new install, package get features
         # TODO:: update with error handling, return
         logging.info("Installing core components.")
         # TODO:: will likely need updated for yum
@@ -141,9 +171,23 @@ class PackageManagement:
         result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
         result = result.splitlines()
         result = map(PackageManagement.packageLineToArray,result)
+        # TODO:: debug
+        print("Package list: %s", result)
         return result
 
     @staticmethod
     def ensureOnlyPluginsInstalled(pluginList:list) -> (bool, str):
         logging.debug("Ensuring only plugins in list installed.")
-        # TODO:: this
+
+        allInstalledPlugins = map(
+            lambda i: i['package'],
+            PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS, installed=True)
+        )
+        pluginsToRemove = [i for i in allInstalledPlugins if i not in pluginList]
+
+        # TODO Try to figure out how to remove unwanted plugins while not bouncing dependency plugins
+        # TODO:: error check
+        PackageManagement.removePackages(pluginsToRemove)
+        PackageManagement.installPackages(pluginList)
+
+        ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)

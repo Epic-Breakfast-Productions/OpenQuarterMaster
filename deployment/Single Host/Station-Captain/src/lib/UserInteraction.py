@@ -159,6 +159,8 @@ class UserInteraction:
                 self.infoStatusMenu()
             if choice == "(2)":
                 self.manageInstallationMenu()
+            if choice == "(3)":
+                self.pluginsMenu()
             if choice == "(4)":
                 self.snapshotsMenu()
             if choice == "(5)":
@@ -955,9 +957,12 @@ class UserInteraction:
         )
         if code != self.dialog.OK:
             return
-        #TODO:: indicate to user
+        self.dialog.infobox("Applying plugin selection. Please wait.")
         PackageManagement.ensureOnlyPluginsInstalled(installedPluginSelection)
-        # TODO:: tell user success
+        self.dialog.msgbox(
+            "Plugin Selection Complete!",
+            title="Plugin Selection"
+        )
 
 
 ui = UserInteraction()
