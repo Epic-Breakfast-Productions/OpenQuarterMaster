@@ -48,7 +48,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'net.datafaker:datafaker:2.3.0'
 
-    implementation 'com.microsoft.playwright:playwright:1.44.0'
+    implementation 'com.microsoft.playwright:playwright:1.45.0'
     implementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 
