@@ -141,6 +141,9 @@ class PackageManagement:
         result = result.stdout
         output = []
         for curLine in result.splitlines():
+            if installed and notInstalled:
+                output.append(curLine)
+                continue
             if installed:
                 if "installed" in curLine:
                     output.append(curLine)
@@ -152,16 +155,19 @@ class PackageManagement:
 
     @staticmethod
     def getPluginDisplayName(package:str):
-        return package.split("-")[3].replace("+", " ")
+        # print("Package: " + package)
+        return package.split("-")[2].replace("+", " ")
 
     @staticmethod
     def packageLineToArray(curLine:str) -> (dict):
         output = {}
-
+        # print("cur line: ", curLine)
         output['package'] = curLine.split("/")[0]
         lineParts = curLine.split(" ")
+        # print("lineParts: ", lineParts)
         output['version'] = lineParts[1]
-        output['installed'] = "installed" in lineParts[3]
+
+        output['installed'] = "installed" in curLine
 
         return output
 
@@ -169,10 +175,11 @@ class PackageManagement:
     def getOqmPackagesList(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
         logging.debug("Getting OQM packages.")
         result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
+        # print("Package list str: " + result)
         result = result.splitlines()
         result = map(PackageManagement.packageLineToArray,result)
         # TODO:: debug
-        print("Package list: %s", result)
+        # print("Package list: ", list(result))
         return result
 
     @staticmethod
