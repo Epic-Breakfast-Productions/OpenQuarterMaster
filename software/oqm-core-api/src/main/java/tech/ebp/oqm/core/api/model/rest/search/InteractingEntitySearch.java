@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.rest.search;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -12,9 +13,11 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.regex;
 
 @ToString(callSuper = true)
+@Setter
 @Getter
 public class InteractingEntitySearch extends SearchKeyAttObject<InteractingEntity> {
 	@QueryParam("name") String name;
+
 	//TODO:: object specific fields, add to bson filter list
 	
 	
@@ -23,8 +26,7 @@ public class InteractingEntitySearch extends SearchKeyAttObject<InteractingEntit
 		List<Bson> output = super.getSearchFilters();
 		
 		if (name != null && !name.isBlank()) {
-			//TODO:: handle first and last name properly
-			output.add(regex("firstName", SearchUtils.getSearchTermPattern(name)));
+			output.add(regex("name", SearchUtils.getSearchTermPattern(name)));
 		}
 		
 		return output;
