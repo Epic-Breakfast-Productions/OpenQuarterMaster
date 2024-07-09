@@ -44,11 +44,11 @@ dependencies {
     implementation 'org.webjars:bootstrap:5.3.2'
 
     testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.3"
     testImplementation 'io.rest-assured:rest-assured'
-    testImplementation 'net.datafaker:datafaker:2.2.2'
+    testImplementation 'net.datafaker:datafaker:2.3.0'
 
-    implementation 'com.microsoft.playwright:playwright:1.44.0'
+    implementation 'com.microsoft.playwright:playwright:1.45.0'
     implementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 
