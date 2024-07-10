@@ -928,7 +928,7 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
             if choice == "(1)":
-                self.setupWizard()
+                self.showPlugins()
             if choice == "(2)":
                 self.selectPluginsMenu()
 
@@ -963,6 +963,22 @@ class UserInteraction:
             "Plugin Selection Complete!",
             title="Plugin Selection"
         )
+
+    def showPlugins(self):
+        toShow = ""
+        for curPackage in PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS):
+            print(curPackage)
+            toShow += curPackage['displayName'] + "\n"
+            toShow += "\tVersion: " + curPackage['version'] + "\n"
+            toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
+            toShow += "\tDescription: " + curPackage['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="Available Plugins",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
 
 ui = UserInteraction()

@@ -159,15 +159,35 @@ class PackageManagement:
         return package.split("-")[2].replace("+", " ")
 
     @staticmethod
+    def getPackageInfo(package:str) -> (bool, str):
+        output = {}
+        packageShow = subprocess.run(['apt-cache', 'show', package], shell=False, capture_output=True, text=True, check=False).stdout
+        packageShow = packageShow.splitlines()
+
+        for curLine in packageShow:
+            if not curLine.strip():
+                continue
+            split = curLine.split(": ", 1)
+            name = split[0]
+            value = split[1]
+            output[name] = value
+        return output
+
+    @staticmethod
     def packageLineToArray(curLine:str) -> (dict):
         output = {}
         # print("cur line: ", curLine)
         output['package'] = curLine.split("/")[0]
+        output['displayName'] = PackageManagement.getPluginDisplayName(output['package'])
         lineParts = curLine.split(" ")
         # print("lineParts: ", lineParts)
         output['version'] = lineParts[1]
-
         output['installed'] = "installed" in curLine
+
+        packageInfo = PackageManagement.getPackageInfo(output['package'])
+        # print(packageInfo)
+        output['description'] = packageInfo['Description']
+        output['fullInfo'] = packageInfo
 
         return output
 
