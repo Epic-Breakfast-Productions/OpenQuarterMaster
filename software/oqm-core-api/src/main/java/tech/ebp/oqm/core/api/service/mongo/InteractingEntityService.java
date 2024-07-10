@@ -13,7 +13,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -42,25 +42,25 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	
 	@PostConstruct
 	public void setup(){
-		BaseStationInteractingEntity baseStationInteractingEntityArc;
-		try(InstanceHandle<BaseStationInteractingEntity> container = Arc.container().instance(BaseStationInteractingEntity.class)){
-			baseStationInteractingEntityArc = container.get();
+		CoreApiInteractingEntity coreApiInteractingEntityArc;
+		try(InstanceHandle<CoreApiInteractingEntity> container = Arc.container().instance(CoreApiInteractingEntity.class)){
+			coreApiInteractingEntityArc = container.get();
 		}
-		if(baseStationInteractingEntityArc == null){
+		if(coreApiInteractingEntityArc == null){
 			return;
 		}
 		//force getting around Arc subclassing out the injected class
-		BaseStationInteractingEntity baseStationInteractingEntity = new BaseStationInteractingEntity(
-			baseStationInteractingEntityArc.getEmail()
+		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(
+			coreApiInteractingEntityArc.getEmail()
 		);
 		//ensure we have the base station in the db
-		try{
-			this.get(baseStationInteractingEntity.getId());
-			this.update(baseStationInteractingEntity);
-			log.info("Updated base station interacting entity entry.");
-		} catch(DbNotFoundException e){
-			this.add(baseStationInteractingEntity);
-			log.info("Added base station interacting entity entry.");
+		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
+		if(gotten == null){
+			this.add(coreApiInteractingEntity);
+			log.info("Added core api interacting entity entry.");
+		} else {
+			this.update(coreApiInteractingEntity);
+			log.info("Updated core api interacting entity entry.");
 		}
 	}
 	
@@ -87,7 +87,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		);
 	}
 	
-	public InteractingEntity get(ObjectId id){
+	public InteractingEntity get(ObjectId id) {
 		return this.getCollection().find(eq("_id", id)).limit(1).first();
 	}
 
