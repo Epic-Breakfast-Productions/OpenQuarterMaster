@@ -5,7 +5,12 @@ Prerequisites:
  - Working Kubernetes cluster
    - Minikube is a good option for local dev
 
+## MiniKube Setup
 
+ 1. Download minikube from latest docs, install
+ 2. Start cluster with "minikube start"
+
+You now have an operational kube cluster.
 
 
 ## Resources
