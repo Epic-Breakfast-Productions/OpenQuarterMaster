@@ -44,47 +44,47 @@
 	</thead>
 	<tbody>
 	{#for curItem in curItemList}
-		{#let curWrapper = curItem.getStoredWrapperForStorage(storageBlock.getId())}
-			{#for curTrackedStored in curWrapper.getStored().values()}
+		{#let curWrapper = curItem.get("storageMap").get(storageBlock.get("id").asText())}
+			{#for curTrackedStored in curWrapper.get("stored").elements()}
 				<tr>
 				{#if curTrackedStored_count == 1}
 					{#if options.includeNumCol}
-						<td class="text-center" rowspan="{curWrapper.getStored().size()}">
+						<td class="text-center" rowspan="{curWrapper.get("stored").size()}">
 						{curItem_count}
 						</td>
 					{/if}
 					{#if options.includeImageCol}
-						{#if ! curItem.getImageIds().isEmpty()}
-							<td class="imageTableCell" rowspan="{curWrapper.getStored().size()}">
-							{#let curImage = imageService.get(curItem.getImageIds().get(0))}
-								<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.getName()}"
+						{#if ! curItem.get("imageIds").isEmpty()}
+							<td class="imageTableCell" rowspan="{curWrapper.get("stored").size()}">
+							{#let curImage = imageService.get(curItem.get("imageIds").get(0))}
+								<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.get("name").asText()}"
 								class="imageTableCellImage">
 							{/let}
 							</td>
 							{#else}
-								<td rowspan="{curWrapper.getStored().size()}"></td>
+								<td rowspan="{curWrapper.get("stored").size()}"></td>
 						{/if}
 					{/if}
-					<td rowspan="{curWrapper.getStored().size()}">
-						{curItem.getName()}
+					<td rowspan="{curWrapper.get("stored").size()}">
+						{curItem.get("name").asText()}
 					</td>
-					<td rowspan="{curWrapper.getStored().size()}">
-						{curItem.getTotal().getValue()}{curItem.getTotal().getUnit().getSymbol()}
+					<td rowspan="{curWrapper.get("stored").size()}">
+						{curItem.get("total").get("value").asDouble()}{curItem.get("total").get("unit").get("symbol").asText()}
 					</td>
-					<td rowspan="{curWrapper.getStored().size()}">
-					{curItem.getTrackedItemIdentifierName()}
+					<td rowspan="{curWrapper.get("stored").size()}">
+					{curItem.get("trackedItemIdentifierName").asText()}
 					</td>
 				{/if}
 				
-				<td>{curTrackedStored.getIdentifier()}</td>
-				<td>{curTrackedStored.getIdentifyingDetails()}</td>
+				<td>{curTrackedStored.get("identifier").asText()}</td>
+				<td>{curTrackedStored.get("identifyingDetails").asText()}</td>
 				{#if options.includeConditionCol}
-					<td>{curTrackedStored.getCondition()}</td>
-					<td>{curTrackedStored.getConditionNotes()}</td>
+					<td>{curTrackedStored.get("condition").asDouble()}%</td>
+					<td>{curTrackedStored.get("conditionNotes").asText()}</td>
 				{/if}
 				<td>
-				{#if curTrackedStored.getExpires() != null}
-					{curTrackedStored.getNotificationStatus().isExpired()}
+				{#if curTrackedStored.get("expires").asBoolean() != null}
+					{curTrackedStored.get("notificationStatus").get("expired").asBoolean()}
 					{#else}
 					N/A
 				{/if}
