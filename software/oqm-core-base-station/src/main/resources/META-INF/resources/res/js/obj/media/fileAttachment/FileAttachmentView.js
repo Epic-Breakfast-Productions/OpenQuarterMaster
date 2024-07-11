@@ -55,7 +55,7 @@ const FileAttachmentView = {
 			if (latestMetadata.mimeType === "application/pdf") {
 				//TODO:: neither of these work
 				// newContent = $('<object style="width: 100%; height: 500px;" type="application/pdf" data="'+dataUrl+'"><p>Failed to load pdf.</p></object>');
-				newContent = $('<embed src="'+dataUrl+'" width="100%" height="600px;" type="application/pdf" />');
+				newContent = $('<embed src="'+dataUrl+'" width="100%" height="100%" type="application/pdf" />');
 			}
 			//TODO:: show pdf, text, markdown?
 		}
