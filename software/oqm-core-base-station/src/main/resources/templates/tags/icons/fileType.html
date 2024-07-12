@@ -13,6 +13,12 @@
 	{#icons/icon icon='filetype-md' titleText='Markdown'}{/icons/icon}
 {#else if mimeType is "text/csv"}
 	{#icons/icon icon='filetype-csv' titleText='CSV'}{/icons/icon}
+{#else if mimeType is "text/css"}
+	{#icons/icon icon='filetype-css' titleText='CSS'}{/icons/icon}
+{#else if mimeType is "text/x-yaml"}
+	{#icons/icon icon='filetype-yml' titleText='YAML'}{/icons/icon}
+{#else if mimeType is "application/x-sh"}
+	{#icons/icon icon='filetype-sh' titleText='Shell Script'}{/icons/icon}
 {#else if mimeType is "application/json"}
 	{#icons/icon icon='filetype-json' titleText='JSON'}{/icons/icon}
 {#else if mimeType is "application/octet-stream"}
