@@ -17,7 +17,7 @@ import java.util.Set;
 @Singleton
 @NoArgsConstructor
 @BsonDiscriminator
-public class BaseStationInteractingEntity extends InteractingEntity {
+public class CoreApiInteractingEntity extends InteractingEntity {
 	
 	/**
 	 * Don't change this. We ue this very specific ObjectId to identify the Base Station's specific entry in the db.
@@ -25,7 +25,7 @@ public class BaseStationInteractingEntity extends InteractingEntity {
 	public static final ObjectId BS_ID = new ObjectId("00000000AAAAAAAAAAFFFFFF");
 	
 	@Inject
-	public BaseStationInteractingEntity(
+	public CoreApiInteractingEntity(
 		@ConfigProperty(name = "service.runBy.email", defaultValue = "")
 		String email
 	){
@@ -42,12 +42,12 @@ public class BaseStationInteractingEntity extends InteractingEntity {
 	
 	@Override
 	public String getName() {
-		return "Base Station";
+		return "Core API";
 	}
 	
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
-		return InteractingEntityType.BASE_STATION;
+		return InteractingEntityType.CORE_API;
 	}
 	
 	@Override

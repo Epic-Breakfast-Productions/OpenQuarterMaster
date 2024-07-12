@@ -6,7 +6,7 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
@@ -28,7 +28,7 @@ public class ExpiryProcessor {
 	HistoryEventNotificationService eventNotificationService;
 	
 	@Inject
-	BaseStationInteractingEntity baseStationInteractingEntity;
+	CoreApiInteractingEntity coreApiInteractingEntity;
 	
 	@Inject
 	InventoryItemService inventoryItemService;
@@ -66,7 +66,7 @@ public class ExpiryProcessor {
 				if (!expiryEvents.isEmpty()) {
 					this.inventoryItemService.update(curEntry.getDbId().toHexString(), cur);
 					for (ItemExpiryEvent curEvent : expiryEvents) {
-						curEvent.setEntity(this.baseStationInteractingEntity.getId());
+						curEvent.setEntity(this.coreApiInteractingEntity.getId());
 						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
 						this.eventNotificationService.sendEvent(curEntry.getDbId(), this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
 					}

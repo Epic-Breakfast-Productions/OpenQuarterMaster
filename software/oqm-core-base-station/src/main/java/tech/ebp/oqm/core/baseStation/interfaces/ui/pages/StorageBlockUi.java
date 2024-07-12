@@ -19,6 +19,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.model.printouts.PageOrientation;
+import tech.ebp.oqm.core.baseStation.model.printouts.PageSizeOption;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
@@ -53,7 +55,9 @@ public class StorageBlockUi extends UiProvider {
 		
 		return this.getUni(
 			this.setupPageTemplate()
-				.data("showSearch", false),
+				.data("showSearch", false)
+				.data("pageSizeOptions", PageSizeOption.values())
+				.data("pageOrientationOptions", PageOrientation.values()),
 			Map.of(
 				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
 				"searchResults", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search).call((ObjectNode results)->{

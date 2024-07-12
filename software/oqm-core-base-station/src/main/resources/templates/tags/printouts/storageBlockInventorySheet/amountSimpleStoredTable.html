@@ -35,7 +35,7 @@
 	</thead>
 	<tbody>
 	{#for curItem in curItemList}
-		{#let curWrapper = curItem.getStoredWrapperForStorage(storageBlock.getId())}
+		{#let curWrapper = curItem.get("storageMap").get(storageBlock.get("id").asText())}
 			<tr>
 			{#if options.includeNumCol}
 				<td class="text-center">
@@ -43,7 +43,7 @@
 				</td>
 			{/if}
 			{#if options.includeImageCol}
-				{#if ! curItem.getImageIds().isEmpty()}
+				{#if ! curItem.get("imageIds").isEmpty()}
 					<td class="imageTableCell">
 					{#let curImage = imageService.get(curItem.getImageIds().get(0))}
 						<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.getName()}"
@@ -55,17 +55,17 @@
 				{/if}
 			{/if}
 			<td>
-				{curItem.getName()}
+				{curItem.get("name").asText()}
 			</td>
-			<td>{curWrapper.getTotal().getValue()}{curWrapper.getTotal().getUnit().getSymbol()}</td>
+			<td>{curWrapper.get("total").get("value").asInt()}{curWrapper.get("total").get("unit").get("symbol").asText()}</td>
 			
 			{#if options.includeConditionCol}
-				<td>{curWrapper.getStored().getCondition()}</td>
-				<td>{curWrapper.getStored().getConditionNotes()}</td>
+				<td>{curWrapper.get("stored").get("condition").asInt()}%</td>
+				<td>{curWrapper.get("stored").get("conditionNotes").asText()}</td>
 			{/if}
 			<td>
-			{#if curWrapper.getStored().getExpires() != null}
-				{curWrapper.getStored().getNotificationStatus().isExpired()}
+			{#if curWrapper.get("stored").get("expires").asText() != null}
+				{curWrapper.get("stored").get("notificationStatus").get("expired").asBoolean()}
 			{/if}
 			</td>
 			

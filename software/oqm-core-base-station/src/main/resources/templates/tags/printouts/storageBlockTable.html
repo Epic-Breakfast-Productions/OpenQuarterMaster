@@ -1,6 +1,6 @@
-{#if storageBlockList.size() > 0}
+{#if storageBlockSr.get("numResults").asInt() > 0}
 	<div class="section">
-	<h3 class="tableTitle">Storage blocks ({storageBlockList.size()})</h3>
+	<h3 class="tableTitle">Storage blocks ({storageBlockSr.get("numResults").asInt()})</h3>
 	<table class="table table-striped table-bordered table-sm">
 	<thead>
 	<tr>
@@ -16,7 +16,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	{#for curBlock in storageBlockList}
+	{#for curBlock in storageBlockSr.get("results")}
 		<tr>
 		{#if options.includeNumCol}
 			<td class="text-center">
@@ -24,10 +24,10 @@
 			</td>
 		{/if}
 		{#if options.includeImageCol}
-			{#if ! curBlock.getImageIds().isEmpty()}
+			{#if ! curBlock.get("imageIds").isEmpty()}
 				<td class="imageTableCell">
 				{#let curImage = imageService.get(curBlock.getImageIds().get(0))}
-					<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for storage block {curBlock.getLabelText()}"
+					<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for storage block {curBlock.get("labelText").asText()}"
 					class="imageTableCellImage">
 				{/let}
 				</td>
@@ -35,9 +35,9 @@
 				<td></td>
 			{/if}
 		{/if}
-		<td>{curBlock.getLabelText()}</td>
-		<td>{curBlock.getLocation()}</td>
-		<td>{curBlock.getDescription()}</td>
+		<td>{curBlock.get("labelText").asText()}</td>
+		<td>{curBlock.get("location").asText()}</td>
+		<td>{curBlock.get("description").asText()}</td>
 		</tr>
 	{/for}
 	</tbody>

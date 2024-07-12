@@ -4,5 +4,5 @@ public enum InteractingEntityType {
 	USER,
 	SERVICE_GENERAL,
 	SERVICE_PLUGIN,
-	BASE_STATION
+	CORE_API
 }

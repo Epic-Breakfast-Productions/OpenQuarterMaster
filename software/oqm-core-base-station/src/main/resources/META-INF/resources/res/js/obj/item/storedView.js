@@ -1,6 +1,6 @@
 const StoredView = {
 	getBlockViewCell(name, value) {
-		let output = $('<div class="col"><h5></h5><p></p></div>');
+		let output = $('<div class="col-sm-4 col-4 col-xs-6"><h5></h5><p></p></div>');
 
 		output.find("h5").text(name);
 		output.find("p").text(value);
@@ -59,9 +59,9 @@ const StoredView = {
 		output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
 
 		if (small) {
-			output.addClass("col-1");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		} else {
-			output.addClass("col");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		}
 
 		return output;
@@ -81,9 +81,9 @@ const StoredView = {
 		output.append(checkoutButton);
 
 		if (small) {
-			output.addClass("col-1");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		} else {
-			output.addClass("col");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		}
 
 		return output;
