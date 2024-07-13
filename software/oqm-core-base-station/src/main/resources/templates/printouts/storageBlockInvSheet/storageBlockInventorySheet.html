@@ -1,25 +1,25 @@
 {#include printouts/mainPrintoutTemplate}
-	{#title}{storageBlock.getLabelText()} - Inventory sheet{/title}
+	{#title}{storageBlock.get("labelText").asText()} - Inventory sheet{/title}
 	{#body}
 		<h1>
-			{storageBlock.getLabelText()} - Inventory sheet
+			{storageBlock.get("labelText").asText()} - Inventory sheet
 		</h1>
-		{#printouts/storageBlockTable}{/printouts/storageBlockTable}
-		
-		<p>Total Items: {searchResult.getNumResultsForEntireQuery()}</p>
-		{#if searchResult.isEmpty()}
+		{#printouts/storageBlockTable storageBlockSr=storageBlockChildrenSearchResults options=options}{/printouts/storageBlockTable}
+
+		<p>Total Items: {searchResult.get("numResultsForEntireQuery").asText()}</p>
+		{#if searchResult.get("numResults").asInt() == 0}
 			<h3>
 				No Items Stored
 			</h3>
-			{#else}
-			{#let curItemList=searchResult.getResults().stream().filter(simpleAmountFilter).toArray()}
-				{#printouts/storageBlockInventorySheet/amountSimpleStoredTable}{/printouts/storageBlockInventorySheet/amountSimpleStoredTable}
+		{#else}
+			{#let curItemList=cdi:JacksonHelpersService.getStreamFromJsonArr(searchResult.get("results")).filter(simpleAmountFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/amountSimpleStoredTable curItemList=curItemList storageBlock=storageBlock options=options}{/printouts/storageBlockInventorySheet/amountSimpleStoredTable}
 			{/let}
-			{#let curItemList=searchResult.getResults().stream().filter(listAmountFilter).toArray()}
-				{#printouts/storageBlockInventorySheet/amountListStoredTable}{/printouts/storageBlockInventorySheet/amountListStoredTable}
+			{#let curItemList=cdi:JacksonHelpersService.getStreamFromJsonArr(searchResult.get("results")).filter(listAmountFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/amountListStoredTable curItemList=curItemList storageBlock=storageBlock options=options}{/printouts/storageBlockInventorySheet/amountListStoredTable}
 			{/let}
-			{#let curItemList=searchResult.getResults().stream().filter(trackedFilter).toArray()}
-				{#printouts/storageBlockInventorySheet/trackedStoredTable}{/printouts/storageBlockInventorySheet/trackedStoredTable}
+			{#let curItemList=cdi:JacksonHelpersService.getStreamFromJsonArr(searchResult.get("results")).filter(trackedFilter).toArray()}
+				{#printouts/storageBlockInventorySheet/trackedStoredTable curItemList=curItemList storageBlock=storageBlock options=options}{/printouts/storageBlockInventorySheet/trackedStoredTable}
 			{/let}
 		{/if}
 	{/body}

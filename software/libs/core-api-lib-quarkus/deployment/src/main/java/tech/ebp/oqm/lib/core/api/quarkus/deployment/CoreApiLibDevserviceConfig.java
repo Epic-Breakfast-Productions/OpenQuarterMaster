@@ -33,6 +33,6 @@ public class CoreApiLibDevserviceConfig {
 	/**
 	 * The version/ tag of the core api container image
 	 */
-	@ConfigItem(name="coreApiVersion", defaultValue = "2.0.0-DEV")
+	@ConfigItem(name="coreApiVersion", defaultValue = "2.1.2")
 	public String coreApiVersion;
 }

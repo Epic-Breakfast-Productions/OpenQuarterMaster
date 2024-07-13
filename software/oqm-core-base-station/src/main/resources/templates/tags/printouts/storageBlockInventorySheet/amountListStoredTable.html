@@ -38,43 +38,43 @@
 	</thead>
 	<tbody>
 	{#for curItem in curItemList}
-		{#let curWrapper = curItem.getStoredWrapperForStorage(storageBlock.getId())}
-			{#for curAmountStored in curWrapper.getStored()}
+		{#let curWrapper = curItem.get("storageMap").get(storageBlock.get("id").asText())}
+			{#for curAmountStored in curWrapper.get("stored")}
 				<tr>
 				{#if curAmountStored_count == 1}
 					{#if options.includeNumCol}
-						<td class="text-center" rowspan="{curWrapper.getStored().size()}">
+						<td class="text-center" rowspan="{curWrapper.get("stored").size()}">
 						{curItem_count}
 						</td>
 					{/if}
 					{#if options.includeImageCol}
-						{#if ! curItem.getImageIds().isEmpty()}
-							<td class="imageTableCell" rowspan="{curWrapper.getStored().size()}">
-							{#let curImage = imageService.get(curItem.getImageIds().get(0))}
-								<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.getName()}"
+						{#if ! curItem.get("imageIds").isEmpty()}
+							<td class="imageTableCell" rowspan="{curWrapper.get("stored").size()}">
+							{#let curImage = imageService.get(curItem.get("imageIds").get(0).asText())}
+								<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.get("name").asText()}"
 								class="imageTableCellImage">
 							{/let}
 							</td>
 							{#else}
-								<td rowspan="{curWrapper.getStored().size()}"></td>
+								<td rowspan="{curWrapper.get("stored").size()}"></td>
 						{/if}
 					{/if}
-					<td rowspan="{curWrapper.getStored().size()}">
-						{curItem.getName()}
+					<td rowspan="{curWrapper.get("stored").size()}">
+						{curItem.get("name").asText()}
 					</td>
-					<td rowspan="{curWrapper.getStored().size()}">
-					{curItem.getTotal().getValue()}{curItem.getTotal().getUnit().getSymbol()}
+					<td rowspan="{curWrapper.get("stored").size()}">
+					{curItem.get("total").get("value").asDouble()}{curItem.get("total").get("unit").get("symbol").asText()}
 					</td>
 				{/if}
 				
-				<td>{curAmountStored.getAmount().getValue()}{curAmountStored.getAmount().getUnit().getSymbol()}</td>
+				<td>{curAmountStored.get("amount").get("value").asDouble()}{curAmountStored.get("amount").get("unit").get("symbol").asText()}</td>
 				{#if options.includeConditionCol}
-					<td>{curAmountStored.getCondition()}</td>
-					<td>{curAmountStored.getConditionNotes()}</td>
+					<td>{curAmountStored.get("condition").asDouble()}</td>
+					<td>{curAmountStored.get("conditionNotes").asText()}</td>
 				{/if}
 				<td>
-				{#if curAmountStored.getExpires() != null}
-					{curAmountStored.getNotificationStatus().isExpired()}
+				{#if curAmountStored.get("expires").asBoolean() != null}
+					{curAmountStored.get("notificationStatus").get("expired").asBoolean()}
 					{#else}
 					N/A
 				{/if}

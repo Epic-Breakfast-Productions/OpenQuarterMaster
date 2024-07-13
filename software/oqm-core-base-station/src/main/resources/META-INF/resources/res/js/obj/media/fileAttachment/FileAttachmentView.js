@@ -13,6 +13,16 @@ const FileAttachmentView = {
 	numRevisions: $("#fileAttachmentViewRevisionsExpandNumRevisions"),
 	revisionsAccord: $("#fileAttachmentViewRevisionsAccord"),
 
+	async getFileContent(dataUrl) {
+		return await Rest.call({
+			url: dataUrl,
+			async: false,
+			returnType: "text",
+			done: function (data) {
+				return data;
+			}
+		});
+	},
 	resetView() {
 		this.previewContainer.text("");
 		this.fullViewContainer.text("");
@@ -27,13 +37,13 @@ const FileAttachmentView = {
 		KeywordAttUtils.clearHideKeywordDisplay(this.keywords);
 		KeywordAttUtils.clearHideAttDisplay(this.atts);
 	},
-	setupFileView(fileGetData, container, preview = true) {
+	async setupFileView(fileGetData, container, preview = true) {
 		let latestMetadata = fileGetData.revisions[fileGetData.revisions.length - 1];
-		let newContent;
+		let newContent = null;
 		let dataUrl = Rest.passRoot + '/media/fileAttachment/' + fileGetData.id + '/revision/latest/data';
 		if (latestMetadata.mimeType.startsWith("audio/")) {
 			newContent = $(' <audio controls>\n' +
-				'  <source src="'+dataUrl+'" type="' + latestMetadata.mimeType + '">\n' +
+				'  <source src="' + dataUrl + '" type="' + latestMetadata.mimeType + '">\n' +
 				'</audio> ');
 			newContent.on("stalled", function (e) {
 				let code = newContent[0].error.code
@@ -42,7 +52,7 @@ const FileAttachmentView = {
 			});
 		} else if (latestMetadata.mimeType.startsWith("video/")) {
 			newContent = $(' <video controls style="max-width: 100%;">\n' +
-				'  <source src="'+dataUrl+'" type="' + latestMetadata.mimeType + '">\n' +
+				'  <source src="' + dataUrl + '" type="' + latestMetadata.mimeType + '">\n' +
 				'</video> ');
 			newContent.on("stalled", function (e) {
 				let code = newContent[0].error.code
@@ -50,14 +60,28 @@ const FileAttachmentView = {
 				console.log("Error code: ", code);
 			});
 		} else if (latestMetadata.mimeType.startsWith("image/")) {
-			newContent = $(' <img src="'+dataUrl+'" style="max-width: 100%;" alt="">\n');
+			newContent = $(' <img src="' + dataUrl + '" style="max-width: 100%;" alt="">\n');
 		} else if (!preview) {//only show these if we are not previewing
-			if (latestMetadata.mimeType === "application/pdf") {
-				//TODO:: neither of these work
-				newContent = $('<object style="width: 100%; height: 500px;" type="application/pdf" data="'+dataUrl+'"><p>Failed to load pdf.</p></object>');
-				// newContent = $('<embed src="/api/v1/media/fileAttachment/'+ fileGetData.id + '/data" width="500" height="375" />');
+			switch (latestMetadata.mimeType) {
+				case "application/pdf":
+					newContent = $('<embed src="' + dataUrl + '" width="100%" height="100%" type="application/pdf" />');
+					break;
+				case "text/plain":
+				case "text/x-yaml":
+				case "text/css":
+				case "text/x-java-properties":
+				case "application/x-sh":
+				case "application/json":
+				case "application/javascript": //TODO:: make this a complete list
+					let textContent = await this.getFileContent(dataUrl);
+					newContent = $('<pre class="align-content-start text-start" style="height:100%; width: 100%; overflow-scrolling: auto;">' + textContent + '</pre>');
+					break;
+				case "text/x-web-markdown":
+					//TODO:: parse into markdown, using good lib
+					let mdContent = await this.getFileContent(dataUrl);
+					newContent = $('<div class="align-content-start text-start">' + mdContent + '</div>');
+					break;
 			}
-			//TODO:: show pdf, text, markdown?
 		}
 		container.append(newContent);
 	},

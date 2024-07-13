@@ -14,7 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemAddEvent;
@@ -60,7 +60,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	BaseStationInteractingEntity baseStationInteractingEntity;
+	CoreApiInteractingEntity coreApiInteractingEntity;
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
@@ -97,7 +97,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		if (!lowStockEvents.isEmpty()) {
 			for (ItemLowStockEvent event : lowStockEvents) {
 				
-				event.setEntity(this.baseStationInteractingEntity.getId());
+				event.setEntity(this.coreApiInteractingEntity.getId());
 				
 				this.getHistoryService().addHistoryFor(
 					oqmDbIdOrName, item, null, event

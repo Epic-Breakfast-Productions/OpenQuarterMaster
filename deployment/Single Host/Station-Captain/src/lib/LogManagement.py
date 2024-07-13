@@ -85,7 +85,7 @@ class LogManagement:
                 sysInfoFile.write(LogManagement.getSystemInfo())
 
             with open(compilingDir + "/01-installed.txt", "w") as sysInfoFile:
-                sysInfoFile.write(PackageManagement.getInstalledPackages())
+                sysInfoFile.write(PackageManagement.getOqmPackagesStr(installed=True, notInstalled=False))
 
             logging.info("Writing log messages.")
             result, services = ServiceUtils.getServiceNames()
