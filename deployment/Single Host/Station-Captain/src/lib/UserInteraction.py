@@ -37,7 +37,7 @@ class UserInteraction:
 
         self.dialog.setup_debug(
             True,
-            open("dialogDebug.log", 'w'),
+            open(LogUtils.logDir + "dialogDebug.log", 'w'),
             always_flush=True,
             expand_file_opt=True
         )
