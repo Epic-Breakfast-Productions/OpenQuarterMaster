@@ -67,18 +67,20 @@ class LogManagement:
         if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
             return False, "Configured compression algorithm was invalid."
 
-        snapshotName = "OQM-log-capture-{}".format(datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"))
+        logCaptureName = "OQM-log-capture-{}".format(datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"))
 
-        log.debug("Log capture name: %s", snapshotName)
-        compilingDir = ScriptInfo.TMP_DIR + "/logCaptures/" + snapshotName
-        snapshotLocation = mainCM.getConfigVal("snapshots.location") + "/logCaptures"
-        logArchiveName = "{}/{}.tar.{}".format(snapshotLocation, snapshotName, compressionAlg)
+        log.debug("Log capture name: %s", logCaptureName)
+        compilingDir = ScriptInfo.TMP_DIR + "/logCaptures/" + logCaptureName
+        logCaptureLocation = mainCM.getConfigVal("snapshots.location") + "/logCaptures"
+        logArchiveName = "{}/{}.tar.{}".format(logCaptureLocation, logCaptureName, compressionAlg)
+        otherLogsDir = compilingDir + "/otherLogs"
 
         success = False
         try:
             try:
                 os.makedirs(compilingDir)
-                os.makedirs(snapshotLocation, exist_ok=True)
+                os.makedirs(otherLogsDir)
+                os.makedirs(logCaptureLocation, exist_ok=True)
             except Exception as e:
                 log.error("Failed to create directories necessary for snapshot taking: %s", e)
                 return False, str(e)
@@ -105,7 +107,11 @@ class LogManagement:
             concurrent.futures.wait(futures)
             log.info("Done writing Service log messages.")
 
-            # TODO:: copy in /var/log/oqm/*
+            try:
+                shutil.copy(LogUtils.logDir, otherLogsDir)
+            except Exception as e:
+                log.error("FAILED to copy in other logs: %s", e)
+                return False, str(e)
 
             log.info("Archiving log bundle.")
             start = time.time()
