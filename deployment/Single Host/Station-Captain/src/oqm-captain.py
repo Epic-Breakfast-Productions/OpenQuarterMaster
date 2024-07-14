@@ -41,7 +41,7 @@ argParser = argparse.ArgumentParser(
 )
 g = argParser.add_mutually_exclusive_group()
 g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-# g.add_argument('-vvvv', '--verbose', dest="verbose", action="store_const", help="Tells the script to log output verbosely to the console", const="") # TODO:: fix
+# g.add_argument('-vvvv', '--verbose', dest="verbose", action="store_false", help="Tells the script to log output verbosely to the console") # TODO:: fix
 g.add_argument('--take-snapshot', dest="takeSnapshot", help="Takes a snapshot. Will pause and restart services.", choices=["manual", "scheduled", "preemptive"])
 g.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
 g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
