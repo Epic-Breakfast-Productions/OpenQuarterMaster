@@ -4,6 +4,10 @@ import os
 import sys
 import logging
 sys.path.append("lib/")
+from LogUtils import *
+LogUtils.setupLogging("station-captain.log")
+
+
 from ScriptInfos import ScriptInfo
 import UserInteraction
 from SnapshotUtils import *
@@ -27,7 +31,10 @@ import argcomplete
 # https://click.palletsprojects.com/en/8.1.x/
 # https://pythondialog.sourceforge.io/
 
-logging.basicConfig(level=logging.DEBUG)
+log = LogUtils.setupLogger(__name__)
+
+log.info("==== STARTING OQM-CAPTAIN SCRIPT ====")
+
 argParser = argparse.ArgumentParser(
     prog="oqm-captain",
     description="This script is a utility to help manage an installation of Open QuarterMaster. Must be run as root.",
