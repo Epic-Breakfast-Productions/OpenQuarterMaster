@@ -17,11 +17,12 @@ class LogUtils:
     logFile = "non.log"
 
     @staticmethod
-    def setupLogging(logFile:str, console:bool=True):
+    def setupLogging(logFile:str, console:bool=False):
         Path(LogUtils.logDir).mkdir(parents=True, exist_ok=True)
         LogUtils.logFile = logFile
+        logging.basicConfig(level=logging.NOTSET)
 
-        if "-vvvv" in sys.argv:
+        if console:
             LogUtils.logLevel = logging.DEBUG
 
     @staticmethod
@@ -33,6 +34,7 @@ class LogUtils:
         # sh.setLevel(LogUtils.logLevel)
 
         logOut = logging.getLogger(name)
+        # print(LogUtils.logLevel == logging.DEBUG)
         logOut.setLevel(LogUtils.logLevel)
         logOut.addHandler(fh)
         # logOut.addHandler(sh)
