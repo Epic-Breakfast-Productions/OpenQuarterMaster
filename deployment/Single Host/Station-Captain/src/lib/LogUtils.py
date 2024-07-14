@@ -1,4 +1,5 @@
 import logging
+import logging.handlers
 import os
 import shutil
 from ConfigManager import *
@@ -12,7 +13,7 @@ class LogUtils:
 
     TODO:: figure out best way to do this, and get log level globally. Might need to not do this quite this way
     """
-    logLevel = logging.DEBUG
+    logLevel = logging.WARNING
     logDir = "/var/log/oqm/"
     logFile = "non.log"
 
@@ -21,16 +22,19 @@ class LogUtils:
         Path(LogUtils.logDir).mkdir(parents=True, exist_ok=True)
         LogUtils.logFile = logFile
 
+        if "-vvvv" in sys.argv:
+            LogUtils.logLevel = logging.DEBUG
+
     @staticmethod
     def setupLogger(name: str) -> logging.Logger:
-        fh = logging.FileHandler(LogUtils.logDir+LogUtils.logFile)
+        fh = logging.handlers.RotatingFileHandler(LogUtils.logDir+LogUtils.logFile, maxBytes=10*1024*1024, backupCount=5)
         fh.setLevel(logging.DEBUG)
 
         # sh = logging.StreamHandler()
         # sh.setLevel(LogUtils.logLevel)
 
         logOut = logging.getLogger(name)
-        logOut.setLevel(logging.INFO)
+        logOut.setLevel(LogUtils.logLevel)
         logOut.addHandler(fh)
         # logOut.addHandler(sh)
         return logOut
