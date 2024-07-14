@@ -1,6 +1,5 @@
 import base64
 import datetime
-import logging
 import socket
 import uuid
 from pathlib import Path
@@ -16,6 +15,9 @@ import sys
 import re
 import collections.abc
 from ScriptInfos import *
+from LogUtils import *
+
+log = LogUtils.setupLogger(__name__)
 
 CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
 CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
@@ -349,7 +351,7 @@ class ConfigManager:
 
     @staticmethod
     def getArrRef(configKey: str):
-        logging.debug('todo')
+        log.debug('todo')
 
     @staticmethod
     def setConfigVal(configKey: str, configVal: str, data: dict):
@@ -380,7 +382,7 @@ class ConfigManager:
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])
         else:
             # TODO:: add array stuff here
-            logging.warn("err")
+            log.warn("err")
 
     @staticmethod
     def setConfigValInFile(
@@ -485,7 +487,7 @@ class ConfigManager:
 
 mainCM = None
 if "NO_SET_MAINCM" in os.environ and os.environ["NO_SET_MAINCM"] == "true":
-    logging.info("Was directed not to setup main CM")
+    log.info("Was directed not to setup main CM")
 else:
-    logging.info("Setting up main CM")
+    log.info("Setting up main CM")
     mainCM = ConfigManager()
