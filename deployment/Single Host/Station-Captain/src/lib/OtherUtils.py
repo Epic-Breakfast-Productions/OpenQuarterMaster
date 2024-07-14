@@ -1,10 +1,11 @@
-import logging
 import os
 import shutil
 from ConfigManager import *
 from ServiceUtils import *
 import docker
+from LogUtils import *
 
+log = LogUtils.setupLogger(__name__)
 
 class OtherUtils:
 
