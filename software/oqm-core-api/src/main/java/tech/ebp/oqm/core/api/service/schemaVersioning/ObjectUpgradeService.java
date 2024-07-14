@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
+import org.bson.Document;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.Versionable;
@@ -61,6 +62,22 @@ public class ObjectUpgradeService {
 		return this.upgraderMap == null;
 	}
 
+	private CollectionUpgradeResult upgradeOqmCollection(MongoCollection<Document> collection, Class<? extends Versionable> objectClass) throws ClassUpgraderNotFoundException {
+		ObjectUpgrader<?> objectVersionBumper = this.getInstanceForClass(objectClass);
+		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder()
+			.collectionName(collection.getNamespace().getCollectionName());
+
+		StopWatch sw = StopWatch.createStarted();
+		for (MongoCursor<?> it = collection.find().cursor(); it.hasNext(); ) {
+			//TODO:: get as bson, not object. feed to upgrader
+//			objectVersionBumper.upgrade()
+		}
+		sw.stop();
+		outputBuilder.timeTaken(Duration.of(sw.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
+
+		return outputBuilder.build();
+	}
+
 	private CollectionUpgradeResult upgradeOqmCollection(OqmMongoDatabase oqmDb, MongoDbAwareService service) throws ClassUpgraderNotFoundException {
 		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder();
 		StopWatch collectionUpgradeTime = StopWatch.createStarted();
@@ -68,20 +85,11 @@ public class ObjectUpgradeService {
 		List<CompletableFuture<CollectionUpgradeResult>> resultMap = new ArrayList<>();
 
 		MongoCollection<?> collection = service.getCollection(oqmDb.getName());
-		ObjectUpgrader<?> objectVersionBumper = this.getInstanceForClass(service.getClazz());
 
-		for (MongoCursor<?> it = collection.find().cursor(); it.hasNext(); ) {
-			//TODO:: get as bson, not object. feed to upgrader
-//			objectVersionBumper.upgrade()
-
-		}
-
-
-
-		collectionUpgradeTime.stop();
-		outputBuilder.timeTaken(Duration.of(collectionUpgradeTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
-
-		return outputBuilder.build();
+		return this.upgradeOqmCollection(
+			//TODO:: get collection as Document type
+			, service.getClazz()
+		);
 	}
 
 
