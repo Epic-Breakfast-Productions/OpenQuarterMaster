@@ -1,9 +1,0 @@
-{!
-Template for the options for a select input for units.
-
-Ingests:
-- units - list of units
-    !}
-{#for unit in units}
-	<option value="{unit.toString()}" data-symbol="{unit.getSymbol()}">{unit.getName()} ({unit.getSymbol()})</option>
-{/for}

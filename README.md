@@ -5,9 +5,9 @@
 <!-- https://shields.io -->
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Epic-Breakfast-Productions/OpenQuarterMaster)
 ![GitHub all releases](https://img.shields.io/github/downloads/Epic-Breakfast-Productions/OpenQuarterMaster/total)
-![Lib - Core](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/coreLib.yml/badge.svg)
-![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/baseStation.yml/badge.svg)
-![Station Captain](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg)
+![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)
+
+[//]: # (![Station Captain]&#40;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg&#41;)
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
@@ -50,13 +50,13 @@ System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes")
 ```
 Please use the diagram above for reference.
 
-How we acomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Base Station](software/open-qm-base-station). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible.
+How we acomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Base Station](software/oqm-core-base-station). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible.
 
 To cover specific use-cases, we have what we call [Plugins](software/plugins). These are components that extend the functionality of the basic inventory management, and fill additional needs with their own capabilities. Examples could include Smart Refrigerator integrations, a system for interacting with physical storage mediums, Point of Sale Systems, Workflow management.. the list is endless. You could even create your own!
 
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
-To get started on your own hardware, please see [Station Captain](software/Station-Captain)
+To get started on your own hardware, please see [Station Captain](deployment/Single%20Host/Station-Captain)
 
 ## On Privacy
 

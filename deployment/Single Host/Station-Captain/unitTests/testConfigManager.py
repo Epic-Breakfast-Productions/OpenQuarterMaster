@@ -94,6 +94,26 @@ class MyTestCase(unittest.TestCase):
             data
         )
 
+    def test_getFilledData(self):
+        filledOutData = self.configManager.getFilledOutData()
+        self.assertEqual(
+            {
+                "newVal": "new2",
+                "testStr": "config file",
+                "testSecret": self.configManager.getConfigVal("testSecret"),
+                "testInt": 1,
+                "testFloat": 1.1,
+                "overwrittenVal": "new",
+                "testObj": {
+                    "nestedOne": "test",
+                    "nestedTwo": "test"
+                },
+                "testArr": ["1", "2", "3"],
+                "testReplacement": "config file - 1 - 1.1 - test - oqm-dev.local"
+            },
+            filledOutData
+        )
+
     def test_getStr(self):
         data = self.configManager.getConfigVal("testStr")
         self.assertEqual(type(data), str)
@@ -188,7 +208,8 @@ class MyTestCase(unittest.TestCase):
     def test_newSecretGet(self):
         newSecret = SecretManager.newSecret()
         print("New secret: "+ newSecret)
-        self.assertEqual(24, len(newSecret))
+        # this likes to sometimes be 24?
+        self.assertEqual(32, len(newSecret))
 
     # TODO:: test get arrays
 

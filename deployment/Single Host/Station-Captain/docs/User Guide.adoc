@@ -55,12 +55,30 @@ This is a quick explanation of the menus in interactive mode, and what the tool 
 **** Storage usage
 **** RAM usage
 . *Manage Installation*
-
+.. *Setup Wizard*
+*** Guides you through the major setup of the system.
 .. *Select OQM major version* TODO, later
 
 .. *SSL/HTTPS Certs TODO*
-... *Cert mode (self, Let's Encrypt, provided)*
 ... *Cert info TODO*
+**** Shows the info about the certs that are currently setup for use
+... *Verify certificates*
+**** Verifies that the certs setup are verifyable and valid for use
+... *Cert mode (self, Let's Encrypt, provided)*
+... *Private Key Location*
+... *Public Cert/Key Location*
+... *Cert mode specific Options*
+**** Self signed Options
+.... *CA Private Key Location*
+.... *Country Name*
+.... *Country Name*
+.... *State or Province Name*
+.... *Locality Name*
+.... *Organization Name*
+.... *Organizational Unit Name*
+**** Let's Encrypt Options
+**** Provided Options
+.... *CA Provided*
 
 .. *Core? TODO*
 ... *Ensure installed? (TODO)*
@@ -82,6 +100,11 @@ TODO- document better
 .. *Plugins* TODO
 .. *Uninstall All* TODO
 
+. *Plugins*
+.. *Review Available Plugins* +
+   Select from a list of plugins to install
+.. *Select Plugins* +
+   Select from a list of plugins to uninstall
 . *Snapshots* +
   Snapshots allow you to take a current state of you system, and save it or back it up for later.
 

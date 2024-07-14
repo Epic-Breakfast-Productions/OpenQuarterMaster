@@ -23,9 +23,10 @@ buildDir="build"
 debDir="InfraDeb"
 
 # All
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "zookeeper")
+packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "kafka")
 # Ready for deployment
-packages=("jaeger" "mongo" "postgres" "keycloak")
+packages=("jaeger" "mongo" "postgres" "keycloak" "kafka-red-panda")
+#packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #
 # Clean
@@ -61,7 +62,7 @@ for curPackage in ${packages[@]}; do
 
 		serviceFile="$i"
 		echo "Service file: $serviceFile"
-		serviceFileEscaped="$(systemd-escape "$serviceFile")"
+		serviceFileEscaped="$serviceFile" #"$(systemd-escape "$serviceFile")"
 		cp "$curPackage/$serviceFile" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		sed -i "s/\${version}/$(jq -r '.version' "$packageConfigFile")/" "$packageDebDir/etc/systemd/system/$serviceFileEscaped"
 		serviceFiles+=("$serviceFileEscaped")
@@ -91,8 +92,9 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io, open+quarter+master-manager-station+captain (>= 2.0.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
+Depends: docker, docker.io, oqm-manager-station+captain (>= 2.2.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
+	# TODO:: add conflicts
 
 	cat <<EOT >> "$packageDebDir/DEBIAN/copyright"
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/

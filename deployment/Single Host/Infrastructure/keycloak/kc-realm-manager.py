@@ -14,7 +14,7 @@ sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
 
 SCRIPT_VERSION = "1.0.0"
-KC_CONTAINER_NAME = "oqm_infra_keycloak"
+KC_CONTAINER_NAME = "oqm-infra-keycloak"
 KC_ADM_SCRIPT = "/opt/keycloak/bin/kcadm.sh"
 KC_REALM = "oqm"
 KC_CLIENT_CONFIGS_DIR = "/etc/oqm/kcClients/"
@@ -53,9 +53,22 @@ def setupAdminConfig(kcContainer: Container | None = None):
     if kcContainer is None:
         kcContainer = getKcContainer()
 
+    # Set OQM Truststore
     runResult = kcContainer.exec_run(
         [
-            KC_ADM_SCRIPT, "config", "credentials", "--server", "http://127.0.0.1:8080",
+            KC_ADM_SCRIPT, "config", "truststore",
+            "--trustpass", mainCM.getConfigVal("cert.certs.keystorePass"),
+            "/etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12"
+        ])
+    if runResult.exit_code != 0:
+        log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
+        raise ChildProcessError("Failed to setup oqm trust store for KC admin")
+
+
+    runResult = kcContainer.exec_run(
+        [
+            KC_ADM_SCRIPT, "config", "credentials",
+            "--server", mainCM.getConfigVal("infra.keycloak.externalBaseUri"),
             "--realm", "master",  # admin user exists in master realm
             "--user", mainCM.getConfigVal("infra.keycloak.adminUser"),
             "--password", mainCM.getConfigVal("infra.keycloak.adminPass")

@@ -1,0 +1,72 @@
+{#modal id='fileAttachmentView' title='File'}
+	{#titleIcon}{#icons/fileAttachments}{/icons/fileAttachments}<sup>{#icons/view}{/icons/view}</sup>{/titleIcon}
+	{#footerButtons}
+		<a href="" class="btn btn-success" title="Download" target="_blank" id="fileAttachmentViewContentDownloadButton">
+		{#icons/download}{/icons/download} Download File
+		</a>
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewContentModal">
+			<i class="bi bi-plus-circle "></i> View Content
+		</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col" id="fileAttachmentViewMessages">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col text-center">
+			<h4 id="fileAttachmentViewFileName">
+				Description:
+			</h4>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col text-center" id="fileAttachmentViewPreviewContainer">
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col">
+			<h4>
+				Description:
+			</h4>
+			<p id="fileAttachmentViewDescription">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col accordion" id="fileAttachmentViewRevisionsExpand">
+			<div class="accordion-item">
+				<h2 class="accordion-header">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#fileAttachmentViewRevisionsExpandCollapse" aria-expanded="true" aria-controls="fileAttachmentViewRevisionsExpandCollapse">
+						Revisions&nbsp;<span class="badge bg-secondary" id="fileAttachmentViewRevisionsExpandNumRevisions"></span>
+					</button>
+				</h2>
+				<div id="fileAttachmentViewRevisionsExpandCollapse" class="accordion-collapse collapse show" data-bs-parent="#fileAttachmentViewRevisionsExpand">
+					<div class="accordion-body">
+						<div class="col accordion" id="fileAttachmentViewRevisionsAccord">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{!TODO: show associated items, storage !}
+	
+	<div class="row">
+        {#objView/objKeywordsView id='fileAttachmentViewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+        {#objView/objAttsView id='fileAttachmentViewAttsSection' classes='col'}{/objView/objAttsView}
+    </div>
+{/modal}
+{#modal id='fileAttachmentViewContent' title='File' size='xl' otherModalId='fileAttachmentViewModal'}
+	{#titleIcon}{#icons/fileAttachments}{/icons/fileAttachments}<sup>{#icons/view}{/icons/view}</sup>{/titleIcon}
+	{#footerButtons}
+		<a href="" class="btn btn-success" title="Download" target="_blank" id="fileAttachmentViewDownloadButton">
+			{#icons/download}{/icons/download} Download File
+		</a>
+	{/footerButtons}
+	<div class="row">
+		<div class="col text-center" id="fileAttachmentViewFullContainer" style="min-height:75vh;">
+		</div>
+	</div>
+{/modal}

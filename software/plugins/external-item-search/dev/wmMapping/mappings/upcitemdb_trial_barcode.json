@@ -1,0 +1,127 @@
+{
+  "request": {
+    "urlPathPattern": "/upcitemdb/prod/trial/lookup",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "code" : "OK",
+      "total" : 1,
+      "offset" : 0,
+      "items" : [ {
+        "ean" : "9781492057895",
+        "title" : "Building Event-Driven Microservices - by Adam Bellemare (Paperback)",
+        "description" : "",
+        "isbn" : "9781492057895",
+        "publisher" : "O'Reilly Media",
+        "category" : "Media > Books",
+        "images" : [ "https://target.scene7.com/is/image/Target/GUEST_324e0d39-af27-40bf-84a5-edead2a6b8d6?wid=1000&hei=1000", "http://images.ecampus.com/images/d/7/895/9781492057895.jpg", "https://i5.walmartimages.com/asr/543ea27b-8e97-4935-b34e-129c4df7dc09.cd0c7517581efa4e9310fa3eb3b0544b.jpeg?odnHeight=450&odnWidth=450&odnBg=ffffff", "https://dynamic.indigoimages.ca//books/9781492057895.jpg?width=200&maxheight=200", "http://images.biggerbooks.com/images/d/7/895/9781492057895.jpg", "http://www0.alibris-static.com/isbn/9781492057895.gif", "https://covers.vitalsource.com/vbid/9781492057840/width/1024" ],
+        "offers" : [ {
+          "merchant" : "Indigo Books & Music",
+          "domain" : "chapters.indigo.ca",
+          "title" : "Building Event-driven Microservices: Leveraging Organizational Data At Scale",
+          "currency" : "CAD",
+          "list_price" : "",
+          "price" : 79.99,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2p2z2t24353a4a4w2&tid=3&seq=1717964474&plt=1d6fc504705ea0b2865a7d1f675c78c8",
+          "updated_t" : 1657896126
+        }, {
+          "merchant" : "eCampus.com",
+          "domain" : "ecampus.com",
+          "title" : "Building Event-driven Microservices",
+          "currency" : "",
+          "list_price" : "",
+          "price" : 44.99,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2p2z2z203z2e494q2&tid=3&seq=1717964474&plt=7fe56d36fed49f8897fbd1d4735ba8b7",
+          "updated_t" : 1717829196
+        }, {
+          "merchant" : "BiggerBooks.com",
+          "domain" : "biggerbooks.com",
+          "title" : "Building Event-driven Microservices",
+          "currency" : "",
+          "list_price" : "",
+          "price" : 46.34,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2p2z2z213x2b4a4q2&tid=3&seq=1717964474&plt=7766236d207034f7a5a9326410f98340",
+          "updated_t" : 1709792997
+        }, {
+          "merchant" : "Wal-Mart.com",
+          "domain" : "walmart.com",
+          "title" : "Building Event-Driven Microservices : Leveraging Organizational Data at Scale (Paperback)",
+          "currency" : "",
+          "list_price" : "",
+          "price" : 47.63,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2p2030333036464v2&tid=3&seq=1717964474&plt=48230f0aec834457e8a35d86df4500dd",
+          "updated_t" : 1645036303
+        }, {
+          "merchant" : "Alibris",
+          "domain" : "alibris.com",
+          "title" : "building event driven microservices leveraging organizational data at scale",
+          "currency" : "",
+          "list_price" : "",
+          "price" : 30.19,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2q2y203w263f4d4z2&tid=3&seq=1717964474&plt=459a4896c1c59342487c3a75a6340ab0",
+          "updated_t" : 1694566499
+        }, {
+          "merchant" : "Alibris UK",
+          "domain" : "alibris.co.uk",
+          "title" : "building event driven microservices leveraging organizational data at scale",
+          "currency" : "GBP",
+          "list_price" : "",
+          "price" : 37.19,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2q2x2y213638454v2&tid=3&seq=1717964474&plt=61a7f99977bc01fc4d24bea6a9a4fd31",
+          "updated_t" : 1694564012
+        }, {
+          "merchant" : "Target",
+          "domain" : "target.com",
+          "title" : "Building Event-Driven Microservices - by Adam Bellemare (Paperback)",
+          "currency" : "",
+          "list_price" : "",
+          "price" : 36.49,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2p213z2x233c4c4t2&tid=3&seq=1717964474&plt=a2c1e762c0e1e99f4a8e3f8659003e19",
+          "updated_t" : 1717738401
+        }, {
+          "merchant" : "VitalSource ",
+          "domain" : "vitalsource.com",
+          "title" : "Building Event-Driven Microservices - 1st Edition (eBook)",
+          "currency" : "CAD",
+          "list_price" : "",
+          "price" : 71.99,
+          "shipping" : "",
+          "condition" : "New",
+          "availability" : "",
+          "link" : "https://www.upcitemdb.com/norob/alink/?id=v2q23303335394b4x2&tid=3&seq=1717964474&plt=b5f017d14cdf910f7f9ecf308ba71a8a",
+          "updated_t" : 1714893523
+        } ]
+      } ]
+    }
+  }
+}
+
+
+
+

@@ -1,0 +1,15 @@
+# Containerfile for OQM's Depot Application
+# https://hub.docker.com/_/php/tags
+FROM php:8.3-apache
+MAINTAINER greg@epic-breakfast-productions.tech
+COPY webroot /var/www/html/
+COPY containerSrc/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY containerSrc/startup.sh /usr/local/bin/startup.sh
+#COPY php.ini /usr/local/etc/php/php.ini-development
+RUN chmod +x /usr/local/bin/startup.sh && \
+    chown -R www-data:www-data /var/www/html && \
+    chown -R www-data:www-data /etc/apache2/sites-available/000-default.conf && \
+    a2enmod ssl && a2enmod socache_shmcb
+USER www-data
+EXPOSE 80 443
+CMD ["startup.sh"]

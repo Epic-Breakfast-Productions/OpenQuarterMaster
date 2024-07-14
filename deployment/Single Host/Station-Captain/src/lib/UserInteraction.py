@@ -12,6 +12,7 @@ from CronUtils import *
 from SnapshotUtils import *
 from LogManagement import *
 from InputValidators import *
+from CertsUtils import *
 import time
 import re
 import os
@@ -29,11 +30,8 @@ class UserInteraction:
     TALL_HEIGHT = 50
 
     def __init__(self):
-        self.dialog = Dialog(
-            dialog="dialog",
-            autowidgetsize=True,
+        self.dialog = Dialog(dialog="dialog", autowidgetsize=True)
 
-        )
         self.dialog.set_background_title(ScriptInfo.SCRIPT_TITLE)
         self.dialog.__setattr__("hfile", "oqm-station-captain-help.txt")
 
@@ -43,7 +41,6 @@ class UserInteraction:
             always_flush=True,
             expand_file_opt=True
         )
-
 
     @staticmethod
     def clearScreen():
@@ -130,10 +127,11 @@ class UserInteraction:
         logging.info("Checking system is setup")
         if not PackageManagement.coreInstalled():
             logging.info("Core setup not installed")
-            code = self.dialog.yesno("Core components are not installed. Install now?", title="Setup")
-            if code == self.dialog.OK:
-                self.dialog.infobox("Installing core components. Please Wait. This can take a few moments.")
-                PackageManagement.installCore()
+            self.dialog.msgbox(
+                "We see that you have not yet installed OQM. You will now be taken through the setup wizard to get started.",
+                title="Core components not installed"
+            )
+            self.setupWizard()
         else:
             logging.info("Core components already installed.")
 
@@ -146,9 +144,10 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Info / Status"),
                     ("(2)", "Manage Installation"),
-                    ("(3)", "Snapshots"),
-                    ("(4)", "Cleanup, Maintenance, and Updates"),
-                    ("(5)", "Captain Settings"),
+                    ("(3)", "Plugins"),
+                    ("(4)", "Snapshots"),
+                    ("(5)", "Cleanup, Maintenance, and Updates"),
+                    # ("(6)", "Captain Settings"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -161,8 +160,10 @@ class UserInteraction:
             if choice == "(2)":
                 self.manageInstallationMenu()
             if choice == "(3)":
-                self.snapshotsMenu()
+                self.pluginsMenu()
             if choice == "(4)":
+                self.snapshotsMenu()
+            if choice == "(5)":
                 self.cleanMaintUpdatesMenu()
 
         logging.debug("Done running main menu.")
@@ -222,23 +223,241 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Manage Installation Menu",
                 choices=[
-                    ("(1)", "SSL/HTTPS Certs (TODO) "),
-                    ("(2)", "Set E-mail Settings"),
-                    ("(3)", "User Administration"),
-                    ("(4)", "Plugins")
+                    ("(1)", "Setup Wizard"),
+                    ("(2)", "SSL/HTTPS Certs"),
+                    ("(3)", "Set E-mail Settings"),
+                    ("(4)", "User Administration")
                 ]
             )
             UserInteraction.clearScreen()
             logging.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
-
+            if choice == "(1)":
+                self.setupWizard()
             if choice == "(2)":
-                self.manageEmailSettings()
+                self.manageCertsMenu()
             if choice == "(3)":
+                self.manageEmailSettings()
+            if choice == "(4)":
                 self.userAdminMenu()
 
         logging.debug("Done running manage install menu.")
+
+    def manageCertsMenu(self):
+        logging.debug("Running Manage Certs menu.")
+
+        while True:
+            certMode = mainCM.getConfigVal("cert.mode")
+            choices = [
+                ("(1)", "Current Cert Info"),
+                ("(2)", "Verify current certs (TODO)"),
+                ("(3)", f"Cert Mode (Currently {certMode})"),
+                ("(6)", "Private Key Location"),
+                ("(7)", "Public Key/Cert Location"),
+            ]
+
+            autoRegenEnabled = "disabled"
+            if CertsUtils.isAutoRegenCertsEnabled():
+                autoRegenEnabled = "enabled"
+
+            if certMode == "self":
+                logging.debug("Setting up menu for self mode")
+                choices.append(("(4)", "Regenerate certs"))
+                choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
+                choices.append(("(8)", "CA Private Key Location"))
+                choices.append(("(9)", "CA Public Cert/Key Location"))
+                choices.append(
+                    ("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
+                choices.append(("(11)",
+                                f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
+                choices.append(
+                    ("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
+                choices.append(("(13)",
+                                f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
+                choices.append(("(14)",
+                                f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
+            if certMode == "letsEncrypt":
+                logging.debug("Setting up menu for let's encrypt mode")
+                accepted = mainCM.getConfigVal('cert.letsEncryptMode.acceptTerms')
+                if accepted:
+                    accepted = "accepted"
+                else:
+                    accepted = "NOT accepted"
+                choices.append(("(4)", "Regenerate certs"))
+                choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
+                choices.append(("(15)", f"Accept Let's Encrypt's Terms of Use ({accepted})"))
+            if certMode == "provided":
+                logging.debug("Setting up menu for provided mode")
+                choices.append(("(8)", "CA Private Key Location"))
+                choices.append(("(9)", "CA Public Cert/Key Location"))
+                choices.append(
+                    ("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
+                if mainCM.getConfigVal('cert.providedMode.caProvided'):
+                    choices.append(("(17)", "Install CA on host"))
+
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Manage Certs Menu",
+                choices=choices
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+
+            if choice == "(1)":
+                logging.debug("Showing current cert information")
+                certInfoReturn = subprocess.run(
+                    ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False,
+                    capture_output=True, text=True, check=False)
+                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout,
+                                      title="System Cert Info")
+
+                if mainCM.getConfigVal("cert.mode") == "self" or (
+                        mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal(
+                        "cert.providedMode.caProvided")):
+                    certInfoReturn = subprocess.run(
+                        ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False,
+                        capture_output=True, text=True, check=False)
+                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout,
+                                          title="CA Cert Info")
+
+            if choice == "(2)":
+                logging.debug("Verifying current cert setup (TODO)")
+                # TODO
+                # TODO:: in self/provided mode where applicable: openssl verify -verbose -CAfile /etc/oqm/certs/CArootCert.crt /etc/oqm/certs/systemCert.crt
+            if choice == "(3)":
+                logging.debug("Setting cert mode")
+                self.promptForConfigChange(
+                    "The method the system will use to get certs ('self', 'letsEncrypt', or 'provided'):",
+                    "Set Cert Mode",
+                    "cert.mode",
+                    validators=[InputValidators.isCertMode]
+                )
+            if choice == "(4)":
+                logging.debug("Regenerating Certs")
+                forceCaRegen = False
+                if mainCM.getConfigVal("cert.mode") == "self":
+                    self.dialog.yesno("Regenerate root CA (not recommended)?")
+                    if code == self.dialog.OK:
+                        logging.info("User chose to regenerate root CA.")
+                        forceCaRegen = True
+                result, message = CertsUtils.regenCerts(forceCaRegen, False)
+                header = "Cert Regeneration Complete"
+                if not result:
+                    header = "Cert Regeneration FAILED"
+                self.dialog.msgbox(message, title=header)
+                self.dialog.infobox("Restarting services. Please wait.")
+                ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
+            if choice == "(5)":
+                logging.info("Toggling cron to regen certs")
+                if CertsUtils.isAutoRegenCertsEnabled():
+                    CertsUtils.disableAutoRegenCerts()
+                else:
+                    CertsUtils.enableAutoRegenCerts()
+            if choice == "(6)":
+                logging.debug("Setting private key location")
+                self.promptForConfigChange(
+                    "The location of the system's private key:",
+                    "Set Private Key Location",
+                    "cert.certs.privateKey",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(7)":
+                logging.debug("Setting public cert location")
+                self.promptForConfigChange(
+                    "The location of the system's public cert/key:",
+                    "Set Public Cert/Key Location",
+                    "cert.certs.systemCert",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(8)":
+                logging.debug("Setting CA private key location")
+                self.promptForConfigChange(
+                    "The location of the system's CA private key:",
+                    "Set CA Private Key Location",
+                    "cert.certs.CARootPrivateKey",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(9)":
+                logging.debug("Setting CA public cert location")
+                self.promptForConfigChange(
+                    "The location of the system's CA public cert/key:",
+                    "Set CA Public Cert/Key Location",
+                    "cert.certs.CARootCert",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(10)":
+                logging.debug("Setting country name for self-signed cert")
+                self.promptForConfigChange(
+                    "The country name for self-signed certs:",
+                    "Set country name for self-signed certs",
+                    "cert.selfMode.certInfo.countryName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(11)":
+                logging.debug("Setting state or province name for self-signed cert")
+                self.promptForConfigChange(
+                    "The state or province name for self-signed certs:",
+                    "Set state or province name for self-signed certs",
+                    "cert.selfMode.certInfo.stateOrProvinceName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(12)":
+                logging.debug("Setting locality name for self-signed cert")
+                self.promptForConfigChange(
+                    "The locality name for self-signed certs:",
+                    "Set locality name for self-signed certs",
+                    "cert.selfMode.certInfo.localityName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(13)":
+                logging.debug("Setting organization name for self-signed cert")
+                self.promptForConfigChange(
+                    "The organization name for self-signed certs:",
+                    "Set organization name for self-signed certs",
+                    "cert.selfMode.certInfo.organizationName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(14)":
+                logging.debug("Setting organizational unit name for self-signed cert")
+                self.promptForConfigChange(
+                    "The organizational unit name for self-signed certs:",
+                    "Set organizational unit name for self-signed certs",
+                    "cert.selfMode.certInfo.organizationalUnitName",
+                    validators=[InputValidators.isNotEmpty]
+                )
+            if choice == "(15)":
+                logging.debug("Setting that the user has accepted Let's Encrypt's terms of use")
+                mainCM.setConfigValInFile("cert.letsEncryptMode", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.rereadConfigData()
+            if choice == "(16)":
+                logging.debug("Setting if the CA was also provided.")
+                code = self.dialog.yesno("Are you providing your own CA file?")
+                caProvided = False
+                if code == self.dialog.OK:
+                    caProvided = True
+                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided,
+                                          ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.rereadConfigData()
+            if choice == "(17)":
+                logging.debug("Installing CA on host")
+                result, message = CertsUtils.ensureCaInstalled()
+                if not result:
+                    self.dialog.msgbox(f"Failed to setup CA on host: \n{message}", title="Failed")
+        self.dialog.yesno("Regenerate certs? Not necessary if no config changed.")
+        if code == self.dialog.OK:
+            logging.info("User chose to regenerate root CA.")
+            forceCaRegen = False
+            self.dialog.yesno("Regenerate root CA (not recommended)?")
+            if code == self.dialog.OK:
+                logging.info("User chose to regenerate root CA.")
+                forceCaRegen = True
+            CertsUtils.regenCerts(forceCaRegen, False)
+            self.dialog.infobox("Restarting services. Please wait.")
+            ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
+        logging.debug("Done running manage certs menu.")
 
     def manageEmailSettings(self):
         logging.info("Entering flow for managing E-mail settings.")
@@ -485,7 +704,8 @@ class UserInteraction:
                     else:
                         logging.info("User chose not to take a preemptive snapshot.")
 
-                    code = self.dialog.yesno("Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
+                    code = self.dialog.yesno(
+                        "Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
                     if code != self.dialog.OK:
                         logging.info("User chose not to do the restore after all.")
                         continue
@@ -497,7 +717,8 @@ class UserInteraction:
                 if not result:
                     self.dialog.msgbox(report, title="Error taking Snapshot")
                 else:
-                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report, title="Snapshot successful")
+                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report,
+                                       title="Snapshot successful")
             if choice == "(3)":
                 if SnapshotUtils.isAutomaticEnabled():
                     SnapshotUtils.disableAutomatic()
@@ -574,7 +795,8 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Prune unused container resources"),
                     ("(2)",
-                     ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
+                     (
+                         "Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
                     ("(3)", "Set prune frequency"),
                 ]
             )
@@ -604,6 +826,159 @@ class UserInteraction:
                     ContainerUtils.enableAutomatic()
 
         logging.debug("Done running container management menu.")
+
+    def setupWizard(self):
+        logging.debug("Running setup wizard.")
+        self.dialog.msgbox(
+            "Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.",
+            title="Setup Wizard")
+
+        # Check if already installed, prompt to uninstall
+        # if PackageManagement.coreInstalled():
+        #     logging.debug("OQM core components already installed.")
+        #     code = self.dialog.yesno(
+        #         "Remove the current installation? \n\nDo this if you want to start fresh.",
+        #         title="Remove current install? - Setup Wizard"
+        #     )
+        #     if code != self.dialog.OK:
+        #         logging.info("User chose not to uninstall the current setup.")
+        #     else:
+        #         logging.info("User chose to uninstall OQM.")
+        #         # TODO:: uninstall, uncomment this
+
+        code = self.dialog.yesno(
+            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today.\n - this is your first time logging into the system\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
+            title="Update system? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to update.")
+        else:
+            logging.info("User chose to update and restart.")
+            self.dialog.infobox("Updating OS/system. Please wait.")
+            result, message = PackageManagement.updateSystem()
+            # TODO:: error check
+            os.system('reboot')
+
+        # Check if not installed, prompt to install
+        if not PackageManagement.coreInstalled():
+            logging.debug("OQM components not yet installed.")
+            code = self.dialog.yesno(
+                "Install core OQM components?",
+                title="Perform core component install? - Setup Wizard"
+            )
+            if code != self.dialog.OK:
+                logging.info("User chose not to install core components.")
+            else:
+                logging.info("User chose to install core components.")
+                self.dialog.infobox("Installing core components. Please wait.")
+                PackageManagement.installCore()
+                self.dialog.msgbox("Core components installed!", title="Setup Wizard")
+
+        # TODO: set simple settings; domain name, run by details, email settings
+
+        code = self.dialog.yesno(
+            "Perform snapshots automatically?\n\nRecommend turning on. This can be managed later in settings.",
+            title="Automatic Snapshots? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to automatically perform snapshots.")
+            SnapshotUtils.disableAutomatic()
+        else:
+            logging.info("User chose to automatically perform snapshots.")
+            SnapshotUtils.enableAutomatic()
+
+        self.dialog.msgbox(
+            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
+            "later in settings.",
+            title="Setup Wizard"
+        )
+        PackageManagement.promptForAutoUpdates()
+
+        code = self.dialog.yesno(
+            "Regenerate certs automatically?\n\nRecommend turning on. This can be managed later in settings.",
+            title="Automatic Certificate Regeneration? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            logging.info("User chose not to automatically regenerate certs.")
+            CertsUtils.enableAutoRegenCerts()
+        else:
+            logging.info("User chose to automatically regenerate certs.")
+            CertsUtils.disableAutoRegenCerts()
+
+        # TODO: if not .local, ask to select cert type
+
+        self.dialog.msgbox(
+            "Setup Wizard complete!",
+            title="Setup Wizard"
+        )
+
+    def pluginsMenu(self):
+        logging.debug("Running Plugins menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Plugins Menu",
+                choices=[
+                    ("(1)", "Review Plugins"),
+                    ("(2)", "Select Plugins")
+                ]
+            )
+            UserInteraction.clearScreen()
+            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+            if choice == "(1)":
+                self.showPlugins()
+            if choice == "(2)":
+                self.selectPluginsMenu()
+
+        logging.debug("Done running manage install menu.")
+
+    @staticmethod
+    def mapPluginSelection(pluginFromPm):
+        return (
+            pluginFromPm['package'],
+            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            pluginFromPm['installed']
+        )
+
+    def getPluginSelectionArray(self):
+        logging.debug("Getting plugin selection array")
+        plugins = PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS)
+        return map(UserInteraction.mapPluginSelection, plugins)
+
+    def selectPluginsMenu(self):
+        # https://pythondialog.sourceforge.io/doc/widgets.html#build-list
+        code, installedPluginSelection = self.dialog.buildlist(
+            title="Select Installed Plugins",
+            text="Select which plugins to be installed. To be installed on right, not to be installed on left.",
+            visit_items=True,
+            items=self.getPluginSelectionArray()
+        )
+        if code != self.dialog.OK:
+            return
+        self.dialog.infobox("Applying plugin selection. Please wait.")
+        PackageManagement.ensureOnlyPluginsInstalled(installedPluginSelection)
+        self.dialog.msgbox(
+            "Plugin Selection Complete!",
+            title="Plugin Selection"
+        )
+
+    def showPlugins(self):
+        toShow = ""
+        for curPackage in PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS):
+            print(curPackage)
+            toShow += curPackage['displayName'] + "\n"
+            toShow += "\tVersion: " + curPackage['version'] + "\n"
+            toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
+            toShow += "\tDescription: " + curPackage['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="Available Plugins",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
 
 ui = UserInteraction()

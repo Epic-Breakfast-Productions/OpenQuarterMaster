@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.sshd.server.command.Command;
 import stationCaptainTest.testResources.config.ConfigReader;
 import stationCaptainTest.testResources.config.snhSetup.ContainerSnhSetupConfig;
 import stationCaptainTest.testResources.config.snhSetup.ExistingSnhSetupConfig;
@@ -122,15 +123,19 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 					log.info("Building installers.");
 					CommandResult.from(new ProcessBuilder("../Station-Captain/makeInstallers.sh")).assertSuccess("Build Station Captain Installers");
 					CommandResult.from(new ProcessBuilder("../Infrastructure/makeInstallers.sh")).assertSuccess("Build Infrastructure Installers");
-					CommandResult.from(new ProcessBuilder("../../../software/open-qm-base-station/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/oqm-depot/makeSnhInstallers.sh")).assertSuccess("Build Depot Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/oqm-core-api/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/oqm-core-base-station/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
 					log.info("Done building installers.");
 				} catch(IOException | InterruptedException e) {
 					throw new RuntimeException(e);
 				}
 				List<File> installers = new ArrayList<>();
-				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
-				installers.addAll(List.of(new File("../../../software/open-qm-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("open+q*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-core-api/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/oqm-core-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
 				
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");
@@ -152,7 +157,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			case deb -> {
 				switch (this.getSetupConfig().getInstallTypeConfig().getType()) {
 					case REPO -> {
-						output = this.runCommand("apt-get", "install", "-y", "open+quarter+master-core-base+station");
+						output = this.runCommand("apt-get", "install", "-y", "oqm-core-base+station");
 					}
 					case FILES -> {
 						output = this.runCommand("apt-get", "install", "-y", "/tmp/oqm-installers/*.deb");
@@ -176,14 +181,18 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		log.info("Uninstalling OQM");
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
 			case deb -> {
-				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*");
-				this.runCommand("apt-get", "autoremove");
+				this.runCommand("systemctl", "stop", "oqm-*").assertSuccess("Stop OQM services");
+//				this.runCommand("apt-get", "remove", "-y", "--purge", "open+quarter+master-*").assertSuccess("Remove old OQM versions");
+				CommandResult uninstallResult = this.runCommand("apt-get", "remove", "-y", "--purge", "oqm-*");
+				this.runCommand("docker", "image", "prune", "-f");//.assertSuccess("Prune docker images");
+				this.runCommand("systemctl", "reset-failed");//.assertSuccess("Reset systemd");
+//				this.runCommand("apt-get", "-y", "autoremove");
 			}
 			case rpm -> {
 				//TODO
 			}
 		}
-		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm");
+		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm").assertSuccess("Remove OQM directories");
 	}
 	
 	

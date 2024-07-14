@@ -20,15 +20,15 @@ class InputValidators:
 
     @staticmethod
     def getValidatorFor(valString: str):
-        if valString is "email":
+        if valString == "email":
             return InputValidators.isEmail
-        if valString is "notEmpty":
+        if valString == "notEmpty":
             return InputValidators.isNotEmpty
-        if valString is "digit":
+        if valString == "digit":
             return InputValidators.isDigit
-        if valString is "cronKeyword":
+        if valString == "cronKeyword":
             return InputValidators.isCronKeyword
-        if valString is "writableDirectory":
+        if valString == "writableDirectory":
             return InputValidators.isWritableDirectory
         return None
 
@@ -56,6 +56,12 @@ class InputValidators:
         try:
             CronFrequency[val]
         except ValueError:
+            return "Value given was not a valid option (" + CronFrequency.getFreqListStr() + ")"
+        return None
+
+    @staticmethod
+    def isCertMode(val: str) -> Optional[str]:
+        if val not in ["self", "letsEncrypt", "provided"]:
             return "Value given was not a valid option (" + CronFrequency.getFreqListStr() + ")"
         return None
 

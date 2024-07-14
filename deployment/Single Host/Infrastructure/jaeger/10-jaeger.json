@@ -1,10 +1,14 @@
 {
 	"infra": {
 		"jaeger": {
-			"host": "oqm_infra_jaeger",
+			"host": "oqm-infra-jaeger",
 			"uiPort": "16686",
 			"otelTracesPort": "4317",
-			"tracesPort": "14268"
+			"tracesPort": "14268",
+			"externalBaseUri": "http://#{system.hostname}:#{infra.jaeger.uiPort}",
+			"options": {
+				"maxTraces": 10000
+			}
 		}
 	}
 }

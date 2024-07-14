@@ -14,7 +14,7 @@ from systemd import journal
 class LogManagement:
 
     @staticmethod
-    def packageServiceLogs(service:str, compilingDir:str):
+    def packageServiceLogs(service: str, compilingDir: str):
         outFileName = compilingDir + "/10-" + service + ".log"
         logging.info("Logging events for %s to file %s", service, outFileName)
         start = time.time()
@@ -85,7 +85,7 @@ class LogManagement:
                 sysInfoFile.write(LogManagement.getSystemInfo())
 
             with open(compilingDir + "/01-installed.txt", "w") as sysInfoFile:
-                sysInfoFile.write(PackageManagement.getInstalledPackages())
+                sysInfoFile.write(PackageManagement.getOqmPackagesStr(installed=True, notInstalled=False))
 
             logging.info("Writing log messages.")
             result, services = ServiceUtils.getServiceNames()

@@ -193,6 +193,8 @@ class SecretManager:
 
 # Exception to throw when config errors occur
 class ConfigKeyNotFoundException(Exception):
+    def __init__(self, message):
+        super().__init__("Config key error. " + message)
     pass
 
 
@@ -246,9 +248,9 @@ class ConfigManager:
                     output += ".local"
             if output is None:
                 if exceptOnNotPresent:
-                    raise ConfigKeyNotFoundException()
+                    raise ConfigKeyNotFoundException(f"Config reference: {configReference}")
                 return ""
-            return output;
+            return output
         else:
             return self.getConfigVal(configReference, exceptOnNotPresent=exceptOnNotPresent)
 
@@ -280,8 +282,12 @@ class ConfigManager:
                 )
         elif isinstance(val, dict):
             for k, v in val.items():
+                newKey = key + "." + k
+                if not key:
+                    newKey = k
+
                 val[k] = self.updateReplacements(
-                    key + "." + k,
+                    newKey,
                     v,
                     generateSecretIfNone,
                     exceptOnNotPresent=exceptOnNotPresent
@@ -305,7 +311,7 @@ class ConfigManager:
         # print("debug:: data: " + json.dumps(data, indent=4))
         if not isinstance(data, dict):
             if exceptOnNotPresent:
-                raise ConfigKeyNotFoundException()
+                raise ConfigKeyNotFoundException(configKeyOrig)
             return ""
         if "." in configKey:
             parts = configKey.split(".", 1)
@@ -314,13 +320,13 @@ class ConfigManager:
 
             if curConfig not in data:
                 if exceptOnNotPresent:
-                    raise ConfigKeyNotFoundException()
+                    raise ConfigKeyNotFoundException(configKeyOrig)
                 return ""
 
             return self.getConfigValRec(configKeyOrig, keyLeft, data[curConfig], processSecret, exceptOnNotPresent)
         if configKey not in data:
             if exceptOnNotPresent:
-                raise ConfigKeyNotFoundException()
+                raise ConfigKeyNotFoundException(configKeyOrig)
             return ""
         result = data[configKey]
         if isinstance(result, (dict, list, str)):
@@ -336,6 +342,11 @@ class ConfigManager:
             exceptOnNotPresent
         )
 
+    def getFilledOutData(self):
+        output = dict(self.configData)
+        self.updateReplacements("", output)
+        return output
+
     @staticmethod
     def getArrRef(configKey: str):
         logging.debug('todo')
@@ -349,7 +360,7 @@ class ConfigManager:
         :param data: The dict to update
         """
         if not isinstance(data, dict):
-            raise ConfigKeyNotFoundException()
+            raise ConfigKeyNotFoundException("Config not an object we can add to.")
 
         if "." not in configKey and "[" not in configKey:
             data[configKey] = configVal
