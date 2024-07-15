@@ -126,7 +126,7 @@ else
 	echo "WARNING: could not run autocomplete!"
 fi
 
-oqm-captain --regen-certs
+oqm-captain --ensure-certs-present
 
 if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
 	echo 'OQM group already existent'

@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 from ConfigManager import *
@@ -6,7 +5,9 @@ from ServiceUtils import *
 from OtherUtils import *
 from CronUtils import *
 import docker
+from LogUtils import *
 
+log = LogUtils.setupLogger(__name__)
 
 class ContainerUtils:
     """
@@ -17,7 +18,7 @@ class ContainerUtils:
 
     @staticmethod
     def pruneContainerResources() -> str:
-        logging.info("Pruning all container resources.")
+        log.info("Pruning all container resources.")
         client = docker.from_env()
 
         numBytesCleared = 0
@@ -29,7 +30,7 @@ class ContainerUtils:
         client.networks.prune()
 
         output = OtherUtils.human_size(numBytesCleared)
-        logging.info("Done pruning container resources. Reclaimed %s", output)
+        log.info("Done pruning container resources. Reclaimed %s", output)
 
         return output
 
@@ -51,16 +52,16 @@ class ContainerUtils:
 
     @staticmethod
     def ensureSharedDockerResources():
-        logging.info("Ensuring docker network exists.")
+        log.info("Ensuring docker network exists.")
         client = docker.from_env()
 
         try:
             client.networks.get(ContainerUtils.DOCKER_NW_NAME)
-            logging.info("Network already present!")
+            log.info("Network already present!")
         except Exception as e:
             # TODO:: narrow exception
-            logging.info("Need to create network.")
+            log.info("Need to create network.")
             client.networks.create(ContainerUtils.DOCKER_NW_NAME)
-            logging.info("Created network.")
+            log.info("Created network.")
 
 
