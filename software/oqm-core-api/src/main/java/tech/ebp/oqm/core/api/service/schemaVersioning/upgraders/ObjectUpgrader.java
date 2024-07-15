@@ -88,7 +88,7 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		sw.stop();
 
 		resultBuilder.upgradedObject(upgradedObj);
-		resultBuilder.timeToUpgrade(Duration.ofMillis(sw.getTime()));
+		resultBuilder.timeTaken(Duration.ofMillis(sw.getTime()));
 
 		return resultBuilder.build();
 	}

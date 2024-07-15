@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.service.schemaVersioning;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,11 +10,14 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistry;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
+import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
@@ -27,12 +32,15 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static com.mongodb.client.model.Filters.eq;
+
 @ApplicationScoped
 @Slf4j
 public class ObjectUpgradeService {
 
 	private Map<Class<?>, ObjectUpgrader<?>> upgraderMap;
 	private OqmDatabaseService oqmDatabaseService;
+	private CodecRegistry codecRegistry;
 	private List<MongoDbAwareService> oqmDbServices;
 
 	public <C extends Versionable> ObjectUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
@@ -48,9 +56,11 @@ public class ObjectUpgradeService {
 
 	@Inject
 	public ObjectUpgradeService(
-		OqmDatabaseService oqmDatabaseService
+		OqmDatabaseService oqmDatabaseService,
+		CodecRegistry codecRegistry
 	) {
 		this.oqmDatabaseService = oqmDatabaseService;
+		this.codecRegistry = codecRegistry;
 
 		this.upgraderMap = Map.of(
 			StorageBlock.class, new StorageBlockUpgrader()
@@ -62,23 +72,40 @@ public class ObjectUpgradeService {
 		return this.upgraderMap == null;
 	}
 
-	private CollectionUpgradeResult upgradeOqmCollection(MongoCollection<Document> collection, Class<? extends Versionable> objectClass) throws ClassUpgraderNotFoundException {
-		ObjectUpgrader<?> objectVersionBumper = this.getInstanceForClass(objectClass);
+	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession cs, MongoCollection<Document> documentCollection, MongoCollection<T> typedCollection, Class<T> objectClass) throws ClassUpgraderNotFoundException {
+		ObjectUpgrader<T> objectVersionBumper = this.getInstanceForClass(objectClass);
 		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder()
-			.collectionName(collection.getNamespace().getCollectionName());
+			.collectionName(documentCollection.getNamespace().getCollectionName());
 
 		StopWatch sw = StopWatch.createStarted();
-		for (MongoCursor<?> it = collection.find().cursor(); it.hasNext(); ) {
-			//TODO:: get as bson, not object. feed to upgrader
-//			objectVersionBumper.upgrade()
+		long numUpdated = 0;
+
+		try (MongoCursor<Document> it = documentCollection.find().cursor()) {
+			while (it.hasNext()) {
+				Document doc = it.next();
+				ObjectUpgradeResult<T> result = objectVersionBumper.upgrade(doc);
+
+				if (result.wasUpgraded()) {
+					numUpdated++;
+					typedCollection.findOneAndReplace(
+						cs,
+						eq("id", result.getUpgradedObject().getId()),
+						result.getUpgradedObject()
+					);
+				}
+			}
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
+
 		sw.stop();
-		outputBuilder.timeTaken(Duration.of(sw.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
+		outputBuilder.timeTaken(Duration.of(sw.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS))
+			.numObjectsUpgraded(numUpdated);
 
 		return outputBuilder.build();
 	}
 
-	private CollectionUpgradeResult upgradeOqmCollection(OqmMongoDatabase oqmDb, MongoDbAwareService service) throws ClassUpgraderNotFoundException {
+	private CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService service) throws ClassUpgraderNotFoundException {
 		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder();
 		StopWatch collectionUpgradeTime = StopWatch.createStarted();
 
@@ -87,17 +114,22 @@ public class ObjectUpgradeService {
 		MongoCollection<?> collection = service.getCollection(oqmDb.getName());
 
 		return this.upgradeOqmCollection(
+			dbCs,
+			service.getCollection(),
+			service.getCollectionName()
 			//TODO:: get collection as Document type
 			, service.getClazz()
 		);
 	}
 
 
-	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb) {
+	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb, ClientSession dbCs) {
 		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder();
 		StopWatch dbUpgradeTime = StopWatch.createStarted();
 
 		List<CompletableFuture<CollectionUpgradeResult>> resultMap = new ArrayList<>();
+
+
 
 		for (MongoDbAwareService curService : this.oqmDbServices) {
 			resultMap.add(
