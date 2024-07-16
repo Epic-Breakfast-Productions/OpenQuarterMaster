@@ -1,0 +1,4 @@
+quarkus:
+  langchain4j:
+    huggingface:
+      api-key:

@@ -105,7 +105,7 @@
                 $("#msg").focus();
             };
             socket.onmessage = function (m) {
-                const chatMessage = m.data; // JSON.parse(m.data);
+                let chatMessage = m.data; // JSON.parse(m.data);
                 let chat = $("#chat");
 
                 chat.append(`<span class='message'></span><span class='system-user'>Miffie</span> : ${chatMessage}</span><br>`);
@@ -132,7 +132,9 @@
     let send = function () {
         if (connected) {
             let msg = $("#msg");
-            var value = msg.val();
+            let value = msg.val();
+
+            console.log("Message: " + value)
 
             $("#chat").append(`<span class='message'></span><span class='user'>You</span> : ${value} </span><br>`);
 

@@ -22,8 +22,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-websockets-next'
     implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
-//    implementation 'io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${quarkus-langchain4j.version}'
-
+    implementation 'io.quarkiverse.langchain4j:quarkus-langchain4j-hugging-face:0.16.3'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

@@ -1,6 +1,7 @@
 package com.ebp.openQuarterMaster.interfaces.websocket;
 
 import com.ebp.openQuarterMaster.interfaces.InterfaceConstants;
+import com.ebp.openQuarterMaster.service.MiffieService;
 import io.quarkus.websockets.next.OnOpen;
 import io.quarkus.websockets.next.OnTextMessage;
 import io.quarkus.websockets.next.WebSocket;
@@ -15,6 +16,12 @@ public class MiffieWebsocket {
 	@Inject
 	WebSocketConnection connection;
 
+	private final MiffieService miffieService;
+
+	public MiffieWebsocket(MiffieService miffieService) {
+		this.miffieService = miffieService;
+	}
+
 	@OnOpen
 	public String onOpen() {
 		log.info("Opened new WebSocket connection; {}", connection.id());
@@ -24,6 +31,7 @@ public class MiffieWebsocket {
 	@OnTextMessage
 	public String onTextMessage(String message) {
 		log.info("Got new websocket message; {}", connection.id());
-		return "I'm Miffie! I Heard: " + message;
+		//TODO:: error handling
+		return this.miffieService.chat(message);
 	}
 }
