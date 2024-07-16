@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id "io.freefair.lombok" version "8.6"
 }
 
 repositories {
@@ -18,6 +19,12 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-micrometer'
     implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-websockets-next'
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+//    implementation 'io.quarkiverse.langchain4j:quarkus-langchain4j-openai:${quarkus-langchain4j.version}'
+
+
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 }

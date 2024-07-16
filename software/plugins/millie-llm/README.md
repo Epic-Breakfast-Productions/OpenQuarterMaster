@@ -1,4 +1,16 @@
-# plugin-millie-llm
+# Miffie LLM Plugin
+
+This project provides an LLM interface to chat about your inventory.
+
+Named after our mascot, Miffie, who is based on [Thomas Mifflin](https://en.wikipedia.org/wiki/Thomas_Mifflin), the first US QuarterMaster General.
+
+
+
+
+
+
+
+
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
