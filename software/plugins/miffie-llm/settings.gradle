@@ -8,4 +8,4 @@ pluginManagement {
         id "${quarkusPluginId}" version "${quarkusPluginVersion}"
     }
 }
-rootProject.name='plugin-millie-llm'
+rootProject.name='plugin-miffie-llm'
