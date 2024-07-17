@@ -1,4 +1,5 @@
 import datetime
+import os.path
 import select
 import concurrent.futures
 import time
@@ -44,6 +45,10 @@ class LogManagement:
             osInfo = file.read() + "\n"
         osInfo += subprocess.run(["uname", "-a"], shell=False, capture_output=True, text=True, check=True).stdout
         output += "OS Info:\n" + osInfo + "\n\n\n"
+
+        if os.path.isfile("/var/log/installer/oem-id"):
+            with open("/var/log/installer/oem-id", 'r') as f:
+                output += "OQM OEM Id:\n" + f.read() + "\n\n\n"
 
         hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
                                 check=True).stdout
