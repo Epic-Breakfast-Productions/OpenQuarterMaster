@@ -4,11 +4,14 @@ This project provides an LLM interface to chat about your inventory.
 
 Named after our mascot, Miffie, who is based on [Thomas Mifflin](https://en.wikipedia.org/wiki/Thomas_Mifflin), the first US QuarterMaster General.
 
+At the moment, provides an interface to an LLM that is told that it answers inventory management tasks.
 
+## TODOs:
 
-
-
-
+ - Run the model locally, ideally through an infra service dedicated to running LLMs
+ - Give Miffie access to inventory data
+ - Figure out the best interface to be a backend service for other components
+ - Has issue with responses; pouring from one response to the next and hallucinating very very quickly
 
 
 
