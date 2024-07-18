@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.baseStation.service.sso;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.sso;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.rest.client.reactive.ClientFormParam;
@@ -8,10 +8,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import tech.ebp.oqm.core.baseStation.service.sso.headerFactories.OidcClientAuthHeaderFactory;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.headerFactories.OidcClientAuthHeaderFactory;
 
 @Path("/protocol/openid-connect/token")
-@RegisterRestClient
+@RegisterRestClient(configKey = Constants.CORE_API_CLIENT_OIDC_NAME)
 @RegisterClientHeaders(OidcClientAuthHeaderFactory.class)
 public interface KeycloakRestClient {
 	

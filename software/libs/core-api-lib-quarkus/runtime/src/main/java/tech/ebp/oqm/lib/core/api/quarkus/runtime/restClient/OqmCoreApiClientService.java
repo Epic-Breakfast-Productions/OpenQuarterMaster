@@ -20,7 +20,7 @@ import java.util.List;
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
 
-@RegisterRestClient(configKey = Constants.CONFIG_ROOT_NAME)
+@RegisterRestClient(configKey = Constants.CORE_API_CLIENT_NAME)
 public interface OqmCoreApiClientService {
 
 	//<editor-fold desc="Info">

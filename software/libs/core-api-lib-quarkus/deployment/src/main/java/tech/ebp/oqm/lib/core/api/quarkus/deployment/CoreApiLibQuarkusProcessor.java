@@ -33,7 +33,8 @@ class CoreApiLibQuarkusProcessor {
 	@BuildStep
 	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 		return List.of(
-			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client.oqmCoreApi.url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}")
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client."+Constants.CORE_API_CLIENT_NAME+".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}"),
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client."+Constants.CORE_API_CLIENT_OIDC_NAME+".url", "${quarkus.oidc.auth-server-url:}")
 		);
 	}
 	

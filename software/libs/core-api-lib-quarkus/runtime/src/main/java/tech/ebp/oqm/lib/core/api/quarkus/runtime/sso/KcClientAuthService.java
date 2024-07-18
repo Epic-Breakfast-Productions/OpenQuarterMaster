@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.baseStation.service.sso;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.sso;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.vertx.ext.auth.impl.jose.JWT;
