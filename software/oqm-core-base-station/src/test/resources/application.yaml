@@ -8,6 +8,7 @@ quarkus:
   http:
     port: 8081
   oqmCoreApi:
+    refreshDbCacheFrequency: "5m"
     devservice:
       certPath: dev/devTest-cert-cert.pem
       certKeyPath: dev/devTest-cert-key.pem
@@ -38,4 +39,3 @@ service:
     phone: 111-222-3333
     website: http://devlopment.dev
     logo: ../../../../dev/developers.jpeg
-  refreshDbCacheFrequency: "5m"

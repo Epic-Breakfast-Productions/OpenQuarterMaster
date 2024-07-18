@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
-import tech.ebp.oqm.core.baseStation.service.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;

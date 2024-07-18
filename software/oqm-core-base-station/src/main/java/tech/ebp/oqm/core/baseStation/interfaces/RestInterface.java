@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
-import tech.ebp.oqm.core.baseStation.service.OqmDatabaseService;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
 
 @Slf4j
 @NoArgsConstructor
