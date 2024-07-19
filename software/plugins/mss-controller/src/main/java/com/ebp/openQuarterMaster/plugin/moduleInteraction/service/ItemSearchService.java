@@ -2,8 +2,8 @@ package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemSearchResults;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.ModuleInfo;
 import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

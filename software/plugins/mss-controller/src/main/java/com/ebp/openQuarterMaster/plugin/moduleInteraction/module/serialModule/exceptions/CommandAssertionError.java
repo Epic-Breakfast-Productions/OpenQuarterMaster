@@ -1,6 +1,6 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.exceptions;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.exceptions;
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.MssCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.MssCommand;
 import lombok.Getter;
 
 public class CommandAssertionError extends IllegalStateException {

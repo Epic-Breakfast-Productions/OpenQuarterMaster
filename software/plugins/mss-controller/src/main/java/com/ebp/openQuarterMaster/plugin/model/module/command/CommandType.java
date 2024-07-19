@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.command;
+package com.ebp.openQuarterMaster.plugin.model.module.command;
 
 public enum CommandType {
 	GET_MODULE_INFO,

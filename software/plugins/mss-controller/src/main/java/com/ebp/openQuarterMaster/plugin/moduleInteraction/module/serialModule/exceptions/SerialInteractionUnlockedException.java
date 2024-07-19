@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.exceptions;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.exceptions;
 
 public class SerialInteractionUnlockedException extends IllegalStateException {
 	

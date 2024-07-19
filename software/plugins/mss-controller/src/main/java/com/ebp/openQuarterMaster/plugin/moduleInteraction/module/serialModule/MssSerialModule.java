@@ -1,9 +1,9 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule;
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.MssCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
+import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.MssCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.CommandResponse;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.updates.MssUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

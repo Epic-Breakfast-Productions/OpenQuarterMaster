@@ -1,9 +1,10 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.MssSerialModule;
+import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.ModuleInfo;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.MssSerialModule;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.StorageBlockInteractionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.scheduler.Scheduled;
@@ -63,18 +64,18 @@ public class ModuleMaster {
 		this.populateStorageToModuleMap();
 	}
 	
-	private void populateStorageToModuleMap(){
-		log.info("Populating cache of Storage Block Ids to their modules.");
-		for(MssModule curModule : this.getModules()){
-			ModuleInfo curModuleInfo = curModule.getModuleInfo();
-			
-			for(String curStorageBlockId : curModuleInfo.getStorageBlockToModBlockNums().keySet()){
-				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
-			}
-		}
-		log.info("Done populating cache of Storage Block Ids to their modules.");
-		log.debug("Number of storage blocks tracked: {}", this.getStorageToModuleMap().size());
-	}
+//	private void populateStorageToModuleMap(){
+//		log.info("Populating cache of Storage Block Ids to their modules.");
+//		for(MssModule curModule : this.getModules()){
+//			ModuleInfo curModuleInfo = curModule.getModuleInfo();
+//
+//			for(String curStorageBlockId : curModuleInfo.getStorageBlockToModBlockNums().keySet()){
+//				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
+//			}
+//		}
+//		log.info("Done populating cache of Storage Block Ids to their modules.");
+//		log.debug("Number of storage blocks tracked: {}", this.getStorageToModuleMap().size());
+//	}
 	
 	private void ensureModuleStorageBlocksExist(){
 		for(MssModule curModule : this.getModules()){

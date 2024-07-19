@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.exceptions;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.exceptions;
 
 /**
  * Exception denoting there was an issue parsing a command.

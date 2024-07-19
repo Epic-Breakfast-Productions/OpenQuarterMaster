@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.command;
+package com.ebp.openQuarterMaster.plugin.model.module.command;
 
 import lombok.AccessLevel;
 import lombok.Data;

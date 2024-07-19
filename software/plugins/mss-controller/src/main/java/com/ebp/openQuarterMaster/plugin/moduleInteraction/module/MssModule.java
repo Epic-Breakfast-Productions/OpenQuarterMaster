@@ -1,13 +1,13 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module;
 
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.GetModInfoCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.IdentifyModCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.MssCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.GetModuleInfoResponse;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
+import com.ebp.openQuarterMaster.plugin.model.module.OqmModuleInfo;
+import com.ebp.openQuarterMaster.plugin.model.module.command.GetModInfoCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.IdentifyModCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.MssCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.CommandResponse;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.GetModuleInfoResponse;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.updates.MssUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Queue;
-import java.util.Set;
 
 public abstract class MssModule {
 	
@@ -27,12 +26,12 @@ public abstract class MssModule {
 	private final ObjectMapper objectMapper;
 	@Getter
 	@Setter(AccessLevel.PROTECTED)
-	protected ModuleInfo moduleInfo;
+	protected OqmModuleInfo moduleInfo;
 	
 	protected MssModule(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
-	protected MssModule(ObjectMapper objectMapper, ModuleInfo moduleInfo) {
+	protected MssModule(ObjectMapper objectMapper, OqmModuleInfo moduleInfo) {
 		this(objectMapper);
 		this.moduleInfo = moduleInfo;
 	}
@@ -59,7 +58,7 @@ public abstract class MssModule {
 	
 	public GetModuleInfoResponse sendGetInfoCommand(){
 		GetModuleInfoResponse response = this.sendCommand(GetModInfoCommand.getInstance(), GetModuleInfoResponse.class);
-		this.setModuleInfo(response.getResponse());
+		this.getModuleInfo().setModuleInfo(response.getResponse());
 		return response;
 	}
 	

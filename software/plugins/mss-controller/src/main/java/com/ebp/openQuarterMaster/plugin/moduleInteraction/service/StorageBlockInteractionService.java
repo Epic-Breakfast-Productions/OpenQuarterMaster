@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 
 import java.util.List;
 
@@ -93,7 +93,7 @@ public class StorageBlockInteractionService {
 		return newJson;
 	}
 	
-	public void ensureModuleBlocksExist(MssModule module) {
+	public void ensureModuleBlocksExist(String oqmDbIdOrName, MssModule module) {
 		log.info(
 			"Ensuring module {} exists as a block with all {} blocks under it.",
 			module.getModuleInfo().getSerialId(),
@@ -101,6 +101,7 @@ public class StorageBlockInteractionService {
 		);
 		ObjectNode result = this.getCoreApiClient().storageBlockSearch(
 			this.getKcClientAuthService().getAuthString(),
+			oqmDbIdOrName,
 			StorageBlockSearch.builder()
 				.keywords(List.of(StorageBlockInteractionService.MSS_MODULE_KEYWORD))
 				.attributeKeys(List.of(StorageBlockInteractionService.MSS_MODULE_ID_ATT_KEY))
@@ -110,7 +111,7 @@ public class StorageBlockInteractionService {
 		if (result.get("empty").asBoolean()) {
 			log.debug("Module {} did not exist yet. Creating.", module.getModuleInfo().getSerialId());
 			module.getModuleInfo().setAssociatedStorageBlockId(
-				this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), this.getNewModuleStorageBlockJson(module))
+				this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), oqmDbIdOrName, this.getNewModuleStorageBlockJson(module))
 					.await().indefinitely()
 					.replaceAll("\"", "")
 				
@@ -148,6 +149,7 @@ public class StorageBlockInteractionService {
 			);
 			result = this.getCoreApiClient().storageBlockSearch(
 				this.getKcClientAuthService().getAuthString(),
+				oqmDbIdOrName,
 				StorageBlockSearch.builder()
 					.keywords(List.of(StorageBlockInteractionService.MSS_MODULE_BLOCK_KEYWORD))
 					.attributeKeys(List.of(
@@ -163,7 +165,7 @@ public class StorageBlockInteractionService {
 			String curId;
 			if (result.get("empty").asBoolean()) {
 				log.debug("Module block {}[{}] did not exist yet. Creating.", module.getModuleInfo().getSerialId(), curBlockNum);
-				curId = this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), this.getNewModuleBlockStorageBlockJson(module, curBlockNum))
+				curId = this.getCoreApiClient().storageBlockAdd(this.getKcClientAuthService().getAuthString(), oqmDbIdOrName, this.getNewModuleBlockStorageBlockJson(module, curBlockNum))
 							.await().indefinitely();
 //
 //					this.getBaseStationStorageRestClient().postNewStorageBlock(

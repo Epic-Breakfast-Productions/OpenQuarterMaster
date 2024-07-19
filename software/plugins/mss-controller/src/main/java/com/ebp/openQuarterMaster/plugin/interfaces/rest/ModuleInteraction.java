@@ -1,8 +1,8 @@
 package com.ebp.openQuarterMaster.plugin.interfaces.rest;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
+import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.CommandResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;

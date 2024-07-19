@@ -1,18 +1,15 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule;
+package com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule;
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.impl.serialModule.exceptions.SerialInteractionUnlockedException;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.updates.MssUpdate;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.exceptions.SerialInteractionUnlockedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fazecast.jSerialComm.SerialPort;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
 

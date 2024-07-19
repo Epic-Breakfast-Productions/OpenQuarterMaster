@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response;
+package com.ebp.openQuarterMaster.plugin.model.module.command.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
