@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from dialog import Dialog
@@ -14,6 +13,9 @@ from LogManagement import *
 import time
 import re
 import os
+from LogUtils import *
+
+log = LogUtils.setupLogger(__name__)
 
 
 class InputValidators:

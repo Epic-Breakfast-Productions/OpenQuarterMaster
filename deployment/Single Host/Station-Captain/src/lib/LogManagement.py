@@ -1,5 +1,5 @@
-import logging
 import datetime
+import os.path
 import select
 import concurrent.futures
 import time
@@ -9,6 +9,9 @@ from PackageManagement import *
 from ServiceUtils import *
 import shutil
 from systemd import journal
+from LogUtils import *
+
+log = LogUtils.setupLogger(__name__)
 
 
 class LogManagement:
@@ -16,18 +19,18 @@ class LogManagement:
     @staticmethod
     def packageServiceLogs(service: str, compilingDir: str):
         outFileName = compilingDir + "/10-" + service + ".log"
-        logging.info("Logging events for %s to file %s", service, outFileName)
+        log.info("log events for %s to file %s", service, outFileName)
         start = time.time()
         with open(outFileName, "w") as outfile:
             result = subprocess.run(["journalctl", "-r", "-u", service], shell=False, text=True, check=False, stdout=outfile)
             if result.returncode != 0:
-                logging.error("Failed to get logs for %s: %s", service, result.stderr)
+                log.error("Failed to get logs for %s: %s", service, result.stderr)
                 return False, result.stderr
-        logging.info("Finished getting log events in %s seconds for %s", time.time() - start, service)
+        log.info("Finished getting log events in %s seconds for %s", time.time() - start, service)
 
     @staticmethod
     def getSystemInfo() -> str:
-        logging.info("Getting system information.")
+        log.info("Getting system information.")
         output = ""
         ipAddrs = subprocess.run(["hostname", "-I"], shell=False, capture_output=True, text=True, check=True).stdout
         ipAddrs = (subprocess.run(["hostname"], shell=False, capture_output=True, text=True,
@@ -43,6 +46,10 @@ class LogManagement:
         osInfo += subprocess.run(["uname", "-a"], shell=False, capture_output=True, text=True, check=True).stdout
         output += "OS Info:\n" + osInfo + "\n\n\n"
 
+        if os.path.isfile("/var/log/installer/oem-id"):
+            with open("/var/log/installer/oem-id", 'r') as f:
+                output += "OQM OEM Id:\n" + f.read() + "\n\n\n"
+
         hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
                                 check=True).stdout
         hwinfo += "\n\nUSB Devices: \n\n"
@@ -55,7 +62,7 @@ class LogManagement:
         output += "Disk Usage Info:\n\n" + diskInfo + "\n\n"
         memInfo = subprocess.run(["free", "-h"], shell=False, capture_output=True, text=True, check=True).stdout
         output += "Memory Info:\n\n" + memInfo + "\n\n"
-        logging.info("Done getting system information.")
+        log.info("Done getting system information.")
 
         return output
 
@@ -65,20 +72,22 @@ class LogManagement:
         if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
             return False, "Configured compression algorithm was invalid."
 
-        snapshotName = "OQM-log-capture-{}".format(datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"))
+        logCaptureName = "OQM-log-capture-{}".format(datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"))
 
-        logging.debug("Log capture name: %s", snapshotName)
-        compilingDir = ScriptInfo.TMP_DIR + "/logCaptures/" + snapshotName
-        snapshotLocation = mainCM.getConfigVal("snapshots.location") + "/logCaptures"
-        logArchiveName = "{}/{}.tar.{}".format(snapshotLocation, snapshotName, compressionAlg)
+        log.debug("Log capture name: %s", logCaptureName)
+        compilingDir = ScriptInfo.TMP_DIR + "/logCaptures/" + logCaptureName
+        logCaptureLocation = mainCM.getConfigVal("snapshots.location") + "/logCaptures"
+        logArchiveName = "{}/{}.tar.{}".format(logCaptureLocation, logCaptureName, compressionAlg)
+        otherLogsDir = compilingDir + "/otherLogs"
 
         success = False
         try:
             try:
                 os.makedirs(compilingDir)
-                os.makedirs(snapshotLocation, exist_ok=True)
+                os.makedirs(otherLogsDir)
+                os.makedirs(logCaptureLocation, exist_ok=True)
             except Exception as e:
-                logging.error("Failed to create directories necessary for snapshot taking: %s", e)
+                log.error("Failed to create directories necessary for snapshot taking: %s", e)
                 return False, str(e)
 
             with open(compilingDir + "/00-sysInfo.txt", "w") as sysInfoFile:
@@ -87,7 +96,7 @@ class LogManagement:
             with open(compilingDir + "/01-installed.txt", "w") as sysInfoFile:
                 sysInfoFile.write(PackageManagement.getOqmPackagesStr(installed=True, notInstalled=False))
 
-            logging.info("Writing log messages.")
+            log.info("Writing Service log messages.")
             result, services = ServiceUtils.getServiceNames()
             if not result:
                 return False, "Failed to get service names: " + services
@@ -101,30 +110,36 @@ class LogManagement:
             executor = concurrent.futures.ProcessPoolExecutor(3)
             futures = [executor.submit(LogManagement.packageServiceLogs, service, compilingDir) for service in services]
             concurrent.futures.wait(futures)
-            logging.info("Done writing log messages.")
+            log.info("Done writing Service log messages.")
 
-            logging.info("Archiving log bundle.")
+            try:
+                shutil.copy(LogUtils.logDir, otherLogsDir)
+            except Exception as e:
+                log.error("FAILED to copy in other logs: %s", e)
+                return False, str(e)
+
+            log.info("Archiving log bundle.")
             start = time.time()
             try:
                 with tarfile.open(logArchiveName, "x:" + compressionAlg) as tar:
                     tar.add(compilingDir, arcname="")
             except Exception as e:
-                logging.error("FAILED to write files to archive: %s", e)
+                log.error("FAILED to write files to archive: %s", e)
                 return False, str(e)
-            logging.info("Completed archiving log bundle. Took %s seconds. Bundle: %s", time.time() - start, logArchiveName)
+            log.info("Completed archiving log bundle. Took %s seconds. Bundle: %s", time.time() - start, logArchiveName)
             success = True
-            logging.info("Done Performing snapshot.")
+            log.info("Done Performing snapshot.")
             return True, logArchiveName
         finally:
-            logging.info("Cleaning up after snapshot operations")
+            log.info("Cleaning up after snapshot operations")
 
             try:
                 if not success:
-                    logging.debug("Removing archive file.")
+                    log.debug("Removing archive file.")
                     if os.path.exists(logArchiveName):
                         os.remove(logArchiveName)
-                logging.debug("Removing compiling dir.")
+                log.debug("Removing compiling dir.")
                 shutil.rmtree(compilingDir)
-                logging.info("Finished cleaning up after snapshot.")
+                log.info("Finished cleaning up after snapshot.")
             except Exception as e:
-                logging.error("Failed to clean up after performing snapshot operation: %s", e)
+                log.error("Failed to clean up after performing snapshot operation: %s", e)

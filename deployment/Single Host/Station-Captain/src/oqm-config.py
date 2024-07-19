@@ -8,6 +8,9 @@ import sys
 from jinja2 import FileSystemLoader
 
 sys.path.append("lib/")
+from LogUtils import *
+LogUtils.setupLogging("config.log")
+
 from ConfigManager import *
 from ScriptInfos import *
 import json
@@ -22,6 +25,8 @@ EXIT_BAD_CONFIG_KEY = 3
 EXIT_CONFIG_READ_ERR = 4
 EXIT_CONFIG_INIT_ERR = 5
 EXIT_CONFIG_SET_ERR = 6
+
+log = LogUtils.setupLogger(__name__)
 
 # Setup argument parser
 argParser = argparse.ArgumentParser(
