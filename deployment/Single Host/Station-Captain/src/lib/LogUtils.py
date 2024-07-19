@@ -9,8 +9,6 @@ from pathlib import Path
 class LogUtils:
     """
     https://docs.python.org/3/library/logging.html
-
-    TODO:: figure out best way to do this, and get log level globally. Might need to not do this quite this way
     """
     logLevel = logging.WARNING
     logDir = "/var/log/oqm/"
