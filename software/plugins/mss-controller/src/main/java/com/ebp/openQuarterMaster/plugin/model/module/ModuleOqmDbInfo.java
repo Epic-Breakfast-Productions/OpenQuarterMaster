@@ -16,17 +16,17 @@ import java.util.TreeMap;
 public class ModuleOqmDbInfo {
 
 	private String associatedStorageBlockId;
-	private Map<String, Integer> storageBlockToModBlockNums = new TreeMap<>();
+	private Map<Integer, String> storageBlockToModBlockNums = new TreeMap<>();
 
 	public String getStorageBlockIdForBlock(int blockNum) {
-		return storageBlockToModBlockNums.entrySet()
-			.stream()
-			.filter(entry->blockNum == entry.getValue())
-			.map(Map.Entry::getKey)
-			.findFirst().get();
+		return this.getStorageBlockToModBlockNums().get(blockNum);
 	}
 
 	public Integer getBlockNumForStorageBlockId(String storageBlockId){
-		return this.getStorageBlockToModBlockNums().get(storageBlockId);
+		return storageBlockToModBlockNums.entrySet()
+			.stream()
+			.filter(entry->entry.getValue().equals(storageBlockId))
+			.map(Map.Entry::getKey)
+			.findFirst().get();
 	}
 }

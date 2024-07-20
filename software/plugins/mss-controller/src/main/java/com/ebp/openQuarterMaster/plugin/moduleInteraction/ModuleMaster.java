@@ -1,12 +1,16 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction;
 
 import com.ebp.openQuarterMaster.plugin.config.ModuleConfig;
+import com.ebp.openQuarterMaster.plugin.model.module.ModuleOqmDbInfo;
+import com.ebp.openQuarterMaster.plugin.model.module.OqmModuleInfo;
 import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
 import com.ebp.openQuarterMaster.plugin.model.module.command.response.ModuleInfo;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.serialModule.MssSerialModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.StorageBlockInteractionService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +18,7 @@ import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,6 +45,10 @@ public class ModuleMaster {
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	StorageBlockInteractionService storageBlockInteractionService;
+
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	OqmDatabaseService oqmDatabaseService;
 	
 	/**
 	 * Serial id -> Module map.
@@ -59,46 +68,91 @@ public class ModuleMaster {
 	
 	@PostConstruct
 	void init(){
-		this.populateModules();
-		this.ensureModuleStorageBlocksExist();
+		this.discoverModules();
+		this.populateModuleStorageBlocksFromDb();
+		if(this.getModuleConfig().autoCreateStorageBlocksInAllDbs()){
+			//TODO:: this
+//			this.ensureModuleStorageBlocksExist();
+		}
 		this.populateStorageToModuleMap();
 	}
 	
-//	private void populateStorageToModuleMap(){
-//		log.info("Populating cache of Storage Block Ids to their modules.");
-//		for(MssModule curModule : this.getModules()){
-//			ModuleInfo curModuleInfo = curModule.getModuleInfo();
-//
-//			for(String curStorageBlockId : curModuleInfo.getStorageBlockToModBlockNums().keySet()){
-//				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
-//			}
-//		}
-//		log.info("Done populating cache of Storage Block Ids to their modules.");
-//		log.debug("Number of storage blocks tracked: {}", this.getStorageToModuleMap().size());
-//	}
-	
-	private void ensureModuleStorageBlocksExist(){
+	private void populateStorageToModuleMap(){
+		log.info("Populating cache of Storage Block Ids to their modules.");
 		for(MssModule curModule : this.getModules()){
-			this.getStorageBlockInteractionService().ensureModuleBlocksExist(curModule);
+			OqmModuleInfo curModuleInfo = curModule.getModuleInfo();
+			//TODO
+			for(String curStorageBlockId : curModuleInfo.get().keySet()){
+				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
+			}
 		}
+		log.info("Done populating cache of Storage Block Ids to their modules.");
+		log.debug("Number of storage blocks tracked: {}", this.getStorageToModuleMap().size());
 	}
 	
+//	private void ensureModuleStorageBlocksExist(){
+//		for(MssModule curModule : this.getModules()){
+//			this.getStorageBlockInteractionService().ensureModuleBlocksExist(curModule);
+//		}
+//	}
+
+	private void populateModuleStorageBlocksFromDb(){
+		log.info("Populating module storage blocks from database.");
+		for(JsonNode curDb : this.getOqmDatabaseService().getDatabases()){
+			String curDbId = curDb.get("id").asText();
+
+			for(MssModule curModule : this.getModules()){
+				Optional<ObjectNode> result = this.getStorageBlockInteractionService().getStorageBlockForModule(curDbId, curModule.getModuleSerialId());
+
+				if(result.isEmpty()){
+					log.info("No storage block found for module {} in db {}", curModule.getModuleSerialId(), curDbId);
+					continue;
+				}
+				String moduleStorageBlockId = curDb.get("id").asText();
+
+				ModuleOqmDbInfo.ModuleOqmDbInfoBuilder builder = ModuleOqmDbInfo.builder()
+					.associatedStorageBlockId(moduleStorageBlockId);
+				Map<Integer, String> blockNumToStorageIdsMap = new TreeMap<>();
+
+				for(Integer curModuleBlockNum : curModule.getModuleInfo().getModuleInfo().getBlockNumStream().toList()){
+					Optional<ObjectNode> storageBlockForModuleBlockNum = this.getStorageBlockInteractionService().getStorageBlockForModuleBlock(curDbId, moduleStorageBlockId, curModuleBlockNum);
+
+					if(storageBlockForModuleBlockNum.isEmpty()){
+						throw new IllegalStateException("Cannot not have a storage block for any given module block.");
+					}
+
+					blockNumToStorageIdsMap.put(
+						curModuleBlockNum,
+						storageBlockForModuleBlockNum.get().get("id").asText()
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds a module to the set
+	 * @param module
+	 */
 	private void addModule(MssModule module){
-		log.info("Adding module {}", module.getModuleInfo().getSerialId());
-		if(this.getModuleMap().containsKey(module.getModuleInfo().getSerialId())){
+		log.info("Adding module {}", module.getModuleInfo().getModuleInfo().getSerialId());
+		if(this.getModuleMap().containsKey(module.getModuleInfo().getModuleInfo().getSerialId())){
 			log.warn(
 				"Already have module with SerialId {} over {}. Attempted to add another over {}. Discarding duplicate.",
-				module.getModuleInfo().getSerialId(),
-				this.moduleMap.get(module.getModuleInfo().getSerialId()).getClass().getSimpleName(),
+				module.getModuleInfo().getModuleInfo().getSerialId(),
+				this.moduleMap.get(module.getModuleInfo().getModuleInfo().getSerialId()).getClass().getSimpleName(),
 				module.getClass().getSimpleName()
 			);
 			return;
 		}
 		
-		this.moduleMap.put(module.getModuleInfo().getSerialId(), module);
+		this.moduleMap.put(module.getModuleInfo().getModuleInfo().getSerialId(), module);
 	}
-	
-	private void populateModules(){
+
+	/**
+	 *
+	 */
+	private void discoverModules(){
 		if(this.getModuleConfig().serial().scanSerial()){
 			//TODO:: scan over serial ports for valid modules. How to do properly?
 		}
@@ -113,7 +167,7 @@ public class ModuleMaster {
 			);
 			this.addModule(newModule);
 			
-			log.info("Added MSS module over Serial. Port: {} Id: {}", serialModuleConfig.portPath(), newModule.getModuleInfo().getSerialId());
+			log.info("Added MSS module over Serial. Port: {} Id: {}", serialModuleConfig.portPath(), newModule.getModuleInfo().getModuleInfo().getSerialId());
 		}
 	}
 	
@@ -129,7 +183,7 @@ public class ModuleMaster {
 		return this.getModuleMap().get(moduleId);
 	}
 	
-	public ModuleInfo getModuleInfo(String moduleId){
+	public OqmModuleInfo getModuleInfo(String moduleId){
 		return this.getModule(moduleId).getModuleInfo();
 	}
 	

@@ -31,15 +31,19 @@ public abstract class MssModule {
 	protected MssModule(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
-	protected MssModule(ObjectMapper objectMapper, OqmModuleInfo moduleInfo) {
-		this(objectMapper);
-		this.moduleInfo = moduleInfo;
-	}
-	
+
+	/**
+	 * This should be called at the end of a constructor.
+	 */
 	protected void postConstructInit(){
 		this.sendGetInfoCommand();
 	}
-	
+
+	public String getModuleSerialId(){
+		return this.getModuleInfo().getModuleSerialId();
+	}
+
+
 	public abstract Queue<MssUpdate> getUpdates();
 	
 	protected abstract ObjectNode sendCommand(MssCommand command);
