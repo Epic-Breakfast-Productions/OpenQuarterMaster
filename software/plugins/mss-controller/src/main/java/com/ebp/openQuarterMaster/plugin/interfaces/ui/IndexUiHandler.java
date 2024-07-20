@@ -16,30 +16,21 @@ import jakarta.ws.rs.core.UriBuilder;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import static java.util.Objects.requireNonNull;
 
 @Path("/")
 @Tags({@Tag(name = "UI", description = "Endpoints for web UI.")})
 public class IndexUiHandler extends UiHandler {
-    
-    @Inject
-    @Location("pages/index")
-    Template page;
-    
+
     @GET
-    @Produces(MediaType.TEXT_HTML)
     @PermitAll
-    public Response get() {
-        if(this.getUserToken() != null){
-            return Response.seeOther(
-                UriBuilder.fromUri("/main").build()
-            ).build();
-        }
-        
-        return Response.ok()
-                   .type(MediaType.TEXT_HTML_TYPE)
-                   .entity(this.page.instance())
-                   .build();
+    @Produces(MediaType.TEXT_HTML)
+    public Response index() throws MalformedURLException, URISyntaxException {
+        return Response.seeOther(
+            UriBuilder.fromUri("/main").build()
+        ).build();
     }
-    
 }

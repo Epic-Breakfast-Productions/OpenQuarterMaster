@@ -81,8 +81,8 @@ public class ModuleMaster {
 		log.info("Populating cache of Storage Block Ids to their modules.");
 		for(MssModule curModule : this.getModules()){
 			OqmModuleInfo curModuleInfo = curModule.getModuleInfo();
-			//TODO
-			for(String curStorageBlockId : curModuleInfo.get().keySet()){
+
+			for(String curStorageBlockId : curModuleInfo.getAssociatedStorageBlockIds().keySet()){
 				this.getStorageToModuleMap().put(curStorageBlockId, curModule);
 			}
 		}

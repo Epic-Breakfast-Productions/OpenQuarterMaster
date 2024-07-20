@@ -79,25 +79,26 @@ public class StorageBlockInteractionService {
 		ObjectNode newJson = this.getNewStorageBlockJson();
 		
 		((ArrayNode) newJson.get("keywords")).add(MSS_MODULE_KEYWORD);
-		((ObjectNode) newJson.get("attributes")).put(MSS_MODULE_ID_ATT_KEY, module.getModuleInfo().getSerialId());
-		newJson.put("label", "MSS Module " + module.getModuleInfo().getSerialId());
-		newJson.put("description", "MSS Module " + module.getModuleInfo().getSerialId() + ". Added by the MSS Controller plugin.");
+		((ObjectNode) newJson.get("attributes")).put(MSS_MODULE_ID_ATT_KEY, module.getModuleSerialId());
+		newJson.put("label", "MSS Module " + module.getModuleInfo().getModuleSerialId());
+		newJson.put("description", "MSS Module " + module.getModuleSerialId() + ". Added by the MSS Controller plugin.");
 		
 		return newJson;
 	}
 	
 	private ObjectNode getNewModuleBlockStorageBlockJson(
+		String oqmDbId,
 		MssModule module,
 		int blockNum
 	) {
 		ObjectNode newJson = this.getNewStorageBlockJson();
 		
 		((ArrayNode) newJson.get("keywords")).add(MSS_MODULE_BLOCK_KEYWORD);
-		((ObjectNode) newJson.get("attributes")).put(MSS_MODULE_ID_ATT_KEY, module.getModuleInfo().getSerialId());
+		((ObjectNode) newJson.get("attributes")).put(MSS_MODULE_ID_ATT_KEY, module.getModuleSerialId());
 		((ObjectNode) newJson.get("attributes")).put(MSS_MODULE_BLOCK_NUM_ATT_KEY, blockNum);
-		newJson.put("label", "MSS Module " + module.getModuleInfo().getSerialId() + "[" + blockNum + "]");
-		newJson.put("parent", module.getModuleInfo().getAssociatedStorageBlockId());
-		newJson.put("description", ordinal(blockNum) + " block under the MSS Module " + module.getModuleInfo().getSerialId() + ". Added by the MSS Controller plugin.");
+		newJson.put("label", "MSS Module " + module.getModuleSerialId() + "[" + blockNum + "]");
+		newJson.put("parent", module.getModuleInfo().getAssociatedStorageBlockId(oqmDbId).get());
+		newJson.put("description", ordinal(blockNum) + " block under the MSS Module " + module.getModuleSerialId() + ". Added by the MSS Controller plugin.");
 		
 		return newJson;
 	}

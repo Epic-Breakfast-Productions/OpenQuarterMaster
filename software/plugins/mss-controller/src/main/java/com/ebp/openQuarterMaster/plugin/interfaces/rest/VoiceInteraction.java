@@ -1,5 +1,6 @@
 package com.ebp.openQuarterMaster.plugin.interfaces.rest;
 
+import com.ebp.openQuarterMaster.plugin.interfaces.RestInterface;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.VoiceSearchService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -20,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 @RequestScoped
 @Tags({@Tag(name = "Voice Interaction", description = "Endpoints for interacting via voice")})
-public class VoiceInteraction {
+public class VoiceInteraction  extends RestInterface {
 	
 	@Inject
 	VoiceSearchService voiceSearchService;
