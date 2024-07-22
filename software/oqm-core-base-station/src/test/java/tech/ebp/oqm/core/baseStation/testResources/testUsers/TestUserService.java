@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.baseStation.testResources.testUsers;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -44,11 +45,9 @@ import java.util.Map;
  * }
  */
 @Slf4j
+@NoArgsConstructor
 public class TestUserService {
 	private final static Faker FAKER = new Faker();
-	public static final String TEST_PASSWORD_ATT_KEY = "TEST_PASSWORD";
-	public static final String TEST_JWT_ATT_KEY = "TEST_JWT";
-	private static final String TEST_EXTERN_ID_ATT_KEY = "TEST_KEYCLOAK_ID";
 
 	private static String getRandomPassword() {
 		StringBuilder sb = new StringBuilder();
@@ -66,19 +65,6 @@ public class TestUserService {
 	public static TestUserService getInstance() {
 		return INSTANCE;
 	}
-
-//	quarkus.oidc.application-type=hybrid
-//	quarkus.oidc.auth-server-url=http://localhost:32769/realms/oqm
-//	quarkus.oidc.client-id=oqm-app
-//	quarkus.oidc.credentials.secret=**********
-//	quarkus.oidc.logout.path=/logout
-//	quarkus.oidc.logout.post-logout-path=/
-//	quarkus.oidc.token-state-manager.split-tokens=true
-
-	public TestUserService() {
-
-	}
-
 
 	private Map<TestUserType, TestUser> testUsers = new HashMap<>();
 
