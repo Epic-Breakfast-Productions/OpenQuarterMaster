@@ -26,8 +26,8 @@ public class MainUiHandler extends UiHandler {
     @Location("pages/main")
     Template page;
     
-//    @Inject
-//    ModuleMaster moduleMaster;
+    @Inject
+    ModuleMaster moduleMaster;
 //
 //    @ConfigProperty(name = "voiceSearch.enabled")
 //    boolean voiceSearchEnabled;
@@ -36,6 +36,7 @@ public class MainUiHandler extends UiHandler {
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed("inventoryView")
     public TemplateInstance get() {
-        return this.setupTemplate(this.page);
+        return this.setupTemplate(this.page)
+            .data("moduleMaster", this.moduleMaster);
     }
 }

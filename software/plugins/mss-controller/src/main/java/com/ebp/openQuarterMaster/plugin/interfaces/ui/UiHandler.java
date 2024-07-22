@@ -16,6 +16,10 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 public class UiHandler extends RestInterface {
 
 	protected TemplateInstance setupTemplate(Template template){
-		return template.data("username", this.getUserToken().getClaim("name"));
+		return template
+			.data("username", this.getUserToken().getClaim("name"))
+			.data("selectedOqmDb", this.getSelectedDb())
+			.data("voiceSearchEnabled", false)
+			;
 	}
 }

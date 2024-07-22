@@ -23,8 +23,8 @@ import java.io.IOException;
 @Tags({@Tag(name = "Voice Interaction", description = "Endpoints for interacting via voice")})
 public class VoiceInteraction  extends RestInterface {
 	
-	@Inject
-	VoiceSearchService voiceSearchService;
+//	@Inject
+//	VoiceSearchService voiceSearchService;
 	
 	@ConfigProperty(name = "voiceSearch.enabled")
 	boolean enabled;
@@ -46,27 +46,27 @@ public class VoiceInteraction  extends RestInterface {
 		return this.enabled;
 	}
 	
-	@GET
-	@Path("/test")
-	@RolesAllowed("inventoryView")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response identifyModuleBlock(
-	) throws IOException {
-		if(!this.enabled){
-			return getDisabledResponse();
-		}
-		return Response.ok(this.voiceSearchService.listenForIntent()).build();
-	}
-	
-	@GET
-	@Path("/itemSearch")
-	@RolesAllowed("inventoryView")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response itemSearchWithVoice(
-	) throws IOException {
-		if(!this.enabled){
-			return getDisabledResponse();
-		}
-		return Response.ok(this.voiceSearchService.searchForItems()).build();
-	}
+//	@GET
+//	@Path("/test")
+//	@RolesAllowed("inventoryView")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response identifyModuleBlock(
+//	) throws IOException {
+//		if(!this.enabled){
+//			return getDisabledResponse();
+//		}
+//		return Response.ok(this.voiceSearchService.listenForIntent()).build();
+//	}
+//
+//	@GET
+//	@Path("/itemSearch")
+//	@RolesAllowed("inventoryView")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response itemSearchWithVoice(
+//	) throws IOException {
+//		if(!this.enabled){
+//			return getDisabledResponse();
+//		}
+//		return Response.ok(this.voiceSearchService.searchForItems()).build();
+//	}
 }

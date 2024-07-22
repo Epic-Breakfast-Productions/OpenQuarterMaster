@@ -261,7 +261,7 @@ public class VoiceSearchService {
 		return this.getVoiceSearchConfig().enabled();
 	}
 	
-	public void trainVoice2Text(String oqmDbId, DockerClient dockerClient) throws IOException, URISyntaxException {
+	public void trainVoice2Text(DockerClient dockerClient) throws IOException, URISyntaxException {
 		this.assertEnabled();
 		log.info("Training voice2text");
 		
@@ -272,7 +272,7 @@ public class VoiceSearchService {
 		{
 			//TODO:: this should be done better; do paging
 			//TODO:: db id. Is there a better way to do this?
-			ObjectNode allItems = this.getCoreApiClient().invItemSearch(this.kcClientAuthService.getAuthString(), oqmDbId, InventoryItemSearch.builder().build()).await().indefinitely();
+			ObjectNode allItems = this.getCoreApiClient().invItemSearch(this.kcClientAuthService.getAuthString(), null, InventoryItemSearch.builder().build()).await().indefinitely();
 			for (Iterator<JsonNode> it = allItems.get("results").elements(); it.hasNext(); ) {
 				ObjectNode curItem = (ObjectNode) it.next();
 				String curItemName = curItem.get("name").asText();

@@ -15,7 +15,10 @@ import java.util.TreeMap;
 @Builder
 public class ModuleOqmDbInfo {
 
-	private String associatedStorageBlockId;
+	@Builder.Default
+	private String associatedStorageBlockId = null;
+
+	@Builder.Default
 	private Map<Integer, String> storageBlockToModBlockNums = new TreeMap<>();
 
 	public String getStorageBlockIdForBlock(int blockNum) {
