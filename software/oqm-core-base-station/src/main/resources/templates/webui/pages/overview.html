@@ -147,7 +147,7 @@
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.length+'):</h5>');
+				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.numResults+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
@@ -181,7 +181,7 @@
 					accordion = accordion.append(curAccord);
 				});
 				
-				let output = $('<h5>{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks ('+storageBlockArr.length+'):</h5>');
+				let output = $('<h5>{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks ('+storageBlockArr.numResults+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}

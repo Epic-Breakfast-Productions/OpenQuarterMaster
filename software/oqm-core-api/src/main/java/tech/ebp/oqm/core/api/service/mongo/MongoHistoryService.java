@@ -24,7 +24,7 @@ import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.rest.search.HistorySearch;
+import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
@@ -184,7 +184,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 			history.setEntity(entity.getId());
 		}
 		ObjectId output = this.add(oqmDbIdOrName, session, history);
-		this.getHens().sendEvents(this.clazzForObjectHistoryIsFor, history);
+		this.getHens().sendEvents(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(), this.clazzForObjectHistoryIsFor, history);
 		return output;
 	}
 	public ObjectId addHistoryFor(String oqmDbIdOrName, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history){

@@ -16,10 +16,9 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.core.api.model.rest.tree.storageBlock.StorageBlockTree;
 import tech.ebp.oqm.core.api.model.rest.tree.storageBlock.StorageBlockTreeNode;
-import tech.ebp.oqm.core.api.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.core.api.model.rest.search.StorageBlockSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
 import java.util.Map;

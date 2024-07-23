@@ -3,10 +3,8 @@ package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -14,25 +12,15 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.FileAttachmentSearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCheckoutSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
 
-@RegisterRestClient(configKey = Constants.CONFIG_ROOT_NAME)
+@RegisterRestClient(configKey = Constants.CORE_API_CLIENT_NAME)
 public interface OqmCoreApiClientService {
 
 	//<editor-fold desc="Info">
@@ -50,8 +38,17 @@ public interface OqmCoreApiClientService {
 
 	//<editor-fold desc="Interacting Entity">
 	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity")
+	Uni<ObjectNode> interactingEntitySearch(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @BeanParam InteractingEntitySearch entitySearch);
+
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}")
+	Uni<ObjectNode> interactingEntityGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
+
+	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
 	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
+
 	//</editor-fold>
 
 	//<editor-fold desc="Units">

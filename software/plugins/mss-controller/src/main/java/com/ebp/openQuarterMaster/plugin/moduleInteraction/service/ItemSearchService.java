@@ -1,10 +1,9 @@
 package com.ebp.openQuarterMaster.plugin.moduleInteraction.service;
 
+import com.ebp.openQuarterMaster.plugin.model.module.OqmModuleInfo;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemSearchResults;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.MssModule;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.ModuleInfo;
-import com.ebp.openQuarterMaster.plugin.restClients.KcClientAuthService;
+import com.ebp.openQuarterMaster.plugin.moduleInteraction.module.MssModule;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -28,6 +28,7 @@ public class ItemSearchService {
 	
 	@RestClient
 	OqmCoreApiClientService coreApiClientService;
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	KcClientAuthService kcClientAuthService;
@@ -38,8 +39,8 @@ public class ItemSearchService {
 	 * @param doHighlight
 	 * @return
 	 */
-	public ItemSearchResults searchForItemLocations(InventoryItemSearch itemSearch, boolean doHighlight){
-		ObjectNode itemResultsJson = this.coreApiClientService.invItemSearch(this.getKcClientAuthService().getAuthString(), itemSearch).await().indefinitely();
+	public ItemSearchResults searchForItemLocations(String oqmDbId, InventoryItemSearch itemSearch, boolean doHighlight){
+		ObjectNode itemResultsJson = this.coreApiClientService.invItemSearch(this.getKcClientAuthService().getAuthString(), oqmDbId, itemSearch).await().indefinitely();
 		ItemSearchResults output = new ItemSearchResults();
 		
 		for(JsonNode curItemJson : itemResultsJson.get("results")){
@@ -47,27 +48,27 @@ public class ItemSearchService {
 			
 			while (curStorageBlockIds.hasNext()){
 				String storageBlockId = curStorageBlockIds.next();
-				ObjectNode storageBlockJson = this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), storageBlockId).await().indefinitely();
+				ObjectNode storageBlockJson = this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), oqmDbId, storageBlockId).await().indefinitely();
 				ItemSearchResults.StorageResult storageResult = new ItemSearchResults.StorageResult(storageBlockId, storageBlockJson.get("labelText").asText());
 				Optional<MssModule> inModuleResult = this.moduleMaster.getModuleWithStorageBlock(storageBlockId);
 				
 				if(inModuleResult.isPresent()){
-					ModuleInfo moduleInfo = inModuleResult.get().getModuleInfo();
-					Integer moduleBlockNum = moduleInfo.getBlockNumForStorageBlockId(storageBlockId);
+					OqmModuleInfo moduleInfo = inModuleResult.get().getModuleInfo();
+					Integer moduleBlockNum = moduleInfo.getBlockNumForStorageBlockId(oqmDbId, storageBlockId).get();
 					
-					if(!output.getWithModuleBlocks().containsKey(moduleInfo.getSerialId())){
+					if(!output.getWithModuleBlocks().containsKey(moduleInfo.getModuleSerialId())){
 						output.getWithModuleBlocks().put(
-							moduleInfo.getSerialId(),
+							moduleInfo.getModuleSerialId(),
 							new ItemSearchResults.ModuleResult(
-								moduleInfo.getAssociatedStorageBlockId(),
-								this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), moduleInfo.getAssociatedStorageBlockId()).await().indefinitely()
+								moduleInfo.getAssociatedStorageBlockId(oqmDbId).get(),
+								this.coreApiClientService.storageBlockGet(this.kcClientAuthService.getAuthString(), oqmDbId, moduleInfo.getAssociatedStorageBlockId(oqmDbId).get()).await().indefinitely()
 									.get("labelText").asText()
 							)
 						);
 					}
 					
-					if(!output.getWithModuleBlocks().get(moduleInfo.getSerialId()).getBlockToStorageMap().containsKey(moduleBlockNum)){
-						output.getWithModuleBlocks().get(moduleInfo.getSerialId()).getBlockToStorageMap().put(
+					if(!output.getWithModuleBlocks().get(moduleInfo.getModuleSerialId()).getBlockToStorageMap().containsKey(moduleBlockNum)){
+						output.getWithModuleBlocks().get(moduleInfo.getModuleSerialId()).getBlockToStorageMap().put(
 							moduleBlockNum,
 							storageResult
 						);

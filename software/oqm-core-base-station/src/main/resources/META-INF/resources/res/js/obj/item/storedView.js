@@ -1,6 +1,6 @@
 const StoredView = {
 	getBlockViewCell(name, value) {
-		let output = $('<div class="col"><h5></h5><p></p></div>');
+		let output = $('<div class="col-sm-4 col-4 col-xs-6"><h5></h5><p></p></div>');
 
 		output.find("h5").text(name);
 		output.find("p").text(value);
@@ -12,9 +12,9 @@ const StoredView = {
 		}
 		return "";
 	},
-	getStorageBlockAmountHeldView(stored) {
+	getStorageBlockAmountHeldView(stored, showCurrently = false) {
 		if (stored.storedType.includes("AMOUNT")) {
-			return StoredView.getBlockViewCell("Stored", stored.amount.value + stored.amount.unit.symbol);
+			return StoredView.getBlockViewCell((showCurrently?"Currently ":"") + "Stored:", stored.amount.value + stored.amount.unit.symbol);
 		}
 		return "";
 	},
@@ -59,9 +59,9 @@ const StoredView = {
 		output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
 
 		if (small) {
-			output.addClass("col-1");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		} else {
-			output.addClass("col");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		}
 
 		return output;
@@ -81,9 +81,9 @@ const StoredView = {
 		output.append(checkoutButton);
 
 		if (small) {
-			output.addClass("col-1");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		} else {
-			output.addClass("col");
+			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
 		}
 
 		return output;
@@ -95,7 +95,8 @@ const StoredView = {
 		index = false,
 		includeStoredLink = false,
 		includeCheckoutLink = false,
-		includeIdentifier = false
+		includeIdentifier = false,
+		showCurrentlyStored = false
 	) {
 		console.log("Getting stored view html for "+JSON.stringify(stored))
 		let newContent = $('<div class="row storedViewRow"></div>');
@@ -119,7 +120,7 @@ const StoredView = {
 		}
 
 		newContent.append(
-			StoredView.getStorageBlockAmountHeldView(stored),
+			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
 			StoredView.getStorageBlockBarcodeView(stored, itemId, storageBlockId, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),

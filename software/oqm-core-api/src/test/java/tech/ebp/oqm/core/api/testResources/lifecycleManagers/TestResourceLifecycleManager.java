@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.testResources.lifecycleManagers;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebDriver;
 import org.testcontainers.Testcontainers;
 
 import java.util.ArrayList;
@@ -25,20 +24,14 @@ public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycl
 	/**
 	 * https://www.testcontainers.org/modules/webdriver_containers/
 	 */
-	public static final SeleniumGridServerManager BROWSER_CONTAINER = new SeleniumGridServerManager();
 	private static final JaegerServerManager JAEGER_SERVER_MANAGER = new JaegerServerManager();
 	
 	private static final Collection<QuarkusTestResourceLifecycleManager> managersAsList = new ArrayList<>(){{
-		add(BROWSER_CONTAINER);
 		add(JAEGER_SERVER_MANAGER);
 	}};
 	
 	static {
 		Testcontainers.exposeHostPorts(8081, 8085);
-	}
-	
-	public static WebDriver getWebDriver() {
-		return BROWSER_CONTAINER.getDriver();
 	}
 	
 	@Override

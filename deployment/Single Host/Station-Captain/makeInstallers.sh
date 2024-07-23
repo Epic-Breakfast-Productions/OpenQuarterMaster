@@ -126,9 +126,9 @@ else
 	echo "WARNING: could not run autocomplete!"
 fi
 
-oqm-captain --regen-certs
+oqm-captain --ensure-certs-present
 
-if grep -q $group /etc/group ; then
+if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
 	echo 'OQM group already existent'
 else
 	echo 'OQM group not yet existent. Creating'
@@ -136,7 +136,7 @@ else
 	echo 'OQM group created.'
 fi
 
-if id "$1" >/dev/null 2>&1; then
+if id "oqm" >/dev/null 2>&1; then
 	echo 'OQM user already existent'
 else
 	echo 'OQM user not yet existent. Creating.'

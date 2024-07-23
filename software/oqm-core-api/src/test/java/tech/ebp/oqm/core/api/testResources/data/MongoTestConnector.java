@@ -99,9 +99,9 @@ public class MongoTestConnector {
 								" records left."
 						);
 					}
-
 				}
 			}
+
 		}
 		log.info("Finished clearing database. Deleted {} records.", totalDeleted);
 	}

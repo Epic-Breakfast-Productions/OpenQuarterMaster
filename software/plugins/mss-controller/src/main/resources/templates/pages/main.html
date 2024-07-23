@@ -10,7 +10,7 @@
 	<title>MSS Controller Plugin - Open Quarter Master</title>
 	
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.3.0/bootswatch.yeti.min.css" rel="stylesheet">
+	<link href="/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.0/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
@@ -271,30 +271,30 @@
 							<div class="accordion-item">
 								<h2 class="accordion-header">
 									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-										data-bs-target="#moduleAccordion-{curModuleInfo.getSerialId()}"
-										aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getSerialId()}">
+										data-bs-target="#moduleAccordion-{curModuleInfo.getModuleSerialId()}"
+										aria-expanded="false" aria-controls="moduleAccordion-{curModuleInfo.getModuleSerialId()}">
 										{#if curModule.getInterfaceType() == 'serialOverUSB' }
 											<i class="bi bi-usb-symbol">&nbsp;</i>
 										{/if}
 										
-										{curModuleInfo.getSerialId()}
+										{curModuleInfo.getModuleSerialId()}
 									</button>
 								</h2>
-								<div id="moduleAccordion-{curModuleInfo.getSerialId()}" class="accordion-collapse collapse"
+								<div id="moduleAccordion-{curModuleInfo.getModuleSerialId()}" class="accordion-collapse collapse"
 								data-bs-parent="#moduleAccordion">
 									<div class="accordion-body">
 										<dl class="row">
 											<dt class="col-sm-3 col-md-2">Id:</dt>
-											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSerialId()}</dd>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getModuleSerialId()}</dd>
 											
 											<dt class="col-sm-3 col-md-2">Spec Version:</dt>
-											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getSpecVersion()}</dd>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getModuleInfo().getSpecVersion()}</dd>
 											
 											<dt class="col-sm-3 col-md-2">Manufacture Date:</dt>
-											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getManufactureDate()}</dd>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getModuleInfo().getManufactureDate()}</dd>
 											
 											<dt class="col-sm-3 col-md-2"># Blocks:</dt>
-											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getNumBlocks()}</dd>
+											<dd class="col-sm-9 col-md-10 user-select-all">{curModuleInfo.getModuleInfo().getNumBlocks()}</dd>
 											
 											<dt class="col-sm-3 col-md-2">Interface:</dt>
 											<dd class="col-sm-9 col-md-10 user-select-all">
@@ -305,30 +305,30 @@
 										</dl>
 										<div class="row">
 											<div class="col">
-												<button class="btn btn-primary" onclick="identifyModule(this, '{curModuleInfo.getSerialId()}')">
+												<button class="btn btn-primary" onclick="identifyModule(this, '{curModuleInfo.getModuleSerialId()}')">
 													<i class="bi bi-crosshair">&nbsp;</i>
 													Identify Module
 													<span class="actionNotify"></span>
 												</button>
 											</div>
 											<div class="col">
-												<a href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getAssociatedStorageBlockId()}">
+												<a href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getAssociatedStorageBlockId(selectedOqmDb)}">
 													View Storage block in Base Station
 												</a>
 											</div>
 										</div>
 										<div class="row pt-2">
-											<div class="accordion col" id="moduleAccordionBlocks-{curModuleInfo.getSerialId()}">
+											<div class="accordion col" id="moduleAccordionBlocks-{curModuleInfo.getModuleSerialId()}">
 												<div class="accordion-item">
 													<h2 class="accordion-header">
 														<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-															data-bs-target="#moduleAccordionBlocks-{curModuleInfo.getSerialId()}-accord"
-															aria-expanded="false" aria-controls="moduleAccordionBlocks-{curModuleInfo.getSerialId()}-accord">
+															data-bs-target="#moduleAccordionBlocks-{curModuleInfo.getModuleSerialId()}-accord"
+															aria-expanded="false" aria-controls="moduleAccordionBlocks-{curModuleInfo.getModuleSerialId()}-accord">
 															Blocks under Module
 														</button>
 													</h2>
-													<div id="moduleAccordionBlocks-{curModuleInfo.getSerialId()}-accord" class="accordion-collapse collapse"
-														data-bs-parent="#moduleAccordionBlocks-{curModuleInfo.getSerialId()}">
+													<div id="moduleAccordionBlocks-{curModuleInfo.getModuleSerialId()}-accord" class="accordion-collapse collapse"
+														data-bs-parent="#moduleAccordionBlocks-{curModuleInfo.getModuleSerialId()}">
 														<div class="accordion-body">
 															<div class="row">
 																<div class="col">
@@ -336,16 +336,16 @@
 																</div>
 															</div>
 															<div class="row">
-																{#for curBlockNum in curModuleInfo.getBlockNumStream()}
+																{#for curBlockNum in curModuleInfo.getModuleInfo().getBlockNumStream()}
 																	<div class="col m-2 d-grid gap-2" style="min-width: 115px; max-width:115px;">
 																		<div class="btn-group" role="group" aria-label="Basic example">
-																			<a class="btn btn-primary" href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getStorageBlockIdForBlock(curBlockNum)}">
+																			<a class="btn btn-primary" href="{config:['quarkus.oqmCoreApi.coreApiBaseUri']}/storage?view={curModuleInfo.getStorageBlockIdForBlock(selectedOqmDb, curBlockNum)}">
 																				{curBlockNum}
 																				<sup>
 																					<i class="bi bi-eye"></i>
 																				</sup>
 																			</a>
-																			<button type="button" class="btn btn-primary" onclick="identifyModuleBlock(this, '{curModuleInfo.getSerialId()}', {curBlockNum})">
+																			<button type="button" class="btn btn-primary" onclick="identifyModuleBlock(this, '{curModuleInfo.getModuleSerialId()}', {curBlockNum})">
 																				<i class="bi bi-crosshair">&nbsp;</i>
 																			</button>
 																		</div>
@@ -436,8 +436,8 @@
 <!-- Modals -->
 
 <!-- scripts -->
-<script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="/lib/js-cookie-3.0.1/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>

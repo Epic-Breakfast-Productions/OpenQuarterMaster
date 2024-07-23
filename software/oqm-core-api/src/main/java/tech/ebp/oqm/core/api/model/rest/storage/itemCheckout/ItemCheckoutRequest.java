@@ -25,8 +25,7 @@ public class ItemCheckoutRequest {
 	@NonNull
 	@NotNull
 	private ObjectId checkedOutFrom;
-	
-	
+
 	/**
 	 * What to check out from the item
 	 */
@@ -37,20 +36,20 @@ public class ItemCheckoutRequest {
 	/**
 	 * Who this was checked out for. Null for the JWT user.
 	 */
-	@Builder.Default
+	@lombok.Builder.Default
 	private CheckoutFor checkedOutFor = null;
-	
-	@Builder.Default
+
+	@lombok.Builder.Default
 	private ZonedDateTime dueBack = null;
 	
 	
 	@NonNull
 	@NotNull
-	@Builder.Default
+	@lombok.Builder.Default
 	private String reason = "";
 	
 	@NonNull
 	@NotNull
-	@Builder.Default
+	@lombok.Builder.Default
 	private String notes = "";
 }

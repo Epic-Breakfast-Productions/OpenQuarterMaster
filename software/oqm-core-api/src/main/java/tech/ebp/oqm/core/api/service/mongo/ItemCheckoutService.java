@@ -1,8 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -11,10 +9,8 @@ import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemCheckinEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -25,9 +21,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.storage.itemCheckout.ItemCheckoutRequest;
-import tech.ebp.oqm.core.api.rest.search.ItemCheckoutSearch;
+import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.AlreadyCheckedInException;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -109,12 +104,13 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 			item = this.inventoryItemService.get(oqmDbIdOrName, checkout.getItem());
 			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
 		}
-		
+
+		ItemCheckinEvent event = new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId());
 		try(ClientSession cs = this.getNewClientSession(true)){
 			if(item != null) {
-				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId()));
+				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, event);
 			}
-			this.update(oqmDbIdOrName, cs, checkout, entity, new UpdateEvent(checkout, entity).setDescription("Checkin"));
+			this.update(oqmDbIdOrName, cs, checkout, entity, event);
 			cs.commitTransaction();
 		}
 		

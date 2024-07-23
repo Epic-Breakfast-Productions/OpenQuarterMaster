@@ -1,13 +1,10 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.client.MongoClient;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
@@ -16,15 +13,15 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.core.api.config.BaseStationInteractingEntity;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -36,34 +33,34 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	
 	@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
 	boolean basicAuthEnabled;
+
+	private final ReentrantLock ensureUserLock = new ReentrantLock();
 	
 	public InteractingEntityService() {
 		super(InteractingEntity.class);
-		
-		
 	}
 	
 	@PostConstruct
 	public void setup(){
-		BaseStationInteractingEntity baseStationInteractingEntityArc;
-		try(InstanceHandle<BaseStationInteractingEntity> container = Arc.container().instance(BaseStationInteractingEntity.class)){
-			baseStationInteractingEntityArc = container.get();
+		CoreApiInteractingEntity coreApiInteractingEntityArc;
+		try(InstanceHandle<CoreApiInteractingEntity> container = Arc.container().instance(CoreApiInteractingEntity.class)){
+			coreApiInteractingEntityArc = container.get();
 		}
-		if(baseStationInteractingEntityArc == null){
+		if(coreApiInteractingEntityArc == null){
 			return;
 		}
 		//force getting around Arc subclassing out the injected class
-		BaseStationInteractingEntity baseStationInteractingEntity = new BaseStationInteractingEntity(
-			baseStationInteractingEntityArc.getEmail()
+		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(
+			coreApiInteractingEntityArc.getEmail()
 		);
 		//ensure we have the base station in the db
-		try{
-			this.get(baseStationInteractingEntity.getId());
-			this.update(baseStationInteractingEntity);
-			log.info("Updated base station interacting entity entry.");
-		} catch(DbNotFoundException e){
-			this.add(baseStationInteractingEntity);
-			log.info("Added base station interacting entity entry.");
+		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
+		if(gotten == null){
+			this.add(coreApiInteractingEntity);
+			log.info("Added core api interacting entity entry.");
+		} else {
+			this.update(coreApiInteractingEntity);
+			log.info("Updated core api interacting entity entry.");
 		}
 	}
 	
@@ -90,9 +87,10 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		);
 	}
 	
-	public InteractingEntity get(ObjectId id){
-		return this.getCollection().find(eq("id", id)).limit(1).first();
+	public InteractingEntity get(ObjectId id) {
+		return this.getCollection().find(eq("_id", id)).limit(1).first();
 	}
+
 	public InteractingEntity get(String id){
 		return this.get(new ObjectId(id));
 	}
@@ -108,28 +106,32 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	@WithSpan
 	public InteractingEntity ensureEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
-		Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
-		if(returningEntityOp.isEmpty()){
-			log.info("New entity interacting with system.");
-			if(this.basicAuthEnabled){
-				entity = InteractingEntity.createEntity(context);
+		try{ //TODO:: test this for performance. Any way around making the whole thing a critical section?
+			this.ensureUserLock.lock();
+
+			Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
+			if(returningEntityOp.isEmpty()){
+				log.info("New entity interacting with system.");
+				if(this.basicAuthEnabled){
+					entity = InteractingEntity.createEntity(context);
+				} else {
+					entity = InteractingEntity.createEntity(jwt);
+				}
 			} else {
-				entity = InteractingEntity.createEntity(jwt);
-				
+				log.debug("Existing entity interacting with system.");
+				entity = returningEntityOp.get();
 			}
-			
-		} else {
-			log.info("Returning entity interacting with system.");
-			entity = returningEntityOp.get();
+
+			if(entity.getId() == null){
+				this.add(entity);
+			} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
+				this.update(entity);
+				log.info("Entity has been updated.");
+			}
+		} finally {
+			this.ensureUserLock.unlock();
 		}
-		
-		if(entity.getId() == null){
-			this.add(entity);
-		} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
-			this.update(entity);
-			log.info("Entity has been updated.");
-		}
-		
+
 		return entity;
 	}
 	

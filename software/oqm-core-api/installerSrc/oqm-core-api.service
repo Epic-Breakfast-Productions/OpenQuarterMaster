@@ -55,6 +55,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -p $(oqm-config -g core.api.httpPort):80 \
                                         -p $(oqm-config -g core.api.httpsPort):443 \
                                         -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
+                                        --add-host $(oqm-config -g system.hostname):host-gateway \
                                         --env-file $MAIN_CONFIG_FILE \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
@@ -88,14 +89,14 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
                                 if [ \"$status\" = \"UP\" ]; then \
-                                    echo \"Base Station running and available!\"; \
+                                    echo \"Core API running and available!\"; \
                                     running=\"true\"; \
                                 fi \
                             done \
                             "
 # Remove from docker
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
 
 [Install]
 WantedBy=multi-user.target

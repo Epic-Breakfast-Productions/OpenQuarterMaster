@@ -1,7 +1,6 @@
 package com.ebp.openQuarterMaster.plugin;
 
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.VoiceSearchService;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
@@ -18,8 +17,8 @@ public class LifecycleBean {
 	@Inject
 	ModuleMaster moduleMaster;
 	
-	@Inject
-	VoiceSearchService voiceSearchService;
+//	@Inject
+//	VoiceSearchService voiceSearchService;
 	
 	void onStart(
 		@Observes
@@ -30,12 +29,12 @@ public class LifecycleBean {
 			moduleMaster.getModuleIds()
 		);
 		
-		if(this.voiceSearchService.enabled()) {
-			log.info(
-				"Speech Search using image: {}",
-				voiceSearchService.getCurImageInformation()
-			);
-		}
+//		if(this.voiceSearchService.enabled()) {
+//			log.info(
+//				"Speech Search using image: {}",
+//				voiceSearchService.getCurImageInformation()
+//			);
+//		}
 	}
 	
 	void onStop(

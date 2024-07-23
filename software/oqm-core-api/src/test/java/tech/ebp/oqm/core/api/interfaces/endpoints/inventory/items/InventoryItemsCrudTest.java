@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.core.api.model.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
@@ -35,7 +35,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.amountStor
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
-import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.InventoryItemsCrud;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,9 +61,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
-	
-	@Inject
-	TestUserService testUserService;
+
+
 	
 	@Inject
 	@Location("templates/items.csv")
@@ -122,7 +120,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	@ParameterizedTest
 	@MethodSource("getSimpleAmountItems")
 	public void testCreateSimpleAmountItem(SimpleAmountItem item) throws JsonProcessingException {
-		User user = this.testUserService.getTestUser();
+		User user = this.getTestUserService().getTestUser();
 		
 		ObjectId returned = create(user, item);
 		
@@ -138,7 +136,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateListAmountItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser();
+		User user = this.getTestUserService().getTestUser();
 		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
 		ObjectId returned = create(user, item);
 		
@@ -154,7 +152,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testCreateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser();
+		User user = this.getTestUserService().getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -172,7 +170,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testUpdateTrackedItem() throws JsonProcessingException {
-		User user = this.testUserService.getTestUser();
+		User user = this.getTestUserService().getTestUser();
 		TrackedItem item = (TrackedItem) new TrackedItem()
 											 .setTrackedItemIdentifierName("id")
 											 .setName(FAKER.commerce().productName());
@@ -185,7 +183,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Test
 	public void testAddFromCsv() throws IOException {
-		User user = this.testUserService.getTestUser();
+		User user = this.getTestUserService().getTestUser();
 		
 		String csvData = this.itemsCsv.render();
 		

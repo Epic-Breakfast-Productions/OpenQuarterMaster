@@ -4,7 +4,7 @@ service:
     email: test@test.org
     phone: 999-888-7777
     website: https://test.org
-  tempDir: "/tmp/oqmTest/baseStation"
+  tempDir: "/tmp/oqmTest/core/api"
 
 externalService:
   extServices:
@@ -17,6 +17,8 @@ externalService:
 #  connector: smallrye-amqp
   
 quarkus:
+  test:
+    integration-test-profile: intTest
   http:
     port: 8081
   log:
@@ -42,8 +44,6 @@ mp:
   jwt:
     verify:
       issuer: "oqm-test"
-      privatekey:
-        location: dev/devTest-cert-key.pem
       publickey:
         location: dev/devTest-cert-cert.pem
 smallrye:
@@ -60,13 +60,9 @@ smallrye:
 
 test:
   profile: test
-  selenium:
-    defaultWait: 10 # seconds
         
 "%quickExpiryCheck":
   service:
     item:
       expiryCheck:
         cron: 0/5 0 0 ? * * * # every 5 seconds
-
-

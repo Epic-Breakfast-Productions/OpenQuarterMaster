@@ -1,0 +1,21 @@
+name: WF - Gradle Build
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build -x test
+          build-root-directory: ${{ inputs.path }}

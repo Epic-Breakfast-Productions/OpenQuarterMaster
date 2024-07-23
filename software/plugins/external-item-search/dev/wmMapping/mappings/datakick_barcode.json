@@ -1,0 +1,49 @@
+{
+  "request": {
+    "urlPathPattern": "/datakick/api/items/.*",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "id": 4712,
+        "user_id": 0,
+        "gtin14": "{{request.pathSegments.[4]}}",
+        "brand_name": "Ubisoft",
+        "name": "Assassin's Creed Syndicate (PS4)",
+        "size": "",
+        "ingredients": "",
+        "serving_size": "",
+        "serving_per_container": "",
+        "calories": "",
+        "fat_calories": "",
+        "fat": "",
+        "saturated_fat": "",
+        "trans_fat": "",
+        "polyunsaturated_fat": "",
+        "monounsaturated_fat": "",
+        "cholesterol": "",
+        "sodium": "",
+        "potassium": "",
+        "carbohydrate": "",
+        "fiber": "",
+        "sugar": "",
+        "protein": "",
+        "author": "",
+        "publisher": "",
+        "pages": "",
+        "alcohol": "",
+        "created_at": null,
+        "updated_at": null
+      }
+    ]
+  }
+}
+
+
+
+

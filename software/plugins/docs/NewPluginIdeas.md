@@ -4,6 +4,15 @@ This is a list of potential plugins to implement.
 
 TODO:: where to go to vote for the next one
 
+## AI LLM interaction service
+
+Write an API and frontend to interact with. Reads in inventory data and responds to prompts based on it
+
+ - preferrably (optionally) in the stylings of "Gunny"
+ - both backend and frontend service
+
+https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html
+
 ## Point of Sale
 
 ## Storage Interaction

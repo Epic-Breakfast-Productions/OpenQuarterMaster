@@ -9,7 +9,7 @@ import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;

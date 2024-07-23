@@ -311,7 +311,7 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({
-		url: "/api/externalItemLookup/webpage/scrape/" + encodeURIComponent(webpage),
+		url: "/api/passthrough/plugin/itemLookup/webpage/scrape/" + encodeURIComponent(webpage),
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data);
 		},
@@ -327,7 +327,7 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({
-		url: "/api/externalItemLookup/product/barcode/" + barcodeText,
+		url: "/api/passthrough/plugin/itemLookup/barcode/" + barcodeText,
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data);
 		},
@@ -342,7 +342,7 @@ ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({
-		url: "/api/externalItemLookup/lego/part/" + partNumber,
+		url: "/api/passthrough/plugin/itemLookup/lego/part/" + partNumber,
 		done: async function (data) {
 			await ExtItemSearch.handleExtItemSearchResults(data)
 		},

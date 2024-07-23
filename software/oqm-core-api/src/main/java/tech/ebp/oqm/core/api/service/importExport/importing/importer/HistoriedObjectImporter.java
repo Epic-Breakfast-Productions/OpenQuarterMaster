@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 

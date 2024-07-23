@@ -33,9 +33,9 @@ import tech.ebp.oqm.core.api.model.object.storage.items.AddSubtractTransferActio
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.core.api.rest.dataImportExport.ImportBundleFileBody;
-import tech.ebp.oqm.core.api.rest.search.HistorySearch;
-import tech.ebp.oqm.core.api.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.core.api.model.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
+import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.importExport.importing.csv.InvItemCsvConverter;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;

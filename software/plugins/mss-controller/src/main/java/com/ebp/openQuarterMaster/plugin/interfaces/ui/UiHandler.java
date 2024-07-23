@@ -1,6 +1,9 @@
 package com.ebp.openQuarterMaster.plugin.interfaces.ui;
 
+import com.ebp.openQuarterMaster.plugin.interfaces.RestInterface;
 import io.quarkus.oidc.IdToken;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,40 +13,13 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 @Slf4j
 @NoArgsConstructor
-public class UiHandler {
-	
-	
-	@Getter(AccessLevel.PROTECTED)
-	@Inject
-	@IdToken
-	JsonWebToken idToken;
-	
-	@Getter(AccessLevel.PROTECTED)
-	@Inject
-	JsonWebToken accessToken;
-	
-	protected boolean hasIdToken() {
-		return this.getIdToken() != null && this.getIdToken().getClaimNames() != null;
-	}
-	
-	protected boolean hasAccessToken(){
-		return this.getAccessToken() != null && this.getAccessToken().getClaimNames() != null;
-	}
-	
-	/**
-	 * When hit from bare API call with just bearer, token will be access token.
-	 *
-	 * When hit from ui, idToken.
-	 * @return
-	 */
-	protected JsonWebToken getUserToken(){
-		if(this.hasIdToken()){
-			return this.getIdToken();
-		}
-		if(this.hasAccessToken()){
-			return this.getAccessToken();
-		}
-		return null;
-	}
+public class UiHandler extends RestInterface {
 
+	protected TemplateInstance setupTemplate(Template template){
+		return template
+			.data("username", this.getUserToken().getClaim("name"))
+			.data("selectedOqmDb", this.getSelectedDb())
+			.data("voiceSearchEnabled", false)
+			;
+	}
 }

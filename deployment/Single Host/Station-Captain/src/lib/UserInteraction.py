@@ -1,6 +1,7 @@
-import logging
 from typing import Optional
-
+import time
+import re
+import os
 from dialog import Dialog
 from ConfigManager import *
 from ContainerUtils import *
@@ -13,10 +14,9 @@ from SnapshotUtils import *
 from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
-import time
-import re
-import os
+from LogUtils import *
 
+log = LogUtils.setupLogger(__name__)
 
 class UserInteraction:
     """
@@ -30,17 +30,14 @@ class UserInteraction:
     TALL_HEIGHT = 50
 
     def __init__(self):
-        self.dialog = Dialog(
-            dialog="dialog",
-            autowidgetsize=True,
+        self.dialog = Dialog(dialog="dialog", autowidgetsize=True)
 
-        )
         self.dialog.set_background_title(ScriptInfo.SCRIPT_TITLE)
         self.dialog.__setattr__("hfile", "oqm-station-captain-help.txt")
 
         self.dialog.setup_debug(
             True,
-            open("dialogDebug.log", 'w'),
+            open(LogUtils.logDir + "dialogDebug.log", 'w'),
             always_flush=True,
             expand_file_opt=True
         )
@@ -65,7 +62,7 @@ class UserInteraction:
         :param secret: If the config to set is a secret or not
         :return: None
         """
-        logging.info("Prompting to change config key " + configKey)
+        log.info("Prompting to change config key " + configKey)
 
         if secret:
             code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
@@ -84,7 +81,7 @@ class UserInteraction:
         for validator in validators:
             validationErr = validator(value)
             if validationErr is not None:
-                logging.warning("Got validation error from value given from user.")
+                log.warning("Got validation error from value given from user.")
                 self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
                 return
 
@@ -94,20 +91,20 @@ class UserInteraction:
             else:
                 mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
         except Exception:
-            logging.error("FAILED to set config value.")
+            log.error("FAILED to set config value.")
             self.dialog.msgbox("FAILED Setting value. Please try again.")
             return
 
         mainCM.rereadConfigData()
         self.dialog.msgbox("Set new value")
 
-        logging.info("Done prompting to change config key " + configKey)
+        log.info("Done prompting to change config key " + configKey)
 
     def promptForServiceRestart(self, configChanged: bool = False):
-        logging.info("Prompting user to see if they want to restart services.")
+        log.info("Prompting user to see if they want to restart services.")
         code = self.dialog.yesno("Restart all services?", title="Restart Services?")
         if code != self.dialog.OK:
-            logging.info("User chose not to restart services.")
+            log.info("User chose not to restart services.")
             return
         self.dialog.infobox("Restarting services. Please wait.")
 
@@ -127,19 +124,19 @@ class UserInteraction:
         self.mainMenu()
 
     def userInteractionSetupCheck(self):
-        logging.info("Checking system is setup")
+        log.info("Checking system is setup")
         if not PackageManagement.coreInstalled():
-            logging.info("Core setup not installed")
+            log.info("Core setup not installed")
             self.dialog.msgbox(
                 "We see that you have not yet installed OQM. You will now be taken through the setup wizard to get started.",
                 title="Core components not installed"
             )
             self.setupWizard()
         else:
-            logging.info("Core components already installed.")
+            log.info("Core components already installed.")
 
     def mainMenu(self):
-        logging.debug("Running main menu.")
+        log.debug("Running main menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Please choose an option:",
@@ -147,13 +144,14 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Info / Status"),
                     ("(2)", "Manage Installation"),
-                    ("(3)", "Snapshots"),
-                    ("(4)", "Cleanup, Maintenance, and Updates"),
-                    ("(5)", "Captain Settings"),
+                    ("(3)", "Plugins"),
+                    ("(4)", "Snapshots"),
+                    ("(5)", "Cleanup, Maintenance, and Updates"),
+                    # ("(6)", "Captain Settings"),
                 ]
             )
             UserInteraction.clearScreen()
-            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            log.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
 
@@ -162,14 +160,16 @@ class UserInteraction:
             if choice == "(2)":
                 self.manageInstallationMenu()
             if choice == "(3)":
-                self.snapshotsMenu()
+                self.pluginsMenu()
             if choice == "(4)":
+                self.snapshotsMenu()
+            if choice == "(5)":
                 self.cleanMaintUpdatesMenu()
 
-        logging.debug("Done running main menu.")
+        log.debug("Done running main menu.")
 
     def infoStatusMenu(self):
-        logging.debug("Running information stats menu.")
+        log.debug("Running information stats menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Please choose an option:",
@@ -180,7 +180,7 @@ class UserInteraction:
                 ]
             )
             self.clearScreen()
-            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            log.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
             if choice == "(1)":
@@ -188,18 +188,18 @@ class UserInteraction:
             if choice == "(2)":
                 self.showHostInfo()
 
-        logging.debug("Done running info and stats selection menu.")
+        log.debug("Done running info and stats selection menu.")
 
     def showHostInfo(self):
-        logging.debug("Showing host info.")
+        log.debug("Showing host info.")
 
         self.dialog.infobox("Gathering system information. please wait.")
         textToShow = ""
         try:
             textToShow += LogManagement.getSystemInfo()
         except subprocess.CalledProcessError:
-            logging.error("Failed to call necessary commands.")
-        logging.debug("Done compiling host info.")
+            log.error("Failed to call necessary commands.")
+        log.debug("Done compiling host info.")
         self.dialog.scrollbox(textToShow, title="Host Information",
                               #    height=UserInteraction.TALL_HEIGHT,
                               # width=UserInteraction.WIDE_WIDTH,
@@ -208,7 +208,7 @@ class UserInteraction:
                               )
 
     def showSystemStatus(self):
-        logging.debug("Showing system status.")
+        log.debug("Showing system status.")
 
         self.dialog.infobox("Gathering status info...")
         systemdStatus = subprocess.run(["systemctl", "list-units", "--all", "open\\x2bquarter\\x2bmaster\\x2d*"],
@@ -217,7 +217,7 @@ class UserInteraction:
         self.dialog.msgbox(systemdStatus, title="System Status", height=50, width=UserInteraction.WIDE_WIDTH)
 
     def manageInstallationMenu(self):
-        logging.debug("Running Manage Installation menu.")
+        log.debug("Running Manage Installation menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Please choose an option:",
@@ -226,12 +226,11 @@ class UserInteraction:
                     ("(1)", "Setup Wizard"),
                     ("(2)", "SSL/HTTPS Certs"),
                     ("(3)", "Set E-mail Settings"),
-                    ("(4)", "User Administration"),
-                    ("(5)", "Plugins")
+                    ("(4)", "User Administration")
                 ]
             )
             UserInteraction.clearScreen()
-            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            log.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
             if choice == "(1)":
@@ -243,10 +242,10 @@ class UserInteraction:
             if choice == "(4)":
                 self.userAdminMenu()
 
-        logging.debug("Done running manage install menu.")
+        log.debug("Done running manage install menu.")
 
     def manageCertsMenu(self):
-        logging.debug("Running Manage Certs menu.")
+        log.debug("Running Manage Certs menu.")
 
         while True:
             certMode = mainCM.getConfigVal("cert.mode")
@@ -263,18 +262,23 @@ class UserInteraction:
                 autoRegenEnabled = "enabled"
 
             if certMode == "self":
-                logging.debug("Setting up menu for self mode")
+                log.debug("Setting up menu for self mode")
                 choices.append(("(4)", "Regenerate certs"))
                 choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
                 choices.append(("(8)", "CA Private Key Location"))
                 choices.append(("(9)", "CA Public Cert/Key Location"))
-                choices.append(("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
-                choices.append(("(11)", f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
-                choices.append(("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
-                choices.append(("(13)", f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
-                choices.append(("(14)", f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
+                choices.append(
+                    ("(10)", f"Cert Country Name ({mainCM.getConfigVal('cert.selfMode.certInfo.countryName')})"))
+                choices.append(("(11)",
+                                f"Cert State or Province Name ({mainCM.getConfigVal('cert.selfMode.certInfo.stateOrProvinceName')})"))
+                choices.append(
+                    ("(12)", f"Cert Locality Name ({mainCM.getConfigVal('cert.selfMode.certInfo.localityName')})"))
+                choices.append(("(13)",
+                                f"Cert Organization Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationName')})"))
+                choices.append(("(14)",
+                                f"Cert Organizational Unit Name ({mainCM.getConfigVal('cert.selfMode.certInfo.organizationalUnitName')})"))
             if certMode == "letsEncrypt":
-                logging.debug("Setting up menu for let's encrypt mode")
+                log.debug("Setting up menu for let's encrypt mode")
                 accepted = mainCM.getConfigVal('cert.letsEncryptMode.acceptTerms')
                 if accepted:
                     accepted = "accepted"
@@ -284,10 +288,11 @@ class UserInteraction:
                 choices.append(("(5)", f"Auto Regenerate certs ({autoRegenEnabled})"))
                 choices.append(("(15)", f"Accept Let's Encrypt's Terms of Use ({accepted})"))
             if certMode == "provided":
-                logging.debug("Setting up menu for provided mode")
+                log.debug("Setting up menu for provided mode")
                 choices.append(("(8)", "CA Private Key Location"))
                 choices.append(("(9)", "CA Public Cert/Key Location"))
-                choices.append(("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
+                choices.append(
+                    ("(16)", f"Provide CA Cert (Currently {mainCM.getConfigVal('cert.providedMode.caProvided')})"))
                 if mainCM.getConfigVal('cert.providedMode.caProvided'):
                     choices.append(("(17)", "Install CA on host"))
 
@@ -297,25 +302,33 @@ class UserInteraction:
                 choices=choices
             )
             UserInteraction.clearScreen()
-            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            log.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
 
             if choice == "(1)":
-                logging.debug("Showing current cert information")
-                certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout, title="System Cert Info")
+                log.debug("Showing current cert information")
+                certInfoReturn = subprocess.run(
+                    ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.systemCert'), "--text"], shell=False,
+                    capture_output=True, text=True, check=False)
+                self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.systemCert') + "\n\n" + certInfoReturn.stdout,
+                                      title="System Cert Info")
 
-                if mainCM.getConfigVal("cert.mode") == "self" or (mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal("cert.providedMode.caProvided")):
-                    certInfoReturn = subprocess.run(["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False, capture_output=True, text=True, check=False)
-                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout, title="CA Cert Info")
+                if mainCM.getConfigVal("cert.mode") == "self" or (
+                        mainCM.getConfigVal("cert.mode") == "provided" and mainCM.getConfigVal(
+                        "cert.providedMode.caProvided")):
+                    certInfoReturn = subprocess.run(
+                        ["openssl", "x509", "-in", mainCM.getConfigVal('cert.certs.CARootCert'), "--text"], shell=False,
+                        capture_output=True, text=True, check=False)
+                    self.dialog.scrollbox(mainCM.getConfigVal('cert.certs.CARootCert') + "\n\n" + certInfoReturn.stdout,
+                                          title="CA Cert Info")
 
             if choice == "(2)":
-                logging.debug("Verifying current cert setup (TODO)")
+                log.debug("Verifying current cert setup (TODO)")
                 # TODO
                 # TODO:: in self/provided mode where applicable: openssl verify -verbose -CAfile /etc/oqm/certs/CArootCert.crt /etc/oqm/certs/systemCert.crt
             if choice == "(3)":
-                logging.debug("Setting cert mode")
+                log.debug("Setting cert mode")
                 self.promptForConfigChange(
                     "The method the system will use to get certs ('self', 'letsEncrypt', or 'provided'):",
                     "Set Cert Mode",
@@ -323,12 +336,12 @@ class UserInteraction:
                     validators=[InputValidators.isCertMode]
                 )
             if choice == "(4)":
-                logging.debug("Regenerating Certs")
+                log.debug("Regenerating Certs")
                 forceCaRegen = False
                 if mainCM.getConfigVal("cert.mode") == "self":
                     self.dialog.yesno("Regenerate root CA (not recommended)?")
                     if code == self.dialog.OK:
-                        logging.info("User chose to regenerate root CA.")
+                        log.info("User chose to regenerate root CA.")
                         forceCaRegen = True
                 result, message = CertsUtils.regenCerts(forceCaRegen, False)
                 header = "Cert Regeneration Complete"
@@ -338,13 +351,13 @@ class UserInteraction:
                 self.dialog.infobox("Restarting services. Please wait.")
                 ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
             if choice == "(5)":
-                logging.info("Toggling cron to regen certs")
+                log.info("Toggling cron to regen certs")
                 if CertsUtils.isAutoRegenCertsEnabled():
                     CertsUtils.disableAutoRegenCerts()
                 else:
                     CertsUtils.enableAutoRegenCerts()
             if choice == "(6)":
-                logging.debug("Setting private key location")
+                log.debug("Setting private key location")
                 self.promptForConfigChange(
                     "The location of the system's private key:",
                     "Set Private Key Location",
@@ -352,7 +365,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(7)":
-                logging.debug("Setting public cert location")
+                log.debug("Setting public cert location")
                 self.promptForConfigChange(
                     "The location of the system's public cert/key:",
                     "Set Public Cert/Key Location",
@@ -360,7 +373,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(8)":
-                logging.debug("Setting CA private key location")
+                log.debug("Setting CA private key location")
                 self.promptForConfigChange(
                     "The location of the system's CA private key:",
                     "Set CA Private Key Location",
@@ -368,7 +381,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(9)":
-                logging.debug("Setting CA public cert location")
+                log.debug("Setting CA public cert location")
                 self.promptForConfigChange(
                     "The location of the system's CA public cert/key:",
                     "Set CA Public Cert/Key Location",
@@ -376,7 +389,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(10)":
-                logging.debug("Setting country name for self-signed cert")
+                log.debug("Setting country name for self-signed cert")
                 self.promptForConfigChange(
                     "The country name for self-signed certs:",
                     "Set country name for self-signed certs",
@@ -384,7 +397,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(11)":
-                logging.debug("Setting state or province name for self-signed cert")
+                log.debug("Setting state or province name for self-signed cert")
                 self.promptForConfigChange(
                     "The state or province name for self-signed certs:",
                     "Set state or province name for self-signed certs",
@@ -392,7 +405,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(12)":
-                logging.debug("Setting locality name for self-signed cert")
+                log.debug("Setting locality name for self-signed cert")
                 self.promptForConfigChange(
                     "The locality name for self-signed certs:",
                     "Set locality name for self-signed certs",
@@ -400,7 +413,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(13)":
-                logging.debug("Setting organization name for self-signed cert")
+                log.debug("Setting organization name for self-signed cert")
                 self.promptForConfigChange(
                     "The organization name for self-signed certs:",
                     "Set organization name for self-signed certs",
@@ -408,7 +421,7 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(14)":
-                logging.debug("Setting organizational unit name for self-signed cert")
+                log.debug("Setting organizational unit name for self-signed cert")
                 self.promptForConfigChange(
                     "The organizational unit name for self-signed certs:",
                     "Set organizational unit name for self-signed certs",
@@ -416,37 +429,38 @@ class UserInteraction:
                     validators=[InputValidators.isNotEmpty]
                 )
             if choice == "(15)":
-                logging.debug("Setting that the user has accepted Let's Encrypt's terms of use")
+                log.debug("Setting that the user has accepted Let's Encrypt's terms of use")
                 mainCM.setConfigValInFile("cert.letsEncryptMode", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
                 mainCM.rereadConfigData()
             if choice == "(16)":
-                logging.debug("Setting if the CA was also provided.")
+                log.debug("Setting if the CA was also provided.")
                 code = self.dialog.yesno("Are you providing your own CA file?")
                 caProvided = False
                 if code == self.dialog.OK:
                     caProvided = True
-                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                mainCM.setConfigValInFile("cert.providedMode.caProvided", caProvided,
+                                          ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
                 mainCM.rereadConfigData()
             if choice == "(17)":
-                logging.debug("Installing CA on host")
+                log.debug("Installing CA on host")
                 result, message = CertsUtils.ensureCaInstalled()
                 if not result:
                     self.dialog.msgbox(f"Failed to setup CA on host: \n{message}", title="Failed")
         self.dialog.yesno("Regenerate certs? Not necessary if no config changed.")
         if code == self.dialog.OK:
-            logging.info("User chose to regenerate root CA.")
+            log.info("User chose to regenerate root CA.")
             forceCaRegen = False
             self.dialog.yesno("Regenerate root CA (not recommended)?")
             if code == self.dialog.OK:
-                logging.info("User chose to regenerate root CA.")
+                log.info("User chose to regenerate root CA.")
                 forceCaRegen = True
             CertsUtils.regenCerts(forceCaRegen, False)
             self.dialog.infobox("Restarting services. Please wait.")
             ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
-        logging.debug("Done running manage certs menu.")
+        log.debug("Done running manage certs menu.")
 
     def manageEmailSettings(self):
-        logging.info("Entering flow for managing E-mail settings.")
+        log.info("Entering flow for managing E-mail settings.")
         # TODO:: add option to test email settings: https://docs.python.org/3.8/library/email.examples.html
         # Show current email settings. Ask if want to change
         while True:
@@ -530,11 +544,11 @@ class UserInteraction:
                 else:
                     self.dialog.msgbox("FAILED to send test message.\nPlease check settings and try again.")
 
-        logging.debug("Done running manage email settings menu.")
+        log.debug("Done running manage email settings menu.")
         self.promptForServiceRestart(True)
 
     def userAdminMenu(self):
-        logging.debug("Running User Admin menu.")
+        log.debug("Running User Admin menu.")
         while True:
             code, choice = self.dialog.menu(
                 "System Users are managed via Keycloak.\nPlease choose an option:",
@@ -559,10 +573,10 @@ class UserInteraction:
                     width=UserInteraction.WIDE_WIDTH
                 )
 
-        logging.debug("Done running user admin menu.")
+        log.debug("Done running user admin menu.")
 
     def cleanMaintUpdatesMenu(self):
-        logging.debug("Running Cleanup, Maintenance, and Updates menu.")
+        log.debug("Running Cleanup, Maintenance, and Updates menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Please choose an option:",
@@ -577,7 +591,7 @@ class UserInteraction:
                 ]
             )
             UserInteraction.clearScreen()
-            logging.debug('Main menu choice: %s, code: %s', choice, code)
+            log.debug('Main menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
 
@@ -595,14 +609,14 @@ class UserInteraction:
             if choice == "(6)":
                 code = self.dialog.yesno("Restart device?", title="Restart Device?")
                 if code == self.dialog.OK:
-                    logging.info("User chose to reboot the device.")
+                    log.info("User chose to reboot the device.")
                     self.dialog.infobox("Rebooting device. Please wait.")
                     os.system('reboot')
 
-        logging.debug("Done Cleanup, Maintenance, and Updates menu.")
+        log.debug("Done Cleanup, Maintenance, and Updates menu.")
 
     def updatesManagementMenu(self):
-        logging.debug("Running Updates menu.")
+        log.debug("Running Updates menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Manage the system's updates:",
@@ -626,17 +640,17 @@ class UserInteraction:
 
                 code = self.dialog.yesno("Updates complete. Restart?", title="Restart?")
                 if code == self.dialog.OK:
-                    logging.info("User chose to restart after updates.")
+                    log.info("User chose to restart after updates.")
                     os.system('reboot')
                 else:
-                    logging.info("User chose not to restart after updates.")
+                    log.info("User chose not to restart after updates.")
 
             if choice == "(2)":
                 PackageManagement.promptForAutoUpdates()
-        logging.debug("Done running container management menu.")
+        log.debug("Done running container management menu.")
 
     def snapshotsMenu(self):
-        logging.debug("Running snapshots menu.")
+        log.debug("Running snapshots menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Please choose an option:",
@@ -651,12 +665,12 @@ class UserInteraction:
                 ]
             )
             UserInteraction.clearScreen()
-            logging.debug('Menu choice: %s, code: %s', choice, code)
+            log.debug('Menu choice: %s, code: %s', choice, code)
             if code != self.dialog.OK:
                 break
 
             if choice == "(1)":
-                logging.info("Choosing snapshot file to restore from")
+                log.info("Choosing snapshot file to restore from")
 
                 # /usr/bin/dialog --backtitle 'Open QuarterMaster Station Captain VSCRIPT_VERSION' --title 'Choose Snapshot file to restore from.' --fselect '/data/oqm-snapshots/*' 50 200
                 code, snapshotFile = self.dialog.fselect(
@@ -667,32 +681,33 @@ class UserInteraction:
                 )
 
                 if code != self.dialog.OK:
-                    logging.info("User chose not to restore snapshot after all.")
+                    log.info("User chose not to restore snapshot after all.")
                 else:
-                    logging.info("User chose snapshot file %s", snapshotFile)
+                    log.info("User chose snapshot file %s", snapshotFile)
                     if not os.path.exists(snapshotFile):
-                        logging.error("File chosen by user does not exist.")
+                        log.error("File chosen by user does not exist.")
                         self.dialog.msgbox("File chosen does not exist.")
                         continue
                     if not os.path.isfile(snapshotFile):
-                        logging.error("File chosen by user not a file.")
+                        log.error("File chosen by user not a file.")
                         self.dialog.msgbox("File chosen was not a file.")
                         continue
                     if not snapshotFile.endswith((".tar.gz", ".tar.xz", ".tar.bz")):
-                        logging.error("File chosen by user not a valid type.")
+                        log.error("File chosen by user not a valid type.")
                         self.dialog.msgbox("File chosen was not a supported type.")
                         continue
 
                     code = self.dialog.yesno("Take a preemptive snapshot, just in case?")
                     if code == self.dialog.OK:
-                        logging.info("User chose to take a preemptive snapshot.")
+                        log.info("User chose to take a preemptive snapshot.")
                         SnapshotUtils.performSnapshot(SnapshotTrigger.preemptive)
                     else:
-                        logging.info("User chose not to take a preemptive snapshot.")
+                        log.info("User chose not to take a preemptive snapshot.")
 
-                    code = self.dialog.yesno("Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
+                    code = self.dialog.yesno(
+                        "Are you want to restore the following snapshot?\n" + snapshotFile + "\n\nThis can't be undone.")
                     if code != self.dialog.OK:
-                        logging.info("User chose not to do the restore after all.")
+                        log.info("User chose not to do the restore after all.")
                         continue
 
                     SnapshotUtils.restoreFromSnapshot(snapshotFile)
@@ -702,7 +717,8 @@ class UserInteraction:
                 if not result:
                     self.dialog.msgbox(report, title="Error taking Snapshot")
                 else:
-                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report, title="Snapshot successful")
+                    self.dialog.msgbox("Snapshot was taken successfully.\n\nOutput File:\n" + report,
+                                       title="Snapshot successful")
             if choice == "(3)":
                 if SnapshotUtils.isAutomaticEnabled():
                     SnapshotUtils.disableAutomatic()
@@ -734,10 +750,10 @@ class UserInteraction:
                 if SnapshotUtils.isAutomaticEnabled():
                     SnapshotUtils.enableAutomatic()
 
-        logging.debug("Done snapshots menu.")
+        log.debug("Done snapshots menu.")
 
     def dataManagementMenu(self):
-        logging.debug("Running data management menu.")
+        log.debug("Running data management menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Manage the system's data:",
@@ -760,7 +776,7 @@ class UserInteraction:
                     title="Confirm"
                 )
                 if code != self.dialog.OK:
-                    logging.info("User chose not to clear data.")
+                    log.info("User chose not to clear data.")
                 else:
                     self.dialog.infobox("Clearing ALL data. Please wait.")
                     if DataUtils.clearAllData():
@@ -768,10 +784,10 @@ class UserInteraction:
                     else:
                         self.dialog.msgbox("Clearing of data FAILED.")
 
-        logging.debug("Done running data management menu.")
+        log.debug("Done running data management menu.")
 
     def containerManagementMenu(self):
-        logging.debug("Running container management menu.")
+        log.debug("Running container management menu.")
         while True:
             code, choice = self.dialog.menu(
                 "Manage the system's containers:",
@@ -779,7 +795,8 @@ class UserInteraction:
                 choices=[
                     ("(1)", "Prune unused container resources"),
                     ("(2)",
-                     ("Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
+                     (
+                         "Disable" if ContainerUtils.isAutomaticEnabled() else "Enable") + " automatic pruning (recommend enabled)"),
                     ("(3)", "Set prune frequency"),
                 ]
             )
@@ -808,33 +825,35 @@ class UserInteraction:
                 if ContainerUtils.isAutomaticEnabled():
                     ContainerUtils.enableAutomatic()
 
-        logging.debug("Done running container management menu.")
+        log.debug("Done running container management menu.")
 
     def setupWizard(self):
-        logging.debug("Running setup wizard.")
-        self.dialog.msgbox("Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.", title="Setup Wizard")
+        log.debug("Running setup wizard.")
+        self.dialog.msgbox(
+            "Welcome to the setup wizard\n\nThis will guide you through a high-level setup of the OQM installation.\n\nYou can run this again later.",
+            title="Setup Wizard")
 
         # Check if already installed, prompt to uninstall
         # if PackageManagement.coreInstalled():
-        #     logging.debug("OQM core components already installed.")
+        #     log.debug("OQM core components already installed.")
         #     code = self.dialog.yesno(
         #         "Remove the current installation? \n\nDo this if you want to start fresh.",
         #         title="Remove current install? - Setup Wizard"
         #     )
         #     if code != self.dialog.OK:
-        #         logging.info("User chose not to uninstall the current setup.")
+        #         log.info("User chose not to uninstall the current setup.")
         #     else:
-        #         logging.info("User chose to uninstall OQM.")
+        #         log.info("User chose to uninstall OQM.")
         #         # TODO:: uninstall, uncomment this
 
         code = self.dialog.yesno(
-            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today.\n - this is your first time logging into the system\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
+            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today.\n - this is your first time log into the system\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
             title="Update system? - Setup Wizard"
         )
         if code != self.dialog.OK:
-            logging.info("User chose not to update.")
+            log.info("User chose not to update.")
         else:
-            logging.info("User chose to update and restart.")
+            log.info("User chose to update and restart.")
             self.dialog.infobox("Updating OS/system. Please wait.")
             result, message = PackageManagement.updateSystem()
             # TODO:: error check
@@ -842,15 +861,15 @@ class UserInteraction:
 
         # Check if not installed, prompt to install
         if not PackageManagement.coreInstalled():
-            logging.debug("OQM components not yet installed.")
+            log.debug("OQM components not yet installed.")
             code = self.dialog.yesno(
                 "Install core OQM components?",
                 title="Perform core component install? - Setup Wizard"
             )
             if code != self.dialog.OK:
-                logging.info("User chose not to install core components.")
+                log.info("User chose not to install core components.")
             else:
-                logging.info("User chose to install core components.")
+                log.info("User chose to install core components.")
                 self.dialog.infobox("Installing core components. Please wait.")
                 PackageManagement.installCore()
                 self.dialog.msgbox("Core components installed!", title="Setup Wizard")
@@ -862,10 +881,10 @@ class UserInteraction:
             title="Automatic Snapshots? - Setup Wizard"
         )
         if code != self.dialog.OK:
-            logging.info("User chose not to automatically perform snapshots.")
+            log.info("User chose not to automatically perform snapshots.")
             SnapshotUtils.disableAutomatic()
         else:
-            logging.info("User chose to automatically perform snapshots.")
+            log.info("User chose to automatically perform snapshots.")
             SnapshotUtils.enableAutomatic()
 
         self.dialog.msgbox(
@@ -880,10 +899,10 @@ class UserInteraction:
             title="Automatic Certificate Regeneration? - Setup Wizard"
         )
         if code != self.dialog.OK:
-            logging.info("User chose not to automatically regenerate certs.")
+            log.info("User chose not to automatically regenerate certs.")
             CertsUtils.enableAutoRegenCerts()
         else:
-            logging.info("User chose to automatically regenerate certs.")
+            log.info("User chose to automatically regenerate certs.")
             CertsUtils.disableAutoRegenCerts()
 
         # TODO: if not .local, ask to select cert type
@@ -892,5 +911,74 @@ class UserInteraction:
             "Setup Wizard complete!",
             title="Setup Wizard"
         )
+
+    def pluginsMenu(self):
+        log.debug("Running Plugins menu.")
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Plugins Menu",
+                choices=[
+                    ("(1)", "Review Plugins"),
+                    ("(2)", "Select Plugins")
+                ]
+            )
+            UserInteraction.clearScreen()
+            log.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+            if choice == "(1)":
+                self.showPlugins()
+            if choice == "(2)":
+                self.selectPluginsMenu()
+
+        log.debug("Done running manage install menu.")
+
+    @staticmethod
+    def mapPluginSelection(pluginFromPm):
+        return (
+            pluginFromPm['package'],
+            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            pluginFromPm['installed']
+        )
+
+    def getPluginSelectionArray(self):
+        log.debug("Getting plugin selection array")
+        plugins = PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS)
+        return map(UserInteraction.mapPluginSelection, plugins)
+
+    def selectPluginsMenu(self):
+        # https://pythondialog.sourceforge.io/doc/widgets.html#build-list
+        code, installedPluginSelection = self.dialog.buildlist(
+            title="Select Installed Plugins",
+            text="Select which plugins to be installed. To be installed on right, not to be installed on left.",
+            visit_items=True,
+            items=self.getPluginSelectionArray()
+        )
+        if code != self.dialog.OK:
+            return
+        self.dialog.infobox("Applying plugin selection. Please wait.")
+        PackageManagement.ensureOnlyPluginsInstalled(installedPluginSelection)
+        self.dialog.msgbox(
+            "Plugin Selection Complete!",
+            title="Plugin Selection"
+        )
+
+    def showPlugins(self):
+        toShow = ""
+        for curPackage in PackageManagement.getOqmPackagesList(PackageManagement.OQM_PLUGINS):
+            print(curPackage)
+            toShow += curPackage['displayName'] + "\n"
+            toShow += "\tVersion: " + curPackage['version'] + "\n"
+            toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
+            toShow += "\tDescription: " + curPackage['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="Available Plugins",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
+
 
 ui = UserInteraction()

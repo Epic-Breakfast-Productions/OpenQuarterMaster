@@ -18,13 +18,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
-import tech.ebp.oqm.core.baseStation.service.OqmDatabaseService;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
 
 @Slf4j
 @NoArgsConstructor
 public abstract class RestInterface {
 
+	/**
+	 * For normal use, don't use this. use the `oqmDatabases`
+	 */
 	@Inject
 	@Getter(AccessLevel.PROTECTED)
 	OqmDatabaseService oqmDatabaseService;
@@ -47,6 +50,9 @@ public abstract class RestInterface {
 
 	@CookieParam("oqmDb")
 	String oqmDb;
+
+	@Getter(AccessLevel.PROTECTED)
+	ArrayNode oqmDatabases;
 
 	protected boolean hasIdToken() {
 		return this.getIdToken() != null &&
@@ -102,6 +108,7 @@ public abstract class RestInterface {
 
 	@PostConstruct
 	void initialLogAndEntityProcess() {
+		this.oqmDatabases = this.oqmDatabaseService.getDatabases();
 		this.logRequestAndProcessEntity();
 	}
 
@@ -133,8 +140,11 @@ public abstract class RestInterface {
 
 	public String getSelectedDb() {
 		if (this.oqmDb == null || this.oqmDb.isBlank()) {
+			if(this.oqmDatabases == null || this.oqmDatabases.isEmpty()){
+				throw new IllegalStateException("Cannot have no databases.");
+			}
 			//TODO: this but smarter?
-			return this.oqmDatabaseService.getDatabases().get(0).get("id").asText();
+			return this.getOqmDatabases().get(0).get("id").asText();
 		}
 		return this.oqmDb;
 	}

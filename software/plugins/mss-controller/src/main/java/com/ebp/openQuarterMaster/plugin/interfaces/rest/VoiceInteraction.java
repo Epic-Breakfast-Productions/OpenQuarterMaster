@@ -1,20 +1,16 @@
 package com.ebp.openQuarterMaster.plugin.interfaces.rest;
 
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.ItemVoiceSearchResults;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
+import com.ebp.openQuarterMaster.plugin.interfaces.RestInterface;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.service.VoiceSearchService;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.entity.ContentType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -25,10 +21,10 @@ import java.io.IOException;
 @Slf4j
 @RequestScoped
 @Tags({@Tag(name = "Voice Interaction", description = "Endpoints for interacting via voice")})
-public class VoiceInteraction {
+public class VoiceInteraction  extends RestInterface {
 	
-	@Inject
-	VoiceSearchService voiceSearchService;
+//	@Inject
+//	VoiceSearchService voiceSearchService;
 	
 	@ConfigProperty(name = "voiceSearch.enabled")
 	boolean enabled;
@@ -50,27 +46,27 @@ public class VoiceInteraction {
 		return this.enabled;
 	}
 	
-	@GET
-	@Path("/test")
-	@RolesAllowed("inventoryView")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response identifyModuleBlock(
-	) throws IOException {
-		if(!this.enabled){
-			return getDisabledResponse();
-		}
-		return Response.ok(this.voiceSearchService.listenForIntent()).build();
-	}
-	
-	@GET
-	@Path("/itemSearch")
-	@RolesAllowed("inventoryView")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response itemSearchWithVoice(
-	) throws IOException {
-		if(!this.enabled){
-			return getDisabledResponse();
-		}
-		return Response.ok(this.voiceSearchService.searchForItems()).build();
-	}
+//	@GET
+//	@Path("/test")
+//	@RolesAllowed("inventoryView")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response identifyModuleBlock(
+//	) throws IOException {
+//		if(!this.enabled){
+//			return getDisabledResponse();
+//		}
+//		return Response.ok(this.voiceSearchService.listenForIntent()).build();
+//	}
+//
+//	@GET
+//	@Path("/itemSearch")
+//	@RolesAllowed("inventoryView")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response itemSearchWithVoice(
+//	) throws IOException {
+//		if(!this.enabled){
+//			return getDisabledResponse();
+//		}
+//		return Response.ok(this.voiceSearchService.searchForItems()).build();
+//	}
 }

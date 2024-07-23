@@ -3,6 +3,8 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.info;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.ValidatableResponse;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @TestHTTPEndpoint(GeneralInfo.class)
 class GeneralInfoTest extends RunningServerTest {
-	
-	@ConfigProperty(name = "service.ops.currency")
-	Currency currency;
+
+	Currency currency = ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class);
 	
 	@Test
 	public void testGetCurrency(){

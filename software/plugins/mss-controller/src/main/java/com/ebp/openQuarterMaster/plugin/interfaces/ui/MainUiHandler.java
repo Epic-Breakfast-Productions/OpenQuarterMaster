@@ -28,17 +28,15 @@ public class MainUiHandler extends UiHandler {
     
     @Inject
     ModuleMaster moduleMaster;
-    
-    @ConfigProperty(name = "voiceSearch.enabled")
-    boolean voiceSearchEnabled;
+//
+//    @ConfigProperty(name = "voiceSearch.enabled")
+//    boolean voiceSearchEnabled;
     
     @GET
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed("inventoryView")
     public TemplateInstance get() {
-        return page.data("moduleMaster", moduleMaster)
-                   .data("voiceSearchEnabled", voiceSearchEnabled)
-                   .data("username", this.getUserToken().getClaim("name"));
+        return this.setupTemplate(this.page)
+            .data("moduleMaster", this.moduleMaster);
     }
-    
 }

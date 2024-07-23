@@ -92,7 +92,8 @@ public class ImagePassthrough extends PassthroughProvider {
 			acceptType,
 			searchFormId,
 			otherModalId,
-			inputIdPrepend
+			inputIdPrepend,
+			"select"
 		);
 	}
 	

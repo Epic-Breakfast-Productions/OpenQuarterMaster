@@ -46,7 +46,7 @@ public abstract class UiProvider extends RestInterface {
 	protected TemplateInstance setupPageTemplate(Template template) {
 		return template
 				   .data("userInfo", this.getUserInfo())
-				   .data("oqmDbs", this.getOqmDatabaseService().getDatabases())
+				   .data("oqmDbs", this.getOqmDatabases())
 				   .data("selectedOqmDb", this.getSelectedDb())
 				   .data("traceId", this.span.getSpanContext().getTraceId())
 				   ;

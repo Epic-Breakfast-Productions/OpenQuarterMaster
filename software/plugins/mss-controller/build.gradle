@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.3"
+    id "io.freefair.lombok" version "8.6"
 }
 
 repositories {
@@ -25,7 +25,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-micrometer'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
 
-    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:1.0.0-SNAPSHOT'
+    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.1.0-SNAPSHOT'
 
     implementation 'com.fazecast:jSerialComm:2.10.1'
     implementation 'com.github.docker-java:docker-java:3.3.3'
@@ -33,20 +33,26 @@ dependencies {
 
 
     // webjars
-    implementation 'org.webjars:jquery:3.6.4'
-    implementation 'org.webjars:bootstrap:5.3.0'
+    implementation 'org.webjars:jquery:3.7.1'
+    implementation 'org.webjars:bootstrap:5.3.3'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'net.datafaker:datafaker:2.0.1'
+
+    testImplementation 'com.microsoft.playwright:playwright:1.45.0'
+    testImplementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 
 group 'com.ebp.openQuarterMaster.plugin'
 version '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
+    }
 }
 
 test {

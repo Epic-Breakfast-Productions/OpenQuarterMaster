@@ -43,12 +43,10 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 	StorageBlockServiceTest(
 		StorageBlockService storageBlockService,
 		StorageBlockTestObjectCreator storageBlockTestObjectCreator,
-		TestUserService testUserService,
 		InventoryItemService inventoryItemService
 	) {
 		this.storageBlockService = storageBlockService;
 		this.storageBlockTestObjectCreator = storageBlockTestObjectCreator;
-		this.testUserService = testUserService;
 		
 		this.inventoryItemService = inventoryItemService;
 	}
@@ -98,7 +96,7 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 	@Ignore
 	@Test
 	public void testDeleteWithRelational(){
-		User testUser = this.testUserService.getTestUser();
+		User testUser = this.getTestUserService().getTestUser();
 		StorageBlock storageBlock = this.getTestObject();
 		Map<String, Set<ObjectId>> expectedRefs = new HashMap<>();
 		

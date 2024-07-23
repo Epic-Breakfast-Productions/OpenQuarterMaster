@@ -1,8 +1,9 @@
 package com.ebp.openQuarterMaster.plugin.interfaces.rest;
 
+import com.ebp.openQuarterMaster.plugin.interfaces.RestInterface;
 import com.ebp.openQuarterMaster.plugin.moduleInteraction.ModuleMaster;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.HighlightBlocksCommand;
-import com.ebp.openQuarterMaster.plugin.moduleInteraction.command.response.CommandResponse;
+import com.ebp.openQuarterMaster.plugin.model.module.command.HighlightBlocksCommand;
+import com.ebp.openQuarterMaster.plugin.model.module.command.response.CommandResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,7 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 @Path("/api/v1/module/{moduleSerialId}")
 @RequestScoped
 @Tags({@Tag(name = "Module Interaction", description = "Endpoints for interacting with modules")})
-public class ModuleInteraction {
+public class ModuleInteraction extends RestInterface {
     
     @Inject
     ModuleMaster master;

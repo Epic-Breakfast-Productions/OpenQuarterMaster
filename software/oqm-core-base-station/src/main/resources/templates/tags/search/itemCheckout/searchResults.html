@@ -15,24 +15,25 @@
 !}
   <thead>
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
   <tr>
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
-    <th scope="col">Status</th>
+    <th scope="col" style="width: 75px;">Status</th>
+    <th scope="col">Amount</th>
     <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
     <th scope="col">For</th>
     <th scope="col">By</th>
     <th scope="col">Due Back</th>
-    <th scope="col" width="125px">Actions</th>
+    <th scope="col" style="width: 125px;">Actions</th>
   </tr>
   </thead>
   <tbody>
   {#if searchResults.get("empty").asBoolean()}
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       <h2>
         No Checkouts Found
       </h2>
@@ -47,7 +48,7 @@
   <tr class="align-middle">
     {#if showItem}
     <td>
-      {#links/inventoryItem inventoryItem=result.get("item").asText()}{/links/inventoryItem}
+      {#links/inventoryItem inventoryItem=result.get("item").asText() itemName=result.get("item-name").asText()}{/links/inventoryItem}
     </td>
     {/if}
       <td class="table-{#if result.get("stillCheckedOut").asBoolean()}active{#else}success{/if}">
@@ -58,22 +59,37 @@
       {/if}
       </td>
     <td>
-      {#links/storageBlock storageBlock=result.get("checkedOutFrom").asText()}{/links/storageBlock}
+      {#if result.get("checkedOut").get("storedType").asText() == "AMOUNT"}
+        {#amountDisplay amount=result.get("checkedOut").get("amount")}{/amountDisplay}
+      {#else}
+        1
+      {/if}
     </td>
     <td>
-      {#when result.get("checkedOutFor").asText()}
+      {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
+    </td>
+    <td>
+      {#let checkedOutFor=result.get("checkedOutFor") }
+      {#when checkedOutFor.get("type").asText()}
       {#is "OQM_ENTITY"}
-      {#interactingEntityRef entityRef=result.getCheckedOutFor().getEntity()}{/interactingEntityRef}
+        {#interactingEntityRef entityRef=result.get("checkedOutFor").get("entityRef")}{/interactingEntityRef}
       {#is "EXT_SYS_USER"}
+        {checkedOutFor.get("name")} /
+        {checkedOutFor.get("externalId")}
       {/when}
+      {/let}
     </td>
     <td>
-		SOME USER
-      {!{#interactingEntityRef entityRef=cdi:ItemCheckoutService.getCreateEvent(result.getId()).getEntity()}{/interactingEntityRef}!}
+      {#interactingEntityRef entityRef=result.get("creatorRef")}{/interactingEntityRef}
     </td>
     <td>
-      {! TODO:: special styling !}
-      {result.get("dueBack").asText()}
+      {#let dueBack=result.get("dueBack").asText()}
+        {#if dueBack == 'null'}
+          N/A
+        {#else}
+          {cdi:DateTimeService.formatForUi(dueBack)}
+        {/if}
+      {/let}
     </td>
     {#if actionType == 'full'}
     <td>
@@ -97,10 +113,10 @@
         {#icons/select}{/icons/select} Select
       </button>
     </td>
-    {#else if actionType == 'viewLink'}
+    {#else if actionType == 'viewCheckin'}
     <td>
-      {#links/itemCheckoutButton id=result.getId()}{/links/itemCheckoutButton}
-      <a href="/itemCheckout?checkin={id}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
+      {#links/itemCheckoutButton id=result.get("id").asText()}{/links/itemCheckoutButton}
+      <a href="/itemCheckout?checkin={result.get("id").asText()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
     </td>
     {/if}
   </tr>
@@ -110,7 +126,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="7" class="text-center">
+    <td colspan="8" class="text-center">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>

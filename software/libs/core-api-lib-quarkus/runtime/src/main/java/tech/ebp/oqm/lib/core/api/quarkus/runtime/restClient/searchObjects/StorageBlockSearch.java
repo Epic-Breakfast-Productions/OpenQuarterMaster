@@ -1,10 +1,7 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
 import jakarta.ws.rs.QueryParam;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -24,7 +21,9 @@ public class StorageBlockSearch extends SearchKeyAttObject {
 	List<String> parents;
 	//	@QueryParam("stores") List<ObjectId> stores; //TODO: need aggregate?
 	@QueryParam("parent") String parent; //TODO:
+	@lombok.Builder.Default
 	@QueryParam("isParent") Boolean isParent = false;
+	@lombok.Builder.Default
 	@QueryParam("isChild") Boolean isChild = false;
 	@QueryParam("isChildOf") String isChildOf;
 	//capacities

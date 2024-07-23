@@ -1,9 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
@@ -12,8 +9,7 @@ import tech.ebp.oqm.core.api.model.object.HasParent;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.core.api.model.rest.tree.ParentedMainObjectTreeNode;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 import java.util.Collection;
 import java.util.List;

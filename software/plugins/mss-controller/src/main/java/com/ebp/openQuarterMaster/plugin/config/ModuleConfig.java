@@ -9,6 +9,10 @@ import java.util.Set;
 
 @ConfigMapping(prefix = "moduleConfig")
 public interface ModuleConfig {
+
+	@WithDefault("false")
+	@WithName("autoCreateStorageBlocksInAllDbs")
+	Boolean autoCreateStorageBlocksInAllDbs();
 	
 	@WithName("serial")
 	SerialConfig serial();

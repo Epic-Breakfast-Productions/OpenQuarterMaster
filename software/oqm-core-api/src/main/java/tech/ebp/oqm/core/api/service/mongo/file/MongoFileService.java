@@ -27,7 +27,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.model.object.media.FileHashes;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;

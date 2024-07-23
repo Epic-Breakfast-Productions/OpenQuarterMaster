@@ -15,8 +15,8 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.rest.search.HistorySearch;
-import tech.ebp.oqm.core.api.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
