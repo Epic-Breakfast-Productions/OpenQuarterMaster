@@ -13,10 +13,5 @@ public class BasicUiTest extends WebUiTest {
 	public void testPageOverview() {
 		this.getLoggedInPage(this.getTestUserService().getTestUser(), "/");
 
-//		Thread.sleep(5*60*1000);
-		// TODO:: need to tell keycloak devservice to use testcontainer hostname
-//		this.getWebDriverWrapper().goTo("");
 	}
-
-	//TODO:: page lookover test
 }
