@@ -26,7 +26,7 @@ public class LifecycleBean {
 	) throws IOException {
 		log.info(
 			"Finished initting Module Master. Picked up on modules: {}",
-			moduleMaster.getModuleIds()
+			this.moduleMaster.getModuleIds()
 		);
 		
 //		if(this.voiceSearchService.enabled()) {

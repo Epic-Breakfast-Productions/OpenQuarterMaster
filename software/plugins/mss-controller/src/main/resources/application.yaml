@@ -4,6 +4,7 @@ service:
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
 
 voiceSearch:
+  enabled: false
   container:
     engineUri: "unix:///run/user/1000/docker.sock"
     image: "synesthesiam/voice2json"
