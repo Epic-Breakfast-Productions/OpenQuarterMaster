@@ -1,5 +1,11 @@
 # mss-controller-plugin
 
+
+`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`
+
+
+
+
 `./gradlew clean build -Pquarkus.container-image.build=true -Pquarkus.jib.platforms=linux/arm64,linux/amd64 -Pquarkus.container-image.group=ebprod -Pquarkus.container-image.name=oqm-plugin-mss-controller -Pquarkus.container-image.push=true`
 
 This plugin interacts with [MSS Modules](../../../hardware/mss), bringing their functionality into the OQM system.
