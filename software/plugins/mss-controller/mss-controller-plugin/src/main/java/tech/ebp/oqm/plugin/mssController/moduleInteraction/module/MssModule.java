@@ -1,13 +1,13 @@
 package tech.ebp.oqm.plugin.mssController.moduleInteraction.module;
 
 
-import tech.ebp.oqm.plugin.mssController.module.OqmModuleInfo;
-import tech.ebp.oqm.plugin.mssController.module.command.GetModInfoCommand;
-import tech.ebp.oqm.plugin.mssController.module.command.HighlightBlocksCommand;
-import tech.ebp.oqm.plugin.mssController.module.command.IdentifyModCommand;
-import tech.ebp.oqm.plugin.mssController.module.command.MssCommand;
-import tech.ebp.oqm.plugin.mssController.module.command.response.CommandResponse;
-import tech.ebp.oqm.plugin.mssController.module.command.response.GetModuleInfoResponse;
+import tech.ebp.oqm.plugin.mssController.model.module.OqmModuleInfo;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.GetModInfoCommand;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.HighlightBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.IdentifyModCommand;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.MssCommand;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.GetModuleInfoResponse;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.updates.MssUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

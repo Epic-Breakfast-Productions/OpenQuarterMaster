@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.module.command;
+package tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command;
 
 import lombok.AccessLevel;
 import lombok.Getter;

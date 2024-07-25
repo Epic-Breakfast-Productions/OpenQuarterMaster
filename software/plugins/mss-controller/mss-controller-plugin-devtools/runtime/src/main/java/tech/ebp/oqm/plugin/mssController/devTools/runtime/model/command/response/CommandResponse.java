@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.module.command.response;
+package tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

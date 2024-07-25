@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.module;
+package tech.ebp.oqm.plugin.mssController.model.module;
 
 
 import lombok.AllArgsConstructor;

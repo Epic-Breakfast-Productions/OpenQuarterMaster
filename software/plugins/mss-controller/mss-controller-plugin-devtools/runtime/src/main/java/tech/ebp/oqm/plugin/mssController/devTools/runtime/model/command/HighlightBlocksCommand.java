@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.module.command;
+package tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +29,11 @@ public class HighlightBlocksCommand extends MssCommand{
 		String color,
 		Set<Integer> blockNumbers
 	){
-		this.storageBlocks.addAll(blockNumbers.stream().map((Integer curBlockNum) ->new BlockHighlightSettings(curBlockNum, color)).toList());
+		this.storageBlocks.addAll(
+				blockNumbers.stream()
+					.map((Integer curBlockNum) ->new BlockHighlightSettings(curBlockNum, color))
+					.toList()
+		);
 	}
 	
 	public HighlightBlocksCommand(

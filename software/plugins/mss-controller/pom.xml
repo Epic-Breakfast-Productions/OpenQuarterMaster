@@ -18,8 +18,8 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>mss-controller-plugin</module>
         <module>mss-controller-plugin-devtools</module>
+        <module>mss-controller-plugin</module>
     </modules>
 
 <!--    <dependencies>-->

@@ -1,6 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.moduleInteraction.service;
 
-import tech.ebp.oqm.plugin.mssController.module.OqmModuleInfo;
+import tech.ebp.oqm.plugin.mssController.model.module.OqmModuleInfo;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.ItemSearchResults;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.ModuleMaster;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.module.MssModule;

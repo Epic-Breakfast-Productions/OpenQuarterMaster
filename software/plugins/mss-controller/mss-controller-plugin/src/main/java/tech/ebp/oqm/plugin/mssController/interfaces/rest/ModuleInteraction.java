@@ -2,8 +2,8 @@ package tech.ebp.oqm.plugin.mssController.interfaces.rest;
 
 import tech.ebp.oqm.plugin.mssController.interfaces.RestInterface;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.ModuleMaster;
-import tech.ebp.oqm.plugin.mssController.module.command.HighlightBlocksCommand;
-import tech.ebp.oqm.plugin.mssController.module.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.HighlightBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.CommandResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
