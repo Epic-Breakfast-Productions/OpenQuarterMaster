@@ -5,16 +5,9 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
-import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
-import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.Constants;
+import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.MssControllerDevtoolBuildTimeConfig;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +33,7 @@ class CoreApiLibQuarkusProcessor {
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(
 		LaunchModeBuildItem launchMode,
-		CoreApiLibBuildTimeConfig config
+		MssControllerDevtoolBuildTimeConfig config
 	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
