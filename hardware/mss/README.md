@@ -1,5 +1,9 @@
 # Modular Storage System (MSS)
 
+## TODO::
+
+ - https://application.oshwa.org/
+ - Review design, document appropriately
 
 
 ## Resources:
