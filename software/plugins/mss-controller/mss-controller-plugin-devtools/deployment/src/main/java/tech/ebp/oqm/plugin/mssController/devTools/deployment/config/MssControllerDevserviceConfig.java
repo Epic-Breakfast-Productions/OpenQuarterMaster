@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 @ConfigGroup
-public class MssControllerDevserviceConfig {
+public interface MssControllerDevserviceConfig {
 	/**
 	 * Enable devservices
 	 */
 	@WithDefault("true")
-	public boolean enable;
+	Boolean enable();
 
 	/**
 	 * The modules to set up for dev tooling
 	 */
-	public Optional<DevModuleConfig> modules;
+	List<DevModuleConfig> modules();
 }

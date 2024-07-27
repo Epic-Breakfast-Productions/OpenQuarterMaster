@@ -1,16 +1,16 @@
 package tech.ebp.oqm.plugin.mssController.devTools.deployment.config;
 
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
 import tech.ebp.oqm.plugin.mssController.devTools.runtime.Constants;
 
-@ConfigRoot(name= Constants.CONFIG_ROOT_NAME, phase= ConfigPhase.BUILD_TIME)
-public class MssControllerDevtoolBuildTimeConfig {
+@ConfigMapping(prefix = "quarkus." + Constants.CONFIG_ROOT_NAME)
+@ConfigRoot(phase= ConfigPhase.BUILD_TIME)
+public interface MssControllerDevtoolBuildTimeConfig {
 	
 	/**
 	 * Config to manage the devservice stood up.
 	 */
-	@ConfigItem(name="devservice")
-	public MssControllerDevserviceConfig devservice;
+	MssControllerDevserviceConfig devServices();
 }
