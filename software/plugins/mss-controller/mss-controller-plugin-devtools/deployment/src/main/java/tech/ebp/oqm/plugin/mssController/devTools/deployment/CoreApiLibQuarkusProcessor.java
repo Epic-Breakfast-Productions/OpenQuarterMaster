@@ -6,12 +6,12 @@ import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.DevModuleConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.MssControllerDevtoolBuildTimeConfig;
+import tech.ebp.oqm.plugin.mssController.devTools.deployment.testModules.MssTestModule;
+import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.ModuleInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class CoreApiLibQuarkusProcessor {
 	
@@ -36,7 +36,28 @@ class CoreApiLibQuarkusProcessor {
 		MssControllerDevtoolBuildTimeConfig config
 	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
-		Map<String, String> mongoConnectionInfo = new HashMap<>();
+
+		for(DevModuleConfig curModuleConfig : config.devServices().modules()){
+			ModuleInfo newModuleInfo = new ModuleInfo(
+				curModuleConfig.info().specVersion().orElse("1"),
+				curModuleConfig.info().serialId().orElse(UUID.randomUUID().toString()),
+				curModuleConfig.info().manufactureDate().orElse("today"),
+				curModuleConfig.info().numBlocks()
+			);
+
+			MssTestModule testModule = switch (curModuleConfig.type()){
+				case SERIAL -> null;
+				case NETWORK -> null;
+			} ;
+
+
+//			new DevServicesResultBuildItem.RunningDevService()
+
+		}
+
+
+
+
 		return List.of();
 	}
 }

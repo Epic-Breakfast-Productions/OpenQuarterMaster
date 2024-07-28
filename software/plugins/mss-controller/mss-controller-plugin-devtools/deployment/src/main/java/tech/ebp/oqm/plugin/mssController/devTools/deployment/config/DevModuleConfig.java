@@ -9,26 +9,46 @@ import java.util.Optional;
 public interface DevModuleConfig {
 
 	/**
-	 * The spec version this module uses. Defaults to newest if not present
-	 */
-	Optional<String> specVersion();
-
-	/**
-	 * The serial id for this module. Auto generated if not specified.
+	 * Info for the module
 	 * @return
 	 */
-	Optional<String> serialId();
+	MouduleInfo info();
 
 	/**
-	 * The manufacture date for this module. Auto generated if not specified.
+	 * The interface type of this mss module
 	 * @return
 	 */
-	Optional<String> manufactureDate();
+	@WithDefault("NETWORK")
+	TestModuleType type();
 
-	/**
-	 * The number of blocks supplied by the module.
-	 * @return
-	 */
-	@WithDefault("64")
-	Integer numBlocks();
+	interface MouduleInfo{
+
+		/**
+		 * The spec version this module uses. Defaults to newest if not present
+		 */
+		Optional<String> specVersion();
+
+		/**
+		 * The serial id for this module. Auto generated if not specified.
+		 * @return
+		 */
+		Optional<String> serialId();
+
+		/**
+		 * The manufacture date for this module. Auto generated if not specified.
+		 * @return
+		 */
+		Optional<String> manufactureDate();
+
+		/**
+		 * The number of blocks supplied by the module.
+		 * @return
+		 */
+		@WithDefault("64")
+		Integer numBlocks();
+	}
+
+	public enum TestModuleType{
+		SERIAL, NETWORK
+	}
 }
