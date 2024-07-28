@@ -15,24 +15,14 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-
     <packaging>pom</packaging>
     <modules>
+        <module>mss-controller-plugin-lib</module>
+        <module>mss-controller-plugin-testModuleServer</module>
         <module>mss-controller-plugin-devtools</module>
         <module>mss-controller-plugin</module>
     </modules>
-
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>junit</groupId>-->
-<!--            <artifactId>junit</artifactId>-->
-<!--            <version>4.11</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
-
     <build>
-
         <pluginManagement>
             <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
