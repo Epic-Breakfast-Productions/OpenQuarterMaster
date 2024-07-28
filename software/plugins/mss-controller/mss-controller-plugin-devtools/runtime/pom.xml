@@ -11,6 +11,11 @@
 	</parent>
 	<dependencies>
 		<dependency>
+			<groupId>tech.ebp.oqm.plugin</groupId>
+			<artifactId>mss-controller-plugin-lib</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-arc</artifactId>
 		</dependency>

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command;
+package tech.ebp.oqm.plugin.mssController.lib.command;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

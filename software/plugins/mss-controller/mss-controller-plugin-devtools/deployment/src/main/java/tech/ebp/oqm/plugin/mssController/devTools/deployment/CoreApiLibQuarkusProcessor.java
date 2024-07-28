@@ -9,7 +9,7 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.DevModuleConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.MssControllerDevtoolBuildTimeConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.testModules.MssTestModule;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.ModuleInfo;
+import tech.ebp.oqm.plugin.mssController.lib.command.response.ModuleInfo;
 
 import java.util.*;
 

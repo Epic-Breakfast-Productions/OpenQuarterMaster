@@ -1,11 +1,10 @@
 package tech.ebp.oqm.plugin.mssController.moduleInteraction;
 
 import jakarta.inject.Named;
-import jdk.jfr.Name;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.module.ModuleOqmDbInfo;
 import tech.ebp.oqm.plugin.mssController.model.module.OqmModuleInfo;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.HighlightBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.lib.command.HighlightBlocksCommand;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.module.serialModule.MssSerialModule;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.module.MssModule;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.service.StorageBlockInteractionService;

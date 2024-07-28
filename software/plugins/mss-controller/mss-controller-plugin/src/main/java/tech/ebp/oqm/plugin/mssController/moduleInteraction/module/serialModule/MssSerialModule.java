@@ -1,9 +1,9 @@
 package tech.ebp.oqm.plugin.mssController.moduleInteraction.module.serialModule;
 
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.module.MssModule;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.HighlightBlocksCommand;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.MssCommand;
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.lib.command.HighlightBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.lib.command.MssCommand;
+import tech.ebp.oqm.plugin.mssController.lib.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.moduleInteraction.updates.MssUpdate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

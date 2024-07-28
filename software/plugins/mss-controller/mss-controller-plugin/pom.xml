@@ -39,12 +39,12 @@
     <dependencies>
         <dependency>
             <groupId>tech.ebp.oqm.plugin</groupId>
-            <artifactId>mss-controller-plugin-devtools</artifactId>
+            <artifactId>mss-controller-plugin-lib</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>tech.ebp.oqm.plugin</groupId>
-            <artifactId>mss-controller-plugin-lib</artifactId>
+            <artifactId>mss-controller-plugin-devtools</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
