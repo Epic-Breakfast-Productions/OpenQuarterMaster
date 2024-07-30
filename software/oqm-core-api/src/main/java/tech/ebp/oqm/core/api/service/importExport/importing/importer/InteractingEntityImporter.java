@@ -5,7 +5,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -20,12 +22,17 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ApplicationScoped
 public class InteractingEntityImporter extends TopLevelImporter<EntityImportResult> {
 
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	InteractingEntityService interactingEntityService;
+
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	CoreApiInteractingEntity coreApiInteractingEntity;
 
 
 	@Override
@@ -51,11 +58,20 @@ public class InteractingEntityImporter extends TopLevelImporter<EntityImportResu
 		long addedEntityCount = 0;
 
 		for(File curEntityDataFile : getObjectFiles(directory)){
+			log.debug("Reading in interacting entity from file {}", curEntityDataFile.getName());
+
+			if(curEntityDataFile.getName().startsWith(this.getCoreApiInteractingEntity().getId().toHexString())){
+				log.info("File contains core api interacting entity. Skipping.");
+				continue;
+			}
+
 			InteractingEntity importingUser = ObjectUtils.OBJECT_MAPPER.readValue(curEntityDataFile, InteractingEntity.class);
 			//if we already have this exact user
 			if(existentUserIds.contains(importingUser.getId())){
+				log.info("Interacting entity already present.");
 				continue;
 			}
+			log.debug("Importing interacting entity: {}", importingUser);
 
 			ObjectId hit = null;
 			if(options.getInteractingEntityMapStrategies().contains(InteractingEntityMapStrategy.EMAIL)){

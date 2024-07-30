@@ -25,7 +25,7 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.3.2/bootswatch.yeti.min.css" rel="stylesheet">
+	<link href="/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
@@ -51,11 +51,11 @@ Ingests:
 		<a class="navbar-brand p-0" href="/overview">
 			<img src="/media/logo.svg" alt=""  id="topOqmLogo">
 		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-				aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
+				aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse" id="navbarColor03">
+		<div class="collapse navbar-collapse navbar-expand-md" id="mainNavBar">
 			<ul class="navbar-nav me-auto">
 				<li class="nav-item">
 					<form class="d-flex me-auto" method="get" action="/items" id="navDbSelectForm">
@@ -179,7 +179,7 @@ Ingests:
 					</a>
 				</li>
 				{/if}
-				<li class="nav-item dropdown">
+				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
 						<span id="userNameDisplay">{userInfo.getName()}</span></a>
@@ -217,12 +217,12 @@ Ingests:
 		<a class="navbar-brand" href="/">
 			<img src="/media/logo.svg" alt="" height="40" width="97" id="topLogo">
 		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03"
-			aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
+			aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		
-		<div class="collapse navbar-collapse" id="navbarColor03">
+		<div class="collapse navbar-collapse" id="mainNavBar">
 			<ul class="navbar-nav me-auto">
 				{#if config:['runningInfo.depotUri'] != " "}
 				<li class="nav-item">
@@ -365,7 +365,7 @@ Ingests:
 
 <!-- scripts -->
 <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
 <script src="/lib/spin.js/spin.umd.js"></script>

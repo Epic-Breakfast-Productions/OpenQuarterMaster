@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.Getter;
@@ -31,30 +32,34 @@ public class CoreApiInteractingEntity extends InteractingEntity {
 	){
 		this.email = email;
 	}
-	
+
 	@Getter
 	private String email;
-	
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
 	public ObjectId getId() {
 		return BS_ID;
 	}
-	
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
 	public String getName() {
 		return "Core API";
 	}
-	
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
 	public InteractingEntityType getInteractingEntityType() {
 		return InteractingEntityType.CORE_API;
 	}
-	
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
 	public Set<String> getRoles() {
 		return new HashSet<>(){{add("Yes");}};
 	}
-	
+
 	@Override
 	public boolean updateFrom(JsonWebToken jwt) {
 		return false;
