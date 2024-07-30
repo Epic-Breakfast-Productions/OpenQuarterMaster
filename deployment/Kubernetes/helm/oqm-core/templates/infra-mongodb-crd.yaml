@@ -1,0 +1,8 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: oqm-mongo
+spec:
+  members: 3
+  type: ReplicaSet
+  version: "4.2.7"
