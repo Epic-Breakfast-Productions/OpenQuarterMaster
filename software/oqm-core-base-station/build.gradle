@@ -35,7 +35,7 @@ dependencies {
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
     implementation 'uk.org.okapibarcode:okapibarcode:0.4.6'
-    implementation 'com.itextpdf:html2pdf:5.0.4'
+    implementation 'com.itextpdf:html2pdf:5.0.5'
 
     //webjars
     implementation 'org.webjars:jquery:3.7.1'
