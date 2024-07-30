@@ -26,10 +26,3 @@ appVersion: "1.0.0"
 maintainers:
   - email: greg@epic-breakfast-productions.tech
     name: Greg Stewart
-
-dependencies:
-  # https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/docs/install-upgrade.md#install-the-operator-using-helm
-  # https://mongodb.github.io/helm-charts/
-  - name: community-operator
-    repository: https://mongodb.github.io/helm-charts
-    version: "0.10.0"
