@@ -69,7 +69,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	
 	@WithSpan
 	public DeleteEvent isDeleted(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
-		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
 		DeleteEvent found;
 		
 		Bson search = and(
@@ -103,7 +103,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	@WithSpan
 	public ObjectHistoryEvent getLatestHistoryEventFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
-		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			found = collection
 						.find(clientSession, eq("objectId", id))
@@ -130,7 +130,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	@WithSpan
 	public boolean hasHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
-		MongoCollection<ObjectHistoryEvent> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			found = collection
 						.find(clientSession, eq("objectId", id))

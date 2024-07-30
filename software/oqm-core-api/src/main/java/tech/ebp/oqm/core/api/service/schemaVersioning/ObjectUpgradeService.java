@@ -40,8 +40,7 @@ public class ObjectUpgradeService {
 
 	private Map<Class<?>, ObjectUpgrader<?>> upgraderMap;
 	private OqmDatabaseService oqmDatabaseService;
-	private CodecRegistry codecRegistry;
-	private List<MongoDbAwareService> oqmDbServices;
+	private List<MongoDbAwareService<?,?,?>> oqmDbServices;
 
 	public <C extends Versionable> ObjectUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
 		if (!this.upgraderMap.containsKey(clazz)) {
@@ -56,11 +55,10 @@ public class ObjectUpgradeService {
 
 	@Inject
 	public ObjectUpgradeService(
-		OqmDatabaseService oqmDatabaseService,
-		CodecRegistry codecRegistry
+		OqmDatabaseService oqmDatabaseService
 	) {
 		this.oqmDatabaseService = oqmDatabaseService;
-		this.codecRegistry = codecRegistry;
+		//TODO:: populate oqmDbServices
 
 		this.upgraderMap = Map.of(
 			StorageBlock.class, new StorageBlockUpgrader()
@@ -105,40 +103,48 @@ public class ObjectUpgradeService {
 		return outputBuilder.build();
 	}
 
-	private CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService service) throws ClassUpgraderNotFoundException {
-		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder();
-		StopWatch collectionUpgradeTime = StopWatch.createStarted();
-
-		List<CompletableFuture<CollectionUpgradeResult>> resultMap = new ArrayList<>();
-
-		MongoCollection<?> collection = service.getCollection(oqmDb.getName());
-
+	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService<T, ?, ?> service) throws ClassUpgraderNotFoundException {
+		String oqmDbId = oqmDb.getId().toHexString();
 		return this.upgradeOqmCollection(
 			dbCs,
-			service.getCollection(),
-			service.getCollectionName()
-			//TODO:: get collection as Document type
-			, service.getClazz()
+			service.getDocumentCollection(oqmDbId),
+			service.getTypedCollection(oqmDbId),
+			service.getClazz()
 		);
 	}
 
 
-	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb, ClientSession dbCs) {
+	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb) {
 		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder();
 		StopWatch dbUpgradeTime = StopWatch.createStarted();
 
-		List<CompletableFuture<CollectionUpgradeResult>> resultMap = new ArrayList<>();
+		List<CompletableFuture<CollectionUpgradeResult>> futures = new ArrayList<>();
+		ClientSession cs = null;
 
-
-
-		for (MongoDbAwareService curService : this.oqmDbServices) {
-			resultMap.add(
-				CompletableFuture.supplyAsync(() -> {
-					return upgradeOqmCollection(oqmDb, curService);
-				})
-			);
+		try {
+			for (MongoDbAwareService<?,?,?> curService : this.oqmDbServices) {
+				if (cs == null) {
+					cs = curService.getNewClientSession(true);
+				}
+				ClientSession finalCs = cs;
+				futures.add(
+					CompletableFuture.supplyAsync(() -> {
+						return upgradeOqmCollection(finalCs, oqmDb, curService);
+					})
+				);
+			}
+			if(cs != null) {
+				cs.commitTransaction();
+			}
+		} finally {
+			if(cs != null){
+				cs.close();
+			}
 		}
 
+		outputBuilder.collectionUpgradeResults(
+			futures.stream().map(CompletableFuture::join).toList()
+		);
 		dbUpgradeTime.stop();
 		outputBuilder.timeTaken(Duration.of(dbUpgradeTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
 
