@@ -1,13 +1,16 @@
-package tech.ebp.oqm.core.baseStation.testResources.testClasses;
+package tech.ebp.oqm.plugin.mssController.testResources.testClasses;
 
-import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
-import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
-import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup;
+import tech.ebp.oqm.plugin.mssController.testResources.testUsers.TestUser;
+import tech.ebp.oqm.plugin.mssController.testResources.testUsers.TestUserService;
+import tech.ebp.oqm.plugin.mssController.testResources.ui.PlaywrightSetup;
 import com.microsoft.playwright.*;
 import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +19,6 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Tag("ui")
