@@ -25,7 +25,6 @@ service:
   tempDir: "/tmp/oqm-baseStation"
   dateTimeFormat:
     default: "MM/dd/YYYY hh:mm:ss a (z)"
-  refreshDbCacheFrequency: "30s"
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -72,10 +71,7 @@ quarkus:
   rest-client:
     logging:
       scope: all
-    "tech.ebp.oqm.core.baseStation.service.sso.KeycloakRestClient":
-      url: ${quarkus.oidc.auth-server-url}
-      scope: jakarta.inject.Singleton
-    externalItemSearch:
+    externalItemSearch: # Leave in for handling the case of not having the plugin available
       url: " "
       scope: jakarta.inject.Singleton
   log:
