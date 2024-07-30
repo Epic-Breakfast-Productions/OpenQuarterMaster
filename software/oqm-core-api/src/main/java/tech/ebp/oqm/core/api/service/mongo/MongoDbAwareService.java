@@ -128,7 +128,9 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 //	}
 	
 	protected MongoCollection<T> getCollection(DbCacheEntry db) {
+		log.debug("Getting collection for cache entry {}", db);
 		if(!this.collections.containsKey(db.getDbId())){
+			log.info("Collection for db cache entry not present. Creating. Cache entry: {}", db);
 			this.collections.put(
 				db.getDbId(),
 				db.getMongoDatabase().getCollection(this.collectionName, this.clazz)

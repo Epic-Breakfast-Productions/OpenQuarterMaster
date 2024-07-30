@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin;
+package tech.ebp.oqm.plugin.mssController.testModuleServer;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
