@@ -116,23 +116,26 @@ const ExtItemSearch = {
 			method: "GET",
 			failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
 			done: async function (data) {
+				console.log("Got search result.");
 				let imageId;
 				let imageName = resultUnifiedName;
 				if (!data.length) {
-					console.log("No results for given source. Adding.")
+					console.log("No results for given source. Adding.");
 					//TODO:: use image add form to add image, come back to this?
-
 					let saveImageFail = false;
+
+					let addData = new FormData();
+					addData.append("fileName", resultUnifiedName);
+					addData.append("description", "");
+					addData.append("source", imageUrl);
+					addData.append("file", imageData);
 
 					await Rest.call({
 						async: false,
 						url: Rest.passRoot + "/media/image",
 						method: "POST",
-						data: {
-							title: resultUnifiedName,
-							source: imageUrl,
-							imageData: imageData
-						},
+						data: addData,
+						dataType: false,
 						failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages,
 						fail: function () {
 							saveImageFail = true;
@@ -214,7 +217,7 @@ const ExtItemSearch = {
 					let newCarImage = newCarImageDir.find("img");
 					newCarImage.prop("src", imageData);
 
-					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this value">Use this image ' + Icons.useDatapoint + '</button>');
+					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this image">Add & Select ' + Icons.useDatapoint + '</button>');
 					useButton.on("click", function () {
 						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
 					});
