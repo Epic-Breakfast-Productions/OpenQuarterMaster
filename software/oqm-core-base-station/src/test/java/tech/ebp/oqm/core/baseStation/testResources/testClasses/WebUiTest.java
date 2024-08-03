@@ -78,7 +78,7 @@ public abstract class WebUiTest extends RunningServerTest {
 				outputStream.write(curPage.content().getBytes());
 			}
 		}
-		Thread.sleep(750);
+		Thread.sleep(250);
 		this.context.close();
 	}
 

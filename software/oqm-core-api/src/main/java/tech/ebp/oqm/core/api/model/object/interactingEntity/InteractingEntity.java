@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.plugin.PluginService;
@@ -29,6 +30,7 @@ import java.util.Set;
 	@JsonSubTypes.Type(value = User.class, name = "USER"),
 	@JsonSubTypes.Type(value = PluginService.class, name = "SERVICE_PLUGIN"),
 	@JsonSubTypes.Type(value = GeneralService.class, name = "SERVICE_GENERAL"),
+	@JsonSubTypes.Type(value = CoreApiInteractingEntity.class, name = "CORE_API"),
 })
 @BsonDiscriminator
 @Data
