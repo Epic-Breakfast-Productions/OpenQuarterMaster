@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -29,6 +30,7 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 	private final SortedSet<ObjectVersionBumper<T>> versionBumpers;
 	@Getter
 	private final Class<T> objClass;
+	private final Map<Integer, LinkedList<ObjectVersionBumper<T>>> cacheMap = new ConcurrentHashMap<>();
 
 	protected ObjectUpgrader(Class<T> objClass, SortedSet<ObjectVersionBumper<T>> versionBumpers) throws VersionBumperListIncontiguousException {
 		this.versionBumpers = versionBumpers;
@@ -51,14 +53,30 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		);
 	}
 
+	protected LinkedList<ObjectVersionBumper<T>> getFromCache(int versionTo){
+		if(!this.cacheMap.containsKey(versionTo)){
+			return null;
+		}
+		return new LinkedList<>(this.cacheMap.get(versionTo));
+	}
+
 	protected Iterator<ObjectVersionBumper<T>> getIteratorAtVersion(int curObjVersion){
 		int curVersionTo = curObjVersion + 1;
 
-		LinkedList<ObjectVersionBumper<T>> bumpers = new LinkedList<>(this.versionBumpers);
+		LinkedList<ObjectVersionBumper<T>> bumpers = this.getFromCache(curVersionTo);
+
+		if(bumpers != null){
+			return bumpers.iterator();
+		}
+
+		bumpers = new LinkedList<>(this.versionBumpers);
 
 		while(!bumpers.isEmpty() && bumpers.getFirst().getBumperTo() < curVersionTo){
 			bumpers.removeFirst();
 		}
+
+		this.cacheMap.put(curObjVersion, bumpers);
+		bumpers = this.getFromCache(curObjVersion);
 
 		return bumpers.iterator();
 	}
