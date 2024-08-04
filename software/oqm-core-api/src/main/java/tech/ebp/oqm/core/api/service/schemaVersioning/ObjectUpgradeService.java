@@ -104,17 +104,22 @@ public class ObjectUpgradeService {
 	}
 
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService<T, ?, ?> service) throws ClassUpgraderNotFoundException {
+		log.info("Updating schema of oqm database service {} in ", service.getClass());
 		String oqmDbId = oqmDb.getId().toHexString();
-		return this.upgradeOqmCollection(
+		CollectionUpgradeResult result = this.upgradeOqmCollection(
 			dbCs,
 			service.getDocumentCollection(oqmDbId),
 			service.getTypedCollection(oqmDbId),
 			service.getClazz()
 		);
+
+		log.info("DONE Updating schema of oqm database service {} in ", service.getClass());
+		return result;
 	}
 
 
 	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb) {
+		log.info("Updating schema of oqm database: {}", oqmDb);
 		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder();
 		StopWatch dbUpgradeTime = StopWatch.createStarted();
 
@@ -148,6 +153,8 @@ public class ObjectUpgradeService {
 		dbUpgradeTime.stop();
 		outputBuilder.timeTaken(Duration.of(dbUpgradeTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
 
+		log.info("Done updating oqm database: {}", oqmDb);
+
 		return outputBuilder.build();
 	}
 
@@ -155,6 +162,7 @@ public class ObjectUpgradeService {
 		if (this.upgradeRan()) {
 			return Optional.empty();
 		}
+		log.info("Upgrading the schema held in the Database.");
 
 		TotalUpgradeResult.Builder totalResultBuilder = TotalUpgradeResult.builder();
 		StopWatch totalTime = StopWatch.createStarted();
@@ -179,6 +187,8 @@ public class ObjectUpgradeService {
 			.toList());
 		totalTime.stop();
 		totalResultBuilder.timeTaken(Duration.of(totalTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
+
+		log.info("DONE upgrading the schema held in the Database.");
 
 		return Optional.of(totalResultBuilder.build());
 	}
