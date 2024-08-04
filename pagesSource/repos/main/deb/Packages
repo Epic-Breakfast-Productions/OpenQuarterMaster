@@ -241,6 +241,38 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-base+station
+Version: 1.4.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-keycloak (>= 1.1.0), oqm-core-depot, oqm-core-api (>= 2.1.0)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.4.1_all.deb
+Size: 4120
+MD5sum: 2491c08bbd600de5896a23d43f5a9e1c
+SHA1: 6a93bdd96a6b8a1c99b1c33ca68a3a73cecae791
+SHA256: 0212687304f6249b05e59e9387d40d3d5a6ebfd5087c627c7306ceb55a3d139e
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
+Version: 1.4.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-keycloak (>= 1.1.0), oqm-core-depot, oqm-core-api (>= 2.1.0)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.4.2_all.deb
+Size: 4124
+MD5sum: 81940a0044e960c400418fe58c5f588b
+SHA1: b502537d28c15d2a0ad9efeaccb4efa0d8b92e9c
+SHA256: 3ca513ab64a1d6e0a2e2379ec41f6ddb06aeba7c878fac6c140c097a7e27d8a7
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-depot
 Version: 1.0.0
 Architecture: all
@@ -566,6 +598,21 @@ Size: 41158
 MD5sum: bae7a110bb8df556d1cfadb0909b43ec
 SHA1: 51f13b532da0f72ac05696ed10563f594d7a360e
 SHA256: 82d7fd6ba7d4880b70adc494cede6bae594ac82348a69a7c401fc5668edd99d6
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-manager-station+captain
+Version: 2.4.0
+Architecture: all
+Maintainer: EBP
+Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2
+Filename: ./oqm-manager-station+captain_2.4.0_all.deb
+Size: 41696
+MD5sum: cd80f58aa787f0c7fb36791f5df53d97
+SHA1: da2809bafafcbc7391de1c44d13ddbe8549bbb32
+SHA256: 63aeff71602687d60fd9f9c64f9ae84987c58b38636b6f89469462b9fbcb13ec
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
