@@ -12,7 +12,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
-import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectUpgradeService;
+import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.nio.file.Paths;
@@ -40,7 +40,7 @@ public class LifecycleBean {
 	OqmDatabaseService dbService;
 
 	@Inject
-	ObjectUpgradeService objectUpgradeService;
+	ObjectSchemaUpgradeService objectSchemaUpgradeService;
 	
 	private ZonedDateTime startDateTime;
 	
@@ -101,7 +101,7 @@ public class LifecycleBean {
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
 		// Upgrade the db schema
-		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectUpgradeService.updateSchema();
+		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
 		if(schemaUpgradeResult.isEmpty()){
 			log.warn("Did not upgrade schema at start.");
 		} else {

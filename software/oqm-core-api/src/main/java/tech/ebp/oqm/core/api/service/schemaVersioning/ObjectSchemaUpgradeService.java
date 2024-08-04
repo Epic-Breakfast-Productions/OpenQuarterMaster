@@ -14,15 +14,18 @@ import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
+import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
-import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectUpgrader;
-import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.storageBlock.StorageBlockUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.InventoryItemSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.storageBlock.StorageBlockSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
@@ -36,17 +39,17 @@ import static com.mongodb.client.model.Filters.eq;
 
 @ApplicationScoped
 @Slf4j
-public class ObjectUpgradeService {
+public class ObjectSchemaUpgradeService {
 
-	private Map<Class<?>, ObjectUpgrader<?>> upgraderMap;
+	private Map<Class<?>, ObjectSchemaUpgrader<?>> upgraderMap;
 	private OqmDatabaseService oqmDatabaseService;
 	private List<MongoDbAwareService<?,?,?>> oqmDbServices;
 
-	public <C extends Versionable> ObjectUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
+	public <C extends Versionable> ObjectSchemaUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
 		if (!this.upgraderMap.containsKey(clazz)) {
 			throw new ClassUpgraderNotFoundException(clazz);
 		}
-		return (ObjectUpgrader<C>) this.upgraderMap.get(clazz);
+		return (ObjectSchemaUpgrader<C>) this.upgraderMap.get(clazz);
 	}
 
 	private void clearUpgraderMap() {
@@ -54,20 +57,22 @@ public class ObjectUpgradeService {
 	}
 
 	@Inject
-	public ObjectUpgradeService(
+	public ObjectSchemaUpgradeService(
 		OqmDatabaseService oqmDatabaseService,
-		StorageBlockService storageBlockService
+		StorageBlockService storageBlockService,
+		InventoryItemService inventoryItemService
 	) {
 		this.oqmDatabaseService = oqmDatabaseService;
 		//TODO:: populate rest of oqmDbServices
 		this.oqmDbServices = List.of(
-			storageBlockService
+			storageBlockService,
+			inventoryItemService
 		);
 
 		this.upgraderMap = Map.of(
-			StorageBlock.class, new StorageBlockUpgrader()
+			StorageBlock.class, new StorageBlockSchemaUpgrader(),
+			InventoryItem.class, new InventoryItemSchemaUpgrader()
 		);
-		;
 	}
 
 	public boolean upgradeRan() {
@@ -75,29 +80,31 @@ public class ObjectUpgradeService {
 	}
 
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession cs, MongoCollection<Document> documentCollection, MongoCollection<T> typedCollection, Class<T> objectClass) throws ClassUpgraderNotFoundException {
-		ObjectUpgrader<T> objectVersionBumper = this.getInstanceForClass(objectClass);
+		ObjectSchemaUpgrader<T> objectVersionBumper = this.getInstanceForClass(objectClass);
 		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder()
 			.collectionName(documentCollection.getNamespace().getCollectionName());
 
 		StopWatch sw = StopWatch.createStarted();
 		long numUpdated = 0;
 
-		try (MongoCursor<Document> it = documentCollection.find().cursor()) {
-			while (it.hasNext()) {
-				Document doc = it.next();
-				ObjectUpgradeResult<T> result = objectVersionBumper.upgrade(doc);
+		if(objectVersionBumper.upgradesAvailable()) {
+			try (MongoCursor<Document> it = documentCollection.find().cursor()) {
+				while (it.hasNext()) {
+					Document doc = it.next();
+					ObjectUpgradeResult<T> result = objectVersionBumper.upgrade(doc);
 
-				if (result.wasUpgraded()) {
-					numUpdated++;
-					typedCollection.findOneAndReplace(
-						cs,
-						eq("id", result.getUpgradedObject().getId()),
-						result.getUpgradedObject()
-					);
+					if (result.wasUpgraded()) {
+						numUpdated++;
+						typedCollection.findOneAndReplace(
+							cs,
+							eq("id", result.getUpgradedObject().getId()),
+							result.getUpgradedObject()
+						);
+					}
 				}
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
 			}
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
 		}
 
 		sw.stop();

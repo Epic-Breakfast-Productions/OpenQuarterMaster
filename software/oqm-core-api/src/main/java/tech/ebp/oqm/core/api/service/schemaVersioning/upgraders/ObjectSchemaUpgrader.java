@@ -24,21 +24,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <T>
  */
 @Slf4j
-public abstract class ObjectUpgrader<T extends Versionable> {
+public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 	@Getter
-	private final SortedSet<ObjectVersionBumper<T>> versionBumpers;
+	private final SortedSet<ObjectSchemaVersionBumper<T>> versionBumpers;
 	@Getter
 	private final Class<T> objClass;
-	private final Map<Integer, LinkedList<ObjectVersionBumper<T>>> cacheMap = new ConcurrentHashMap<>();
+	private final Map<Integer, LinkedList<ObjectSchemaVersionBumper<T>>> cacheMap = new ConcurrentHashMap<>();
 
-	protected ObjectUpgrader(Class<T> objClass, SortedSet<ObjectVersionBumper<T>> versionBumpers) throws VersionBumperListIncontiguousException {
+	protected ObjectSchemaUpgrader(Class<T> objClass, SortedSet<ObjectSchemaVersionBumper<T>> versionBumpers) throws VersionBumperListIncontiguousException {
 		this.versionBumpers = versionBumpers;
 		this.objClass = objClass;
 
 		//check that the set is contiguous
 		int lastVersion = 1;
-		for(ObjectVersionBumper<T> cur : this.versionBumpers){
+		for(ObjectSchemaVersionBumper<T> cur : this.versionBumpers){
 			if((lastVersion + 1) != cur.getBumperTo()){
 				throw new VersionBumperListIncontiguousException(lastVersion, this.objClass);
 			}
@@ -46,24 +46,24 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		}
 	}
 
-	protected ObjectUpgrader(Class<T> objClass, ObjectVersionBumper<T> ... versionBumpers) throws VersionBumperListIncontiguousException {
+	protected ObjectSchemaUpgrader(Class<T> objClass, ObjectSchemaVersionBumper<T>... versionBumpers) throws VersionBumperListIncontiguousException {
 		this(
 			objClass,
 			new TreeSet<>(Arrays.stream(versionBumpers).toList())
 		);
 	}
 
-	protected LinkedList<ObjectVersionBumper<T>> getFromCache(int versionTo){
+	protected LinkedList<ObjectSchemaVersionBumper<T>> getFromCache(int versionTo){
 		if(!this.cacheMap.containsKey(versionTo)){
 			return null;
 		}
 		return new LinkedList<>(this.cacheMap.get(versionTo));
 	}
 
-	protected Iterator<ObjectVersionBumper<T>> getIteratorAtVersion(int curObjVersion){
+	protected Iterator<ObjectSchemaVersionBumper<T>> getIteratorAtVersion(int curObjVersion){
 		int curVersionTo = curObjVersion + 1;
 
-		LinkedList<ObjectVersionBumper<T>> bumpers = this.getFromCache(curVersionTo);
+		LinkedList<ObjectSchemaVersionBumper<T>> bumpers = this.getFromCache(curVersionTo);
 
 		if(bumpers != null){
 			return bumpers.iterator();
@@ -90,9 +90,9 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 		JsonNode upgradedJson = oldObj.deepCopy();
 
 		StopWatch sw = StopWatch.createStarted();
-		Iterator<ObjectVersionBumper<T>> it = getIteratorAtVersion(curVersion);
+		Iterator<ObjectSchemaVersionBumper<T>> it = getIteratorAtVersion(curVersion);
 		while (it.hasNext()){
-			ObjectVersionBumper<T> curBumper = it.next();
+			ObjectSchemaVersionBumper<T> curBumper = it.next();
 
 			upgradedJson = curBumper.bumpObject(upgradedJson);
 		}
@@ -119,5 +119,9 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 				)
 			)
 		);
+	}
+
+	public boolean upgradesAvailable(){
+		return !this.versionBumpers.isEmpty();
 	}
 }

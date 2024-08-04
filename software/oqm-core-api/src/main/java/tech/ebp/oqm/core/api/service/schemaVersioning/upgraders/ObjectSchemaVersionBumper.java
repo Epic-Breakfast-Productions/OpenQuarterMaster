@@ -9,9 +9,9 @@ import tech.ebp.oqm.core.api.model.object.Versionable;
  *
  * @param <T>
  */
-public abstract class ObjectVersionBumper<T extends Versionable> implements Comparable<ObjectVersionBumper<T>> {
+public abstract class ObjectSchemaVersionBumper<T extends Versionable> implements Comparable<ObjectSchemaVersionBumper<T>> {
 
-	protected ObjectVersionBumper(int bumperTo) {
+	protected ObjectSchemaVersionBumper(int bumperTo) {
 		this.bumperTo = bumperTo;
 	}
 
@@ -33,10 +33,10 @@ public abstract class ObjectVersionBumper<T extends Versionable> implements Comp
 	public abstract JsonNode bumpObject(JsonNode oldObj);
 
 	@Override
-	public int compareTo(ObjectVersionBumper<T> tObjectVersionBumper) {
+	public int compareTo(ObjectSchemaVersionBumper<T> tObjectSchemaVersionBumper) {
 		return Integer.compare(
 			this.getBumperTo(),
-			tObjectVersionBumper.getBumperTo()
+			tObjectSchemaVersionBumper.getBumperTo()
 		);
 	}
 }
