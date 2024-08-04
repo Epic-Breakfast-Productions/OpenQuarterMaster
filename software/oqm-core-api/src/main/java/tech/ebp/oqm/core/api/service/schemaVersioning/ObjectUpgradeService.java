@@ -10,7 +10,6 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -21,8 +20,9 @@ import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
+import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectUpgrader;
-import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.StorageBlockUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.storageBlock.StorageBlockUpgrader;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
@@ -55,10 +55,14 @@ public class ObjectUpgradeService {
 
 	@Inject
 	public ObjectUpgradeService(
-		OqmDatabaseService oqmDatabaseService
+		OqmDatabaseService oqmDatabaseService,
+		StorageBlockService storageBlockService
 	) {
 		this.oqmDatabaseService = oqmDatabaseService;
-		//TODO:: populate oqmDbServices
+		//TODO:: populate rest of oqmDbServices
+		this.oqmDbServices = List.of(
+			storageBlockService
+		);
 
 		this.upgraderMap = Map.of(
 			StorageBlock.class, new StorageBlockUpgrader()
@@ -120,7 +124,8 @@ public class ObjectUpgradeService {
 
 	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb) {
 		log.info("Updating schema of oqm database: {}", oqmDb);
-		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder();
+		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder()
+			.dbName(oqmDb.getName());
 		StopWatch dbUpgradeTime = StopWatch.createStarted();
 
 		List<CompletableFuture<CollectionUpgradeResult>> futures = new ArrayList<>();

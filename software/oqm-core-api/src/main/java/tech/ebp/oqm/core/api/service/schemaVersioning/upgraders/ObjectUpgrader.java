@@ -13,7 +13,6 @@ import tech.ebp.oqm.core.api.exception.VersionBumperListIncontiguousException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
-import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectVersionBumper;
 
 import java.time.Duration;
 import java.util.*;
@@ -57,7 +56,7 @@ public abstract class ObjectUpgrader<T extends Versionable> {
 
 		LinkedList<ObjectVersionBumper<T>> bumpers = new LinkedList<>(this.versionBumpers);
 
-		while(bumpers.getFirst().getBumperTo() < curVersionTo){
+		while(!bumpers.isEmpty() && bumpers.getFirst().getBumperTo() < curVersionTo){
 			bumpers.removeFirst();
 		}
 

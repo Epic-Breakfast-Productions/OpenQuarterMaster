@@ -9,14 +9,17 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
+import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
+import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectUpgradeService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Singleton
@@ -35,6 +38,9 @@ public class LifecycleBean {
 	
 	@Inject
 	OqmDatabaseService dbService;
+
+	@Inject
+	ObjectUpgradeService objectUpgradeService;
 	
 	private ZonedDateTime startDateTime;
 	
@@ -94,7 +100,14 @@ public class LifecycleBean {
 		this.customUnitService.collectionStats();
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
-		
+		// Upgrade the db schema
+		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectUpgradeService.updateSchema();
+		if(schemaUpgradeResult.isEmpty()){
+			log.warn("Did not upgrade schema at start.");
+		} else {
+			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
+		}
+
 	}
 	
 	void onStop(
