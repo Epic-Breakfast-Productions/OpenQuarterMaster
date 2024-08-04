@@ -124,11 +124,18 @@ const ExtItemSearch = {
 					//TODO:: use image add form to add image, come back to this?
 					let saveImageFail = false;
 
+					let filename = new URL(imageUrl).pathname;
+					filename = filename.substring(filename.lastIndexOf('/') + 1);
+					if(filename.includes(".")){
+						filename = filename.split('.').slice(0, -1).join('.')
+					}
+					filename += "."+imageData.split(';')[0].split('/')[1];
+
 					let addData = new FormData();
-					addData.append("fileName", resultUnifiedName);
+					addData.append("fileName", filename);
 					addData.append("description", "");
 					addData.append("source", imageUrl);
-					addData.append("file", imageData);
+					addData.append("file", await (await (await fetch(imageData)).blob()));
 
 					await Rest.call({
 						async: false,
