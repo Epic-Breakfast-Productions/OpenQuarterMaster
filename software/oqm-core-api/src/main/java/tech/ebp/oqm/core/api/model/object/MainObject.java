@@ -11,7 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.ALWAYS)
-public abstract class MainObject {
+public abstract class MainObject implements Versionable {
 	
 	/**
 	 * The id of this object in the Mongodb.

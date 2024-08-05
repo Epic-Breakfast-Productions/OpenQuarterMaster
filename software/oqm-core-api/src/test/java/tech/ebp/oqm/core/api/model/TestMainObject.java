@@ -13,4 +13,9 @@ public class TestMainObject extends AttKeywordMainObject {
 	public TestMainObject(ObjectId objectId, Map<String, String> atts, List<String> keywords) {
 		super(objectId, atts, keywords);
 	}
+
+	@Override
+	public int getSchemaVersion() {
+		return 1;
+	}
 }

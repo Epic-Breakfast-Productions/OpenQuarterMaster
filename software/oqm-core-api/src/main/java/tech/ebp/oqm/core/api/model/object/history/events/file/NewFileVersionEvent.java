@@ -14,9 +14,15 @@ import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 @ToString(callSuper = true)
 @BsonDiscriminator
 public class NewFileVersionEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@Override
 	public EventType getType() {
 		return EventType.FILE_NEW_VERSION;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }
