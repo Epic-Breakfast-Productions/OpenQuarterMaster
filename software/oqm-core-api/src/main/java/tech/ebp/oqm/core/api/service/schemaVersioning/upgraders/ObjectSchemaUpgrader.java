@@ -30,7 +30,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 	private final SortedSet<ObjectSchemaVersionBumper<T>> versionBumpers;
 	@Getter
 	private final Class<T> objClass;
-	private final Map<Integer, LinkedList<ObjectSchemaVersionBumper<T>>> cacheMap = new ConcurrentHashMap<>();
+	private final Map<Integer, LinkedList<ObjectSchemaVersionBumper<T>>> bumperListCacheMap = new ConcurrentHashMap<>();
 
 	protected ObjectSchemaUpgrader(Class<T> objClass, SortedSet<ObjectSchemaVersionBumper<T>> versionBumpers) throws VersionBumperListIncontiguousException {
 		this.versionBumpers = versionBumpers;
@@ -53,17 +53,17 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		);
 	}
 
-	protected LinkedList<ObjectSchemaVersionBumper<T>> getFromCache(int versionTo){
-		if(!this.cacheMap.containsKey(versionTo)){
+	protected LinkedList<ObjectSchemaVersionBumper<T>> getBumperFromCache(int versionTo){
+		if(!this.bumperListCacheMap.containsKey(versionTo)){
 			return null;
 		}
-		return new LinkedList<>(this.cacheMap.get(versionTo));
+		return new LinkedList<>(this.bumperListCacheMap.get(versionTo));
 	}
 
-	protected Iterator<ObjectSchemaVersionBumper<T>> getIteratorAtVersion(int curObjVersion){
+	protected Iterator<ObjectSchemaVersionBumper<T>> getBumperIteratorAtVersion(int curObjVersion){
 		int curVersionTo = curObjVersion + 1;
 
-		LinkedList<ObjectSchemaVersionBumper<T>> bumpers = this.getFromCache(curVersionTo);
+		LinkedList<ObjectSchemaVersionBumper<T>> bumpers = this.getBumperFromCache(curVersionTo);
 
 		if(bumpers != null){
 			return bumpers.iterator();
@@ -75,8 +75,8 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			bumpers.removeFirst();
 		}
 
-		this.cacheMap.put(curObjVersion, bumpers);
-		bumpers = this.getFromCache(curObjVersion);
+		this.bumperListCacheMap.put(curObjVersion, bumpers);
+		bumpers = this.getBumperFromCache(curObjVersion);
 
 		return bumpers.iterator();
 	}
@@ -90,7 +90,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		JsonNode upgradedJson = oldObj.deepCopy();
 
 		StopWatch sw = StopWatch.createStarted();
-		Iterator<ObjectSchemaVersionBumper<T>> it = getIteratorAtVersion(curVersion);
+		Iterator<ObjectSchemaVersionBumper<T>> it = getBumperIteratorAtVersion(curVersion);
 		while (it.hasNext()){
 			ObjectSchemaVersionBumper<T> curBumper = it.next();
 
