@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CustomUnitEntry extends MainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NotNull
 	@NonNull
@@ -28,4 +29,9 @@ public class CustomUnitEntry extends MainObject {
 	@NotNull
 	@NonNull
 	private NewCustomUnitRequest unitCreator;
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
+	}
 }

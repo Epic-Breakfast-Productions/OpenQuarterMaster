@@ -21,6 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class OqmMongoDatabase extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NotNull
 	@Length(min = 1, max = 15)
@@ -41,5 +42,10 @@ public class OqmMongoDatabase extends AttKeywordMainObject {
 			return this.getName();
 		}
 		return this.displayName;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

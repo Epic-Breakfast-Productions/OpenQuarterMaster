@@ -19,7 +19,8 @@ import java.util.Set;
 @NoArgsConstructor
 @BsonDiscriminator
 public class CoreApiInteractingEntity extends InteractingEntity {
-	
+
+	public static final int CUR_SCHEMA_VERSION = 1;
 	/**
 	 * Don't change this. We ue this very specific ObjectId to identify the Base Station's specific entry in the db.
 	 */
@@ -63,5 +64,10 @@ public class CoreApiInteractingEntity extends InteractingEntity {
 	@Override
 	public boolean updateFrom(JsonWebToken jwt) {
 		return false;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

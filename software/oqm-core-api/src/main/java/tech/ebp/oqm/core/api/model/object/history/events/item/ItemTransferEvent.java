@@ -22,6 +22,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 //@SuperBuilder
 @BsonDiscriminator
 public class ItemTransferEvent extends ItemAddSubEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ItemTransferEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -42,5 +43,10 @@ public class ItemTransferEvent extends ItemAddSubEvent {
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_TRANSFER;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }
