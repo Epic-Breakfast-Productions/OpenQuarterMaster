@@ -44,6 +44,7 @@ public class ObjectSchemaUpgradeService {
 	private Map<Class<?>, ObjectSchemaUpgrader<?>> upgraderMap;
 	private OqmDatabaseService oqmDatabaseService;
 	private List<MongoDbAwareService<?,?,?>> oqmDbServices;
+	private TotalUpgradeResult startupUpgradeResult = null;
 
 	public <C extends Versionable> ObjectSchemaUpgrader<C> getInstanceForClass(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
 		if (!this.upgraderMap.containsKey(clazz)) {
@@ -75,9 +76,14 @@ public class ObjectSchemaUpgradeService {
 		);
 	}
 
-	public boolean upgradeRan() {
-		return this.upgraderMap == null;
+	public Optional<TotalUpgradeResult> getStartupUpgradeResult() {
+		return Optional.ofNullable(this.startupUpgradeResult);
 	}
+
+	public boolean upgradeRan() {
+		return this.startupUpgradeResult == null;
+	}
+
 
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession cs, MongoCollection<Document> documentCollection, MongoCollection<T> typedCollection, Class<T> objectClass) throws ClassUpgraderNotFoundException {
 		ObjectSchemaUpgrader<T> objectVersionBumper = this.getInstanceForClass(objectClass);
@@ -203,7 +209,8 @@ public class ObjectSchemaUpgradeService {
 		totalResultBuilder.timeTaken(Duration.of(totalTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
 
 		log.info("DONE upgrading the schema held in the Database.");
+		this.startupUpgradeResult = totalResultBuilder.build();
 
-		return Optional.of(totalResultBuilder.build());
+		return this.getStartupUpgradeResult();
 	}
 }
