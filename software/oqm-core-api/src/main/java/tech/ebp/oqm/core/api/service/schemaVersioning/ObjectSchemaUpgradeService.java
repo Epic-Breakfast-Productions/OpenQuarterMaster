@@ -88,6 +88,7 @@ public class ObjectSchemaUpgradeService {
 		long numUpdated = 0;
 
 		if(objectVersionBumper.upgradesAvailable()) {
+			//TODO:: add search for any objects with versions less than current.
 			try (MongoCursor<Document> it = documentCollection.find().cursor()) {
 				while (it.hasNext()) {
 					Document doc = it.next();
@@ -117,6 +118,7 @@ public class ObjectSchemaUpgradeService {
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService<T, ?, ?> service) throws ClassUpgraderNotFoundException {
 		log.info("Updating schema of oqm database service {} in ", service.getClass());
 		String oqmDbId = oqmDb.getId().toHexString();
+		//TODO:: hande upgrading history
 		CollectionUpgradeResult result = this.upgradeOqmCollection(
 			dbCs,
 			service.getDocumentCollection(oqmDbId),
