@@ -2,7 +2,7 @@
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-  name: oqm-mongo
+  name: oqm-core-api-mongo
 spec:
   members: 3
   type: ReplicaSet
@@ -11,10 +11,10 @@ spec:
     authentication:
       modes: ["SCRAM"]
   users:
-    - name: my-user
+    - name: oqm-core-api-user
       db: admin
       passwordSecretRef: # a reference to the secret that will be used to generate the user's password
-        name: my-user-password
+        name: oqm-core-api-user-password
       roles:
         - name: clusterAdmin
           db: admin
@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: my-user-password
+  name: oqm-core-api-user-password
 type: Opaque
 stringData:
-  password: pass
+  password: "pass"
