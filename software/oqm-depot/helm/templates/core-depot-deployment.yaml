@@ -15,7 +15,7 @@ spec:
         app: {{ .Release.Name }}-oqm-core-depot
     spec:
       containers:
-        - image: "docker.io/ebprod/oqm-core-depot:{{ .Values.service.core.depot.imageTag }}"
+        - image: "docker.io/ebprod/oqm-core-depot:{{ default .Chart.AppVersion .Values.service.core.depot.imageTag }}"
           name: {{ .Release.Name }}-oqm-core-depot
           resources: {}
           ports:

@@ -1,8 +1,7 @@
-# Service configs
 service:
   core:
     depot:
-      imageTag: "1.1.4-dev"
+#      imageTag:
       service:
         httpPort: 80
         httpsPort: 443
