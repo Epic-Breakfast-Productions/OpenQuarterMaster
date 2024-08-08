@@ -2,7 +2,7 @@
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-  name: oqm-core-api-mongo
+  name: {{ .Release.Name }}-oqm-core-api-mongo
 spec:
   members: 3
   type: ReplicaSet
@@ -14,7 +14,7 @@ spec:
     - name: oqm-core-api-user
       db: admin
       passwordSecretRef: # a reference to the secret that will be used to generate the user's password
-        name: oqm-core-api-user-password
+        name: {{ .Release.Name }}-oqm-core-api-mongo-user-password
       roles:
         - name: clusterAdmin
           db: admin
@@ -25,7 +25,15 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: oqm-core-api-user-password
+  name: {{ .Release.Name }}-oqm-core-api-mongo-user-password
 type: Opaque
-stringData:
-  password: "pass"
+data:
+  # new password if new, use old for upgrade
+  # https://stackoverflow.com/questions/56170052/how-not-to-overwrite-randomly-generated-secrets-in-helm-templates
+  {{- if .Release.IsInstall }}
+  password: {{ randAlphaNum 20 | b64enc }}
+  {{ else }}
+  # `index` function is necessary because the property name contains a dash.
+  # Otherwise (...).data.db_password would have worked too.
+  password: {{ index (lookup "v1" "Secret" .Release.Namespace (print .Release.Name "-oqm-core-api-user-password")).data "password" }}
+  {{ end }}

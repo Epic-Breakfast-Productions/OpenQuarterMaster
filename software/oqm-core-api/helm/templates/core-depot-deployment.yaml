@@ -25,3 +25,10 @@ spec:
             - name: https
               containerPort: 443
               protocol: TCP
+          env:
+            - name: "QUARKUS_MONGODB_CONNECTION_STRING"
+              valueFrom:
+                secretKeyRef:
+                  name: <metadata.name>-<auth-db>-<username> # test-api-oqm-core-api-mongo-config?
+                  key: connectionString.standardSrv
+
