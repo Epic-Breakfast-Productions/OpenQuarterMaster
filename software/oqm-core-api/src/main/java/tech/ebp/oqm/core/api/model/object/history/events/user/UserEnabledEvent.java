@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 //@SuperBuilder
 @BsonDiscriminator
 public class UserEnabledEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public UserEnabledEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -33,5 +34,10 @@ public class UserEnabledEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.USER_ENABLED;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

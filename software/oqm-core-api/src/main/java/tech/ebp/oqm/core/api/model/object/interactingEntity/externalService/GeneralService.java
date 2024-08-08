@@ -14,6 +14,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityTyp
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class GeneralService extends ExternalService {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
@@ -25,5 +26,10 @@ public class GeneralService extends ExternalService {
 	public boolean updateFrom(JsonWebToken jwt) {
 		//TODO
 		return false;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

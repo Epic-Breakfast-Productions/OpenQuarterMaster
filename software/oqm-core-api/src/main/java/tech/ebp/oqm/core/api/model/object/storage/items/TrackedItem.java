@@ -29,6 +29,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class TrackedItem extends InventoryItem<TrackedStored, Map<String, TrackedStored>, TrackedMapStoredWrapper> {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@Override
 	public StorageType getStorageType() {
@@ -84,5 +85,10 @@ public class TrackedItem extends InventoryItem<TrackedStored, Map<String, Tracke
 	@Override
 	protected TrackedMapStoredWrapper newWrapperInstance() {
 		return new TrackedMapStoredWrapper();
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

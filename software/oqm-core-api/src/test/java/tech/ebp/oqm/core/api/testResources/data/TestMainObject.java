@@ -43,7 +43,12 @@ public class TestMainObject extends AttKeywordMainObject {
 		this.setTestField(testField);
 		this.setFloatValue(floatValue);
 	}
-	
+
+	@Override
+	public int getSchemaVersion() {
+		return 1;
+	}
+
 //	public TestMainObject(String testField, BigInteger bigIntValue){
 //		this.setTestField(testField);
 //		this.setBigIntValue(bigIntValue);

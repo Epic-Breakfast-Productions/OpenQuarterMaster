@@ -26,8 +26,8 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class FileMainObject
 	extends AttKeywordMainObject
-	//	implements AttKeywordContaining
 {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public FileMainObject(ObjectId id, Map<@NotBlank @NotNull String, String> attributes, List<@NotBlank String> keywords) {
 		super(id, attributes, keywords);
@@ -63,5 +63,10 @@ public class FileMainObject
 			this.source = newUpload.source;
 		}
 		return true;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

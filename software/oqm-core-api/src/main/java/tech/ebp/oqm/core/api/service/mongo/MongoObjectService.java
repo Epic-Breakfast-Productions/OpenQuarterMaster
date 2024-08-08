@@ -69,7 +69,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		log.debug("Filter for find: {}", filter);
 		FindIterable<T> output;
 		
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (filter != null) {
 			if (session == null) {
 				output = collection.find(filter);
@@ -179,7 +179,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public Iterator<T> iterator(String oqmDbIdOrName) {
-		return getCollection(oqmDbIdOrName).find().iterator();
+		return getTypedCollection(oqmDbIdOrName).find().iterator();
 	}
 	
 	/**
@@ -224,7 +224,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return If the collection is empty or not.
 	 */
 	public boolean collectionEmpty(String oqmDbIdOrName) {
-		return this.getCollection(oqmDbIdOrName).countDocuments() == 0;
+		return this.getTypedCollection(oqmDbIdOrName).countDocuments() == 0;
 	}
 	
 	/**
@@ -235,7 +235,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return the count of records in the collection
 	 */
 	public long count(String oqmDbIdOrName, ClientSession clientSession, Bson filter) {
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (filter == null) {
 			if (clientSession == null) {
 				return collection.countDocuments();
@@ -280,7 +280,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The object found. Null if not found.
 	 */
 	public T get(String oqmDbIdOrName, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
-		T found = getCollection(oqmDbIdOrName)
+		T found = getTypedCollection(oqmDbIdOrName)
 					  .find(eq("_id", objectId))
 					  .limit(1)
 					  .first();
@@ -293,7 +293,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public T get(String oqmDbIdOrName, ClientSession clientSession, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		T found;
 		
 		if (clientSession == null) {
@@ -362,7 +362,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		}
 		this.ensureObjectValid(oqmDbIdOrName, false, object, null);//TODO:: add client session
 		
-		this.getCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
+		this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
 		return object;
 	}
 	
@@ -381,7 +381,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
 		//TODO:: review this
 		this.get(oqmDbIdOrName, clientSession, object.getId());
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			return collection.findOneAndReplace(clientSession, eq("_id", object.getId()), object);
 		} else {
@@ -407,7 +407,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		this.ensureObjectValid(oqmDbIdOrName, true, object, session);
 		
 		InsertOneResult result;
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (session == null) {
 			result = collection.insertOne(object);
 		} else {
@@ -480,7 +480,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		this.assertNotReferenced(oqmDbIdOrName, clientSession, toRemove);
 		
 		DeleteResult result;
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession == null) {
 			result = collection.deleteOne(eq("_id", objectId));
 		} else {
@@ -523,12 +523,12 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 */
 	public long removeAll(String oqmDbIdOrName) {
 		//TODO:: client session
-		return this.getCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
+		return this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
 	}
 	
 	@Override
 	public long clear(String oqmDbIdOrName, @NonNull ClientSession session) {
-		return this.getCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
+		return this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
 	}
 	
 	/**
@@ -539,7 +539,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The sum of all values at the field
 	 */
 	protected long getSumOfIntField(String oqmDbIdOrName, String field) {
-		Document returned = this.getCollection(oqmDbIdOrName).aggregate(
+		Document returned = this.getTypedCollection(oqmDbIdOrName).aggregate(
 			List.of(
 				new Document(
 					"$group",
@@ -557,7 +557,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	protected double getSumOfFloatField(String oqmDbIdOrName, String field) {
-		Document returned = this.getCollection(oqmDbIdOrName).aggregate(
+		Document returned = this.getTypedCollection(oqmDbIdOrName).aggregate(
 			List.of(
 				new Document(
 					"$group",
@@ -579,7 +579,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		String field,
 		String value
 	) {
-		return this.getCollection(oqmDbIdOrName)
+		return this.getTypedCollection(oqmDbIdOrName)
 				   .find(
 					   eq(field, value)
 				   ).limit(1)

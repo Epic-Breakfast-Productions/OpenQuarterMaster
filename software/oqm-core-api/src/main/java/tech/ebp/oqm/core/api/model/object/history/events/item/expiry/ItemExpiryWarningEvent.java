@@ -20,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 //@SuperBuilder
 @BsonDiscriminator
 public class ItemExpiryWarningEvent extends ItemExpiryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ItemExpiryWarningEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -32,5 +33,10 @@ public class ItemExpiryWarningEvent extends ItemExpiryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_EXPIRY_WARNING;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

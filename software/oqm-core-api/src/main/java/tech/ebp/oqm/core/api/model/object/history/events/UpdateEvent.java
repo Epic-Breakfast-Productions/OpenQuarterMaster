@@ -26,6 +26,7 @@ import java.util.List;
 //@SuperBuilder
 @BsonDiscriminator
 public class UpdateEvent extends DescriptiveEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public UpdateEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -44,5 +45,10 @@ public class UpdateEvent extends DescriptiveEvent {
 	@Override
 	public EventType getType() {
 		return EventType.UPDATE;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

@@ -26,7 +26,12 @@ class DbDeleteRelationalExceptionTest extends WebServerTest {
 			FAKER.name().name(), new TreeSet<>(List.of(ObjectId.get()))
 		);
 		
-		DbDeleteRelationalException e = new DbDeleteRelationalException(new MainObject(objectId){}, references);
+		DbDeleteRelationalException e = new DbDeleteRelationalException(new MainObject(objectId){
+			@Override
+			public int getSchemaVersion() {
+				return 1;
+			}
+		}, references);
 		
 		log.info("Error message: {}", e.getMessage());
 		

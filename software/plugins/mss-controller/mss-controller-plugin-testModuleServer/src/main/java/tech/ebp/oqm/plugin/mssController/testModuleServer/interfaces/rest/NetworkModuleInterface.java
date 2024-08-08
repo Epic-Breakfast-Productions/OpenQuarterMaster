@@ -6,4 +6,5 @@ import tech.ebp.oqm.plugin.mssController.testModuleServer.interfaces.MssModuleIn
 @RequestScoped
 public class NetworkModuleInterface extends MssModuleInterface {
 	//TODO:: REST endpoint, etc
+
 }

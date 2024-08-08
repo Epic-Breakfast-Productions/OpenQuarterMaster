@@ -20,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @ToString(callSuper = true)
 @BsonDiscriminator(value="CreateEvent")
 public class CreateEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public CreateEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -32,5 +33,10 @@ public class CreateEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.CREATE;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

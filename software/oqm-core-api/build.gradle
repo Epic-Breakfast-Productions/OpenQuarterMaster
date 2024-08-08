@@ -43,8 +43,6 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
-	implementation 'com.itextpdf:html2pdf:5.0.4'
-
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
 	implementation 'tech.units:indriya:2.2'

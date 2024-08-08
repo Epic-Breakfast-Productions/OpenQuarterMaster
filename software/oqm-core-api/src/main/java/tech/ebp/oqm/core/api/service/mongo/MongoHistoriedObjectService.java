@@ -274,7 +274,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	@WithSpan
 	public long removeAll(String oqmDbIdOrName, ClientSession session, InteractingEntity entity) {
 		//TODO:: add history event to each
-		MongoCollection<T> collection = this.getCollection(oqmDbIdOrName);
+		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (session == null) {
 			return collection.deleteMany(new BsonDocument()).getDeletedCount();
 		} else {

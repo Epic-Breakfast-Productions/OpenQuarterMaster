@@ -46,7 +46,7 @@ HasParentObjService<T extends MainObject & HasParent, S extends SearchObject<T>,
 	public ParentedMainObjectTree<T, N> getTree(String oqmDbIdOrName, Collection<ObjectId> onlyInclude) {
 		ParentedMainObjectTree<T, N> output = this.getNewTree();
 		
-		FindIterable<T> results = getCollection(oqmDbIdOrName).find();
+		FindIterable<T> results = getTypedCollection(oqmDbIdOrName).find();
 		output.add(results.iterator());
 		
 		if (!onlyInclude.isEmpty()) {
