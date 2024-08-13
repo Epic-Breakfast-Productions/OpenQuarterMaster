@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.6"
+    id "io.freefair.lombok" version "8.7.1"
 }
 
 group 'com.ebp.openQuarterMaster'
@@ -46,7 +46,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'net.datafaker:datafaker:2.3.1'
 
-    testImplementation 'com.microsoft.playwright:playwright:1.45.1'
+    testImplementation 'com.microsoft.playwright:playwright:1.46.0'
     testImplementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 
