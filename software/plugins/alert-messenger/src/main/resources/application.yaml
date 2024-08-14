@@ -1,0 +1,17 @@
+
+quarkus:
+  oqmCoreApi:
+    devservice:
+      enableKafka: true
+
+mp:
+  messaging:
+    incoming:
+      words-in:
+        topic: words
+        auto:
+          offset:
+            reset: earliest
+    outgoing:
+      words-out:
+        topic: words
