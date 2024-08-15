@@ -12,7 +12,7 @@ quarkus:
   keycloak:
     devservices:
       # Required to export realm
-      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
+      start-command: "start-dev --http-enabled=true --hostname-strict=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
       realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
       resource-aliases:
@@ -21,3 +21,9 @@ quarkus:
       resource-mappings:
         systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
         systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+mp:
+  messaging:
+    incoming:
+      events-incoming:
+        bootstrap:
+          servers: ${devservice.kafka.bootstrapServers}

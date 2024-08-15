@@ -17,6 +17,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
+    implementation 'io.quarkus:quarkus-oidc'
+
+    implementation 'io.quarkus:quarkus-qute'
+
     implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.2.0-SNAPSHOT'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
