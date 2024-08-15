@@ -25,6 +25,7 @@ public class HistoryEventNotificationService {
 	
 	public static final String INTERNAL_EVENT_CHANNEL = "events-internal";
 	public static final String OUTGOING_EVENT_CHANNEL = "events-outgoing";
+	public static final String TOPIC_PREPEND = "oqm-core-";
 	public static final String ALL_EVENT_TOPIC = "all-events";
 	
 	@ConfigProperty(name = "mp.messaging.outgoing.events-outgoing.bootstrap.servers")
@@ -66,8 +67,16 @@ public class HistoryEventNotificationService {
 					notificationWrapper.getEvent()
 				).addMetadata(
 					OutgoingKafkaRecordMetadata.<String>builder()
+						.withTopic(TOPIC_PREPEND + ALL_EVENT_TOPIC)
+						.build()
+				));
+			this.outgoingEventEmitter.send(
+				Message.of(
+					notificationWrapper.getEvent()
+				).addMetadata(
+					OutgoingKafkaRecordMetadata.<String>builder()
 						.withTopic(
-							(notificationWrapper.getDatabase() == null? "" : notificationWrapper.getDatabase().toHexString() + "-") + notificationWrapper.getObjectName() + "-" + notificationWrapper.getEvent().getType()
+							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null? "" : notificationWrapper.getDatabase().toHexString() + "-") + notificationWrapper.getObjectName() + "-" + notificationWrapper.getEvent().getType()
 						)
 						.build()
 				));
@@ -76,7 +85,8 @@ public class HistoryEventNotificationService {
 					notificationWrapper.getEvent()
 				).addMetadata(
 					OutgoingKafkaRecordMetadata.<String>builder()
-						.withTopic((notificationWrapper.getDatabase() == null? "" : notificationWrapper.getDatabase().toHexString() + "-") + ALL_EVENT_TOPIC)
+						.withTopic(
+							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null? "" : notificationWrapper.getDatabase().toHexString() + "-") + ALL_EVENT_TOPIC)
 						.build()
 				));
 			log.debug("Sent event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());

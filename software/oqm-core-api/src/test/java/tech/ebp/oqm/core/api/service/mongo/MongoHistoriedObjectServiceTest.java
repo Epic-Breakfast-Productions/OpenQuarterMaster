@@ -75,7 +75,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		assertEquals(testUser.getId(), createEvent.getEntity());
 		
 		ConsumerTask<String, String> createFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
-			this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
+			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
 			1
 		);
 		createFromAll.awaitCompletion();
@@ -84,7 +84,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		assertEquals(createEvent, createEventFromMessage);
 		
 		ConsumerTask<String, String> createFromCreate = this.kafkaCompanion.consumeStrings().fromTopics(
-			this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
+			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
 			1
 		);
 		createFromCreate.awaitCompletion();
