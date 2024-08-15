@@ -13,13 +13,12 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-rest'
     implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-rest-qute'
     implementation 'io.quarkus:quarkus-messaging-kafka'
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-config-yaml'
-    implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
     implementation 'io.quarkus:quarkus-oidc'
-
     implementation 'io.quarkus:quarkus-qute'
 
     implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.2.0-SNAPSHOT'

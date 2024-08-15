@@ -2,6 +2,10 @@
 quarkus:
   log:
     level: DEBUG
+  oidc:
+    application-type: web_app
+    token-state-manager:
+      split-tokens: true
   oqmCoreApi:
     devservice:
       enableKafka: true
@@ -27,6 +31,10 @@ mp:
       events-incoming:
         topic: oqm-core-all-events
         connector: smallrye-kafka
+
+smallrye:
+  jwt:
+    always-check-authorization: true
 
 "%dev":
   quarkus:
