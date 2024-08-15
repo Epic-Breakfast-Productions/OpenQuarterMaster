@@ -3,15 +3,45 @@ quarkus:
   oqmCoreApi:
     devservice:
       enableKafka: true
+      coreApiVersion: 2.1.3-DEV
+      certPath: ../../../../dev/devTest-cert-cert.pem
+      certKeyPath: ../../../../dev/devTest-cert-key.pem
+  keycloak:
+    devservices:
+      # Required to export realm
+      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
+      realm-path: "../../../../dev/oqm-realm.json"
+      realm-name: "oqm"
+      resource-aliases:
+        systemCert: ../../../../dev/devTest-cert-cert.pem
+        systemCertKey: ../../../../dev/devTest-cert-key.pem
+      resource-mappings:
+        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
+        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
 
 mp:
   messaging:
     incoming:
-      words-in:
-        topic: words
-        auto:
-          offset:
-            reset: earliest
-    outgoing:
-      words-out:
-        topic: words
+      events-incoming:
+        topic: oqm-core-all-events
+        connector: smallrye-kafka
+
+"%dev":
+  quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
+      ssl:
+        certificate:
+          files: ../../../../dev/devTest-cert-cert.pem
+          key-files: ../../../../dev/devTest-cert-key.pem
+    oidc:
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
+  mp:
+    messaging:
+      incoming:
+        events-incoming:
+          bootstrap:
+            servers: ${devservice.kafka.bootstrapServers}

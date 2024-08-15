@@ -1,4 +1,4 @@
-package tech.ebp.openQuarterMaster;
+package tech.ebp.oqm;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
