@@ -9,5 +9,22 @@
     Welcome, {userInfo.getName()}!
 </h1>
 
+<br />
+<p>
+    Database selected:
+</p>
+<!-- Selected db: {selectedOqmDb} -->
+<form class="" id="navDbSelectForm">
+    <select id="navDatabaseSelector" aria-label="Database Selection" style="max-width: 140px;" onchange="OqmDbUtils.newDbSelected();">
+        {#for curOqmDb in oqmDbs}
+            {#let curId=curOqmDb.get("id").asText()}
+                <option value="{curId}" {#if curId.equals(selectedOqmDb)}selected{/if}>{curOqmDb.get("displayName").asText()}</option>
+            {/let}
+        {/for}
+    </select>
+</form>
+
+<script src="/res/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
+<script src="/res/js/OqmDb.js"></script>
 </body>
 </html>
