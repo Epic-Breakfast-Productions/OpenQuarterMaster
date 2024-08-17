@@ -11,12 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
-import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedService;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
@@ -73,18 +71,28 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		assertEquals(objectId, createEvent.getObjectId());
 		assertNotNull(createEvent.getEntity());
 		assertEquals(testUser.getId(), createEvent.getEntity());
-		
+
+
 		ConsumerTask<String, String> createFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
-			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
+			HistoryEventNotificationService.ALL_EVENT_TOPIC,
 			1
 		);
 		createFromAll.awaitCompletion();
 		assertEquals(1, createFromAll.count());
 		CreateEvent createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAll.getFirstRecord().value(), CreateEvent.class);
 		assertEquals(createEvent, createEventFromMessage);
+
+		ConsumerTask<String, String> createFromAllInDb = this.kafkaCompanion.consumeStrings().fromTopics(
+			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC_LABEL,
+			1
+		);
+		createFromAllInDb.awaitCompletion();
+		assertEquals(1, createFromAllInDb.count());
+		createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAllInDb.getFirstRecord().value(), CreateEvent.class);
+		assertEquals(createEvent, createEventFromMessage);
 		
 		ConsumerTask<String, String> createFromCreate = this.kafkaCompanion.consumeStrings().fromTopics(
-			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC,
+			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC_LABEL,
 			1
 		);
 		createFromCreate.awaitCompletion();
