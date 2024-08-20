@@ -56,8 +56,13 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		}
 	}
 
+	/**
+	 * Registers the mutex with the given id. Always call this before starting to use the mutex.
+	 *
+	 * @param mutexId The id of the mutex to register.
+	 */
 	public void register(String mutexId) {
-// Verify if exists
+		// Verify if exists
 		List<InstanceMutex> existingMutexes = this.getCollection().find(eq("mutexId", mutexId)).into(new ArrayList<>());
 
 		log.info("Existent mutexes: {}", existingMutexes);
@@ -73,7 +78,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 				new UpdateOptions().upsert(true)
 			);
 
-			if(result.getUpsertedId() != null){
+			if (result.getUpsertedId() != null) {
 				log.info("Mutex {} created.", mutexId);
 			} else {
 				log.info("Mutex {} was added in another thread before we could get to it.", mutexId);
@@ -86,12 +91,14 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	}
 
 	/**
-	 * Get the mutex. Create it if does not exists. Ensure it has
-	 * not been frozen by a dead process.
+	 * Locks the mutex with the given id.
+	 * <p>
 	 * Non blocking.
+	 * <p>
+	 * Call {@link #register(String)} before using this method.
 	 *
-	 * @param mutexId
-	 * @param additionalIdentity
+	 * @param mutexId            The is of the mutex to get the lock for
+	 * @param additionalIdentity If an additional identity is required. Only use if need the mutex to offer concurrency within the same instance of the app.
 	 * @return true when reserved, false when not.
 	 */
 	public boolean lock(@NonNull String mutexId, Optional<String> additionalIdentity) {
@@ -148,9 +155,9 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	}
 
 	/**
-	 * Free a mutex previously reserved
+	 * Free a mutex previously reserved.
 	 *
-	 * @param mutexId
+	 * @param mutexId The id of the mutex to free
 	 */
 	public void free(@NonNull String mutexId, Optional<String> additionalIdentity) {
 		String identity = this.getIdentity(additionalIdentity);
