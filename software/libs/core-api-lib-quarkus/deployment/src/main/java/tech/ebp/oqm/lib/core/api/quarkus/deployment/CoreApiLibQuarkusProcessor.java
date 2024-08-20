@@ -84,8 +84,8 @@ class CoreApiLibQuarkusProcessor {
 				.withAccessToHost(true)
 				.withNetworkAliases(KAFKA_DEVSERVICE_HOSTNAME)
 //				.withListener(() -> "external://"+KAFKA_DEVSERVICE_HOSTNAME + ":9092")
-				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":9092")
-				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":9093")
+				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":19092")
+//				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":9093")
 
 				// { {external:{host: localhost, port: 32884}}, {internal:{host: 127.0.0.1, port: 9093}}}
 //				.withEnv("REDPANDA_KAFKA_ADVERTISED_LISTENERS", String.format(
@@ -107,7 +107,7 @@ class CoreApiLibQuarkusProcessor {
 			String bootstrapServers = kafka.getBootstrapServers();
 			kafkaConnectionInfo.putAll(Map.of(
 				"quarkus.reactive-messaging.health.enabled", "true",
-				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 9092),
+				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 19092),
 				"devservice.kafka.bootstrapServers", kafka.getBootstrapServers(),
 				"mp.messaging.outgoing.events-outgoing.connector", "smallrye-kafka",
 				"mp.messaging.outgoing.events-outgoing.broadcast", "true",
