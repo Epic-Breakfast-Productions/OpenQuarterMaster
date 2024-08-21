@@ -6,6 +6,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.eclipse.microprofile.reactive.messaging.Message;
+
+import java.util.concurrent.CompletionStage;
 
 @Slf4j
 @ApplicationScoped
@@ -20,9 +23,10 @@ public class ExampleConsumer {
 	}
 
 	@Incoming("oqm-core-all-events")
-	public void receive(ObjectNode message) {
+	public CompletionStage<Void> receive(Message<ObjectNode> message) {
 		//TODO:: use a kafka ui to figure out why no worky
-		log.info("Received message {}", message);
+		log.info("Received message {}", message.getPayload());
 		received = true;
+		return message.ack();
 	}
 }
