@@ -22,7 +22,7 @@ public class CoreApiLibDevserviceConfig {
 	 * Enables kafka.
 	 */
 	@ConfigItem(name="enableKafka")
-	@WithDefault("true")
+	@WithDefault("false")
 	public boolean enableKafka;
 	
 	/**

@@ -8,7 +8,6 @@ import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
@@ -83,24 +82,7 @@ class CoreApiLibQuarkusProcessor {
 				.withNetwork(Network.SHARED)
 				.withAccessToHost(true)
 				.withNetworkAliases(KAFKA_DEVSERVICE_HOSTNAME)
-//				.withListener(() -> "external://"+KAFKA_DEVSERVICE_HOSTNAME + ":9092")
-				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":19092")
-//				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":9093")
-
-				// { {external:{host: localhost, port: 32884}}, {internal:{host: 127.0.0.1, port: 9093}}}
-//				.withEnv("REDPANDA_KAFKA_ADVERTISED_LISTENERS", String.format(
-//						"internal://%s:9093,external://%s:9092",
-//						KAFKA_DEVSERVICE_HOSTNAME,
-//						KAFKA_DEVSERVICE_HOSTNAME
-//					))
-				;
-//			KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"))
-//				.withKraft()
-//				.withNetwork(Network.SHARED)
-//				.withAccessToHost(true)
-//				.withNetworkAliases(KAFKA_DEVSERVICE_HOSTNAME)
-//				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":9092")
-//				;
+				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":19092");
 			kafka.start();
 
 			//TODO:: fix; RP advertises localhost for listeners despite supplying the correct hostname as config
