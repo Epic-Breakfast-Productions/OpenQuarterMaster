@@ -77,7 +77,6 @@ class CoreApiLibQuarkusProcessor {
 			);
 		}
 		if (config.devservice.enableKafka) {
-			//TODO:: allow connection from core api devservice, and the using app. Update hostname, replace in bootstrap?
 			RedpandaContainer kafka = new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v23.1.2"))
 				.withNetwork(Network.SHARED)
 				.withAccessToHost(true)
@@ -85,8 +84,6 @@ class CoreApiLibQuarkusProcessor {
 				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":19092");
 			kafka.start();
 
-			//TODO:: fix; RP advertises localhost for listeners despite supplying the correct hostname as config
-			String bootstrapServers = kafka.getBootstrapServers();
 			kafkaConnectionInfo.putAll(Map.of(
 				"quarkus.reactive-messaging.health.enabled", "true",
 				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 19092),
