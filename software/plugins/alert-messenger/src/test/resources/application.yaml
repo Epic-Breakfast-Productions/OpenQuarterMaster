@@ -24,6 +24,9 @@ quarkus:
 mp:
   messaging:
     incoming:
-      events-incoming:
+      oqm-core-all-events:
         bootstrap:
           servers: ${devservice.kafka.bootstrapServers}
+kafka:
+  bootstrap:
+    servers: ${devservice.kafka.bootstrapServers}

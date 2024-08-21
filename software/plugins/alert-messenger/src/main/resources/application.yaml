@@ -28,9 +28,13 @@ quarkus:
 mp:
   messaging:
     incoming:
-      events-incoming:
-        topic: oqm-core-all-events
+      oqm-core-all-events:
         connector: smallrye-kafka
+        auto:
+          offset:
+            reset: earliest
+#        value:
+#          deserializer: tech.ebp.oqm.plugin.alertMessenger.ObjectNodeDeserializer
 
 smallrye:
   jwt:
@@ -52,6 +56,6 @@ smallrye:
   mp:
     messaging:
       incoming:
-        events-incoming:
+        oqm-core-all-events:
           bootstrap:
             servers: ${devservice.kafka.bootstrapServers}
