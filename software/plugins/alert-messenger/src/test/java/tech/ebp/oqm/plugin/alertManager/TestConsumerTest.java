@@ -47,7 +47,7 @@ public class TestConsumerTest {
 
 		log.info("Id of new block: {}", newid);
 
-		LocalDateTime timeout = LocalDateTime.now().plusMinutes(30);
+		LocalDateTime timeout = LocalDateTime.now().plusMinutes(1);
 		while(!this.testConsumer.isReceived()){
 			if(LocalDateTime.now().isAfter(timeout)){
 				Assertions.fail("Failed to receive message.");
