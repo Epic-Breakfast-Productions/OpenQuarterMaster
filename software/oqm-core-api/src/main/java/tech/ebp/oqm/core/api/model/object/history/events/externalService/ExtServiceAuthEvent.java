@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 //@SuperBuilder
 @BsonDiscriminator
 public class ExtServiceAuthEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ExtServiceAuthEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -30,5 +31,10 @@ public class ExtServiceAuthEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.EXT_SERVICE_AUTH;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

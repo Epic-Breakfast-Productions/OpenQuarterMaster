@@ -29,7 +29,8 @@ import java.util.Set;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class StorageBlock extends ImagedMainObject implements HasParent, FileAttachmentContaining {
-	
+	public static final int CUR_SCHEMA_VERSION = 1;
+
 	/**
 	 * The label for this storage block
 	 */
@@ -92,4 +93,10 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 		}
 		return this.getLabel() + " / " + this.getNickname();
 	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
+	}
+
 }

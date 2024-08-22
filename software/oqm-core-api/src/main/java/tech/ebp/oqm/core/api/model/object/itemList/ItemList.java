@@ -25,6 +25,7 @@ import java.util.Map;
 @ToString(callSuper = true)
 @AllArgsConstructor
 public class ItemList extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	/**
 	 * The name of this list
@@ -65,5 +66,10 @@ public class ItemList extends AttKeywordMainObject {
 			this.getItemActions().put(itemId, new ArrayList<>());
 		}
 		return this.getItemActions().get(itemId);
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

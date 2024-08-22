@@ -23,6 +23,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class PluginService extends ExternalService {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
@@ -73,5 +74,10 @@ public class PluginService extends ExternalService {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

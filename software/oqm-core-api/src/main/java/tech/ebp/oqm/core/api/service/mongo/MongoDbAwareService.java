@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -127,7 +128,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 //		return this.collection;
 //	}
 	
-	protected MongoCollection<T> getCollection(DbCacheEntry db) {
+	protected MongoCollection<T> getTypedCollection(DbCacheEntry db) {
 		log.debug("Getting collection for cache entry {}", db);
 		if(!this.collections.containsKey(db.getDbId())){
 			log.info("Collection for db cache entry not present. Creating. Cache entry: {}", db);
@@ -138,11 +139,18 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		}
 		return this.collections.get(db.getDbId());
 	}
-	
-	protected MongoCollection<T> getCollection(String oqmDbIdOrName) {
-		return this.getCollection(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName));
+
+	public MongoCollection<T> getTypedCollection(String oqmDbIdOrName) {
+		DbCacheEntry dbCacheEntry = this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName);
+
+		return this.getTypedCollection(dbCacheEntry);
 	}
-	
+
+	public MongoCollection<Document> getDocumentCollection(String oqmDbIdOrName) {
+		DbCacheEntry dbCacheEntry = this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName);
+		return dbCacheEntry.getMongoDatabase().getCollection(this.collectionName);
+	}
+
 	public static TransactionOptions getDefaultTransactionOptions() {
 		return TransactionOptions.builder()
 								 .readPreference(ReadPreference.primary())
@@ -177,7 +185,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 	
 	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){
-		return (X) builder.size(this.getCollection(oqmDbIdOrName).countDocuments());
+		return (X) builder.size(this.getTypedCollection(oqmDbIdOrName).countDocuments());
 	}
 	
 	/**

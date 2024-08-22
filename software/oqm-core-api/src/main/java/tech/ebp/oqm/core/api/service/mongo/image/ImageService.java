@@ -64,6 +64,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	 * @return The resized image
 	 */
 	public BufferedImage resizeImage(BufferedImage inputImage) {
+		log.debug("Resizing image {}", inputImage);
 		// creates output image
 		BufferedImage outputImage = new BufferedImage(
 			this.imageResizeConfig.width(),
@@ -95,8 +96,14 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 				FilenameUtils.getExtension(fileName),
 				"imageUploads"
 			);
+			log.info("Image needs resized: {}", origImage);
 			{
 				BufferedImage bufferedImage = ImageIO.read(origImage);
+
+				if(bufferedImage == null){
+					throw new IllegalArgumentException("Image data given was invalid or unsupported.");
+				}
+
 				bufferedImage = resizeImage(bufferedImage);
 				ImageIO.write(bufferedImage, this.imageResizeConfig.savedType(), usingImage);
 			}
