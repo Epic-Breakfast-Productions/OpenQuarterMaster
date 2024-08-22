@@ -6,4 +6,8 @@
 
 ## Deployment
 
+`docker buildx build . -t ebprod/oqm-core-depot:$(jq -r '.version' webroot/composer.json) --platform linux/amd64,linux/arm64 --push`
+
+old:
+
 `docker build -t ebprod/oqm-core-depot:$(jq -r '.version' webroot/composer.json) . && docker push ebprod/oqm-core-depot:$(jq -r '.version' webroot/composer.json)`
