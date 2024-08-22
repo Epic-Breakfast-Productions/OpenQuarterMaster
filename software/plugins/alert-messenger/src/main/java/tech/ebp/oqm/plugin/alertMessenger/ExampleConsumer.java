@@ -24,9 +24,8 @@ public class ExampleConsumer {
 
 	@Incoming("oqm-core-all-events")
 	public CompletionStage<Void> receive(Message<ObjectNode> message) {
-		//TODO:: use a kafka ui to figure out why no worky
 		log.info("Received message {}", message.getPayload());
-		received = true;
+		this.received = true;
 		return message.ack();
 	}
 }
