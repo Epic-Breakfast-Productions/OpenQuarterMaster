@@ -1,4 +1,4 @@
-name: CI - Plugin - External Item Search
+name: CI - Plugin - Alert Messenger
 
 # Controls when the workflow will run
 on:
