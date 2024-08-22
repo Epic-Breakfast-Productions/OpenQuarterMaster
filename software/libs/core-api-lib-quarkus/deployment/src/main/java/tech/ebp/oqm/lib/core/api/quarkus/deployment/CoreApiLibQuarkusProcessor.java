@@ -10,6 +10,7 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
@@ -21,23 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 class CoreApiLibQuarkusProcessor {
-	
+
 	private static final String FEATURE = "core-api-lib-quarkus";
-	private static final String MONGODB_DEVSERVICE_HOSTNAME = "mongodbserver";
-	
+	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-dev-mongodb-server";
+	private static final String KAFKA_DEVSERVICE_HOSTNAME = "oqm-dev-kafka-server";
+
 	@BuildStep
 	FeatureBuildItem feature() {
 		return new FeatureBuildItem(FEATURE);
 	}
-	
+
 	@BuildStep
 	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 		return List.of(
-			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client."+Constants.CORE_API_CLIENT_NAME+".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}"),
-			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client."+Constants.CORE_API_CLIENT_OIDC_NAME+".url", "${quarkus.oidc.auth-server-url:}")
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client." + Constants.CORE_API_CLIENT_NAME + ".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}"),
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client." + Constants.CORE_API_CLIENT_OIDC_NAME + ".url", "${quarkus.oidc.auth-server-url:}")
 		);
 	}
-	
+
 	@BuildStep
 	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
 		return new HealthBuildItem(
@@ -45,7 +47,7 @@ class CoreApiLibQuarkusProcessor {
 			buildTimeConfig.healthEnabled
 		);
 	}
-	
+
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(
 		LaunchModeBuildItem launchMode,
@@ -53,41 +55,69 @@ class CoreApiLibQuarkusProcessor {
 	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
+		Map<String, String> kafkaConnectionInfo = new HashMap<>();
 		{//mongodb
 			DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
-			
+
 			MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
 			mongoDBContainer.addExposedPorts();
 			mongoDBContainer.withNetwork(Network.SHARED);
 			mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 			mongoDBContainer.start();
-			
+
 			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":27017");
-			
+
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
 					mongoDBContainer.getContainerId(),
 					mongoDBContainer::close,
 					Map.of()
 				)
-						   .toBuildItem()
+					.toBuildItem()
+			);
+		}
+		if (config.devservice.enableKafka) {
+			RedpandaContainer kafka = new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v23.1.2"))
+				.withNetwork(Network.SHARED)
+				.withAccessToHost(true)
+				.withNetworkAliases(KAFKA_DEVSERVICE_HOSTNAME)
+				.withListener(() -> KAFKA_DEVSERVICE_HOSTNAME + ":19092");
+			kafka.start();
+
+			kafkaConnectionInfo.putAll(Map.of(
+				"quarkus.reactive-messaging.health.enabled", "true",
+				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 19092),
+				"devservice.kafka.bootstrapServers", kafka.getBootstrapServers(),
+				"mp.messaging.outgoing.events-outgoing.connector", "smallrye-kafka",
+				"mp.messaging.outgoing.events-outgoing.broadcast", "true",
+				"mp.messaging.outgoing.events-outgoing.value.serializer", "io.quarkus.kafka.client.serialization.ObjectMapperSerializer"
+			));
+
+			output.add(
+				new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					kafka.getContainerId(),
+					kafka::close,
+					Map.of()
+				).toBuildItem()
 			);
 		}
 		{//Base Station
 			DockerImageName dockerImageName = DockerImageName.parse("ebprod/oqm-core-api:" + config.devservice.coreApiVersion);
 			// You might want to use Quarkus config here to customise the container
 			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(dockerImageName)
-														  .withAccessToHost(true)
-														  .withEnv(mongoConnectionInfo)
-														  .withNetwork(Network.SHARED);
+				.withAccessToHost(true)
+				.withEnv(mongoConnectionInfo)
+				.withEnv(kafkaConnectionInfo)
+				.withNetwork(Network.SHARED);
 			;
-			
+
 			if (
 				config.devservice.certKeyPath.isPresent() ||
-				config.devservice.certPath.isPresent()
+					config.devservice.certPath.isPresent()
 			) {
-				if(!(config.devservice.certKeyPath.isPresent() &&
-				   config.devservice.certPath.isPresent())){
+				if (!(config.devservice.certKeyPath.isPresent() &&
+					config.devservice.certPath.isPresent())) {
 					throw new RuntimeException("Must specify both cert and key for core api devservice.");
 				}
 
@@ -105,23 +135,27 @@ class CoreApiLibQuarkusProcessor {
 				container.withEnv("mp.jwt.verify.publickey.location", "/tmp/systemCert.pem");
 
 			}
-			
+
 			container.start();
-			
+
 			Map<String, String> props = new HashMap<>();
 			props.put("quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
 			props.put("quarkus.rest-client.oqmCoreApi.url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
-			
+
+			if (!kafkaConnectionInfo.isEmpty()) {
+				props.put("devservice.kafka.bootstrapServers", kafkaConnectionInfo.get("devservice.kafka.bootstrapServers"));
+			}
+
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
 					container.getContainerId(),
 					container::close,
 					props
 				)
-						   .toBuildItem()
+					.toBuildItem()
 			);
 		}
-		
+
 		return output;
 	}
 }
