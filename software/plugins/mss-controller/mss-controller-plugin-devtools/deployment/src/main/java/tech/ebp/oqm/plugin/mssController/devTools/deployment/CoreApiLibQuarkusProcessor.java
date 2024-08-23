@@ -46,44 +46,41 @@ class CoreApiLibQuarkusProcessor {
 				curModuleConfig.info().numBlocks()
 			);
 
-			MssTestModule testModule = switch (curModuleConfig.type()) {
+			MssTestModule<?> testModule = switch (curModuleConfig.type()) {
 				case SERIAL -> new MssTestSerialModule(newModuleInfo);
 				case NETWORK -> null;
 			};
 
 			testModule.start();
 
-
-//			new DevServicesResultBuildItem.RunningDevService()
-
 			output.add(new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
 					testModule.getContainerId(),
 					testModule::close,
-					new HashMap<>()
+					testModule.getAppConfig()
 				)
 					.toBuildItem()
 			);
 
 		}
 
-		ModuleInfo newModuleInfo = new ModuleInfo(
-			"1",
-			UUID.randomUUID().toString(),
-			"today",
-			5
-		);
-
-		MssTestModule testModule = new MssTestSerialModule(newModuleInfo);
-		testModule.start();
-		output.add(new DevServicesResultBuildItem.RunningDevService(
-				FEATURE,
-				testModule.getContainerId(),
-				testModule::close,
-				new HashMap<>()
-			)
-				.toBuildItem()
-		);
+//		ModuleInfo newModuleInfo = new ModuleInfo(
+//			"1",
+//			UUID.randomUUID().toString(),
+//			"today",
+//			5
+//		);
+//
+//		MssTestModule<?> testModule = new MssTestSerialModule(newModuleInfo);
+//		testModule.start();
+//		output.add(new DevServicesResultBuildItem.RunningDevService(
+//				FEATURE,
+//				testModule.getContainerId(),
+//				testModule::close,
+//				testModule.getAppConfig()
+//			)
+//				.toBuildItem()
+//		);
 
 		return output;
 	}

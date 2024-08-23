@@ -1,6 +1,10 @@
 quarkus:
   application:
     name: Open QuarterMaster MSS Controller Plugin (TEST)
+  mssControllerDev:
+    devServices:
+      modules:
+        - type: SERIAL
   log:
     level: DEBUG
   smallrye-openapi:

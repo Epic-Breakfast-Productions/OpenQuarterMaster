@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.testModuleServer;
 
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -10,18 +11,18 @@ import tech.ebp.oqm.plugin.mssController.testModuleServer.interfaces.serial.Seri
 
 @Singleton
 @Slf4j
-public class StartupHandler {
+public class ShutdownHandler {
 	@Inject
 	ModuleConfig moduleConfig;
 
 	@Inject
 	SerialModuleInterface serialModuleInterface;
 
-	void onStart(
+	void onEnd(
 		@Observes
-		StartupEvent ev
+		ShutdownEvent ev
 	) {
-		log.info("Starting test module server: \n\t{} \n\t{} \n\t{}",
+		log.info("CLOSING test module server: \n\t{} \n\t{} \n\t{}",
 			this.moduleConfig.type(),
 			this.moduleConfig.serialId(),
 			this.moduleConfig.numBlocks()
@@ -29,13 +30,12 @@ public class StartupHandler {
 
 		switch (this.moduleConfig.type()){
 			case SERIAL -> {
-				//to ensure initted
-				this.serialModuleInterface.getTestSerialPort();
+				this.serialModuleInterface.getTestSerialPort().close();
 			}
 			case NETWORK -> {
 			}
 		}
 
-		log.info("MSS Test Module Server started.");
+		log.info("MSS Test Module Server shutdown.");
 	}
 }

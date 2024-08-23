@@ -3,18 +3,19 @@ package tech.ebp.oqm.plugin.mssController.devTools.deployment.testModules;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
-import tech.ebp.oqm.plugin.mssController.lib.command.MssCommand;
 import tech.ebp.oqm.plugin.mssController.lib.command.response.ModuleInfo;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class MssTestModule<SELF extends MssTestModule<SELF>> extends GenericContainer<SELF> {
 
 	protected ModuleInfo moduleInfo;
+	protected Map<String, String> appConfig = new HashMap<>();
 
 	protected MssTestModule(ModuleInfo moduleInfo) {
 		super(DockerImageName.parse("ebprod/oqm-plugin-mss_controller-test_module_server:" + ConfigProvider.getConfig().getValue("quarkus.application.version", String.class)));
@@ -22,6 +23,10 @@ public abstract class MssTestModule<SELF extends MssTestModule<SELF>> extends Ge
 	}
 
 	static final int PORT = 8123;
+
+	public Map<String, String> getAppConfig() {
+		return this.appConfig;
+	}
 
 
 	@Override

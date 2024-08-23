@@ -8,6 +8,7 @@ import io.quarkus.scheduler.Scheduler;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.lib.command.MssCommand;
 import tech.ebp.oqm.plugin.mssController.lib.command.response.CommandResponse;
@@ -20,19 +21,23 @@ import java.util.Optional;
 @Slf4j
 @ApplicationScoped
 public class SerialModuleInterface {
-
+	@Inject
+	ModuleConfig config;
 	@Inject
 	TestModuleImpl testModuleImpl;
 	@Inject
 	ObjectMapper objectMapper;
+
+	@Getter
 	TestSerialPort testSerialPort;
 
 	@Inject
 	Scheduler scheduler;
 
 	@PostConstruct
-	public void init(ModuleConfig config) throws IOException {
-		if(config.type() == ModuleConfig.TestModuleType.SERIAL){
+	public void init() throws IOException {
+		if(this.config.type() != ModuleConfig.TestModuleType.SERIAL){
+			log.info("NOT configured to setup serial.");
 			return;
 		}
 
@@ -60,4 +65,6 @@ public class SerialModuleInterface {
 		}
 		log.debug("Done with process loop.");
 	}
+
+
 }
