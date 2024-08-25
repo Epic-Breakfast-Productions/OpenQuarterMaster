@@ -9,7 +9,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.ListAmountItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.TrackedItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
 import java.io.IOException;

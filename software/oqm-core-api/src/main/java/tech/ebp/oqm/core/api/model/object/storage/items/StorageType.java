@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.stored;
+package tech.ebp.oqm.core.api.model.object.storage.items;
 
 /**
  * Enum to determine what type of storage the item uses.

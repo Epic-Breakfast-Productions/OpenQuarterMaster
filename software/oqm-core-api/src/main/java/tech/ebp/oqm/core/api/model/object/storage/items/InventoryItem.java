@@ -12,7 +12,6 @@ import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StorageType;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
