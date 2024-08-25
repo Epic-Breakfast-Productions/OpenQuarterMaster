@@ -1,16 +1,21 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Stored object to describe an amount of stored substance.
@@ -81,5 +86,10 @@ public class AmountStored extends Stored {
 		//TODO:: add more attributes
 		
 		return sb.toString();
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return 1;
 	}
 }
