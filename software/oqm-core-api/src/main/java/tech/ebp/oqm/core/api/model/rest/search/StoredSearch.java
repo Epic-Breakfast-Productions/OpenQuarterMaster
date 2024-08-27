@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.model.rest.search;
 
 import com.mongodb.client.model.Filters;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.ToString;
@@ -19,8 +20,8 @@ import static com.mongodb.client.model.Filters.*;
 @Getter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
-	@QueryParam("itemBarcode") String itemBarcode;
-	@QueryParam("item") ObjectId inventoryItemId;
+	@PathParam("itemId") ObjectId inventoryItemId;
+	@PathParam("blockId") ObjectId storageBlockId;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
@@ -32,13 +33,20 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
+		if(this.hasValue(this.getInventoryItemId())){
+			filters.add(eq("item", this.getInventoryItemId()));
+		}
+		if(this.hasValue(this.getStorageBlockId())){
+			filters.add(eq("storageBlock", this.getStorageBlockId()));
+		}
+
 		//TODO::item
 		//TODO:: redo these
-		if (this.hasValue(this.getItemBarcode())) {
-			filters.add(
-				eq("barcode", this.getItemBarcode())
-			);
-		}
+//		if (this.hasValue(this.getItemBarcode())) {
+//			filters.add(
+//				eq("barcode", this.getItemBarcode())
+//			);
+//		}
 		if(this.hasValue(this.getInStorageBlocks())){
 			filters.add(or(
 				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {

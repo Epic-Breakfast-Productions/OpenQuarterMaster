@@ -1,7 +1,7 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -20,37 +20,58 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
-import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
-import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.service.importExport.importing.csv.InvItemCsvConverter;
+import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored/{blockId}")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
-public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, InventoryItemSearch> {
-	
-	@Inject
-	InvItemCsvConverter invItemCsvConverter;
-	
+public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
+
 	@Getter
 	@Inject
-	InventoryItemService objectService;
-	
+	StoredService objectService;
+
 	@Getter
-	Class<InventoryItem> objectClass = InventoryItem.class;
+	@Inject
+	InventoryItemService inventoryItemService;
+
+	@Getter
+	Class<Stored> objectClass = Stored.class;
+
+	@Getter
+	@PathParam("itemId")
+	String itemId;
+	@Getter
+	@PathParam("blockId")
+	String blockId;
+
+	@Getter
+	private InventoryItem inventoryItem;
+
+	@PostConstruct
+	public void setup(){
+		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+
+		if(!this.inventoryItem.getStorageBlocks().contains(new ObjectId(this.blockId))){
+			throw new NotFoundException("Storage block given not found in the given item");
+		}
+	}
+
 	
 	@POST
 	@Operation(
-		summary = "Adds a new inventory item."
+		summary = "Adds a new stored to the item in the specified block."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -71,109 +92,38 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ObjectId create(
-		@Valid InventoryItem item
+		@Valid Stored stored
 	) {
-		return super.create(item);
+		return super.create(stored);
 	}
 	
-//	@POST
+//	@Override
+//	@Path("stats")
+//	@GET
 //	@Operation(
-//		summary = "Imports items from a file uploaded by a user."
+//		summary = "Gets stats on this object's collection."
 //	)
 //	@APIResponse(
 //		responseCode = "200",
-//		description = "Object added.",
+//		description = "Object retrieved.",
 //		content = @Content(
-//			mediaType = MediaType.APPLICATION_JSON,
+//			mediaType = "application/json",
 //			schema = @Schema(
-//				type = SchemaType.ARRAY,
-//				implementation = ObjectId.class
+//				implementation = InvItemCollectionStats.class
 //			)
 //		)
 //	)
-//	@APIResponse(
-//		responseCode = "400",
-//		description = "Bad request given. Data given could not pass validation.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@RolesAllowed(Roles.INVENTORY_EDIT)
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
 //	@Produces(MediaType.APPLICATION_JSON)
-//	public Response importData(
-//		@BeanParam ImportBundleFileBody body
-//	) throws IOException {
-//		log.info("Processing item file: {}", body.fileName);
-//
-//		final String fileExtension = FilenameUtils.getExtension(body.fileName);
-//
-//		List<InventoryItem<?, ?, ?>> items = new ArrayList<>();
-//		switch (fileExtension) {
-//			case "csv":
-//				items.addAll(this.invItemCsvConverter.csvIsToItems(body.file));
-//				break;
-//			case "json":
-//				JsonNode json = this.getObjectMapper().readTree(body.file);
-//
-//				if (json.isObject()) {
-//					json = this.getObjectMapper().createArrayNode().add(json);
-//				}
-//
-//				while (!(json).isEmpty()) {
-//					JsonNode curItemJson = ((ArrayNode) json).remove(0);
-//					items.add(this.getObjectMapper().treeToValue(curItemJson, InventoryItem.class));
-//				}
-//
-//				break;
-//			default:
-//				return Response.status(Response.Status.BAD_REQUEST).entity("Invalid file type uploaded.").build();
-//		}
-//
-//		List<ObjectId> results = new ArrayList<>(items.size());
-//		try (ClientSession session = this.getObjectService().getNewClientSession()) {
-//			session.startTransaction();
-//			while (!items.isEmpty()) {
-//				results.add(
-//					this.getObjectService().add(
-//						this.getOqmDbIdOrName(),
-//						session,
-//						items.remove(0),
-//						this.getInteractingEntity()
-//					)
-//				);
-//			}
-//			session.commitTransaction();
-//		}
-//
-//		return Response.ok(results).build();
+//	@RolesAllowed(Roles.INVENTORY_VIEW)
+//	@WithSpan
+//	public CollectionStats getCollectionStats(
+//	) {
+//		return super.getCollectionStats();
 //	}
 	
-	@Override
-	@Path("stats")
 	@GET
 	@Operation(
-		summary = "Gets stats on this object's collection."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InvItemCollectionStats.class
-			)
-		)
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
-	public InvItemCollectionStats getCollectionStats(
-	) {
-		return (InvItemCollectionStats) super.getCollectionStats();
-	}
-	
-	@GET
-	@Operation(
-		summary = "Gets a list of objects, using search parameters."
+		summary = "Gets a list of items stored in the storage block, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -195,16 +145,15 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
-		//for actual queries
-		@BeanParam InventoryItemSearch itemSearch
+		@BeanParam StoredSearch storedSearch
 	) {
-		return super.search(itemSearch);
+		return super.search(storedSearch);
 	}
 	
 	@Path("{id}")
 	@GET
 	@Operation(
-		summary = "Gets a particular InventoryItem."
+		summary = "Gets a particular stored item."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -212,7 +161,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = InventoryItem.class
+				implementation = Stored.class
 			)
 		)
 	)
@@ -233,16 +182,14 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public InventoryItem get(
-		@PathParam("id") String id
-	) {
+	public Stored get(@PathParam("id") String id) {
 		return super.get(id);
 	}
 	
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a particular Object.",
+		summary = "Updates a particular stored item. If applicable, amounts are disregarded. Use the add/subtract/set/transfer endpoints to modify amounts.",
 		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
@@ -272,18 +219,18 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
-	public InventoryItem update(
+	public Stored update(
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		//TODO:: check changes to stored, if entries changed manage the associated stored
+		//TODO:: disallow amounts
 		return super.update(id, updates);
 	}
 	
 	@DELETE
 	@Path("{id}")
 	@Operation(
-		summary = "Deletes a particular object."
+		summary = "Deletes a particular stored item. This removes it completely. To remove an amount of something, use subtract/transfer/set endpoints."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -291,7 +238,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = InventoryItem.class
+				implementation = Stored.class
 			)
 		)
 	)
@@ -312,17 +259,16 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
-	public InventoryItem delete(
+	public Stored delete(
 		@PathParam("id") String id
 	) {
-		//TODO:: delete stored
 		return super.delete(id);
 	}
 	
 	@GET
 	@Path("{id}/history")
 	@Operation(
-		summary = "Gets a particular object's history."
+		summary = "Gets a particular stored item's history."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -356,7 +302,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@GET
 	@Path("history")
 	@Operation(
-		summary = "Searches the history for the inventory items."
+		summary = "Searches the history for the stored items in this item and storage block."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -380,36 +326,13 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
+		//TODO:: adjust
 		return super.searchHistory(searchObject);
 	}
 
-	@GET
-	@Path("inStorageBlock/{storageBlockId}")
-	@Operation(
-		summary = "Gets items that are stored in the given block."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = InventoryItem.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to get.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getInventoryItemsInBlock(
-		@PathParam("storageBlockId") String storageBlockId
-	) {
-		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(this.getOqmDbIdOrName(), storageBlockId)).build();
-	}
-	
+	//TODO:: add
+	//TODO:: subtract
+	//TODO:: transfer
+	//TODO:: set
+
 }
