@@ -6,7 +6,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.lib.command.MssCommand;
-import tech.ebp.oqm.plugin.mssController.lib.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.testModuleServer.interfaces.TestModuleInterface;
 
 import java.io.Closeable;
@@ -71,7 +70,7 @@ public class TestSerialPort implements Closeable, TestModuleInterface {
 
 		this.mssModuleSerialPort = SerialPort.getCommPort(this.mssModulePortLocation);
 
-		log.info("Got ports: {} (for hw impl) and {} (to connect to)", mssModulePortLocation, mssConnectionPortLocation);
+		log.info("Got ports: {} (for hw impl) and {} (to connect to)", this.mssModulePortLocation, this.mssConnectionPortLocation);
 	}
 
 	private String readLine() {
@@ -134,10 +133,15 @@ public class TestSerialPort implements Closeable, TestModuleInterface {
 
 	@SneakyThrows
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		log.info("Closing out test serial port.");
 		this.process.destroy();
-		this.process.waitFor();
+		try {
+			this.process.waitFor();
+		} catch (InterruptedException e) {
+			log.error("Failed to wait for process to finish.", e);
+			this.process.destroyForcibly();
+		}
 		log.info("Exited socat with code {}", this.process.exitValue());
 	}
 }

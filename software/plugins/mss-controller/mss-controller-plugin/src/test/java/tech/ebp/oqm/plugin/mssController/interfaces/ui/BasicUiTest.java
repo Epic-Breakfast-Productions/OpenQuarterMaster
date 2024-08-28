@@ -1,5 +1,7 @@
 package tech.ebp.oqm.plugin.mssController.interfaces.ui;
 
+import io.quarkus.test.junit.TestProfile;
+import tech.ebp.oqm.plugin.mssController.testResources.profiles.NoModulesTestProfile;
 import tech.ebp.oqm.plugin.mssController.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.plugin.mssController.testResources.testUsers.TestUserService;
 import io.quarkus.test.junit.QuarkusTest;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 @Slf4j
 @QuarkusTest
+@TestProfile(NoModulesTestProfile.class)
 public class BasicUiTest extends WebUiTest {
 
 	@Getter

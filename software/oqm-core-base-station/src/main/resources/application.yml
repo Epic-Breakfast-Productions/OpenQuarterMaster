@@ -68,6 +68,9 @@ ui:
 quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
+  container-image:
+    name: oqm-core-base_station
+    group: ebprod
   rest-client:
     logging:
       scope: all
