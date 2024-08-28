@@ -163,12 +163,15 @@ Ingests:
 		
 			<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
 				<div class="input-group">
-					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name">
-					<select class="form-select" id="navSearchTypeSelect" aria-label="Navbar Quick Search search type" style="max-width: 140px;">
-						<option data-action="/items" data-field="name" selected>Items</option>
-						<option data-action="/storage" data-field="label">Storage Blocks</option>
-					</select>
-					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search} Search</button>
+					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
+					<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
+						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
+					</ul>
+
+
+					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search}</button>
 				</div>
 			</form>
 			<ul class="navbar-nav mb-auto">
