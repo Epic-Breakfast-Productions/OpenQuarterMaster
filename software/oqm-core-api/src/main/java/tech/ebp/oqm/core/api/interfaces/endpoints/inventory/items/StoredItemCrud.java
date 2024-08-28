@@ -334,5 +334,6 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	//TODO:: subtract
 	//TODO:: transfer
 	//TODO:: set
+	//TODO:: checkout
 
 }
