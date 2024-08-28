@@ -10,7 +10,7 @@
 #
 
 [Unit]
-Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "24.0".
+Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "25.0".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target
@@ -24,7 +24,7 @@ TimeoutSec=5m
 # setup operating variables
 Environment="CONTAINER_NAME=oqm-infra-keycloak"
 Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
-Environment="IMAGE_VERSION=24.0"
+Environment="IMAGE_VERSION=25.0"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
