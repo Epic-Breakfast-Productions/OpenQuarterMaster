@@ -1,21 +1,16 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Stored object to describe an amount of stored substance.
@@ -31,7 +26,7 @@ public class AmountStored extends Stored {
 	 * The amount of the thing stored.
 	 */
 	@ValidQuantity
-	private Quantity amount = null;
+	private Quantity<?> amount = null;
 	
 	public AmountStored(Unit<?> unit) {
 		this(Quantities.getQuantity(0, unit));
@@ -46,6 +41,7 @@ public class AmountStored extends Stored {
 	}
 	
 	public AmountStored add(AmountStored amount) {
+		@SuppressWarnings("rawtypes")
 		Quantity orig = this.getAmount();
 		
 		if (orig != null) {
@@ -65,7 +61,10 @@ public class AmountStored extends Stored {
 	 * @throws NotEnoughStoredException
 	 */
 	public AmountStored subtract(AmountStored amount) throws NotEnoughStoredException {
-		Quantity result = this.getAmount().subtract(amount.getAmount());
+		@SuppressWarnings("rawtypes")
+		Quantity otherAmount = amount.getAmount();
+		@SuppressWarnings("rawtypes")
+		Quantity result = this.getAmount().subtract(otherAmount);
 		
 		if (result.getValue().doubleValue() < 0) {
 			throw new NotEnoughStoredException("Resulting amount less than zero. (subtracting "+amount.getAmount()+" from "+this.getAmount()+" resulting in "+result+")");
