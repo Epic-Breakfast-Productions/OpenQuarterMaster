@@ -3,7 +3,6 @@ package tech.ebp.oqm.core.api.testResources.data;
 
 
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -11,9 +10,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryItem> {
 	
 	@Override
-	public InventoryItem<?, ?, ?> getTestObject() {
-		SimpleAmountItem item = new SimpleAmountItem();
-		
+	public InventoryItem getTestObject() {
+		InventoryItem item = new InventoryItem();
+
 		item.setName(faker.commerce().productName());
 		
 		return item;

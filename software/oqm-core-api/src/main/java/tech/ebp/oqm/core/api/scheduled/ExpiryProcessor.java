@@ -61,16 +61,17 @@ public class ExpiryProcessor {
 
 			//TODO:: do with client session
 			it.forEach((InventoryItem cur)->{
-				List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
-
-				if (!expiryEvents.isEmpty()) {
-					this.inventoryItemService.update(curEntry.getDbId().toHexString(), cur);
-					for (ItemExpiryEvent curEvent : expiryEvents) {
-						curEvent.setEntity(this.coreApiInteractingEntity.getId());
-						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
-						this.eventNotificationService.sendEvent(curEntry.getDbId(), this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
-					}
-				}
+				//TODO:: rework
+//				List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
+//
+//				if (!expiryEvents.isEmpty()) {
+//					this.inventoryItemService.update(curEntry.getDbId().toHexString(), cur);
+//					for (ItemExpiryEvent curEvent : expiryEvents) {
+//						curEvent.setEntity(this.coreApiInteractingEntity.getId());
+//						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
+//						this.eventNotificationService.sendEvent(curEntry.getDbId(), this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
+//					}
+//				}
 			});
 		}
 

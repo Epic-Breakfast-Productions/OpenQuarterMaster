@@ -22,22 +22,22 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 			Arguments.of(new AmountStored(OqmProvidedUnits.UNIT)),
 			Arguments.of(
 				new AmountStored(5, OqmProvidedUnits.UNIT)
+					.setExpires(LocalDateTime.now())
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
-					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDateTime.now())
-					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
+					.setAttributes(Map.of("hello", "world"))
+					.setKeywords(List.of("hello", "world"))
 			
 			),
 			Arguments.of(
 				new AmountStored(5, USCustomary.INCH)
+					.setExpires(LocalDateTime.now())
 					.setCondition(50)
 					.setConditionNotes(FAKER.lorem().paragraph())
-					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDateTime.now())
-					.setKeywords(List.of("hello", "world"))
 					.setImageIds(List.of(ObjectId.get()))
+					.setAttributes(Map.of("hello", "world"))
+					.setKeywords(List.of("hello", "world"))
 			
 			)
 		);

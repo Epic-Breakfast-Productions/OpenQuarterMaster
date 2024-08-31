@@ -68,34 +68,34 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 		}
 	}
 
-	
-	@POST
-	@Operation(
-		summary = "Adds a new stored to the item in the specified block."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
-		@Valid Stored stored
-	) {
-		return super.create(stored);
-	}
+	//we do this in transact
+//	@POST
+//	@Operation(
+//		summary = "Adds a new stored to the item in the specified block."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Object added.",
+//		content = @Content(
+//			mediaType = "application/json",
+//			schema = @Schema(
+//				implementation = ObjectId.class
+//			)
+//		)
+//	)
+//	@APIResponse(
+//		responseCode = "400",
+//		description = "Bad request given. Data given could not pass validation.",
+//		content = @Content(mediaType = "text/plain")
+//	)
+//	@RolesAllowed(Roles.INVENTORY_EDIT)
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public ObjectId create(
+//		@Valid Stored stored
+//	) {
+//		return super.create(stored);
+//	}
 	
 //	@Override
 //	@Path("stats")
@@ -136,10 +136,6 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 					implementation = SearchResult.class
 				)
 			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -189,7 +185,7 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a particular stored item. If applicable, amounts are disregarded. Use the add/subtract/set/transfer endpoints to modify amounts.",
+		summary = "Updates a particular stored item. If applicable, amounts are disregarded. Use the transact endpoint to modify amounts, or add/remove stored items",
 		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
@@ -225,44 +221,6 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	) {
 		//TODO:: disallow amounts
 		return super.update(id, updates);
-	}
-	
-	@DELETE
-	@Path("{id}")
-	@Operation(
-		summary = "Deletes a particular stored item. This removes it completely. To remove an amount of something, use subtract/transfer/set endpoints."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Stored.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "410",
-		description = "Object requested has already been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Stored delete(
-		@PathParam("id") String id
-	) {
-		return super.delete(id);
 	}
 	
 	@GET

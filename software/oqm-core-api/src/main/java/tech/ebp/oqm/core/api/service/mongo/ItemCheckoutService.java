@@ -30,6 +30,9 @@ import java.util.TreeSet;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 
+/**
+ * TODO:: rework
+ */
 @Named("ItemCheckoutService")
 @Slf4j
 @ApplicationScoped
@@ -58,31 +61,34 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 	public ObjectId checkoutItem(String oqmDbIdOrName, ItemCheckoutRequest request, InteractingEntity entity){
 		log.info("Checking out item: {}", request);
 		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, request.getItem());
-		
-		Stored result;
-		try {
-			result = item.subtract(request.getCheckedOutFrom(), request.getToCheckout());
-		} catch(ClassCastException e){
-			throw new IllegalArgumentException("Bad stored type given for item.", e);
-		}
-		
-		ItemCheckout itemCheckout = new ItemCheckout();
-		itemCheckout.setCheckedOut(request.getToCheckout());
-		itemCheckout.setItem(request.getItem());
-		itemCheckout.setCheckedOutFrom(request.getCheckedOutFrom());
-		itemCheckout.setCheckedOutFor(request.getCheckedOutFor());
-		itemCheckout.setDueBack(request.getDueBack());
-		itemCheckout.setReason(request.getReason());
-		itemCheckout.setNotes(request.getNotes());
-		
-		ObjectId newId;
-		try(ClientSession cs = this.getNewClientSession(true)){
-			newId = this.add(oqmDbIdOrName, cs, itemCheckout, entity);
-			this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
-			cs.commitTransaction();
-		}
-		
-		return newId;
+
+		//TODO:: rework
+//		Stored result;
+//		try {
+//			result = item.subtract(request.getCheckedOutFrom(), request.getToCheckout());
+//		} catch(ClassCastException e){
+//			throw new IllegalArgumentException("Bad stored type given for item.", e);
+//		}
+//
+//		ItemCheckout itemCheckout = new ItemCheckout();
+//		itemCheckout.setCheckedOut(request.getToCheckout());
+//		itemCheckout.setItem(request.getItem());
+//		itemCheckout.setCheckedOutFrom(request.getCheckedOutFrom());
+//		itemCheckout.setCheckedOutFor(request.getCheckedOutFor());
+//		itemCheckout.setDueBack(request.getDueBack());
+//		itemCheckout.setReason(request.getReason());
+//		itemCheckout.setNotes(request.getNotes());
+//
+//		ObjectId newId;
+//		try(ClientSession cs = this.getNewClientSession(true)){
+//			newId = this.add(oqmDbIdOrName, cs, itemCheckout, entity);
+//			this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, new ItemCheckoutEvent(item, entity).setItemCheckoutId(newId));
+//			cs.commitTransaction();
+//		}
+//
+//		return newId;
+
+		return null;
 	}
 	
 	public ItemCheckout checkinItem(
@@ -91,30 +97,32 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		@NonNull @Valid CheckInDetails checkInDetails,
 		InteractingEntity entity
 	) {
-		ItemCheckout checkout = this.get(oqmDbIdOrName, checkoutId);
-		
-		if(!checkout.isStillCheckedOut()){
-			throw new AlreadyCheckedInException("Checkout with id " + checkout.getId().toHexString() + " already checked in.");
-		}
-		
-		checkout.setCheckInDetails(checkInDetails);
-		InventoryItem item = null;
-		
-		if(checkInDetails instanceof ReturnCheckin){
-			item = this.inventoryItemService.get(oqmDbIdOrName, checkout.getItem());
-			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
-		}
-
-		ItemCheckinEvent event = new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId());
-		try(ClientSession cs = this.getNewClientSession(true)){
-			if(item != null) {
-				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, event);
-			}
-			this.update(oqmDbIdOrName, cs, checkout, entity, event);
-			cs.commitTransaction();
-		}
-		
-		return checkout;
+//		ItemCheckout checkout = this.get(oqmDbIdOrName, checkoutId);
+//
+//		if(!checkout.isStillCheckedOut()){
+//			throw new AlreadyCheckedInException("Checkout with id " + checkout.getId().toHexString() + " already checked in.");
+//		}
+//
+//		checkout.setCheckInDetails(checkInDetails);
+//		InventoryItem item = null;
+//
+//		if(checkInDetails instanceof ReturnCheckin){
+//			item = this.inventoryItemService.get(oqmDbIdOrName, checkout.getItem());
+//			item.add(((ReturnCheckin) checkInDetails).getStorageBlockCheckedInto(), checkout.getCheckedOut(), false);
+//		}
+//
+//		ItemCheckinEvent event = new ItemCheckinEvent(item, entity).setItemCheckoutId(checkout.getId());
+//		try(ClientSession cs = this.getNewClientSession(true)){
+//			if(item != null) {
+//				this.inventoryItemService.update(oqmDbIdOrName, cs, item, entity, event);
+//			}
+//			this.update(oqmDbIdOrName, cs, checkout, entity, event);
+//			cs.commitTransaction();
+//		}
+//
+//		return checkout;
+		//TODO:: rework
+		return null;
 	}
 	
 	//TODO:: prevent updates to those that are already checked in
@@ -134,7 +142,7 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		return list;
 	}
 	
-	public Set<ObjectId> getItemCheckoutsReferencing(String oqmDbIdOrName, ClientSession clientSession, InventoryItem<?, ?, ?> item){
+	public Set<ObjectId> getItemCheckoutsReferencing(String oqmDbIdOrName, ClientSession clientSession, InventoryItem item){
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			oqmDbIdOrName,

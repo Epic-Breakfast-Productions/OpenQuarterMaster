@@ -1,10 +1,8 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
-import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.testUtils.ObjectValidationTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
-import tech.units.indriya.AbstractUnit;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -12,19 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class AmountStoredValidationTest extends ObjectValidationTest<AmountStored> {
+class UniqueStoredValidationTest extends ObjectValidationTest<UniqueStored> {
 	
 	public static Stream<Arguments> getValid() {
 		return Stream.of(
-			Arguments.of(new AmountStored(OqmProvidedUnits.UNIT)),
+			Arguments.of(new UniqueStored().setId(new ObjectId())),
 			Arguments.of(
-				new AmountStored(5, OqmProvidedUnits.UNIT)
+				new UniqueStored()
 					.setCondition(50)
 					.setExpires(LocalDateTime.now())
-					.setConditionNotes(FAKER.lorem().paragraph())
 					.setImageIds(List.of(ObjectId.get()))
+					.setConditionNotes(FAKER.lorem().paragraph())
 					.setAttributes(Map.of("hello", "world"))
 					.setKeywords(List.of("hello", "world"))
+					.setId(new ObjectId())
 			)
 		);
 	}
@@ -32,21 +31,15 @@ class AmountStoredValidationTest extends ObjectValidationTest<AmountStored> {
 	public static Stream<Arguments> getInvalid() {
 		return Stream.of(
 			Arguments.of(
-				new AmountStored(OqmProvidedUnits.UNIT).setCondition(-1),
+				new UniqueStored().setCondition(-1).setId(new ObjectId()),
 				new HashMap<>() {{
 					put("condition", "must be greater than or equal to 0");
 				}}
 			),
 			Arguments.of(
-				new AmountStored(OqmProvidedUnits.UNIT).setCondition(101),
+				new UniqueStored().setCondition(101).setId(new ObjectId()),
 				new HashMap<>() {{
 					put("condition", "must be less than or equal to 100");
-				}}
-			),
-			Arguments.of(
-				new AmountStored(0.0, AbstractUnit.ONE),
-				new HashMap<>() {{
-					put("amount", "Invalid unit. \"one\" not applicable for item storage.");
 				}}
 			)
 		);

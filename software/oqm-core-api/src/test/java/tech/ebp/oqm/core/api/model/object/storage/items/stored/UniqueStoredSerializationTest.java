@@ -9,24 +9,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class TrackedStoredSerializationTest extends ObjectSerializationTest<TrackedStored> {
+class UniqueStoredSerializationTest extends ObjectSerializationTest<UniqueStored> {
 	
-	protected TrackedStoredSerializationTest() {
-		super(TrackedStored.class);
+	protected UniqueStoredSerializationTest() {
+		super(UniqueStored.class);
 	}
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new TrackedStored().setIdentifier(FAKER.idNumber().peselNumber())),
+			Arguments.of(new UniqueStored().setId(new ObjectId())),
 			Arguments.of(
-				new TrackedStored()
-					.setIdentifier(FAKER.idNumber().peselNumber())
+				new UniqueStored()
 					.setCondition(50)
-					.setConditionNotes(FAKER.lorem().paragraph())
-					.setAttributes(Map.of("hello", "world"))
 					.setExpires(LocalDateTime.now())
-					.setKeywords(List.of("hello", "world"))
+					.setConditionNotes(FAKER.lorem().paragraph())
 					.setImageIds(List.of(ObjectId.get()))
+					.setAttributes(Map.of("hello", "world"))
+					.setKeywords(List.of("hello", "world"))
+					.setId(new ObjectId())
 			)
 		);
 	}

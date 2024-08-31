@@ -32,12 +32,7 @@ import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.TrackedItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.TrackedStored;
-import tech.ebp.oqm.core.api.model.object.storage.items.storedWrapper.amountStored.SingleAmountStoredWrapper;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.core.api.model.rest.unit.custom.NewBaseCustomUnitRequest;
@@ -207,86 +202,44 @@ class DataImportServiceTest extends RunningServerTest {
 		}
 		//add items
 		List<ObjectId> itemIds = new ArrayList<>();
-		List<SimpleAmountItem> simpleAmountItems = new ArrayList<>();
+		List<InventoryItem> simpleAmountItems = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
-			SimpleAmountItem item = new SimpleAmountItem();
+			//TODO:: different item types
+			InventoryItem item = new InventoryItem();
 			item.setDescription(FAKER.lorem().paragraph());
 			item.setName(FAKER.name().name());
 			item.setUnit(customUnits.get(rand.nextInt(customUnits.size())).getUnitCreator().toUnit());
-			for (int j = 0; j < 5; j++) {
-				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size())))
-					.setAmount(abs(rand.nextInt() + 1), item.getUnit())
-					.setCondition(rand.nextInt(100))
-					.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
-					.setConditionNotes(FAKER.lorem().paragraph());
-			}
+
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
 			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
 			itemIds.add(newId);
 			simpleAmountItems.add(item);
 		}
-		List<ListAmountItem> listAmountItems = new ArrayList<>();
-		for (int i = 0; i < 5; i++) {
-			ListAmountItem item = new ListAmountItem();
-			item.setDescription(FAKER.lorem().paragraph());
-			item.setName(FAKER.name().name());
-			for (int j = 0; j < 5; j++) {
-				item.getStoredForStorage(storageIds.get(rand.nextInt(storageIds.size()))).add(
-					(AmountStored) new AmountStored()
-									   .setAmount(abs(rand.nextInt()), item.getUnit())
-									   .setCondition(rand.nextInt(100))
-									   .setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
-									   .setConditionNotes(FAKER.lorem().paragraph())
-				);
-			}
-			item.getAttributes().put("key", "val");
-			item.getKeywords().add("hello world");
-			itemIds.add(this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser));
-			listAmountItems.add(item);
-		}
-		List<TrackedItem> trackedItems = new ArrayList<>();
-		for (int i = 0; i < 5; i++) {
-			TrackedItem item = new TrackedItem();
-			item.setDescription(FAKER.lorem().paragraph());
-			item.setName(FAKER.name().name());
-			item.setTrackedItemIdentifierName("id");
-			for (int j = 0; j < 5; j++) {
-				item.add(
-					storageIds.get(rand.nextInt(storageIds.size())),
-					(TrackedStored) new TrackedStored()
-										.setIdentifier(FAKER.idNumber().valid())
-										.setCondition(rand.nextInt(100))
-										.setExpires(LocalDateTime.now().plusDays(rand.nextInt(5)))
-										.setConditionNotes(FAKER.lorem().paragraph())
-				);
-			}
-			item.getAttributes().put("key", "val");
-			item.getKeywords().add("hello world");
-			ObjectId newId =this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
-			itemIds.add(newId);
-			trackedItems.add(item);
-		}
+		//TODO:: stored items
+		//TODO:: do some transactions
+
 		//add item checkouts
 		for (int i = 0; i < 1; i++) {
 			{
-				SimpleAmountItem checkingOutItem = simpleAmountItems.get(rand.nextInt(simpleAmountItems.size()));
-				
-				LinkedList<Map.Entry<ObjectId, SingleAmountStoredWrapper>> storedEntries = new LinkedList<>(checkingOutItem.getStorageMap().entrySet());
-				
-				Map.Entry<ObjectId, SingleAmountStoredWrapper> checkingOutEntry = storedEntries.removeFirst();
-				ObjectId checkoutId = this.itemCheckoutService.checkoutItem(
-					DEFAULT_TEST_DB_NAME,
-					ItemCheckoutRequest.builder()
-						.item(checkingOutItem.getId())
-						.checkedOutFrom(checkingOutEntry.getKey())
-						.toCheckout(checkingOutEntry.getValue().getStored())
-						.checkedOutFor(new CheckoutForOqmEntity(testUser.getId()))
-						.reason(FAKER.lorem().paragraph())
-						.notes(FAKER.lorem().paragraph())
-						.build(),
-					testUser
-				);
+				InventoryItem checkingOutItem = simpleAmountItems.get(rand.nextInt(simpleAmountItems.size()));
+
+				//TODO:: rework
+//				LinkedList<Map.Entry<ObjectId, SingleAmountStoredWrapper>> storedEntries = new LinkedList<>(checkingOutItem.getStorageMap().entrySet());
+//
+//				Map.Entry<ObjectId, SingleAmountStoredWrapper> checkingOutEntry = storedEntries.removeFirst();
+//				ObjectId checkoutId = this.itemCheckoutService.checkoutItem(
+//					DEFAULT_TEST_DB_NAME,
+//					ItemCheckoutRequest.builder()
+//						.item(checkingOutItem.getId())
+//						.checkedOutFrom(checkingOutEntry.getKey())
+//						.toCheckout(checkingOutEntry.getValue().getStored())
+//						.checkedOutFor(new CheckoutForOqmEntity(testUser.getId()))
+//						.reason(FAKER.lorem().paragraph())
+//						.notes(FAKER.lorem().paragraph())
+//						.build(),
+//					testUser
+//				);
 			}
 			//TODO:: rest of item types
 		}

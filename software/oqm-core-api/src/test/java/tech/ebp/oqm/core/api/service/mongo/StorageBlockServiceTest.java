@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
@@ -14,7 +15,6 @@ import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 
 import jakarta.inject.Inject;
@@ -109,10 +109,10 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(subBlockId)));
 			
 			//Inventory item, basic
-			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, new SimpleAmountItem().setName(FAKER.name().name()), testUser);
-			
-			SimpleAmountItem sai = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name());
-			sai.getStoredForStorage(storageBlock.getId());
+			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, new InventoryItem().setName(FAKER.name().name()), testUser);
+
+			InventoryItem sai = new InventoryItem().setName(FAKER.name().name());
+
 			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 		}

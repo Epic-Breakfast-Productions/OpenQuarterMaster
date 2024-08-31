@@ -276,7 +276,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		//TODO:: check changes to stored, if entries changed manage the associated stored
+		//TODO:: disallow StorageType, unit
+		//TODO:: if storage blocks changed, process updates to stored
 		return super.update(id, updates);
 	}
 	
@@ -381,35 +382,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.searchHistory(searchObject);
-	}
-
-	@GET
-	@Path("inStorageBlock/{storageBlockId}")
-	@Operation(
-		summary = "Gets items that are stored in the given block."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = InventoryItem.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to get.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getInventoryItemsInBlock(
-		@PathParam("storageBlockId") String storageBlockId
-	) {
-		return Response.ok(((InventoryItemService) this.getObjectService()).getItemsInBlock(this.getOqmDbIdOrName(), storageBlockId)).build();
 	}
 	
 }
