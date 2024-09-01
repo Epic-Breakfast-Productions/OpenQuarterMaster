@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.model.rest.search;
 import com.mongodb.client.model.Filters;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -16,6 +17,7 @@ import static com.mongodb.client.model.Filters.*;
 
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
 	@QueryParam("itemBarcode") String itemBarcode;

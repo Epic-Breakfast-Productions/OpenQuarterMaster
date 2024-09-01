@@ -10,10 +10,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import jakarta.validation.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -22,13 +19,19 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
+import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -67,10 +70,18 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	@Getter
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String databasePrefix;
-	
+
 	@Getter
 	@Inject
 	OqmDatabaseService oqmDatabaseService;
+
+	@Getter
+	@Inject
+	ImageService imageService;
+
+	@Getter
+	@Inject
+	FileAttachmentService fileAttachmentService;
 	
 	/**
 	 * The name of the collection this service is in charge of
@@ -180,8 +191,27 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 * Meant to be extended to provide functionality. This empty method simply allows ignoring, if desired.
 	 *
 	 * @param newOrChangedObject If true, object validated for creation. If false, validated for updating.
+	 * @throws ValidationException If any validation issues arise
 	 */
-	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) {
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) throws ValidationException {
+		if(this.getClazz().isAssignableFrom(ImagedMainObject.class)){
+			for(ObjectId curImageId : ((ImagedMainObject)newOrChangedObject).getImageIds()){
+				try{
+					this.imageService.getObj(oqmDbIdOrName, curImageId);
+				} catch (DbNotFoundException e){
+					throw new ValidationException("Image given not present in images: " + curImageId.toHexString(), e);
+				}
+			}
+		}
+		if(this.getClazz().isAssignableFrom(FileAttachmentContaining.class)){
+			for(ObjectId curImageId : ((FileAttachmentContaining)newOrChangedObject).getAttachedFiles()){
+				try{
+					this.fileAttachmentService.getObj(oqmDbIdOrName, curImageId);
+				} catch (DbNotFoundException e){
+					throw new ValidationException("File Attachment given not present in file attachments: " + curImageId.toHexString(), e);
+				}
+			}
+		}
 	}
 	
 	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){

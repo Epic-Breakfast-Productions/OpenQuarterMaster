@@ -8,6 +8,7 @@ import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.List;
@@ -44,10 +46,18 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	CoreApiInteractingEntity coreApiInteractingEntity;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
+
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	StorageBlockService storageBlockService;
+
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	ItemCategoryService itemCategoryService;
 	
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
@@ -61,9 +71,37 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@WithSpan
 	@Override
-	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) {
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) throws ValidationException {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
-		//TODO:: name not existant, storage block ids exist, image ids exist
+
+		for(ObjectId curCategoryId : newOrChangedObject.getCategories()){
+			try{
+				this.getItemCategoryService().get(oqmDbIdOrName, curCategoryId);
+			} catch (DbNotFoundException e){
+				throw new ValidationException("Item category " + curCategoryId.toHexString() + " does not exist.", e);
+			}
+		}
+
+		for(ObjectId curObjectId : newOrChangedObject.getStorageBlocks()){
+			try{
+				this.getStorageBlockService().get(oqmDbIdOrName, curObjectId);
+			} catch (DbNotFoundException e){
+				throw new ValidationException("Storage block " + curObjectId.toHexString() + " does not exist.", e);
+			}
+		}
+
+		List<InventoryItem> nameResults = this.list(oqmDbIdOrName, eq("name", newOrChangedObject.getName()), null, null);
+		if(!nameResults.isEmpty()){
+			if(newObject){
+				throw new ValidationException("Item with name '" + newOrChangedObject.getName() + "' already exists.");
+			} else {
+				for(InventoryItem curMatcingName : nameResults){
+					if(!curMatcingName.getId().equals(newOrChangedObject.getId())){
+						throw new ValidationException("Item with name '" + newOrChangedObject.getName() + "' already exists.");
+					}
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -83,13 +121,20 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@Override
 	public InventoryItem update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+		//TODO:: disallow StorageType, incompatible unit changes
+		//TODO:: if storage blocks changed, process updates to stored
 		InventoryItem item = super.update(oqmDbIdOrName, id, updateJson, interactingEntity);
-		super.update(oqmDbIdOrName, item);
+		this.update(oqmDbIdOrName, item);
 		
 		return item;
 	}
 
-	
+	@Override
+	public InventoryItem remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity) {
+		//TODO:: delete stored
+		return super.remove(oqmDbIdOrName, session, objectId, entity);
+	}
+
 	@WithSpan
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(

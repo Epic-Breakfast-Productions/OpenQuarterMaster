@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -41,13 +42,17 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	/**
 	 * The type of storage this item uses.
 	 */
+	@NonNull
+	@NotNull
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private StorageType getStorageType;
 	
 	/**
 	 * Description of the item
 	 */
-	private String description = null;
+	@NonNull
+	@NotNull
+	private String description = "";
 	
 	/**
 	 * The barcode for this item.
@@ -97,6 +102,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * The threshold of low stock for the entire object.
 	 * <p>
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
+	 * TODO:: validate unit is compatible with main unit
 	 */
 	private Quantity<?> lowStockThreshold = null;
 	
@@ -105,7 +111,10 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 *
 	 * @return The unit associated with this item.
 	 */
-	public @NonNull Unit<?> unit;
+	@NonNull
+	@NotNull
+	@ValidUnit
+	public Unit<?> unit;
 
 	@Override
 	public int getSchemaVersion() {

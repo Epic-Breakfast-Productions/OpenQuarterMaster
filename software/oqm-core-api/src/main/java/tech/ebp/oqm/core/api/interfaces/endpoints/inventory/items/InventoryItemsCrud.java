@@ -54,7 +54,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
+		description = "Item added.",
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
@@ -173,7 +173,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of objects, using search parameters."
+		summary = "Gets a list of items, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -186,16 +186,11 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 					implementation = SearchResult.class
 				)
 			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response search(
-		//for actual queries
 		@BeanParam InventoryItemSearch itemSearch
 	) {
 		return super.search(itemSearch);
@@ -242,8 +237,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a particular Object.",
-		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
+		summary = "Updates a particular inventory item.",
+		description = "Partial update to an item. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -276,15 +271,13 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		//TODO:: disallow StorageType, unit
-		//TODO:: if storage blocks changed, process updates to stored
 		return super.update(id, updates);
 	}
 	
 	@DELETE
 	@Path("{id}")
 	@Operation(
-		summary = "Deletes a particular object."
+		summary = "Deletes a particular item."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -316,7 +309,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public InventoryItem delete(
 		@PathParam("id") String id
 	) {
-		//TODO:: delete stored
 		return super.delete(id);
 	}
 	
@@ -370,10 +362,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 					implementation = ObjectHistoryEvent.class
 				)
 			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
