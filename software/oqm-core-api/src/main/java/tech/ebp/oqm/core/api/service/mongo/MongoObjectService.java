@@ -32,12 +32,7 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.and;
@@ -327,7 +322,9 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public T get(String oqmDbIdOrName, String objectId) throws DbNotFoundException, DbDeletedException {
 		return this.get(oqmDbIdOrName, new ObjectId(objectId));
 	}
-	
+
+	private Set<String> disallowedUpdateFields = new HashSet<>();
+
 	/**
 	 * Updates the object at the id given. Validates the object before updating in the database.
 	 *
@@ -336,18 +333,26 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The updated object.
 	 */
-	public T update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson) throws DbNotFoundException, DbDeletedException {
+	public T update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson) throws DbNotFoundException {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
-		
+
+
+		Iterator<String> updatingFields = updateJson.fieldNames();
+		while (updatingFields.hasNext()) {
+			String field = updatingFields.next();
+			if(this.disallowedUpdateFields.contains(field)) {
+				throw new IllegalArgumentException("Not allowed to update field '" + field + "' of an " + this.getClazz().getSimpleName());
+			}
+		}
+
 		T object = this.get(oqmDbIdOrName, id);
 		
 		ObjectReader reader = this.getObjectMapper()
 								  .readerForUpdating(object)
 								  .with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
-			//TODO:: enable different types, for InventoryItem (fails to deal with the abstract type)
 			reader.readValue(updateJson, object.getClass());
 		} catch(IOException e) {
 			throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);

@@ -36,6 +36,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * The name of this inventory item
 	 */
 	@NonNull
+	@NotNull
 	@NotBlank(message = "Name cannot be blank")
 	private String name;
 	
@@ -45,7 +46,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	private StorageType getStorageType;
+	private StorageType storageType;
 	
 	/**
 	 * Description of the item

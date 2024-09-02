@@ -3,42 +3,33 @@ package tech.ebp.oqm.core.api.service.mongo;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 
 import jakarta.inject.Inject;
-import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
 class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, InventoryItemService> {
-	
-	InventoryItemService inventoryItemService;
-	
-	InventoryItemTestObjectCreator itemTestObjectCreator;
-	
+
 	@Inject
-	InventoryItemServiceTest(
-		InventoryItemService inventoryItemService,
-		InventoryItemTestObjectCreator itemTestObjectCreator
-	) {
-		this.inventoryItemService = inventoryItemService;
-		this.itemTestObjectCreator = itemTestObjectCreator;
-	}
+	InventoryItemService inventoryItemService;
+
+	@Inject
+	InventoryItemTestObjectCreator itemTestObjectCreator;
 	
 	@Override
 	protected InventoryItem getTestObject() {
@@ -64,6 +55,117 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void addTest() {
 		this.defaultAddTest(this.inventoryItemService);
 	}
+
+	@Test
+	public void getObjectIdTest() {
+		this.defaultGetObjectIdTest(this.inventoryItemService);
+	}
+
+	@Test
+	public void getStringTest() {
+		this.defaultGetStringTest(this.inventoryItemService);
+	}
+
+	@Test
+	public void removeAllTest() {
+		this.defaultRemoveAllTest(this.inventoryItemService);
+	}
+
+	@Test
+	public void updatePassTest(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put("name", FAKER.name().name());
+		updates.put("description", FAKER.lorem().paragraph());
+		updates.put("storageType", item.getStorageType().name());
+		//TODO:: finish; storage blocks, files?, images?
+
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user);
+		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
+
+		assertEquals(updates.get("name").asText(), item.getName());
+		assertEquals(updates.get("description").asText(), item.getDescription());
+		assertEquals(updates.get("storageType").asText(), item.getStorageType().name());
+	}
+
+	@Test
+	public void testInvalidNameUpdateNull(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put("name", (String)null);
+
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
+	@Test
+	public void testInvalidNameUpdateBlank(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		InventoryItem other = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put("name", "");
+
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
+	@Test
+	public void testInvalidNameCreateEqualsAnother(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem other = this.getTestObject();
+		InventoryItem item = this.getTestObject().setName(other.getName());
+		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+
+		Exception exception = assertThrows(ValidationException.class, () ->  this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
+	@Test
+	public void testInvalidNameUpdateEqualsAnother(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		InventoryItem other = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put("name", other.getName());
+
+		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
+	@Test
+	public void testInvalidUpdateStorageType(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put("storageType", StorageType.AMOUNT_LIST.name());
+
+		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
+	//TODO:: update name test
+	//TODO:: add w/ used name test
+	//TODO:: tests with images, file?
+	//TODO:: invalid update with units test
+	//TODO::
+
+
+
 
 	//TODO:: rework
 //	@Test
@@ -161,21 +263,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 //
 //		assertEquals(newName, item2.getName());
 //	}
-	
-	@Test
-	public void getObjectIdTest() {
-		this.defaultGetObjectIdTest(this.inventoryItemService);
-	}
-	
-	@Test
-	public void getStringTest() {
-		this.defaultGetStringTest(this.inventoryItemService);
-	}
-	
-	@Test
-	public void removeAllTest() {
-		this.defaultRemoveAllTest(this.inventoryItemService);
-	}
+
 
 	//TODO:: rework
 //	@Test
