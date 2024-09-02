@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class StoredNotificationStatus {
-	
+
+	@lombok.Builder.Default
 	private boolean expired = false;
+
+	@lombok.Builder.Default
 	private boolean expiredWarning = false;
 }

@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.object.storage.items.transactions;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class AppliedTransaction extends AttKeywordMainObject {
 	@Override
 	public int getSchemaVersion() {
@@ -36,6 +38,7 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private ZonedDateTime timestamp = ZonedDateTime.now();
 
 	/**

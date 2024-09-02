@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.HasParent;
@@ -28,6 +29,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class StorageBlock extends ImagedMainObject implements HasParent, FileAttachmentContaining {
 	public static final int CUR_SCHEMA_VERSION = 1;
 

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ItemNotificationStatus {
-	
+
+	@lombok.Builder.Default
 	private boolean lowStock = false;
 }

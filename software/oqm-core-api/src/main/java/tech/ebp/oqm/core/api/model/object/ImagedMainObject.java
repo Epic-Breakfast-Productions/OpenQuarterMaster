@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public abstract class ImagedMainObject extends AttKeywordMainObject {
 	
 	/**
@@ -27,5 +29,6 @@ public abstract class ImagedMainObject extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<@NonNull ObjectId> imageIds = new ArrayList<>();
 }

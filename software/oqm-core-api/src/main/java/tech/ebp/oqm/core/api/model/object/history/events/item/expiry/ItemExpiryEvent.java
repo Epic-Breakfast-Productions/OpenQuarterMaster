@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -14,8 +15,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-//@SuperBuilder
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public abstract class ItemExpiryEvent extends ItemStorageBlockEvent {
 	
 	public ItemExpiryEvent(ObjectId objectId, InteractingEntity entity) {

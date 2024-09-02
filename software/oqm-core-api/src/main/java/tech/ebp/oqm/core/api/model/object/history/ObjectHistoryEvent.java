@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
@@ -30,9 +31,6 @@ import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListAction
 import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListActionDeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListActionUpdateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListApplyEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.user.UserDisabledEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.user.UserEnabledEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 
 import java.time.ZonedDateTime;
@@ -52,10 +50,6 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = CreateEvent.class, name = "CREATE"),
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
 	@JsonSubTypes.Type(value = DeleteEvent.class, name = "DELETE"),
-	
-	@JsonSubTypes.Type(value = UserLoginEvent.class, name = "USER_LOGIN"),
-	@JsonSubTypes.Type(value = UserEnabledEvent.class, name = "USER_ENABLED"),
-	@JsonSubTypes.Type(value = UserDisabledEvent.class, name = "USER_DISABLED"),
 	
 	@JsonSubTypes.Type(value = ItemExpiryWarningEvent.class, name = "ITEM_EXPIRY_WARNING"),
 	@JsonSubTypes.Type(value = ItemExpiredEvent.class, name = "ITEM_EXPIRED"),
@@ -77,6 +71,7 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = NewFileVersionEvent.class, name = "FILE_NEW_VERSION"),
 })
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	
 	/**
@@ -88,6 +83,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
+	@lombok.Builder.Default
 	private ObjectId entity = null;
 	
 	/**

@@ -26,10 +26,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
@@ -68,7 +65,15 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			this.hens = container.get();
 		}
 	}
-	
+
+	//TODO:: this better
+	@Override
+	public Set<String> getDisallowedUpdateFields() {
+		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
+		output.add("storageType");
+		return output;
+	}
+
 	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) throws ValidationException {

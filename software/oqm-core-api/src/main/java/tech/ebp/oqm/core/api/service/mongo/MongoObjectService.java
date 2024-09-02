@@ -14,6 +14,7 @@ import com.mongodb.client.result.InsertOneResult;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
@@ -40,6 +41,9 @@ import static com.mongodb.client.model.Filters.eq;
 
 @Slf4j
 public abstract class MongoObjectService<T extends MainObject, S extends SearchObject<T>, X extends CollectionStats> extends MongoDbAwareService<T, S, X> {
+
+	@Getter
+	private Set<String> disallowedUpdateFields = new HashSet<>();
 	
 	protected MongoObjectService(String collectionName, Class<T> clazz) {
 		super(collectionName, clazz);
@@ -323,8 +327,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.get(oqmDbIdOrName, new ObjectId(objectId));
 	}
 
-	private Set<String> disallowedUpdateFields = new HashSet<>();
-
 	/**
 	 * Updates the object at the id given. Validates the object before updating in the database.
 	 *
@@ -338,16 +340,21 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
 
+		T object = this.get(oqmDbIdOrName, id);
+		ObjectNode origJsonObj = this.getObjectMapper().valueToTree(object);
 
 		Iterator<String> updatingFields = updateJson.fieldNames();
 		while (updatingFields.hasNext()) {
-			String field = updatingFields.next();
-			if(this.disallowedUpdateFields.contains(field)) {
-				throw new IllegalArgumentException("Not allowed to update field '" + field + "' of an " + this.getClazz().getSimpleName());
+			String updatingField = updatingFields.next();
+			if(this.getDisallowedUpdateFields().contains(updatingField)) {
+				//TODO:: support sub-fields
+				if(!origJsonObj.get(updatingField).equals(
+					updateJson.get(updatingField)
+				)) {
+					throw new IllegalArgumentException("Not allowed to update field '" + updatingField + "' of an " + this.getClazz().getSimpleName());
+				}
 			}
 		}
-
-		T object = this.get(oqmDbIdOrName, id);
 		
 		ObjectReader reader = this.getObjectMapper()
 								  .readerForUpdating(object)

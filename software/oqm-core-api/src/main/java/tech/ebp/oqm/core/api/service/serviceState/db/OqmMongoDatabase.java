@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 public class OqmMongoDatabase extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
@@ -27,14 +28,16 @@ public class OqmMongoDatabase extends AttKeywordMainObject {
 	@Length(min = 1, max = 15)
 	@Pattern(regexp = "^([A-Z]|[a-z]|[0-9]|[-_])+$")//TODO:: test
 	private String name;
-	
+
+	@lombok.Builder.Default
 	private String displayName = null;
 	
 	@NotNull
 	@Length(max = 256)
 	@lombok.Builder.Default
 	private String description = "";
-	
+
+	@lombok.Builder.Default
 	private Set<@NotNull String> usersAllowed = null;
 	
 	public String getDisplayName(){

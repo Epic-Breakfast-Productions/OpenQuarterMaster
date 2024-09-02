@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -19,8 +20,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-//@SuperBuilder
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public class ItemTransferEvent extends ItemAddSubEvent {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	

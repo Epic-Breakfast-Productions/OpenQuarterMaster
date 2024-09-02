@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
@@ -24,12 +25,14 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class ItemCheckout extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	/**
 	 * When these item(s) were checked out
 	 */
+	@lombok.Builder.Default
 	private ZonedDateTime checkoutDate = ZonedDateTime.now();
 	
 	/**
@@ -63,19 +66,23 @@ public class ItemCheckout extends AttKeywordMainObject {
 	/**
 	 * When the item is due back by
 	 */
+	@lombok.Builder.Default
 	private ZonedDateTime dueBack = null;
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String reason = "";
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String notes = "";
 	
 	/**
 	 * The exact item being checked out
 	 */
+	@lombok.Builder.Default
 	private CheckInDetails checkInDetails = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

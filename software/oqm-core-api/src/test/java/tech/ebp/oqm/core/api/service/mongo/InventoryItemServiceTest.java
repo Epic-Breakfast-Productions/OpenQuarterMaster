@@ -154,7 +154,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("storageType", StorageType.AMOUNT_LIST.name());
 
-		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 

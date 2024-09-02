@@ -10,7 +10,6 @@ import tech.ebp.oqm.core.api.model.object.history.events.item.ItemSubEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.core.api.model.testUtils.ObjectSerializationTest;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,9 +68,6 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistor
 									 .setDescription(FAKER.lorem().paragraph())
 									 .setEntity(ObjectId.get())
 					),
-					//login
-					Arguments.of(new UserLoginEvent()),
-					Arguments.of(new UserLoginEvent().setEntity(ObjectId.get())),
 					//item expired
 					Arguments.of(new ItemExpiredEvent().setStorageBlockId(ObjectId.get())),
 					Arguments.of(

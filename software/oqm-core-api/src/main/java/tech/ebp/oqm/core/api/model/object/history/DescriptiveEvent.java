@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -18,7 +19,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-//@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public abstract class DescriptiveEvent extends ObjectHistoryEvent {
 	
 	public DescriptiveEvent(ObjectId objectId, InteractingEntity entity) {
@@ -33,6 +34,7 @@ public abstract class DescriptiveEvent extends ObjectHistoryEvent {
 	/** Description of the event */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
 	
 	protected DescriptiveEvent(String description) {

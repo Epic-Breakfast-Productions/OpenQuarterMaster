@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -15,8 +16,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-//@SuperBuilder
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public abstract class ItemStorageBlockEvent extends ObjectHistoryEvent {
 	
 	public ItemStorageBlockEvent(ObjectId objectId, InteractingEntity entity) {
@@ -30,8 +31,10 @@ public abstract class ItemStorageBlockEvent extends ObjectHistoryEvent {
 	@NotNull
 	//	@NonNull
 	private ObjectId storageBlockId;
-	
+
+	@lombok.Builder.Default
 	private String identifier = null;
-	
+
+	@lombok.Builder.Default
 	private Integer index = null;
 }
