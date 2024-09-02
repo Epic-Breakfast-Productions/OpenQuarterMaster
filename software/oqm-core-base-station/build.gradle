@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.7.1"
+    id "io.freefair.lombok" version "8.10"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.4.2'
+version '1.4.3'
 
 repositories {
     mavenCentral()
