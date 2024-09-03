@@ -1,34 +1,15 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.validation.Valid;
-import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
-import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
-
-import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
 
 @Slf4j
 @Named("ItemStoredTransactionService")
@@ -50,12 +31,26 @@ public class ItemStoredTransactionService extends MongoObjectService<AppliedTran
 		InventoryItem inventoryItem,
 		ItemStoredTransaction itemStoredTransaction
 	){
-		AppliedTransaction newTransaction = new AppliedTransaction();
-		newTransaction.setInventoryItem(inventoryItem.getId());
+		AppliedTransaction.Builder<?,?> appliedTransactionBuilder = AppliedTransaction.builder()
+			.inventoryItem(inventoryItem.getId())
+			.transaction(itemStoredTransaction);
 
-		//TODO
+		switch (inventoryItem.getStorageType()){
+			case BULK -> {
+				//TODO Only allow one stored to exist
+			}
+			case AMOUNT_LIST -> {
+				//TODO: if new, add to stored
+			}
+			case UNIQUE_MULTI -> {
+				//TODO:: add to stored
+			}
+			case UNIQUE_SINGLE -> {
+				//TODO:: Only allow one stored to exist
+			}
+		}
 
-		ObjectId newId = this.add(oqmDbIdOrName, newTransaction);
+		ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 		return newId;
 	}
 

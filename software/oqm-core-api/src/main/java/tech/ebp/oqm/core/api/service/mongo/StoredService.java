@@ -21,16 +21,14 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
@@ -51,6 +49,13 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 
+	@Override
+	public Set<String> getDisallowedUpdateFields() {
+		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
+		output.add("amount");
+		return output;
+	}
+
 	public StoredService() {
 		super(Stored.class, false);
 		try(InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)){
@@ -62,7 +67,6 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
-		//TODO:: name not existant, storage block ids exist, image ids exist
 	}
 	
 	@Override
@@ -73,22 +77,13 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	@Override
 	public Stored update(String oqmDbIdOrName, Stored object) throws DbNotFoundException {
-		/**
-		 * TODO:: disallow updating amount
-		 */
 		Stored item = super.update(oqmDbIdOrName, object);
 		return item;
 	}
 	
 	@Override
 	public Stored update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
-		/**
-		 * TODO:: disallow updating amount
-		 * also, wat?
-		 */
 		Stored item = super.update(oqmDbIdOrName, id, updateJson, interactingEntity);
-		super.update(oqmDbIdOrName, item);
-		
 		return item;
 	}
 

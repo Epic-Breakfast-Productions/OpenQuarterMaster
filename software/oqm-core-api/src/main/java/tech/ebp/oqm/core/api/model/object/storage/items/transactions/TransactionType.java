@@ -1,15 +1,18 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions;
 
 public enum TransactionType {
+	ADD_AMOUNT,
 	ADD_WHOLE,
-	ADD_PART,
 
-	SUBTRACT_WHOLE,
-	SUBTRACT_PART,
-
-	TRANSFER_WHOLE,
-	TRANSFER_PART,
-	
+	CHECKIN_FULL,
+	CHECKIN_PART,
+	CHECKOUT_AMOUNT,
 	CHECKOUT_WHOLE,
-	CHECKOUT_PART
+
+	SUBTRACT_AMOUNT,
+	SUBTRACT_WHOLE,
+
+	TRANSFER_AMOUNT,
+	TRANSFER_WHOLE,
+
 }

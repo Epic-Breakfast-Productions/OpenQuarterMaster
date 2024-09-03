@@ -33,7 +33,7 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored/{blockId}")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored/inBlock/{blockId}")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
@@ -145,7 +145,7 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	) {
 		return super.search(storedSearch);
 	}
-	
+
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -181,7 +181,7 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	public Stored get(@PathParam("id") String id) {
 		return super.get(id);
 	}
-	
+
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -222,7 +222,7 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 		//TODO:: disallow amounts
 		return super.update(id, updates);
 	}
-	
+
 	@GET
 	@Path("{id}/history")
 	@Operation(
