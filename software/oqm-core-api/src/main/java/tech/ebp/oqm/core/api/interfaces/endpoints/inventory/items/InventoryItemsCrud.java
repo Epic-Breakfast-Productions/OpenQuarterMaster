@@ -190,7 +190,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<InventoryItem> search(
 		@BeanParam InventoryItemSearch itemSearch
 	) {
 		return super.search(itemSearch);

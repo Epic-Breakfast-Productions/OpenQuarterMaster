@@ -121,11 +121,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
-	public Response search(
+	public SearchResult<T> search(
 		//		@BeanParam
 		S searchObject
 	) {
-		return this.getSearchResponseBuilder(searchObject).build();
+		return this.getObjectService().search(this.getOqmDbIdOrName(), searchObject);
 	}
 	
 	//	@Path("{id}")

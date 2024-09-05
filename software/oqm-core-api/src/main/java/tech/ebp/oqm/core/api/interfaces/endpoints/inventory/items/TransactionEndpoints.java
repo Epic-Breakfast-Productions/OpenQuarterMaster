@@ -1,14 +1,11 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -22,14 +19,12 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
-import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
-import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemStoredTransactionService;
@@ -40,7 +35,7 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
-public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
+public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	@Inject
@@ -69,20 +64,83 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
 	}
 
-	@GET
+	@PUT
+	@Path("/transact")
 	@Operation(
-		summary = "Searches all of an item's stored entries."
+		summary = "Applies a transaction to a stored item."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Stored entries retrieved."
+		description = "The id of the applied transaction record.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.OBJECT,
+					implementation = ObjectId.class
+				)
+			)
+		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public SearchResult<Stored> search(
-		@BeanParam StoredSearch storedSearch
-	) {
-		return super.search(storedSearch);
+	public ObjectId transact(ItemStoredTransaction transaction) {
+		return this.itemStoredTransactionService.apply(this.getOqmDbIdOrName(), this.getInventoryItem(), transaction);
 	}
 
+	@GET
+	@Path("/transaction")
+	@Operation(
+		summary = "Searches all of an item's stored item transactions."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
+				)
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public SearchResult<AppliedTransaction> searchTransactions(
+		@BeanParam AppliedTransactionSearch storedSearch
+	) {
+		return this.itemStoredTransactionService.search(this.getOqmDbIdOrName(), storedSearch);
+	}
+
+	@GET
+	@Path("/transaction/{transactionId}")
+	@Operation(
+		summary = "Searches all of an item's stored item transactions."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json",
+				schema = @Schema(
+					type = SchemaType.OBJECT,
+					implementation = SearchResult.class
+				)
+			)
+		}
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public AppliedTransaction getAppliedTransaction(
+		@PathParam("transactionId") String transactionId
+	) {
+		return this.getItemStoredTransactionService().get(this.getOqmDbIdOrName(), transactionId);
+	}
 }

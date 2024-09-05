@@ -140,7 +140,7 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<Stored> search(
 		@BeanParam StoredSearch storedSearch
 	) {
 		return super.search(storedSearch);
