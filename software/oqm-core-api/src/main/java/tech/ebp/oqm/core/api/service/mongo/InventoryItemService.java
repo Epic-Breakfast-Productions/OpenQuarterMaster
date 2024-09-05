@@ -107,6 +107,15 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				}
 			}
 		}
+
+		if(!newObject){
+			//TODO:: in try?
+			InventoryItem existing = this.get(oqmDbIdOrName, newOrChangedObject.getId());
+
+			if(!existing.getUnit().isCompatible(newOrChangedObject.getUnit())){
+				throw new ValidationException("New unit not compatible with current unit.");
+			}
+		}
 	}
 	
 	@Override

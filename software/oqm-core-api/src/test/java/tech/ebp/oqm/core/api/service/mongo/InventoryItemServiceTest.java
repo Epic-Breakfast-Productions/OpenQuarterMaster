@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,6 +17,9 @@ import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 
 import jakarta.inject.Inject;
+import tech.units.indriya.unit.Units;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
@@ -158,11 +162,39 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		log.info("Exception: {}", exception.getMessage());
 	}
 
-	//TODO:: update name test
-	//TODO:: add w/ used name test
+	@Test
+	public void testUpdateUnit() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put(
+			"unit",
+			ObjectUtils.OBJECT_MAPPER.readTree("{\"string\":\"mol\"}")
+		);
+
+		item = this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user);
+		assertEquals(Units.MOLE, item.getUnit());
+	}
+
+	@Test
+	public void testInvalidUpdateUnit() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updates.put(
+			"unit",
+			ObjectUtils.OBJECT_MAPPER.readTree("{\"string\":\"gal\"}")
+		);
+
+		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		log.info("Exception: {}", exception.getMessage());
+	}
+
 	//TODO:: tests with images, file?
-	//TODO:: invalid update with units test
-	//TODO::
 
 
 
