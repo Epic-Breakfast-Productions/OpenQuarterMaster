@@ -3,6 +3,8 @@ package tech.ebp.oqm.core.api.service.mongo;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -28,8 +30,8 @@ public class ItemStoredTransactionService extends MongoObjectService<AppliedTran
 
 	public ObjectId apply(
 		String oqmDbIdOrName,
-		InventoryItem inventoryItem,
-		ItemStoredTransaction itemStoredTransaction
+		@NotNull InventoryItem inventoryItem,
+		@Valid ItemStoredTransaction itemStoredTransaction
 	){
 		AppliedTransaction.Builder<?,?> appliedTransactionBuilder = AppliedTransaction.builder()
 			.inventoryItem(inventoryItem.getId())

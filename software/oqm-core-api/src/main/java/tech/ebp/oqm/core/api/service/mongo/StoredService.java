@@ -91,7 +91,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if (item.getStorageType() == BULK || item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inBlock = this.search(oqmDbIdOrName, StoredSearch.builder().inventoryItemId(item.getId()).storageBlockId(newOrChangedObject.getStorageBlock()).build());
+			SearchResult<Stored> inBlock = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()).setStorageBlockId(newOrChangedObject.getStorageBlock()));
 
 			if (!inBlock.isEmpty()) {
 				if (inBlock.getNumResults() != 1) {
@@ -105,7 +105,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if(item.getStorageType() == UNIQUE_GLOBAL){
-			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, StoredSearch.builder().inventoryItemId(item.getId()).build());
+			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
 				if(inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");

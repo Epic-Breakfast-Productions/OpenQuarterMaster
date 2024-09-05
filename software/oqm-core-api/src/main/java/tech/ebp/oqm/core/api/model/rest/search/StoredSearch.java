@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -18,6 +19,7 @@ import static com.mongodb.client.model.Filters.*;
 
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
 	@PathParam("itemId") ObjectId inventoryItemId;

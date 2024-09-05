@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
@@ -38,6 +39,18 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
+@Schema(oneOf = {
+	AddAmountTransaction.class,
+	AddWholeTransaction.class,
+	CheckinPartTransaction.class,
+	CheckinFullTransaction.class,
+	CheckoutAmountTransaction.class,
+	CheckoutWholeTransaction.class,
+	SubAmountTransaction.class,
+	SubWholeTransaction.class,
+	TransferAmountTransaction.class,
+	TransferWholeTransaction.class
+})
 public abstract class ItemStoredTransaction implements Versionable {
 
 	public abstract TransactionType getTransactionType();
