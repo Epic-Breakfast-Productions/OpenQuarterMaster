@@ -1,10 +1,8 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
 import tech.units.indriya.quantity.Quantities;
@@ -20,13 +18,16 @@ import javax.measure.Unit;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class AmountStored extends Stored {
 	
 	/**
 	 * The amount of the thing stored.
 	 */
+	@NotNull
+	@NonNull
 	@ValidQuantity
-	private Quantity<?> amount = null;
+	private Quantity<?> amount;
 	
 	public AmountStored(Unit<?> unit) {
 		this(Quantities.getQuantity(0, unit));

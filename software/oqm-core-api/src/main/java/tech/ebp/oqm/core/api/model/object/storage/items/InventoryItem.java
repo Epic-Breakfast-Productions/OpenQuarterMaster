@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
 import javax.measure.Quantity;
@@ -32,8 +33,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@ValidItemUnit
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
-	
+
 	/**
 	 * The name of this inventory item
 	 */
@@ -41,7 +43,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@NotBlank(message = "Name cannot be blank")
 	private String name;
-	
+
 	/**
 	 * The type of storage this item uses.
 	 */
@@ -49,14 +51,14 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private StorageType storageType;
-	
+
 	/**
 	 * Description of the item
 	 */
 	@NonNull
 	@NotNull
 	private String description = "";
-	
+
 	/**
 	 * The barcode for this item.
 	 * <p>
@@ -64,14 +66,14 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: rework
 	 */
 	private String barcode = null;
-	
+
 	/**
 	 * Categories this item belongs to.
 	 */
 	@NonNull
 	@NotNull
 	private List<@NotNull ObjectId> categories = new ArrayList<>();
-	
+
 	/**
 	 * The map of where the items are stored.
 	 * <p>
@@ -82,16 +84,16 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	private Set<ObjectId> storageBlocks = new LinkedHashSet<>();
-	
+
 	/**
 	 * Files that have been attached to the item.
 	 */
 	@NonNull
 	@NotNull
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
-	
+
 	private ItemNotificationStatus notificationStatus = new ItemNotificationStatus();
-	
+
 	/**
 	 * When before a stored item expired to send a warning out about that expiration.
 	 * <p>
@@ -100,7 +102,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	private Duration expiryWarningThreshold = Duration.ZERO;
-	
+
 	/**
 	 * The threshold of low stock for the entire object.
 	 * <p>
@@ -108,11 +110,11 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: validate unit is compatible with main unit
 	 */
 	private Quantity<?> lowStockThreshold = null;
-	
+
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
-	 *
-	 * @return The unit associated with this item.
+	 * <p>
+	 * If using a storage type that uses the unique type, this must be a unit compatible with the 'unit' unit.
 	 */
 	@NonNull
 	@NotNull

@@ -21,7 +21,10 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
@@ -60,6 +63,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	public Set<String> getDisallowedUpdateFields() {
 		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
 		output.add("amount");
+		output.add("item");
+		output.add("storageBlock");
 		return output;
 	}
 
@@ -90,6 +95,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			throw new ValidationException("Stored given of type "+newOrChangedObject.getStoredType()+" cannot be held in item of storage type" + item.getStorageType());
 		}
 
+		if(item.getStorageType().storedType == StoredType.AMOUNT){
+			if(!item.getUnit().isCompatible(((AmountStored)newOrChangedObject).getAmount().getUnit())){
+				throw new ValidationException("Unit of amount must be compatible with item's unit.");
+			}
+		}
+
 		if (item.getStorageType() == BULK || item.getStorageType() == UNIQUE_SINGLE) {
 			SearchResult<Stored> inBlock = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()).setStorageBlockId(newOrChangedObject.getStorageBlock()));
 
@@ -104,7 +115,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 
-		if(item.getStorageType() == UNIQUE_GLOBAL){
+		if(item.getStorageType() == UNIQUE_SINGLE){
 			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
 				if(inItem.getNumResults() != 1) {
