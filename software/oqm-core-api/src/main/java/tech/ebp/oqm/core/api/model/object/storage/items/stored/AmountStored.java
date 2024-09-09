@@ -41,17 +41,9 @@ public class AmountStored extends Stored {
 		return this.setAmount(Quantities.getQuantity(amount, unit));
 	}
 	
-	public AmountStored add(AmountStored amount) {
-		@SuppressWarnings("rawtypes")
-		Quantity orig = this.getAmount();
-		
-		if (orig != null) {
-			this.setAmount(
-				orig.add(amount.getAmount())
-			);
-		} else {
-			this.setAmount(amount.getAmount());
-		}
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public AmountStored add(Quantity amount) {
+		this.setAmount(this.getAmount().add(amount));
 		return this;
 	}
 	

@@ -136,17 +136,31 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			.build();
 	}
 
-	@Override
-	public Stored update(String oqmDbIdOrName, Stored object) throws DbNotFoundException {
-		Stored item = super.update(oqmDbIdOrName, object);
-		return item;
+	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
+		SearchResult<T> result = (SearchResult<T>) this.search(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId).setStorageBlockId(storageBlockId));
+
+		if(result.isEmpty()){
+			throw new DbNotFoundException("No stored currently stored in this block ("+storageBlockId+") under this item ("+itemId+").", this.clazz);
+		}
+
+		return result;
 	}
 
-	@Override
-	public Stored update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
-		Stored item = super.update(oqmDbIdOrName, id, updateJson, interactingEntity);
-		return item;
+	public SearchResult<Stored> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId) {
+		return this.getStoredForItemBlock(oqmDbIdOrName, cs, itemId, storageBlockId, Stored.class);
 	}
+
+	public <T extends Stored> T getSingleStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
+		SearchResult<T> result = this.getStoredForItemBlock(oqmDbIdOrName, cs, itemId, storageBlockId, type);
+
+		if(result.getNumResults() != 1){
+			throw new IllegalStateException("Expected single stored in this block ("+storageBlockId+") under this item ("+itemId+"), but got " + result.getNumResults() + ".");
+		}
+
+		return result.getResults().getFirst();
+	}
+
+
 
 	//TODO:: stats on storeds
 	//TODO:: add/sub/transfer

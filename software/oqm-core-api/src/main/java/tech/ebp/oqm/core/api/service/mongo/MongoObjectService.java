@@ -189,7 +189,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The search results for the search given
 	 */
 	@WithSpan
-	public SearchResult<T> search(String oqmDbIdOrName, @NonNull S searchObject) {
+	public SearchResult<T> search(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -199,6 +199,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		List<T> list = this.list(
 			oqmDbIdOrName,
+			cs,
 			filter,
 			searchObject.getSortBson(),
 			pagingOptions
@@ -210,6 +211,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 			!filters.isEmpty(),
 			pagingOptions
 		);
+	}
+
+	public SearchResult<T> search(String oqmDbIdOrName, @NonNull S searchObject) {
+		return this.search(oqmDbIdOrName, null, searchObject);
 	}
 	
 	@Deprecated

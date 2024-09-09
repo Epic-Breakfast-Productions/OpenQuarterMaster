@@ -34,6 +34,13 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	private ObjectId inventoryItem;
 
 	/**
+	 * The item that the action was performed on.
+	 */
+	@NonNull
+	@NotNull
+	private ObjectId affectedStored;
+
+	/**
 	 * When the event occurred
 	 */
 	@NonNull
