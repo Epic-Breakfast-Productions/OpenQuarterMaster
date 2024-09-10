@@ -18,17 +18,8 @@ public abstract class TransferTransaction extends ItemStoredTransaction {
 	@NotNull
 	@NonNull
 	private ObjectId fromBlock;
+
 	@NotNull
 	@NonNull
 	private ObjectId toBlock;
-
-	/**
-	 * If applicable, the specific stored item we are transferring from.
-	 */
-	private ObjectId fromStored;
-
-	/**
-	 * If applicable, the specific stored item we are transferring to.
-	 */
-	private ObjectId toStored;
 }

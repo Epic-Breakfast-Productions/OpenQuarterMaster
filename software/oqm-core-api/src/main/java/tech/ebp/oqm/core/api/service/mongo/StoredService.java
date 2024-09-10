@@ -2,6 +2,8 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCursor;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
@@ -21,22 +23,21 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
+import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.units.indriya.quantity.Quantities;
 
+import javax.measure.Quantity;
 import java.util.*;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.exists;
+import static com.mongodb.client.model.Filters.*;
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
 @Named("StoredService")
@@ -160,7 +161,50 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return result.getResults().getFirst();
 	}
 
+	public StoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item){
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, and(new StoredSearch().setInventoryItemId(item.getId()).getSortBson()), null, null);
 
+		Quantity zero = Quantities.getQuantity(0, item.getUnit());
+		Quantity total = Quantities.getQuantity(0, item.getUnit());
+		long numStored = 0;
+		Map<ObjectId, Long> storageBlockNums = new HashMap<>();
+		Map<ObjectId, Quantity> storageBlockTotals = new HashMap<>();
+		try(
+			MongoCursor<Stored> storedIterator = storedInItem.iterator()
+		) {
+			while(storedIterator.hasNext()){
+				Stored stored = storedIterator.next();
+				numStored++;
+
+				Quantity toAdd;
+				switch (stored.getStoredType()){
+					case AMOUNT -> {
+						toAdd = ((AmountStored)stored).getAmount();
+					}
+					case UNIQUE -> {
+						toAdd = UnitUtils.Quantities.UNIT_ONE;
+					}
+					default -> {
+						throw new UnsupportedOperationException("Unsupported stored type (this shouldn't happen): " + stored.getStoredType());
+					}
+				}
+				total = total.add(toAdd);
+
+				ObjectId block = stored.getStorageBlock();
+				storageBlockNums.put(block, storageBlockNums.getOrDefault(block, 0L) + 1);
+				storageBlockTotals.put(block, storageBlockTotals.getOrDefault(block, zero).add(toAdd));
+
+				//TODO:: expired
+			}
+		}
+
+		//TODO:: low stock
+
+		return StoredStats.builder()
+			.total(total)
+			.numStored(numStored)
+			.build();
+	}
 
 	//TODO:: stats on storeds
 	//TODO:: add/sub/transfer

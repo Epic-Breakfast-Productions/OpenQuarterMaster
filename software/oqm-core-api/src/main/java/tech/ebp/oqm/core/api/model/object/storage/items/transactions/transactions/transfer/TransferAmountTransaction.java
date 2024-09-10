@@ -25,6 +25,15 @@ public class TransferAmountTransaction extends TransferTransaction {
 	@NotNull
 	private Quantity<?> amount;
 
+	/**
+	 * If applicable, the specific stored item we are transferring from.
+	 */
+	private ObjectId fromStored;
+
+	/**
+	 * If applicable, the specific stored item we are transferring to.
+	 */
+	private ObjectId toStored;
 
 	@Override
 	public TransactionType getTransactionType() {

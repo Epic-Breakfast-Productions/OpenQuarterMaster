@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredStats;
 
 import java.time.ZonedDateTime;
 
@@ -54,4 +55,8 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	@NotNull
 	@NonNull
 	private ItemStoredTransaction transaction;
+
+	@NonNull
+	@NotNull
+	private StoredStats statsAfterApply;
 }

@@ -1,8 +1,11 @@
 package tech.ebp.oqm.core.api.model.units;
 
 import lombok.NonNull;
+import tech.units.indriya.quantity.Quantities;
 
+import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.measure.quantity.AmountOfSubstance;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -12,6 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 public final class UnitUtils {
+	public static class Quantities {
+		public static final Quantity<AmountOfSubstance> UNIT_ONE = tech.units.indriya.quantity.Quantities.getQuantity(0, OqmProvidedUnits.UNIT);
+	}
 	
 	/**
 	 * List of all units we support and deal with.

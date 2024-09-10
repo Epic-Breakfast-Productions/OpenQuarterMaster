@@ -6,6 +6,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
  * Enum to determine what type of storage the item uses.
  */
 public enum StorageType {
+
 	/**
 	 * The type to use for bulk amounts of stuff in a storage block. Examples; screws, mulch
 	 */
