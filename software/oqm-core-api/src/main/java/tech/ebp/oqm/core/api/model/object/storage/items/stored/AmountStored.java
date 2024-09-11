@@ -53,14 +53,12 @@ public class AmountStored extends Stored {
 	 * @return The resulting amount stored (this)
 	 * @throws NotEnoughStoredException
 	 */
-	public AmountStored subtract(AmountStored amount) throws NotEnoughStoredException {
+	public AmountStored subtract(Quantity amount) throws NotEnoughStoredException {
 		@SuppressWarnings("rawtypes")
-		Quantity otherAmount = amount.getAmount();
-		@SuppressWarnings("rawtypes")
-		Quantity result = this.getAmount().subtract(otherAmount);
+		Quantity result = this.getAmount().subtract(amount);
 		
-		if (result.getValue().doubleValue() < 0) {
-			throw new NotEnoughStoredException("Resulting amount less than zero. (subtracting "+amount.getAmount()+" from "+this.getAmount()+" resulting in "+result+")");
+		if (result.getValue().doubleValue() < 0.0) {
+			throw new NotEnoughStoredException("Resulting amount less than zero. (subtracting "+amount+" from "+this.getAmount()+" resulting in "+result+")");
 		}
 		this.setAmount(result);
 		return this;

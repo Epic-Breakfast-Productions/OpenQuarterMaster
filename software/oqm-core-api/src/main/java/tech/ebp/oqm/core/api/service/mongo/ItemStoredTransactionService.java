@@ -119,7 +119,22 @@ public class ItemStoredTransactionService extends MongoObjectService<AppliedTran
 			}
 			case SUBTRACT_AMOUNT -> {
 				SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;
-				//TODO
+				AmountStored stored;
+				switch(inventoryItem.getStorageType()){
+					case BULK -> {
+						stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), subAmountTransaction.getFromBlock(), AmountStored.class);
+					}
+					case AMOUNT_LIST -> {
+						stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, subAmountTransaction.getFromStored());
+					}
+					default -> {
+						throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+					}
+				}
+				appliedTransactionBuilder.affectedStored(stored.getId());
+				stored.subtract(subAmountTransaction.getAmount());
+
+				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, null);//TODO:: new event type; applied transaction
 			}
 			case SUBTRACT_WHOLE -> {
 				SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
@@ -129,7 +144,45 @@ public class ItemStoredTransactionService extends MongoObjectService<AppliedTran
 			}
 			case TRANSFER_AMOUNT -> {
 				TransferAmountTransaction transferAmountTransaction = (TransferAmountTransaction) itemStoredTransaction;
-				//TODO
+				AmountStored fromStored;
+				AmountStored toStored;
+
+				switch(inventoryItem.getStorageType()){
+					case BULK -> {
+						fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getFromBlock(), AmountStored.class);
+						try{
+							toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getToBlock(), AmountStored.class);
+						} catch (DbNotFoundException e){
+							toStored = AmountStored.builder()
+								.item(inventoryItem.getId())
+								.storageBlock(transferAmountTransaction.getToBlock())
+								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+								.build();
+							this.storedService.add(oqmDbIdOrName, cs, toStored, interactingEntity);
+						}
+					}
+					case AMOUNT_LIST -> {
+						fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, transferAmountTransaction.getFromStored());
+						if(transferAmountTransaction.getToStored() == null){
+							toStored = AmountStored.builder()
+								.item(inventoryItem.getId())
+								.storageBlock(transferAmountTransaction.getToBlock())
+								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+								.build();
+							this.storedService.add(oqmDbIdOrName, cs, toStored, interactingEntity);
+						} else {
+							toStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, transferAmountTransaction.getToStored());
+						}
+					}
+					default -> {
+						throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+					}
+				}
+
+				fromStored.subtract(transferAmountTransaction.getAmount());
+				toStored.add(transferAmountTransaction.getAmount());
+				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity, null);//TODO:: event
+				this.storedService.update(oqmDbIdOrName, cs, toStored, interactingEntity, null);
 			}
 			case TRANSFER_WHOLE -> {
 				TransferWholeTransaction transferWholeTransaction = (TransferWholeTransaction) itemStoredTransaction;
