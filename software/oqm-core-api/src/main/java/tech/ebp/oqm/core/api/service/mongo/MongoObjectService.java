@@ -340,7 +340,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The updated object.
 	 */
-	public T update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson) throws DbNotFoundException {
+	public T update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson) throws DbNotFoundException {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
@@ -377,9 +377,14 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .map(ConstraintViolation::getMessage)
 												   .collect(Collectors.joining(", ")));
 		}
-		this.ensureObjectValid(oqmDbIdOrName, false, object, null);//TODO:: add client session
-		
-		this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
+		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
+
+		if (cs == null) {
+			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
+		} else {
+			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(cs, eq("_id", id), object);
+		}
+
 		return object;
 	}
 	
@@ -391,8 +396,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The updated object.
 	 */
-	public T update(String oqmDbIdOrName, String id, ObjectNode updateJson) {
-		return this.update(oqmDbIdOrName, new ObjectId(id), updateJson);
+	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson) {
+		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson);
 	}
 	
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {

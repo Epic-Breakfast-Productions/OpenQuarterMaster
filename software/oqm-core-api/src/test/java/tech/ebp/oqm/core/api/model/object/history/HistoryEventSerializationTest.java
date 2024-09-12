@@ -7,7 +7,7 @@ import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemAddEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemSubEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemTransferEvent;
+import tech.ebp.oqm.core.api.model.object.history.events.item.ItemTransactionEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.core.api.model.testUtils.ObjectSerializationTest;
@@ -100,12 +100,12 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistor
 									 .setDescription(FAKER.lorem().paragraph())
 					),
 					//item transfer
-					Arguments.of(new ItemTransferEvent()
+					Arguments.of(new ItemTransactionEvent()
 									 .setStorageBlockToId(ObjectId.get())
 									 .setStorageBlockFromId(ObjectId.get())
 									 .setQuantity(testQuantity)
 					),
-					Arguments.of(new ItemTransferEvent()
+					Arguments.of(new ItemTransactionEvent()
 									 .setStorageBlockToId(ObjectId.get())
 									 .setStorageBlockFromId(ObjectId.get())
 									 .setQuantity(testQuantity)
