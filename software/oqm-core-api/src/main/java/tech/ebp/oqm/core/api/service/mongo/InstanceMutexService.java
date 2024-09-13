@@ -3,17 +3,25 @@ package tech.ebp.oqm.core.api.service.mongo;
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.model.InstanceMutex;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.InstanceMutexSearch;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
@@ -25,6 +33,15 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.*;
 
 /**
+ * Provides an interface through which to provide mutex functionality between instances of the core api.
+ * <p>
+ * Use:
+ * <ol>
+ *     <li>Call {@link #register(String)} to ensure mutex exists.</li>
+ *     <li>Call {@link #lock(String, Optional)} to grab the lock.</li>
+ *     <li>Call {@link #free(String, Optional)} to free the lock.</li>
+ * </ol>
+ * <p>
  * Original inspiration: https://www.disk91.com/2018/technology/programming/springboot-mongo-create-a-mutex-to-synchronize-multiple-frontends/
  */
 @ApplicationScoped
@@ -157,7 +174,8 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	/**
 	 * Free a mutex previously reserved.
 	 *
-	 * @param mutexId The id of the mutex to free
+	 * @param mutexId            The id of the mutex to free
+	 * @param additionalIdentity If needed to mutex threads inside the same service, provide this
 	 */
 	public void free(@NonNull String mutexId, Optional<String> additionalIdentity) {
 		String identity = this.getIdentity(additionalIdentity);
@@ -184,5 +202,60 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 
 	public void free(@NonNull String mutexId) {
 		this.free(mutexId, Optional.empty());
+	}
+
+	/**
+	 * Class to enable usage in a try-with-resources.
+	 * <p>
+	 * TODO:: test
+	 */
+	@Data
+	@Builder
+	public static class InstanceMutexResource implements Closeable {
+		@NonNull
+		@NotNull
+		private InstanceMutexService mutexService;
+
+		@NonNull
+		@NotNull
+		@NotBlank
+		private String mutexId;
+
+		@NonNull
+		@NotNull
+		@lombok.Builder.Default
+		private Optional<String> additionalIdentity = Optional.empty();
+
+		@NonNull
+		@NotNull
+		@lombok.Builder.Default
+		private Optional<Duration> timeToWait = Optional.empty();
+
+		/**
+		 * Awaits for the lock to be acquired before returning this object.
+		 *
+		 * @return This object when the lock is acquired.
+		 */
+		public InstanceMutexResource awaitLock() throws MutexWaitTimeoutException, InterruptedException {
+			Duration toWait = this.getTimeToWait().orElse(Duration.ofHours(1));
+			LocalDateTime expires = LocalDateTime.now().plus(toWait);
+
+			this.getMutexService().register(this.getMutexId());
+
+			do {
+				boolean result = this.getMutexService().lock(this.getMutexId(), this.getAdditionalIdentity());
+
+				if (result) {
+					return this;
+				}
+				Thread.sleep(50);//TODO:: make configurable wait time
+			} while (LocalDateTime.now().isBefore(expires));
+			throw new MutexWaitTimeoutException();
+		}
+
+		@Override
+		public void close() throws IOException {
+			this.getMutexService().free(this.getMutexId(), this.getAdditionalIdentity());
+		}
 	}
 }

@@ -34,42 +34,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Abstract Service that implements all basic functionality when dealing with mongo collections.
- *
- * @param <T> The type of object stored.
+ * Abstract class to note a mongo service that is aware of OQM databases.
+ * @param <T> The type of object this service is concerned with
+ * @param <S>
+ * @param <V>
  */
 @Slf4j
 public abstract class MongoDbAwareService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> extends MongoService<T, S, V> {
-	
-	
-	//TODO:: move to constructor?
-	protected static final Validator VALIDATOR;
-	
-	static {
-		try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-			VALIDATOR = validatorFactory.getValidator();
-		}
-	}
-	
-	/**
-	 * Mapper to help deal with json updates.
-	 */
-	@Inject
-	@Getter(AccessLevel.PROTECTED)
-	ObjectMapper objectMapper;
-	/**
-	 * The MongoDb client.
-	 */
-	@Inject
-	@Getter(AccessLevel.PROTECTED)
-	MongoClient mongoClient;
-	
-	/**
-	 * The name of the database to access
-	 */
-	@Getter
-	@ConfigProperty(name = "quarkus.mongodb.database")
-	String databasePrefix;
+
 
 	@Getter
 	@Inject
@@ -88,13 +60,8 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 */
 	@Getter
 	protected final String collectionName;
-	
-	
-	/**
-	 * The actual mongo collection.
-	 */
-	private MongoCollection<T> collection = null;
-	
+
+
 	private Map<ObjectId, MongoCollection<T>> collections = new HashMap<>();
 	
 	
@@ -160,29 +127,6 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	public MongoCollection<Document> getDocumentCollection(String oqmDbIdOrName) {
 		DbCacheEntry dbCacheEntry = this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName);
 		return dbCacheEntry.getMongoDatabase().getCollection(this.collectionName);
-	}
-
-	public static TransactionOptions getDefaultTransactionOptions() {
-		return TransactionOptions.builder()
-								 .readPreference(ReadPreference.primary())
-								 .readConcern(ReadConcern.LOCAL)
-								 .writeConcern(WriteConcern.MAJORITY)
-								 .build();
-	}
-	
-	@WithSpan
-	public ClientSession getNewClientSession(boolean startTransaction) {
-		ClientSession clientSession = this.getMongoClient().startSession();
-		
-		if(startTransaction){
-			clientSession.startTransaction();
-		}
-		
-		return clientSession;
-	}
-	
-	public ClientSession getNewClientSession() {
-		return this.getNewClientSession(false);
 	}
 	
 	/**

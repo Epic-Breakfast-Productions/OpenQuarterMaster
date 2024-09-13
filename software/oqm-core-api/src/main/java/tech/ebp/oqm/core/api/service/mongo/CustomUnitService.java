@@ -22,6 +22,9 @@ import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service to handle custom units, available to all OQM databases.
+ */
 @Slf4j
 @ApplicationScoped
 public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {

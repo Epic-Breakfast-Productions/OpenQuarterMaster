@@ -43,7 +43,7 @@ import static com.mongodb.client.model.Filters.eq;
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
  * <p>
- * TODO:: update this to be injected, one instance to handle all history. Pull from higher up than object service? OR programmatically get Hens: Arc.container().instance(Foo.class).get()
+ * TODO:: update this to be injected, one instance to handle all history, with cached collections. Pull from higher up than object service? OR programmatically get Hens: Arc.container().instance(Foo.class).get()
  *
  * @param <T> The type of object stored.
  */

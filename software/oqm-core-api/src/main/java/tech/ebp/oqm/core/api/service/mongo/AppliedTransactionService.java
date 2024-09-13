@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.ItemTransactionDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
@@ -32,27 +33,40 @@ import tech.units.indriya.quantity.Quantities;
 
 import java.util.Set;
 
+/**
+ * Service to handle applying transactions to items stored, and keeping track of what transactions have been applied.
+ */
 @Slf4j
 @Named("ItemStoredTransactionService")
 @ApplicationScoped
-public class ItemStoredTransactionService extends MongoObjectService<AppliedTransaction, AppliedTransactionSearch, CollectionStats> {
+public class AppliedTransactionService extends MongoObjectService<AppliedTransaction, AppliedTransactionSearch, CollectionStats> {
 
 //	@Inject
 //	InventoryItemService inventoryItemService;
+
 	@Inject
 	StoredService storedService;
 
-	public ItemStoredTransactionService() {
+	public AppliedTransactionService() {
 		super(AppliedTransaction.class);
 	}
 
-
+	/**
+	 * Applies the transaction given.
+	 * @param oqmDbIdOrName
+	 * @param cs
+	 * @param inventoryItem
+	 * @param itemStoredTransaction
+	 * @param interactingEntity
+	 * @return
+	 */
 	public ObjectId apply(
 		String oqmDbIdOrName,
 		ClientSession cs,
 		@NotNull InventoryItem inventoryItem,
 		@Valid ItemStoredTransaction itemStoredTransaction,
-		InteractingEntity interactingEntity
+		InteractingEntity interactingEntity,
+		HistoryDetail ... details //TODO: use
 	){
 		//TODO:: if cs null, create.
 		final ObjectId transactionId = new ObjectId();

@@ -62,7 +62,4 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private StoredStats statsAfterApply;
-
-	@lombok.Builder.Default
-	private boolean finalized = false;
 }

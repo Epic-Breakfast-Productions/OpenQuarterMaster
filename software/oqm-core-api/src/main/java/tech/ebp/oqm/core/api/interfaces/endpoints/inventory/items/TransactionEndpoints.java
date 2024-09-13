@@ -27,7 +27,7 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
-import tech.ebp.oqm.core.api.service.mongo.ItemStoredTransactionService;
+import tech.ebp.oqm.core.api.service.mongo.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
@@ -47,7 +47,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 
 	@Getter
 	@Inject
-	ItemStoredTransactionService itemStoredTransactionService;
+	AppliedTransactionService appliedTransactionService;
 
 	@Getter
 	Class<Stored> objectClass = Stored.class;
@@ -85,7 +85,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ObjectId transact(ItemStoredTransaction transaction) {
-		return this.itemStoredTransactionService.apply(this.getOqmDbIdOrName(), null, this.getInventoryItem(), transaction, this.getInteractingEntity());
+		return this.appliedTransactionService.apply(this.getOqmDbIdOrName(), null, this.getInventoryItem(), transaction, this.getInteractingEntity());
 	}
 
 	@GET
@@ -115,7 +115,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	public SearchResult<AppliedTransaction> searchTransactions(
 		@BeanParam AppliedTransactionSearch storedSearch
 	) {
-		return this.itemStoredTransactionService.search(this.getOqmDbIdOrName(), storedSearch);
+		return this.appliedTransactionService.search(this.getOqmDbIdOrName(), storedSearch);
 	}
 
 	@GET
@@ -141,6 +141,6 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	public AppliedTransaction getAppliedTransaction(
 		@PathParam("transactionId") String transactionId
 	) {
-		return this.getItemStoredTransactionService().get(this.getOqmDbIdOrName(), transactionId);
+		return this.getAppliedTransactionService().get(this.getOqmDbIdOrName(), transactionId);
 	}
 }
