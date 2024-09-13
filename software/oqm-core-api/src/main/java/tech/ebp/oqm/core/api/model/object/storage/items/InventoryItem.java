@@ -3,12 +3,7 @@ package tech.ebp.oqm.core.api.model.object.storage.items;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
@@ -57,6 +52,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
 
 	/**
@@ -72,6 +68,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<@NotNull ObjectId> categories = new ArrayList<>();
 
 	/**
@@ -83,6 +80,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<ObjectId> storageBlocks = new LinkedHashSet<>();
 
 	/**
@@ -90,8 +88,12 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
 	private ItemNotificationStatus notificationStatus = new ItemNotificationStatus();
 
 	/**
@@ -101,6 +103,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Duration expiryWarningThreshold = Duration.ZERO;
 
 	/**

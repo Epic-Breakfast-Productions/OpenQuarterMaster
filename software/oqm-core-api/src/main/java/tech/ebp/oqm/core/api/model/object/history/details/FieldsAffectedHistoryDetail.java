@@ -81,6 +81,7 @@ public class FieldsAffectedHistoryDetail extends HistoryDetail {
 
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<String> fieldsUpdated = new ArrayList<>();
 
 	@Override

@@ -67,6 +67,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
+	@lombok.Builder.Default
 	private LocalDateTime expires = null;
 
 	/**
@@ -82,12 +83,16 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 */
 	@Max(100)
 	@Min(0)
+	@lombok.Builder.Default
 	private Integer condition = null;
 
 	/**
 	 * Notes on the condition on the thing(s) stored.
 	 */
-	private String conditionNotes = null;
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private String conditionNotes = "";
 
 	/**
 	 * List of images related to the object.

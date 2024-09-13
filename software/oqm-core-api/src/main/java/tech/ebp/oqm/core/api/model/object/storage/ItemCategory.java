@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.HasParent;
@@ -37,10 +32,13 @@ public class ItemCategory extends ImagedMainObject implements HasParent {
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
-	
+
+	@lombok.Builder.Default
 	private Color color = null;
-	
+
+	@lombok.Builder.Default
 	private ObjectId parent = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

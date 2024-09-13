@@ -41,6 +41,7 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<ObjectId> affectedStored = new LinkedHashSet<>();
 
 	/**
