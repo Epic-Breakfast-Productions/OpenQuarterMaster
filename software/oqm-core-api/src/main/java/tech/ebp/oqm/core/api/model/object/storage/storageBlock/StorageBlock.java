@@ -3,12 +3,7 @@ package tech.ebp.oqm.core.api.model.object.storage.storageBlock;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
@@ -46,6 +41,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String nickname = "";
 	
 	/**
@@ -53,6 +49,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
 	
 	/**
@@ -60,6 +57,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String location = "";
 	
 	/**
@@ -72,6 +70,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<@NotNull Quantity<?>> capacityMeasures = new ArrayList<>();
 	
 	/**
@@ -79,6 +78,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<@NotNull ObjectId> storedCategories = new ArrayList<>();
 	
 	/**
@@ -86,6 +86,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

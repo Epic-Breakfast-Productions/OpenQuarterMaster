@@ -8,6 +8,8 @@ import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredStats;
 
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -39,7 +41,7 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId affectedStored;
+	private Set<ObjectId> affectedStored = new LinkedHashSet<>();
 
 	/**
 	 * When the event occurred
@@ -59,4 +61,7 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private StoredStats statsAfterApply;
+
+	@lombok.Builder.Default
+	private boolean finalized = false;
 }
