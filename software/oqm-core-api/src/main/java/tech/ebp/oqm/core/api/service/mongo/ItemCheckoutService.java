@@ -11,18 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemCheckinEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemCheckoutEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnCheckin;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.AlreadyCheckedInException;
 
 import java.util.Set;
 import java.util.TreeSet;

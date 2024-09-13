@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemStorageBlockEvent;
+import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 
 @Data
@@ -17,7 +17,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @EqualsAndHashCode(callSuper = true)
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
-public abstract class ItemExpiryEvent extends ItemStorageBlockEvent {
+public abstract class ItemExpiryEvent extends ObjectHistoryEvent {
 	
 	public ItemExpiryEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);

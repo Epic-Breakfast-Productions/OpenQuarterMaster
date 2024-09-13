@@ -88,7 +88,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		updates.put("storageType", item.getStorageType().name());
 		//TODO:: finish; storage blocks, files?, images?
 
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user);
 		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
 
 		assertEquals(updates.get("name").asText(), item.getName());
@@ -105,7 +105,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", (String) null);
 
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 
@@ -129,7 +129,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", "");
 
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 
@@ -155,7 +155,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", other.getName());
 
-		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 
@@ -168,7 +168,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("storageType", StorageType.AMOUNT_LIST.name());
 
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 
@@ -184,7 +184,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 			ObjectUtils.OBJECT_MAPPER.readTree("{\"string\":\"mol\"}")
 		);
 
-		item = this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user);
+		item = this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user);
 		assertEquals(Units.MOLE, item.getUnit());
 	}
 
@@ -200,7 +200,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 			ObjectUtils.OBJECT_MAPPER.readTree("{\"string\":\"gal\"}")
 		);
 
-		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, newId, updates, user));
+		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
 	}
 

@@ -85,7 +85,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ObjectId transact(ItemStoredTransaction transaction) {
-		return this.itemStoredTransactionService.apply(this.getOqmDbIdOrName(), this.getInventoryItem(), transaction);
+		return this.itemStoredTransactionService.apply(this.getOqmDbIdOrName(), null, this.getInventoryItem(), transaction, this.getInteractingEntity());
 	}
 
 	@GET

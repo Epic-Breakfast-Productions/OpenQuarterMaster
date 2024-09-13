@@ -19,6 +19,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.model.object.history.details.FieldsAffectedHistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
@@ -167,25 +168,32 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public T update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
 		assertNotNullEntity(interactingEntity);
 		T updated = this.update(oqmDbIdOrName, cs, id, updateJson);
+
+		List<HistoryDetail> newDeets = new ArrayList<>(List.of(details));
+		newDeets.add(FieldsAffectedHistoryDetail.builder().fieldsUpdated(FieldsAffectedHistoryDetail.getFields(updateJson)).build());
 		
 		this.getHistoryService().objectUpdated(
 			oqmDbIdOrName,
 			cs,
 			updated,
 			interactingEntity,
-			details //TODO:: add updateJson fields
+			newDeets.toArray(HistoryDetail[]::new)
 		);
 		
 		return updated;
 	}
-	
-	/**
-	 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
-	 *
-	 * @param object The object to add
-	 *
-	 * @return The id of the newly added object.
-	 */
+
+	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
+		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson, interactingEntity, details);
+	}
+
+		/**
+		 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
+		 *
+		 * @param object The object to add
+		 *
+		 * @return The id of the newly added object.
+		 */
 	@WithSpan
 	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity, HistoryDetail ... details) {
 		if (!this.allowNullEntityForCreate) {

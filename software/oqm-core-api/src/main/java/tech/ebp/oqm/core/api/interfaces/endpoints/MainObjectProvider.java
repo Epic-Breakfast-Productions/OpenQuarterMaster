@@ -238,7 +238,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
-		T updated = this.getObjectService().update(this.getOqmDbIdOrName(), id, updates, this.getInteractingEntity());
+		T updated = this.getObjectService().update(this.getOqmDbIdOrName(), null, id, updates, this.getInteractingEntity());
 		
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;

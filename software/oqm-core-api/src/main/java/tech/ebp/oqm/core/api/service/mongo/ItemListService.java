@@ -43,7 +43,7 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 		ItemListActionAddEvent event = new ItemListActionAddEvent(list, entity);
 		event.setItemId(itemId);
 		
-		this.update(oqmDbIdOrName, list, entity, event);
+//		this.update(oqmDbIdOrName, null, list, entity, event); //TODO:: add back in
 		
 		return list;
 	}

@@ -8,8 +8,8 @@ import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.history.DescriptiveEvent;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
+import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 
 @Data
@@ -18,7 +18,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @ToString(callSuper = true)
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
-public class ItemListApplyEvent extends DescriptiveEvent {
+public class ItemListApplyEvent extends ObjectHistoryEvent {
 	public static final int CUR_SCHEMA_VERSION = 1;
 
 	public ItemListApplyEvent(ObjectId objectId, InteractingEntity entity) {
