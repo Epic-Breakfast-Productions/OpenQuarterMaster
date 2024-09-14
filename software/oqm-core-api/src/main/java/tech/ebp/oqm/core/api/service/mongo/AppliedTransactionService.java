@@ -31,6 +31,8 @@ import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.units.indriya.quantity.Quantities;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -66,11 +68,17 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		@NotNull InventoryItem inventoryItem,
 		@Valid ItemStoredTransaction itemStoredTransaction,
 		InteractingEntity interactingEntity,
-		HistoryDetail ... details //TODO: use
+		HistoryDetail ... details
 	){
 		//TODO:: if cs null, create.
 		final ObjectId transactionId = new ObjectId();
-		ItemTransactionDetail itemTransactionDetail = new ItemTransactionDetail(transactionId);
+		HistoryDetail[] historyDetails;
+		{
+			List<HistoryDetail> deetsCollection = new ArrayList<HistoryDetail>();
+			deetsCollection.addAll(List.of(details));
+			deetsCollection.add(new ItemTransactionDetail(transactionId));
+			historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
+		}
 		AppliedTransaction.Builder<?,?> appliedTransactionBuilder = AppliedTransaction.builder()
 			.id(transactionId)
 			.inventoryItem(inventoryItem.getId())
@@ -113,14 +121,14 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				stored.add(addAmountTransaction.getAmount());
 
 				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, itemTransactionDetail);
+				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 			}
 			case ADD_WHOLE -> {
 				AddWholeTransaction addWholeTransaction = (AddWholeTransaction) itemStoredTransaction;
 				Stored stored = addWholeTransaction.getToAdd();
 
 				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.add(oqmDbIdOrName, cs, stored, interactingEntity, itemTransactionDetail);
+				this.storedService.add(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 			}
 			case CHECKIN_FULL -> {
 				CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
@@ -155,14 +163,14 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				stored.subtract(subAmountTransaction.getAmount());
 
 				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, itemTransactionDetail);
+				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 			}
 			case SUBTRACT_WHOLE -> {
 				SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
 				ObjectId toSubtract = subWholeTransaction.getToSubtract();
 
 				appliedTransactionBuilder.affectedStored(Set.of(toSubtract));
-				this.storedService.remove(oqmDbIdOrName, cs, toSubtract, interactingEntity, itemTransactionDetail);
+				this.storedService.remove(oqmDbIdOrName, cs, toSubtract, interactingEntity, historyDetails);
 			}
 			case TRANSFER_AMOUNT -> {
 				TransferAmountTransaction transferAmountTransaction = (TransferAmountTransaction) itemStoredTransaction;
@@ -204,8 +212,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				fromStored.subtract(transferAmountTransaction.getAmount());
 				toStored.add(transferAmountTransaction.getAmount());
 				appliedTransactionBuilder.affectedStored(Set.of(fromStored.getId(), toStored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity,  itemTransactionDetail);
-				this.storedService.update(oqmDbIdOrName, cs, toStored, interactingEntity, itemTransactionDetail);
+				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity,  historyDetails);
+				this.storedService.update(oqmDbIdOrName, cs, toStored, interactingEntity, historyDetails);
 			}
 			case TRANSFER_WHOLE -> {
 				TransferWholeTransaction transferWholeTransaction = (TransferWholeTransaction) itemStoredTransaction;
@@ -218,7 +226,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());
 
 				appliedTransactionBuilder.affectedStored(Set.of(toTransferId));
-				this.storedService.update(oqmDbIdOrName, cs, toTransfer, interactingEntity, itemTransactionDetail);
+				this.storedService.update(oqmDbIdOrName, cs, toTransfer, interactingEntity, historyDetails);
 			}
 		}
 
