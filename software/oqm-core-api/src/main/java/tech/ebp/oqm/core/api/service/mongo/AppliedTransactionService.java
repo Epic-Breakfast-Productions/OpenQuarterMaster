@@ -12,7 +12,11 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.ItemTransactionDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemAmountCheckout;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
@@ -49,6 +53,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	@Inject
 	StoredService storedService;
 
+	@Inject
+	ItemCheckoutService itemCheckoutService;
+
 	public AppliedTransactionService() {
 		super(AppliedTransaction.class);
 	}
@@ -74,7 +81,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		final ObjectId transactionId = new ObjectId();
 		HistoryDetail[] historyDetails;
 		{
-			List<HistoryDetail> deetsCollection = new ArrayList<HistoryDetail>();
+			List<HistoryDetail> deetsCollection = new ArrayList<>();
 			deetsCollection.addAll(List.of(details));
 			deetsCollection.add(new ItemTransactionDetail(transactionId));
 			historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
@@ -144,7 +151,32 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 			}
 			case CHECKOUT_WHOLE -> {
 				CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
-				//TODO
+				Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
+				appliedTransactionBuilder.affectedStored(Set.of(affectedStored.getId()));
+				ItemCheckout.Builder<?, ?, ?> checkoutBuilder;
+				switch(inventoryItem.getStorageType()){
+					case BULK -> {
+						AmountStored affectedAmountStored = (AmountStored) affectedStored;
+						checkoutBuilder = ItemAmountCheckout.builder()
+							.checkedOut(affectedAmountStored.getAmount());
+						affectedAmountStored.setAmount(Quantities.getQuantity(0, affectedAmountStored.getAmount().getUnit()));
+						this.storedService.update(oqmDbIdOrName, cs, affectedAmountStored, interactingEntity, historyDetails);
+					}
+					case AMOUNT_LIST, UNIQUE_MULTI, UNIQUE_SINGLE -> {
+						checkoutBuilder = ItemWholeCheckout.builder()
+							.checkedOut(affectedStored);
+						this.storedService.remove(oqmDbIdOrName, cs, affectedStored.getId(), interactingEntity, historyDetails);
+					}
+					default -> {
+						throw new IllegalStateException("Storage type not supported. This should never happen.");
+					}
+				}
+				checkoutBuilder.item(inventoryItem.getId())
+					.checkedOutFrom(affectedStored.getStorageBlock())
+					.checkoutDetails(cwTransaction.getCheckoutDetails())
+					.transaction(transactionId)
+					;
+				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
 			}
 			case SUBTRACT_AMOUNT -> {
 				SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;

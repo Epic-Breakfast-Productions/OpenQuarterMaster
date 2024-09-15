@@ -7,7 +7,11 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckoutDetails;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
+
+import java.time.ZonedDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,12 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @SuperBuilder(toBuilder = true)
 public abstract class CheckoutTransaction extends ItemStoredTransaction {
 
-	/**
-	 * The storage block we are checking out from.
-	 */
 	@NotNull
 	@NonNull
-	private ObjectId fromBlock;
-
-	//TODO:: checkout details
+	private CheckoutDetails checkoutDetails;
 }

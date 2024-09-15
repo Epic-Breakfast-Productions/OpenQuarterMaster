@@ -17,11 +17,11 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 public class CheckoutWholeTransaction extends CheckoutTransaction {
 
 	/**
-	 * The specific stored object to checkout
+	 * The specific stored object to check out.
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId toAdd;
+	private ObjectId toCheckout;
 
 
 	@Override

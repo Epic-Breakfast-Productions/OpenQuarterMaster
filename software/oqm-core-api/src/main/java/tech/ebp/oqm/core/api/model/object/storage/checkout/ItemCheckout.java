@@ -1,6 +1,8 @@
 package tech.ebp.oqm.core.api.model.object.storage.checkout;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,8 +14,11 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.LossCheckin;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnCheckin;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutFor;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 
 import java.time.ZonedDateTime;
 
@@ -26,8 +31,18 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class ItemCheckout extends AttKeywordMainObject {
-	public static final int CUR_SCHEMA_VERSION = 1;
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "checkoutType"
+)
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = ItemAmountCheckout.class, name = "AMOUNT"),
+	@JsonSubTypes.Type(value = ItemWholeCheckout.class, name = "WHOLE"),
+})
+public abstract class ItemCheckout <T> extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 2;
+
+	public abstract CheckoutType getCheckoutType();
 	
 	/**
 	 * When these item(s) were checked out
@@ -48,39 +63,27 @@ public class ItemCheckout extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private ObjectId checkedOutFrom;
+
+	/**
+	 * The transaction that created this checkout.
+	 */
+	@NonNull
+	@NotNull
+	private ObjectId transaction;
 	
 	/**
 	 * The exact item being checked out
 	 */
 	@NonNull
 	@NotNull
-	private Stored checkedOut;
-	
-	/**
-	 * Who checked out the item
-	 */
-	@NonNull
+	private T checkedOut;
+
 	@NotNull
-	private CheckoutFor checkedOutFor;
-	
-	/**
-	 * When the item is due back by
-	 */
-	@lombok.Builder.Default
-	private ZonedDateTime dueBack = null;
-	
 	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private String reason = "";
-	
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private String notes = "";
-	
+	private CheckoutDetails checkoutDetails;
+
 	/**
-	 * The exact item being checked out
+	 * The details of the checkin.
 	 */
 	@lombok.Builder.Default
 	private CheckInDetails checkInDetails = null;
