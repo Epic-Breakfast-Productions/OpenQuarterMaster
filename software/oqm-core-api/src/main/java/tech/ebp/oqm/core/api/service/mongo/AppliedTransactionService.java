@@ -19,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
@@ -62,6 +63,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 	/**
 	 * Applies the transaction given.
+	 *
 	 * @param oqmDbIdOrName
 	 * @param cs
 	 * @param inventoryItem
@@ -75,8 +77,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		@NotNull InventoryItem inventoryItem,
 		@Valid ItemStoredTransaction itemStoredTransaction,
 		InteractingEntity interactingEntity,
-		HistoryDetail ... details
-	){
+		HistoryDetail... details
+	) {
 		//TODO:: if cs null, create.
 		final ObjectId transactionId = new ObjectId();
 		HistoryDetail[] historyDetails;
@@ -86,20 +88,20 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 			deetsCollection.add(new ItemTransactionDetail(transactionId));
 			historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
 		}
-		AppliedTransaction.Builder<?,?> appliedTransactionBuilder = AppliedTransaction.builder()
+		AppliedTransaction.Builder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
 			.id(transactionId)
 			.inventoryItem(inventoryItem.getId())
 			.transaction(itemStoredTransaction);
 
-		switch(itemStoredTransaction.getTransactionType()){
+		switch (itemStoredTransaction.getTransactionType()) {
 			case ADD_AMOUNT -> {
 				AddAmountTransaction addAmountTransaction = (AddAmountTransaction) itemStoredTransaction;
 				AmountStored stored;
-				switch(inventoryItem.getStorageType()){
+				switch (inventoryItem.getStorageType()) {
 					case BULK -> {
-						try{
+						try {
 							stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), addAmountTransaction.getToBlock(), AmountStored.class);
-						} catch (DbNotFoundException e){
+						} catch (DbNotFoundException e) {
 							stored = AmountStored.builder()
 								.item(inventoryItem.getId())
 								.storageBlock(addAmountTransaction.getToBlock())
@@ -109,7 +111,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 					}
 					case AMOUNT_LIST -> {
-						if(addAmountTransaction.getToStored() == null){
+						if (addAmountTransaction.getToStored() == null) {
 							stored = AmountStored.builder()
 								.item(inventoryItem.getId())
 								.storageBlock(addAmountTransaction.getToBlock())
@@ -147,14 +149,45 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 			}
 			case CHECKOUT_AMOUNT -> {
 				CheckoutAmountTransaction checkoutAmountTransaction = (CheckoutAmountTransaction) itemStoredTransaction;
-				//TODO
+				AmountStored stored;
+
+				switch (inventoryItem.getStorageType()) {
+					case BULK -> {
+						if (checkoutAmountTransaction.getFromBlock() != null) {
+							stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), checkoutAmountTransaction.getFromBlock(), AmountStored.class);
+						} else if (checkoutAmountTransaction.getFromStored() != null) {
+							stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, checkoutAmountTransaction.getFromStored());
+						} else {
+							throw new IllegalArgumentException("No stored or block given to checkout from.");
+						}
+					}
+					case AMOUNT_LIST -> {
+						if (checkoutAmountTransaction.getFromStored() == null) {
+							throw new IllegalArgumentException("No stored given to checkout from.");
+						}
+						stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, checkoutAmountTransaction.getFromStored());
+					}
+					default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
+				}
+
+				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+				ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
+					.item(inventoryItem.getId())
+					.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
+					.checkedOutFrom(stored.getId())
+					.checkedOut(checkoutAmountTransaction.getAmount())
+					.transaction(transactionId);
+
+				stored.subtract(checkoutAmountTransaction.getAmount());
+				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
+				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
 			}
 			case CHECKOUT_WHOLE -> {
 				CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
 				Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
 				appliedTransactionBuilder.affectedStored(Set.of(affectedStored.getId()));
 				ItemCheckout.Builder<?, ?, ?> checkoutBuilder;
-				switch(inventoryItem.getStorageType()){
+				switch (inventoryItem.getStorageType()) {
 					case BULK -> {
 						AmountStored affectedAmountStored = (AmountStored) affectedStored;
 						checkoutBuilder = ItemAmountCheckout.builder()
@@ -175,13 +208,13 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					.checkedOutFrom(affectedStored.getStorageBlock())
 					.checkoutDetails(cwTransaction.getCheckoutDetails())
 					.transaction(transactionId)
-					;
+				;
 				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
 			}
 			case SUBTRACT_AMOUNT -> {
 				SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;
 				AmountStored stored;
-				switch(inventoryItem.getStorageType()){
+				switch (inventoryItem.getStorageType()) {
 					case BULK -> {
 						stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), subAmountTransaction.getFromBlock(), AmountStored.class);
 					}
@@ -209,12 +242,12 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				AmountStored fromStored;
 				AmountStored toStored;
 
-				switch(inventoryItem.getStorageType()){
+				switch (inventoryItem.getStorageType()) {
 					case BULK -> {
 						fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getFromBlock(), AmountStored.class);
-						try{
+						try {
 							toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getToBlock(), AmountStored.class);
-						} catch (DbNotFoundException e){
+						} catch (DbNotFoundException e) {
 							toStored = AmountStored.builder()
 								.item(inventoryItem.getId())
 								.storageBlock(transferAmountTransaction.getToBlock())
@@ -225,7 +258,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					}
 					case AMOUNT_LIST -> {
 						fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, transferAmountTransaction.getFromStored());
-						if(transferAmountTransaction.getToStored() == null){
+						if (transferAmountTransaction.getToStored() == null) {
 							toStored = AmountStored.builder()
 								.item(inventoryItem.getId())
 								.storageBlock(transferAmountTransaction.getToBlock())
@@ -244,7 +277,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				fromStored.subtract(transferAmountTransaction.getAmount());
 				toStored.add(transferAmountTransaction.getAmount());
 				appliedTransactionBuilder.affectedStored(Set.of(fromStored.getId(), toStored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity,  historyDetails);
+				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity, historyDetails);
 				this.storedService.update(oqmDbIdOrName, cs, toStored, interactingEntity, historyDetails);
 			}
 			case TRANSFER_WHOLE -> {
@@ -252,7 +285,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				ObjectId toTransferId = transferWholeTransaction.getStoredToTransfer();
 
 				Stored toTransfer = this.storedService.get(oqmDbIdOrName, cs, toTransferId);
-				if(!transferWholeTransaction.getFromBlock().equals(toTransfer.getStorageBlock())){
+				if (!transferWholeTransaction.getFromBlock().equals(toTransfer.getStorageBlock())) {
 					throw new IllegalArgumentException("Stored to transfer not starting out in expecting block.");
 				}
 				toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());

@@ -19,9 +19,14 @@ import javax.measure.Quantity;
 public class CheckoutAmountTransaction extends CheckoutTransaction {
 
 	/**
-	 * If applicable, the specific storage block we are checking out
+	 * If applicable, the specific stored object we are checking out from.
 	 */
 	private ObjectId fromStored;
+
+	/**
+	 * If applicable, the specific block we are checking out from. Use when checking out from bulk
+	 */
+	private ObjectId fromBlock;
 
 	/**
 	 * The amount we are checking out.

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
@@ -39,6 +40,7 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemAmountCheckout.class, name = "AMOUNT"),
 	@JsonSubTypes.Type(value = ItemWholeCheckout.class, name = "WHOLE"),
 })
+@BsonDiscriminator
 public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
@@ -95,6 +97,6 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 
 	@Override
 	public int getSchemaVersion() {
-		return 1;
+		return CUR_SCHEMA_VERSION;
 	}
 }
