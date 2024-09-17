@@ -149,10 +149,12 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						AmountStored amountStored;
 						if (cfTransaction.getToStored() != null) {
 							amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, cfTransaction.getToStored());
+							//TODO:: create if not present?
 						} else if (cfTransaction.getToBlock() != null) {
 							switch (inventoryItem.getStorageType()) {
 								case BULK -> {
 									amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
+									//TODO:: create if not present?
 								}
 								default -> throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
 							}
