@@ -4,22 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.LossCheckin;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnCheckin;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutFor;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 
 import java.time.ZonedDateTime;
 
@@ -64,14 +54,14 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId checkedOutFrom;
+	private ObjectId checkedOutFromBlock;
 
 	/**
 	 * The transaction that created this checkout.
 	 */
 	@NonNull
 	@NotNull
-	private ObjectId transaction;
+	private ObjectId checkOutTransaction;
 	
 	/**
 	 * The exact item being checked out
@@ -85,10 +75,16 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	private CheckoutDetails checkoutDetails;
 
 	/**
-	 * The details of the checkin.
+	 * The details of checking back in this checkout.
 	 */
 	@lombok.Builder.Default
 	private CheckInDetails checkInDetails = null;
+
+	/**
+	 * The transaction that checked in this.
+	 */
+	@lombok.Builder.Default
+	private ObjectId checkInTransaction = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isStillCheckedOut(){

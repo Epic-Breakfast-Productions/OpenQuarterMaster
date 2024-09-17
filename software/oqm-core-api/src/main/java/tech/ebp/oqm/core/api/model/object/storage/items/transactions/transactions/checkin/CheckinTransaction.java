@@ -23,13 +23,6 @@ public abstract class CheckinTransaction extends ItemStoredTransaction {
 	private ObjectId checkoutId;
 
 	/**
-	 * The block we are checking into
-	 */
-	@NotNull
-	@NonNull
-	private ObjectId toBlock;
-
-	/**
 	 * The details of checking in the transaction
 	 */
 	@NotNull

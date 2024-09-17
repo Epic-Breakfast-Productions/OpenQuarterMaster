@@ -1,9 +1,12 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 @EqualsAndHashCode(callSuper = true)
@@ -11,6 +14,15 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @Data
 @SuperBuilder(toBuilder = true)
 public class CheckinFullTransaction extends CheckinTransaction {
+
+
+	/**
+	 * The block we are checking into
+	 */
+	private ObjectId toBlock;
+
+	private ObjectId toStored;
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.CHECKIN_FULL;

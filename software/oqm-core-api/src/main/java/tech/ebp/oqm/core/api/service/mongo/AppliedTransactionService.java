@@ -7,6 +7,7 @@ import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
@@ -16,10 +17,8 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemAmountCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
@@ -141,11 +140,45 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 			}
 			case CHECKIN_FULL -> {
 				CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
-				//TODO
+				ItemCheckout<?> checkout = this.itemCheckoutService.get(oqmDbIdOrName, cs, cfTransaction.getCheckoutId());
+
+				switch (checkout.getCheckoutType()) {
+					case AMOUNT -> {
+						ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
+
+						AmountStored amountStored;
+						if (cfTransaction.getToStored() != null) {
+							amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, cfTransaction.getToStored());
+						} else if (cfTransaction.getToBlock() != null) {
+							switch (inventoryItem.getStorageType()) {
+								case BULK -> {
+									amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
+								}
+								default -> throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
+							}
+						} else {
+							throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
+						}
+
+						amountStored.add(iac.getCheckedOut());
+						this.storedService.update(oqmDbIdOrName, cs, amountStored, interactingEntity, historyDetails);
+						appliedTransactionBuilder.affectedStored(Set.of(amountStored.getId()));
+					}
+					case WHOLE -> {
+						Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
+						checkedOut.setStorageBlock(cfTransaction.getToBlock());
+						this.storedService.add(oqmDbIdOrName, cs, checkedOut, interactingEntity, historyDetails);
+						appliedTransactionBuilder.affectedStored(Set.of(checkedOut.getId()));
+					}
+				}
+				checkout.setCheckInDetails(cfTransaction.getDetails());
+				checkout.setCheckInTransaction(transactionId);
+				this.itemCheckoutService.update(oqmDbIdOrName, cs, checkout, interactingEntity, historyDetails);
 			}
 			case CHECKIN_PART -> {
 				CheckinPartTransaction checkinPartTransaction = (CheckinPartTransaction) itemStoredTransaction;
 				//TODO
+				throw new NotImplementedException("Checking in only a part of a checked out item not supported yet.");
 			}
 			case CHECKOUT_AMOUNT -> {
 				CheckoutAmountTransaction checkoutAmountTransaction = (CheckoutAmountTransaction) itemStoredTransaction;
@@ -174,9 +207,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 					.item(inventoryItem.getId())
 					.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
-					.checkedOutFrom(stored.getId())
+					.fromStoredId(stored.getId())
+					.checkedOutFromBlock(stored.getStorageBlock())
 					.checkedOut(checkoutAmountTransaction.getAmount())
-					.transaction(transactionId);
+					.checkOutTransaction(transactionId);
 
 				stored.subtract(checkoutAmountTransaction.getAmount());
 				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
@@ -205,9 +239,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					}
 				}
 				checkoutBuilder.item(inventoryItem.getId())
-					.checkedOutFrom(affectedStored.getStorageBlock())
+					.checkedOutFromBlock(affectedStored.getStorageBlock())
 					.checkoutDetails(cwTransaction.getCheckoutDetails())
-					.transaction(transactionId)
+					.checkOutTransaction(transactionId)
 				;
 				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
 			}

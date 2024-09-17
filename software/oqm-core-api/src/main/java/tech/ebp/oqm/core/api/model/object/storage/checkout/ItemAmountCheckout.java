@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
+	private ObjectId fromStoredId;
 //	private boolean wholeCheckout = false;
 
 	public CheckoutType getCheckoutType(){
