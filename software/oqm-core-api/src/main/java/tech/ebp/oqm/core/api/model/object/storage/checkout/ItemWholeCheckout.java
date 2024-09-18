@@ -19,6 +19,7 @@ import javax.measure.Quantity;
 public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
+	@Override
 	public CheckoutType getCheckoutType(){
 		return CheckoutType.WHOLE;
 	}

@@ -1,10 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
@@ -13,6 +10,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 public abstract class SubtractTransaction extends ItemStoredTransaction {
 
 	/**

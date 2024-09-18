@@ -14,6 +14,7 @@ import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -162,7 +163,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	public StoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item){
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, and(new StoredSearch().setInventoryItemId(item.getId()).getSortBson()), null, null);
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, and(new StoredSearch().setInventoryItemId(item.getId()).getSearchFilters()), null, null);
 
 		Quantity zero = Quantities.getQuantity(0, item.getUnit());
 		Quantity total = Quantities.getQuantity(0, item.getUnit());

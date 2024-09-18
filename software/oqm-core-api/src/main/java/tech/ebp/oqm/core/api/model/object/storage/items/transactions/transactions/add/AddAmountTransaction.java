@@ -1,10 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -15,6 +12,7 @@ import javax.measure.Quantity;
 @ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 public class AddAmountTransaction extends AddTransaction {
 
 	/**

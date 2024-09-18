@@ -15,6 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class AppliedTransaction extends AttKeywordMainObject {
 	@Override

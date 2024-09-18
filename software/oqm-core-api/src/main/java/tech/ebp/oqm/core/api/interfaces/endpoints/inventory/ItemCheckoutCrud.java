@@ -45,73 +45,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	
 	@Getter
 	Class<ItemCheckout> objectClass =  ItemCheckout.class;
-	
-	@POST
-	@Operation(
-		summary = "Checks out an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
-		@Valid ItemCheckoutRequest itemCheckoutRequest
-	) {
-		InteractingEntity entity = this.getInteractingEntity();
-		
-		if(itemCheckoutRequest.getCheckedOutFor() == null){
-			itemCheckoutRequest.setCheckedOutFor(
-				new CheckoutForOqmEntity(entity)
-			);
-		}
-		
-		return this.getObjectService().checkoutItem(this.getOqmDbIdOrName(), itemCheckoutRequest, entity);
-	}
-	
-	@PUT
-	@Path("{id}/checkin")
-	@Operation(
-		summary = "Checks in an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ItemCheckout checkin(
-		@PathParam("id") String id,
-		@Valid CheckInDetails checkInDetails
-	) {
-		return this.getObjectService().checkinItem(this.getOqmDbIdOrName(), new ObjectId(id), checkInDetails, this.getInteractingEntity());
-	}
-	
+
 	@GET
 	@Operation(
 		summary = "Gets a list of checkouts, using search parameters."

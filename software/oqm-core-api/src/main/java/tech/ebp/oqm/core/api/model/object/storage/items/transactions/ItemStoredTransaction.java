@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -21,6 +22,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 
 @Data
 @SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "transactionType"

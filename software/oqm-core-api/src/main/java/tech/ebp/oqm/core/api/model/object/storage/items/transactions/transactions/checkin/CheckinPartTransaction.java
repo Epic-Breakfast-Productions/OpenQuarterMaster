@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactio
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -10,6 +11,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 public class CheckinPartTransaction extends CheckinTransaction {
 	@Override
 	public TransactionType getTransactionType() {

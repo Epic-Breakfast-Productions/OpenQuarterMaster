@@ -86,7 +86,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private Map<HistoryDetailType, HistoryDetail> details = new HashMap<>();
+	private Map<String, HistoryDetail> details = new HashMap<>();
 	
 	public abstract EventType getType();
 	

@@ -26,6 +26,9 @@ import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
 
 import javax.measure.Quantity;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.SequencedSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -98,7 +101,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
@@ -122,7 +125,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
@@ -144,7 +147,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
@@ -166,7 +169,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
@@ -192,7 +195,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = UniqueStored.builder().item(itemId).storageBlock(blockId).build();
@@ -213,7 +216,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
@@ -235,7 +238,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.BULK).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject(), user);
@@ -256,7 +259,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(Set.of(blockId));
+		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject(), user);
@@ -282,7 +285,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			user
 		);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
-		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(Set.of(blockIdOne));
+		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(new LinkedHashSet<>(List.of(blockIdOne)));
 		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockIdOne).getTestObject(), user);

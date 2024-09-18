@@ -12,18 +12,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
+import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.model.object.history.details.ItemTransactionDetail;
+import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
+import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
+import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
+import tech.ebp.oqm.core.api.model.units.UnitUtils;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
+import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoObjectServiceTest;
+import tech.units.indriya.quantity.Quantities;
 import tech.units.indriya.unit.Units;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType.ITEM_TRANSACTION;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
@@ -35,10 +53,19 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	AppliedTransactionService appliedTransactionService;
 
 	@Inject
+	StorageBlockService storageBlockService;
+
+	@Inject
+	StorageBlockTestObjectCreator storageBlockTestObjectCreator;
+
+	@Inject
 	InventoryItemService inventoryItemService;
 
 	@Inject
 	InventoryItemTestObjectCreator itemTestObjectCreator;
+
+	@Inject
+	StoredService storedService;
 
 	//TODO:: these default tests
 	@Override
@@ -81,9 +108,107 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 //		this.defaultRemoveAllTest(this.appliedTransactionService);
 //	}
 
+
+
+	private InventoryItem setupItem(StorageType storageType, InteractingEntity entity) {
+		StorageBlock storageBlock = storageBlockTestObjectCreator.getTestObject();
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, entity);
+		InventoryItem item = this.itemTestObjectCreator.getTestObject().setStorageType(storageType);
+		item.getStorageBlocks().add(storageBlock.getId());
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, entity);
+		return item;
+	}
+
+
+
 //<editor-fold desc="Apply- Add Amount">
-	//TODO:: Success- bulk - already present in block
-	//TODO:: Success- bulk - not present in block
+	@Test
+	public void addAmountSuccessBulkNotInBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		ItemStoredTransaction preApplyTransaction = AddAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.toBlock(item.getStorageBlocks().getFirst())
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail)event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+	}
+
+	@Test
+	public void addAmountSuccessBulkAlreadyInBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		AmountStored originalStored = AmountStored.builder()
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.build();
+		this.storedService.add(DEFAULT_TEST_DB_NAME, originalStored, entity);
+
+
+		ItemStoredTransaction preApplyTransaction = AddAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.toBlock(item.getStorageBlocks().getFirst())
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(originalStored.getId(), stored.getId());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(10, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail)event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+	}
+
 	//TODO:: Success- amount list- to new in list
 	//TODO:: Success- amount list- to existing in list
 	//TODO:: fail - any unique

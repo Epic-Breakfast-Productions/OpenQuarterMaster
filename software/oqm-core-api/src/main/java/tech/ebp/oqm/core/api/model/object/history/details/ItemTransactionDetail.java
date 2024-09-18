@@ -14,6 +14,6 @@ public class ItemTransactionDetail extends HistoryDetail {
 
 	@Override
 	public HistoryDetailType getType() {
-		return HistoryDetailType.NOTE;
+		return HistoryDetailType.ITEM_TRANSACTION;
 	}
 }

@@ -24,6 +24,7 @@ import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
+import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
@@ -60,8 +61,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		//TODO:: check has id
 	}
 
-	public static Map<HistoryDetailType, HistoryDetail> detailListToMap(HistoryDetail ... details){
-		return Arrays.stream(details).collect(Collectors.toMap(HistoryDetail::getType, Function.identity()));
+	public static Map<String, HistoryDetail> detailListToMap(HistoryDetail ... details){
+		return Arrays.stream(details).collect(Collectors.toMap((detail)->detail.getType().name(), Function.identity()));
 	}
 	
 	@Getter
@@ -141,7 +142,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
 		object = this.update(oqmDbIdOrName, cs, object);
 		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,
-			CreateEvent.builder()
+			UpdateEvent.builder()
 				.objectId(object.getId())
 				.entity(entity.getId())
 				.details(detailListToMap(details))

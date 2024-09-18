@@ -81,7 +81,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private Set<ObjectId> storageBlocks = new LinkedHashSet<>();
+	private LinkedHashSet<ObjectId> storageBlocks = new LinkedHashSet<>();
 
 	/**
 	 * Files that have been attached to the item.

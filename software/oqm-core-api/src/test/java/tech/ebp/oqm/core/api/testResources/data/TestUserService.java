@@ -1,19 +1,28 @@
 package tech.ebp.oqm.core.api.testResources.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.restassured.specification.RequestSpecification;
 import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.Claims;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import tech.ebp.oqm.core.api.testResources.TestRestUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static io.restassured.RestAssured.given;
+import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 /**
  *
@@ -103,6 +112,10 @@ public class TestUserService {
 			;
 		return token;
 	}
+
+	public RequestSpecification newJwtCall(User testUser) {
+		return TestRestUtils.newJwtCall(this.getUserToken(testUser));
+	}
 	
 	public User getTestUser(Set<String> roles) {
 		User.Builder builder = User.builder();
@@ -119,7 +132,19 @@ public class TestUserService {
 		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
 		
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
-		
+
+		//ensure user is added to db
+		String userJsonString = this.newJwtCall(testUser).get("/api/v1/interacting-entity/self")
+			.then()
+			.statusCode(200)
+			.extract().body().asString();
+		try {
+			ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
+			testUser.setId(new ObjectId(userJson.get("id").asText()));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+
 		return testUser;
 	}
 	

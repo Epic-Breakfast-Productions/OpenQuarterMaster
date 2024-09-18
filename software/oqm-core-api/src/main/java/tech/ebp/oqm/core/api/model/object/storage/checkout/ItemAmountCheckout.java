@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
@@ -28,6 +28,7 @@ public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
 	private ObjectId fromStoredId;
 //	private boolean wholeCheckout = false;
 
+	@Override
 	public CheckoutType getCheckoutType(){
 		return CheckoutType.AMOUNT;
 	}

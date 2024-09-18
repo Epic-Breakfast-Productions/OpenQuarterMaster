@@ -33,6 +33,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferWholeTransaction;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.units.indriya.quantity.Quantities;
 
 import java.util.ArrayList;
@@ -77,264 +78,279 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		@Valid ItemStoredTransaction itemStoredTransaction,
 		InteractingEntity interactingEntity,
 		HistoryDetail... details
-	) {
-		//TODO:: if cs null, create.
-		final ObjectId transactionId = new ObjectId();
-		HistoryDetail[] historyDetails;
-		{
-			List<HistoryDetail> deetsCollection = new ArrayList<>();
-			deetsCollection.addAll(List.of(details));
-			deetsCollection.add(new ItemTransactionDetail(transactionId));
-			historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
-		}
-		AppliedTransaction.Builder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
-			.id(transactionId)
-			.inventoryItem(inventoryItem.getId())
-			.transaction(itemStoredTransaction);
-
-		switch (itemStoredTransaction.getTransactionType()) {
-			case ADD_AMOUNT -> {
-				AddAmountTransaction addAmountTransaction = (AddAmountTransaction) itemStoredTransaction;
-				AmountStored stored;
-				switch (inventoryItem.getStorageType()) {
-					case BULK -> {
-						try {
-							stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), addAmountTransaction.getToBlock(), AmountStored.class);
-						} catch (DbNotFoundException e) {
-							stored = AmountStored.builder()
-								.item(inventoryItem.getId())
-								.storageBlock(addAmountTransaction.getToBlock())
-								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-								.build();
-							this.storedService.add(oqmDbIdOrName, cs, stored, interactingEntity);
-						}
-					}
-					case AMOUNT_LIST -> {
-						if (addAmountTransaction.getToStored() == null) {
-							stored = AmountStored.builder()
-								.item(inventoryItem.getId())
-								.storageBlock(addAmountTransaction.getToBlock())
-								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-								.build();
-							this.storedService.add(oqmDbIdOrName, cs, stored, interactingEntity);
-						} else {
-							stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, addAmountTransaction.getToStored());
-						}
-					}
-					default -> {
-						throw new IllegalArgumentException("Cannot add an amount to a unique item.");
-					}
+	) throws Exception {
+		try(MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
+			return csw.runTransaction(()->{
+				final ObjectId transactionId = new ObjectId();
+				HistoryDetail[] historyDetails;
+				{
+					List<HistoryDetail> deetsCollection = new ArrayList<>();
+					deetsCollection.addAll(List.of(details));
+					deetsCollection.add(new ItemTransactionDetail(transactionId));
+					historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
 				}
-				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				stored.add(addAmountTransaction.getAmount());
+				AppliedTransaction.Builder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
+					.id(transactionId)
+					.inventoryItem(inventoryItem.getId())
+					.transaction(itemStoredTransaction)
+					.entity(interactingEntity.getId());
 
-				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
-			}
-			case ADD_WHOLE -> {
-				AddWholeTransaction addWholeTransaction = (AddWholeTransaction) itemStoredTransaction;
-				Stored stored = addWholeTransaction.getToAdd();
-
-				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.add(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
-			}
-			case CHECKIN_FULL -> {
-				CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
-				ItemCheckout<?> checkout = this.itemCheckoutService.get(oqmDbIdOrName, cs, cfTransaction.getCheckoutId());
-
-				switch (checkout.getCheckoutType()) {
-					case AMOUNT -> {
-						ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
-
-						AmountStored amountStored;
-						if (cfTransaction.getToStored() != null) {
-							amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, cfTransaction.getToStored());
-							//TODO:: create if not present?
-						} else if (cfTransaction.getToBlock() != null) {
-							switch (inventoryItem.getStorageType()) {
-								case BULK -> {
-									amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
-									//TODO:: create if not present?
+				switch (itemStoredTransaction.getTransactionType()) {
+					case ADD_AMOUNT -> {
+						AddAmountTransaction addAmountTransaction = (AddAmountTransaction) itemStoredTransaction;
+						AmountStored stored;
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								if (addAmountTransaction.getToBlock() != null) {
+									try {
+										stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), addAmountTransaction.getToBlock(), AmountStored.class);
+									} catch (DbNotFoundException e) {
+										stored = AmountStored.builder()
+											.item(inventoryItem.getId())
+											.storageBlock(addAmountTransaction.getToBlock())
+											.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+											.build();
+										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
+									}
+								} else if (addAmountTransaction.getToStored() != null) {
+									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), addAmountTransaction.getToStored());
+								} else {
+									throw new IllegalArgumentException("No to block or stored given.");
 								}
-								default -> throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
 							}
-						} else {
-							throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
+							case AMOUNT_LIST -> {
+								if (addAmountTransaction.getToStored() == null) {
+									stored = AmountStored.builder()
+										.item(inventoryItem.getId())
+										.storageBlock(addAmountTransaction.getToBlock())
+										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+										.build();
+									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
+								} else {
+									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), addAmountTransaction.getToStored());
+								}
+							}
+							default -> {
+								throw new IllegalArgumentException("Cannot add an amount to a unique item.");
+							}
+						}
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						stored.add(addAmountTransaction.getAmount());
+
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
+					}
+					case ADD_WHOLE -> {
+						AddWholeTransaction addWholeTransaction = (AddWholeTransaction) itemStoredTransaction;
+						Stored stored = addWholeTransaction.getToAdd();
+
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
+					}
+					case CHECKIN_FULL -> {
+						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
+						ItemCheckout<?> checkout = this.itemCheckoutService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getCheckoutId());
+
+						switch (checkout.getCheckoutType()) {
+							case AMOUNT -> {
+								ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
+
+								AmountStored amountStored;
+								if (cfTransaction.getToStored() != null) {
+									amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getToStored());
+									//TODO:: create if not present?
+								} else if (cfTransaction.getToBlock() != null) {
+									switch (inventoryItem.getStorageType()) {
+										case BULK -> {
+											amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
+											//TODO:: create if not present?
+										}
+										default ->
+											throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
+									}
+								} else {
+									throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
+								}
+
+								amountStored.add(iac.getCheckedOut());
+								this.storedService.update(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity, historyDetails);
+								appliedTransactionBuilder.affectedStored(Set.of(amountStored.getId()));
+							}
+							case WHOLE -> {
+								Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
+								checkedOut.setStorageBlock(cfTransaction.getToBlock());
+								this.storedService.add(oqmDbIdOrName, csw.getClientSession(), checkedOut, interactingEntity, historyDetails);
+								appliedTransactionBuilder.affectedStored(Set.of(checkedOut.getId()));
+							}
+						}
+						checkout.setCheckInDetails(cfTransaction.getDetails());
+						checkout.setCheckInTransaction(transactionId);
+						this.itemCheckoutService.update(oqmDbIdOrName, csw.getClientSession(), checkout, interactingEntity, historyDetails);
+					}
+					case CHECKIN_PART -> {
+						CheckinPartTransaction checkinPartTransaction = (CheckinPartTransaction) itemStoredTransaction;
+						//TODO
+						throw new NotImplementedException("Checking in only a part of a checked out item not supported yet.");
+					}
+					case CHECKOUT_AMOUNT -> {
+						CheckoutAmountTransaction checkoutAmountTransaction = (CheckoutAmountTransaction) itemStoredTransaction;
+						AmountStored stored;
+
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								if (checkoutAmountTransaction.getFromBlock() != null) {
+									stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), checkoutAmountTransaction.getFromBlock(), AmountStored.class);
+								} else if (checkoutAmountTransaction.getFromStored() != null) {
+									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), checkoutAmountTransaction.getFromStored());
+								} else {
+									throw new IllegalArgumentException("No stored or block given to checkout from.");
+								}
+							}
+							case AMOUNT_LIST -> {
+								if (checkoutAmountTransaction.getFromStored() == null) {
+									throw new IllegalArgumentException("No stored given to checkout from.");
+								}
+								stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), checkoutAmountTransaction.getFromStored());
+							}
+							default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
 						}
 
-						amountStored.add(iac.getCheckedOut());
-						this.storedService.update(oqmDbIdOrName, cs, amountStored, interactingEntity, historyDetails);
-						appliedTransactionBuilder.affectedStored(Set.of(amountStored.getId()));
-					}
-					case WHOLE -> {
-						Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
-						checkedOut.setStorageBlock(cfTransaction.getToBlock());
-						this.storedService.add(oqmDbIdOrName, cs, checkedOut, interactingEntity, historyDetails);
-						appliedTransactionBuilder.affectedStored(Set.of(checkedOut.getId()));
-					}
-				}
-				checkout.setCheckInDetails(cfTransaction.getDetails());
-				checkout.setCheckInTransaction(transactionId);
-				this.itemCheckoutService.update(oqmDbIdOrName, cs, checkout, interactingEntity, historyDetails);
-			}
-			case CHECKIN_PART -> {
-				CheckinPartTransaction checkinPartTransaction = (CheckinPartTransaction) itemStoredTransaction;
-				//TODO
-				throw new NotImplementedException("Checking in only a part of a checked out item not supported yet.");
-			}
-			case CHECKOUT_AMOUNT -> {
-				CheckoutAmountTransaction checkoutAmountTransaction = (CheckoutAmountTransaction) itemStoredTransaction;
-				AmountStored stored;
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
+							.item(inventoryItem.getId())
+							.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
+							.fromStoredId(stored.getId())
+							.checkedOutFromBlock(stored.getStorageBlock())
+							.checkedOut(checkoutAmountTransaction.getAmount())
+							.checkOutTransaction(transactionId);
 
-				switch (inventoryItem.getStorageType()) {
-					case BULK -> {
-						if (checkoutAmountTransaction.getFromBlock() != null) {
-							stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), checkoutAmountTransaction.getFromBlock(), AmountStored.class);
-						} else if (checkoutAmountTransaction.getFromStored() != null) {
-							stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, checkoutAmountTransaction.getFromStored());
-						} else {
-							throw new IllegalArgumentException("No stored or block given to checkout from.");
+						stored.subtract(checkoutAmountTransaction.getAmount());
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
+						this.itemCheckoutService.add(oqmDbIdOrName, csw.getClientSession(), checkoutBuilder.build(), interactingEntity);
+					}
+					case CHECKOUT_WHOLE -> {
+						CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
+						Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
+						appliedTransactionBuilder.affectedStored(Set.of(affectedStored.getId()));
+						ItemCheckout.Builder<?, ?, ?> checkoutBuilder;
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								AmountStored affectedAmountStored = (AmountStored) affectedStored;
+								checkoutBuilder = ItemAmountCheckout.builder()
+									.checkedOut(affectedAmountStored.getAmount());
+								affectedAmountStored.setAmount(Quantities.getQuantity(0, affectedAmountStored.getAmount().getUnit()));
+								this.storedService.update(oqmDbIdOrName, csw.getClientSession(), affectedAmountStored, interactingEntity, historyDetails);
+							}
+							case AMOUNT_LIST, UNIQUE_MULTI, UNIQUE_SINGLE -> {
+								checkoutBuilder = ItemWholeCheckout.builder()
+									.checkedOut(affectedStored);
+								this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), affectedStored.getId(), interactingEntity, historyDetails);
+							}
+							default -> {
+								throw new IllegalStateException("Storage type not supported. This should never happen.");
+							}
 						}
+						checkoutBuilder.item(inventoryItem.getId())
+							.checkedOutFromBlock(affectedStored.getStorageBlock())
+							.checkoutDetails(cwTransaction.getCheckoutDetails())
+							.checkOutTransaction(transactionId)
+						;
+						this.itemCheckoutService.add(oqmDbIdOrName, csw.getClientSession(), checkoutBuilder.build(), interactingEntity);
 					}
-					case AMOUNT_LIST -> {
-						if (checkoutAmountTransaction.getFromStored() == null) {
-							throw new IllegalArgumentException("No stored given to checkout from.");
+					case SUBTRACT_AMOUNT -> {
+						SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;
+						AmountStored stored;
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), subAmountTransaction.getFromBlock(), AmountStored.class);
+							}
+							case AMOUNT_LIST -> {
+								stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), subAmountTransaction.getFromStored());
+							}
+							default -> {
+								throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+							}
 						}
-						stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, checkoutAmountTransaction.getFromStored());
-					}
-					default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
-				}
+						stored.subtract(subAmountTransaction.getAmount());
 
-				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
-					.item(inventoryItem.getId())
-					.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
-					.fromStoredId(stored.getId())
-					.checkedOutFromBlock(stored.getStorageBlock())
-					.checkedOut(checkoutAmountTransaction.getAmount())
-					.checkOutTransaction(transactionId);
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
+					}
+					case SUBTRACT_WHOLE -> {
+						SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
+						ObjectId toSubtract = subWholeTransaction.getToSubtract();
 
-				stored.subtract(checkoutAmountTransaction.getAmount());
-				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
-				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
-			}
-			case CHECKOUT_WHOLE -> {
-				CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
-				Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
-				appliedTransactionBuilder.affectedStored(Set.of(affectedStored.getId()));
-				ItemCheckout.Builder<?, ?, ?> checkoutBuilder;
-				switch (inventoryItem.getStorageType()) {
-					case BULK -> {
-						AmountStored affectedAmountStored = (AmountStored) affectedStored;
-						checkoutBuilder = ItemAmountCheckout.builder()
-							.checkedOut(affectedAmountStored.getAmount());
-						affectedAmountStored.setAmount(Quantities.getQuantity(0, affectedAmountStored.getAmount().getUnit()));
-						this.storedService.update(oqmDbIdOrName, cs, affectedAmountStored, interactingEntity, historyDetails);
+						appliedTransactionBuilder.affectedStored(Set.of(toSubtract));
+						this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), toSubtract, interactingEntity, historyDetails);
 					}
-					case AMOUNT_LIST, UNIQUE_MULTI, UNIQUE_SINGLE -> {
-						checkoutBuilder = ItemWholeCheckout.builder()
-							.checkedOut(affectedStored);
-						this.storedService.remove(oqmDbIdOrName, cs, affectedStored.getId(), interactingEntity, historyDetails);
-					}
-					default -> {
-						throw new IllegalStateException("Storage type not supported. This should never happen.");
-					}
-				}
-				checkoutBuilder.item(inventoryItem.getId())
-					.checkedOutFromBlock(affectedStored.getStorageBlock())
-					.checkoutDetails(cwTransaction.getCheckoutDetails())
-					.checkOutTransaction(transactionId)
-				;
-				this.itemCheckoutService.add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
-			}
-			case SUBTRACT_AMOUNT -> {
-				SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;
-				AmountStored stored;
-				switch (inventoryItem.getStorageType()) {
-					case BULK -> {
-						stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), subAmountTransaction.getFromBlock(), AmountStored.class);
-					}
-					case AMOUNT_LIST -> {
-						stored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, subAmountTransaction.getFromStored());
-					}
-					default -> {
-						throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
-					}
-				}
-				stored.subtract(subAmountTransaction.getAmount());
+					case TRANSFER_AMOUNT -> {
+						TransferAmountTransaction transferAmountTransaction = (TransferAmountTransaction) itemStoredTransaction;
+						AmountStored fromStored;
+						AmountStored toStored;
 
-				appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
-			}
-			case SUBTRACT_WHOLE -> {
-				SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
-				ObjectId toSubtract = subWholeTransaction.getToSubtract();
-
-				appliedTransactionBuilder.affectedStored(Set.of(toSubtract));
-				this.storedService.remove(oqmDbIdOrName, cs, toSubtract, interactingEntity, historyDetails);
-			}
-			case TRANSFER_AMOUNT -> {
-				TransferAmountTransaction transferAmountTransaction = (TransferAmountTransaction) itemStoredTransaction;
-				AmountStored fromStored;
-				AmountStored toStored;
-
-				switch (inventoryItem.getStorageType()) {
-					case BULK -> {
-						fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getFromBlock(), AmountStored.class);
-						try {
-							toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transferAmountTransaction.getToBlock(), AmountStored.class);
-						} catch (DbNotFoundException e) {
-							toStored = AmountStored.builder()
-								.item(inventoryItem.getId())
-								.storageBlock(transferAmountTransaction.getToBlock())
-								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-								.build();
-							this.storedService.add(oqmDbIdOrName, cs, toStored, interactingEntity);
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), transferAmountTransaction.getFromBlock(), AmountStored.class);
+								try {
+									toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), transferAmountTransaction.getToBlock(), AmountStored.class);
+								} catch (DbNotFoundException e) {
+									toStored = AmountStored.builder()
+										.item(inventoryItem.getId())
+										.storageBlock(transferAmountTransaction.getToBlock())
+										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+										.build();
+									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity);
+								}
+							}
+							case AMOUNT_LIST -> {
+								fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), transferAmountTransaction.getFromStored());
+								if (transferAmountTransaction.getToStored() == null) {
+									toStored = AmountStored.builder()
+										.item(inventoryItem.getId())
+										.storageBlock(transferAmountTransaction.getToBlock())
+										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+										.build();
+									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity);
+								} else {
+									toStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), transferAmountTransaction.getToStored());
+								}
+							}
+							default -> {
+								throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+							}
 						}
+
+						fromStored.subtract(transferAmountTransaction.getAmount());
+						toStored.add(transferAmountTransaction.getAmount());
+						appliedTransactionBuilder.affectedStored(Set.of(fromStored.getId(), toStored.getId()));
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), fromStored, interactingEntity, historyDetails);
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity, historyDetails);
 					}
-					case AMOUNT_LIST -> {
-						fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, transferAmountTransaction.getFromStored());
-						if (transferAmountTransaction.getToStored() == null) {
-							toStored = AmountStored.builder()
-								.item(inventoryItem.getId())
-								.storageBlock(transferAmountTransaction.getToBlock())
-								.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-								.build();
-							this.storedService.add(oqmDbIdOrName, cs, toStored, interactingEntity);
-						} else {
-							toStored = (AmountStored) this.storedService.get(oqmDbIdOrName, cs, transferAmountTransaction.getToStored());
+					case TRANSFER_WHOLE -> {
+						TransferWholeTransaction transferWholeTransaction = (TransferWholeTransaction) itemStoredTransaction;
+						ObjectId toTransferId = transferWholeTransaction.getStoredToTransfer();
+
+						Stored toTransfer = this.storedService.get(oqmDbIdOrName, csw.getClientSession(), toTransferId);
+						if (!transferWholeTransaction.getFromBlock().equals(toTransfer.getStorageBlock())) {
+							throw new IllegalArgumentException("Stored to transfer not starting out in expecting block.");
 						}
-					}
-					default -> {
-						throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+						toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());
+
+						appliedTransactionBuilder.affectedStored(Set.of(toTransferId));
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toTransfer, interactingEntity, historyDetails);
 					}
 				}
 
-				fromStored.subtract(transferAmountTransaction.getAmount());
-				toStored.add(transferAmountTransaction.getAmount());
-				appliedTransactionBuilder.affectedStored(Set.of(fromStored.getId(), toStored.getId()));
-				this.storedService.update(oqmDbIdOrName, cs, fromStored, interactingEntity, historyDetails);
-				this.storedService.update(oqmDbIdOrName, cs, toStored, interactingEntity, historyDetails);
-			}
-			case TRANSFER_WHOLE -> {
-				TransferWholeTransaction transferWholeTransaction = (TransferWholeTransaction) itemStoredTransaction;
-				ObjectId toTransferId = transferWholeTransaction.getStoredToTransfer();
+				appliedTransactionBuilder.statsAfterApply(this.storedService.getItemStats(oqmDbIdOrName, csw.getClientSession(), inventoryItem));
 
-				Stored toTransfer = this.storedService.get(oqmDbIdOrName, cs, toTransferId);
-				if (!transferWholeTransaction.getFromBlock().equals(toTransfer.getStorageBlock())) {
-					throw new IllegalArgumentException("Stored to transfer not starting out in expecting block.");
-				}
-				toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());
+				ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 
-				appliedTransactionBuilder.affectedStored(Set.of(toTransferId));
-				this.storedService.update(oqmDbIdOrName, cs, toTransfer, interactingEntity, historyDetails);
-			}
+				return newId;
+			});
+		} catch (Exception e) {
+			log.error("Failed to apply transaction: ", e);
+			throw e;
 		}
-
-		appliedTransactionBuilder.statsAfterApply(this.storedService.getItemStats(oqmDbIdOrName, cs, inventoryItem));
-
-		ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
-		return newId;
 	}
 
 	@Override

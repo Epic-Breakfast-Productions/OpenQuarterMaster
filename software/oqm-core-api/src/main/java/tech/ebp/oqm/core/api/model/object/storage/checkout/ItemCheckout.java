@@ -34,6 +34,7 @@ import java.time.ZonedDateTime;
 public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
+	@ToString.Include
 	public abstract CheckoutType getCheckoutType();
 	
 	/**
