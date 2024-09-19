@@ -90,7 +90,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if (!item.getStorageBlocks().contains(newOrChangedObject.getStorageBlock())) {
-			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not use to hold this item.");
+			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item.");
 		}
 
 		if(item.getStorageType().storedType != newOrChangedObject.getStoredType()){

@@ -112,6 +112,11 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 											.build();
 										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
 									}
+									if (addAmountTransaction.getToStored() != null){
+										if(!stored.getId().equals(addAmountTransaction.getToStored())){
+											throw new IllegalArgumentException("To Stored given does not match stored found in block.");
+										}
+									}
 								} else if (addAmountTransaction.getToStored() != null) {
 									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), addAmountTransaction.getToStored());
 								} else {
@@ -128,6 +133,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
 								} else {
 									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), addAmountTransaction.getToStored());
+									if(!stored.getStorageBlock().equals(addAmountTransaction.getToBlock())){
+										throw new IllegalArgumentException("To Stored given does not exist in block.");
+									}
 								}
 							}
 							default -> {
