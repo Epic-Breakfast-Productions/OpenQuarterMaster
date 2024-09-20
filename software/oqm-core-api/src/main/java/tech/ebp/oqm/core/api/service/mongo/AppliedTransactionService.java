@@ -292,6 +292,13 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
 							}
 						}
+
+						if(subAmountTransaction.getFromStored() != null && !stored.getId().equals(subAmountTransaction.getFromStored())){
+							throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
+						}
+						if(!stored.getStorageBlock().equals(subAmountTransaction.getFromBlock())){
+							throw new IllegalArgumentException("Stored retrieved not in specified block.");
+						}
 						stored.subtract(subAmountTransaction.getAmount());
 
 						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));

@@ -28,6 +28,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTran
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
@@ -684,11 +685,439 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	//TODO:: any more?
 //</editor-fold>
 //<editor-fold desc="Apply- Subtract Amount">
-	//TODO:: Success - bulk
-	//TODO:: Success - amount list
-	//TODO:: fail - less than 0 left in stored
-	//TODO:: Fail - Unique (any)
-	//TODO:: fail - mismatched item/stored/block
+	@Test
+	public void applySubtractAmountSuccessBulkBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			AmountStored.builder()
+				.amount(Quantities.getQuantity(5, item.getUnit()))
+				.item(item.getId())
+				.storageBlock(item.getStorageBlocks().getFirst())
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail)event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+	}
+
+	@Test
+	public void applySubtractAmountSuccessBulkStored() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail)event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+	}
+
+	@Test
+	public void applySubtractAmountSuccessList() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail)event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+	}
+
+	@Test
+	public void applySubtractAmountFailUniqueMulti() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_MULTI, entity);
+
+		UniqueStored initialStored = UniqueStored.builder()
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Cannot subtract an amount from a unique item.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailUniqueSingle() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_SINGLE, entity);
+
+		UniqueStored initialStored = UniqueStored.builder()
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Cannot subtract an amount from a unique item.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailBulkSubMoreThanHeld() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(2, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Resulting amount less than zero. (subtracting 5 units from 2 units resulting in -3 units)", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailAmtListSubMoreThanHeld() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(2, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Resulting amount less than zero. (subtracting 5 units from 2 units resulting in -3 units)", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailBulkMismatchedBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		StorageBlock newBlock = StorageBlock.builder().label(FAKER.location().building()).build();
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, newBlock, entity);
+		item.getStorageBlocks().add(newBlock.getId());
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+		AmountStored secondStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(newBlock.getId())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			secondStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(newBlock.getId())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored id in transaction not the id of stored found.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailBulkMismatchedStored() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		StorageBlock newBlock = StorageBlock.builder().label(FAKER.location().building()).build();
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, newBlock, entity);
+		item.getStorageBlocks().add(newBlock.getId());
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+		AmountStored secondStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(newBlock.getId())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			secondStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(secondStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored id in transaction not the id of stored found.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailListMismatchedBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+
+		StorageBlock newBlock = StorageBlock.builder().label(FAKER.location().building()).build();
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, newBlock, entity);
+		item.getStorageBlocks().add(newBlock.getId());
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+		AmountStored secondStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(newBlock.getId())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			secondStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(newBlock.getId())
+			.fromStored(initialStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored retrieved not in specified block.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailListMismatchedStored() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+
+		StorageBlock newBlock = StorageBlock.builder().label(FAKER.location().building()).build();
+		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, newBlock, entity);
+		item.getStorageBlocks().add(newBlock.getId());
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+		AmountStored secondStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(newBlock.getId())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			secondStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.fromStored(secondStored.getId())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored retrieved not in specified block.", e.getMessage());
+	}
+
+	@Test
+	public void applySubtractAmountFailNullStored() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+
+		AmountStored initialStored = AmountStored.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.build();
+		this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			initialStored,
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = SubAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.fromBlock(item.getStorageBlocks().getFirst())
+			.build();
+		IllegalArgumentException e =  assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Could not find Stored with id null", e.getMessage());
+	}
+
 	//TODO:: any more?
 //</editor-fold>
 //<editor-fold desc="Apply- Subtract Whole">
