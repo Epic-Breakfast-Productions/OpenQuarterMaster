@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemAmountCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
@@ -149,11 +150,23 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case ADD_WHOLE -> {
-						AddWholeTransaction addWholeTransaction = (AddWholeTransaction) itemStoredTransaction;
-						Stored stored = addWholeTransaction.getToAdd();
+						AddWholeTransaction awt = (AddWholeTransaction) itemStoredTransaction;
+						Stored stored = awt.getToAdd();
 
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						if(!inventoryItem.getId().equals(stored.getItem())){
+							throw new IllegalArgumentException("Stored given is not associated with item.");
+						}
+
+						if(inventoryItem.getStorageType() == StorageType.BULK){
+							throw new IllegalArgumentException("Cannot add whole item to a bulk storage typed item.");
+						}
+
+						if(!awt.getToBlock().equals(stored.getStorageBlock())){
+							throw new IllegalArgumentException("To Block given does not match block marked in stored.");
+						}
+
 						this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
 					}
 					case CHECKIN_FULL -> {
 						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;

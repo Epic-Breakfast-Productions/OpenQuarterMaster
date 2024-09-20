@@ -16,7 +16,7 @@ import java.util.Set;
 
 public final class UnitUtils {
 	public static class Quantities {
-		public static final Quantity<AmountOfSubstance> UNIT_ONE = tech.units.indriya.quantity.Quantities.getQuantity(0, OqmProvidedUnits.UNIT);
+		public static final Quantity<AmountOfSubstance> UNIT_ONE = tech.units.indriya.quantity.Quantities.getQuantity(1, OqmProvidedUnits.UNIT);
 	}
 	
 	/**
