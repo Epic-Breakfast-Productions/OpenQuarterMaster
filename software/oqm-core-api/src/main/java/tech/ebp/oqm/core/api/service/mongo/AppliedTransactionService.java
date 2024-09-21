@@ -284,22 +284,43 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						AmountStored stored;
 						switch (inventoryItem.getStorageType()) {
 							case BULK -> {
-								stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), sat.getBlock(), AmountStored.class);
+								if (sat.getBlock() != null) {
+									try {
+										stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), sat.getBlock(), AmountStored.class);
+									} catch (DbNotFoundException e) {
+										stored = AmountStored.builder()
+											.item(inventoryItem.getId())
+											.storageBlock(sat.getBlock())
+											.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+											.build();
+										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
+									}
+									if (sat.getStored() != null){
+										if(!stored.getId().equals(sat.getStored())){
+											throw new IllegalArgumentException("To Stored given does not match stored found in block.");
+										}
+									}
+								} else if (sat.getStored() != null) {
+									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), sat.getStored());
+								} else {
+									throw new IllegalArgumentException("No to block or stored given.");
+								}
 							}
 							case AMOUNT_LIST -> {
-								stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), sat.getStored());
+								if (sat.getStored() == null) {
+									throw new IllegalArgumentException("Must specify a stored to set the amount of.");
+								} else {
+									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), sat.getStored());
+									if(!stored.getStorageBlock().equals(sat.getBlock())){
+										throw new IllegalArgumentException("To Stored given does not exist in block.");
+									}
+								}
 							}
 							default -> {
-								throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+								throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 							}
 						}
-
-						if(sat.getStored() != null && !stored.getId().equals(sat.getStored())){
-							throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
-						}
-						if(!stored.getStorageBlock().equals(sat.getBlock())){
-							throw new IllegalArgumentException("Stored retrieved not in specified block.");
-						}
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
 						stored.setAmount(sat.getAmount());
 
 						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
