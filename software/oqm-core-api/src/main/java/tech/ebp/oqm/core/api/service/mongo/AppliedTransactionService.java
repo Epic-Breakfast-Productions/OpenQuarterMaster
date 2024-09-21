@@ -28,6 +28,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
@@ -277,6 +278,32 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							.checkOutTransaction(transactionId)
 						;
 						this.itemCheckoutService.add(oqmDbIdOrName, csw.getClientSession(), checkoutBuilder.build(), interactingEntity);
+					}
+					case SET_AMOUNT -> {
+						SetAmountTransaction sat = (SetAmountTransaction) itemStoredTransaction;
+						AmountStored stored;
+						switch (inventoryItem.getStorageType()) {
+							case BULK -> {
+								stored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), sat.getBlock(), AmountStored.class);
+							}
+							case AMOUNT_LIST -> {
+								stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), sat.getStored());
+							}
+							default -> {
+								throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
+							}
+						}
+
+						if(sat.getStored() != null && !stored.getId().equals(sat.getStored())){
+							throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
+						}
+						if(!stored.getStorageBlock().equals(sat.getBlock())){
+							throw new IllegalArgumentException("Stored retrieved not in specified block.");
+						}
+						stored.setAmount(sat.getAmount());
+
+						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case SUBTRACT_AMOUNT -> {
 						SubAmountTransaction subAmountTransaction = (SubAmountTransaction) itemStoredTransaction;

@@ -13,6 +13,8 @@ public enum TransactionType {
 	CHECKOUT_AMOUNT,
 	CHECKOUT_WHOLE,
 
+	SET_AMOUNT,
+
 	SUBTRACT_AMOUNT,
 	SUBTRACT_WHOLE,
 
