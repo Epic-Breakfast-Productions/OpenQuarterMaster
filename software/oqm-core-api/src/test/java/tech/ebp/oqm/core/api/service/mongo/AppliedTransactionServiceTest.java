@@ -31,6 +31,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
@@ -2043,11 +2044,360 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	//TODO:: any more?
 //</editor-fold>
 //<editor-fold desc="Apply- Transfer Whole">
-	//TODO:: Success - bulk
-	//TODO:: Success - amt list
-	//TODO:: Success - unique list
-	//TODO:: Success - unique single
-	//TODO:: fail - mismatched item/stored/block
+
+	@Test
+	public void applyTransferWholeSuccessBulk() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, AmountStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.amount(Quantities.getQuantity(5, item.getUnit()))
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.toBlock(secondBlock)
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
+
+		{
+			AmountStored firstStored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().getFirst());
+			assertEquals(firstStoredFromSearch, firstStored);
+			assertEquals(Quantities.getQuantity(5, item.getUnit()), firstStored.getAmount());
+
+			SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(firstStored.getId()));
+			assertFalse(storedHistory.isEmpty());
+			UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+			assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+			assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+		}
+	}
+
+	@Test
+	public void applyTransferWholeSuccessAmtList() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, AmountStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.amount(Quantities.getQuantity(5, item.getUnit()))
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.storedToTransfer(initialStoredId)
+			.toBlock(secondBlock)
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
+
+		{
+			AmountStored firstStored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().getFirst());
+			assertEquals(firstStoredFromSearch, firstStored);
+			assertEquals(Quantities.getQuantity(5, item.getUnit()), firstStored.getAmount());
+
+			SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(firstStored.getId()));
+			assertFalse(storedHistory.isEmpty());
+			UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+			assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+			assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+		}
+	}
+
+	@Test
+	public void applyTransferWholeSuccessUniqueMulti() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_MULTI, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.storedToTransfer(initialStoredId)
+			.toBlock(secondBlock)
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		UniqueStored firstStoredFromSearch = (UniqueStored) storedSearchResult.getResults().get(0);
+
+		{
+			UniqueStored firstStored = (UniqueStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().getFirst());
+			assertEquals(firstStoredFromSearch, firstStored);
+
+			SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(firstStored.getId()));
+			assertFalse(storedHistory.isEmpty());
+			UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+			assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+			assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+		}
+	}
+
+
+	@Test
+	public void applyTransferWholeSuccessUniqueSingle() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_SINGLE, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.storedToTransfer(initialStoredId)
+			.toBlock(secondBlock)
+			.build();
+
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		//TODO:: storage block stats
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		UniqueStored firstStoredFromSearch = (UniqueStored) storedSearchResult.getResults().get(0);
+
+		{
+			UniqueStored firstStored = (UniqueStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().getFirst());
+			assertEquals(firstStoredFromSearch, firstStored);
+
+			SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(firstStored.getId()));
+			assertFalse(storedHistory.isEmpty());
+			UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+			assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+			assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+		}
+	}
+
+	@Test
+	public void applyTransferWholeFailBulkBadStoredId() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, AmountStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.amount(Quantities.getQuantity(5, item.getUnit()))
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.storedToTransfer(new ObjectId())
+			.toBlock(secondBlock)
+			.build();
+
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored id given mismatched id from gotten stored.", e.getMessage());
+	}
+
+	@Test
+	public void applyTransferWholeFailAmtListBadFromBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, AmountStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.amount(Quantities.getQuantity(5, item.getUnit()))
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(secondBlock)
+			.storedToTransfer(initialStoredId)
+			.toBlock(firstBlock)
+			.build();
+
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored found not in specified block.", e.getMessage());
+	}
+
+	@Test
+	public void applyTransferWholeFailUniqueMultiBadFromBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_MULTI, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(secondBlock)
+			.storedToTransfer(initialStoredId)
+			.toBlock(firstBlock)
+			.build();
+
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored found not in specified block.", e.getMessage());
+	}
+
+	@Test
+	public void applyTransferWholeFailUniqueSingleBadStoredId() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.UNIQUE_SINGLE, entity);
+		ObjectId firstBlock = item.getStorageBlocks().getFirst();
+		ObjectId secondBlock = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			StorageBlock.builder().label(FAKER.location().building()).build(),
+			entity
+		);
+		item.getStorageBlocks().add(secondBlock);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
+				.item(item.getId())
+				.storageBlock(firstBlock)
+				.build(),
+			entity
+		);
+
+		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
+			.fromBlock(firstBlock)
+			.storedToTransfer(new ObjectId())
+			.toBlock(secondBlock)
+			.build();
+
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertEquals("Stored id given mismatched id from gotten stored.", e.getMessage());
+	}
 	//TODO:: any more?
 //</editor-fold>
 }

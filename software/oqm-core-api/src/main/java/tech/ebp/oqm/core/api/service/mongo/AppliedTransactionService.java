@@ -414,16 +414,30 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity, historyDetails);
 					}
 					case TRANSFER_WHOLE -> {
-						TransferWholeTransaction transferWholeTransaction = (TransferWholeTransaction) itemStoredTransaction;
-						ObjectId toTransferId = transferWholeTransaction.getStoredToTransfer();
+						TransferWholeTransaction twt = (TransferWholeTransaction) itemStoredTransaction;
 
-						Stored toTransfer = this.storedService.get(oqmDbIdOrName, csw.getClientSession(), toTransferId);
-						if (!transferWholeTransaction.getFromBlock().equals(toTransfer.getStorageBlock())) {
-							throw new IllegalArgumentException("Stored to transfer not starting out in expecting block.");
+						Stored toTransfer;
+						switch (inventoryItem.getStorageType()) {
+							case BULK,UNIQUE_SINGLE -> {
+								toTransfer = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), twt.getFromBlock(), Stored.class);
+
+								if(twt.getStoredToTransfer() != null && !twt.getStoredToTransfer().equals(toTransfer.getId())){
+									throw new IllegalArgumentException("Stored id given mismatched id from gotten stored.");
+								}
+							}
+							case AMOUNT_LIST,UNIQUE_MULTI -> {
+								toTransfer = this.storedService.get(oqmDbIdOrName, csw.getClientSession(), twt.getStoredToTransfer());
+
+								if(!twt.getFromBlock().equals(toTransfer.getStorageBlock())){
+									throw new IllegalArgumentException("Stored found not in specified block.");
+								}
+							}
+							default -> throw new IllegalArgumentException("Unsupported storage type. This should never happen.");
 						}
-						toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toTransferId)));
+						toTransfer.setStorageBlock(twt.getToBlock());
+
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toTransfer.getId())));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toTransfer, interactingEntity, historyDetails);
 					}
 				}
