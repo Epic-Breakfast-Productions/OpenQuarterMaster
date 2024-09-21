@@ -35,7 +35,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 
 	@Override
 	public TransactionType getTransactionType() {
-		return TransactionType.TRANSFER_WHOLE;
+		return TransactionType.TRANSFER_AMOUNT;
 	}
 
 	@Override

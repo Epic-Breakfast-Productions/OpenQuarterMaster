@@ -39,6 +39,7 @@ import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.units.indriya.quantity.Quantities;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -144,10 +145,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 							}
 						}
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						stored.add(addAmountTransaction.getAmount());
 
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case ADD_WHOLE -> {
@@ -167,7 +168,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 
 						this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 					}
 					case CHECKIN_FULL -> {
 						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
@@ -196,13 +197,13 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 								amountStored.add(iac.getCheckedOut());
 								this.storedService.update(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity, historyDetails);
-								appliedTransactionBuilder.affectedStored(Set.of(amountStored.getId()));
+								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(amountStored.getId())));
 							}
 							case WHOLE -> {
 								Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
 								checkedOut.setStorageBlock(cfTransaction.getToBlock());
 								this.storedService.add(oqmDbIdOrName, csw.getClientSession(), checkedOut, interactingEntity, historyDetails);
-								appliedTransactionBuilder.affectedStored(Set.of(checkedOut.getId()));
+								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(checkedOut.getId())));
 							}
 						}
 						checkout.setCheckInDetails(cfTransaction.getDetails());
@@ -237,7 +238,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
 						}
 
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 							.item(inventoryItem.getId())
 							.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
@@ -253,7 +254,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					case CHECKOUT_WHOLE -> {
 						CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
 						Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
-						appliedTransactionBuilder.affectedStored(Set.of(affectedStored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(affectedStored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder;
 						switch (inventoryItem.getStorageType()) {
 							case BULK -> {
@@ -320,10 +321,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 							}
 						}
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						stored.setAmount(sat.getAmount());
 
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case SUBTRACT_AMOUNT -> {
@@ -349,46 +350,46 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 						stored.subtract(subAmountTransaction.getAmount());
 
-						appliedTransactionBuilder.affectedStored(Set.of(stored.getId()));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case SUBTRACT_WHOLE -> {
 						SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
 						ObjectId toSubtract = subWholeTransaction.getToSubtract();
 
-						appliedTransactionBuilder.affectedStored(Set.of(toSubtract));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toSubtract)));
 						this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), toSubtract, interactingEntity, historyDetails);
 					}
 					case TRANSFER_AMOUNT -> {
-						TransferAmountTransaction transferAmountTransaction = (TransferAmountTransaction) itemStoredTransaction;
+						TransferAmountTransaction tat = (TransferAmountTransaction) itemStoredTransaction;
 						AmountStored fromStored;
 						AmountStored toStored;
 
 						switch (inventoryItem.getStorageType()) {
 							case BULK -> {
-								fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), transferAmountTransaction.getFromBlock(), AmountStored.class);
+								fromStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), tat.getFromBlock(), AmountStored.class);
 								try {
-									toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), transferAmountTransaction.getToBlock(), AmountStored.class);
+									toStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), tat.getToBlock(), AmountStored.class);
 								} catch (DbNotFoundException e) {
 									toStored = AmountStored.builder()
 										.item(inventoryItem.getId())
-										.storageBlock(transferAmountTransaction.getToBlock())
+										.storageBlock(tat.getToBlock())
 										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
 										.build();
 									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity);
 								}
 							}
 							case AMOUNT_LIST -> {
-								fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), transferAmountTransaction.getFromStored());
-								if (transferAmountTransaction.getToStored() == null) {
+								fromStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), tat.getFromStored());
+								if (tat.getToStored() == null) {
 									toStored = AmountStored.builder()
 										.item(inventoryItem.getId())
-										.storageBlock(transferAmountTransaction.getToBlock())
+										.storageBlock(tat.getToBlock())
 										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
 										.build();
 									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity);
 								} else {
-									toStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), transferAmountTransaction.getToStored());
+									toStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), tat.getToStored());
 								}
 							}
 							default -> {
@@ -396,9 +397,19 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							}
 						}
 
-						fromStored.subtract(transferAmountTransaction.getAmount());
-						toStored.add(transferAmountTransaction.getAmount());
-						appliedTransactionBuilder.affectedStored(Set.of(fromStored.getId(), toStored.getId()));
+						if(tat.getFromStored() != null && !tat.getFromStored().equals(fromStored.getId())){
+							throw new IllegalArgumentException("From Stored retrieved not in specified block.");
+						}
+						if(tat.getToStored() != null && !tat.getToStored().equals(toStored.getId())){
+							throw new IllegalArgumentException("To Stored retrieved not in specified block.");
+						}
+
+						fromStored.subtract(tat.getAmount());
+						toStored.add(tat.getAmount());
+						LinkedHashSet<ObjectId> affectedStored = new LinkedHashSet<>();
+						affectedStored.add(toStored.getId());
+						affectedStored.add(fromStored.getId());
+						appliedTransactionBuilder.affectedStored(affectedStored);
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), fromStored, interactingEntity, historyDetails);
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity, historyDetails);
 					}
@@ -412,7 +423,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 						toTransfer.setStorageBlock(transferWholeTransaction.getToBlock());
 
-						appliedTransactionBuilder.affectedStored(Set.of(toTransferId));
+						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toTransferId)));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toTransfer, interactingEntity, historyDetails);
 					}
 				}
