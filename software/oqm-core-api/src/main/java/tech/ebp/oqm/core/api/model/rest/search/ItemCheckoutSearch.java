@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.rest.search;
 
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -13,6 +14,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
 	@QueryParam("storageCheckedOutFrom") String storageCheckedOutFrom;

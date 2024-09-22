@@ -238,6 +238,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
 						}
 
+						if(checkoutAmountTransaction.getFromBlock() != null && !stored.getStorageBlock().equals(checkoutAmountTransaction.getFromBlock())){
+							throw new IllegalArgumentException("From Storage block given mismatched stored's block.");
+						}
+
 						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 							.item(inventoryItem.getId())
