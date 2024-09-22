@@ -68,6 +68,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 	/**
 	 * Applies the transaction given.
+	 * <p>
+	 * TODO:: do... something... with this madness
 	 *
 	 * @param oqmDbIdOrName
 	 * @param cs
@@ -84,8 +86,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		InteractingEntity interactingEntity,
 		HistoryDetail... details
 	) throws Exception {
-		try(MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
-			return csw.runTransaction(()->{
+		try (MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
+			return csw.runTransaction(() -> {
 				final ObjectId transactionId = new ObjectId();
 				HistoryDetail[] historyDetails;
 				{
@@ -117,8 +119,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 											.build();
 										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
 									}
-									if (addAmountTransaction.getToStored() != null){
-										if(!stored.getId().equals(addAmountTransaction.getToStored())){
+									if (addAmountTransaction.getToStored() != null) {
+										if (!stored.getId().equals(addAmountTransaction.getToStored())) {
 											throw new IllegalArgumentException("To Stored given does not match stored found in block.");
 										}
 									}
@@ -138,7 +140,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
 								} else {
 									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), addAmountTransaction.getToStored());
-									if(!stored.getStorageBlock().equals(addAmountTransaction.getToBlock())){
+									if (!stored.getStorageBlock().equals(addAmountTransaction.getToBlock())) {
 										throw new IllegalArgumentException("To Stored given does not exist in block.");
 									}
 								}
@@ -148,7 +150,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							}
 						}
 
-						if(!inventoryItem.getId().equals(stored.getItem())){
+						if (!inventoryItem.getId().equals(stored.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
@@ -162,15 +164,15 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						AddWholeTransaction awt = (AddWholeTransaction) itemStoredTransaction;
 						Stored stored = awt.getToAdd();
 
-						if(!inventoryItem.getId().equals(stored.getItem())){
+						if (!inventoryItem.getId().equals(stored.getItem())) {
 							throw new IllegalArgumentException("Stored given is not associated with item.");
 						}
 
-						if(inventoryItem.getStorageType() == StorageType.BULK){
+						if (inventoryItem.getStorageType() == StorageType.BULK) {
 							throw new IllegalArgumentException("Cannot add whole item to a bulk storage typed item.");
 						}
 
-						if(!awt.getToBlock().equals(stored.getStorageBlock())){
+						if (!awt.getToBlock().equals(stored.getStorageBlock())) {
 							throw new IllegalArgumentException("To Block given does not match block marked in stored.");
 						}
 
@@ -181,7 +183,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
 						ItemCheckout<?> checkout = this.itemCheckoutService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getCheckoutId());
 
-						if(!inventoryItem.getId().equals(checkout.getItem())){
+						if (!inventoryItem.getId().equals(checkout.getItem())) {
 							throw new IllegalArgumentException("Checkout is not associated with the item.");
 						}
 						switch (checkout.getCheckoutType()) {
@@ -190,13 +192,29 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 								AmountStored amountStored;
 								if (cfTransaction.getToStored() != null) {
-									amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getToStored());
-									//TODO:: create if not present?
+									try {
+										amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
+									} catch (DbNotFoundException e) {
+										amountStored = AmountStored.builder()
+											.item(inventoryItem.getId())
+											.storageBlock(cfTransaction.getToBlock())
+											.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+											.build();
+										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity);
+									}
 								} else if (cfTransaction.getToBlock() != null) {
 									switch (inventoryItem.getStorageType()) {
 										case BULK -> {
-											amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
-											//TODO:: create if not present?
+											try {
+												amountStored = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId(), cfTransaction.getToBlock(), AmountStored.class);
+											} catch (DbNotFoundException e) {
+												amountStored = AmountStored.builder()
+													.item(inventoryItem.getId())
+													.storageBlock(cfTransaction.getToBlock())
+													.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+													.build();
+												this.storedService.add(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity);
+											}
 										}
 										default ->
 											throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
@@ -205,7 +223,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 									throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
 								}
 
-								if(!inventoryItem.getId().equals(amountStored.getItem())){
+								if (!inventoryItem.getId().equals(amountStored.getItem())) {
 									throw new IllegalArgumentException("Stored is not associated with the item.");
 								}
 
@@ -215,7 +233,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							}
 							case WHOLE -> {
 								Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
-								if(!inventoryItem.getId().equals(checkedOut.getItem())){
+								if (!inventoryItem.getId().equals(checkedOut.getItem())) {
 									throw new IllegalArgumentException("Stored is not associated with the item.");
 								}
 								checkedOut.setStorageBlock(cfTransaction.getToBlock());
@@ -258,13 +276,14 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								}
 								stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), checkoutAmountTransaction.getFromStored());
 							}
-							default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
+							default ->
+								throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
 						}
 
-						if(!inventoryItem.getId().equals(stored.getItem())){
+						if (!inventoryItem.getId().equals(stored.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
-						if(checkoutAmountTransaction.getFromBlock() != null && !stored.getStorageBlock().equals(checkoutAmountTransaction.getFromBlock())){
+						if (checkoutAmountTransaction.getFromBlock() != null && !stored.getStorageBlock().equals(checkoutAmountTransaction.getFromBlock())) {
 							throw new IllegalArgumentException("From Storage block given mismatched stored's block.");
 						}
 
@@ -273,7 +292,6 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							.item(inventoryItem.getId())
 							.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
 							.fromStoredId(stored.getId())
-							.checkedOutFromBlock(stored.getStorageBlock())
 							.checkedOut(checkoutAmountTransaction.getAmount())
 							.checkOutTransaction(transactionId);
 
@@ -285,13 +303,12 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
 						Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
 
-						if(!inventoryItem.getId().equals(affectedStored.getItem())){
+						if (!inventoryItem.getId().equals(affectedStored.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
 						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(affectedStored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemWholeCheckout.builder()
-							.checkedOutFromBlock(affectedStored.getStorageBlock())
 							.checkoutDetails(cwTransaction.getCheckoutDetails())
 							.checkOutTransaction(transactionId)
 							.item(inventoryItem.getId())
@@ -316,8 +333,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 											.build();
 										this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity);
 									}
-									if (sat.getStored() != null){
-										if(!stored.getId().equals(sat.getStored())){
+									if (sat.getStored() != null) {
+										if (!stored.getId().equals(sat.getStored())) {
 											throw new IllegalArgumentException("To Stored given does not match stored found in block.");
 										}
 									}
@@ -332,7 +349,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 									throw new IllegalArgumentException("Must specify a stored to set the amount of.");
 								} else {
 									stored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), sat.getStored());
-									if(!stored.getStorageBlock().equals(sat.getBlock())){
+									if (!stored.getStorageBlock().equals(sat.getBlock())) {
 										throw new IllegalArgumentException("To Stored given does not exist in block.");
 									}
 								}
@@ -342,7 +359,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							}
 						}
 
-						if(!inventoryItem.getId().equals(stored.getItem())){
+						if (!inventoryItem.getId().equals(stored.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
@@ -367,14 +384,14 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							}
 						}
 
-						if(!inventoryItem.getId().equals(stored.getItem())){
+						if (!inventoryItem.getId().equals(stored.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
-						if(subAmountTransaction.getFromStored() != null && !stored.getId().equals(subAmountTransaction.getFromStored())){
+						if (subAmountTransaction.getFromStored() != null && !stored.getId().equals(subAmountTransaction.getFromStored())) {
 							throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
 						}
-						if(!stored.getStorageBlock().equals(subAmountTransaction.getFromBlock())){
+						if (!stored.getStorageBlock().equals(subAmountTransaction.getFromBlock())) {
 							throw new IllegalArgumentException("Stored retrieved not in specified block.");
 						}
 						stored.subtract(subAmountTransaction.getAmount());
@@ -386,7 +403,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						SubWholeTransaction subWholeTransaction = (SubWholeTransaction) itemStoredTransaction;
 						Stored toSubtract = this.storedService.get(oqmDbIdOrName, cs, subWholeTransaction.getToSubtract());
 
-						if(!inventoryItem.getId().equals(toSubtract.getItem())){
+						if (!inventoryItem.getId().equals(toSubtract.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
@@ -431,17 +448,17 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 
 
-						if(!inventoryItem.getId().equals(toStored.getItem())){
+						if (!inventoryItem.getId().equals(toStored.getItem())) {
 							throw new IllegalArgumentException("To Stored is not associated with the item.");
 						}
-						if(!inventoryItem.getId().equals(fromStored.getItem())){
+						if (!inventoryItem.getId().equals(fromStored.getItem())) {
 							throw new IllegalArgumentException("From Stored is not associated with the item.");
 						}
 
-						if(tat.getFromStored() != null && !tat.getFromStored().equals(fromStored.getId())){
+						if (tat.getFromStored() != null && !tat.getFromStored().equals(fromStored.getId())) {
 							throw new IllegalArgumentException("From Stored retrieved not in specified block.");
 						}
-						if(tat.getToStored() != null && !tat.getToStored().equals(toStored.getId())){
+						if (tat.getToStored() != null && !tat.getToStored().equals(toStored.getId())) {
 							throw new IllegalArgumentException("To Stored retrieved not in specified block.");
 						}
 
@@ -459,24 +476,25 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 						Stored toTransfer;
 						switch (inventoryItem.getStorageType()) {
-							case BULK,UNIQUE_SINGLE -> {
+							case BULK, UNIQUE_SINGLE -> {
 								toTransfer = this.storedService.getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), twt.getFromBlock(), Stored.class);
 
-								if(twt.getStoredToTransfer() != null && !twt.getStoredToTransfer().equals(toTransfer.getId())){
+								if (twt.getStoredToTransfer() != null && !twt.getStoredToTransfer().equals(toTransfer.getId())) {
 									throw new IllegalArgumentException("Stored id given mismatched id from gotten stored.");
 								}
 							}
-							case AMOUNT_LIST,UNIQUE_MULTI -> {
+							case AMOUNT_LIST, UNIQUE_MULTI -> {
 								toTransfer = this.storedService.get(oqmDbIdOrName, csw.getClientSession(), twt.getStoredToTransfer());
 
-								if(!twt.getFromBlock().equals(toTransfer.getStorageBlock())){
+								if (!twt.getFromBlock().equals(toTransfer.getStorageBlock())) {
 									throw new IllegalArgumentException("Stored found not in specified block.");
 								}
 							}
-							default -> throw new IllegalArgumentException("Unsupported storage type. This should never happen.");
+							default ->
+								throw new IllegalArgumentException("Unsupported storage type. This should never happen.");
 						}
 
-						if(!inventoryItem.getId().equals(toTransfer.getItem())){
+						if (!inventoryItem.getId().equals(toTransfer.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 

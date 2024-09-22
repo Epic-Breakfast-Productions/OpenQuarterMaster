@@ -49,13 +49,6 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private ObjectId item;
-	
-	/**
-	 * The storage block this item was checked out from
-	 */
-	@NonNull
-	@NotNull
-	private ObjectId checkedOutFromBlock;
 
 	/**
 	 * The transaction that created this checkout.

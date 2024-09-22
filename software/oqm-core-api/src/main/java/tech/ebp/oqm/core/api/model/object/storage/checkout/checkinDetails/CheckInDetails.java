@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
@@ -43,6 +40,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String notes = "";
 	
 	/**
@@ -50,6 +48,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private ZonedDateTime checkinDateTime = ZonedDateTime.now();
 	
 	/**
@@ -57,6 +56,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<@NonNull ObjectId> imageIds = new ArrayList<>();
 	
 	/**
@@ -64,6 +64,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -71,5 +72,6 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private List<@NotBlank String> keywords = new ArrayList<>();
 }
