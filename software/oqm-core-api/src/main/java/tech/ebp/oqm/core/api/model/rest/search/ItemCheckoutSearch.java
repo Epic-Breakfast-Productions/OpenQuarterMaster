@@ -19,6 +19,7 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	@QueryParam("item") String itemCheckedOut;
 	@QueryParam("storageCheckedOutFrom") String storageCheckedOutFrom;
 	@QueryParam("entity") String checkedOutBy;
+	@QueryParam("checkOutTransaction") String checkOutTransaction;
 	@QueryParam("stillCheckedOut") Boolean stillCheckedOut = true;
 	
 	@Override
@@ -38,6 +39,11 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 		if (this.hasValue(this.getStorageCheckedOutFrom())) {
 			filters.add(
 				eq("checkedOutFrom", new ObjectId(this.getStorageCheckedOutFrom()))
+			);
+		}
+		if (this.hasValue(this.getCheckOutTransaction())) {
+			filters.add(
+				eq("checkOutTransaction", new ObjectId(this.getCheckOutTransaction()))
 			);
 		}
 		

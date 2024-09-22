@@ -7,13 +7,16 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LossCheckin extends CheckInDetails {
+@SuperBuilder(toBuilder = true)
+public class LossCheckinDetails extends CheckInDetails {
 	
 	@NonNull
 	@NotNull

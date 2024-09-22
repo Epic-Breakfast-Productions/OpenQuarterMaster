@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordContaining;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,10 +28,12 @@ import java.util.Map;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "checkinType"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ReturnCheckin.class, name = "RETURN"),
-	@JsonSubTypes.Type(value = LossCheckin.class, name = "LOSS"),
+	@JsonSubTypes.Type(value = ReturnFullCheckinDetails.class, name = "RETURN_FULL"),
+	@JsonSubTypes.Type(value = ReturnPartCheckinDetails.class, name = "RETURN_PART"),
+	@JsonSubTypes.Type(value = LossCheckinDetails.class, name = "LOSS"),
 })
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public abstract class CheckInDetails implements AttKeywordContaining {
 	
 	public abstract CheckInType getCheckinType();

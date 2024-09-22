@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemAmountCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnFullCheckinDetails;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
@@ -25,6 +26,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinLossTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutWholeTransaction;
@@ -179,11 +181,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
 						ItemCheckout<?> checkout = this.itemCheckoutService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getCheckoutId());
 
-
 						if(!inventoryItem.getId().equals(checkout.getItem())){
-							throw new IllegalArgumentException("Stored is not associated with the item.");
+							throw new IllegalArgumentException("Checkout is not associated with the item.");
 						}
-
 						switch (checkout.getCheckoutType()) {
 							case AMOUNT -> {
 								ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
@@ -205,6 +205,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 									throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
 								}
 
+								if(!inventoryItem.getId().equals(amountStored.getItem())){
+									throw new IllegalArgumentException("Stored is not associated with the item.");
+								}
+
 								amountStored.add(iac.getCheckedOut());
 								this.storedService.update(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity, historyDetails);
 								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(amountStored.getId())));
@@ -219,6 +223,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(checkedOut.getId())));
 							}
 						}
+
 						checkout.setCheckInDetails(cfTransaction.getDetails());
 						checkout.setCheckInTransaction(transactionId);
 						this.itemCheckoutService.update(oqmDbIdOrName, csw.getClientSession(), checkout, interactingEntity, historyDetails);
@@ -227,6 +232,11 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						CheckinPartTransaction checkinPartTransaction = (CheckinPartTransaction) itemStoredTransaction;
 						//TODO
 						throw new NotImplementedException("Checking in only a part of a checked out item not supported yet.");
+					}
+					case CHECKIN_LOSS -> {
+						CheckinLossTransaction clt = (CheckinLossTransaction) itemStoredTransaction;
+						//TODO
+						throw new NotImplementedException("This should be implemented.");
 					}
 					case CHECKOUT_AMOUNT -> {
 						CheckoutAmountTransaction checkoutAmountTransaction = (CheckoutAmountTransaction) itemStoredTransaction;

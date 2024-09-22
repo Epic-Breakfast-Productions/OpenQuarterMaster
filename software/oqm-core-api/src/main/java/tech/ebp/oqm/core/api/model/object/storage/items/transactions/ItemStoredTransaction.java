@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinLossTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
@@ -32,6 +33,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	@JsonSubTypes.Type(value = AddWholeTransaction.class, name = "ADD_WHOLE"),
 	@JsonSubTypes.Type(value = CheckinPartTransaction.class, name = "CHECKIN_PART"),
 	@JsonSubTypes.Type(value = CheckinFullTransaction.class, name = "CHECKIN_FULL"),
+	@JsonSubTypes.Type(value = CheckinLossTransaction.class, name = "CHECKIN_LOSS"),
 	@JsonSubTypes.Type(value = CheckoutAmountTransaction.class, name = "CHECKOUT_AMOUNT"),
 	@JsonSubTypes.Type(value = CheckoutWholeTransaction.class, name = "CHECKOUT_WHOLE"),
 	@JsonSubTypes.Type(value = SubAmountTransaction.class, name = "SUBTRACT_AMOUNT"),
@@ -46,6 +48,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	AddWholeTransaction.class,
 	CheckinPartTransaction.class,
 	CheckinFullTransaction.class,
+	CheckinLossTransaction.class,
 	CheckoutAmountTransaction.class,
 	CheckoutWholeTransaction.class,
 	SubAmountTransaction.class,

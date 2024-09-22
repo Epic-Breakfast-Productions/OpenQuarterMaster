@@ -13,7 +13,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public abstract class CheckinTransaction extends ItemStoredTransaction {
+public abstract class CheckinTransaction <T extends CheckInDetails> extends ItemStoredTransaction {
 
 	/**
 	 * The id of the checkout to checkin
@@ -25,6 +25,6 @@ public abstract class CheckinTransaction extends ItemStoredTransaction {
 	 */
 	@NotNull
 	@NonNull
-	private CheckInDetails details;
+	private T details;
 
 }

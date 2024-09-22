@@ -5,21 +5,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
-public class ReturnCheckin extends CheckInDetails {
-	/**
-	 * Where the item went when checked in
-	 */
-	private ObjectId storageBlockCheckedInto = null;
+@SuperBuilder(toBuilder = true)
+public class ReturnFullCheckinDetails extends CheckInDetails {
 	
 	@Override
 	public CheckInType getCheckinType() {
-		return CheckInType.RETURN;
+		return CheckInType.RETURN_FULL;
 	}
 }

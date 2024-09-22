@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnPartCheckinDetails;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
@@ -13,10 +14,12 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @Data
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public class CheckinPartTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
+public class CheckinLossTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
+
+
 	@Override
 	public TransactionType getTransactionType() {
-		return TransactionType.CHECKIN_PART;
+		return TransactionType.CHECKIN_LOSS;
 	}
 
 	@Override
