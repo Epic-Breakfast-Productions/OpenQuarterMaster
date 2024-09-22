@@ -216,8 +216,23 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 												this.storedService.add(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity);
 											}
 										}
+										case AMOUNT_LIST -> {
+											if (cfTransaction.getToStored() == null) {
+												amountStored = AmountStored.builder()
+													.item(inventoryItem.getId())
+													.storageBlock(cfTransaction.getToBlock())
+													.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+													.build();
+												this.storedService.add(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity);
+											} else {
+												amountStored = (AmountStored) this.storedService.get(oqmDbIdOrName, csw.getClientSession(), cfTransaction.getToStored());
+												if (!amountStored.getStorageBlock().equals(cfTransaction.getToBlock())) {
+													throw new IllegalArgumentException("To Stored given does not exist in block.");
+												}
+											}
+										}
 										default ->
-											throw new IllegalArgumentException("Must specify a stored to checkin into for item list.");
+											throw new IllegalArgumentException("Cannot add amount to unique item.");
 									}
 								} else {
 									throw new IllegalArgumentException("Must specify a stored or block to checkin into.");

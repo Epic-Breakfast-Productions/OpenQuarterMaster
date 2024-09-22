@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.object.history;
 
 public enum EventType {
 	CREATE,
+	RECREATE,
 	UPDATE,
 	DELETE,
 	

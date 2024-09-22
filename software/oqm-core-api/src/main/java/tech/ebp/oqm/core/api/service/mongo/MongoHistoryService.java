@@ -24,6 +24,7 @@ import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
+import tech.ebp.oqm.core.api.model.object.history.events.ReCreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
@@ -194,27 +195,27 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 
 	@WithSpan
 	public ObjectId objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity, HistoryDetail... details) {
+		ObjectHistoryEvent.Builder<?,?> eventBuilder;
 		try {
 			this.getHistoryFor(oqmDbIdOrName, session, created);
-			throw new IllegalStateException(
-				"History already exists for object " + this.clazzForObjectHistoryIsFor.getSimpleName() + " with id: " + created.getId()
-			);
+			//object is being re-created, probably
+			eventBuilder = ReCreateEvent.builder();
 		} catch (DbNotFoundException e) {
-			// no history record should exist.
+			eventBuilder = CreateEvent.builder();
 		}
+		ObjectHistoryEvent newEvent = eventBuilder
+			.objectId(created.getId())
+			.entity(entity.getId())
+			.details(MongoHistoriedObjectService.detailListToMap(details))
+			.build();
 
-		ObjectHistoryEvent history = new CreateEvent(created, entity);
 
 		return this.addHistoryFor(
 			oqmDbIdOrName,
 			session,
 			created,
 			entity,
-			CreateEvent.builder()
-				.objectId(created.getId())
-				.entity(entity.getId())
-				.details(MongoHistoriedObjectService.detailListToMap(details))
-				.build()
+			newEvent
 		);
 	}
 

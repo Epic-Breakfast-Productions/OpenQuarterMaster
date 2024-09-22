@@ -21,20 +21,20 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @ToString(callSuper = true)
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
-public class CreateEvent extends ObjectHistoryEvent {
+public class ReCreateEvent extends ObjectHistoryEvent {
 	public static final int CUR_SCHEMA_VERSION = 1;
-	
-	public CreateEvent(ObjectId objectId, InteractingEntity entity) {
+
+	public ReCreateEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
 	}
-	
-	public CreateEvent(MainObject object, InteractingEntity entity) {
+
+	public ReCreateEvent(MainObject object, InteractingEntity entity) {
 		super(object, entity);
 	}
 	
 	@Override
 	public EventType getType() {
-		return EventType.CREATE;
+		return EventType.RECREATE;
 	}
 
 	@Override
