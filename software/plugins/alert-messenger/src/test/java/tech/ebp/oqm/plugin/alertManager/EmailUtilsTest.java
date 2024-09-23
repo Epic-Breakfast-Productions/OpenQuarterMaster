@@ -29,7 +29,7 @@ public class EmailUtilsTest {
     @Test
     public void testSendEmail() {
         // Arrange
-        String recipient = "andrebp21@juniata.edu";
+        String recipient = "samplereceiver@sample.com";
         String subject = "Test Subject";
         String content = "Test Content";
 
