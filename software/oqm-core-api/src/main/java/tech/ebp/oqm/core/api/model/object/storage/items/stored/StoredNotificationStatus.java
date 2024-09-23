@@ -16,4 +16,7 @@ public class StoredNotificationStatus {
 
 	@lombok.Builder.Default
 	private boolean expiredWarning = false;
+
+	@lombok.Builder.Default
+	private boolean lowStock = false;
 }

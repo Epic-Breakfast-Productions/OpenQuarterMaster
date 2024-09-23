@@ -196,7 +196,19 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				storageBlockTotals.put(block, storageBlockTotals.getOrDefault(block, zero).add(toAdd));
 
 				//TODO:: expired
+				//TODO:: low stock
 			}
+		}
+
+		Map<ObjectId, StoredInBlockStats> perBlockStats = new LinkedHashMap<>();
+		for(ObjectId curBlock : item.getStorageBlocks()){
+			long numInBlock = storageBlockNums.getOrDefault(curBlock, 0L);
+			Quantity amountInBlock = storageBlockTotals.getOrDefault(curBlock, zero);
+
+			perBlockStats.put(curBlock, StoredInBlockStats.builder()
+					.numStored(numInBlock)
+					.total(amountInBlock)
+				.build());
 		}
 
 		//TODO:: low stock
@@ -204,6 +216,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return StoredStats.builder()
 			.total(total)
 			.numStored(numStored)
+			.storageBlockStats(perBlockStats)
 			.build();
 	}
 

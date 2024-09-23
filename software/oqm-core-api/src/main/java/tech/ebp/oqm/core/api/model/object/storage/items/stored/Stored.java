@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 
+import javax.measure.Quantity;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
@@ -69,6 +70,14 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 */
 	@lombok.Builder.Default
 	private LocalDateTime expires = null;
+
+	/**
+	 * The threshold of low stock for the entire object.
+	 * <p>
+	 * Null for no threshold, Quantity with compatible unit to set the threshold.
+	 * TODO:: validate unit is compatible with main unit
+	 */
+	private Quantity<?> lowStockThreshold = null;
 
 	/**
 	 * Statuses about this stored object.
