@@ -128,7 +128,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.listIterator(dbId.toHexString(), cs);
 	}
 	
-	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+	public FindIterable<T> listIterator(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -137,10 +137,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		return this.listIterator(
 			oqmDbIdOrName,
+			cs,
 			filter,
 			searchObject.getSortBson(),
 			searchObject.getPagingOptions()
 		);
+	}
+
+	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+		return this.listIterator(oqmDbIdOrName, null, searchObject);
 	}
 	
 	/**

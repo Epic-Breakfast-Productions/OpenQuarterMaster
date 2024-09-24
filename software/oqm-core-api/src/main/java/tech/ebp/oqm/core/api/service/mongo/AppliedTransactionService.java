@@ -520,7 +520,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					}
 				}
 
-				appliedTransactionBuilder.statsAfterApply(this.storedService.getItemStats(oqmDbIdOrName, csw.getClientSession(), inventoryItem));
+				appliedTransactionBuilder.statsAfterApply(this.storedService.getItemStats(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId()));
 
 				ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 

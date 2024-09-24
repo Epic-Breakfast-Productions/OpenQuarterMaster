@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
@@ -14,20 +13,12 @@ import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.object.media.Image;
-import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
-import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
-import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
@@ -162,66 +153,112 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return result.getResults().getFirst();
 	}
 
-	public StoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item){
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, and(new StoredSearch().setInventoryItemId(item.getId()).getSearchFilters()), null, null);
 
-		Quantity zero = Quantities.getQuantity(0, item.getUnit());
-		Quantity total = Quantities.getQuantity(0, item.getUnit());
-		long numStored = 0;
-		Map<ObjectId, Long> storageBlockNums = new HashMap<>();
-		Map<ObjectId, Quantity> storageBlockTotals = new HashMap<>();
-		try(
-			MongoCursor<Stored> storedIterator = storedInItem.iterator()
-		) {
-			while(storedIterator.hasNext()){
-				Stored stored = storedIterator.next();
-				numStored++;
+	private void addToStats(BasicStatsContaining statsToAddTo, Stored stored){
 
-				Quantity toAdd;
-				switch (stored.getStoredType()){
-					case AMOUNT -> {
-						toAdd = ((AmountStored)stored).getAmount();
-					}
-					case UNIQUE -> {
-						toAdd = UnitUtils.Quantities.UNIT_ONE;
-					}
-					default -> {
-						throw new UnsupportedOperationException("Unsupported stored type (this shouldn't happen): " + stored.getStoredType());
-					}
-				}
-				total = total.add(toAdd);
+		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 
-				ObjectId block = stored.getStorageBlock();
-				storageBlockNums.put(block, storageBlockNums.getOrDefault(block, 0L) + 1);
-				storageBlockTotals.put(block, storageBlockTotals.getOrDefault(block, zero).add(toAdd));
-
-				//TODO:: expired
-				//TODO:: low stock
+		if (stored.getStoredType() == StoredType.AMOUNT) {
+			AmountStored amtStored = (AmountStored) stored;
+			if (amtStored.getLowStockThreshold() != null && stored.getNotificationStatus().isLowStock()) {
+				statsToAddTo.setNumLowStock(statsToAddTo.getNumLowStock() + 1L);
 			}
 		}
 
-		Map<ObjectId, StoredInBlockStats> perBlockStats = new LinkedHashMap<>();
-		for(ObjectId curBlock : item.getStorageBlocks()){
-			long numInBlock = storageBlockNums.getOrDefault(curBlock, 0L);
-			Quantity amountInBlock = storageBlockTotals.getOrDefault(curBlock, zero);
-
-			perBlockStats.put(curBlock, StoredInBlockStats.builder()
-					.numStored(numInBlock)
-					.total(amountInBlock)
-				.build());
+		if(stored.getNotificationStatus().isExpiredWarning()){
+			statsToAddTo.setNumExpiryWarn(statsToAddTo.getNumExpiryWarn() + 1L);
 		}
 
-		//TODO:: low stock
-
-		return StoredStats.builder()
-			.total(total)
-			.numStored(numStored)
-			.storageBlockStats(perBlockStats)
-			.build();
+		if(stored.getNotificationStatus().isExpired()){
+			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
+		}
 	}
 
-	//TODO:: stats on storeds
-	//TODO:: add/sub/transfer
+	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored){
+		this.addToStats((BasicStatsContaining) statsToAddTo, stored);
+
+		Quantity toAdd = switch (stored.getStoredType()){
+			case AMOUNT -> {
+				AmountStored amountStored = (AmountStored) stored;
+				yield amountStored.getAmount();
+			}
+			case UNIQUE -> UnitUtils.Quantities.UNIT_ONE;
+		};
+
+		statsToAddTo.setTotal(
+			statsToAddTo.getTotal().add(toAdd)
+		);
+	}
+
+	private void addToStats(StoredInBlockStats storedInBlockStats, Stored stored){
+		this.addToStats((StatsWithTotalContaining) storedInBlockStats, stored);
+	}
+
+	private void addToStats(ItemStoredStats itemStoredStats, Stored stored){
+		if(!itemStoredStats.getStorageBlockStats().containsKey(stored.getId())){
+			itemStoredStats.getStorageBlockStats().put(stored.getId(), new StoredInBlockStats(itemStoredStats.getTotal().getUnit()));
+		}
+		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getId());
+
+		this.addToStats(storedInBlockStats, stored);
+		this.addToStats((StatsWithTotalContaining) itemStoredStats, stored);
+	}
+
+	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored){
+
+		if(!storedStats.getItemStats().containsKey(stored.getId())){
+			storedStats.getItemStats().put(stored.getId(), new ItemStoredStats(
+				this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
+			));
+		}
+		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
+
+		this.addToStats((BasicStatsContaining) storedStats,  stored);
+		this.addToStats(itemStoredStats, stored);
+	}
+
+	public StoredStats getStoredStats(String oqmDbIdOrName, ClientSession cs, StoredSearch search) {
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, search);
+		StoredStats output = new StoredStats();
+
+		try(
+			MongoCursor<Stored> storedIterator = storedInItem.iterator()
+		) {
+			while (storedIterator.hasNext()) {
+				Stored curStored = storedIterator.next();
+
+				this.addToStats(
+					oqmDbIdOrName,
+					cs,
+					output,
+					curStored
+				);
+			}
+		}
+
+		return output;
+	}
+
+	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId){
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
+
+		ItemStoredStats output = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, itemId).getUnit());
+
+		try(
+			MongoCursor<Stored> storedIterator = storedInItem.iterator()
+		) {
+			while (storedIterator.hasNext()) {
+				Stored curStored = storedIterator.next();
+
+				this.addToStats(
+					output,
+					curStored
+				);
+			}
+		}
+
+		return output;
+	}
 
 	//TODO:: get referencing....
 }

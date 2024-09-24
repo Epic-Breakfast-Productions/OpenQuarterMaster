@@ -1,9 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
@@ -23,18 +20,11 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.units.indriya.quantity.Quantities;
 
-import javax.measure.Quantity;
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;

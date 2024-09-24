@@ -5,11 +5,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredStats;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -62,5 +62,5 @@ public class AppliedTransaction extends AttKeywordMainObject {
 
 	@NonNull
 	@NotNull
-	private StoredStats statsAfterApply;
+	private ItemStoredStats statsAfterApply;
 }

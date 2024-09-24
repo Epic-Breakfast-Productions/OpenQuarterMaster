@@ -72,14 +72,6 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	private LocalDateTime expires = null;
 
 	/**
-	 * The threshold of low stock for the entire object.
-	 * <p>
-	 * Null for no threshold, Quantity with compatible unit to set the threshold.
-	 * TODO:: validate unit is compatible with main unit
-	 */
-	private Quantity<?> lowStockThreshold = null;
-
-	/**
 	 * Statuses about this stored object.
 	 */
 	@NonNull

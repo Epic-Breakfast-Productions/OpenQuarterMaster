@@ -28,13 +28,21 @@ public class AmountStored extends Stored {
 	@NonNull
 	@ValidQuantity
 	private Quantity<?> amount;
+
+	/**
+	 * The threshold of low stock for the entire object.
+	 * <p>
+	 * Null for no threshold, Quantity with compatible unit to set the threshold.
+	 * TODO:: validate unit is compatible with main unit
+	 */
+	private Quantity<?> lowStockThreshold = null;
 	
 	public AmountStored(Unit<?> unit) {
-		this(Quantities.getQuantity(0, unit));
+		this(Quantities.getQuantity(0, unit), null);
 	}
 	
 	public AmountStored(Number amount, Unit<?> unit) {
-		this(Quantities.getQuantity(amount, unit));
+		this(Quantities.getQuantity(amount, unit), null);
 	}
 	
 	public AmountStored setAmount(Number amount, Unit<?> unit) {
