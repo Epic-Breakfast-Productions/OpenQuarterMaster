@@ -58,14 +58,14 @@ public class EmailUtilsTest {
         assertEquals(content, sentMail.getText()); // Verify email content
     }
 
+    // Test case for sending an actual email (disabled for now)
+
+    // Injecting the actual EmailUtils without mocks to send a real email
+
+    @Inject
+    EmailUtils realEmailUtils; // Inject the real EmailUtils object
+
     /*
-     * // Test case for sending an actual email (disabled for now)
-     * 
-     * // Injecting the actual EmailUtils without mocks to send a real email
-     * 
-     * @Inject
-     * EmailUtils realEmailUtils; // Inject the real EmailUtils object
-     * 
      * // Test case to send a real email using realEmailUtils
      * 
      * @Test

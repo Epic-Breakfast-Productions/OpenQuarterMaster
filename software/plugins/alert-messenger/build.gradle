@@ -21,6 +21,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-qute'
     implementation 'io.quarkus:quarkus-mailer'
+    
+    // Add Quarkus REST Client dependency
+    implementation 'io.quarkus:quarkus-rest-client'
 
     implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.2.0-SNAPSHOT'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
