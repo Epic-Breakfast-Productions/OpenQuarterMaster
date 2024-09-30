@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 

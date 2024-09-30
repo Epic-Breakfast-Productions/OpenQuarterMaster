@@ -16,7 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockProcessResults;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
@@ -24,12 +29,12 @@ import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.mongodb.client.model.Filters.*;
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
 @Named("StoredService")
@@ -84,12 +89,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item.");
 		}
 
-		if(item.getStorageType().storedType != newOrChangedObject.getStoredType()){
-			throw new ValidationException("Stored given of type "+newOrChangedObject.getStoredType()+" cannot be held in item of storage type" + item.getStorageType());
+		if (item.getStorageType().storedType != newOrChangedObject.getStoredType()) {
+			throw new ValidationException("Stored given of type " + newOrChangedObject.getStoredType() + " cannot be held in item of storage type" + item.getStorageType());
 		}
 
-		if(item.getStorageType().storedType == StoredType.AMOUNT){
-			if(!item.getUnit().isCompatible(((AmountStored)newOrChangedObject).getAmount().getUnit())){
+		if (item.getStorageType().storedType == StoredType.AMOUNT) {
+			if (!item.getUnit().isCompatible(((AmountStored) newOrChangedObject).getAmount().getUnit())) {
 				throw new ValidationException("Unit of amount must be compatible with item's unit.");
 			}
 		}
@@ -108,10 +113,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 
-		if(item.getStorageType() == UNIQUE_SINGLE){
+		if (item.getStorageType() == UNIQUE_SINGLE) {
 			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
-				if(inItem.getNumResults() != 1) {
+				if (inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");
 				}
 
@@ -132,8 +137,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		SearchResult<T> result = (SearchResult<T>) this.search(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId).setStorageBlockId(storageBlockId));
 
-		if(result.isEmpty()){
-			throw new DbNotFoundException("No stored currently stored in this block ("+storageBlockId+") under this item ("+itemId+").", this.clazz);
+		if (result.isEmpty()) {
+			throw new DbNotFoundException("No stored currently stored in this block (" + storageBlockId + ") under this item (" + itemId + ").", this.clazz);
 		}
 
 		return result;
@@ -146,15 +151,15 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	public <T extends Stored> T getSingleStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		SearchResult<T> result = this.getStoredForItemBlock(oqmDbIdOrName, cs, itemId, storageBlockId, type);
 
-		if(result.getNumResults() != 1){
-			throw new IllegalStateException("Expected single stored in this block ("+storageBlockId+") under this item ("+itemId+"), but got " + result.getNumResults() + ".");
+		if (result.getNumResults() != 1) {
+			throw new IllegalStateException("Expected single stored in this block (" + storageBlockId + ") under this item (" + itemId + "), but got " + result.getNumResults() + ".");
 		}
 
 		return result.getResults().getFirst();
 	}
 
 
-	private void addToStats(BasicStatsContaining statsToAddTo, Stored stored){
+	private void addToStats(BasicStatsContaining statsToAddTo, Stored stored) {
 
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 
@@ -165,19 +170,19 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 
-		if(stored.getNotificationStatus().isExpiredWarning()){
+		if (stored.getNotificationStatus().isExpiredWarning()) {
 			statsToAddTo.setNumExpiryWarn(statsToAddTo.getNumExpiryWarn() + 1L);
 		}
 
-		if(stored.getNotificationStatus().isExpired()){
+		if (stored.getNotificationStatus().isExpired()) {
 			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
 		}
 	}
 
-	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored){
+	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored) {
 		this.addToStats((BasicStatsContaining) statsToAddTo, stored);
 
-		Quantity toAdd = switch (stored.getStoredType()){
+		Quantity toAdd = switch (stored.getStoredType()) {
 			case AMOUNT -> {
 				AmountStored amountStored = (AmountStored) stored;
 				yield amountStored.getAmount();
@@ -190,12 +195,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		);
 	}
 
-	private void addToStats(StoredInBlockStats storedInBlockStats, Stored stored){
+	private void addToStats(StoredInBlockStats storedInBlockStats, Stored stored) {
 		this.addToStats((StatsWithTotalContaining) storedInBlockStats, stored);
 	}
 
-	private void addToStats(ItemStoredStats itemStoredStats, Stored stored){
-		if(!itemStoredStats.getStorageBlockStats().containsKey(stored.getId())){
+	private void addToStats(ItemStoredStats itemStoredStats, Stored stored) {
+		if (!itemStoredStats.getStorageBlockStats().containsKey(stored.getId())) {
 			itemStoredStats.getStorageBlockStats().put(stored.getId(), new StoredInBlockStats(itemStoredStats.getTotal().getUnit()));
 		}
 		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getId());
@@ -204,16 +209,16 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		this.addToStats((StatsWithTotalContaining) itemStoredStats, stored);
 	}
 
-	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored){
+	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
 
-		if(!storedStats.getItemStats().containsKey(stored.getId())){
+		if (!storedStats.getItemStats().containsKey(stored.getId())) {
 			storedStats.getItemStats().put(stored.getId(), new ItemStoredStats(
 				this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
 			));
 		}
 		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
 
-		this.addToStats((BasicStatsContaining) storedStats,  stored);
+		this.addToStats((BasicStatsContaining) storedStats, stored);
 		this.addToStats(itemStoredStats, stored);
 	}
 
@@ -221,7 +226,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, search);
 		StoredStats output = new StoredStats();
 
-		try(
+		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator()
 		) {
 			while (storedIterator.hasNext()) {
@@ -239,12 +244,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return output;
 	}
 
-	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId){
+	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
 		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
 
 		ItemStoredStats output = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, itemId).getUnit());
 
-		try(
+		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator()
 		) {
 			while (storedIterator.hasNext()) {
@@ -260,5 +265,94 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return output;
 	}
 
-	//TODO:: get referencing....
+	private Optional<StoredExpiryLowStockProcessResult> getStoredExpiryLowStockProcessResult(
+		String oqmDbIdOrName, ClientSession cs, Stored stored, Duration expiryWarningThreshold, InteractingEntity entity, HistoryDetail... historyDetails
+	) {
+		StoredExpiryLowStockProcessResult curResult = new StoredExpiryLowStockProcessResult();
+		boolean changed = false;
+
+		if (stored.getStoredType() == StoredType.AMOUNT) {
+			AmountStored amountStored = (AmountStored) stored;
+
+			if (UnitUtils.underThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {
+				if (!amountStored.getNotificationStatus().isLowStock()) {
+					amountStored.getNotificationStatus().setLowStock(true);
+					curResult.setLowStock(true);
+					changed = true;
+				}
+			} else {
+				if (amountStored.getNotificationStatus().isLowStock()) {
+					amountStored.getNotificationStatus().setLowStock(false);
+					changed = true;
+				}
+			}
+		}
+
+		if (stored.getExpires() != null) {
+			if (stored.getExpires().isBefore(LocalDateTime.now())) {
+				if (!stored.getNotificationStatus().isExpired()) {
+					changed = true;
+					stored.getNotificationStatus().setExpired(true);
+					stored.getNotificationStatus().setExpiredWarning(false);
+					curResult.setExpired(true);
+				}
+			} else if (
+				!expiryWarningThreshold.equals(Duration.ZERO) &&
+					stored.getExpires().isBefore(LocalDateTime.now().plus(expiryWarningThreshold))
+			) {
+				if (!stored.getNotificationStatus().isExpiredWarning()) {
+					changed = true;
+					stored.getNotificationStatus().setExpired(false);
+					stored.getNotificationStatus().setExpiredWarning(true);
+					curResult.setExpiryWarn(true);
+				}
+			}
+		}
+
+		if (changed) {
+			this.update(oqmDbIdOrName, cs, stored, entity, historyDetails);
+			return Optional.of(curResult);
+		}
+		return Optional.empty();
+	}
+
+
+	public ItemPostTransactionProcessResults postTransactionProcess(
+		String oqmDbIdOrName, ClientSession cs, ObjectId itemId, InteractingEntity entity, HistoryDetail... historyDetails
+	) {
+		//TODO:: apply mutex here?
+		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
+		ItemStoredStats storedStats = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, itemId).getUnit());
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
+		ItemExpiryLowStockProcessResults results = new ItemExpiryLowStockProcessResults().setItemId(item.getId());
+
+		try (
+			MongoCursor<Stored> storedIterator = storedInItem.iterator();
+		) {
+			while (storedIterator.hasNext()) {
+				Stored curStored = storedIterator.next();
+
+				this.addToStats(
+					storedStats,
+					curStored
+				);
+
+				Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
+					oqmDbIdOrName, cs, curStored, item.getExpiryWarningThreshold(), entity, historyDetails
+				);
+				if (result.isPresent()) {
+					results.getResults().getOrDefault(curStored.getStorageBlock(), new ArrayList<>())
+						.add(result.get());
+				}
+			}
+		}
+
+		//TODO:: process low stock stats in item
+
+		return ItemPostTransactionProcessResults.builder()
+			.expiryLowStockResults(results)
+			.stats(storedStats)
+			.build();
+	}
+//TODO:: get referencing....
 }
