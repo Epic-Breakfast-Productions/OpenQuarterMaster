@@ -321,11 +321,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		String oqmDbIdOrName, ClientSession cs, InventoryItem item, InteractingEntity entity, HistoryDetail... historyDetails
 	) {
 		//TODO:: apply mutex here?
-//		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
+
 		ItemStoredStats storedStats = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, item.getId()).getUnit());
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 		ItemExpiryLowStockProcessResults results = new ItemExpiryLowStockProcessResults().setItemId(item.getId());
 
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator();
 		) {
@@ -347,7 +347,27 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 
-		//TODO:: process low stock stats in item
+		boolean changed = false;
+		if(item.getLowStockThreshold() != null){
+			if(UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())){
+				if(!item.getNotificationStatus().isLowStock()){
+					changed = true;
+					item.getNotificationStatus().setLowStock(true);
+					results.setLowStock(true);
+				}
+			} else {
+				if(item.getNotificationStatus().isLowStock()){
+					changed = true;
+					item.getNotificationStatus().setLowStock(false);
+				}
+			}
+		}
+
+		if(changed){
+			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, historyDetails);
+		}
+
+		//TODO:: message pass to notification sender
 
 		return ItemPostTransactionProcessResults.builder()
 			.expiryLowStockResults(results)

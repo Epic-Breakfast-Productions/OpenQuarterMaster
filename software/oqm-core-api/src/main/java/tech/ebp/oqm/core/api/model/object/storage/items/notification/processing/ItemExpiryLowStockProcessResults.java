@@ -19,6 +19,10 @@ public class ItemExpiryLowStockProcessResults {
 	@NotNull
 	private ObjectId itemId;
 
+	@NotNull
+	@lombok.Builder.Default
+	private boolean lowStock = false;
+
 	/**
 	 * Key is the id of the storage block it is stored in.
 	 */
