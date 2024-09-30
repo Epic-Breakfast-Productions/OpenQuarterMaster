@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredStats;
 
@@ -62,5 +63,5 @@ public class AppliedTransaction extends AttKeywordMainObject {
 
 	@NonNull
 	@NotNull
-	private ItemStoredStats statsAfterApply;
+	private ItemPostTransactionProcessResults postApplyResults;
 }

@@ -523,9 +523,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				//TODO:: process expired, low stock
 
 
-
-
-				appliedTransactionBuilder.statsAfterApply(this.storedService.getItemStats(oqmDbIdOrName, csw.getClientSession(), inventoryItem.getId()));
+				appliedTransactionBuilder.postApplyResults(
+					this.storedService.postTransactionProcess(oqmDbIdOrName, csw.getClientSession(), inventoryItem, interactingEntity, historyDetails)
+				);
 
 				ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 

@@ -318,12 +318,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 
 	public ItemPostTransactionProcessResults postTransactionProcess(
-		String oqmDbIdOrName, ClientSession cs, ObjectId itemId, InteractingEntity entity, HistoryDetail... historyDetails
+		String oqmDbIdOrName, ClientSession cs, InventoryItem item, InteractingEntity entity, HistoryDetail... historyDetails
 	) {
 		//TODO:: apply mutex here?
-		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
-		ItemStoredStats storedStats = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, itemId).getUnit());
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
+//		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
+		ItemStoredStats storedStats = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, item.getId()).getUnit());
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 		ItemExpiryLowStockProcessResults results = new ItemExpiryLowStockProcessResults().setItemId(item.getId());
 
 		try (

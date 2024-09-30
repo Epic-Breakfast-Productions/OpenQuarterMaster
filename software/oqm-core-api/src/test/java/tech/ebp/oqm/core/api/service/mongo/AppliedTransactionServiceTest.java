@@ -152,9 +152,10 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(1, appliedTransaction.getAffectedStored().size());
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
-
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		
+		
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -200,8 +201,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -240,8 +241,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -288,8 +289,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -440,8 +441,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -484,8 +485,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -527,8 +528,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -699,8 +700,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -769,8 +770,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -836,8 +837,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -903,8 +904,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -970,8 +971,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1036,8 +1037,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1101,8 +1102,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1165,8 +1166,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1242,8 +1243,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1305,8 +1306,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1368,8 +1369,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1669,8 +1670,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(0, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1726,8 +1727,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(0, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1782,8 +1783,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(0, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1838,8 +1839,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(0, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1883,8 +1884,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -1930,8 +1931,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(6, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(6, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -1980,8 +1981,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(6, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(6, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2149,8 +2150,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -2200,8 +2201,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -2251,8 +2252,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 
@@ -2602,8 +2603,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2681,8 +2682,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2761,8 +2762,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2841,8 +2842,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2922,8 +2923,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -2994,8 +2995,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(2, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(2, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -3259,8 +3260,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -3317,8 +3318,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -3374,8 +3375,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
@@ -3431,8 +3432,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		assertEquals(1, appliedTransaction.getStatsAfterApply().getNumStored());
-		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getStatsAfterApply().getTotal());
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
