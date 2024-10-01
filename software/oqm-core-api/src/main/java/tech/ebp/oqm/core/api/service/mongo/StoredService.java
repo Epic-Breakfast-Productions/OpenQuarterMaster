@@ -374,5 +374,6 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			.stats(storedStats)
 			.build();
 	}
+
 //TODO:: get referencing....
 }

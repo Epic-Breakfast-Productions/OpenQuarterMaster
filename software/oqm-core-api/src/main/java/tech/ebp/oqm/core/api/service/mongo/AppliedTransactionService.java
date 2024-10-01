@@ -19,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnFullCheckinDetails;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
@@ -520,12 +521,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					}
 				}
 
-				//TODO:: process expired, low stock
-
-
-				appliedTransactionBuilder.postApplyResults(
-					this.storedService.postTransactionProcess(oqmDbIdOrName, csw.getClientSession(), inventoryItem, interactingEntity, historyDetails)
-				);
+				ItemPostTransactionProcessResults postProcessResults = this.storedService.postTransactionProcess(oqmDbIdOrName, csw.getClientSession(), inventoryItem, interactingEntity, historyDetails);
+				//TODO:: really add all this? potentially a large amount to add to the applied transaction
+				appliedTransactionBuilder.postApplyResults(postProcessResults);
 
 				ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 

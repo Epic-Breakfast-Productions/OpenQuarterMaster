@@ -4,16 +4,18 @@ package tech.ebp.oqm.core.api.model.object.storage.items.notification.processing
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStockEvent;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemExpiryLowStockProcessResults {
+public class ItemExpiryLowStockProcessResults implements ProcessResults {
 
 	@NonNull
 	@NotNull
@@ -30,4 +32,18 @@ public class ItemExpiryLowStockProcessResults {
 	@NonNull
 	@lombok.Builder.Default
 	private Map<ObjectId, List<StoredExpiryLowStockProcessResult>> results = new HashMap<>();
+
+	@Override
+	public List<ItemExpiryLowStockEvent> getEvents() {
+		//TODO:: add the item level low stock
+		return this.getResults().values()
+			.stream()
+			.flatMap(curResultList->{
+				//TODO:: add storage block level low stock
+				return curResultList.stream().flatMap(curResult->{
+					return curResult.getEvents(this.getItemId()).stream();
+				});
+			})
+			.collect(Collectors.toList());
+	}
 }
