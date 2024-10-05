@@ -353,7 +353,12 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, T object) {
 		return this.getHistoryFor(oqmDbIdOrName, object.getId());
 	}
-	
+
+	@WithSpan
+	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId object, InteractingEntity entity, ObjectHistoryEvent event) {
+		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);
+	}
+
 	@WithSpan
 	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);

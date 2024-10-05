@@ -183,14 +183,18 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 
 	@WithSpan
-	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
-		history.setObjectId(objectReferred.getId());
+	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, ObjectId objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
+		history.setObjectId(objectReferred);
 		if (entity != null) {
 			history.setEntity(entity.getId());
 		}
 		ObjectId output = this.add(oqmDbIdOrName, session, history);
 		this.getHens().sendEvents(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(), this.clazzForObjectHistoryIsFor, history);
 		return output;
+	}
+
+	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
+		return this.addHistoryFor(oqmDbIdOrName, session, objectReferred.getId(), entity, history);
 	}
 
 	@WithSpan

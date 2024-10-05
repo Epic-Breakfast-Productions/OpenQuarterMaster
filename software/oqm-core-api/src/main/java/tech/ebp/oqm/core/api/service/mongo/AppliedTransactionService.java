@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service to handle applying transactions to items stored, and keeping track of what transactions have been applied.
@@ -102,6 +103,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					.inventoryItem(inventoryItem.getId())
 					.transaction(itemStoredTransaction)
 					.entity(interactingEntity.getId());
+				LinkedHashSet<Stored> affectedStored;
 
 				switch (itemStoredTransaction.getTransactionType()) {
 					case ADD_AMOUNT -> {
@@ -155,10 +157,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						stored.add(addAmountTransaction.getAmount());
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(stored));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case ADD_WHOLE -> {
@@ -178,7 +179,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 
 						this.storedService.add(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(stored));
 					}
 					case CHECKIN_FULL -> {
 						CheckinFullTransaction cfTransaction = (CheckinFullTransaction) itemStoredTransaction;
@@ -245,7 +246,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 								amountStored.add(iac.getCheckedOut());
 								this.storedService.update(oqmDbIdOrName, csw.getClientSession(), amountStored, interactingEntity, historyDetails);
-								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(amountStored.getId())));
+								affectedStored = new LinkedHashSet<>(Set.of(amountStored));
 							}
 							case WHOLE -> {
 								Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
@@ -254,7 +255,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 								}
 								checkedOut.setStorageBlock(cfTransaction.getToBlock());
 								this.storedService.add(oqmDbIdOrName, csw.getClientSession(), checkedOut, interactingEntity, historyDetails);
-								appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(checkedOut.getId())));
+								affectedStored = new LinkedHashSet<>(Set.of(checkedOut));
+							}
+							default -> {
+								throw new IllegalArgumentException("Invalid checkout type.");
 							}
 						}
 
@@ -303,7 +307,6 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							throw new IllegalArgumentException("From Storage block given mismatched stored's block.");
 						}
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 							.item(inventoryItem.getId())
 							.checkoutDetails(checkoutAmountTransaction.getCheckoutDetails())
@@ -312,26 +315,27 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							.checkOutTransaction(transactionId);
 
 						stored.subtract(checkoutAmountTransaction.getAmount());
+						affectedStored = new LinkedHashSet<>(Set.of(stored));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 						this.itemCheckoutService.add(oqmDbIdOrName, csw.getClientSession(), checkoutBuilder.build(), interactingEntity);
 					}
 					case CHECKOUT_WHOLE -> {
 						CheckoutWholeTransaction cwTransaction = (CheckoutWholeTransaction) itemStoredTransaction;
-						Stored affectedStored = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
+						Stored storedCheckingOut = this.storedService.get(oqmDbIdOrName, cwTransaction.getToCheckout());
 
-						if (!inventoryItem.getId().equals(affectedStored.getItem())) {
+						if (!inventoryItem.getId().equals(storedCheckingOut.getItem())) {
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(affectedStored.getId())));
 						ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemWholeCheckout.builder()
 							.checkoutDetails(cwTransaction.getCheckoutDetails())
 							.checkOutTransaction(transactionId)
 							.item(inventoryItem.getId())
-							.checkedOut(affectedStored);
+							.checkedOut(storedCheckingOut);
 
-						this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), affectedStored.getId(), interactingEntity, historyDetails);
+						this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), storedCheckingOut.getId(), interactingEntity, historyDetails);
 						this.itemCheckoutService.add(oqmDbIdOrName, csw.getClientSession(), checkoutBuilder.build(), interactingEntity);
+						affectedStored = new LinkedHashSet<>(Set.of(storedCheckingOut));
 					}
 					case SET_AMOUNT -> {
 						SetAmountTransaction sat = (SetAmountTransaction) itemStoredTransaction;
@@ -379,10 +383,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
 						stored.setAmount(sat.getAmount());
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(stored));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case SUBTRACT_AMOUNT -> {
@@ -412,7 +415,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						}
 						stored.subtract(subAmountTransaction.getAmount());
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(stored.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(stored));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), stored, interactingEntity, historyDetails);
 					}
 					case SUBTRACT_WHOLE -> {
@@ -423,7 +426,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 							throw new IllegalArgumentException("Stored is not associated with the item.");
 						}
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toSubtract.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(toSubtract));
 						this.storedService.remove(oqmDbIdOrName, csw.getClientSession(), toSubtract.getId(), interactingEntity, historyDetails);
 					}
 					case TRANSFER_AMOUNT -> {
@@ -480,10 +483,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 						fromStored.subtract(tat.getAmount());
 						toStored.add(tat.getAmount());
-						LinkedHashSet<ObjectId> affectedStored = new LinkedHashSet<>();
-						affectedStored.add(toStored.getId());
-						affectedStored.add(fromStored.getId());
-						appliedTransactionBuilder.affectedStored(affectedStored);
+
+						affectedStored = new LinkedHashSet<>(List.of(toStored, fromStored));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), fromStored, interactingEntity, historyDetails);
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity, historyDetails);
 					}
@@ -516,15 +517,26 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 
 						toTransfer.setStorageBlock(twt.getToBlock());
 
-						appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(Set.of(toTransfer.getId())));
+						affectedStored = new LinkedHashSet<>(Set.of(toTransfer));
 						this.storedService.update(oqmDbIdOrName, csw.getClientSession(), toTransfer, interactingEntity, historyDetails);
+					}
+					default -> {
+						throw new IllegalArgumentException("Invalid transaction type given.");
 					}
 				}
 
-				ItemPostTransactionProcessResults postProcessResults = this.storedService.postTransactionProcess(oqmDbIdOrName, csw.getClientSession(), inventoryItem, interactingEntity, historyDetails);
-				//TODO:: really add all this? potentially a large amount to add to the applied transaction
-				appliedTransactionBuilder.postApplyResults(postProcessResults);
+				ItemPostTransactionProcessResults postProcessResults = this.storedService.postTransactionProcess(
+					oqmDbIdOrName,
+					csw.getClientSession(),
+					inventoryItem,
+					transactionId,
+					affectedStored,
+					interactingEntity,
+					historyDetails
+				);
 
+				appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(affectedStored.stream().map(Stored::getId).toList()));
+				appliedTransactionBuilder.postApplyResults(postProcessResults);
 				ObjectId newId = this.add(oqmDbIdOrName, appliedTransactionBuilder.build());
 
 				return newId;

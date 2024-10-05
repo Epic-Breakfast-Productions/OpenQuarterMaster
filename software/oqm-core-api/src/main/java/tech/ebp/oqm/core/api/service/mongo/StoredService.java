@@ -16,10 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockProcessResults;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
@@ -28,12 +30,14 @@ import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.notification.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Quantity;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
@@ -56,6 +60,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
+
 
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -266,7 +271,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	private Optional<StoredExpiryLowStockProcessResult> getStoredExpiryLowStockProcessResult(
-		String oqmDbIdOrName, ClientSession cs, Stored stored, Duration expiryWarningThreshold, InteractingEntity entity, HistoryDetail... historyDetails
+		String oqmDbIdOrName,
+		ClientSession cs,
+		Stored stored,
+		Duration expiryWarningThreshold,
+		InteractingEntity entity,
+		HistoryDetail... historyDetails
 	) {
 		StoredExpiryLowStockProcessResult curResult = new StoredExpiryLowStockProcessResult();
 		boolean changed = false;
@@ -316,26 +326,28 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return Optional.empty();
 	}
 
-
 	public ItemPostTransactionProcessResults postTransactionProcess(
-		String oqmDbIdOrName, ClientSession cs, InventoryItem item, InteractingEntity entity, HistoryDetail... historyDetails
+		String oqmDbIdOrName,
+		ClientSession cs,
+		InventoryItem item, ObjectId transactionId, Set<Stored> concerning, InteractingEntity entity, HistoryDetail... historyDetails
 	) {
 		//TODO:: apply mutex here?
 
-		ItemStoredStats storedStats = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, item.getId()).getUnit());
-		ItemExpiryLowStockProcessResults results = new ItemExpiryLowStockProcessResults().setItemId(item.getId());
+		//TODO:: separate thread to get these stats
+		ItemStoredStats storedStats = this.getItemStats(oqmDbIdOrName, cs, item.getId());
+		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItemId(item.getId());
 
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
+		FindIterable<Stored> storedInItem = this.listIterator(
+			oqmDbIdOrName, cs, new StoredSearch()
+				.setInventoryItemId(item.getId())
+				.setInStorageBlocks(concerning.stream().map(Stored::getId).distinct().collect(Collectors.toList()))
+		);
 		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator();
 		) {
+			//TODO:: only check for expiredness in concerning
 			while (storedIterator.hasNext()) {
 				Stored curStored = storedIterator.next();
-
-				this.addToStats(
-					storedStats,
-					curStored
-				);
 
 				Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
 					oqmDbIdOrName, cs, curStored, item.getExpiryWarningThreshold(), entity, historyDetails
@@ -348,26 +360,41 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		boolean changed = false;
-		if(item.getLowStockThreshold() != null){
-			if(UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())){
-				if(!item.getNotificationStatus().isLowStock()){
+		if (item.getLowStockThreshold() != null) {
+			if (UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
+				if (!item.getNotificationStatus().isLowStock()) {
 					changed = true;
 					item.getNotificationStatus().setLowStock(true);
 					results.setLowStock(true);
 				}
 			} else {
-				if(item.getNotificationStatus().isLowStock()){
+				if (item.getNotificationStatus().isLowStock()) {
 					changed = true;
 					item.getNotificationStatus().setLowStock(false);
 				}
 			}
 		}
 
-		if(changed){
+		if (changed) {
 			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, historyDetails);
-		}
+			results.getEvents(transactionId).parallelStream().forEach(event -> {
+				Class<? extends MainObject> clazz;
 
-		//TODO:: message pass to notification sender
+				if(event.getObjectId().equals(item.getId())){
+					clazz = InventoryItem.class;
+					this.getInventoryItemService().addHistoryFor(oqmDbIdOrName, cs, item, this.getCoreApiInteractingEntity(), event);
+				} else {
+					clazz = Stored.class;
+					this.addHistoryFor(oqmDbIdOrName, cs, event.getObjectId(), this.getCoreApiInteractingEntity(), event);
+				}
+
+				this.hens.sendEvent(
+					this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(),
+					clazz,
+					event
+				);
+			});
+		}
 
 		return ItemPostTransactionProcessResults.builder()
 			.expiryLowStockResults(results)

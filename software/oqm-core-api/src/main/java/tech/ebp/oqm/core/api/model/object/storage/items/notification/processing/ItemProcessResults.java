@@ -6,6 +6,6 @@ import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStock
 
 import java.util.List;
 
-public interface ProcessResults {
-	List<ItemExpiryLowStockEvent> getEvents();
+public interface ItemProcessResults {
+	List<ItemExpiryLowStockEvent> getEvents(ObjectId transactionId);
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ProcessResults;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemProcessResults;
 
 @Data
 @AllArgsConstructor
@@ -14,5 +14,5 @@ public class ProcessResultsWrapper {
 	@NonNull
 	private ObjectId oqmDbId;
 	@NonNull
-	private ProcessResults processResults;
+	private ItemProcessResults processResults;
 }

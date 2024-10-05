@@ -3579,4 +3579,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	}
 	//TODO:: any more?
 //</editor-fold>
+	//<editor-fold desc="Post transaction processing">
+
+	//</editor-fold>
 }

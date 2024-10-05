@@ -8,23 +8,22 @@ import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStock
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExpiryLowStockProcessResults implements ProcessResults {
+public class ExpiryLowStockItemProcessResults implements ItemProcessResults {
 
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
-	private Map<ObjectId, ItemExpiryLowStockProcessResults> itemResults = new HashMap<>();
+	private Map<ObjectId, ItemExpiryLowStockItemProcessResults> itemResults = new HashMap<>();
 
 	@Override
-	public List<ItemExpiryLowStockEvent> getEvents() {
+	public List<ItemExpiryLowStockEvent> getEvents(ObjectId transactionId) {
 		return this.itemResults.values().stream()
-			.flatMap(list->list.getEvents().stream())
+			.flatMap(list->list.getEvents(transactionId).stream())
 			.toList();
 	}
 }

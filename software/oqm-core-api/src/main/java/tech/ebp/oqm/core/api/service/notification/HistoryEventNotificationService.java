@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.notification;
 
+import com.mongodb.session.ClientSession;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
@@ -16,7 +17,9 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ProcessResults;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemProcessResults;
+import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +30,6 @@ import java.util.Optional;
 public class HistoryEventNotificationService {
 
 	public static final String INTERNAL_EVENT_CHANNEL = "events-internal";
-	public static final String INTERNAL_EVENT_PROCESS_CHANNEL = "events-process-internal";
 	public static final String OUTGOING_EVENT_CHANNEL = "events-outgoing";
 	public static final String TOPIC_PREPEND = "oqm-core-";
 	public static final String ALL_EVENT_TOPIC_LABEL = "all-events";
@@ -43,13 +45,6 @@ public class HistoryEventNotificationService {
 	@Channel(INTERNAL_EVENT_CHANNEL)
 	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<EventNotificationWrapper> internalEventEmitter;
-
-	@Inject
-	@Broadcast
-	@Channel(INTERNAL_EVENT_PROCESS_CHANNEL)
-	@OnOverflow(value = OnOverflow.Strategy.DROP)
-	Emitter<ProcessResultsWrapper> internalEventProcessEmitter;
-
 
 	@Inject
 	@Broadcast
@@ -116,18 +111,6 @@ public class HistoryEventNotificationService {
 		}
 	}
 
-	@WithSpan
-	@Incoming(INTERNAL_EVENT_PROCESS_CHANNEL)
-	void sendEventOutgoing(ProcessResultsWrapper processResults) {
-		ObjectId oqmDbId = processResults.getOqmDbId();
-		processResults.getProcessResults().getEvents().parallelStream().forEach(event->{
-			this.internalEventEmitter.send(
-				//TODO:: in future, what to do with object name?
-				new EventNotificationWrapper(oqmDbId, "", event)
-			);
-		});
-	}
-
 	public void sendEvent(ObjectId oqmDatabase, Class<?> objectClass, ObjectHistoryEvent event) {
 		this.sendEvents(oqmDatabase, objectClass, event);
 	}
@@ -144,11 +127,6 @@ public class HistoryEventNotificationService {
 			}
 			this.internalEventEmitter.send(new EventNotificationWrapper(oqmDatabase, objectClass.getSimpleName(), event));
 		}
-	}
-
-	public void sendEvents(ObjectId oqmDatabase, ProcessResults processResults){
-		log.info("Sending event to internal process results channel.");
-		this.internalEventProcessEmitter.send(new ProcessResultsWrapper(oqmDatabase, processResults));
 	}
 
 }

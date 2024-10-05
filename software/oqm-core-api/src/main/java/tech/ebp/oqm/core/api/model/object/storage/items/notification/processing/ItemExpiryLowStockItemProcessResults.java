@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemExpiryLowStockProcessResults implements ProcessResults {
+public class ItemExpiryLowStockItemProcessResults implements ItemProcessResults {
 
 	@NonNull
 	@NotNull
@@ -34,14 +34,14 @@ public class ItemExpiryLowStockProcessResults implements ProcessResults {
 	private Map<ObjectId, List<StoredExpiryLowStockProcessResult>> results = new HashMap<>();
 
 	@Override
-	public List<ItemExpiryLowStockEvent> getEvents() {
+	public List<ItemExpiryLowStockEvent> getEvents(ObjectId transactionId) {
 		//TODO:: add the item level low stock
 		return this.getResults().values()
 			.stream()
 			.flatMap(curResultList->{
 				//TODO:: add storage block level low stock
 				return curResultList.stream().flatMap(curResult->{
-					return curResult.getEvents(this.getItemId()).stream();
+					return curResult.getEvents(this.getItemId(), transactionId).stream();
 				});
 			})
 			.collect(Collectors.toList());
