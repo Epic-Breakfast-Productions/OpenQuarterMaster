@@ -3639,7 +3639,6 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	//TODO:: any more?
 //</editor-fold>
 	//<editor-fold desc="Post transaction processing">
-
 	//TODO:: no alerts
 	//TODO:: low stock (stored)
 	//TODO:: low stock (item)

@@ -275,6 +275,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		ClientSession cs,
 		Stored stored,
 		Duration expiryWarningThreshold,
+		boolean checkExpired,
 		InteractingEntity entity,
 		HistoryDetail... historyDetails
 	) {
@@ -298,7 +299,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 
-		if (stored.getExpires() != null) {
+		if (checkExpired && stored.getExpires() != null) {
 			if (stored.getExpires().isBefore(LocalDateTime.now())) {
 				if (!stored.getNotificationStatus().isExpired()) {
 					changed = true;
@@ -333,6 +334,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	) {
 		//TODO:: apply mutex here?
 
+		Set<ObjectId> concerningIds = concerning.stream().map(Stored::getId).collect(Collectors.toSet());
 		//TODO:: separate thread to get these stats
 		ItemStoredStats storedStats = this.getItemStats(oqmDbIdOrName, cs, item.getId());
 		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItemId(item.getId());
@@ -345,12 +347,16 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator();
 		) {
-			//TODO:: only check for expiredness in concerning
 			while (storedIterator.hasNext()) {
 				Stored curStored = storedIterator.next();
 
 				Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
-					oqmDbIdOrName, cs, curStored, item.getExpiryWarningThreshold(), entity, historyDetails
+					oqmDbIdOrName,
+					cs,
+					curStored,
+					item.getExpiryWarningThreshold(),
+					concerningIds.contains(curStored.getId()),
+					entity, historyDetails
 				);
 				if (result.isPresent()) {
 					results.getResults().getOrDefault(curStored.getStorageBlock(), new ArrayList<>())
