@@ -1,14 +1,21 @@
 
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.kafka.InjectKafkaCompanion;
+import io.quarkus.test.kafka.KafkaCompanionResource;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.reactive.messaging.kafka.companion.ConsumerTask;
+import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
 import jakarta.inject.Inject;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.core.api.model.object.ObjectUtils;
+import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.ItemTransactionDetail;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
@@ -43,6 +50,8 @@ import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.notification.EventNotificationWrapper;
+import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -50,6 +59,8 @@ import tech.ebp.oqm.core.api.testResources.testClasses.MongoObjectServiceTest;
 import tech.units.indriya.quantity.Quantities;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType.ITEM_TRANSACTION;
@@ -58,6 +69,7 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
+@QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransaction, AppliedTransactionService> {
 
 	@Inject
@@ -80,6 +92,9 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 
 	@Inject
 	ItemCheckoutService checkoutService;
+
+	@InjectKafkaCompanion
+	KafkaCompanion kafkaCompanion;
 
 	//TODO:: these default tests
 	@Override
@@ -132,6 +147,47 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		return item;
 	}
 
+	//TODO:: figure out how to properly clear these queues to do message verification
+//	private void clearQueues(int numToWaitFor){
+//		this.kafkaCompanion
+//			.consumeStrings()
+//			.fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC, Integer.MAX_VALUE)
+//			.awaitCompletion()
+//			;
+//	}
+//
+//	private List<EventNotificationWrapper> assertMessages(
+//		EventType... expectedEvents
+//	) throws JsonProcessingException {
+//		ConsumerTask<String, String> messagesFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
+//			HistoryEventNotificationService.ALL_EVENT_TOPIC,
+//			expectedEvents.length
+//		);
+//		messagesFromAll.awaitCompletion();
+//		assertEquals(expectedEvents.length, messagesFromAll.count());
+//
+//		List<EventNotificationWrapper> eventWrappers = messagesFromAll.stream()
+//			.map(record-> {
+//				try {
+//					return ObjectUtils.OBJECT_MAPPER.readValue(record.value(), EventNotificationWrapper.class);
+//				} catch (JsonProcessingException e) {
+//					throw new RuntimeException(e);
+//				}
+//			})
+//			.collect(Collectors.toList());
+//		log.info("Found messages for transaction: {}", eventWrappers);
+//
+//
+//		for(int i = 0; i < expectedEvents.length; i++) {
+//			EventNotificationWrapper curWrapper = eventWrappers.get(i);
+//			EventType expectedType = expectedEvents[i];
+//
+//			assertEquals(expectedType, curWrapper.getEvent().getType());
+//		}
+//
+//		return eventWrappers;
+//	}
+
 
 //<editor-fold desc="Apply- Add Amount">
 	@Test
@@ -144,6 +200,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
 
+//		this.clearQueues(5);
 		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -172,6 +229,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+
+//		this.assertMessages(EventType.UPDATE);
 	}
 
 	@Test
@@ -3581,5 +3640,10 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 //</editor-fold>
 	//<editor-fold desc="Post transaction processing">
 
+	//TODO:: no alerts
+	//TODO:: low stock (stored)
+	//TODO:: low stock (item)
+	//TODO:: expiry warn alert
+	//TODO:: expired alert
 	//</editor-fold>
 }
