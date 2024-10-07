@@ -445,7 +445,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 										.storageBlock(tat.getToBlock())
 										.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
 										.build();
-									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity);
+									this.storedService.add(oqmDbIdOrName, csw.getClientSession(), toStored, interactingEntity, details);
 								}
 							}
 							case AMOUNT_LIST -> {

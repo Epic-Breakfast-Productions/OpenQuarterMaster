@@ -275,6 +275,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		ClientSession cs,
 		Stored stored,
 		Duration expiryWarningThreshold,
+		boolean checkLowStock,
 		boolean checkExpired,
 		InteractingEntity entity,
 		HistoryDetail... historyDetails
@@ -282,7 +283,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		StoredExpiryLowStockProcessResult curResult = new StoredExpiryLowStockProcessResult();
 		boolean changed = false;
 
-		if (stored.getStoredType() == StoredType.AMOUNT) {
+		if (checkLowStock && stored.getStoredType() == StoredType.AMOUNT) {
 			AmountStored amountStored = (AmountStored) stored;
 
 			if (UnitUtils.underThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {
@@ -355,6 +356,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 					cs,
 					curStored,
 					item.getExpiryWarningThreshold(),
+					true,
 					concerningIds.contains(curStored.getId()),
 					entity, historyDetails
 				);

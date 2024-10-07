@@ -147,46 +147,45 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		return item;
 	}
 
-	//TODO:: figure out how to properly clear these queues to do message verification
-//	private void clearQueues(int numToWaitFor){
-//		this.kafkaCompanion
-//			.consumeStrings()
-//			.fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC, Integer.MAX_VALUE)
-//			.awaitCompletion()
-//			;
-//	}
-//
-//	private List<EventNotificationWrapper> assertMessages(
-//		EventType... expectedEvents
-//	) throws JsonProcessingException {
-//		ConsumerTask<String, String> messagesFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
-//			HistoryEventNotificationService.ALL_EVENT_TOPIC,
-//			expectedEvents.length
-//		);
-//		messagesFromAll.awaitCompletion();
-//		assertEquals(expectedEvents.length, messagesFromAll.count());
-//
-//		List<EventNotificationWrapper> eventWrappers = messagesFromAll.stream()
-//			.map(record-> {
-//				try {
-//					return ObjectUtils.OBJECT_MAPPER.readValue(record.value(), EventNotificationWrapper.class);
-//				} catch (JsonProcessingException e) {
-//					throw new RuntimeException(e);
-//				}
-//			})
-//			.collect(Collectors.toList());
-//		log.info("Found messages for transaction: {}", eventWrappers);
-//
-//
-//		for(int i = 0; i < expectedEvents.length; i++) {
-//			EventNotificationWrapper curWrapper = eventWrappers.get(i);
-//			EventType expectedType = expectedEvents[i];
-//
-//			assertEquals(expectedType, curWrapper.getEvent().getType());
-//		}
-//
-//		return eventWrappers;
-//	}
+	private void clearQueues(){
+		this.kafkaCompanion
+			.topics()
+			.delete(HistoryEventNotificationService.ALL_EVENT_TOPIC)
+//			.clear(HistoryEventNotificationService.ALL_EVENT_TOPIC)
+		;
+	}
+
+	private List<EventNotificationWrapper> assertMessages(
+		EventType... expectedEvents
+	) throws JsonProcessingException {
+		ConsumerTask<String, String> messagesFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
+			HistoryEventNotificationService.ALL_EVENT_TOPIC
+			, expectedEvents.length
+		);
+		messagesFromAll.awaitCompletion();
+		assertEquals(expectedEvents.length, messagesFromAll.count());
+
+		List<EventNotificationWrapper> eventWrappers = messagesFromAll.stream()
+			.map(record-> {
+				try {
+					return ObjectUtils.OBJECT_MAPPER.readValue(record.value(), EventNotificationWrapper.class);
+				} catch (JsonProcessingException e) {
+					throw new RuntimeException(e);
+				}
+			})
+			.collect(Collectors.toList());
+		log.info("Found messages for transaction: {}", eventWrappers);
+
+
+		for(int i = 0; i < expectedEvents.length; i++) {
+			EventNotificationWrapper curWrapper = eventWrappers.get(i);
+			EventType expectedType = expectedEvents[i];
+
+			assertEquals(expectedType, curWrapper.getEvent().getType());
+		}
+
+		return eventWrappers;
+	}
 
 
 //<editor-fold desc="Apply- Add Amount">
@@ -200,7 +199,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
 
-//		this.clearQueues(5);
+		this.clearQueues();
 		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -230,7 +229,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 
-//		this.assertMessages(EventType.UPDATE);
+		List<EventNotificationWrapper> messages = this.assertMessages(EventType.CREATE, EventType.UPDATE);
+		//TODO:: verify messages
 	}
 
 	@Test
