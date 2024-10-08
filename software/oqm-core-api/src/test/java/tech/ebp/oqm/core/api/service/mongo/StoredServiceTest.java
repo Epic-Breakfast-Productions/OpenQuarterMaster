@@ -17,7 +17,9 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StoredTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -295,6 +297,36 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			this.storedTestObjectCreator.setItem(item).setStorageBlock(blockIdTwo).getTestObject(),
 			user
 		));
+	}
+
+
+	@Test
+	public void searchInStorageBlockTest() {
+		User user = this.getTestUserService().getTestUser();
+		ObjectId blockId = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			new StorageBlock().setLabel(FAKER.location().building()),
+			user
+		);
+		ObjectId otherBlockId = this.storageBlockService.add(
+			DEFAULT_TEST_DB_NAME,
+			new StorageBlock().setLabel(FAKER.location().building()),
+			user
+		);
+		InventoryItem item = this.itemTestObjectCreator.getTestObject();
+		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId, otherBlockId)));
+		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+
+		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
+		Stored otherStored = this.storedTestObjectCreator.setItem(item).setStorageBlock(otherBlockId).getTestObject();
+
+		this.storedService.add(DEFAULT_TEST_DB_NAME, stored, user);
+		this.storedService.add(DEFAULT_TEST_DB_NAME, otherStored, user);
+
+		SearchResult<Stored> result = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInStorageBlocks(List.of(blockId)));
+
+		assertEquals(1, result.getNumResults());
+		assertEquals(stored, result.getResults().get(0));
 	}
 
 	//TODO:: update

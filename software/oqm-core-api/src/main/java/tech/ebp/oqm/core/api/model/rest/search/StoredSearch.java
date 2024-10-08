@@ -50,11 +50,18 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 //			);
 //		}
 		if(this.hasValue(this.getInStorageBlocks())){
-			filters.add(or(
-				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
-					return exists("storageMap." + storageBlockId.toHexString());
-				}).toList()
-			));
+			if(this.getInStorageBlocks().size() == 1){
+				filters.add(
+					eq("storageBlock", this.getInStorageBlocks().getFirst())
+				);
+			} else {
+				filters.add(or(
+					this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
+//					return exists("storageBlocks." + storageBlockId.toHexString());
+						return eq("storageBlock", storageBlockId);
+					}).toList()
+				));
+			}
 		}
 		if(this.hasValue(this.getHasExpired())){
 			filters.add(

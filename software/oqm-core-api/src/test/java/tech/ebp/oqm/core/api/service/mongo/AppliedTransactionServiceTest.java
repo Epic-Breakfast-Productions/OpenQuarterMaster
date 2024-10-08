@@ -58,7 +58,10 @@ import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecyc
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoObjectServiceTest;
 import tech.units.indriya.quantity.Quantities;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,9 +158,38 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		;
 	}
 
+	//TODO:: this with all following tests
 	private List<EventNotificationWrapper> assertMessages(
 		EventType... expectedEvents
 	) throws JsonProcessingException {
+		//TODO:: get list of all sent messages instead of predicted number
+//		List<EventNotificationWrapper> eventWrappers = new ArrayList<>();
+//		boolean awaiting = true;
+//		do{
+//			try {
+//				eventWrappers.add(
+//					ObjectUtils.OBJECT_MAPPER.readValue(
+//						this.kafkaCompanion.consumeStrings()
+//							.fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC, 1)
+//							.awaitCompletion(Duration.of(10, ChronoUnit.SECONDS))
+//							.getFirstRecord().value(),
+//
+//
+////						this.kafkaCompanion.consumeStrings()
+////							.fromTopics(HistoryEventNotificationService.ALL_EVENT_TOPIC)
+////							.awaitNextRecord(Duration.of(10, ChronoUnit.SECONDS))
+//////							.stream().findFirst().get().value(),
+//////							.getFirstRecord().value(),
+//						EventNotificationWrapper.class
+//					)
+//				);
+//				log.info("Got another wrapper");
+//			} catch (AssertionError e){
+//				awaiting = false;
+//			}
+//		}while(awaiting);
+
+
 		ConsumerTask<String, String> messagesFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
 			HistoryEventNotificationService.ALL_EVENT_TOPIC
 			, expectedEvents.length
@@ -176,6 +208,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.collect(Collectors.toList());
 		log.info("Found messages for transaction: {}", eventWrappers);
 
+		assertEquals(expectedEvents.length, eventWrappers.size());
 
 		for(int i = 0; i < expectedEvents.length; i++) {
 			EventNotificationWrapper curWrapper = eventWrappers.get(i);
@@ -3639,7 +3672,52 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 	//TODO:: any more?
 //</editor-fold>
 	//<editor-fold desc="Post transaction processing">
-	//TODO:: no alerts
+	@Test
+	public void applyTransactionPostProcessNoChange() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		ItemStoredTransaction preApplyTransaction = AddAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.toBlock(item.getStorageBlocks().getFirst())
+			.build();
+
+		this.clearQueues();
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		List<EventNotificationWrapper> messages = this.assertMessages(EventType.CREATE, EventType.UPDATE);
+		//TODO:: verify messages
+	}
+
+	@Test
+	public void applyTransactionPostProcessStoredLowStock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+
+		AmountStored originalStored = AmountStored.builder()
+			.item(item.getId())
+			.storageBlock(item.getStorageBlocks().getFirst())
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.lowStockThreshold(Quantities.getQuantity(20, item.getUnit()))
+			.build();
+		this.storedService.add(DEFAULT_TEST_DB_NAME, originalStored, entity);
+
+		ItemStoredTransaction preApplyTransaction = AddAmountTransaction.builder()
+			.amount(Quantities.getQuantity(5, item.getUnit()))
+			.toBlock(item.getStorageBlocks().getFirst())
+			.build();
+
+		this.clearQueues();
+		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+
+		List<EventNotificationWrapper> messages = this.assertMessages(EventType.UPDATE, EventType.UPDATE, EventType.UPDATE, EventType.ITEM_LOW_STOCK);
+		//TODO:: assert events, notification state
+	}
+
+
+
 	//TODO:: low stock (stored)
 	//TODO:: low stock (item)
 	//TODO:: expiry warn alert

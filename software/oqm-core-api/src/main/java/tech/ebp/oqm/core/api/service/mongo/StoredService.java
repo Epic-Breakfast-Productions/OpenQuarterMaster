@@ -18,7 +18,6 @@ import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
@@ -30,7 +29,6 @@ import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.notification.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Quantity;
@@ -343,7 +341,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		FindIterable<Stored> storedInItem = this.listIterator(
 			oqmDbIdOrName, cs, new StoredSearch()
 				.setInventoryItemId(item.getId())
-				.setInStorageBlocks(concerning.stream().map(Stored::getId).distinct().collect(Collectors.toList()))
+				.setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
 		);
 		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator();
@@ -361,8 +359,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 					entity, historyDetails
 				);
 				if (result.isPresent()) {
-					results.getResults().getOrDefault(curStored.getStorageBlock(), new ArrayList<>())
-						.add(result.get());
+					StoredExpiryLowStockProcessResult curResult = result.get();
+
+					if(!results.getResults().containsKey(curStored.getStorageBlock())){
+						results.getResults().put(curStored.getStorageBlock(), new ArrayList<>());
+					}
+					results.getResults().get(curStored.getStorageBlock()).add(curResult);
 				}
 			}
 		}
@@ -381,6 +383,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 					item.getNotificationStatus().setLowStock(false);
 				}
 			}
+		}
+
+		List<StoredExpiryLowStockProcessResult> inBlockResults = results.getResults().values().stream().flatMap(List::stream).toList();
+		if(!inBlockResults.isEmpty()){
+			changed = true;
 		}
 
 		if (changed) {
