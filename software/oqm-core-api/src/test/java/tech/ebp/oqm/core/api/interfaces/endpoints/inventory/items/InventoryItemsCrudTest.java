@@ -38,9 +38,120 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	Template itemsCsv;
 
 
-	//TODO:: CRUD of inventory items
 
-	//TODO
+	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
+		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+										   .contentType(ContentType.JSON)
+										   .body(objectMapper.writeValueAsString(item))
+										   .when()
+										   .post("", DEFAULT_TEST_DB_NAME)
+										   .then();
+
+		response.statusCode(Response.Status.OK.getStatusCode());
+
+		log.info("Got response body: {}", response.extract().body().asString());
+
+		ObjectId returned = response.extract().body().as(ObjectId.class);
+
+		log.info("Got object id back from create request: {}", returned);
+		return returned;
+	}
+
+	private InventoryItem update(User user, ObjectNode updateData, ObjectId id) throws JsonProcessingException {
+		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+										   .contentType(ContentType.JSON)
+										   .body(objectMapper.writeValueAsString(updateData))
+										   .when()
+										   .put(DEFAULT_TEST_DB_NAME, id.toHexString())
+										   .then();
+
+		response.statusCode(Response.Status.OK.getStatusCode());
+
+		InventoryItem returned = response.extract().body().as(InventoryItem.class);
+
+		log.info("Got object id back from create request: {}", returned);
+		return returned;
+	}
+
+	public static Stream<Arguments> getSimpleAmountItems() {
+		return Stream.of(
+			Arguments.of(
+				new SimpleAmountItem().setName(FAKER.commerce().productName())
+			),
+			Arguments.of(
+				new SimpleAmountItem() {{
+					this.getStorageMap().put(ObjectId.get(), new SingleAmountStoredWrapper(new AmountStored(0, this.getUnit())));
+				}}.setName(FAKER.commerce().productName())
+			)
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("getSimpleAmountItems")
+	public void testCreateSimpleAmountItem(SimpleAmountItem item) throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+
+		ObjectId returned = create(user, item);
+
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
+		assertNotNull(stored);
+
+		item.setId(returned);
+
+		assertEquals(item, stored);
+
+		//TODO:: check history
+	}
+
+	@Test
+	public void testCreateListAmountItem() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		ListAmountItem item = (ListAmountItem) new ListAmountItem().setName(FAKER.commerce().productName());
+		ObjectId returned = create(user, item);
+
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
+		assertNotNull(stored);
+
+		item.setId(returned);
+
+		assertEquals(item, stored);
+
+		//TODO:: check history
+	}
+
+	@Test
+	public void testCreateTrackedItem() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		TrackedItem item = (TrackedItem) new TrackedItem()
+											 .setTrackedItemIdentifierName("id")
+											 .setName(FAKER.commerce().productName());
+		ObjectId returned = create(user, item);
+
+		InventoryItem stored = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
+		assertNotNull(stored);
+
+		item.setId(returned);
+
+		assertEquals(item, stored);
+
+		//TODO:: check history
+	}
+
+	@Test
+	public void testUpdateTrackedItem() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		TrackedItem item = (TrackedItem) new TrackedItem()
+											 .setTrackedItemIdentifierName("id")
+											 .setName(FAKER.commerce().productName());
+		item.add(ObjectId.get(), new TrackedStored("1"));
+		ObjectId returned = create(user, item);
+
+		ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		updateData.put("name", FAKER.commerce().productName());
+	}
+
+
+	//TODO:: 708 move to new service
 //	@Test
 //	public void testAddFromCsv() throws IOException {
 //		User user = this.getTestUserService().getTestUser();

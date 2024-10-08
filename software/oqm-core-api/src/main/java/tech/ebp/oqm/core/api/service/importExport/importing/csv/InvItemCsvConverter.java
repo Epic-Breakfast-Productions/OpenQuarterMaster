@@ -23,9 +23,10 @@ public class InvItemCsvConverter {
 	public static final String[] CSV_HEADERS = {"name", "description", "storageType", "unit", "valuePerUnit", "barcode", "trackedItemId",  "storageBlock"};
 	public static final Character COMMENT_CHAR = '#';
 	
-	public List<InventoryItem> csvIsToItems(InputStream is) throws IOException {
-		//TODO:: rework
-//		List<InventoryItem> output = new ArrayList<>();
+	public List<InventoryItem<?, ?, ?>> csvIsToItems(InputStream is) throws IOException {
+		throw new IllegalStateException("Not implemented yet");
+		//TODO:: 708 move to plugin
+//		List<InventoryItem<?, ?, ?>> output = new ArrayList<>();
 //		Reader in = new InputStreamReader(is);
 //
 //		Iterable<CSVRecord> records = CSVFormat.Builder
@@ -38,7 +39,7 @@ public class InvItemCsvConverter {
 //
 //		for (CSVRecord record : records) {
 //			StorageType storageType = StorageType.valueOf(record.get("storageType"));
-//			InventoryItem item = switch (storageType) {
+//			InventoryItem<?, ?, ?> item = switch (storageType) {
 //				case AMOUNT_SIMPLE -> new SimpleAmountItem();
 //				case AMOUNT_LIST -> new ListAmountItem();
 //				case TRACKED -> new TrackedItem();
@@ -88,6 +89,5 @@ public class InvItemCsvConverter {
 //			output.add(item);
 //		}
 //		return output;
-		return null;
 	}
 }
