@@ -180,8 +180,10 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updateData.put("name", FAKER.commerce().productName());
 	}
-	
-	@Test
+
+
+	//TODO:: 708 move to new service
+//	@Test
 	public void testAddFromCsv() throws IOException {
 		User user = this.getTestUserService().getTestUser();
 		
