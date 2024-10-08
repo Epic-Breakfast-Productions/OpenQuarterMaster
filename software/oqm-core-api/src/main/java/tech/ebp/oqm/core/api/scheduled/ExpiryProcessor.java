@@ -10,6 +10,7 @@ import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
@@ -35,6 +36,9 @@ public class ExpiryProcessor {
 
 	@Inject
 	OqmDatabaseService oqmDatabaseService;
+
+	@Inject
+	StoredService storedService;
 	
 	@WithSpan
 	@Scheduled(
@@ -47,35 +51,9 @@ public class ExpiryProcessor {
 		//TODO:: multithread
 		log.info("Start processing all held items for newly expired stored.");
 		for(DbCacheEntry curEntry : this.oqmDatabaseService.getDatabases()){
-
-			FindIterable<InventoryItem> it = this.inventoryItemService.listIterator(curEntry.getDbId().toHexString(),
-				and(
-					not(size("storageMap", 0))
-					//TODO:: figure out better filter
-					//  - https://stackoverflow.com/a/26967000/3015723
-					//  - https://stackoverflow.com/a/71999502/3015723
-				),
-				null,
-				null
-			);
-
-			//TODO:: do with client session
-			it.forEach((InventoryItem cur)->{
-				//TODO:: rework
-//				List<ItemExpiryEvent> expiryEvents = cur.updateExpiredStates();
-//
-//				if (!expiryEvents.isEmpty()) {
-//					this.inventoryItemService.update(curEntry.getDbId().toHexString(), cur);
-//					for (ItemExpiryEvent curEvent : expiryEvents) {
-//						curEvent.setEntity(this.coreApiInteractingEntity.getId());
-//						this.inventoryItemService.addHistoryFor(curEntry.getDbId().toHexString(), cur, null, curEvent);//TODO:: pass BS entity?
-//						this.eventNotificationService.sendEvent(curEntry.getDbId(), this.inventoryItemService.getClazz(), curEvent);//TODO:: handle potential threadedness?
-//					}
-//				}
-			});
+			long result = this.storedService.scanForExpired(curEntry.getDbName());
+			log.info("Processed {} expiry or warning events for {}", result, curEntry.getDbName());
 		}
-
-
 		log.info("Finished processing all held items for newly expired stored.");
 	}
 }

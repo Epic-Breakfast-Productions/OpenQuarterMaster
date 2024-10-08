@@ -17,6 +17,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
@@ -29,6 +30,7 @@ import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import javax.measure.Quantity;
@@ -393,21 +395,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		if (changed) {
 			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, historyDetails);
 			results.getEvents(transactionId).parallelStream().forEach(event -> {
-				Class<? extends MainObject> clazz;
-
 				if(event.getObjectId().equals(item.getId())){
-					clazz = InventoryItem.class;
 					this.getInventoryItemService().addHistoryFor(oqmDbIdOrName, cs, item, this.getCoreApiInteractingEntity(), event);
 				} else {
-					clazz = Stored.class;
 					this.addHistoryFor(oqmDbIdOrName, cs, event.getObjectId(), this.getCoreApiInteractingEntity(), event);
 				}
-
-				this.hens.sendEvent(
-					this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(),
-					clazz,
-					event
-				);
 			});
 		}
 
@@ -415,6 +407,55 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			.expiryLowStockResults(results)
 			.stats(storedStats)
 			.build();
+	}
+
+	public long scanForExpired(String oqmDbIdOrName){
+		try (MongoSessionWrapper csw = new MongoSessionWrapper(this)) {
+			FindIterable<Stored> storedInItem = this.listIterator(
+				oqmDbIdOrName,
+				csw.getClientSession(),
+				new StoredSearch()
+					.setHasExpiryDate(true)
+			);
+			try (
+				MongoCursor<Stored> storedIterator = storedInItem.iterator();
+			) {
+				Map<ObjectId, Duration> itemExpiryWarningThresholds = new HashMap<>();
+				long output = 0L;
+				while (storedIterator.hasNext()) {
+					Stored curStored = storedIterator.next();
+
+					if(!itemExpiryWarningThresholds.containsKey(curStored.getItem())){
+						itemExpiryWarningThresholds.put(
+							curStored.getItem(),
+							this.inventoryItemService.get(oqmDbIdOrName, curStored.getItem()).getExpiryWarningThreshold()
+						);
+					}
+
+					Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
+						oqmDbIdOrName,
+						csw.getClientSession(),
+						curStored,
+						itemExpiryWarningThresholds.get(curStored.getItem()),
+						true,
+						false,
+						this.coreApiInteractingEntity
+					);
+					if (result.isPresent()) {
+						StoredExpiryLowStockProcessResult curResult = result.get();
+
+						for(
+							ObjectHistoryEvent curEvent :
+							curResult.getEvents(null, null)//Shouldn't hit the code that uses these parameters
+							){
+							output++;
+							this.addHistoryFor(oqmDbIdOrName, csw.getClientSession(), curStored, this.getCoreApiInteractingEntity(), curEvent);
+						}
+					}
+				}
+				return output;
+			}
+		}
 	}
 
 //TODO:: get referencing....

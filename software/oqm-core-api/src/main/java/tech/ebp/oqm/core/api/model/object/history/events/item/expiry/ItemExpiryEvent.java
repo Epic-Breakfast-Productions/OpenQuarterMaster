@@ -23,8 +23,5 @@ public abstract class ItemExpiryEvent extends ItemExpiryLowStockEvent {
 	public ItemExpiryEvent(MainObject object, InteractingEntity entity) {
 		super(object, entity);
 	}
-
-	@NonNull
-	private ObjectId storedId;
 	
 }

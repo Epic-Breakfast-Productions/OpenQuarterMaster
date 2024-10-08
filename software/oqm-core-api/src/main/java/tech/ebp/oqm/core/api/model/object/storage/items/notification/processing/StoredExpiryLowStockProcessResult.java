@@ -40,15 +40,13 @@ public class StoredExpiryLowStockProcessResult {
 
 		if (this.isExpired()) {
 			output.add(ItemExpiredEvent.builder()
-				.objectId(itemId)
-				.storedId(this.storedId)
+				.objectId(this.storedId)
 				.build()
 			);
 		}
 		if (this.isExpiryWarn()) {
 			output.add(ItemExpiryWarningEvent.builder()
-				.objectId(itemId)
-				.storedId(this.storedId)
+				.objectId(this.storedId)
 				.build()
 			);
 		}

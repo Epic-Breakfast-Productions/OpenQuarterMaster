@@ -25,6 +25,12 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	@PathParam("itemId") ObjectId inventoryItemId;
 	@PathParam("blockId") ObjectId storageBlockId;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
+
+	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
+	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
+
+
+	//TODO:: are these outdated?
 	@QueryParam("hasExpired") Boolean hasExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
@@ -63,6 +69,16 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 				));
 			}
 		}
+		if(this.hasValue(this.getHasExpiryDate())){
+			filters.add(
+				ne("expires", null)
+			);
+		}
+		if(this.hasValue(this.getHasLowStockThreshold())){
+
+		}
+
+
 		if(this.hasValue(this.getHasExpired())){
 			filters.add(
 				(this.getHasExpired()?
