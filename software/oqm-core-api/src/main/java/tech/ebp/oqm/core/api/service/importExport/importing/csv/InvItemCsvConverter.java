@@ -23,7 +23,7 @@ public class InvItemCsvConverter {
 	public static final String[] CSV_HEADERS = {"name", "description", "storageType", "unit", "valuePerUnit", "barcode", "trackedItemId",  "storageBlock"};
 	public static final Character COMMENT_CHAR = '#';
 	
-	public List<InventoryItem<?, ?, ?>> csvIsToItems(InputStream is) throws IOException {
+	public List<InventoryItem> csvIsToItems(InputStream is) throws IOException {
 		throw new IllegalStateException("Not implemented yet");
 		//TODO:: 708 move to plugin
 //		List<InventoryItem<?, ?, ?>> output = new ArrayList<>();
