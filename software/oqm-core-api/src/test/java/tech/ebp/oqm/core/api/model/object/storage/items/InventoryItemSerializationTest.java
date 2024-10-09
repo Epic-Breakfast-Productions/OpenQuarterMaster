@@ -2,14 +2,11 @@ package tech.ebp.oqm.core.api.model.object.storage.items;
 
 import tech.ebp.oqm.core.api.model.testUtils.ObjectSerializationTest;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.provider.Arguments;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
-import tech.units.indriya.quantity.Quantities;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -86,17 +83,17 @@ class InventoryItemSerializationTest extends ObjectSerializationTest<InventoryIt
 //			TrackedItemTest.getLargeTrackedItem()
 //		);
 //	}
-//
-//
-//	public static Stream<Arguments> getObjects() {
-//		return Stream.concat(
-//						 Stream.concat(
-//							 getSimpleAmountItems().stream(),
-//							 getListAmountItems().stream()
-//						 ),
-//						 getTrackedItems().stream()
-//					 )
-//					 .map(Arguments::of);
-//	}
+
+	public static Stream<Arguments> getObjects() {
+		return Stream.of(
+			Arguments.of(
+				InventoryItem.builder()
+					.storageType(StorageType.UNIQUE_SINGLE)
+					.name(FAKER.food().fruit())
+					.unit(OqmProvidedUnits.UNIT)
+					.build()
+			)
+		);
+	}
 	
 }
