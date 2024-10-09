@@ -134,7 +134,9 @@ public class TestUserService {
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
 
 		//ensure user is added to db
-		String userJsonString = this.newJwtCall(testUser).get("/api/v1/interacting-entity/self")
+		String userJsonString = this.newJwtCall(testUser)
+			.basePath("")
+			.get("/api/v1/interacting-entity/self")
 			.then()
 			.statusCode(200)
 			.extract().body().asString();
