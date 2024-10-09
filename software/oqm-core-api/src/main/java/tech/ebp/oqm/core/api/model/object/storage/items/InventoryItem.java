@@ -45,7 +45,6 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private StorageType storageType;
 
 	/**

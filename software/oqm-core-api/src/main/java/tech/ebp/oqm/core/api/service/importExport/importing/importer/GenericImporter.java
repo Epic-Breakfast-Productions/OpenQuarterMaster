@@ -10,6 +10,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class GenericImporterHistoried<T extends MainObject, S extends SearchObject<T>>
-	extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
-	
-	
-	public GenericImporterHistoried(MongoHistoriedObjectService<T, S, ?> mongoService) {
+public class GenericImporter<T extends MainObject, S extends SearchObject<T>>
+	extends ObjectImporter<T, S, MongoObjectService<T, S, ?>> {
+
+	public GenericImporter(MongoObjectService<T, S, ?> mongoService) {
 		super(mongoService);
 	}
 	
@@ -39,7 +39,7 @@ public class GenericImporterHistoried<T extends MainObject, S extends SearchObje
 			ObjectId oldId = curObj.getId();
 			ObjectId newId;
 			try {
-				newId = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
+				newId = this.getObjectService().add(dbId.toHexString(), clientSession, curObj);
 			} catch(Throwable e) {
 				log.error("Failed to import object: ", e);
 				throw e;
@@ -68,10 +68,6 @@ public class GenericImporterHistoried<T extends MainObject, S extends SearchObje
 		StopWatch sw = StopWatch.createStarted();
 		for (File curObjFile : filesForObject) {
 			this.readInObject(dbId, clientSession, curObjFile, importingEntity, options);
-		}
-
-		if(options.getIncludeHistory()){
-			//TODO:: history
 		}
 		
 		sw.stop();

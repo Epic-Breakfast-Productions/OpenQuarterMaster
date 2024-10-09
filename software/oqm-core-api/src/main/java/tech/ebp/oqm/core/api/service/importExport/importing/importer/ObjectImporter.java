@@ -9,6 +9,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,13 +17,13 @@ import java.nio.file.Path;
 import java.util.Map;
 
 @Slf4j
-public abstract class HistoriedObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoHistoriedObjectService<T, S, ?>>
+public abstract class ObjectImporter<T extends MainObject, S extends SearchObject<T>, M extends MongoObjectService<T, S, ?>>
 	extends Importer<T> {
 	
 	@Getter
 	private final M objectService;
 	
-	protected HistoriedObjectImporter(M mongoService){
+	protected ObjectImporter(M mongoService){
 		this.objectService = mongoService;
 	}
 	
