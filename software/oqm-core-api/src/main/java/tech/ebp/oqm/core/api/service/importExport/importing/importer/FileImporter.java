@@ -31,7 +31,7 @@ public abstract class FileImporter<
 	private final M fileService;
 
 	@Getter
-	private final HistoriedObjectImporter<T, S, ?> historiedObjectImporter;
+	private final ObjectImporter<T, S, ?> historiedObjectImporter;
 
 	protected FileImporter(M fileService) {
 		this.fileService = fileService;

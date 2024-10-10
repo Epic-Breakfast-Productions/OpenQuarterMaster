@@ -1,9 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.history.events.item;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -15,9 +13,9 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-//@SuperBuilder
 @BsonDiscriminator
-public class ItemLowStockEvent extends ObjectHistoryEvent {
+@SuperBuilder(toBuilder = true)
+public class ItemLowStockEvent extends ItemExpiryLowStockEvent {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ItemLowStockEvent(ObjectId objectId, InteractingEntity entity) {
@@ -27,13 +25,14 @@ public class ItemLowStockEvent extends ObjectHistoryEvent {
 	public ItemLowStockEvent(MainObject object, InteractingEntity entity) {
 		super(object, entity);
 	}
-	
-	private ObjectId storageBlockId = null;
-	
-	private String identifier = null;
-	
-	private Integer index = null;
-	
+
+	@NonNull
+	private ObjectId transactionId;
+
+	private ObjectId storedId;
+
+	private ObjectId storageBlockId;
+
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_LOW_STOCK;
