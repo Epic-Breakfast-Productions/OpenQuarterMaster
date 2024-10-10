@@ -17,16 +17,20 @@ class UniqueStoredSerializationTest extends ObjectSerializationTest<UniqueStored
 	
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
-			Arguments.of(new UniqueStored().setId(new ObjectId())),
 			Arguments.of(
-				new UniqueStored()
-					.setCondition(50)
-					.setExpires(LocalDateTime.now())
-					.setConditionNotes(FAKER.lorem().paragraph())
-					.setImageIds(List.of(ObjectId.get()))
-					.setAttributes(Map.of("hello", "world"))
-					.setKeywords(List.of("hello", "world"))
-					.setId(new ObjectId())
+				UniqueStored.builder().id(new ObjectId()).item(new ObjectId()).build()
+			),
+			Arguments.of(
+				UniqueStored.builder()
+					.item(new ObjectId())
+					.condition(50)
+					.expires(LocalDateTime.now())
+					.conditionNotes(FAKER.lorem().paragraph())
+					.imageIds(List.of(ObjectId.get()))
+					.attributes(Map.of("hello", "world"))
+					.keywords(List.of("hello", "world"))
+					.id(new ObjectId())
+					.build()
 			)
 		);
 	}
