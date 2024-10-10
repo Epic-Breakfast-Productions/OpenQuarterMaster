@@ -117,7 +117,7 @@ public class TestUserService {
 		return TestRestUtils.newJwtCall(this.getUserToken(testUser));
 	}
 	
-	public User getTestUser(Set<String> roles) {
+	public User getTestUser(Set<String> roles, boolean create) {
 		User.Builder builder = User.builder();
 		
 		builder.username(FAKER.name().username());
@@ -133,35 +133,41 @@ public class TestUserService {
 		
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
 
-		//ensure user is added to db
-		String userJsonString = this.newJwtCall(testUser)
-			.basePath("")
-			.get("/api/v1/interacting-entity/self")
-			.then()
-			.statusCode(200)
-			.extract().body().asString();
-		try {
-			ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
-			testUser.setId(new ObjectId(userJson.get("id").asText()));
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
+		if(create) {
+			//ensure user is added to db
+			String userJsonString = this.newJwtCall(testUser)
+				.basePath("")
+				.get("/api/v1/interacting-entity/self")
+				.then()
+				.statusCode(200)
+				.extract().body().asString();
+			try {
+				ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
+				testUser.setId(new ObjectId(userJson.get("id").asText()));
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		return testUser;
 	}
 	
 	public User getTestUser(String ... roles) {
-		return this.getTestUser(Set.of(roles));
+		return this.getTestUser(Set.of(roles), true);
 	}
-	
-	public User getTestUser(boolean admin) {
+
+	public User getTestUser(boolean admin, boolean create) {
 		Set<String> roles = new HashSet<>(Roles.NON_ADMIN_ROLES);
-		
+
 		if(admin){
 			roles.addAll(Roles.ADMIN_ROLES);
 		}
-		
-		return this.getTestUser(roles);
+
+		return this.getTestUser(roles, create);
+	}
+
+	public User getTestUser(boolean admin) {
+		return this.getTestUser(admin, true);
 	}
 	
 	public User getTestUser(){
