@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
@@ -117,12 +118,13 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
 	 * <p>
-	 * If using a storage type that uses the unique type, this must be a unit compatible with the 'unit' unit.
+	 * If using a storage type that uses the amount type, this must be a unit compatible with the 'unit' unit.
 	 */
 	@NonNull
 	@NotNull
 	@ValidUnit
-	public Unit<?> unit;
+	@lombok.Builder.Default
+	public Unit<?> unit = OqmProvidedUnits.UNIT;
 
 	@Override
 	public int getSchemaVersion() {

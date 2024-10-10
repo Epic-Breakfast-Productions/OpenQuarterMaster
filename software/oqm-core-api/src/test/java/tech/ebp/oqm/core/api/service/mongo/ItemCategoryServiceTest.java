@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.ItemCategoryTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
@@ -109,9 +111,16 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 			expectedRefs.put(this.itemCategoryService.getClazz().getSimpleName(), new TreeSet<>(List.of(catId)));
 			
 			//Inventory item, basic
-			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, new InventoryItem().setName(FAKER.name().name()).setCategories(List.of(ObjectId.get())), testUser);
+			this.inventoryItemService.add(
+				DEFAULT_TEST_DB_NAME,
+				InventoryItem.builder()
+					.storageType(StorageType.BULK)
+					.name(FAKER.name().name())
+					.build(),
+				testUser
+			);
 
-			InventoryItem sai = new InventoryItem().setName(FAKER.name().name());
+			InventoryItem sai = InventoryItem.builder().name(FAKER.name().name()).storageType(StorageType.BULK).unit(OqmProvidedUnits.UNIT).build();
 			sai.setCategories(List.of(itemCategory.getId()));
 			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
