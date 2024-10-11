@@ -35,7 +35,6 @@ public interface OqmCoreApiClientService {
 	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//</editor-fold>
 
-
 	//<editor-fold desc="Interacting Entity">
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity")
@@ -49,6 +48,9 @@ public interface OqmCoreApiClientService {
 	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
 	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
 
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/self")
+	Uni<ObjectNode> interactingEntityGetSelf(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//</editor-fold>
 
 	//<editor-fold desc="Units">
