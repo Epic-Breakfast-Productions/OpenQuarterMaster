@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -193,15 +194,15 @@ public interface OqmCoreApiClientService {
 		ObjectNode item
 	);
 
-	@POST
-	@Path(INV_ITEM_ROOT_ENDPOINT)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ArrayNode> invItemImportData(
-		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@BeanParam ImportBundleFileBody body
-	);
+//	@POST
+//	@Path(INV_ITEM_ROOT_ENDPOINT)
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	Uni<ArrayNode> invItemImportData(
+//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+//		@BeanParam ImportBundleFileBody body
+//	);
 
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
 	@GET
@@ -221,32 +222,32 @@ public interface OqmCoreApiClientService {
 		@BeanParam InventoryItemSearch itemSearch
 	);
 
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
 	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> invItemGet(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("id") String id
+		@PathParam("itemId") String id
 	);
 
 	@PUT
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> invItemUpdate(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("id") String id,
+		@PathParam("itemId") String id,
 		ObjectNode updates
 	);
 
 	@DELETE
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}")
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> invItemDelete(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("id") String id
+		@PathParam("itemId") String id
 	);
 
 	@GET
@@ -269,96 +270,102 @@ public interface OqmCoreApiClientService {
 	);
 
 	@GET
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemGetStoredInventoryItem(
+	Uni<ObjectNode> invItemStoredSearch(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
+		@BeanParam StoredSearch storedSearch
+	);
+
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/inBlock/{storageBlockId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemStoredInBlockSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("itemId") String itemId,
+		@PathParam("storageBlockId") String storageBlockId,
+		@BeanParam StoredSearch storedSearch
+	);
+
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemStoredInBlockGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("itemId") String itemId,
+		@PathParam("storedId") String storedId,
 		@PathParam("storageBlockId") String storageBlockId
 	);
 
 	@PUT
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemAddStoredInventoryItem(
-		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode addObject
-	);
-
-	@PUT
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemAddStoredInventoryItemToStored(
+	Uni<ObjectNode> invItemStoredInBlockUpdate(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
 		@PathParam("storedId") String storedId,
 		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode addObject
+		ObjectNode updateObject
 	);
 
-	@DELETE
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}")
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemSubtractStoredInventoryItem(
-		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode subtractObject
-	);
-
-	@DELETE
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/{storedId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemSubtractStoredInventoryItem(
+	Uni<ObjectNode> invItemStoredInBlockGetHistory(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
 		@PathParam("storedId") String storedId,
 		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode subtractObject
+		HistorySearch search
 	);
 
-	@PUT
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockIdFrom}/{storageBlockIdTo}")
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemTransferStoredInventoryItem(
+	Uni<ObjectNode> invItemStoredInBlockGetHistory(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
-		@PathParam("storageBlockIdTo") String storageBlockIdTo,
-		JsonNode transferObject
+		@PathParam("storageBlockId") String storageBlockId,
+		HistorySearch search
 	);
 
 	@PUT
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transact")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemTransferStoredInventoryItem(
+	Uni<ObjectNode> invItemStoredTransact(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
-		@PathParam("storedIdFrom") String storedIdFrom,
-		@PathParam("storageBlockIdTo") String storageBlockIdTo,
-		@PathParam("storedIdTo") String storedIdTo,
-		JsonNode transferObject
+		ObjectNode transaction
 	);
 
-	@PUT
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/applyAddSubtractTransfer")
+	@GET
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemApplyAddSubtractTransfer(
+	Uni<ObjectNode> invItemStoredTransactionSearch(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
-		ObjectNode action
+		AppliedTransactionSearch search
 	);
+
+	@GET
+	@Path("/transaction/{transactionId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemStoredTransactionGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("itemId") String itemId,
+		@PathParam("transactionId") String transactionId
+	);
+
 	//</editor-fold>
 
 	//<editor-fold desc="Images">
