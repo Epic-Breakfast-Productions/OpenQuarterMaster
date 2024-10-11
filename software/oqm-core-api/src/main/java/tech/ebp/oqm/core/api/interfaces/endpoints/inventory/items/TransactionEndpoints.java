@@ -121,20 +121,11 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@GET
 	@Path("/transaction/{transactionId}")
 	@Operation(
-		summary = "Searches all of an item's stored item transactions."
+		summary = "Gets a particular applied transaction."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

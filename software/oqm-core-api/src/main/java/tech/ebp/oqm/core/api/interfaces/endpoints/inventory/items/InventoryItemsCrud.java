@@ -196,7 +196,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		return super.search(itemSearch);
 	}
 	
-	@Path("{id}")
+	@Path("{itemId}")
 	@GET
 	@Operation(
 		summary = "Gets a particular InventoryItem."
@@ -235,7 +235,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@PUT
-	@Path("{id}")
+	@Path("{itemId}")
 	@Operation(
 		summary = "Updates a particular inventory item.",
 		description = "Partial update to an item. Do not need to supply all fields, just the one(s) you wish to update."
@@ -275,7 +275,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@DELETE
-	@Path("{id}")
+	@Path("{itemId}")
 	@Operation(
 		summary = "Deletes a particular item."
 	)
@@ -313,9 +313,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	}
 	
 	@GET
-	@Path("{id}/history")
+	@Path("{itemId}/history")
 	@Operation(
-		summary = "Gets a particular object's history."
+		summary = "Gets a particular object's history. Does not include history of stored items."
 	)
 	@APIResponse(
 		responseCode = "200",

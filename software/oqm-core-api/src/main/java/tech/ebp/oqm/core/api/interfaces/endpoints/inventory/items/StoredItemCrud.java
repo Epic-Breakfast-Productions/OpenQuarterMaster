@@ -67,59 +67,6 @@ public class StoredItemCrud extends MainObjectProvider<Stored, StoredSearch> {
 			throw new NotFoundException("Storage block given not found in the given item");
 		}
 	}
-
-	//we do this in transact
-//	@POST
-//	@Operation(
-//		summary = "Adds a new stored to the item in the specified block."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Object added.",
-//		content = @Content(
-//			mediaType = "application/json",
-//			schema = @Schema(
-//				implementation = ObjectId.class
-//			)
-//		)
-//	)
-//	@APIResponse(
-//		responseCode = "400",
-//		description = "Bad request given. Data given could not pass validation.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@RolesAllowed(Roles.INVENTORY_EDIT)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public ObjectId create(
-//		@Valid Stored stored
-//	) {
-//		return super.create(stored);
-//	}
-	
-//	@Override
-//	@Path("stats")
-//	@GET
-//	@Operation(
-//		summary = "Gets stats on this object's collection."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Object retrieved.",
-//		content = @Content(
-//			mediaType = "application/json",
-//			schema = @Schema(
-//				implementation = InvItemCollectionStats.class
-//			)
-//		)
-//	)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@RolesAllowed(Roles.INVENTORY_VIEW)
-//	@WithSpan
-//	public CollectionStats getCollectionStats(
-//	) {
-//		return super.getCollectionStats();
-//	}
 	
 	@GET
 	@Operation(
