@@ -17,7 +17,7 @@ Requires=oqm-infra-keycloak.service
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-base_station"
 Environment="IMAGE_NAME=ebprod/oqm-core-base_station"
