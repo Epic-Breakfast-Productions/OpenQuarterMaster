@@ -58,6 +58,9 @@ externalService:
 quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
+  container-image:
+    name: oqm-core-api
+    group: ebprod
   log:
     level: DEBUG
     console:
@@ -102,7 +105,8 @@ quarkus:
     body:
       preallocate-body-buffer: true
     limits:
-      max-body-size: 500M
+      max-body-size: 750M
+      max-form-attribute-size: 750M
     auth:
       proactive: false
     access-log:

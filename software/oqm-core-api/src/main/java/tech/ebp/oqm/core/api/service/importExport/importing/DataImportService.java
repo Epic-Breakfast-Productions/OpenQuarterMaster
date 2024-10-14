@@ -110,12 +110,6 @@ public class DataImportService {
 	OqmDatabaseService oqmDatabaseService;
 
 	@Inject
-	InteractingEntityService interactingEntityService;
-
-	@Inject
-	CustomUnitService customUnitService;
-
-	@Inject
 	ImageService imageService;
 
 	@Inject

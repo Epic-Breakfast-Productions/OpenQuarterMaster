@@ -23,6 +23,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 //@SuperBuilder
 @BsonDiscriminator
 public class ItemCheckoutEvent extends ObjectHistoryEvent {
+	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ItemCheckoutEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -39,5 +40,10 @@ public class ItemCheckoutEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.ITEM_CHECKOUT;
+	}
+
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

@@ -10,10 +10,13 @@ Write an API and frontend to interact with. Reads in inventory data and responds
 
  - preferrably (optionally) in the stylings of "Gunny"
  - both backend and frontend service
+ - Locally hosted LLM
 
 https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html
 
 ## Point of Sale
+
+https://mike42.me/blog/2015-03-getting-a-usb-receipt-printer-working-on-linux
 
 ## Storage Interaction
 
@@ -59,3 +62,8 @@ Users create a custom workflow for items to come into and work through, and fini
 ## AI Powered Image Searches
 
  - Search database based on images, using AI to do the find
+
+## House Management
+
+ - scheduled todos
+ - simple project tracking

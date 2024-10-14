@@ -10,7 +10,7 @@
 #
 
 [Unit]
-Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "24.0".
+Description=Keycloak server for Open Quartermaster. Version ${version}, using Keycloak tagged to "26.0".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target
@@ -20,11 +20,11 @@ Requires=oqm-infra-postgres.service
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 # setup operating variables
 Environment="CONTAINER_NAME=oqm-infra-keycloak"
 Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
-Environment="IMAGE_VERSION=24.0"
+Environment="IMAGE_VERSION=26.0"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
@@ -38,6 +38,7 @@ ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oq
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/infra/keycloak/files/publicCert.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/keycloak"
+# TODO:: use file templating to achieve this
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
@@ -101,7 +102,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl -k \"https://$hostname:$servicePort/health\")\"; \
+                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://oqm-infra-keycloak:9000/health -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

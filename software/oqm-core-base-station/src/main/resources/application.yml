@@ -68,6 +68,9 @@ ui:
 quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
+  container-image:
+    name: oqm-core-base_station
+    group: ebprod
   rest-client:
     logging:
       scope: all
@@ -101,7 +104,8 @@ quarkus:
     body:
       preallocate-body-buffer: true
     limits:
-      max-body-size: 500M
+      max-body-size: 750M
+      max-form-attribute-size: 750M
     auth:
       proactive: false
       permission:
@@ -122,7 +126,6 @@ quarkus:
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   oqmCoreApi:
     devservice:
-      coreApiVersion: 2.1.0-DEV
       certPath: ../../../../dev/devTest-cert-cert.pem
       certKeyPath: ../../../../dev/devTest-cert-key.pem
       

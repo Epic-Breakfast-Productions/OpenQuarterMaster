@@ -1,6 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.model.module;
 
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.response.ModuleInfo;
+import tech.ebp.oqm.plugin.mssController.lib.command.response.ModuleInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

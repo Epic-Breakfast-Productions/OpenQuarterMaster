@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.6"
+    id "io.freefair.lombok" version "8.10.2"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.4.1-DEV'
+version '1.4.4'
 
 repositories {
     mavenCentral()
@@ -28,25 +28,25 @@ dependencies {
     implementation 'io.quarkus:quarkus-opentelemetry'
     implementation 'io.quarkus:quarkus-scheduler'
 
-    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.1.0-SNAPSHOT'
+    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.2.0-SNAPSHOT'
 
     implementation 'org.apache.commons:commons-io:1.3.2'
     implementation 'org.apache.commons:commons-text:1.12.0'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
-    implementation 'uk.org.okapibarcode:okapibarcode:0.4.6'
-    implementation 'com.itextpdf:html2pdf:5.0.4'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.1'
+    implementation 'uk.org.okapibarcode:okapibarcode:0.4.8'
+    implementation 'com.itextpdf:html2pdf:5.0.5'
 
     //webjars
     implementation 'org.webjars:jquery:3.7.1'
     implementation 'org.webjars:bootstrap:5.3.3'
 
     testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.3"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.11.2"
     testImplementation 'io.rest-assured:rest-assured'
-    testImplementation 'net.datafaker:datafaker:2.3.0'
+    testImplementation 'net.datafaker:datafaker:2.4.0'
 
-    testImplementation 'com.microsoft.playwright:playwright:1.45.0'
+    testImplementation 'com.microsoft.playwright:playwright:1.47.0'
     testImplementation 'com.deque.html.axe-core:playwright:4.9.1'
 }
 

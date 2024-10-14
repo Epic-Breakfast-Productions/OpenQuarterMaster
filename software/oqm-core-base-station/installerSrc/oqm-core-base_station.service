@@ -17,7 +17,7 @@ Requires=oqm-infra-keycloak.service
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-base_station"
 Environment="IMAGE_NAME=ebprod/oqm-core-base_station"
@@ -53,6 +53,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -p $(oqm-config -g core.baseStation.httpPort):80 \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
+                                        --env-file /tmp/oqm/serviceConfig/core/base+station/user-config.list \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up

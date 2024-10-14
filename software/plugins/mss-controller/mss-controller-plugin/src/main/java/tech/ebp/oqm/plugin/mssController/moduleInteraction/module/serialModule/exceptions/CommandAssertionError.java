@@ -1,6 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.moduleInteraction.module.serialModule.exceptions;
 
-import tech.ebp.oqm.plugin.mssController.devTools.runtime.model.command.MssCommand;
+import tech.ebp.oqm.plugin.mssController.lib.command.MssCommand;
 import lombok.Getter;
 
 public class CommandAssertionError extends IllegalStateException {
