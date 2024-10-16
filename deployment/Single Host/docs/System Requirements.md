@@ -2,15 +2,16 @@
 
 This is a set of requirements for the entire system, not necessarily just the station captain.
 
-This system is regularly tested on Ubuntu 22.04.
+This system is regularly tested on Ubuntu 24.04.
 
 ## Software Requirements
 
 - A Modern Linux OS
-    - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems. (Tested on Ubuntu 22.04, Raspbian)
+    - At the moment we only support Debian-based systems (`apt`), we plan on eventually also supporting Fedora/RHEL (`dnf`) systems.
     - Tested and verified:
       - Ubuntu 22.04
       - Lubuntu 22.04
+      - Ubuntu 24.04
       - Raspbian (current version as of Dec 2023)
 
 ## Hardware Requirements:
@@ -23,7 +24,7 @@ This system is regularly tested on Ubuntu 22.04.
             - Must include [AVX](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions). Known supported:
                 - Any AMD
                 - Any modern Intel i3, i5, i7, i9
-                - Intel N95, N100
+                - Intel N95, N100, N300
         - 64-bit ARM v8
 
 Note:: it is possible certain plugins, or a large number of plugins, will require more resources or have different hardware requirements.
