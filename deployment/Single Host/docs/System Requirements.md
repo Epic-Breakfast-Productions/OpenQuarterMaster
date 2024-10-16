@@ -32,6 +32,7 @@ Note:: it is possible certain plugins, or a large number of plugins, will requir
 ### Proven SBC's and other 'specialty' hardware:
 
 - ARM:
-    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/), 8Gb memory recommended. 4Gb would probably be fine for testing and minimal purposes only, but any less is probably not going to be enough for a good experience.
+    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/
+        - 8Gb memory recommended. 4Gb would probably be fine for testing and minimal purposes only, but any less is probably not going to be enough for a good experience.
 
 
