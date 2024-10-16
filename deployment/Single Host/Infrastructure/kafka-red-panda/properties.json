@@ -1,6 +1,6 @@
 {
 	"packageName":"oqm-infra-kafka+red+panda",
-	"version":"1.0.0",
+	"version":"1.0.1",
 	"description":"Kafka instance for Open QuarterMaster using Red Panda.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/kafka-red-panda",
 	"configs": [],
