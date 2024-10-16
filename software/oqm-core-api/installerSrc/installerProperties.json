@@ -6,7 +6,7 @@
 	"description": "Core API instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-core-api",
 	"dependencies": {
-		"deb": "curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-mongodb (>= 1.1.0), oqm-core-depot (>= 1.0.0)"
+		"deb": "curl, jq, docker.io, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-mongodb (>= 1.1.0), oqm-core-depot (>= 1.0.0)"
 	},
 	"copyright": {
 		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
