@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Slf4j
 public class ObjectHistoryEventTest extends BasicTest {
 	
-	public class TestObjectHistoryEvent extends DescriptiveEvent {
+	public class TestObjectHistoryEvent extends ObjectHistoryEvent {
 		
 		@Override
 		public EventType getType() {

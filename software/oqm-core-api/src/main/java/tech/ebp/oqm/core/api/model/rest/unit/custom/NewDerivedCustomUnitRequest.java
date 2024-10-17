@@ -53,12 +53,8 @@ public class NewDerivedCustomUnitRequest extends NewCustomUnitRequest {
 			default:
 				throw new IllegalArgumentException("Bad or unsupported derive type. This should not happen.");
 		}
-		
-		try {
-			newUnit = UnitTools.getUnitWithNameSymbol(newUnit, this.getName(), this.getSymbol());
-		} catch(NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+
+		newUnit = UnitTools.getUnitWithNameSymbol(newUnit, this.getName(), this.getSymbol());
 		
 		return newUnit;
 	}
