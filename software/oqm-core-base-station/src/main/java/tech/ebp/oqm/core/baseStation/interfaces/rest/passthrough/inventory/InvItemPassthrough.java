@@ -1,29 +1,23 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.inventory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.PassthroughProvider;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.AppliedTransactionSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
-
-import java.io.IOException;
 
 @Slf4j
 @Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/inventory/item")
@@ -56,32 +50,32 @@ public class InvItemPassthrough extends PassthroughProvider {
 		return this.getOqmCoreApiClient().invItemCreate(this.getBearerHeaderStr(), this.getSelectedDb(), item);
 	}
 	
-	@POST
-	@Operation(
-		summary = "Imports items from a file uploaded by a user."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ArrayNode> importData(
-		@BeanParam ImportBundleFileBody body
-	) throws IOException {
-		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), this.getSelectedDb(), body);
-	}
+//	@POST
+//	@Operation(
+//		summary = "Imports items from a file uploaded by a user."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Object added.",
+//		content = @Content(
+//			mediaType = MediaType.APPLICATION_JSON,
+//			schema = @Schema(
+//				type = SchemaType.ARRAY
+//			)
+//		)
+//	)
+//	@APIResponse(
+//		responseCode = "400",
+//		description = "Bad request given. Data given could not pass validation.",
+//		content = @Content(mediaType = "text/plain")
+//	)
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Uni<ArrayNode> importData(
+//		@BeanParam ImportBundleFileBody body
+//	) throws IOException {
+//		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), this.getSelectedDb(), body);
+//	}
 	
 	@Path("stats")
 	@GET
@@ -316,201 +310,70 @@ public class InvItemPassthrough extends PassthroughProvider {
 //		//TODO
 //		return Response.serverError().entity("Not implemented yet.").build();
 //	}
-	
+
 	@PUT
-	@Path("{itemId}/stored/{storageBlockId}")
+	@Path("{itemId}/stored/transact")
 	@Operation(
-		summary = "Adds a stored amount or tracked item to the storage block specified."
+		summary = "Applies a transaction to a stored item."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added to.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
+		description = "The id of the applied transaction record.",
+		content = {
+			@Content(
+				mediaType = "application/json"
+			)
+		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> addStoredInventoryItem(
+	public Uni<ObjectNode> transact(
 		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode addObject
+		ObjectNode transaction
+	) throws Exception {
+		return this.getOqmCoreApiClient().invItemStoredTransact(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transaction);
+	}
+
+	@GET
+	@Path("{itemId}/stored/transaction")
+	@Operation(
+		summary = "Searches all of an item's stored item transactions."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json"
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<ObjectNode> searchTransactions(
+		@PathParam("itemId") String itemId,
+		AppliedTransactionSearch appliedTransactionSearch
 	) {
-		return this.getOqmCoreApiClient().invItemAddStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockId, addObject);
+		return this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch);
 	}
-	
-	@PUT
-	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
+
+	@GET
+	@Path("{itemId}/stored/transaction/{transactionId}")
 	@Operation(
-		summary = "Adds a stored amount or tracked item to the storage block specified."
+		summary = "Gets a particular applied transaction."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added to.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> addStoredInventoryItemToStored(
+	public Uni<ObjectNode> getAppliedTransaction(
 		@PathParam("itemId") String itemId,
-		@PathParam("storedId") String storedId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode addObject
-	) throws JsonProcessingException {
-		return this.getOqmCoreApiClient().invItemAddStoredInventoryItemToStored(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storedId, storageBlockId, addObject);
-	}
-	
-	@DELETE
-	@Path("{itemId}/stored/{storageBlockId}")
-	@Operation(
-		summary = "Subtracts a stored amount or tracked item from the storage block specified."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item subtracted from.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> subtractStoredInventoryItem(
-		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode subtractObject
+		@PathParam("transactionId") String transactionId
 	) {
-		return this.getOqmCoreApiClient().invItemSubtractStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockId, subtractObject);
+		return this.getOqmCoreApiClient().invItemStoredTransactionGet(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transactionId);
 	}
-	
-	@DELETE
-	@Path("{itemId}/stored/{storageBlockId}/{storedId}")
-	@Operation(
-		summary = "Subtracts a stored amount or tracked item from the storage block specified."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item subtracted from.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> subtractStoredInventoryItem(
-		@PathParam("itemId") String itemId,
-		@PathParam("storedId") String storedId,
-		@PathParam("storageBlockId") String storageBlockId,
-		JsonNode subtractObject
-	) {
-		return this.getOqmCoreApiClient().invItemSubtractStoredInventoryItem(this.getBearerHeaderStr(), itemId, storedId, storageBlockId, subtractObject);
-	}
-	
-	@PUT
-	@Path("{itemId}/stored/{storageBlockIdFrom}/{storageBlockIdTo}")
-	@Operation(
-		summary = "Transfers a stored amount or tracked item to the storage block specified."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> transferStoredInventoryItem(
-		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
-		@PathParam("storageBlockIdTo") String storageBlockIdTo,
-		JsonNode transferObject
-	) {
-		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockIdFrom, storageBlockIdTo, transferObject);
-	}
-	
-	@PUT
-	@Path("{itemId}/stored/{storageBlockIdFrom}/{storedIdFrom}/{storageBlockIdTo}/{storedIdTo}")
-	@Operation(
-		summary = "Transfers a stored amount or tracked item to the storage block specified."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> transferStoredInventoryItem(
-		@PathParam("itemId") String itemId,
-		@PathParam("storageBlockIdFrom") String storageBlockIdFrom,
-		@PathParam("storedIdFrom") String storedIdFrom,
-		@PathParam("storageBlockIdTo") String storageBlockIdTo,
-		@PathParam("storedIdTo") String storedIdTo,
-		JsonNode transferObject
-	) {
-		return this.getOqmCoreApiClient().invItemTransferStoredInventoryItem(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, storageBlockIdFrom, storedIdFrom, storageBlockIdTo, storedIdTo,
-			transferObject);
-	}
-	
-	/**
-	 * TODO:: add endpoint to support list of actions
-	 *
-	 * @param itemId
-	 * @param action
-	 *
-	 * @return
-	 * @throws JsonProcessingException
-	 */
-	@PUT
-	@Path("{itemId}/stored/applyAddSubtractTransfer")
-	@Operation(
-		summary = "Transfers a stored amount or tracked item to the storage block specified."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No item found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> applyAddSubtractTransfer(
-		@PathParam("itemId") String itemId,
-		ObjectNode action
-	) {
-		return this.getOqmCoreApiClient().invItemApplyAddSubtractTransfer(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, action);
-	}
+
 }
