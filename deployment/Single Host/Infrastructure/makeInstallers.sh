@@ -92,7 +92,7 @@ Developer: EBP
 Architecture: all
 Description: $(cat "$packageConfigFile" | jq -r '.description')
 Homepage: $(cat "$packageConfigFile" | jq -r '.homepage')
-Depends: docker, docker.io, oqm-manager-station+captain (>= 2.2.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)$(cat "$packageConfigFile" | jq -r '.dependencies.deb')
 EOT
 	# TODO:: add conflicts
 

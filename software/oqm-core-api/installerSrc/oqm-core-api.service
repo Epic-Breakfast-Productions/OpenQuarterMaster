@@ -19,7 +19,7 @@ Requires=oqm-infra-keycloak.service
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-api"
 Environment="IMAGE_NAME=ebprod/oqm-core-api"
