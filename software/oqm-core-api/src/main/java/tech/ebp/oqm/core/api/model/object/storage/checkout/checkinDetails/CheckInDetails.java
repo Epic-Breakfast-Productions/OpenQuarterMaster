@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordContaining;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,10 +25,12 @@ import java.util.Map;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "checkinType"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ReturnCheckin.class, name = "RETURN"),
-	@JsonSubTypes.Type(value = LossCheckin.class, name = "LOSS"),
+	@JsonSubTypes.Type(value = ReturnFullCheckinDetails.class, name = "RETURN_FULL"),
+	@JsonSubTypes.Type(value = ReturnPartCheckinDetails.class, name = "RETURN_PART"),
+	@JsonSubTypes.Type(value = LossCheckinDetails.class, name = "LOSS"),
 })
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public abstract class CheckInDetails implements AttKeywordContaining {
 	
 	public abstract CheckInType getCheckinType();
@@ -39,6 +40,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String notes = "";
 	
 	/**
@@ -46,6 +48,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private ZonedDateTime checkinDateTime = ZonedDateTime.now();
 	
 	/**
@@ -53,6 +56,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<@NonNull ObjectId> imageIds = new ArrayList<>();
 	
 	/**
@@ -60,6 +64,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -67,5 +72,6 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private List<@NotBlank String> keywords = new ArrayList<>();
 }

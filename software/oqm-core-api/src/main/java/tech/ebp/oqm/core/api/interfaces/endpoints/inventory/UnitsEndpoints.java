@@ -89,7 +89,7 @@ public class UnitsEndpoints extends EndpointProvider {
     @GET
     @Path("deriveTypes")
     @Operation(
-            summary = "Gets the list of supported units."
+            summary = "Gets the ways that can be used to derive a custom unit from another one.."
     )
     @APIResponse(
             responseCode = "200",
@@ -105,7 +105,6 @@ public class UnitsEndpoints extends EndpointProvider {
     @PermitAll
     @Produces(MediaType.APPLICATION_JSON)
     public NewDerivedCustomUnitRequest.DeriveType[] getUnitDeriveTypes() {
-        log.info("Getting valid unit list.");
         return NewDerivedCustomUnitRequest.DeriveType.values();
     }
 
