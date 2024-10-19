@@ -223,6 +223,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 			this.getOqmDbIdOrName(),
 			this.getFileService().getFileObjectService().update(
 				this.getOqmDbIdOrName(),
+				null,
 				id,
 				updates,
 				this.getInteractingEntity()

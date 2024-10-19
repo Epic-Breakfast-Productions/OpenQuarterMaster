@@ -121,11 +121,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	@WithSpan
-	public Response search(
+	public SearchResult<T> search(
 		//		@BeanParam
 		S searchObject
 	) {
-		return this.getSearchResponseBuilder(searchObject).build();
+		return this.getObjectService().search(this.getOqmDbIdOrName(), searchObject);
 	}
 	
 	//	@Path("{id}")
@@ -238,7 +238,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
-		T updated = this.getObjectService().update(this.getOqmDbIdOrName(), id, updates, this.getInteractingEntity());
+		T updated = this.getObjectService().update(this.getOqmDbIdOrName(), null, id, updates, this.getInteractingEntity());
 		
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
 		return updated;

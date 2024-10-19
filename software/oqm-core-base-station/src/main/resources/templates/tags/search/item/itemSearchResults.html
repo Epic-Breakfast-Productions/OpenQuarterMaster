@@ -22,7 +22,7 @@
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Name</th>
-    <th scope="col">Stored Type</th>
+    <th scope="col">Storage Type</th>
     <th scope="col">Total</th>
     <th scope="col"># Blocks used</th>
     <th scope="col" width="150px">Actions</th>
@@ -56,8 +56,12 @@
     </td>
     <td>{name}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
-    <td>{#amountDisplay amount=result.get("total")}{/amountDisplay}</td>
-    <td>{result.get("storageMap").size()}</td>
+    <td>
+      {!{#amountDisplay amount=result.get("total")}{/amountDisplay}!}
+    </td>
+    <td>
+      {result.get("storageBlocks").size()}
+    </td>
     {#if actionType == 'full'}
     <td>
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
