@@ -90,9 +90,8 @@ const ItemView = {
 			let funcForAmount = function () {
 				headerContent += stored.amount.value + stored.amount.unit.symbol;
 			};
-			StoredTypeUtils.foreachStoredType(
+			StoredTypeUtils.runForType(
 				trackedType,
-				funcForAmount,
 				funcForAmount,
 				function () {
 
@@ -232,9 +231,9 @@ const ItemView = {
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
 				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
-				ItemView.itemViewStorageType.text(StoredTypeUtils.storedTypeToDisplay(itemData.storageType));
-				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
-				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
+				ItemView.itemViewStorageType.text(StorageTypeUtils.typeToDisplay(itemData.storageType));
+				// ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);//TODO
+				ItemView.itemViewTotalVal.text(itemData.valueOfStored);//TODO
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
 
 				if (itemData.description) {
@@ -243,7 +242,7 @@ const ItemView = {
 				}
 
 				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode")
+					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode");
 					ItemView.itemViewBarcodeContainer.show();
 				}
 
@@ -256,7 +255,7 @@ const ItemView = {
 
 				console.log("Setting up view of stored.");
 
-				let numStorageBlocks = Object.keys(itemData.storageMap).length;
+				let numStorageBlocks = Object.keys(itemData.storageBlocks).length;
 
 				if (numStorageBlocks === 0) {
 					console.log("None stored.");
@@ -267,43 +266,6 @@ const ItemView = {
 					ItemView.itemViewStored.show();
 				}
 
-				let showAmountStoredPricePerUnit = function () {
-					ItemView.itemViewValPerUnit.text(itemData.valuePerUnit);
-				}
-				StoredTypeUtils.foreachStoredType(
-					itemData.storageType,
-					showAmountStoredPricePerUnit,
-					showAmountStoredPricePerUnit,
-					function () {
-						ItemView.itemViewValPerUnit.text(itemData.defaultValue);
-						ItemView.itemViewValPerUnitDefault.show();
-
-						ItemView.itemViewIdentifyingAtt.text(itemData.trackedItemIdentifierName);
-						ItemView.itemViewIdentifyingAttContainer.show();
-					}
-				);
-
-				Object.keys(itemData.storageMap).forEach(storageId => {
-					promises.push(new Promise(async function () {
-						console.log("Processing stored wrapper under storage block " + storageId);
-						let curBlockName = storageId;
-						await Rest.call({
-							spinnerContainer: null,
-							async: false,
-							url: Rest.passRoot + "/inventory/storage-block/" + storageId,
-							failMessagesDiv: ItemView.itemViewMessages,
-							done: function (data) {
-								curBlockName = data.label;
-							}
-						});
-
-						ItemView.addViewStorageBlocksAccordionItem(
-							storageId,
-							ItemView.getStoredAccordView(itemData.storageType, itemId, storageId, itemData.storageMap[storageId].stored),
-							curBlockName
-						);
-					}));
-				});
 				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
 				ItemView.checkoutSearchFormItemIdInput.val(itemId);
 				ItemView.checkoutSearchForm.submit();

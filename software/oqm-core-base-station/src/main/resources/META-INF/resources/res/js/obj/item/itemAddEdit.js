@@ -138,21 +138,6 @@ const ItemAddEdit = {
                 ItemAddEdit.addEditStoredTypeInputChanged();
                 Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 
-                let setAmountStoredVars = function () {
-                    Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
-                    ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
-                    ItemAddEdit.addEditItemPricePerUnitInput.val(data.valuePerUnit);
-                    UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
-                };
-
-                await ItemAddEdit.foreachStoredTypeFromAddEditInput(
-                    setAmountStoredVars,
-                    setAmountStoredVars,
-                    function () {
-                        ItemAddEdit.addEditItemIdentifyingAttInput.val(data.trackedItemIdentifierName);
-                    }
-                );
-
                 if (data.lowStockThreshold) {
                     console.log("Item had low stock threshold.");
                     ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
@@ -182,49 +167,10 @@ const ItemAddEdit = {
                     ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
                 }
 
-
-                Object.keys(data.storageMap).forEach(curStorageBlockId => {
-                    let newStorageBody = ItemAddEdit.createStorageBlockAccord("", curStorageBlockId);
-
-                    let storageBlockEntriesContainer = newStorageBody.find(".storageBlockEntriesContainer");
-
-                    ItemAddEdit.foreachStoredTypeFromAddEditInput(
-                        function () {
-                            ItemAddEdit.setStoredItemVales(newStorageBody, data.storageMap[curStorageBlockId].stored);
-                        },
-                        function () {
-                            data.storageMap[curStorageBlockId].stored.forEach(function (curStorageBlock) {
-                                let curId = 'addEditItemStorageAssoc-' + curStorageBlockId + '-formContent';
-                                let newAmtStored = ItemAddEdit.createNewAmountStored(curId, curId, false);
-
-                                ItemAddEdit.setStoredItemVales(
-                                    newAmtStored,
-                                    curStorageBlock
-                                );
-                                storageBlockEntriesContainer.append(newAmtStored);
-                            });
-                        },
-                        function () {
-                            let addItemField = newStorageBody.find(".identifierValueInput")[0];
-                            let addItemButton = newStorageBody.find(".addTrackedItemButton");
-                            Object.keys(data.storageMap[curStorageBlockId].stored).forEach(curItemIdentifier => {
-                                addItemField.value = curItemIdentifier;
-                                let curId = 'addEditItemStorageAssoc-' + curStorageBlockId + '-formContent';
-                                let trackedStored = ItemAddEdit.createNewTrackedStored(curId, addItemButton, false);
-
-                                ItemAddEdit.setStoredItemVales(
-                                    trackedStored,
-                                    data.storageMap[curStorageBlockId].stored[curItemIdentifier]
-                                );
-                                storageBlockEntriesContainer.append(trackedStored);
-                            });
-                            addItemField.value = "";
-                        }
-                    );
-                    ItemAddEdit.addStorageBlockAccord(newStorageBody);
-
-                    getStorageBlockLabel(curStorageBlockId, function (blockName) {
-                        newStorageBody.find(".storageBlockName").text(blockName);
+                data.storageBlocks.forEach(curStorageBlockId => {
+                    getStorageBlockLabel(curStorageBlockId, function (label) {
+                        //TODO:: determine if we are allowed to remove (if has stored items in it or not)
+                        ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
                     });
                 });
             }
@@ -262,8 +208,6 @@ const ItemAddEdit = {
                 return;
             }
 
-            //TODO:: check for existent
-
             let newBlock = $('<div class="col-3">' +
                 '  <input type="hidden" name="storageBlocks[]" />' +
                 '  <div class="card">' +
@@ -289,11 +233,10 @@ const ItemAddEdit = {
             }
         },
         selectedStorageList: function () {
-            let output = [];
-
-            //TODO:: add to output
-
-            return output;
+            return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
+                .map(function () {
+                    return $(this).val();
+                }).get();
         }
     }
 };
@@ -327,8 +270,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
             ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
         ) : null),
         categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
-        storageBlocks: ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
-            .map(function(){return $(this).val();}).get(),
+        storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
         attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
     };
 
