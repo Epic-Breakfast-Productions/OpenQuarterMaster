@@ -2,13 +2,17 @@ package tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.inventory;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -25,6 +29,11 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Invent
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class InvItemPassthrough extends PassthroughProvider {
+
+	@Getter
+	@Inject
+	@Location("tags/search/item/itemSearchResults")
+	Template searchResultTemplate;
 	
 	@POST
 	@Operation(
@@ -114,11 +123,23 @@ public class InvItemPassthrough extends PassthroughProvider {
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> search(
+	public Uni<Response> search(
 		//for actual queries
-		@BeanParam InventoryItemSearch itemSearch
+		@BeanParam InventoryItemSearch itemSearch,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
-		return this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch);
+		return this.processSearchResults(
+			this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch),
+			this.searchResultTemplate,
+			acceptType,
+			searchFormId,
+			otherModalId,
+			inputIdPrepend,
+			"select"
+		);
 	}
 	
 	@Path("{id}")

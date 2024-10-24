@@ -37,6 +37,13 @@ const ItemView = {
 	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 	itemViewFiles: $("#itemViewFilesContainer"),
 
+	allStoredSearchForm: $("#itemViewAllStoredSearchForm"),
+	allStoredSearchFormItemInputDeleteButton: $("#itemViewAllStoredSearchForm-itemInputClearButton"),
+	allStoredSearchFormItemInputSearchButton: $("#itemViewAllStoredSearchForm-itemInputSearchButton"),
+	allStoredSearchFormItemInputId: $("#itemViewAllStoredSearchForm-itemInputId"),
+	allStoredSearchFormItemInputName: $("#itemViewAllStoredSearchForm-itemInputName"),
+
+
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
 		ItemView.itemViewStoredNum.text("");
@@ -74,6 +81,12 @@ const ItemView = {
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
+
+		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
+		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO
+		this.allStoredSearchFormItemInputName.val("");
+		this.allStoredSearchFormItemInputId.val("");
+
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.off('click');
@@ -264,6 +277,10 @@ const ItemView = {
 					console.log(numStorageBlocks + " stored.");
 					ItemView.itemViewStoredNum.text(numStorageBlocks);
 					ItemView.itemViewStored.show();
+
+					ItemView.allStoredSearchFormItemInputName.val(itemData.name);
+					ItemView.allStoredSearchFormItemInputId.val(itemId);
+					ItemView.allStoredSearchForm.submit();
 				}
 
 				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
