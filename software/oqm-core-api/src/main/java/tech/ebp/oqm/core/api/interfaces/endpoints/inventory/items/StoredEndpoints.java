@@ -48,13 +48,19 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@PathParam("itemId")
 	String itemId;
 
-	@Getter
-	private InventoryItem inventoryItem;
+	private InventoryItem inventoryItem = null;
 
-	@PostConstruct
-	public void setup(){
-		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+	public InventoryItem getInventoryItem() {
+		if(inventoryItem == null) {
+			this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+		}
+		return inventoryItem;
 	}
+
+//	@PostConstruct
+//	public void setup(){
+//		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+//	}
 
 	@GET
 	@Operation(

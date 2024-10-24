@@ -23,7 +23,9 @@ import static com.mongodb.client.model.Filters.*;
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
 	@PathParam("itemId") ObjectId inventoryItemId;
+
 	@PathParam("blockId") ObjectId storageBlockId;
+
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
