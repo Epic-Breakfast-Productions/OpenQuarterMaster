@@ -229,7 +229,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
-		@PathParam("id") String id
+		@PathParam("itemId") String id
 	) {
 		return super.get(id);
 	}
@@ -268,7 +268,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
-		@PathParam("id") String id,
+		@PathParam("itemId") String id,
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -307,7 +307,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
-		@PathParam("id") String id
+		@PathParam("itemId") String id
 	) {
 		return super.delete(id);
 	}
@@ -340,7 +340,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("itemId") String id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
