@@ -56,10 +56,10 @@ public class DatabaseExportService {
 	private static final DateFormat fileRevisionTimestampFormat = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss-SSS");
 
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
-			String oqmDbIdOrName,
-			File tempDir,
-			MongoObjectService<T, S, ?> service,
-			boolean includeHistory
+		String oqmDbIdOrName,
+		File tempDir,
+		MongoObjectService<T, S, ?> service,
+		boolean includeHistory
 	) {
 		String dataTypeName = service.getCollectionName();
 		log.info("Writing {} data to archive folder.", dataTypeName);
@@ -120,10 +120,10 @@ public class DatabaseExportService {
 	}
 
 	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
-			String oqmDbIdOrName,
-			File tempDir,
-			MongoFileService<T, S, ?, G> fileService,
-			boolean includeHistory
+		String oqmDbIdOrName,
+		File tempDir,
+		MongoFileService<T, S, ?, G> fileService,
+		boolean includeHistory
 	) {
 		String dataTypeName = fileService.getCollectionName();
 		log.info("Writing {} data to archive folder.", dataTypeName);
@@ -143,44 +143,44 @@ public class DatabaseExportService {
 			}
 
 			CompletableFuture<Void> future = CompletableFuture.allOf(
-					CompletableFuture.supplyAsync(() -> {
-						recordRecords(
-								oqmDbIdOrName,
-								mainDir,
-								fileService.getFileObjectService(),
-								includeHistory
-						);
-						return null;
-					}),
-					CompletableFuture.supplyAsync(() -> {
-						Iterator<GridFSFile> it = fileService.fileIterator(oqmDbIdOrName);
+				CompletableFuture.supplyAsync(() -> {
+					recordRecords(
+						oqmDbIdOrName,
+						mainDir,
+						fileService.getFileObjectService(),
+						includeHistory
+					);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(() -> {
+					Iterator<GridFSFile> it = fileService.fileIterator(oqmDbIdOrName);
 
-						while (it.hasNext()) {
-							GridFSFile curGridFile = it.next();
-							FileMetadata metadata = FileMetadata.fromDocument(curGridFile.getMetadata(), fileService.getFileMetadataCodec());
-							String curFileName = curGridFile.getFilename();
-							String curRevisionName = fileRevisionTimestampFormat.format(curGridFile.getUploadDate());
-							File curFileDir = new File(fileDataDir, curFileName);
-							File curFileRevisionDir = new File(curFileDir, curRevisionName);
-							File curRevisionFile = new File(curFileRevisionDir, "file." + metadata.getFileExtension());
-							File curRevisionMetadata = new File(curFileRevisionDir, "metadata.json");
+					while (it.hasNext()) {
+						GridFSFile curGridFile = it.next();
+						FileMetadata metadata = FileMetadata.fromDocument(curGridFile.getMetadata(), fileService.getFileMetadataCodec());
+						String curFileName = curGridFile.getFilename();
+						String curRevisionName = fileRevisionTimestampFormat.format(curGridFile.getUploadDate());
+						File curFileDir = new File(fileDataDir, curFileName);
+						File curFileRevisionDir = new File(curFileDir, curRevisionName);
+						File curRevisionFile = new File(curFileRevisionDir, "file." + metadata.getFileExtension());
+						File curRevisionMetadata = new File(curFileRevisionDir, "metadata.json");
 
-							curFileDir.mkdir();
-							curFileRevisionDir.mkdir();
+						curFileDir.mkdir();
+						curFileRevisionDir.mkdir();
 
-							try (
-									FileOutputStream os = new FileOutputStream(curRevisionFile);
-							) {
-								ObjectUtils.OBJECT_MAPPER.writeValue(curRevisionMetadata, metadata);
-								fileService.getFileContents(oqmDbIdOrName, curGridFile.getObjectId(), os);
-							} catch (IOException e) {
-								log.error("FAILED to write files: ", e);
-								throw new RuntimeException(e);
-							}
+						try (
+							FileOutputStream os = new FileOutputStream(curRevisionFile);
+						) {
+							ObjectUtils.OBJECT_MAPPER.writeValue(curRevisionMetadata, metadata);
+							fileService.getFileContents(oqmDbIdOrName, curGridFile.getObjectId(), os);
+						} catch (IOException e) {
+							log.error("FAILED to write files: ", e);
+							throw new RuntimeException(e);
 						}
+					}
 
-						return null;
-					})
+					return null;
+				})
 			);
 			try {
 				future.get();
@@ -196,8 +196,8 @@ public class DatabaseExportService {
 	}
 
 	private static <T extends MainObject, S extends SearchObject<T>> void recordRecords(
-			File tempDir,
-			TopLevelMongoService<T, S, ?> service
+		File tempDir,
+		TopLevelMongoService<T, S, ?> service
 	) {
 		String dataTypeName = service.getCollectionName();
 		log.info("Writing {} data to archive folder.", dataTypeName);
@@ -261,6 +261,12 @@ public class DatabaseExportService {
 	InventoryItemService inventoryItemService;
 
 	@Inject
+	StoredService storedService;
+
+	@Inject
+	AppliedTransactionService appliedTransactionService;
+
+	@Inject
 	ItemListService itemListService;
 
 	@Inject
@@ -289,14 +295,14 @@ public class DatabaseExportService {
 			StopWatch dataToFileSw = StopWatch.createStarted();
 			log.info("Writing out top level data.");
 			CompletableFuture<Void> topLevelFutures = CompletableFuture.allOf(
-					CompletableFuture.supplyAsync(() -> {
-						recordRecords(topLevelDataDir, this.customUnitService);
-						return null;
-					}),
-					CompletableFuture.supplyAsync(() -> {
-						recordRecords(topLevelDataDir, this.interactingEntityService);
-						return null;
-					})
+				CompletableFuture.supplyAsync(() -> {
+					recordRecords(topLevelDataDir, this.customUnitService);
+					return null;
+				}),
+				CompletableFuture.supplyAsync(() -> {
+					recordRecords(topLevelDataDir, this.interactingEntityService);
+					return null;
+				})
 			);
 
 			log.info("Writing out selected databases");
@@ -317,49 +323,57 @@ public class DatabaseExportService {
 					ObjectUtils.OBJECT_MAPPER.writeValue(new File(thisDbDir, DB_INFO_FILE_NAME), db);
 
 					databaseFutures.put(db, CompletableFuture.supplyAsync(() -> {
-								String dbId = db.getId().toHexString();
-								StopWatch sw = StopWatch.createStarted();
+							String dbId = db.getId().toHexString();
+							StopWatch sw = StopWatch.createStarted();
 
-								CompletableFuture<Void> future = CompletableFuture.allOf(
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.fileAttachmentService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.imageService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.itemCategoryService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.storageBlockService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.inventoryItemService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.itemListService, options.getIncludeHistory());
-											return null;
-										}),
-										CompletableFuture.supplyAsync(() -> {
-											recordRecords(dbId, thisDbDir, this.itemCheckoutService, options.getIncludeHistory());
-											return null;
-										})
-								);
-								try {
-									future.get();
-								} catch (Throwable e) {
-									throw new DataExportException("Failed to export service(s) data.", e);
-								}
+							CompletableFuture<Void> future = CompletableFuture.allOf(
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.fileAttachmentService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.imageService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.itemCategoryService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.storageBlockService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.inventoryItemService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.storedService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.appliedTransactionService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.itemListService, options.getIncludeHistory());
+									return null;
+								}),
+								CompletableFuture.supplyAsync(() -> {
+									recordRecords(dbId, thisDbDir, this.itemCheckoutService, options.getIncludeHistory());
+									return null;
+								})
+							);
+							try {
+								future.get();
+							} catch (Throwable e) {
+								throw new DataExportException("Failed to export service(s) data.", e);
+							}
 
-								sw.stop();
-								log.info("Took {} to generate files.", sw);
-								return (Void) null;
-							})
+							sw.stop();
+							log.info("Took {} to generate files.", sw);
+							return (Void) null;
+						})
 					);
 				}
 			}
@@ -369,15 +383,15 @@ public class DatabaseExportService {
 			} catch (Throwable e) {
 				throw new DataExportException("Failed to export top level service(s) data.", e);
 			}
-			try{
+			try {
 				databaseFutures.forEach((OqmMongoDatabase db, CompletableFuture<Void> future) -> {
 					try {
 						future.get();
 					} catch (Throwable e) {
-						throw new DataExportException("Failed to export database \""+db.getName()+"\" service(s) data.", e);
+						throw new DataExportException("Failed to export database \"" + db.getName() + "\" service(s) data.", e);
 					}
 				});
-			}catch (Throwable e){
+			} catch (Throwable e) {
 				throw new DataExportException("Failed to export top level service(s) data.", e);
 			}
 			dataToFileSw.stop();
@@ -398,17 +412,17 @@ public class DatabaseExportService {
 			StopWatch sw = StopWatch.createStarted();
 
 			try (
-					OutputStream fOut = new FileOutputStream(outputFile);
-					BufferedOutputStream buffOut = new BufferedOutputStream(fOut);
-					GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut, parameters);
-					TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)
+				OutputStream fOut = new FileOutputStream(outputFile);
+				BufferedOutputStream buffOut = new BufferedOutputStream(fOut);
+				GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(buffOut, parameters);
+				TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)
 			) {
 				tOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
 				Files.walkFileTree(dirToArchiveAsPath, new SimpleFileVisitor<>() {
 					@Override
 					public FileVisitResult visitFile(
-							Path file,
-							BasicFileAttributes attributes
+						Path file,
+						BasicFileAttributes attributes
 					) {
 						// only copy files, no symbolic links
 						if (attributes.isSymbolicLink()) {
@@ -419,7 +433,7 @@ public class DatabaseExportService {
 
 						try {
 							TarArchiveEntry tarEntry = new TarArchiveEntry(
-									file.toFile(), targetFile.toString()
+								file.toFile(), targetFile.toString()
 							);
 							tOut.putArchiveEntry(tarEntry);
 							Files.copy(file, tOut);

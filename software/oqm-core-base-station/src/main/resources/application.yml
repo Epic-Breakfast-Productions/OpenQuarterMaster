@@ -64,6 +64,9 @@ ui:
   itemCheckout:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemsStored:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
