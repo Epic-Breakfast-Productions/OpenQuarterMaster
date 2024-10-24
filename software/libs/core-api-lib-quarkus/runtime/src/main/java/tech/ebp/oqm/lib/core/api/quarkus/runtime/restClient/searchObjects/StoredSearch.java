@@ -1,6 +1,5 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +17,6 @@ import java.util.List;
 @SuperBuilder
 public class StoredSearch extends SearchKeyAttObject {
 
-	@PathParam("itemId") String inventoryItemId;
-	@PathParam("blockId") String storageBlockId;
 	@QueryParam("inStorageBlock") List<String> inStorageBlocks;
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
