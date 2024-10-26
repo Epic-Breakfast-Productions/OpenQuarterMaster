@@ -1,6 +1,6 @@
 ItemStoredSearch = {
     //TODO:: handle searching
-    search: async function (searchFormJs, event, resultsContainerSelector) {
+    search: async function (searchFormJs, event, resultsContainerSelector, showItem=false, showStorage=false) {
         event.preventDefault();
         console.log("Searching for items stored.");
         let searchFormJq = $(searchFormJs);
@@ -19,6 +19,17 @@ ItemStoredSearch = {
         formData.delete("item");
 
         let searchUrl = Rest.passRoot + `/inventory/item/${itemId}/stored?` + new URLSearchParams(formData).toString();
+        let headers = {
+            "accept": "text/html",
+            "searchFormId": searchFormJq.attr("id"),
+            // "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
+        };
+        if(showItem){
+            headers['showItem']="true";
+        }
+        if(showStorage){
+            headers['showStorage']="true";
+        }
 
         return Rest.call({
             spinnerContainer: searchContainer.get(0),
@@ -27,11 +38,7 @@ ItemStoredSearch = {
             failNoResponse: null,
             failNoResponseCheckStatus: true,
             returnType: "html",
-            extraHeaders: {
-                "accept": "text/html",
-                "searchFormId": searchFormJq.attr("id"),
-                // "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
-            },
+            extraHeaders: headers,
             // async: false,
             done: function (data) {
                 resultsContainer.html(data);

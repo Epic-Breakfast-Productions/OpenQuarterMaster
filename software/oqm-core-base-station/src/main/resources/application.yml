@@ -204,4 +204,4 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-    refreshDbCacheFrequency: "5m"
+    refreshDbCacheFrequency: "30m"

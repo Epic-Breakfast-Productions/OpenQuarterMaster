@@ -15,7 +15,7 @@
 !}
   <thead>
   <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
+    <td colspan="100" class="text-center searchResultsContainer">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>
@@ -24,8 +24,8 @@
     <th scope="col">Label</th>
     <th scope="col">Id?</th>
     <th scope="col">type?</th>
-    <th scope="col">Item</th> {! TODO: Optional !}
-    <th scope="col">Stored In</th>
+    {#if showItem}<th scope="col">Item</th>{/if}
+    {#if showStorage}<th scope="col">Stored In</th>{/if}
     <th scope="col">Amount</th> {! TODO:: optional !}
     <th scope="col" width="150px">Actions</th>
   </tr>
@@ -33,7 +33,7 @@
   <tbody>
   {#if searchResults.get("empty").asBoolean()}
   <tr>
-    <td colspan="6" class="text-center">
+    <td colspan="100" class="text-center">
       <h2>
         Nothing Stored
       </h2>
@@ -60,8 +60,8 @@
     <td>{result.get("labelText").asText()}</td>
     <td>{id}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storedType").asText())}</td>
-    <td>{result.get("item").asText()}}</td>{!TODO:: instead of just id, name + link !}{! TODO:: optional !}
-    <td>{result.get("storageBlock").asText()}}</td>{!TODO:: instead of just id, name + link !}
+    {#if showItem}<td>{result.get("item-name").asText()}}</td>{/if}{!TODO:: link this !}
+    {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}}</td>{/if}{!TODO:: link !}
     <td>{! TODO:: optionally amount !}</td>
     {#if actionType == 'full'}
     <td>
@@ -96,7 +96,7 @@
   </tbody>
   <tfoot>
   <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
+    <td colspan="100" class="text-center searchResultsContainer">
       {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
     </td>
   </tr>

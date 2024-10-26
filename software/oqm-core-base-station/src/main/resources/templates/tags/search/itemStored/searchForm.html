@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
-{#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true onSubmit=str:fmt("ItemStoredSearch.search(this, event,'%s');",resultsContainer) defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true onSubmit=str:fmt("ItemStoredSearch.search(this, event,'%s',false, true);",resultsContainer) defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
     {#inputs}
         {#inputs/item/itemSelectInput id=id}
         {/inputs/item/itemSelectInput}

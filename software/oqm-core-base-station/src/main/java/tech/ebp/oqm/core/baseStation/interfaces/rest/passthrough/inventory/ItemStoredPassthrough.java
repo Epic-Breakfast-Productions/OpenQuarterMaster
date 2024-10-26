@@ -28,7 +28,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 
 	@Getter
 	@Inject
-	@Location("tags/search/item/itemSearchResults")
+	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
 
 	@Getter
@@ -53,20 +53,20 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId,
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend,
+		@HeaderParam("showItem") boolean showItem,
+		@HeaderParam("showStorage") boolean showStorage,
 		@HeaderParam("actionType") Optional<String> actionType
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient()
 				.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
-				.onFailure()
-				.call((Throwable e)->{
-					log.warn("Error getting search results: " + e.getMessage(), e);
-					return Uni.createFrom().item(null);
-				})
 				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 			,
-			this.searchResultTemplate,
+			this.searchResultTemplate
+				.data("showItem", showItem)
+				.data("showStorage", showStorage)
+			,
 			acceptType,
 			searchFormId,
 			otherModalId,

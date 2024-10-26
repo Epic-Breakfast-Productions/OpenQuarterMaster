@@ -113,7 +113,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 		if (MediaType.TEXT_HTML.equals(acceptType)) {
 			return searchUni.map(
 				(ObjectNode endResults)->{
-					log.debug("Final result of history search: {}", endResults);
+					log.debug("Final result of search: {}", endResults);
 					return Response.ok(
 						searchResultTemplate
 							.data("actionType", actionType)
@@ -126,7 +126,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 				});
 		} else {
 			return searchUni.map((output)->{
-				log.debug("Storage Block search results: {}", output);
+				log.debug("Final result of search: {}", output);
 				return Response.ok(output).build();
 			});
 		}
