@@ -337,41 +337,51 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 		Set<ObjectId> concerningIds = concerning.stream().map(Stored::getId).collect(Collectors.toSet());
 		//TODO:: separate thread to get these stats
-		ItemStoredStats storedStats = this.getItemStats(oqmDbIdOrName, cs, item.getId());
+
+		//process expiry and low stock for affected stored
 		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItemId(item.getId());
+		{
+			FindIterable<Stored> storedInItem = this.listIterator(
+				oqmDbIdOrName, cs, new StoredSearch()
+					.setInventoryItemId(item.getId())
+					.setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
+			);
+			try (
+				MongoCursor<Stored> storedIterator = storedInItem.iterator();
+			) {
+				while (storedIterator.hasNext()) {
+					Stored curStored = storedIterator.next();
 
-		FindIterable<Stored> storedInItem = this.listIterator(
-			oqmDbIdOrName, cs, new StoredSearch()
-				.setInventoryItemId(item.getId())
-				.setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
-		);
-		try (
-			MongoCursor<Stored> storedIterator = storedInItem.iterator();
-		) {
-			while (storedIterator.hasNext()) {
-				Stored curStored = storedIterator.next();
+					Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
+						oqmDbIdOrName,
+						cs,
+						curStored,
+						item.getExpiryWarningThreshold(),
+						true,
+						concerningIds.contains(curStored.getId()),
+						entity, historyDetails
+					);
+					if (result.isPresent()) {
+						StoredExpiryLowStockProcessResult curResult = result.get();
 
-				Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
-					oqmDbIdOrName,
-					cs,
-					curStored,
-					item.getExpiryWarningThreshold(),
-					true,
-					concerningIds.contains(curStored.getId()),
-					entity, historyDetails
-				);
-				if (result.isPresent()) {
-					StoredExpiryLowStockProcessResult curResult = result.get();
-
-					if(!results.getResults().containsKey(curStored.getStorageBlock())){
-						results.getResults().put(curStored.getStorageBlock(), new ArrayList<>());
+						if (!results.getResults().containsKey(curStored.getStorageBlock())) {
+							results.getResults().put(curStored.getStorageBlock(), new ArrayList<>());
+						}
+						results.getResults().get(curStored.getStorageBlock()).add(curResult);
 					}
-					results.getResults().get(curStored.getStorageBlock()).add(curResult);
 				}
 			}
 		}
 
+		ItemStoredStats oldStats = item.getStats();
+		ItemStoredStats storedStats = this.getItemStats(oqmDbIdOrName, cs, item.getId());
+		item.setStats(storedStats);
+
 		boolean changed = false;
+
+		if(!storedStats.equals(oldStats)){
+			changed = true;
+		}
 		if (item.getLowStockThreshold() != null) {
 			if (UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
 				if (!item.getNotificationStatus().isLowStock()) {
@@ -453,6 +463,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 						}
 					}
 				}
+				//TODO:: update item stats
 				return output;
 			}
 		}

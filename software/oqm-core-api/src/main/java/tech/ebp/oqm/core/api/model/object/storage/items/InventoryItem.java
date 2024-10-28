@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
@@ -114,6 +115,13 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: validate unit is compatible with main unit
 	 */
 	private Quantity<?> lowStockThreshold = null;
+
+	/**
+	 * The stats for the stored items.
+	 * <p>
+	 * Null if a transaction was never performed on this item.
+	 */
+	private ItemStoredStats stats = null;
 
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
