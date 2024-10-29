@@ -20,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
@@ -73,6 +74,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public Set<String> getDisallowedUpdateFields() {
 		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
 		output.add("storageType");
+		output.add("stats");
 		return output;
 	}
 
@@ -116,6 +118,13 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 
 			if (!existing.getUnit().isCompatible(newOrChangedObject.getUnit())) {
 				throw new ValidationException("New unit not compatible with current unit.");
+			}
+		} else {
+			//if new item, and stats are null, set new stats.
+			if(newOrChangedObject.getStats() == null){
+				newOrChangedObject.setStats(
+					new ItemStoredStats(newOrChangedObject.getUnit())
+				);
 			}
 		}
 	}
