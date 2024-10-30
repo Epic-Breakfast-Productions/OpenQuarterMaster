@@ -24,7 +24,7 @@
     <th scope="col">Name</th>
     <th scope="col">Storage Type</th>
     <th scope="col">Total</th>
-    <th scope="col"># Blocks used</th>
+    <th scope="col"># {#icons/storageBlocks}{/icons/storageBlocks}</th>
     <th scope="col" width="150px">Actions</th>
   </tr>
   </thead>
@@ -57,7 +57,7 @@
     <td>{name}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
     <td>
-      {!{#amountDisplay amount=result.get("total")}{/amountDisplay}!}
+      {#amountDisplay amount=result.get("stats").get("total")}{/amountDisplay}
     </td>
     <td>
       {result.get("storageBlocks").size()}

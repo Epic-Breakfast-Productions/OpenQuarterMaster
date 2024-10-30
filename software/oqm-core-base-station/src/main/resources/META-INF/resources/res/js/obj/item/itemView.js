@@ -36,6 +36,8 @@ const ItemView = {
 	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
 	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 	itemViewFiles: $("#itemViewFilesContainer"),
+	numStoredDisplay: $("#itemViewTotalStoredNum"),
+	numBlocksDisplay: $("#itemViewStorageBlockNum"),
 
 	allStoredSearchForm: $("#itemViewAllStoredSearchForm"),
 	allStoredSearchFormItemInputDeleteButton: $("#itemViewAllStoredSearchForm-itemInputClearButton"),
@@ -81,6 +83,9 @@ const ItemView = {
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
+
+		this.numStoredDisplay.text("");
+		this.numBlocksDisplay.text("");
 
 		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
 		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO
@@ -245,9 +250,12 @@ const ItemView = {
 				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
 				ItemView.itemViewStorageType.text(StorageTypeUtils.typeToDisplay(itemData.storageType));
-				// ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);//TODO
+				ItemView.itemViewTotal.text(itemData.stats.total.value + "" + itemData.stats.total.unit.symbol);
 				ItemView.itemViewTotalVal.text(itemData.valueOfStored);//TODO
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
+
+				ItemView.numStoredDisplay.text(itemData.stats.numStored);
+				ItemView.numBlocksDisplay.text(itemData.storageBlocks.length);
 
 				if (itemData.description) {
 					ItemView.itemViewDescription.text(itemData.description);
