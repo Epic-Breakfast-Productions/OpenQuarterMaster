@@ -120,7 +120,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw new ValidationException("New unit not compatible with current unit.");
 			}
 		} else {
-			//if new item, and stats are null, set new stats.
+			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if(newOrChangedObject.getStats() == null){
 				newOrChangedObject.setStats(
 					new ItemStoredStats(newOrChangedObject.getUnit())

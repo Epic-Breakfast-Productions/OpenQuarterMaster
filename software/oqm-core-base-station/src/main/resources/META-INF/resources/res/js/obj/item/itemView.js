@@ -78,6 +78,8 @@ const ItemView = {
 		ItemView.checkoutSearchForm.trigger("reset");
 		FileAttachmentView.resetObjectView(ItemView.itemViewFiles);
 
+		ItemView.allStoredSearchForm.trigger("reset");
+
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
@@ -315,8 +317,9 @@ if (UriUtils.getParams.has("view")
 	ItemView.viewBsModal.show();
 }
 
-
-//TODO:: disable item input
+ItemView.allStoredSearchFormItemInputDeleteButton.prop("disabled", true);
+ItemView.allStoredSearchFormItemInputSearchButton.prop("disabled", true);
+ItemView.allStoredSearchFormItemInputName.prop("disabled", true);
 
 ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
 ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
