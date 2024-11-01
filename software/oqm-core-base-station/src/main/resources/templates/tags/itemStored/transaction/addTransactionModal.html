@@ -1,0 +1,47 @@
+{#modal id='itemStoredTransactionAddModal' size='xl' title='Add Item Stored'}
+	{#titleIcon}
+		{#icons/stored}{/icons/stored}<sup>{#icons/add}{/icons/add}</sup>
+	{/titleIcon}
+	{#footerButtons}
+	{!<button type="button" class="btn btn-success" id="itemCheckoutViewCheckinButton" data-bs-toggle="modal" data-bs-target="#itemCheckinModal">!}
+		{!{#icons/checkin}{/icons/checkin} Checkin!}
+	{!</button>!}
+	{/footerButtons}
+	<div class="row">
+		<div class="col" id="itemStoredTransactionAddMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionAddForm'>
+		<div class="row">
+			<div class="col">
+
+				<div class="mb-3" id="itemStoredTransactionAddFormTypeInputContainer">
+					<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
+					<select class="form-select" id="itemStoredTransactionAddFormTypeInput">
+						<option value="ADD_WHOLE">Whole Stored</option>
+						<option value="ADD_AMOUNT">Amount</option>
+					</select>
+				</div>
+
+				<div class="mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+					<label for="itemStoredTransactionAddFormToBlockInput" class="form-label">To Block</label>
+					<select class="form-select" id="itemStoredTransactionAddFormToBlockInput">
+					</select>
+				</div>
+
+				<div class="mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
+					<label for="itemStoredTransactionAddFormToStoredInput" class="form-label">To Stored</label>
+					<select class="form-select" id="itemStoredTransactionAddFormToStoredInput">
+					</select>
+				</div>
+
+				<div id="itemStoredTransactionAddFormAmountContainer">
+					{! TODO:: amount input form !}
+				</div>
+				<div id="itemStoredTransactionAddFormStoredContainer">
+					{! TODO:: stored form? !}
+				</div>
+			</div>
+		</div>
+	</form>
+{/modal}

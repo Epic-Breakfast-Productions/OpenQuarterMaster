@@ -94,9 +94,6 @@ const ItemView = {
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
 
-		this.numStoredDisplay.text("");
-		this.numBlocksDisplay.text("");
-
 		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
 		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO
 		this.allStoredSearchFormItemInputName.val("");
@@ -248,9 +245,6 @@ const ItemView = {
 				ItemView.itemViewTotal.text(itemData.stats.total.value + "" + itemData.stats.total.unit.symbol);
 				ItemView.itemViewTotalVal.text(itemData.valueOfStored);//TODO
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
-
-				ItemView.numStoredDisplay.text(itemData.stats.numStored);
-				ItemView.numBlocksDisplay.text(itemData.storageBlocks.length);
 
 				if (itemData.description) {
 					ItemView.itemViewDescription.text(itemData.description);
