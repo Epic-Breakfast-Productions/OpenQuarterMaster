@@ -3,10 +3,18 @@ const ItemView = {
 	viewBsModal: new bootstrap.Modal($("#itemViewModal"), {}),
 	itemViewMessages: $("#itemViewMessages"),
 	itemViewModalLabel: $("#itemViewModalLabel"),
-	itemViewStored: $("#itemViewStored"),
-	itemViewStoredNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
-	itemViewStoredNum: $("#itemViewStoredNum"),
-	itemViewStoredAccordion: $("#itemViewStoredAccordion"),
+
+	storedMultiContainer: $("#itemViewStoredMultiContainer"),
+
+	storedSingleContainer: $("#itemViewStoredSingleContainer"),
+	storedNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
+	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
+	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
+	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
+	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
+	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
+	storedNonePresentBlocksList: $("#itemViewStoredNonePresentBlocksList"),
+
 	itemViewTotal: $("#itemViewTotal"),
 	itemViewTotalVal: $("#itemViewTotalVal"),
 	itemViewValPerUnitDefault: $("#itemViewValPerUnitDefault"),
@@ -36,8 +44,6 @@ const ItemView = {
 	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
 	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 	itemViewFiles: $("#itemViewFilesContainer"),
-	numStoredDisplay: $("#itemViewTotalStoredNum"),
-	numBlocksDisplay: $("#itemViewStorageBlockNum"),
 
 	allStoredSearchForm: $("#itemViewAllStoredSearchForm"),
 	allStoredSearchFormItemInputDeleteButton: $("#itemViewAllStoredSearchForm-itemInputClearButton"),
@@ -45,17 +51,19 @@ const ItemView = {
 	allStoredSearchFormItemInputId: $("#itemViewAllStoredSearchForm-itemInputId"),
 	allStoredSearchFormItemInputName: $("#itemViewAllStoredSearchForm-itemInputName"),
 
-
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
-		ItemView.itemViewStoredNum.text("");
-		ItemView.itemViewStored.hide();
-		ItemView.itemViewStoredNonePresentContainer.hide();
-		ItemView.itemViewStoredAccordion.text("");
+		ItemView.storedMultiContainer.hide();
+		ItemView.storedSingleContainer.hide();
+		ItemView.storedNonePresentContainer.hide();
+		ItemView.storedMultiByBlockAccordion.text("");
+		ItemView.storedSingleAccordion.text("");
+		ItemView.storedBulkAccordion.text("");
 		ItemView.itemViewValPerUnitDefault.hide();
 		ItemView.itemViewValPerUnit.text("");
 		ItemView.itemViewIdentifyingAttContainer.hide();
 		ItemView.itemViewTotalVal.text("");
+		ItemView.storedNonePresentBlocksList.text("");
 
 		ItemView.itemViewCategoriesContainer.hide();
 		ItemView.itemViewCategories.text("");
@@ -143,84 +151,36 @@ const ItemView = {
 
 		return newAccordItem;
 	},
-	addViewStorageBlocksAccordionItem: function (blockId, content, stored) {
-		return ItemView.itemViewStoredAccordion.append($(ItemView.addViewAccordionItem(blockId, content, stored)));
-	},
 
+	addStoredBlockViewAccordionItem: async function (item, blockId, accordionId, bodyPromise) {
+		let headerId = blockId + "-stored-view-accord-header";
+		let collapseId = headerId + "-collapse";
 
-	getAmountStoredContent(stored, itemId, storageBlockId) {
-		console.log("Getting view content for simple amount stored.");
-		return StoredView.getStoredViewContent(stored, itemId, storageBlockId, false, true, true);
-	},
-	getAmountListStoredContent(itemId, blockId, storedList) {
-		console.log("Getting view content for list amount stored.");
+		let newAccordItem = $('<div class="accordion-item">' +
+			'  <h2 class="accordion-header">' +
+			'    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
+			'    </button>' +
+			'  </h2>' +
+			'  <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">' +
+			'    <div class="accordion-body">' +
+			'    </div>' +
+			'  </div>' +
+			'</div>');
 
-		let accordContent = $('<div class="col accordion"></div>');
+		let header = newAccordItem.find(".accordion-header");
+		header.prop("id", headerId);
+		let collapse = newAccordItem.find(".accordion-collapse");
+		collapse.prop("id", collapseId);
+		collapse.prop("aria-labelledby", header.prop("id"));
+		collapse.prop("data-bs-parent", "#" + accordionId);
+		let collapseButton = newAccordItem.find(".accordion-button");
+		collapseButton.prop("aria-controls", collapseId);
+		collapseButton.prop("data-bs-target", "#" + collapseId);
 
-		if (storedList.length > 0) {
-			let accordId = "itemViewStored" + blockId + "Accordion";
-			accordContent.prop("id", accordId);
-			let i = 0;
-			storedList.forEach(function (curStored) {
-				accordContent.append(
-					ItemView.addViewAccordionItem(
-						accordId + i,
-						StoredView.getStoredViewContent(curStored, itemId, blockId, i, false, true),
-						curStored,
-						"AMOUNT_LIST"
-					)
-				);
-				i++;
-			});
+		await bodyPromise;
+		newAccordItem.find(".accordion-body").append(bodyPromise);
 
-		} else {
-			accordContent.append($('<h4>Nothing currently stored.</h4>'));
-		}
-
-		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
-			.append($('<div class="row"></div>').append(accordContent));
-	},
-	getTrackedStoredWrapperContent(itemId, blockId, trackedMap) {
-		console.log("Getting view content for tracked stored wrapper.");
-
-		let accordContent = $('<div class="col accordion"></div>');
-		let storageIds = Object.keys(trackedMap);
-
-		if (storageIds.length > 0) {
-			let accordId = "itemViewStored" + blockId + "Accordion";
-			accordContent.prop("id", accordId);
-			storageIds.forEach(key => {
-
-				accordContent.append(ItemView.addViewAccordionItem(
-					accordId + key,
-					StoredView.getStoredViewContent(trackedMap[key], itemId, blockId, key, false, true, true),
-					key
-				));
-			});
-
-		} else {
-			accordContent.html('<h4>Nothing currently stored.</h4>');
-		}
-
-
-		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
-			.append($('<div class="row"></div>').append(accordContent));
-	},
-	getStoredAccordView(storageType, itemId, storageId, storedWrapperData){
-		return StoredTypeUtils.foreachStoredType(
-			storageType,
-			function () {
-				return ItemView.getAmountStoredContent(storedWrapperData, itemId, storageId);
-			},
-			function () {
-				return ItemView.getAmountListStoredContent(itemId, storageId, storedWrapperData);
-			},
-			function () {
-				return ItemView.getTrackedStoredWrapperContent(itemId, storageId, storedWrapperData)
-			}
-		);
+		return newAccordItem;
 	},
 	setupView(itemId) {
 		console.log("Setting up view for item " + itemId);
@@ -242,6 +202,39 @@ const ItemView = {
 			failMessagesDiv: ItemView.itemViewMessages,
 			done: async function (itemData) {
 				let promises = [];
+
+				if (itemData.stats.numStored) {
+					let multiDisplay = function(){
+						//TODO
+					}
+					StorageTypeUtils.runForType(
+						itemData,
+						function () {
+							//TODO
+						},
+						multiDisplay,
+						multiDisplay,
+						function () {
+							//TODO
+						}
+					);
+				} else {
+					console.log("None stored.");
+					ItemView.storedNonePresentContainer.show();
+
+					if (itemData.storageBlocks.length) {
+						itemData.storageBlocks.forEach(function (curBlock) {
+							getStorageBlockLabel(curBlock, function (labelText) {
+								let newLink = Links.getStorageViewLink(curBlock, labelText);
+								ItemView.storedNonePresentBlocksList.append(newLink);
+								ItemView.storedNonePresentBlocksList.append(" ");
+							});
+						});
+					} else {
+						//TODO:: button to edit item
+						ItemView.storedNonePresentBlocksList.text("None! Add storage blocks by editing the item!");
+					}
+				}
 
 				if (itemData.categories.length) {
 					ItemView.itemViewCategoriesContainer.show();
@@ -278,20 +271,23 @@ const ItemView = {
 
 				console.log("Setting up view of stored.");
 
-				let numStorageBlocks = Object.keys(itemData.storageBlocks).length;
-
-				if (numStorageBlocks === 0) {
-					console.log("None stored.");
-					ItemView.itemViewStoredNonePresentContainer.show();
-				} else {
-					console.log(numStorageBlocks + " stored.");
-					ItemView.itemViewStoredNum.text(numStorageBlocks);
-					ItemView.itemViewStored.show();
-
-					ItemView.allStoredSearchFormItemInputName.val(itemData.name);
-					ItemView.allStoredSearchFormItemInputId.val(itemId);
-					ItemView.allStoredSearchForm.submit();
-				}
+				// let numStorageBlocks = itemData.stats.numStored;// Object.keys(itemData.storageBlocks).length;
+				//TODO:: show storage blocks associated
+				// if (numStorageBlocks === 0) {
+				// 	console.log("None stored.");
+				// 	ItemView.storedNonePresentContainer.show();
+				// 	//TODO:: if storage blocks present, prompt to edit item to add block(s)
+				// 	//TODO:: prompt to add stored item
+				// } else {
+				// 	//TODO:: display right; bulk vs multi vs single display
+				// 	console.log(numStorageBlocks + " stored.");
+				// 	ItemView.itemViewStoredNum.text(numStorageBlocks);
+				// 	ItemView.itemViewStored.show();
+				//
+				// 	ItemView.allStoredSearchFormItemInputName.val(itemData.name);
+				// 	ItemView.allStoredSearchFormItemInputId.val(itemId);
+				// 	ItemView.allStoredSearchForm.submit();
+				// }
 
 				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
 				ItemView.checkoutSearchFormItemIdInput.val(itemId);
@@ -325,7 +321,7 @@ ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
 ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
 ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
 
-ItemView.checkoutSearchForm.on("submit", function(e){
+ItemView.checkoutSearchForm.on("submit", function (e) {
 	e.preventDefault();
 	let searchParams = new URLSearchParams(new FormData(e.target));
 	console.log("URL search params: " + searchParams);

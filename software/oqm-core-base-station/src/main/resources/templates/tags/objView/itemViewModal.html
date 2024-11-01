@@ -96,11 +96,20 @@
     <div class="col">
         <div id="itemViewStoredNonePresentContainer">
             <h4>Nothing Stored</h4>
+            {! TODO:: add stored button !}
+            <h5>Available storage blocks:</h5>
+            <p id="itemViewStoredNonePresentBlocksList">
+
+            </p>
+            {!TODO:: list storage blocks? !}
         </div>
-        <div id="itemViewStored">
+        <div id="itemViewStoredMultiContainer">
             <h4>
-                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewTotalStoredNum"></span> stored across <span id="itemViewStorageBlockNum"></span> storage blocks:
+                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
             </h4>
+            <div>
+                <button class="btn btn-success">+ Add Stored Item</button>
+            </div>
             <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
@@ -115,8 +124,7 @@
             </ul>
             <div class="tab-content" id="itemViewStoredViewTabContent">
               <div class="tab-pane fade show active" id="itemViewStoredViewTabByBlockPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabByBlock" tabindex="0">
-                <div class="accordion" id="itemViewStoredAccordion">
-                    TODO:: accordion of viewed
+                <div class="accordion" id="itemViewStoredMultiByBlockAccordion">
                 </div>
               </div>
               <div class="tab-pane fade" id="itemViewStoredViewTabAllStoredPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabAllStored" tabindex="0">
@@ -151,6 +159,14 @@
                     </div>
                 </div>
               </div>
+            </div>
+        </div>
+        <div id="itemViewStoredBulkContainer">
+            <div class="accordion" id="itemViewStoredBulkAccordion">
+            </div>
+        </div>
+        <div id="itemViewStoredSingleContainer">
+            <div class="accordion" id="itemViewStoredSingleAccordion">
             </div>
         </div>
     </div>
