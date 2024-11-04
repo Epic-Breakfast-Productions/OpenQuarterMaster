@@ -1,15 +1,27 @@
 
 const ModalHelpers = {
 
+	getModalCloseButton: function (modalJq){
+		return modalJq.find("#" + modalJq.prop("id") + "LabelCloseButton")
+	},
+	clearModalReturn: function(destModalJq){
+		//   data-bs-target="#exampleModalToggle" data-bs-toggle="modal"
+		//  data-bs-otherModalId
+		destModalJq.removeAttr("data-bs-otherModalId");
+		let modalCloseButton = this.getModalCloseButton(destModalJq);
+		modalCloseButton.removeAttr("data-bs-target");
+		modalCloseButton.removeAttr("data-bs-toggle");
+	},
 	/**
 	 *
 	 * @param destModalJq The jQuery object of the modal we are going to.
-	 * @param returnModal Mixed type. If String, the tag to find using jquery. Can also be the modal element or an element within the modal both as plain js or jQuery
+	 * @param returnModal Mixed type. The modal being returned to. If String, the tag to find using jquery. Can also be the modal element or an element within the modal both as plain js or jQuery. If Event, gets the element from the event's target. Null to reset the return modal.
 	 */
-	setReturnModal: function(destModalJq, returnModal){
+	setReturnModal: function(destModalJq, returnModal = null){
 		//ensure using jquery object
 		if(returnModal == null){
-			return; //TODO:: reset return modal
+			this.clearModalReturn(destModalJq);
+			return;
 		} else if(typeof returnModal === "string" || returnModal instanceof String || returnModal instanceof Element){
 			returnModal = $(returnModal);
 		} else if(returnModal instanceof Event){
@@ -18,12 +30,18 @@ const ModalHelpers = {
 		//get modal parent, if applicable
 		returnModal = returnModal.closest(".modal");
 
-		//TODO:: set destModal to return to returnModal.
+		if(returnModal == null){
+			this.clearModalReturn(destModalJq);
+			return;
+		}
 
+		let returnModalId = returnModal.prop("id");
+		console.log("Setting modal to return to ", returnModalId);
 
+		destModalJq.attr("data-bs-otherModalId", returnModalId);
 
-
+		let destModalCloseButton = this.getModalCloseButton(destModalJq);
+		destModalCloseButton.attr("data-bs-target", "#" + returnModalId);
+		destModalCloseButton.attr("data-bs-toggle", "modal");
 	}
-
-
 };
