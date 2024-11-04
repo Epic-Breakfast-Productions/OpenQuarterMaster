@@ -96,12 +96,18 @@
     <div class="col">
         <div id="itemViewStoredNonePresentContainer">
             <h4>Nothing Stored</h4>
-            {! TODO:: add stored button !}
-            <h5>Available storage blocks:</h5>
-            <p id="itemViewStoredNonePresentBlocksList">
+            <div id="itemViewStoredNonePresentHasStorageContainer">
+                <button class="btn btn-primary" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
+                <h5>Available storage blocks:</h5>
+                <p id="itemViewStoredNonePresentBlocksList">
 
-            </p>
-            {!TODO:: list storage blocks? !}
+                </p>
+            </div>
+            <div id="itemViewStoredNonePresentNoStorageContainer">
+                <p>
+                    No storage blocks associated with this item! Add storage by editing this item!
+                </p>
+            </div>
         </div>
         <div id="itemViewStoredMultiContainer">
             <h4>

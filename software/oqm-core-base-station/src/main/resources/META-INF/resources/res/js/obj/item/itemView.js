@@ -8,6 +8,9 @@ const ItemView = {
 
 	storedSingleContainer: $("#itemViewStoredSingleContainer"),
 	storedNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
+	storedNonePresentHasStorageContainer: $("#itemViewStoredNonePresentHasStorageContainer"),
+	storedNonePresentNoStorageContainer: $("#itemViewStoredNonePresentNoStorageContainer"),
+
 	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
@@ -56,6 +59,9 @@ const ItemView = {
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
 		ItemView.storedNonePresentContainer.hide();
+		ItemView.storedNonePresentHasStorageContainer.hide();
+		ItemView.storedNonePresentNoStorageContainer.hide();
+
 		ItemView.storedMultiByBlockAccordion.text("");
 		ItemView.storedSingleAccordion.text("");
 		ItemView.storedBulkAccordion.text("");
@@ -227,9 +233,9 @@ const ItemView = {
 								ItemView.storedNonePresentBlocksList.append(" ");
 							});
 						});
+						ItemView.storedNonePresentHasStorageContainer.show();
 					} else {
-						//TODO:: button to edit item
-						ItemView.storedNonePresentBlocksList.text("None! Add storage blocks by editing the item!");
+						ItemView.storedNonePresentNoStorageContainer.show();
 					}
 				}
 

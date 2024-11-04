@@ -34,8 +34,9 @@ const ItemStoredTransaction = {
 		resetForm: function () {
 			console.log("Resetting item stored add transaction form.");
 		},
-		setupForm(itemId, preselectedStored = null) {
-			console.log("Setting up item stored add transaction form.");
+		setupForm(itemId, preselectedStored = null, buttonElement = null) {
+			console.log("Setting up item stored add transaction form for item ", itemId);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
 			Getters.InventoryItem.get(itemId, function (item) {
 				//TODO:: setup
