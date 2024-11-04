@@ -194,6 +194,8 @@ smallrye:
       credentials:
         secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
+    oqmCoreApi:
+      refreshDbCacheFrequency: "30m"
 
   runningInfo:
     depotUri: "Hello World"
@@ -204,4 +206,4 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-    refreshDbCacheFrequency: "30m"
+
