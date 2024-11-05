@@ -35,9 +35,10 @@ const StorageTypeUtils = {
         whenUniqueSingle
     ) {
         //If item data, get from data
-        if(typeof storedType !== "string" && !storedType instanceof String){
+        if(typeof storedType !== "string" && !(storedType instanceof String)){
             storedType = storedType.storageType;
         }
+
 
         if (storedType === "BULK") {
             if (whenBulk !== null) {

@@ -2,7 +2,7 @@
 const Getters = {
 	InventoryItem: {
 		get(itemId, doneFunc) {
-			console.log("Getting name for inventory item \"" + itemId + "\"");
+			console.log("Getting inventory item \"" + itemId + "\"");
 			return Rest.call({
 				spinnerContainer: null,
 				url: Rest.passRoot + "/inventory/item/" + itemId,
