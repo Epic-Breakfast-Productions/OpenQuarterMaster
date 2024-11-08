@@ -12,9 +12,19 @@
 	</div>
 
 	<form id='itemStoredTransactionAddForm'>
-		<input type="hidden" name="itemId" id="itemStoredTransactionAddFormItemIdInput" value=""/>
+		<input type="hidden" name="itemId" id="itemStoredTransactionAddFormStoredIdInput" value=""/>
 		<div class="row">
 			<div class="col">
+				<div class="mb-3" id="itemStoredTransactionAddFormItemInputContainer">
+					<label for=itemStoredTransactionAddFormItem-itemInputSearchButton" class="form-label">{#icons/item}{/icons/item} Item:</label>
+					{#inputs/item/itemSelectInput id="itemStoredTransactionAddFormItem"}{/inputs/item/itemSelectInput}
+				</div>
+				<div class="mb-3" id="itemStoredTransactionAddFormItemDisplayContainer">
+					<h3>
+						{#icons/item}{/icons/item} Item: <span id="itemStoredTransactionAddFormItemDisplayName"></span>
+					</h3>
+				</div>
+
 
 				<div class="mb-3" id="itemStoredTransactionAddFormTypeInputContainer">
 					<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
@@ -36,11 +46,8 @@
 					</select>
 				</div>
 
-				<div id="itemStoredTransactionAddFormAmountContainer">
+				<div id="itemStoredTransactionAddFormInputsContainer">
 					{! TODO:: amount input form !}
-				</div>
-				<div id="itemStoredTransactionAddFormStoredContainer">
-					{! TODO:: stored form? !}
 				</div>
 			</div>
 		</div>
