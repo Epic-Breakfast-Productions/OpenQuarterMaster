@@ -1,10 +1,17 @@
 const StoredTypeUtils = {
     types: ["AMOUNT", "UNIQUE"],
+    typeFromStored(stored){
+        return stored.storedType;
+    },
     runForType(
         storedType,
         whenAmount,
         whenUnique,
     ) {
+        if(typeof storedType !== "string" && !(storedType instanceof String)){
+            storedType = this.typeFromStored(storedType);
+        }
+
         if (storedType === "AMOUNT") {
             if (whenAmount !== null) {
                 return whenAmount();
@@ -39,7 +46,6 @@ const StorageTypeUtils = {
             storedType = storedType.storageType;
         }
 
-
         if (storedType === "BULK") {
             if (whenBulk !== null) {
                 return whenBulk();
@@ -63,15 +69,12 @@ const StorageTypeUtils = {
         whenAmount,
         whenUnique,
     ) {
-        if (storedType === "BULK" || storedType === "AMOUNT_LIST") {
-            if (whenAmount !== null) {
-                return whenAmount();
-            }
-        } else if (storedType === "UNIQUE_MULTI" || storedType === "UNIQUE_SINGLE") {
-            if (whenUnique !== null) {
-                return whenUnique();
-            }
-        }
+        this.runForType(storedType,
+            whenAmount,
+            whenAmount,
+            whenUnique,
+            whenUnique
+        );
     },
     typeToDisplay(storedType) {
         if (storedType === "BULK") {
