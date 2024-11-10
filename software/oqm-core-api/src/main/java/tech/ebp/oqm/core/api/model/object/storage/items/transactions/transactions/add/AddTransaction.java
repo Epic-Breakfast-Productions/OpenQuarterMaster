@@ -12,11 +12,4 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 public abstract class AddTransaction extends ItemStoredTransaction {
-
-	/**
-	 * The storage block we are adding to.
-	 */
-	@NotNull
-	@NonNull
-	private ObjectId toBlock;
 }

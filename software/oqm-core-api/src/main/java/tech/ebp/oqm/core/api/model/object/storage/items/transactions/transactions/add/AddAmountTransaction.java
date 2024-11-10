@@ -16,7 +16,12 @@ import javax.measure.Quantity;
 public class AddAmountTransaction extends AddTransaction {
 
 	/**
-	 * If applicable, the specific storage block we are adding to.
+	 * If applicable, the storage block we are adding to.
+	 */
+	private ObjectId toBlock;
+
+	/**
+	 * If applicable, the specific existing stored object we are adding to.
 	 */
 	private ObjectId toStored;
 
