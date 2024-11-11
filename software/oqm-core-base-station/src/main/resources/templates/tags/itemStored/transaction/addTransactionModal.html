@@ -3,9 +3,9 @@
 		{#icons/stored}{/icons/stored}<sup>{#icons/add}{/icons/add}</sup>
 	{/titleIcon}
 	{#footerButtons}
-	{!<button type="button" class="btn btn-success" id="itemCheckoutViewCheckinButton" data-bs-toggle="modal" data-bs-target="#itemCheckinModal">!}
-		{!{#icons/checkin}{/icons/checkin} Checkin!}
-	{!</button>!}
+	<button type="submit" class="btn btn-success" form="itemStoredTransactionAddForm">
+		{#icons/add}{/icons/add} Add Item Stored
+	</button>
 	{/footerButtons}
 	<div class="row">
 		<div class="col" id="itemStoredTransactionAddMessages"></div>
@@ -34,10 +34,43 @@
 					</select>
 				</div>
 
-				<div class="mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
-					<label for="itemStoredTransactionAddFormToBlockInput" class="form-label">To Block</label>
-					<select class="form-select" id="itemStoredTransactionAddFormToBlockInput">
-					</select>
+				<div class="row">
+					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+						<div class="card">
+							<div class="card-header">
+								<div class="d-grid gap-2">
+									<input class="btn-check" type="radio" name="flexRadioDefault" id="itemStoredTransactionAddFormToBlockRadio" style="" required>
+									<label class="btn" for="itemStoredTransactionAddFormToBlockRadio">
+										To {#icons/storageBlock}{/icons/storageBlock} Block
+									</label>
+								</div>
+							</div>
+							<div class="card-body">
+								<div>
+									{!<label for="itemStoredTransactionAddFormToBlockInput" class="form-label">To Block</label>!}
+									<select class="form-select" id="itemStoredTransactionAddFormToBlockInput">
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+						<div class="card">
+							<div class="card-header">
+								<div class="d-grid gap-2">
+									<input class="btn-check" type="radio" name="flexRadioDefault" id="itemStoredTransactionAddFormToStoredRadio" required>
+									<label class="btn" for="itemStoredTransactionAddFormToStoredRadio">
+										To {#icons/stored}{/icons/stored} Stored
+									</label>
+								</div>
+							</div>
+							<div class="card-body">
+								<select class="form-select" id="">
+								</select>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">

@@ -1,6 +1,7 @@
 const ItemStoredTransaction = {
 
 	submitTransaction: async function (itemId, transaction) {
+		console.log("Submitting transaction for item " + itemId + ":", transaction);
 		//TODO
 	},
 
@@ -209,6 +210,25 @@ const ItemStoredTransaction = {
 				this.itemClearButton.prop("disabled", false);
 				this.itemSearchButton.prop("disabled", false);
 			}
+		},
+		submitForm: async function(event){
+			event.preventDefault();
+			console.log("Submitting Add Transaction form");
+
+			let data = {
+				transactionType: this.typeInput.val(),
+
+			}
+
+
+
+
+
+
+
+			//TODO
+
+			await ItemStoredTransaction.submitTransaction(this.itemIdInput.val(), data);
 		}
 	},
 	Checkin: {
@@ -227,3 +247,5 @@ const ItemStoredTransaction = {
 		//TODO
 	}
 };
+
+ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitForm);
