@@ -9,87 +9,48 @@ const ItemStoredTransaction = {
 		getBasicInputs(stored) {
 			//TODO:: update to use barcode input
 			//TODO:: update these
-			let output = $('<div class="storedEditCommonFields">' +
-				'<div class="mb-3 ">\n' +
-				'    <label class="form-label">Barcode</label>\n' +
-				'    <div class="input-group">\n' +
-				'        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' +
-				'    </div>\n' +
-				'</div>\n' +
-				'<div class="mb-3 ">\n' +
-				'    <label class="form-label">Condition Percentage</label>\n' +
-				'    <div class="input-group">\n' +
-				'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' + //TODO:: better label of better to worse
+			let output = $('<div class="storedEditCommonFields">' + '<div class="mb-3 ">\n' + '    <label class="form-label">Barcode</label>\n' + '    <div class="input-group">\n' + '        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' + '    </div>\n' + '</div>\n' + '<div class="mb-3 ">\n' + '    <label class="form-label">Condition Percentage</label>\n' + '    <div class="input-group">\n' + '        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' + //TODO:: better label of better to worse
 				'        <span class="input-group-text" id="addon-wrapping">%</span>\n' + //TODO:: better label of better to worse
-				'    </div>\n' +
-				'</div>\n' +
-				'<div class="mb-3">\n' +
-				'    <label class="form-label">Condition Details</label>\n' +
-				'    <textarea class="form-control" name="conditionDetails"></textarea>\n' +
-				'</div>\n' +
-				'<div class="mb-3">\n' +
-				'    <label class="form-label">Expires</label>\n' +
-				'    <input type="date" class="form-control storedExpiredInput" name="expires">\n' +
-				//TODO:: note to leave blank if not applicable
-				'</div>\n' +
-				//TODO:: move these templates to js calls
+				'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' + '    <label class="form-label">Condition Details</label>\n' + '    <textarea class="form-control" name="conditionDetails"></textarea>\n' + '</div>\n' + '<div class="mb-3">\n' + '    <label class="form-label">Expires</label>\n' + '    <input type="date" class="form-control storedExpiredInput" name="expires">\n' + //TODO:: note to leave blank if not applicable
+				'</div>\n' + //TODO:: move these templates to js calls
 				// imageInputTemplate.html() +
 
 				//TODO:: show kw/att on same row. images too?
-				PageComponents.Inputs.keywords +
-				PageComponents.Inputs.attribute +
-				'</div>\n'
-			);
+				PageComponents.Inputs.keywords + PageComponents.Inputs.attribute + '</div>\n');
 
 			//TODO:: populate from stored
 
 			return output;
-		},
-		getAmountInputs: function (item, stored) {
+		}, getAmountInputs: function (item, stored) {
 			console.log("Getting amount inputs");
 			//TODO:: update compatible unit tools
-			let output = $('<div class="amountStoredFormElements">' +
-				'<label class="form-label">Amount:</label>\n' +
-				'<div class="input-group mt-2 mb-3">\n' +
-				'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' +
-				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
-				'</div>' +
-				'</div>');
+			let output = $('<div class="amountStoredFormElements">' + '<label class="form-label">Amount:</label>\n' + '<div class="input-group mt-2 mb-3">\n' + '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' + '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
+				'</div>' + '</div>');
 			// UnitUtils.getUnitOptions()
 
 			//TODO:: populate units
 			//TODO:: populate from stored
 
 			return output;
-		},
-		getUniqueInputs(stored) {
+		}, getUniqueInputs(stored) {
 			let output = $('<div class="uniqueStoredFormInputs"></div>');
 			//TODO:: make inputs
 
 			return output;
-		},
-		getStoredInputs(item, stored) {
+		}, getStoredInputs(item, stored) {
 			let output = $('<div class="storedInputs"></div>');
 
-			StorageTypeUtils.runForStoredType(item,
-				function () {
-					output.append(
-						ItemStoredTransaction.StoredFormUtils.getAmountInputs(stored)
-					);
-				},
-				function () {
-					output.append(
-						ItemStoredTransaction.StoredFormUtils.getUniqueInputs(stored)
-					);
-				}
-			);
+			StorageTypeUtils.runForStoredType(item, function () {
+				output.append(ItemStoredTransaction.StoredFormUtils.getAmountInputs(stored));
+			}, function () {
+				output.append(ItemStoredTransaction.StoredFormUtils.getUniqueInputs(stored));
+			});
 
 			output.append(this.getBasicInputs(stored));
 
 			return output;
 		}
-	},
-	Add: {
+	}, Add: {
 		modal: $("#itemStoredTransactionAddModal"),
 		messages: $("#itemStoredTransactionAddMessages"),
 		form: $("#itemStoredTransactionAddForm"),
@@ -106,12 +67,48 @@ const ItemStoredTransaction = {
 
 		typeInputContainer: $("#itemStoredTransactionAddFormTypeInputContainer"),
 		typeInput: $("#itemStoredTransactionAddFormTypeInput"),
+
 		toBlockInputContainer: $("#itemStoredTransactionAddFormToBlockInputContainer"),
 		toBlockInput: $("#itemStoredTransactionAddFormToBlockInput"),
+		toBlockRadio: $("#itemStoredTransactionAddFormToBlockRadio"),
+
 		toStoredInputContainer: $("#itemStoredTransactionAddFormToStoredInputContainer"),
 		toStoredInput: $("#itemStoredTransactionAddFormToStoredInput"),
+		toStoredRadio: $("#itemStoredTransactionAddFormToStoredRadio"),
+
 		inputsContainer: $("#itemStoredTransactionAddFormInputsContainer"),
 
+		//TODO:: rework these inputs; too many options. Needs simplified
+		ableToInputs(inputsContainerJq, radios = true, disabled = true, readonly = false, clearRadios = true) {
+			let radioInputs = inputsContainerJq.find('input[name="toInput"]');
+			let inputs = inputsContainerJq.find(".card-body").find('input, select');
+			inputs.prop("disabled", disabled);
+			inputs.prop("readonly", readonly);
+
+			if (disabled) {
+				inputsContainerJq.find(".card-body").addClass("opacity-25");
+				radioInputs.prop("selected", false);
+			} else {
+				inputsContainerJq.find(".card-body").removeClass("opacity-25");
+			}
+
+			if (radios) {
+				radioInputs.prop("disabled", disabled);
+				radioInputs.prop("readonly", readonly);
+				if(clearRadios) {
+					radioInputs.prop("selected", false);
+				}
+			}
+
+			if(!radioInputs.prop("selected")){
+				inputs.prop("disabled", true);
+			}
+		},
+
+		/**
+		 * Changes inputs based on state of type, and to inputs
+		 * @param item
+		 */
 		updateInputs: function (item = null) {
 			if (item == null) {
 				item = this.itemIdInput.val();
@@ -122,16 +119,37 @@ const ItemStoredTransaction = {
 			}
 
 			ItemStoredTransaction.Add.inputsContainer.text("");
-			ItemStoredTransaction.Add.inputsContainer.append(
-				ItemStoredTransaction.StoredFormUtils.getStoredInputs(item, null)
-			);
-			if (
-				!ItemStoredTransaction.Add.typeInput.is(":hidden") &&
-				ItemStoredTransaction.Add.typeInput.val() === "ADD_AMOUNT"
-			) {
-				ItemStoredTransaction.Add.inputsContainer.find(".storedEditCommonFields")
-					.hide();
-			}
+			ItemStoredTransaction.Add.inputsContainer.append(ItemStoredTransaction.StoredFormUtils.getStoredInputs(item, null));
+
+			StorageTypeUtils.runForType(item,
+				function () {
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, true, false, false, false);
+
+					let type = ItemStoredTransaction.Add.typeInput.val();
+					switch (type) {
+						case "ADD_AMOUNT":
+							let toBlockVal = ItemStoredTransaction.Add.toBlockInput.val();
+
+							// if something exists in storage block, disable whole stored input
+							if(!(item.stats.storageBlockStats[toBlockVal] == null) || item.stats.storageBlockStats[toBlockVal].numStored !== 0){
+								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, true, false, true);
+								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, true, false, false, false);
+							}
+							ItemStoredTransaction.Add.inputsContainer.find(".storedEditCommonFields").hide();
+							break;
+						case "ADD_WHOLE":
+
+							break;
+					}
+				}, function () {
+					//TODO
+				}, function () {
+					//TODO
+				}, function () {
+					//TODO
+				});
+
 		},
 		resetForm: function (changeItemRelated = true) {
 			console.log("Resetting item stored add transaction form.");
@@ -150,7 +168,10 @@ const ItemStoredTransaction = {
 			}
 
 			this.typeInputContainer.hide();
-			this.toStoredInputContainer.hide();
+
+			this.ableToInputs(this.toStoredInputContainer);
+			this.ableToInputs(this.toBlockInputContainer);
+
 			this.toStoredInput.html("");
 			this.toBlockInput.html("");
 		},
@@ -174,24 +195,17 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.toBlockInput.append(blockOp);
 				});
 
-				StorageTypeUtils.runForType(
-					item,
-					function () {
-						//TODO:: if something exists in storage block, disable whole stored input
-						ItemStoredTransaction.Add.typeInputContainer.show();
-						ItemStoredTransaction.Add.updateInputs(item);
-					},
-					function () {
-						ItemStoredTransaction.Add.typeInputContainer.show();
-						ItemStoredTransaction.Add.updateInputs(item);
-					},
-					function () {
-						ItemStoredTransaction.Add.updateInputs(item);
-					},
-					function () {
-						//TODO
-					}
-				);
+				StorageTypeUtils.runForType(item, function () {
+					ItemStoredTransaction.Add.typeInputContainer.show();
+					ItemStoredTransaction.Add.updateInputs(item);
+				}, function () {
+					ItemStoredTransaction.Add.typeInputContainer.show();
+					ItemStoredTransaction.Add.updateInputs(item);
+				}, function () {
+					ItemStoredTransaction.Add.updateInputs(item);
+				}, function () {
+					//TODO
+				});
 				await Promise.all(promises);
 			});
 		},
@@ -211,7 +225,7 @@ const ItemStoredTransaction = {
 				this.itemSearchButton.prop("disabled", false);
 			}
 		},
-		submitForm: async function(event){
+		submitForm: async function (event) {
 			event.preventDefault();
 			console.log("Submitting Add Transaction form");
 
@@ -221,29 +235,19 @@ const ItemStoredTransaction = {
 			}
 
 
-
-
-
-
-
 			//TODO
 
 			await ItemStoredTransaction.submitTransaction(this.itemIdInput.val(), data);
 		}
-	},
-	Checkin: {
+	}, Checkin: {
 		//TODO
-	},
-	Checkout: {
+	}, Checkout: {
 		//TODO
-	},
-	Set: {
+	}, Set: {
 		//TODO
-	},
-	Subtract: {
+	}, Subtract: {
 		//TODO
-	},
-	Transfer: {
+	}, Transfer: {
 		//TODO
 	}
 };

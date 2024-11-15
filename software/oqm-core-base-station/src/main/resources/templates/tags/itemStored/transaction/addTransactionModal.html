@@ -25,21 +25,12 @@
 					</h3>
 				</div>
 
-
-				<div class="mb-3" id="itemStoredTransactionAddFormTypeInputContainer">
-					<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
-					<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();">
-						<option value="ADD_WHOLE">Whole Stored</option>
-						<option value="ADD_AMOUNT">Amount</option>
-					</select>
-				</div>
-
 				<div class="row">
 					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
 						<div class="card">
 							<div class="card-header">
 								<div class="d-grid gap-2">
-									<input class="btn-check" type="radio" name="flexRadioDefault" id="itemStoredTransactionAddFormToBlockRadio" style="" required>
+									<input class="btn-check" type="radio" name="toInput" id="itemStoredTransactionAddFormToBlockRadio" style="" onchange="ItemStoredTransaction.Add.updateInputs();" required>
 									<label class="btn" for="itemStoredTransactionAddFormToBlockRadio">
 										To {#icons/storageBlock}{/icons/storageBlock} Block
 									</label>
@@ -55,11 +46,11 @@
 						</div>
 					</div>
 
-					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
 						<div class="card">
 							<div class="card-header">
 								<div class="d-grid gap-2">
-									<input class="btn-check" type="radio" name="flexRadioDefault" id="itemStoredTransactionAddFormToStoredRadio" required>
+									<input class="btn-check" type="radio" name="toInput" id="itemStoredTransactionAddFormToStoredRadio" onchange="ItemStoredTransaction.Add.updateInputs();" required>
 									<label class="btn" for="itemStoredTransactionAddFormToStoredRadio">
 										To {#icons/stored}{/icons/stored} Stored
 									</label>
@@ -73,9 +64,11 @@
 					</div>
 				</div>
 
-				<div class="mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
-					<label for="itemStoredTransactionAddFormToStoredInput" class="form-label">To Stored</label>
-					<select class="form-select" id="itemStoredTransactionAddFormToStoredInput">
+				<div class="mb-3" id="itemStoredTransactionAddFormTypeInputContainer">
+					<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
+					<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();">
+						<option value="ADD_WHOLE">Whole Stored</option>
+						<option value="ADD_AMOUNT">Amount</option>
 					</select>
 				</div>
 
