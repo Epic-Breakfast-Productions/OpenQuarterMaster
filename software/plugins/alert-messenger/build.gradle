@@ -21,6 +21,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-qute'
     implementation 'io.quarkus:quarkus-mailer'
+    implementation 'io.quarkus:quarkus-hibernate-orm-panache'
+
     
     // Add Quarkus REST Client dependency
     implementation 'io.quarkus:quarkus-rest-client'

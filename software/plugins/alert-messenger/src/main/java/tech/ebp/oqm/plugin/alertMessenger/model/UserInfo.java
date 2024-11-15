@@ -17,4 +17,9 @@ public class UserInfo {
 	private String username;
 	private String email;
 	private Set<String> roles;
+
+	// Custom method to match the expected getUserId() in your other code
+	public String getUserId() {
+		return id;
+	}
 }
