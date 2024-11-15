@@ -2,13 +2,10 @@ package tech.ebp.oqm.core.api.health;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.health.HealthCheck;
-import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
-import org.eclipse.microprofile.health.Readiness;
+import org.eclipse.microprofile.health.*;
 import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService;
 
-@Readiness
+@Startup
 @ApplicationScoped
 public class SchemaUpgradeHealthCheck implements HealthCheck {
 

@@ -13,6 +13,9 @@ voiceSearch:
 quarkus:
   application:
     name: OQM MSS Controller Plugin
+  container-image:
+    name: oqm-plugin-mss_controller
+    group: ebprod
   rest-client:
     "com.ebp.openQuarterMaster.plugin.restClients.KeycloakRestClient":
       url: ${quarkus.oidc.auth-server-url}

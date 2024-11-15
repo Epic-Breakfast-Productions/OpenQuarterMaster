@@ -31,9 +31,14 @@ public class PlaywrightSetup implements Closeable {
 
 	{
 		log.info("Setting up playwright for UI tests.");
-		playwright = Playwright.create();
+		try {
+			this.playwright = Playwright.create();
+		} catch (Throwable e){
+			log.error("Failed creating new playwright: ", e);
+			throw e;
+		}
 		//TODO:: choose browser based on config
-		browser = playwright.firefox().launch();
+		this.browser = playwright.firefox().launch();
 
 		log.info("DONE setting up playwright.");
 	}

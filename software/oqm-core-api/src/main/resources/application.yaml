@@ -58,6 +58,9 @@ externalService:
 quarkus:
   application:
     name: ${service.nameShort} - V${service.apiVersion}
+  container-image:
+    name: oqm-core-api
+    group: ebprod
   log:
     level: DEBUG
     console:
