@@ -6,3 +6,6 @@ service:
         httpPort: 80
         httpsPort: 443
       logLevel: "INFO"
+mongo:
+  replicas: 3
+  database: oqm

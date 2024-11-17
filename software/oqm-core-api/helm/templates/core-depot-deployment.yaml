@@ -29,6 +29,7 @@ spec:
             - name: "QUARKUS_MONGODB_CONNECTION_STRING"
               valueFrom:
                 secretKeyRef:
-                  name: <metadata.name>-<auth-db>-<username> # test-api-oqm-core-api-mongo-config?
+                  name: {{ .Release.Name }}-oqm-core-api-mongo-{{.Values.mongo.database}}-oqm-core-api-user #<metadata.name>-<auth-db>-<username> # test-api-oqm-core-api-mongo-config?
                   key: connectionString.standardSrv
-
+            - name: "QUARKUS_MONGODB_DATABASE"
+              value: {{.Values.mongo.database}}

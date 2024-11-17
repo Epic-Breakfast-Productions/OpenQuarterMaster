@@ -8,3 +8,7 @@ Install:
  - docker
  - helm
  - minikube
+
+## Minikube
+
+https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/#Linux

@@ -1,10 +1,50 @@
+#
+# This helm template sets up mongodb for the core api.
+#   https://medium.com/@rohinpandey21/guide-mongodb-kubernetes-community-operator-c85faac0fc84
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-database
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mongodb-database
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - patch
+      - delete
+      - get
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mongodb-database
+subjects:
+  - kind: ServiceAccount
+    name: mongodb-database
+roleRef:
+  kind: Role
+  name: mongodb-database
+  apiGroup: rbac.authorization.k8s.io
+---
 # https://github.com/mongodb/mongodb-kubernetes-operator/blob/master/config/samples/mongodb.com_v1_mongodbcommunity_cr.yaml
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
   name: {{ .Release.Name }}-oqm-core-api-mongo
 spec:
-  members: 3
+  members: {{ .Values.mongo.replicas }}
   type: ReplicaSet
   version: "6.0.5"
   security:
@@ -12,13 +52,21 @@ spec:
       modes: ["SCRAM"]
   users:
     - name: oqm-core-api-user
-      db: admin
+      db: {{.Values.mongo.database}}
       passwordSecretRef: # a reference to the secret that will be used to generate the user's password
         name: {{ .Release.Name }}-oqm-core-api-mongo-user-password
       roles:
+        - name: root
+{{/*          db: {{.Values.mongo.database}}*/}}
+          db: admin
         - name: clusterAdmin
+{{/*          db: {{.Values.mongo.database}}*/}}
           db: admin
         - name: userAdminAnyDatabase
+{{/*          db: {{.Values.mongo.database}}*/}}
+          db: admin
+        - name: readWriteAnyDatabase
+{{/*          db: {{.Values.mongo.database}}*/}}
           db: admin
       scramCredentialsSecretName: my-scram
 ---
