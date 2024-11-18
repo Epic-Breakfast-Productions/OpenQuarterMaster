@@ -26,7 +26,15 @@
 				</div>
 
 				<div class="row">
-					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+					<div class="col mb-3"  id="itemStoredTransactionAddFormTypeInputContainer">
+						<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
+						<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();">
+							<option value="ADD_WHOLE">Whole Stored</option>
+							<option value="ADD_AMOUNT">Amount</option>
+						</select>
+					</div>
+
+					<div class="col mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
 						<div class="card">
 							<div class="card-header">
 								<div class="d-grid gap-2">
@@ -46,7 +54,7 @@
 						</div>
 					</div>
 
-					<div class="col-6 mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
+					<div class="col mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
 						<div class="card">
 							<div class="card-header">
 								<div class="d-grid gap-2">
@@ -62,14 +70,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
-
-				<div class="mb-3" id="itemStoredTransactionAddFormTypeInputContainer">
-					<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
-					<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();">
-						<option value="ADD_WHOLE">Whole Stored</option>
-						<option value="ADD_AMOUNT">Amount</option>
-					</select>
 				</div>
 
 				<div id="itemStoredTransactionAddFormInputsContainer">

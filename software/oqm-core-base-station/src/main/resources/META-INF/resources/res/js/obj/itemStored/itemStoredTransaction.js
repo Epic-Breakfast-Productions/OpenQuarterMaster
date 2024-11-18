@@ -78,31 +78,27 @@ const ItemStoredTransaction = {
 
 		inputsContainer: $("#itemStoredTransactionAddFormInputsContainer"),
 
-		//TODO:: rework these inputs; too many options. Needs simplified
-		ableToInputs(inputsContainerJq, radios = true, disabled = true, readonly = false, clearRadios = true) {
+		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true) {
 			let radioInputs = inputsContainerJq.find('input[name="toInput"]');
 			let inputs = inputsContainerJq.find(".card-body").find('input, select');
-			inputs.prop("disabled", disabled);
-			inputs.prop("readonly", readonly);
+			let cardBody = inputsContainerJq.find(".card-body");
 
-			if (disabled) {
-				inputsContainerJq.find(".card-body").addClass("opacity-25");
+			radioInputs.prop("disabled", disabled);
+			radioInputs.prop("readonly", readonly);
+			if(clearRadios) {
 				radioInputs.prop("selected", false);
+			}
+
+			if (disabled || !radioInputs.is(":checked")) {
+				console.log("Adding opacity to ", inputsContainerJq.attr("id"))
+				cardBody.addClass("opacity-25");
 			} else {
-				inputsContainerJq.find(".card-body").removeClass("opacity-25");
+				console.log("clearing opacity.")
+				cardBody.removeClass("opacity-25");
 			}
 
-			if (radios) {
-				radioInputs.prop("disabled", disabled);
-				radioInputs.prop("readonly", readonly);
-				if(clearRadios) {
-					radioInputs.prop("selected", false);
-				}
-			}
-
-			if(!radioInputs.prop("selected")){
-				inputs.prop("disabled", true);
-			}
+			inputs.prop("disabled", disabled);
+			inputs.prop("readonly", radioInputs.prop("readonly"));
 		},
 
 		/**
@@ -123,8 +119,8 @@ const ItemStoredTransaction = {
 
 			StorageTypeUtils.runForType(item,
 				function () {
-					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false, false);
-					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, true, false, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
 					switch (type) {
@@ -133,8 +129,8 @@ const ItemStoredTransaction = {
 
 							// if something exists in storage block, disable whole stored input
 							if(!(item.stats.storageBlockStats[toBlockVal] == null) || item.stats.storageBlockStats[toBlockVal].numStored !== 0){
-								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, true, false, true);
-								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, true, false, false, false);
+								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
+								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 							}
 							ItemStoredTransaction.Add.inputsContainer.find(".storedEditCommonFields").hide();
 							break;
