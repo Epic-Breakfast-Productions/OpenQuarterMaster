@@ -86,7 +86,7 @@ const ItemStoredTransaction = {
 			radioInputs.prop("disabled", disabled);
 			radioInputs.prop("readonly", readonly);
 			if(clearRadios) {
-				radioInputs.prop("selected", false);
+				radioInputs.prop("checked", false);
 			}
 
 			if (disabled || !radioInputs.is(":checked")) {
@@ -127,15 +127,11 @@ const ItemStoredTransaction = {
 						case "ADD_AMOUNT":
 							let toBlockVal = ItemStoredTransaction.Add.toBlockInput.val();
 
-							// if something exists in storage block, disable whole stored input
-							if(!(item.stats.storageBlockStats[toBlockVal] == null) || item.stats.storageBlockStats[toBlockVal].numStored !== 0){
-								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
-								ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
-							}
 							ItemStoredTransaction.Add.inputsContainer.find(".storedEditCommonFields").hide();
 							break;
 						case "ADD_WHOLE":
-
+							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
+							//TODO:: disable toBlock values with something already stored in it
 							break;
 					}
 				}, function () {

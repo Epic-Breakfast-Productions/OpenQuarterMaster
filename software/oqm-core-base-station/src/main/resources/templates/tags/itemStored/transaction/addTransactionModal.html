@@ -28,10 +28,14 @@
 				<div class="row">
 					<div class="col mb-3"  id="itemStoredTransactionAddFormTypeInputContainer">
 						<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
-						<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();">
+						<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();" aria-describedby="itemStoredTransactionAddFormTypeInputHelp">
 							<option value="ADD_WHOLE">Whole Stored</option>
 							<option value="ADD_AMOUNT">Amount</option>
 						</select>
+						<div id="itemStoredTransactionAddFormTypeInputHelp" class="form-text">
+							The type of adding we are doing. <br />
+							<span id="itemStoredTransactionAddFormTypeInputHelpDisabledNote"></span>
+						</div>
 					</div>
 
 					<div class="col mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
@@ -51,6 +55,9 @@
 									</select>
 								</div>
 							</div>
+							<div class="card-footer text-body-secondary">
+						        Select this to add to a storage block.
+						    </div>
 						</div>
 					</div>
 
@@ -68,6 +75,9 @@
 								<select class="form-select" id="">
 								</select>
 							</div>
+							<div class="card-footer text-body-secondary">
+						        Select this to add to an existent stored item.
+						    </div>
 						</div>
 					</div>
 				</div>
