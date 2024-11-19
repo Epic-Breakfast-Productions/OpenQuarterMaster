@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.10.2"
+    id "io.freefair.lombok" version "8.11"
 }
 
 group 'com.ebp.openQuarterMaster'
@@ -35,7 +35,7 @@ dependencies {
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.1'
     implementation 'uk.org.okapibarcode:okapibarcode:0.4.8'
-    implementation 'com.itextpdf:html2pdf:5.0.5'
+    implementation 'com.itextpdf:html2pdf:6.0.0'
 
     //webjars
     implementation 'org.webjars:jquery:3.7.1'
