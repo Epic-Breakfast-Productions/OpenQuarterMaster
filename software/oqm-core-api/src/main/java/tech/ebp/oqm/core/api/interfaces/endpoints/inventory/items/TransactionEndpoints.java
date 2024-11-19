@@ -56,12 +56,13 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@PathParam("itemId")
 	String itemId;
 
-	@Getter
 	private InventoryItem inventoryItem;
 
-	@PostConstruct
-	public void setup(){
-		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+	public InventoryItem getInventoryItem() {
+		if(this.inventoryItem == null) {
+			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+		}
+		return this.inventoryItem;
 	}
 
 	@PUT
