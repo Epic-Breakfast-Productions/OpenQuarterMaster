@@ -1,43 +1,86 @@
 const ItemStoredTransaction = {
 
-	submitTransaction: async function (itemId, transaction) {
+
+	// http://localhost:8080/api/passthrough/inventory/item/673c68565986ac44629caf6c/stored/transact
+	//                      /api/passthrough/inventory/item/{itemId}                /stored/transact
+	submitTransaction: async function (itemId, transaction, transactionModal) {
 		console.log("Submitting transaction for item " + itemId + ":", transaction);
-		//TODO
+		Rest.call({
+			spinnerContainer: transactionModal.find("modal-body")[0],
+			failMessagesDiv: transactionModal.find("messages")[0],
+			method: "PUT",
+			url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/transact",
+			data: transaction,
+			done: function(appliedTransaction){
+				PageMessages.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
+			}
+		});
 	},
 
 	StoredFormUtils: {
 		getBasicInputs(stored) {
 			//TODO:: update to use barcode input
 			//TODO:: update these
-			let output = $('<div class="storedEditCommonFields">' + '<div class="mb-3 ">\n' + '    <label class="form-label">Barcode</label>\n' + '    <div class="input-group">\n' + '        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' + '    </div>\n' + '</div>\n' + '<div class="mb-3 ">\n' + '    <label class="form-label">Condition Percentage</label>\n' + '    <div class="input-group">\n' + '        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' + //TODO:: better label of better to worse
-				'        <span class="input-group-text" id="addon-wrapping">%</span>\n' + //TODO:: better label of better to worse
-				'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' + '    <label class="form-label">Condition Details</label>\n' + '    <textarea class="form-control" name="conditionDetails"></textarea>\n' + '</div>\n' + '<div class="mb-3">\n' + '    <label class="form-label">Expires</label>\n' + '    <input type="date" class="form-control storedExpiredInput" name="expires">\n' + //TODO:: note to leave blank if not applicable
+			let output = $(
+				'<div class="commonStoredFormElements">' +
+				'<div class="mb-3 ">\n' +
+				'    <label class="form-label">Barcode</label>\n' +
+				'    <div class="input-group">\n' +
+				'        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' +
+				'    </div>\n' + '</div>\n' + '<div class="mb-3 ">\n' +
+				'    <label class="form-label">Condition Percentage</label>\n' +
+				'    <div class="input-group">\n' +
+				'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' +
+				//TODO:: better label of better to worse
+				'        <span class="input-group-text" id="addon-wrapping">%</span>\n' +
+				//TODO:: better label of better to worse
+				'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' +
+				'    <label class="form-label">Condition Details</label>\n' +
+				'    <textarea class="form-control" name="conditionDetails"></textarea>\n' +
+				'</div>\n' +
+				'<div class="mb-3">\n' +
+				'    <label class="form-label">Expires</label>\n' +
+				'    <input type="date" class="form-control storedExpiredInput" name="expires">\n' +
+				//TODO:: note to leave blank if not applicable
 				'</div>\n' + //TODO:: move these templates to js calls
 				// imageInputTemplate.html() +
 
 				//TODO:: show kw/att on same row. images too?
-				PageComponents.Inputs.keywords + PageComponents.Inputs.attribute + '</div>\n');
+				PageComponents.Inputs.keywords +
+				PageComponents.Inputs.attribute +
+				'</div>\n'
+			);
 
 			//TODO:: populate from stored
 
 			return output;
-		}, getAmountInputs: function (item, stored) {
+		},
+		getAmountInputs: function (item, stored) {
 			console.log("Getting amount inputs");
 			//TODO:: update compatible unit tools
-			let output = $('<div class="amountStoredFormElements">' + '<label class="form-label">Amount:</label>\n' + '<div class="input-group mt-2 mb-3">\n' + '     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' + '     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
-				'</div>' + '</div>');
+			let output = $(
+				'<div class="amountStoredFormElements">' +
+				'<label class="form-label">Amount:</label>\n' +
+				'<div class="input-group mt-2 mb-3">\n' +
+				'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' +
+				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
+				'</div>' +
+				'</div>'
+			);
 			// UnitUtils.getUnitOptions()
 
 			//TODO:: populate units
 			//TODO:: populate from stored
 
 			return output;
-		}, getUniqueInputs(stored) {
+		},
+		getUniqueInputs(stored) {
 			let output = $('<div class="uniqueStoredFormInputs"></div>');
 			//TODO:: make inputs
 
 			return output;
-		}, getStoredInputs(item, stored) {
+		},
+		getStoredInputs(item, stored) {
 			let output = $('<div class="storedInputs"></div>');
 
 			StorageTypeUtils.runForStoredType(item, function () {
@@ -85,7 +128,7 @@ const ItemStoredTransaction = {
 
 			radioInputs.prop("disabled", disabled);
 			radioInputs.prop("readonly", readonly);
-			if(clearRadios) {
+			if (clearRadios) {
 				radioInputs.prop("checked", false);
 			}
 
@@ -127,7 +170,8 @@ const ItemStoredTransaction = {
 						case "ADD_AMOUNT":
 							let toBlockVal = ItemStoredTransaction.Add.toBlockInput.val();
 
-							ItemStoredTransaction.Add.inputsContainer.find(".storedEditCommonFields").hide();
+							console.debug("Removing common elements.");
+							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
 							break;
 						case "ADD_WHOLE":
 							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
@@ -141,7 +185,7 @@ const ItemStoredTransaction = {
 				}, function () {
 					//TODO
 				});
-
+			console.debug("Done updating inputs.");
 		},
 		resetForm: function (changeItemRelated = true) {
 			console.log("Resetting item stored add transaction form.");
@@ -217,19 +261,50 @@ const ItemStoredTransaction = {
 				this.itemSearchButton.prop("disabled", false);
 			}
 		},
-		submitForm: async function (event) {
-			event.preventDefault();
+		submitForm: async function () {
 			console.log("Submitting Add Transaction form");
 
 			let data = {
 				transactionType: this.typeInput.val(),
+			}
 
+			//determine "to" value
+			if(this.toStoredRadio.is(":checked")){
+				console.debug("Going to stored.");
+				data.toStored = "";//TODO:: when we have the input implemented
+			}
+			if(this.toBlockRadio.is(":checked")){
+				console.debug("Going to block.");
+				data.toBlock = this.toBlockInput.val();
 			}
 
 
-			//TODO
+			let amtFormElements = this.inputsContainer.find(".amountStoredFormElements");
+			if (amtFormElements) {
+				console.debug("Amount fields present.");
+				data.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer)
+			}
+			let commFormElements = this.inputsContainer.find(".commonStoredFormElements");
+			if (commFormElements) {
+				console.debug("Common fields present.");
+				//TODO:: throw data in
+			}
 
-			await ItemStoredTransaction.submitTransaction(this.itemIdInput.val(), data);
+			await ItemStoredTransaction.submitTransaction(
+				this.itemIdInput.val(),
+				data,
+				this.modal
+			);
+		},
+		/**
+		 * Handler for submitting the add transaction form.
+		 * Wrapper for submitForm, in order to enable the use of "this" in that method.
+		 * @param event
+		 * @returns {Promise<void>}
+		 */
+		submitFormHandler:  async function (event) {
+			event.preventDefault();
+			await ItemStoredTransaction.Add.submitForm();
 		}
 	}, Checkin: {
 		//TODO
@@ -244,4 +319,4 @@ const ItemStoredTransaction = {
 	}
 };
 
-ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitForm);
+ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);

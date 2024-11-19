@@ -57,5 +57,14 @@ const UnitUtils = {
 		};
 
 		return output;
+	},
+	getQuantityFromInputs(inputsContainerJq){
+		let output = this.getQuantityObj(
+			inputsContainerJq.find('input[name="amountStored"]').val(),
+			inputsContainerJq.find('select[name="amountStoredUnit"]').val()
+		);
+		console.debug("Got quantity from form: ", output);
+
+		return output;
 	}
 };
