@@ -876,3 +876,18 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
 Licence: GPL-3+
 
+Package: oqm-plugin-ext+item+search
+Version: 1.0.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0)
+Filename: ./oqm-plugin-ext+item+search_1.0.1_all.deb
+Size: 3496
+MD5sum: cff06e99ce86be4aadeb6e442d09b20c
+SHA1: db14c8b0ac0d9dfde498e920303172b213aef9bb
+SHA256: 01df268ca6f72cc37ced7c227cb7f6d2ebf8a3b4e135a1c20a2c85e22c268a9a
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
+Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
+Licence: GPL-3+
+
