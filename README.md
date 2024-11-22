@@ -9,7 +9,8 @@
 
 [//]: # (![Station Captain]&#40;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg&#41;)
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
-![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)
+[![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -17,10 +18,12 @@
 
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
-**For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)**
+We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions) or just hang out with us on our [Discord](https://discord.gg/cpcVh6SyNn)
 
-We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests!
+## Quick Links
 
+ - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
+ - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
 
 ## How it works
 
@@ -50,13 +53,13 @@ System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes")
 ```
 Please use the diagram above for reference.
 
-How we acomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Base Station](software/oqm-core-base-station). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible.
+How we acomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/oqm-core-api). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible. We also have a frontend for the core API called the [Base Station](software/oqm-core-base-station), which lets you have direct and easy to navigate access to your inventory.
 
 To cover specific use-cases, we have what we call [Plugins](software/plugins). These are components that extend the functionality of the basic inventory management, and fill additional needs with their own capabilities. Examples could include Smart Refrigerator integrations, a system for interacting with physical storage mediums, Point of Sale Systems, Workflow management.. the list is endless. You could even create your own!
 
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
-To get started on your own hardware, please see [Station Captain](deployment/Single%20Host/Station-Captain)
+To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
 
 ## On Privacy
 
