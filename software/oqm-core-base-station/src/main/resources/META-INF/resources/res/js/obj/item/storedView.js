@@ -56,7 +56,7 @@ const StoredView = {
 	},
 	getStoredBlockLink(storageBlockId, small = false) {
 		let output = $('<div class=""></div>');
-		output.html(Links.getStorageViewButton(storageBlockId, 'View in Storage'));
+		output.html(Links.getStorageViewButton(storageBlockId, 'View Block'));
 
 		if (small) {
 			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");

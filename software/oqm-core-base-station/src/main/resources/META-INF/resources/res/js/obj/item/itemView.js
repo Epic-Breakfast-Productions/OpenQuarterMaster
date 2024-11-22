@@ -15,9 +15,14 @@ const ItemView = {
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
 	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
+
 	storedBulkContainer: $("#itemViewStoredBulkContainer"),
 	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
+	storedBulkNonePresentBlocksList: $("#itemViewStoredBulkNonePresentBlocksList"),
 	storedNonePresentBlocksList: $("#itemViewStoredNonePresentBlocksList"),
+	storedBulkNumStoredDisplay: $("#itemViewStoredBulkNumStoredDisplay"),
+	storedBulkBlockNum: $("#itemViewStoredBulkBlockNum"),
+
 
 	itemViewTotal: $("#itemViewTotal"),
 	itemViewTotalVal: $("#itemViewTotalVal"),
@@ -60,6 +65,8 @@ const ItemView = {
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
 		ItemView.storedBulkContainer.hide();
+		ItemView.storedBulkNumStoredDisplay.text("");
+		ItemView.storedBulkBlockNum.text("");
 		ItemView.storedNonePresentContainer.hide();
 		ItemView.storedNonePresentHasStorageContainer.hide();
 		ItemView.storedNonePresentNoStorageContainer.hide();
@@ -112,52 +119,8 @@ const ItemView = {
 			ItemView.itemViewEditButton.off('click');
 		}
 	},
-	addViewAccordionItem: function (id, content, headerContent, trackedType) {
-		let accordId = "itemViewAccordBlock" + id;
 
-		//if not string, expected as stored obj
-		if (typeof headerContent !== 'string' && !(headerContent instanceof String)) {
-			let stored = headerContent;
-			headerContent = "";
-
-			let funcForAmount = function () {
-				headerContent += stored.amount.value + stored.amount.unit.symbol;
-			};
-			StoredTypeUtils.runForType(
-				trackedType,
-				funcForAmount,
-				function () {
-
-				}
-			);
-
-			if (stored.condition) {
-				headerContent += " Condition: " + stored.condition + "%";
-			}
-			if (stored.expires) {
-				headerContent += " Expires: " + stored.expires;
-			}
-		}
-
-		let newAccordItem = $('<div class="accordion-item">' +
-			'<h2 class="accordion-header" id="' + accordId + 'Header">' +
-			'<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordId + 'Collapse" aria-expanded="false" aria-controls="' + accordId + 'Collapse">' +
-			headerContent +
-			'</button>' +
-			'</h2>' +
-			'<div id="' + accordId + 'Collapse" class="accordion-collapse collapse" aria-labelledby="' + accordId + 'Header" data-bs-parent="#' + accordId + 'Header">' +
-			'<div class="accordion-body">' +
-			'</div>' +
-			'</div>' +
-			'</div>');
-
-		newAccordItem.find('.accordion-button').text(headerContent);
-		newAccordItem.find('.accordion-body').append(content);
-
-		return newAccordItem;
-	},
-
-	addStoredBlockViewAccordionItem: async function (item, blockId, accordionId, bodyPromise) {
+	addStoredBlockViewAccordionItem: async function (item, blockId, accordionId, body) {
 		let headerId = blockId + "-stored-view-accord-header";
 		let collapseId = headerId + "-collapse";
 
@@ -176,14 +139,19 @@ const ItemView = {
 		header.prop("id", headerId);
 		let collapse = newAccordItem.find(".accordion-collapse");
 		collapse.prop("id", collapseId);
-		collapse.prop("aria-labelledby", header.prop("id"));
-		collapse.prop("data-bs-parent", "#" + accordionId);
+		collapse.attr("aria-labelledby", header.prop("id"));
+		collapse.attr("data-bs-parent", "#" + accordionId);
 		let collapseButton = newAccordItem.find(".accordion-button");
-		collapseButton.prop("aria-controls", collapseId);
-		collapseButton.prop("data-bs-target", "#" + collapseId);
+		collapseButton.attr("aria-controls", collapseId);
+		collapseButton.attr("data-bs-target", "#" + collapseId);
+		newAccordItem.find(".accordion-body").append(body);
 
-		await bodyPromise;
-		newAccordItem.find(".accordion-body").append(bodyPromise);
+		newAccordItem.find(".accordion-button").text(blockId);
+		getStorageBlockLabel(blockId, function(blockLabel){
+			let labelText = blockLabel;
+
+			newAccordItem.find(".accordion-button").text(labelText);
+		});
 
 		return newAccordItem;
 	},
@@ -209,25 +177,51 @@ const ItemView = {
 				let promises = [];
 
 				if (itemData.stats.numStored) {
-					let multiDisplay = function(){
+					ItemView.storedBulkNumStoredDisplay.text(itemData.stats.numStored);
+					ItemView.storedBulkBlockNum.text(itemData.storageBlocks.length);
+					let multiDisplay = function () {
 						//TODO
 					}
 					StorageTypeUtils.runForType(
 						itemData,
 						function () {
-							let accord = $('<div class="accordion"></div>');
-
-							//TODO
-							itemData.storageBlocks.forEach(function(blockId){
+							itemData.storageBlocks.forEach(function (blockId) {
 								console.debug("Displaying block: ", blockId);
 
-								Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, function (stored){
-									//TODO:: add to accordion
-								});
+								if(itemData.stats.storageBlockStats[blockId].numStored) {
+									promises.push(
+										Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
+											ItemView.addStoredBlockViewAccordionItem(
+												itemData,
+												blockId,
+												"itemViewStoredBulkAccordion",
+												StoredView.getStoredViewContent(
+													stored,
+													itemId,
+													blockId,
+													false,
+													true,
+													false,
+													false,
+													true
+												)
+											).then(function(newAccordItem){
+												ItemView.storedBulkAccordion.append(newAccordItem);
+											});
+										})
+									);
+								} else {
+									if(ItemView.storedBulkNonePresentBlocksList.empty()){
+										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no items:");
+									}
+									getStorageBlockLabel(blockId, function (labelText) {
+										let newLink = Links.getStorageViewLink(blockId, labelText);
+										ItemView.storedBulkNonePresentBlocksList.append(newLink);
+										ItemView.storedBulkNonePresentBlocksList.append(" ");
+									});
+								}
 							});
 
-
-							ItemView.storedBulkAccordion.append(accord);
 							ItemView.storedBulkContainer.show();
 						},
 						multiDisplay,

@@ -100,7 +100,6 @@
                 <button class="btn btn-primary" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
                 <h5>Available storage blocks:</h5>
                 <p id="itemViewStoredNonePresentBlocksList">
-
                 </p>
             </div>
             <div id="itemViewStoredNonePresentNoStorageContainer">
@@ -171,6 +170,8 @@
             <h4>
                 {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
             </h4>
+            <p id="itemViewStoredBulkNonePresentBlocksList">
+            </p>
             <div class="accordion" id="itemViewStoredBulkAccordion">
             </div>
         </div>
