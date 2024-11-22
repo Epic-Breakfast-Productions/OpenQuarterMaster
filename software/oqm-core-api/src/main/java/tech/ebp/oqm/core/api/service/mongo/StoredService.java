@@ -205,10 +205,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	private void addToStats(ItemStoredStats itemStoredStats, Stored stored) {
-		if (!itemStoredStats.getStorageBlockStats().containsKey(stored.getId())) {
-			itemStoredStats.getStorageBlockStats().put(stored.getId(), new StoredInBlockStats(itemStoredStats.getTotal().getUnit()));
+		if (!itemStoredStats.getStorageBlockStats().containsKey(stored.getStorageBlock())) {
+			itemStoredStats.getStorageBlockStats().put(stored.getStorageBlock(), new StoredInBlockStats(itemStoredStats.getTotal().getUnit()));
 		}
-		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getId());
+		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getStorageBlock());
 
 		this.addToStats(storedInBlockStats, stored);
 		this.addToStats((StatsWithTotalContaining) itemStoredStats, stored);
