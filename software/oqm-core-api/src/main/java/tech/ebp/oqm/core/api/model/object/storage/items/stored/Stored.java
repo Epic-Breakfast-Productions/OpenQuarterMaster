@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 @SuperBuilder(toBuilder = true)
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "storedType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = AmountStored.class, name = "AMOUNT"),
@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 
-	public abstract StoredType getStoredType();
+	public abstract StoredType getType();
 
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem} this stored is associated with.

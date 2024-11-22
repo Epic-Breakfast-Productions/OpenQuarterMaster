@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -94,8 +93,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item.");
 		}
 
-		if (item.getStorageType().storedType != newOrChangedObject.getStoredType()) {
-			throw new ValidationException("Stored given of type " + newOrChangedObject.getStoredType() + " cannot be held in item of storage type" + item.getStorageType());
+		if (item.getStorageType().storedType != newOrChangedObject.getType()) {
+			throw new ValidationException("Stored given of type " + newOrChangedObject.getType() + " cannot be held in item of storage type" + item.getStorageType());
 		}
 
 		if (item.getStorageType().storedType == StoredType.AMOUNT) {
@@ -168,7 +167,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 
-		if (stored.getStoredType() == StoredType.AMOUNT) {
+		if (stored.getType() == StoredType.AMOUNT) {
 			AmountStored amtStored = (AmountStored) stored;
 			if (amtStored.getLowStockThreshold() != null && stored.getNotificationStatus().isLowStock()) {
 				statsToAddTo.setNumLowStock(statsToAddTo.getNumLowStock() + 1L);
@@ -187,7 +186,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored) {
 		this.addToStats((BasicStatsContaining) statsToAddTo, stored);
 
-		Quantity toAdd = switch (stored.getStoredType()) {
+		Quantity toAdd = switch (stored.getType()) {
 			case AMOUNT -> {
 				AmountStored amountStored = (AmountStored) stored;
 				yield amountStored.getAmount();
@@ -283,7 +282,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		StoredExpiryLowStockProcessResult curResult = new StoredExpiryLowStockProcessResult();
 		boolean changed = false;
 
-		if (checkLowStock && stored.getStoredType() == StoredType.AMOUNT) {
+		if (checkLowStock && stored.getType() == StoredType.AMOUNT) {
 			AmountStored amountStored = (AmountStored) stored;
 
 			if (UnitUtils.underThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {

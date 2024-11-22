@@ -12,7 +12,7 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 public class UniqueStored extends Stored {
 	@Override
-	public StoredType getStoredType() {
+	public StoredType getType() {
 		return StoredType.UNIQUE;
 	}
 

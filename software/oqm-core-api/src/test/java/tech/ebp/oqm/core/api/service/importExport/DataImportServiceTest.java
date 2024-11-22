@@ -111,7 +111,7 @@ class DataImportServiceTest extends RunningServerTest {
 				new NewBaseCustomUnitRequest(ValidUnitDimension.amount)
 					.setUnitCategory(UnitCategory.Number)
 					.setName(FAKER.name().name())
-					.setSymbol(FAKER.food().dish())
+					.setSymbol(FAKER.food().dish().replace(" ", ""))
 			);
 			this.customUnitService.add(null, customUnitEntry);
 		}
@@ -128,7 +128,7 @@ class DataImportServiceTest extends RunningServerTest {
 				)
 					.setUnitCategory(UnitCategory.Number)
 					.setName(FAKER.name().name())
-					.setSymbol(FAKER.food().dish())
+					.setSymbol(FAKER.food().dish().replace(" ", ""))
 			);
 			this.customUnitService.add(null, customUnitEntry);
 		}

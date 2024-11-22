@@ -73,7 +73,7 @@ public class AmountStored extends Stored {
 	}
 	
 	@Override
-	public StoredType getStoredType() {
+	public StoredType getType() {
 		return StoredType.AMOUNT;
 	}
 	
