@@ -22,6 +22,23 @@ const Getters = {
 				}
 			});
 		}
+	},
+	StoredItem: {
+		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored?inBlock=" + blockId,
+				done: function(storedSearchResults){
+					if(storedSearchResults.numResults === 0){
+						throw new Error("No results where expected one.");
+					}
+					if(storedSearchResults.numResults > 1){
+						throw new Error("More than one result. Expected one.");
+					}
+					doneFunc(storedSearchResults);
+				}
+			});
+		}
 	}
 }
 

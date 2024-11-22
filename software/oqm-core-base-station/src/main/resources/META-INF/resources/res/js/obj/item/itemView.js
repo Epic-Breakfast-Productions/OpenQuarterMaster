@@ -15,6 +15,7 @@ const ItemView = {
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
 	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
+	storedBulkContainer: $("#itemViewStoredBulkContainer"),
 	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
 	storedNonePresentBlocksList: $("#itemViewStoredNonePresentBlocksList"),
 
@@ -58,6 +59,7 @@ const ItemView = {
 		ItemView.itemViewModalLabel.text("");
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
+		ItemView.storedBulkContainer.hide();
 		ItemView.storedNonePresentContainer.hide();
 		ItemView.storedNonePresentHasStorageContainer.hide();
 		ItemView.storedNonePresentNoStorageContainer.hide();
@@ -213,7 +215,20 @@ const ItemView = {
 					StorageTypeUtils.runForType(
 						itemData,
 						function () {
+							let accord = $('<div class="accordion"></div>');
+
 							//TODO
+							itemData.storageBlocks.forEach(function(blockId){
+								console.debug("Displaying block: ", blockId);
+
+								Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, function (stored){
+									//TODO:: add to accordion
+								});
+							});
+
+
+							ItemView.storedBulkAccordion.append(accord);
+							ItemView.storedBulkContainer.show();
 						},
 						multiDisplay,
 						multiDisplay,
