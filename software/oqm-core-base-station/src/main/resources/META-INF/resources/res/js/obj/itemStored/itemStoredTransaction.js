@@ -40,7 +40,7 @@ const ItemStoredTransaction = {
 				'</div>\n' +
 				'<div class="mb-3">\n' +
 				'    <label class="form-label">Expires</label>\n' +
-				'    <input type="date" class="form-control storedExpiredInput" name="expires">\n' +
+				'    <input type="datetime-local" class="form-control storedExpiredInput" name="expires">\n' +
 				//TODO:: note to leave blank if not applicable
 				'</div>\n' + //TODO:: move these templates to js calls
 				// imageInputTemplate.html() +
@@ -169,7 +169,6 @@ const ItemStoredTransaction = {
 					switch (type) {
 						case "ADD_AMOUNT":
 							let toBlockVal = ItemStoredTransaction.Add.toBlockInput.val();
-
 							console.debug("Removing common elements.");
 							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
 							break;
@@ -278,16 +277,36 @@ const ItemStoredTransaction = {
 				data.toBlock = this.toBlockInput.val();
 			}
 
+			switch (data.transactionType){
+				case "ADD_AMOUNT":
+					console.debug("Amount fields present.");
+					data.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
+					break;
+				case "ADD_WHOLE":
+					data.toAdd = {};
+					let toAddFieldsTo = data.toAdd;
 
-			let amtFormElements = this.inputsContainer.find(".amountStoredFormElements");
-			if (amtFormElements) {
-				console.debug("Amount fields present.");
-				data.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer)
-			}
-			let commFormElements = this.inputsContainer.find(".commonStoredFormElements");
-			if (commFormElements) {
-				console.debug("Common fields present.");
-				//TODO:: throw data in
+					let amtFormElements = this.inputsContainer.find(".amountStoredFormElements");
+					if (amtFormElements) {
+						console.debug("Amount fields present.");
+						toAddFieldsTo.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
+						toAddFieldsTo.type = "AMOUNT";
+					} else {
+						toAddFieldsTo.type = "UNIQUE";
+					}
+					let commFormElements = this.inputsContainer.find(".commonStoredFormElements");
+					if (commFormElements) {
+						console.debug("Common fields present.");
+
+						toAddFieldsTo["barcode"] = commFormElements.find('input[name="barcode"]').val();
+						toAddFieldsTo["condition"] = commFormElements.find('input[name="condition"]').val();
+						toAddFieldsTo["conditionDetails"] = commFormElements.find('input[name="conditionDetails"]').val();
+						toAddFieldsTo["expires"] = commFormElements.find('input[name="expires"]').val();
+						toAddFieldsTo["item"] = ItemStoredTransaction.Add.itemIdInput.val();
+						toAddFieldsTo["storageBlock"] = ItemStoredTransaction.Add.toBlockInput.val();
+						KeywordAttEdit.addKeywordAttData(toAddFieldsTo, commFormElements.find(".keywordInputDiv"), commFormElements.find(".attInputDiv"));
+					}
+					break;
 			}
 
 			await ItemStoredTransaction.submitTransaction(
