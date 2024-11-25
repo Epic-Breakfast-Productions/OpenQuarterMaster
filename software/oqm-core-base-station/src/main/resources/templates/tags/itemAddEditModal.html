@@ -88,21 +88,9 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="addEditItemBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
-                    <div class="col-sm-10">
-                        {#inputs/barcodeInput id='addEditItemBarcodeInput'}{/inputs/barcodeInput}
-                    </div>
-                </div>
-                <div class="mb-3 row">
                     <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Storage Type</label>
                     <div class="col-sm-10">
-                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="BULK" onchange="ItemAddEdit.addEditStoredTypeInputChanged()" aria-describedby="addEditItemStorageTypeHelp">
+                        <select class="form-select form-select-lg" id="addEditItemStorageTypeInput" data-current="BULK" onchange="ItemAddEdit.addEditStoredTypeInputChanged()" aria-describedby="addEditItemStorageTypeHelp">
                             <option value="BULK" selected>Bulk</option>
                             <option value="AMOUNT_LIST">Amount List</option>
                             <option value="UNIQUE_MULTI">Unique - Multi</option>
@@ -112,6 +100,18 @@
                             For details on each type of storage, see <a href="/help#items" target="_blank">{#icons/help}{/icons/help} Help</a><br />
                             This cannot be changed after item creation.
                         </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemBarcodeInput" class="col-sm-2 col-form-label">Barcode</label>
+                    <div class="col-sm-10">
+                        {#inputs/barcodeInput id='addEditItemBarcodeInput'}{/inputs/barcodeInput}
                     </div>
                 </div>
                 <!-- TODO:: default value -->
