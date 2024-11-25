@@ -162,7 +162,7 @@ const ItemStoredTransaction = {
 
 			StorageTypeUtils.runForType(item,
 				function () {
-					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
@@ -231,7 +231,8 @@ const ItemStoredTransaction = {
 				});
 
 				StorageTypeUtils.runForType(item, function () {
-					ItemStoredTransaction.Add.typeInputContainer.show();
+					// ItemStoredTransaction.Add.typeInputContainer.show();
+					ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
 					ItemStoredTransaction.Add.updateInputs(item);
 				}, function () {
 					ItemStoredTransaction.Add.typeInputContainer.show();

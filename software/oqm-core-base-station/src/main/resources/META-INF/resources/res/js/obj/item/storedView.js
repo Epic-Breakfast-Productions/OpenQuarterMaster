@@ -7,13 +7,13 @@ const StoredView = {
 		return output;
 	},
 	getStorageBlockTrackedIdentifierView(stored) {
-		if (stored.storedType.includes("TRACKED")) {
+		if (stored.type.includes("UNIQUE")) {
 			return StoredView.getBlockViewCell("Identifier", stored.identifier);
 		}
 		return "";
 	},
 	getStorageBlockAmountHeldView(stored, showCurrently = false) {
-		if (stored.storedType.includes("AMOUNT")) {
+		if (stored.type.includes("AMOUNT")) {
 			return StoredView.getBlockViewCell((showCurrently?"Currently ":"") + "Stored:", stored.amount.value + stored.amount.unit.symbol);
 		}
 		return "";
@@ -31,7 +31,7 @@ const StoredView = {
 		return "";
 	},
 	getStorageBlockIdentifyingDetailsView(stored) {
-		if (stored.storedType.includes("TRACKED") && stored.identifyingDetails) {
+		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
 			return StoredView.getBlockViewCell("Identifying Details", stored.identifyingDetails);
 		}
 		return "";
