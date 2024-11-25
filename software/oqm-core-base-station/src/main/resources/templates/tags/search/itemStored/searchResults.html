@@ -50,16 +50,16 @@
   </tr>
   {#else}
   {#for result in searchResults.get("results")}
-  	{#let id=result.get("id").asText()}
+  	{#let id=result.get("id").asText() labelText=result.get("labelText").asText()}
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
       <img src="/api/passthrough/media/image/for/itemStored/{id}" class="searchResultImage">{! TODO:: fix this url !}
       {/if}
     </td>
-    <td>{result.get("labelText").asText()}</td>
+    <td>{labelText}</td>
     <td>{id}</td>
-    <td>{cdi:EnumFormattingService.formatEnum(result.get("storedType").asText())}</td>
+    <td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>
     {#if showItem}<td>{result.get("item-name").asText()}}</td>{/if}{!TODO:: link this !}
     {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}}</td>{/if}{!TODO:: link !}
     <td>{! TODO:: optionally amount !}</td>
@@ -71,16 +71,16 @@
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">
-        {#icons/addSubTrans}{/icons/addSubTrans}
-      </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
-              onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}</button>
+      {!<button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">!}
+        {!{#icons/addSubTrans}{/icons/addSubTrans}!}
+      {!</button>!}
+
+      {!<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItem('{result.id}');">{#icons/remove}{/icons/remove}</button>!}
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {name}"
+      <button type="button" class="btn btn-sm btn-success" title="Select {labelText}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="ItemStoredSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
+              onclick="ItemStoredSearchSelect.selectItem('{labelText}', '{id}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
 	{#else if actionType == 'view'}

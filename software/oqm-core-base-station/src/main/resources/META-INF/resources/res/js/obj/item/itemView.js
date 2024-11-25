@@ -180,7 +180,15 @@ const ItemView = {
 					ItemView.storedBulkNumStoredDisplay.text(itemData.stats.numStored);
 					ItemView.storedBulkBlockNum.text(itemData.storageBlocks.length);
 					let multiDisplay = function () {
-						//TODO
+						console.log(itemData.stats.numStored + " stored.");
+						ItemView.storedMultiNumBlocksDisplay.text(itemData.stats.numStored);
+						ItemView.storedMultiContainer.show();
+
+						ItemView.allStoredSearchFormItemInputName.val(itemData.name);
+						ItemView.allStoredSearchFormItemInputId.val(itemId);
+						ItemView.allStoredSearchForm.submit();
+						//TODO:: doublecheck above
+						//TODO:: populate by block accordion
 					}
 					StorageTypeUtils.runForType(
 						itemData,
