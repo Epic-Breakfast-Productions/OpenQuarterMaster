@@ -162,13 +162,16 @@ const ItemStoredTransaction = {
 
 			StorageTypeUtils.runForType(item,
 				function () {
-					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
+
+					if(!item.stats.numStored){
+						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+					}
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
 					switch (type) {
 						case "ADD_AMOUNT":
-							let toBlockVal = ItemStoredTransaction.Add.toBlockInput.val();
 							console.debug("Removing common elements.");
 							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
 							break;
@@ -178,7 +181,23 @@ const ItemStoredTransaction = {
 							break;
 					}
 				}, function () {
-					//TODO
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
+
+					if(!item.stats.numStored){
+						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+					}
+
+					let type = ItemStoredTransaction.Add.typeInput.val();
+					switch (type) {
+						case "ADD_AMOUNT":
+							console.debug("Removing common elements.");
+							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
+							break;
+						case "ADD_WHOLE":
+							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
+							break;
+					}
 				}, function () {
 					//TODO
 				}, function () {
@@ -203,6 +222,7 @@ const ItemStoredTransaction = {
 			}
 
 			this.typeInputContainer.hide();
+			ItemStoredTransaction.Add.typeInput.prop("disabled", false);
 
 			this.ableToInputs(this.toStoredInputContainer);
 			this.ableToInputs(this.toBlockInputContainer);
@@ -231,8 +251,10 @@ const ItemStoredTransaction = {
 				});
 
 				StorageTypeUtils.runForType(item, function () {
-					// ItemStoredTransaction.Add.typeInputContainer.show();
+					ItemStoredTransaction.Add.typeInputContainer.show();
 					ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
+					ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+
 					ItemStoredTransaction.Add.updateInputs(item);
 				}, function () {
 					ItemStoredTransaction.Add.typeInputContainer.show();
