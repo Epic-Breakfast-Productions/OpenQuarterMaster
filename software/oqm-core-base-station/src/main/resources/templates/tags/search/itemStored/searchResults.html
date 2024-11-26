@@ -13,6 +13,7 @@
 
   if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
 !}
+  {#let showAmount=(searchResults.get("inventoryItem").get("storageType").asText().equals("BULK") || searchResults.get("inventoryItem").get("storageType").asText().equals("AMOUNT_LIST")) }
   <thead>
   <tr>
     <td colspan="100" class="text-center searchResultsContainer">
@@ -23,10 +24,10 @@
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Label</th>
     <th scope="col">Id?</th>
-    <th scope="col">type?</th>
+    {#if showType}<th scope="col">Type</th>{/if}
     {#if showItem}<th scope="col">Item</th>{/if}
-    {#if showStorage}<th scope="col">Stored In</th>{/if}
-    <th scope="col">Amount</th> {! TODO:: optional !}
+    {#if showStorage}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
+    {#if showAmount}<th scope="col">Amount</th>{/if}
     <th scope="col" width="150px">Actions</th>
   </tr>
   </thead>
@@ -59,10 +60,11 @@
     </td>
     <td>{labelText}</td>
     <td>{id}</td>
-    <td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>
+
+    {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}
     {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
     {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
-    <td>{! TODO:: optionally amount !}</td>
+    {#if showAmount}<td>{#amountDisplay amount=result.get("amount")}{/amountDisplay}</td>{/if}
     {#if actionType == 'full'}
     <td>
       <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
@@ -101,3 +103,4 @@
     </td>
   </tr>
   </tfoot>
+      {/let}

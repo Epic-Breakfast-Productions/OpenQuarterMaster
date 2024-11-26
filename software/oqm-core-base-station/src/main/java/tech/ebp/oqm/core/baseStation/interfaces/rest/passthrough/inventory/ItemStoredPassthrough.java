@@ -70,6 +70,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 			this.searchResultTemplate
 				.data("showItem", showItem)
 				.data("showStorage", showStorage)
+				.data("showType", false)
 			,
 			acceptType,
 			searchFormId,
