@@ -12,6 +12,7 @@ const ItemView = {
 	storedNonePresentNoStorageContainer: $("#itemViewStoredNonePresentNoStorageContainer"),
 
 	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
+	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
 	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
@@ -72,6 +73,7 @@ const ItemView = {
 		ItemView.storedNonePresentNoStorageContainer.hide();
 
 		ItemView.storedMultiByBlockAccordion.text("");
+		ItemView.storedMultiNoneStoredInBlock.text("");
 		ItemView.storedSingleAccordion.text("");
 		ItemView.storedBulkAccordion.text("");
 		ItemView.itemViewValPerUnitDefault.hide();
@@ -146,14 +148,19 @@ const ItemView = {
 		collapseButton.attr("data-bs-target", "#" + collapseId);
 		newAccordItem.find(".accordion-body").append(body);
 
-		newAccordItem.find(".accordion-button").text(blockId);
+		collapseButton.text(blockId);
 		getStorageBlockLabel(blockId, function(blockLabel){
 			let labelText = blockLabel;
+			//TODO:: num stored
+			//TODO:: total/unit
 
-			newAccordItem.find(".accordion-button").text(labelText);
+			collapseButton.text(labelText);
 		});
 
 		return newAccordItem;
+	},
+	getStoredInBlockSearch: function(itemId, blockId){
+		return $("<p>Search!</p>");//TODO
 	},
 	setupView(itemId) {
 		console.log("Setting up view for item " + itemId);
@@ -189,6 +196,35 @@ const ItemView = {
 						ItemView.allStoredSearchForm.submit();
 						//TODO:: doublecheck above
 						//TODO:: populate by block accordion
+
+
+						itemData.storageBlocks.forEach(function (blockId) {
+							console.debug("Displaying block: ", blockId);
+
+							if(itemData.stats.storageBlockStats[blockId].numStored) {
+								promises.push(
+									Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
+										ItemView.addStoredBlockViewAccordionItem(
+											itemData,
+											blockId,
+											"itemViewStoredBulkAccordion",
+											ItemView.getStoredInBlockSearch(itemId, blockId)
+										).then(function(newAccordItem){
+											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
+										});
+									})
+								);
+							} else {
+								if(ItemView.storedMultiNoneStoredInBlock.empty()){
+									ItemView.storedMultiNoneStoredInBlock.append("Blocks with nothing stored:");
+								}
+								getStorageBlockLabel(blockId, function (labelText) {
+									let newLink = Links.getStorageViewLink(blockId, labelText);
+									ItemView.storedMultiNoneStoredInBlock.append(newLink);
+									ItemView.storedMultiNoneStoredInBlock.append(" ");
+								});
+							}
+						});
 					}
 					StorageTypeUtils.runForType(
 						itemData,

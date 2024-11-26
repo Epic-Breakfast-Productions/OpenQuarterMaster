@@ -60,8 +60,8 @@
     <td>{labelText}</td>
     <td>{id}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>
-    {#if showItem}<td>{result.get("item-name").asText()}}</td>{/if}{!TODO:: link this !}
-    {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}}</td>{/if}{!TODO:: link !}
+    {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
+    {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
     <td>{! TODO:: optionally amount !}</td>
     {#if actionType == 'full'}
     <td>
