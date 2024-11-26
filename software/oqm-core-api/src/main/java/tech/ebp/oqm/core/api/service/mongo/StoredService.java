@@ -12,6 +12,7 @@ import jakarta.inject.Named;
 import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
@@ -28,6 +29,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
@@ -130,6 +132,17 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				}
 			}
 		}
+	}
+
+	@Override
+	public SearchResult<Stored> search(String oqmDbIdOrName, ClientSession cs, @NonNull StoredSearch searchObject) {
+		SearchResult<Stored> results = super.search(oqmDbIdOrName, cs, searchObject);
+
+		if(searchObject.getInventoryItemId() != null){
+			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, searchObject.getInventoryItemId()), results);
+		}
+
+		return results;
 	}
 
 	@Override
