@@ -202,7 +202,8 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 				}, function () {
-					//TODO
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 				});
 			console.debug("Done updating inputs.");
 		},
@@ -257,22 +258,22 @@ const ItemStoredTransaction = {
 						ItemStoredTransaction.Add.typeInputContainer.show();
 						ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
-
-						ItemStoredTransaction.Add.updateInputs(item);
 					},
 					function () {
 						ItemStoredTransaction.Add.typeInputContainer.show();
-						ItemStoredTransaction.Add.updateInputs(item);
 					},
 					function () {
 						ItemStoredTransaction.Add.typeInputContainer.show();
 						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
-						ItemStoredTransaction.Add.updateInputs(item);
 					},
 					function () {
-						//TODO
-					});
+						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
+						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+					}
+				);
+				ItemStoredTransaction.Add.updateInputs(item);
 				await Promise.all(promises);
 			});
 		},
