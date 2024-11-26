@@ -21,7 +21,7 @@ class ListAmountStoredWrapperValidationTest extends ObjectValidationTest<ListAmo
 			Arguments.of(
 				new ListAmountStoredWrapper(Units.DAY),
 				new HashMap<>() {{
-					put("parentUnit", "Invalid unit. day not applicable for item storage.");
+					put("parentUnit", "Invalid unit. d not applicable for item storage.");
 				}}
 			)
 		);
