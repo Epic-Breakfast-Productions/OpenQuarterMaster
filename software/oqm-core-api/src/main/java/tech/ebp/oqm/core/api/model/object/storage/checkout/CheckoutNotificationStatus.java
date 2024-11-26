@@ -14,5 +14,6 @@ public class CheckoutNotificationStatus {
 	/**
 	 * If the checkout obj is due soon or not
 	 */
+	@lombok.Builder.Default
 	private boolean dueSoon = false;
 }
