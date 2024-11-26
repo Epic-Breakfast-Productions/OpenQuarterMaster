@@ -11,7 +11,7 @@ const ItemStoredTransaction = {
 			method: "PUT",
 			url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/transact",
 			data: transaction,
-			done: function(appliedTransaction){
+			done: function (appliedTransaction) {
 				PageMessages.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
 			}
 		});
@@ -165,7 +165,7 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 
-					if(!item.stats.numStored){
+					if (!item.stats.numStored) {
 						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
 					}
 
@@ -184,7 +184,7 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 
-					if(!item.stats.numStored){
+					if (!item.stats.numStored) {
 						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
 					}
 
@@ -199,7 +199,8 @@ const ItemStoredTransaction = {
 							break;
 					}
 				}, function () {
-					//TODO
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 				}, function () {
 					//TODO
 				});
@@ -250,20 +251,28 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.toBlockInput.append(blockOp);
 				});
 
-				StorageTypeUtils.runForType(item, function () {
-					ItemStoredTransaction.Add.typeInputContainer.show();
-					ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
-					ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+				StorageTypeUtils.runForType(
+					item,
+					function () {
+						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
+						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
 
-					ItemStoredTransaction.Add.updateInputs(item);
-				}, function () {
-					ItemStoredTransaction.Add.typeInputContainer.show();
-					ItemStoredTransaction.Add.updateInputs(item);
-				}, function () {
-					ItemStoredTransaction.Add.updateInputs(item);
-				}, function () {
-					//TODO
-				});
+						ItemStoredTransaction.Add.updateInputs(item);
+					},
+					function () {
+						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.updateInputs(item);
+					},
+					function () {
+						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
+						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+						ItemStoredTransaction.Add.updateInputs(item);
+					},
+					function () {
+						//TODO
+					});
 				await Promise.all(promises);
 			});
 		},
@@ -291,16 +300,16 @@ const ItemStoredTransaction = {
 			}
 
 			//determine "to" value
-			if(this.toStoredRadio.is(":checked")){
+			if (this.toStoredRadio.is(":checked")) {
 				console.debug("Going to stored.");
 				data.toStored = "";//TODO:: when we have the input implemented
 			}
-			if(this.toBlockRadio.is(":checked")){
+			if (this.toBlockRadio.is(":checked")) {
 				console.debug("Going to block.");
 				data.toBlock = this.toBlockInput.val();
 			}
 
-			switch (data.transactionType){
+			switch (data.transactionType) {
 				case "ADD_AMOUNT":
 					console.debug("Amount fields present.");
 					data.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
@@ -310,7 +319,7 @@ const ItemStoredTransaction = {
 					let toAddFieldsTo = data.toAdd;
 
 					let amtFormElements = this.inputsContainer.find(".amountStoredFormElements");
-					if (amtFormElements) {
+					if (amtFormElements.length) {
 						console.debug("Amount fields present.");
 						toAddFieldsTo.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
 						toAddFieldsTo.type = "AMOUNT";
@@ -344,7 +353,7 @@ const ItemStoredTransaction = {
 		 * @param event
 		 * @returns {Promise<void>}
 		 */
-		submitFormHandler:  async function (event) {
+		submitFormHandler: async function (event) {
 			event.preventDefault();
 			await ItemStoredTransaction.Add.submitForm();
 		}
