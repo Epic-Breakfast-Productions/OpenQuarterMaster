@@ -44,8 +44,8 @@ quarkus:
     db-kind: postgresql
     jdbc:
       url: jdbc:postgresql://localhost:5432/oqm_db
-    username: "${DB_USERNAME}"
-    password: "${DB_PASSWORD}"
+    username: ${DB_USERNAME:defaultUsername}
+    password: ${DB_PASSWORD:defaultPassword}
   hibernate-orm:
     database:
       generation: update
