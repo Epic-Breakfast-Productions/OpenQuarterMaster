@@ -22,8 +22,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-qute'
     implementation 'io.quarkus:quarkus-mailer'
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
+    implementation 'io.quarkus:quarkus-jdbc-postgresql'
 
-    
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+
     // Add Quarkus REST Client dependency
     implementation 'io.quarkus:quarkus-rest-client'
 

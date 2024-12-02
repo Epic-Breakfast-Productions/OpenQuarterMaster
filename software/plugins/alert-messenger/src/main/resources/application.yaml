@@ -39,6 +39,16 @@ quarkus:
     username: "oqm.alert.messenger@gmail.com"
     password: "${SMTP_PASSWORD}"
     mock: false
+  # Database configuration below (for user credentials).
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/oqm_db
+    username: Brendan
+    password: Password123
+  hibernate-orm:
+    database:
+      generation: update
 
 mp:
   messaging:

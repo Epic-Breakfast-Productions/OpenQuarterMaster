@@ -8,6 +8,7 @@ import tech.ebp.oqm.plugin.alertMessenger.repositories.UserRepository;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @ApplicationScoped
 @Slf4j
@@ -22,8 +23,8 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return UserInfo object if found, Optional.empty otherwise
      */
-    public Optional<UserInfo> getUserInfo(String userId) {
-        return Optional.ofNullable(userRepository.findByUserId(userId));
+    public Optional<UserInfo> getUserInfo(UUID userId) {
+        return Optional.ofNullable(userRepository.findById(userId));
     }
 
     /**
@@ -32,7 +33,7 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return the user ID, or null if the user is not found
      */
-    public String getId(String userId) {
+    public String getId(UUID userId) {
         return getUserInfo(userId)
                 .map(UserInfo::getUserId)
                 .orElse(null);
@@ -44,7 +45,7 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return the user's name, or null if the user is not found
      */
-    public String getName(String userId) {
+    public String getName(UUID userId) {
         return getUserInfo(userId)
                 .map(UserInfo::getName)
                 .orElse(null);
@@ -56,7 +57,7 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return the user's email, or null if the user is not found
      */
-    public String getEmail(String userId) {
+    public String getEmail(UUID userId) {
         return getUserInfo(userId)
                 .map(UserInfo::getEmail)
                 .orElse(null);
@@ -68,7 +69,7 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return the user's username, or null if the user is not found
      */
-    public String getUserName(String userId) {
+    public String getUserName(UUID userId) {
         return getUserInfo(userId)
                 .map(UserInfo::getUsername)
                 .orElse(null);
@@ -80,7 +81,7 @@ public class UserUtils {
      * @param userId the unique user ID
      * @return a set of roles, or null if the user is not found
      */
-    public Set<String> getRoles(String userId) {
+    public Set<String> getRoles(UUID userId) {
         return getUserInfo(userId)
                 .map(UserInfo::getRoles)
                 .orElse(null);
