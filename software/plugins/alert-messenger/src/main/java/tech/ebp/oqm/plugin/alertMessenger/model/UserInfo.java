@@ -48,24 +48,3 @@ public class UserInfo {
 		return id.toString();
 	}
 }
-
-/*@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity // Makes this class a database entity
-@Table(name = "users")
-public class UserInfo {
-	@Id // This field acts as the primary key
-	private String id;
-
-	private String name;
-	private String username;
-	private String email;
-	private Set<String> roles;
-
-	// Custom method to match the expected getUserId() in your other code
-	public String getUserId() {
-		return id;
-	}
-}*/
