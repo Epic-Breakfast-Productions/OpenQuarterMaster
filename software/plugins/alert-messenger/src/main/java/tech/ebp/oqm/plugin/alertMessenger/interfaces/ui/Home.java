@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.alertMessenger.repositories.UserPreferencesRepository;
 import tech.ebp.oqm.plugin.alertMessenger.repositories.UserRepository;
+import tech.ebp.oqm.plugin.alertMessenger.AlertConsumer;
 import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
 import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,10 +30,20 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+/*
+ * Remove this after testing
+ */
+import org.eclipse.microprofile.reactive.messaging.Message;
 
 @Slf4j
 @Path("/")
@@ -58,6 +69,7 @@ public class Home extends UiInterface {
 
 	@Inject
 	SecurityIdentity identity; // Provides user and role info
+
 
 	@GET
 	@RolesAllowed("inventoryView")

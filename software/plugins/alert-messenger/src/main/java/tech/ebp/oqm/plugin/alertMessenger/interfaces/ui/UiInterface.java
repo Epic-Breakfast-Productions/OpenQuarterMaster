@@ -88,6 +88,11 @@ public abstract class UiInterface {
 
 	@PostConstruct
 	void initialLogAndEntityProcess() {
+		if (this.getUserToken() == null) {
+			log.warn("JWT token is null. Skipping user initialization.");
+			return;
+		}
+
 		this.oqmDatabases = this.oqmDatabaseService.getDatabases();
 		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
 
