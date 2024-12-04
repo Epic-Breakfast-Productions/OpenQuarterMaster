@@ -39,7 +39,8 @@ quarkus:
     username: "oqm.alert.messenger@gmail.com"
     password: "${SMTP_PASSWORD}"
     mock: false
-  # Database configuration below (for user credentials).
+
+  # Database configuration below (for user credentials and preferences).
   datasource:
     db-kind: postgresql
     jdbc:
@@ -64,6 +65,7 @@ mp:
 smallrye:
   jwt:
     always-check-authorization: true
+    require-scope: false
 
 
 "%dev":

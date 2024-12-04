@@ -99,7 +99,6 @@ public abstract class UiInterface {
 			if(this.oqmDatabases == null || this.oqmDatabases.isEmpty()){
 				throw new IllegalStateException("Cannot have no databases.");
 			}
-			//TODO: this but smarter?
 			return this.getOqmDatabases().get(0).get("id").asText();
 		}
 		return this.oqmDb;

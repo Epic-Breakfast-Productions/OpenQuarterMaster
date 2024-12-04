@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.alertMessenger.model;
 
+import java.util.HashSet;
 /*import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,8 +28,20 @@ public class UserInfo {
 
     private String email;
 
-    @ElementCollection
-    private Set<String> roles;
+	@ElementCollection
+	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+	@Column(name = "role")
+	private Set<String> roles = new HashSet<>(); // Initialize with a modifiable collection
+
+	// Getter
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	// Setter
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
+	}
 
 	// Custom method to match the expected getUserId() in your other code
 	public String getUserId() {

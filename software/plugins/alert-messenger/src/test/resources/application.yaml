@@ -44,6 +44,11 @@ mp:
       oqm-core-all-events:
         bootstrap:
           servers: ${devservice.kafka.bootstrapServers}
+      alert-messages:
+        connector: smallrye-kafka
+        topic: oqm-core-all-events
+        value:
+          deserializer: org.apache.kafka.common.serialization.StringDeserializer
 kafka:
   bootstrap:
     servers: ${devservice.kafka.bootstrapServers}
