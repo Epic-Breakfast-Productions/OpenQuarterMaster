@@ -35,7 +35,7 @@ quarkus:
     port: 587
     ssl: false
     start-tls: REQUIRED
-    username: "oqm.alert.messenger@gmail.com"
+    username: "${SMTP_USERNAME}"
     password: "${SMTP_PASSWORD}"
     mock: false
 mp:
