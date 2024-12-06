@@ -71,6 +71,8 @@ public class Home extends UiInterface {
 	SecurityIdentity identity; // Provides user and role info
 
 
+	// Ensures the user is saved/updated in the database based on JWT claims
+	// and renders the home page with the user's information.
 	@GET
 	@RolesAllowed("inventoryView")
 	@Produces(MediaType.TEXT_HTML)
@@ -120,6 +122,7 @@ public class Home extends UiInterface {
 				this.setupPageTemplate(this.pageTemplate)).build();
 	}
 
+	// Updates user notification preferences (email and Slack webhook) in the database.
 	@POST
 	@Path("/updatePreferences")
 	@PermitAll

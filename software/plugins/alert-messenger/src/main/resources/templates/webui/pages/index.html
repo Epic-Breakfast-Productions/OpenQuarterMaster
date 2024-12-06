@@ -25,6 +25,7 @@
 </form>
 
 <!-- Adding in a form to get user preferences on notifications -->
+<!-- Form for users to update their notification preferences for email and Slack. -->
 <form id="notificationForm">
 
   <!-- Hidden User ID -->
@@ -61,7 +62,7 @@
 <script src="/res/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
 <script src="../js/OqmDb.js"></script>
 
-<!-- I had some trouble indexing OqmDb.js when I made changes to it so I'm just adding them here. -->
+<!-- Handles form submission to send user preferences to the backend using Fetch API. -->
 <script>
   const form = document.getElementById('notificationForm');
   const submitButton = form.querySelector('button[type="submit"]');

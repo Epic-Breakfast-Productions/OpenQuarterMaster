@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+// Unit tests for the SlackUtils class to verify message-sending functionality.
 @QuarkusTest
 public class SlackUtilsTest {
 
@@ -18,12 +19,18 @@ public class SlackUtilsTest {
     // Test case to verify that the sendSlackMessage() method works with real implementation
     @Test
     public void testSendSlackMessage() {
-        // Arrange: Prepare a sample message
+        String testUserIdEnv = System.getenv("TEST_USER_ID");
+        System.out.println("TEST_USER_ID = " + testUserIdEnv); // Debugging output
+    
+        if (testUserIdEnv == null || testUserIdEnv.isEmpty()) {
+            throw new IllegalStateException("Environment variable TEST_USER_ID is not set or is empty.");
+        }
+    
+        UUID testUserId = UUID.fromString(testUserIdEnv);
         String message = "Test Slack Message";
-
-        // Act and Assert: Ensure that the method doesn't throw an exception when sending a real message
+    
         assertDoesNotThrow(() -> {
-            slackUtils.sendSlackMessage(UUID.fromString("${TEST_USER_ID}"), message);
+            slackUtils.sendSlackMessage(testUserId, message);
         });
     }
 }

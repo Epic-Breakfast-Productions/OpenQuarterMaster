@@ -5,6 +5,7 @@ import io.quarkus.mailer.Mail;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+// Utility class for sending email notifications using the Quarkus Mailer API.
 @ApplicationScoped
 public class EmailUtils {
 

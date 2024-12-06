@@ -11,6 +11,7 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
+// Represents user information stored in the database, including roles and contact details.
 @Entity
 @Table(name = "users")
 @Builder
@@ -31,6 +32,8 @@ public class UserInfo {
 	@ElementCollection
 	@CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
 	@Column(name = "role")
+	
+	// Stores user roles as a set of strings linked to the user in a separate table.
 	private Set<String> roles = new HashSet<>(); // Initialize with a modifiable collection
 
 	// Getter

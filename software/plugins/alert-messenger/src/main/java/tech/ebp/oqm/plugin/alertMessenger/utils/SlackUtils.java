@@ -13,6 +13,7 @@ import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
 import java.util.Optional;
 import java.util.UUID;
 
+// Utility class for sending Slack messages using a webhook configured for each user.
 @ApplicationScoped
 public class SlackUtils {
 

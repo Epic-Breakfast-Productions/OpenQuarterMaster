@@ -17,6 +17,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
+
+// AlertConsumer processes Kafka messages from the `oqm-core-all-events` topic 
+// and sends alerts via email and Slack based on user preferences.
 @Slf4j
 @ApplicationScoped
 public class AlertConsumer {
@@ -33,11 +36,14 @@ public class AlertConsumer {
     @Inject
     private SlackUtils slack;
 
+    // Initializes the AlertConsumer bean and logs startup information.
     @PostConstruct
     public void init() {
         log.info("Starting AlertConsumer");
     }
 
+    // Handles incoming Kafka messages, processes their payload, 
+    // and routes alerts based on user preferences.
     @Incoming("oqm-core-all-events")
     public CompletionStage<Void> receive(Message<ObjectNode> message) {
         try {
@@ -53,6 +59,8 @@ public class AlertConsumer {
         }
     }
 
+    // Validates the payload structure, retrieves user preferences, 
+    // and decides whether to send email or Slack notifications.
     private void processMessage(ObjectNode payload) {
         if (!payload.has("type") || !payload.has("details") || !payload.has("userId")) {
             log.error("Invalid payload: {}", payload);
@@ -84,6 +92,7 @@ public class AlertConsumer {
         }
     }
 
+    // Sends email notifications using the EmailUtils class if the user's email is configured.
     private void handleEmailNotification(UUID userId, String alertType, String alertDetails) {
         var userInfo = userRepository.findById(userId);
         if (userInfo == null || userInfo.getEmail() == null) {
@@ -94,6 +103,7 @@ public class AlertConsumer {
         log.info("Email sent to user ID {}: {}", userId, userInfo.getEmail());
     }
 
+    // Sends Slack notifications using the SlackUtils class if the user has a Slack webhook configured.
     private void handleSlackNotification(UUID userId, String alertType, String alertDetails) {
         slack.sendSlackMessage(userId, String.format("%s: \n%s", alertType, alertDetails));
         log.info("Slack message sent to user ID {}", userId);

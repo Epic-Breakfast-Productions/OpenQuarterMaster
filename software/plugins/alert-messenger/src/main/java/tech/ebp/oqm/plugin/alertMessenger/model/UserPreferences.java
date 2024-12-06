@@ -4,6 +4,7 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.*;
 
+// Represents user preferences for notifications (email and Slack webhook).
 @Entity
 @Table(name = "user_preferences")
 @Builder

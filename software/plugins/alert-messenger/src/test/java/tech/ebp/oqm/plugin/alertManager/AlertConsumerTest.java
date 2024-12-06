@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
+// Unit tests for the AlertConsumer class to verify message handling and notification logic.
 @QuarkusTest
 public class AlertConsumerTest {
 
@@ -52,6 +53,7 @@ public class AlertConsumerTest {
         testUserId = UUID.randomUUID();
     }
 
+    // Verifies that the consumer sends both email and Slack notifications for valid messages.
     @Test
     public void testReceiveMessageWithEmailAndSlackNotifications() throws Exception {
         // Mock user preferences

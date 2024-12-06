@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
+// Unit tests for the EmailUtils class to verify email-sending functionality.
 @QuarkusTest
 public class EmailUtilsTest {
 
@@ -34,6 +35,7 @@ public class EmailUtilsTest {
 
     // Test case to verify that the sendEmail() function in EmailUtils works as
     // expected
+    // Verifies that the EmailUtils class sends emails with the correct recipient, subject, and content.
     @Test
     public void testSendEmail() {
 

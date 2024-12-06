@@ -29,6 +29,7 @@ quarkus:
         systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
         systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
   # Mailer configuration for Gmail SMTP server.
+  # Configures the SMTP server for sending email notifications.
   mailer:
     auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"
     from: "oqm.alert.messenger@gmail.com"
@@ -41,6 +42,7 @@ quarkus:
     mock: false
 
   # Database configuration below (for user credentials and preferences).
+  # Configures the PostgreSQL database for storing user information and preferences.
   datasource:
     db-kind: postgresql
     jdbc:
