@@ -11,7 +11,6 @@ public interface ModuleConfig {
 
 	TestModuleType type();
 
-
 	enum TestModuleType{
 		SERIAL, NETWORK
 	}

@@ -18,10 +18,14 @@ public interface ModuleConfig {
 	SerialConfig serial();
 	
 	interface SerialConfig {
-		
+
 		@WithName("scanSerial")
 		@WithDefault("true")
 		boolean scanSerial();
+
+		@WithName("scanDir")
+		@WithDefault("/dev/")//TODO:: doublecheck
+		String scanDir();
 		
 		@WithName("modules")
 		Set<SerialModuleConfig> modules();

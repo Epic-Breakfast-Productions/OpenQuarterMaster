@@ -9,19 +9,20 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.DevModuleConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.config.MssControllerDevtoolBuildTimeConfig;
 import tech.ebp.oqm.plugin.mssController.devTools.deployment.testModules.MssTestModule;
+import tech.ebp.oqm.plugin.mssController.devTools.deployment.testModules.MssTestSerialModule;
 import tech.ebp.oqm.plugin.mssController.lib.command.response.ModuleInfo;
 
 import java.util.*;
 
 class CoreApiLibQuarkusProcessor {
-	
+
 	private static final String FEATURE = "mss-controller-devtooling";
-	
+
 	@BuildStep
 	FeatureBuildItem feature() {
 		return new FeatureBuildItem(FEATURE);
 	}
-	
+
 //	@BuildStep
 //	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 //		return List.of(
@@ -37,7 +38,7 @@ class CoreApiLibQuarkusProcessor {
 	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 
-		for(DevModuleConfig curModuleConfig : config.devServices().modules()){
+		for (DevModuleConfig curModuleConfig : config.devServices().modules()) {
 			ModuleInfo newModuleInfo = new ModuleInfo(
 				curModuleConfig.info().specVersion().orElse("1"),
 				curModuleConfig.info().serialId().orElse(UUID.randomUUID().toString()),
@@ -45,19 +46,42 @@ class CoreApiLibQuarkusProcessor {
 				curModuleConfig.info().numBlocks()
 			);
 
-			MssTestModule testModule = switch (curModuleConfig.type()){
-				case SERIAL -> null;
+			MssTestModule<?> testModule = switch (curModuleConfig.type()) {
+				case SERIAL -> new MssTestSerialModule(newModuleInfo);
 				case NETWORK -> null;
-			} ;
+			};
 
+			testModule.start();
 
-//			new DevServicesResultBuildItem.RunningDevService()
+			output.add(new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					testModule.getContainerId(),
+					testModule::close,
+					testModule.getAppConfig()
+				)
+					.toBuildItem()
+			);
 
 		}
 
+//		ModuleInfo newModuleInfo = new ModuleInfo(
+//			"1",
+//			UUID.randomUUID().toString(),
+//			"today",
+//			5
+//		);
+//
+//		MssTestModule<?> testModule = new MssTestSerialModule(newModuleInfo);
+//		testModule.start();
+//		output.add(new DevServicesResultBuildItem.RunningDevService(
+//				FEATURE,
+//				testModule.getContainerId(),
+//				testModule::close,
+//				testModule.getAppConfig()
+//			)
+//				.toBuildItem()
+//		);
 
-
-
-		return List.of();
+		return output;
 	}
 }
