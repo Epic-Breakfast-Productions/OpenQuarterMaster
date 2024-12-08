@@ -84,6 +84,16 @@
         "test",
         "userTesting"
       ]
+    },
+    {
+      "login": "LouisBarbier",
+      "name": "LouisBarbier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116147989?v=4",
+      "profile": "https://github.com/LouisBarbier",
+      "contributions": [
+        "content",
+        "projectManagement"
+      ]
     }
   ],
   "contributorsPerLine": 7,
