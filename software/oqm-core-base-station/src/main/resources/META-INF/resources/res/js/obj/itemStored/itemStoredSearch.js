@@ -1,5 +1,5 @@
 ItemStoredSearch = {
-    //TODO:: handle searching
+
     search: async function (searchFormJs, event, resultsContainerSelector, showItem=false, showStorage=false) {
         event.preventDefault();
         console.log("Searching for items stored.");
@@ -22,6 +22,7 @@ ItemStoredSearch = {
         let headers = {
             "accept": "text/html",
             "searchFormId": searchFormJq.attr("id"),
+            "actionType": "full"
             // "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
         };
         if(showItem){
