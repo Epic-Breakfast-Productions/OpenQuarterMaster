@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,8 +9,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
@@ -21,10 +20,10 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * Maybe move to core api extension?
  */
-@Named("OqmDatabaseService")
+@Named("OqmUnitService")
 @Slf4j
 @ApplicationScoped
-public class OqmDatabaseService {
+public class OqmUnitService {
 
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
@@ -33,7 +32,8 @@ public class OqmDatabaseService {
 	KcClientAuthService serviceAccountService;
 
 	private final ReentrantLock mutex = new ReentrantLock();
-	private ArrayNode dbs = null;
+	private ObjectNode allUnits = null;
+	private ObjectNode unitCompatibilityMap = null;
 	private boolean enabled = false;
 
 	@PostConstruct
@@ -47,7 +47,6 @@ public class OqmDatabaseService {
 		}
 		this.enabled = true;
 
-
 		this.refreshCache();
 	}
 
@@ -57,24 +56,42 @@ public class OqmDatabaseService {
 		if(!enabled){
 			return;
 		}
-		log.info("Refreshing cache of OQM databases.");
+		log.info("Refreshing cache of OQM units.");
+
+		ObjectNode allUnits = this.oqmCoreApiClientService.unitGetAll(this.serviceAccountService.getAuthString()).await().indefinitely();
+		ObjectNode unitCompatibilityMap = this.oqmCoreApiClientService.unitGetCompatibleMap(this.serviceAccountService.getAuthString()).await().indefinitely();
+
 		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 		log.info("Got new cache of databases: {}", newCacheData);
 		try {
 			this.mutex.lock();
-			this.dbs = newCacheData;
+			this.allUnits = allUnits;
+			this.unitCompatibilityMap = unitCompatibilityMap;
 		} finally {
 			this.mutex.unlock();
 		}
 	}
 
-	public ArrayNode getDatabases() {
-		log.info("Getting cached OQM databases.");
+	public ObjectNode getAllUnits() {
+		log.info("Getting cached OQM units.");
 		try {
 			this.mutex.lock();
-			return this.dbs;
+			return this.allUnits;
 		} finally {
 			this.mutex.unlock();
 		}
+	}
+	public ObjectNode getCompatibleUnitMap() {
+		log.info("Getting cached OQM unit compatibility map.");
+		try {
+			this.mutex.lock();
+			return this.unitCompatibilityMap;
+		} finally {
+			this.mutex.unlock();
+		}
+	}
+
+	public ObjectNode getUnitCompatibleWith(String unit) {
+		return (ObjectNode) this.getCompatibleUnitMap().get(unit);
 	}
 }
