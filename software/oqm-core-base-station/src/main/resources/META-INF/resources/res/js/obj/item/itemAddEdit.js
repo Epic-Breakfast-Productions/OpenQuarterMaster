@@ -248,7 +248,6 @@ ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
         return false;
     }
 });
-UnitUtils.updateCompatibleUnits(ItemAddEdit.addEditItemUnitInput.val(), ItemAddEdit.addEditItemForm);
 
 StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
     console.log("Selected " + blockId + " - " + blockName);

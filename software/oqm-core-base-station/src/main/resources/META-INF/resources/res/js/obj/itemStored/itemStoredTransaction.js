@@ -55,7 +55,7 @@ const ItemStoredTransaction = {
 
 			return output;
 		},
-		getAmountInputs: function (item, stored) {
+		getAmountInputs: async function (item, stored) {
 			console.log("Getting amount inputs");
 			//TODO:: update compatible unit tools
 			let output = $(
@@ -63,14 +63,14 @@ const ItemStoredTransaction = {
 				'<label class="form-label">Amount:</label>\n' +
 				'<div class="input-group mt-2 mb-3">\n' +
 				'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' +
-				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit">' + ItemAddEdit.compatibleUnitOptions + '</select>\n' + //TODO:: populate
+				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit"></select>\n' +
 				'</div>' +
 				'</div>'
 			);
-			// UnitUtils.getUnitOptions()
 
-			//TODO:: populate units
-			//TODO:: populate from stored
+			//TODO:: selected unit from stored
+			let unitOps = await UnitUtils.getCompatibleUnitOptions(item.unit.string);
+			output.find(".unitInput").append($(unitOps));
 
 			return output;
 		},
@@ -80,13 +80,14 @@ const ItemStoredTransaction = {
 
 			return output;
 		},
-		getStoredInputs(item, stored) {
+		getStoredInputs: async function(item, stored) {
 			let output = $('<div class="storedInputs"></div>');
 
-			StorageTypeUtils.runForStoredType(item, function () {
-				output.append(ItemStoredTransaction.StoredFormUtils.getAmountInputs(stored));
+			StorageTypeUtils.runForStoredType(item, async function () {
+				let amountInputs = await ItemStoredTransaction.StoredFormUtils.getAmountInputs(item, stored);
+				output.append(amountInputs);
 			}, function () {
-				output.append(ItemStoredTransaction.StoredFormUtils.getUniqueInputs(stored));
+				output.append(ItemStoredTransaction.StoredFormUtils.getUniqueInputs(item, stored));
 			});
 
 			output.append(this.getBasicInputs(stored));
@@ -148,7 +149,7 @@ const ItemStoredTransaction = {
 		 * Changes inputs based on state of type, and to inputs
 		 * @param item
 		 */
-		updateInputs: function (item = null) {
+		updateInputs: async function (item = null) {
 			if (item == null) {
 				item = this.itemIdInput.val();
 			}
@@ -158,9 +159,11 @@ const ItemStoredTransaction = {
 			}
 
 			ItemStoredTransaction.Add.inputsContainer.text("");
-			ItemStoredTransaction.Add.inputsContainer.append(ItemStoredTransaction.StoredFormUtils.getStoredInputs(item, null));
+			let storedInputs = await ItemStoredTransaction.StoredFormUtils.getStoredInputs(item, null);
+			ItemStoredTransaction.Add.inputsContainer.append(storedInputs);
 
-			StorageTypeUtils.runForType(item,
+			StorageTypeUtils.runForType(
+				item,
 				function () {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
@@ -273,7 +276,7 @@ const ItemStoredTransaction = {
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
 					}
 				);
-				ItemStoredTransaction.Add.updateInputs(item);
+				promises.push(ItemStoredTransaction.Add.updateInputs(item));
 				await Promise.all(promises);
 			});
 		},

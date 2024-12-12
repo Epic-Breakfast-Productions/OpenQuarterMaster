@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest.components;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -13,6 +14,7 @@ import jakarta.ws.rs.core.Variant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -50,14 +52,14 @@ public class UnitInputs extends ApiProvider {
 		responseCode = "200",
 		description = "Got the units."
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Response getCompatibleUnits(
 		@PathParam("unit") String unit,
 		@HeaderParam("Accept") String acceptType
 	) {
 		log.info("Getting units compatible with {}.", unit);
 
-		ObjectNode compatibleUnits = this.getOqmUnitService().getUnitCompatibleWith(unit);
+		ArrayNode compatibleUnits = this.getOqmUnitService().getUnitCompatibleWith(unit);
 
 		return switch (acceptType){
 			case MediaType.APPLICATION_JSON -> Response.ok(compatibleUnits).build();

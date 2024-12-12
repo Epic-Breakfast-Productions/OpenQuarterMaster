@@ -267,7 +267,8 @@ const ItemStoredAddSubTransfer = {
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemStoredAddSubTransfer.formMessages,
 			done: async function (itemData) {
-				UnitUtils.updateCompatibleUnits(itemData.unit.string);
+
+				// UnitUtils.updateCompatibleUnits(itemData.unit.string);
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItem", itemData);
 				jQuery.data(ItemStoredAddSubTransfer.form, "curItemType", itemData.storageType);
 				ItemStoredAddSubTransfer.formItemNameLabel.text(itemData.name);

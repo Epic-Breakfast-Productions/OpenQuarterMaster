@@ -25,10 +25,11 @@ const UnitUtils = {
 		return output;
 	},
 	getCompatibleUnitOptions: async function (unit, selectedVal = null) {
-		if (unit in this.compatibleUnitOptionsCache) {
+		if (!(unit in this.compatibleUnitOptionsCache)) {
+			console.debug("Cache miss, getting compatible units for ", unit);
 			await Rest.call({
 				method: "GET",
-				url: Rest.apiRoot + "/pageComponents/unit/inputs/all",
+				url: Rest.apiRoot + "/pageComponents/unit/inputs/compatibleWith/"+unit,
 				returnType: "html",
 				extraHeaders: {
 					"accept": "text/html",
