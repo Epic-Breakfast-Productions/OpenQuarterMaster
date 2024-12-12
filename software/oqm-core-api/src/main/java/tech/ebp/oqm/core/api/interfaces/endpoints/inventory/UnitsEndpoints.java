@@ -43,7 +43,7 @@ public class UnitsEndpoints extends EndpointProvider {
 
     @GET
     @Operation(
-            summary = "Gets the list of supported units."
+            summary = "Gets the map of supported units."
     )
     @APIResponse(
             responseCode = "200",

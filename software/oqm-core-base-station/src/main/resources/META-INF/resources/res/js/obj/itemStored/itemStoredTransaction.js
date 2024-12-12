@@ -57,7 +57,6 @@ const ItemStoredTransaction = {
 		},
 		getAmountInputs: async function (item, stored) {
 			console.log("Getting amount inputs");
-			//TODO:: update compatible unit tools
 			let output = $(
 				'<div class="amountStoredFormElements">' +
 				'<label class="form-label">Amount:</label>\n' +
@@ -70,7 +69,7 @@ const ItemStoredTransaction = {
 
 			//TODO:: selected unit from stored
 			let unitOps = await UnitUtils.getCompatibleUnitOptions(item.unit.string);
-			output.find(".unitInput").append($(unitOps));
+			output.find(".unitInput").append(unitOps);
 
 			return output;
 		},
