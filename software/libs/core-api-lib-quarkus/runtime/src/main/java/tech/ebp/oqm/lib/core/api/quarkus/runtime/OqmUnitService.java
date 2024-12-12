@@ -62,7 +62,7 @@ public class OqmUnitService {
 		ObjectNode unitCompatibilityMap = this.oqmCoreApiClientService.unitGetCompatibleMap(this.serviceAccountService.getAuthString()).await().indefinitely();
 
 		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
-		log.info("Got new cache of databases: {}", newCacheData);
+		log.info("Got new cache of units: {}", newCacheData);
 		try {
 			this.mutex.lock();
 			this.allUnits = allUnits;
@@ -91,7 +91,7 @@ public class OqmUnitService {
 		}
 	}
 
-	public ObjectNode getUnitCompatibleWith(String unit) {
-		return (ObjectNode) this.getCompatibleUnitMap().get(unit);
+	public ArrayNode getUnitCompatibleWith(String unit) {
+		return (ArrayNode) this.getCompatibleUnitMap().get(unit);
 	}
 }
