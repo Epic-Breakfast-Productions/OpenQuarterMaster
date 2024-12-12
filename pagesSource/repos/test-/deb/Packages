@@ -1,0 +1,136 @@
+Package: oqm-core-api
+Version: 3.0.0-DEV
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-mongodb (>= 1.1.0), oqm-core-depot (>= 1.0.0)
+Filename: ./oqm-core-api_3.0.0-DEV_all.deb
+Size: 4096
+MD5sum: 9f48c9ba5999da4013f5ef487cee539b
+SHA1: 53b3c72b65df42892a746717fc813087caa9b5e5
+SHA256: 815d9f760ee296bec22b30f9676b2361c5c00322e5a7b57f4a203d75b52ab3c3
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-core-api
+Description: Core API instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
+Version: 1.5.0-DEV
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-keycloak (>= 1.1.0), oqm-core-depot, oqm-core-api (>= 2.1.0)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.5.0-DEV_all.deb
+Size: 4154
+MD5sum: b759c7fbf7a0d29554171cfaf4892e29
+SHA1: f2d2fc64bbdadcdbf7119648f2351ba8440d118a
+SHA256: fe782b839846da731fa0ca40bb55ee07ef4b5494200ca83a6e1e6a7830472c13
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-depot
+Version: 1.1.3
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.1.0)
+Filename: ./oqm-core-depot_1.1.3_all.deb
+Size: 2544
+MD5sum: 5a50eef2d887ca676a3579b46ab87952
+SHA1: d282da96dbc18855d7c355da27d2331b89112188
+SHA256: cf8b7a6c1fa459c2b3506718b0e090174f9579a802e765466603351cd1605b6c
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-depot
+Description: Depot instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-infra-jaeger
+Version: 1.2.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-jaeger_1.2.1_all.deb
+Size: 10486
+MD5sum: ba57cb2499fe70f743e48950f916f9fe
+SHA1: 46d30ef1bdf53ffe82145372e4d5501b7470865d
+SHA256: 3513e83c15b007bd92061a0de017608ff45eee63d5203ce93d69d60d4afb5312
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger
+Description: Jaeger instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-kafka+red+panda
+Version: 1.0.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-kafka+red+panda_1.0.1_all.deb
+Size: 2282
+MD5sum: 479233d80f63c41db8fb0df04d0f3ba4
+SHA1: 7272417ab522d36d6cb4a48d6b1a5d6d3b73f246
+SHA256: 00149f5ea3568c86eefa827598ede4756940b2d0b520bc6fe83ee42f849dbeda
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/kafka-red-panda
+Description: Kafka instance for Open QuarterMaster using Red Panda.
+Developer: EBP
+
+Package: oqm-infra-keycloak
+Version: 1.2.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-keycloak_1.2.2_all.deb
+Size: 15154
+MD5sum: 81889d46e9230421ad472a462ad114b7
+SHA1: ed72e658c22831834671167f5080577cb285ede9
+SHA256: bf9c902873d22d5fe03e10533bbf127d03981f40cceff6d02fd49a8c503dcb70
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak
+Description: Keycloak instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-mongodb
+Version: 1.2.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-mongodb_1.2.1_all.deb
+Size: 3594
+MD5sum: afad99de4577f0e33a7ed8456700a541
+SHA1: ba289bd213ba4ded9d079b7d468fff0b8eaf167d
+SHA256: 9e47d917be3bc7e33981028bc3bb441900fdcca92c11e52a28ce5d639cb2f2e4
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo
+Description: MongoDb instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-postgres
+Version: 1.2.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-postgres_1.2.1_all.deb
+Size: 3284
+MD5sum: 7b4943140b7c8fea99b278078e3be602
+SHA1: 2fad93d3e1825751b1bf3a6a9f7e907d01b38565
+SHA256: 875a8c2766a57b0369cf8da467ac562d8a1b4feff36d5ecf066bb59629ede886
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
+Description: Postgresql instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-manager-station+captain
+Version: 2.4.2
+Architecture: all
+Maintainer: EBP
+Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2, python3-distutils-extra
+Filename: ./oqm-manager-station+captain_2.4.2_all.deb
+Size: 32162
+MD5sum: 156ead15bd5717e79817121f5c84e745
+SHA1: 22480909690f568a01d8432a95daa1efd3c4732b
+SHA256: 637d6f940865e84d532900a8f3e4bcd1ddd8cbe97ab25101a674a3f16c82a6e0
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
