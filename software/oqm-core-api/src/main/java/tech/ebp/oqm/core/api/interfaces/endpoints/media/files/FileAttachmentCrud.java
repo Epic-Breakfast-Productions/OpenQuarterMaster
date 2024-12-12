@@ -244,6 +244,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 			this.getOqmDbIdOrName(),
 			this.getFileService().getFileObjectService().update(
 				this.getOqmDbIdOrName(),
+				null,
 				id,
 				updates,
 				this.getInteractingEntity()

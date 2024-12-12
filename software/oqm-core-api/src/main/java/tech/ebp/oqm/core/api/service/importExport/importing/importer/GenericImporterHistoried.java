@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Slf4j
 public class GenericImporterHistoried<T extends MainObject, S extends SearchObject<T>>
-	extends HistoriedObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
+	extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
 	
 	
 	public GenericImporterHistoried(MongoHistoriedObjectService<T, S, ?> mongoService) {

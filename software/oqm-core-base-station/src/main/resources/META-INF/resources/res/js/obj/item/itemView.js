@@ -3,10 +3,28 @@ const ItemView = {
 	viewBsModal: new bootstrap.Modal($("#itemViewModal"), {}),
 	itemViewMessages: $("#itemViewMessages"),
 	itemViewModalLabel: $("#itemViewModalLabel"),
-	itemViewStored: $("#itemViewStored"),
-	itemViewStoredNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
-	itemViewStoredNum: $("#itemViewStoredNum"),
-	itemViewStoredAccordion: $("#itemViewStoredAccordion"),
+
+	storedMultiContainer: $("#itemViewStoredMultiContainer"),
+
+	storedSingleContainer: $("#itemViewStoredSingleContainer"),
+	storedNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
+	storedNonePresentHasStorageContainer: $("#itemViewStoredNonePresentHasStorageContainer"),
+	storedNonePresentNoStorageContainer: $("#itemViewStoredNonePresentNoStorageContainer"),
+
+	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
+	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
+	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
+	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
+	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
+
+	storedBulkContainer: $("#itemViewStoredBulkContainer"),
+	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
+	storedBulkNonePresentBlocksList: $("#itemViewStoredBulkNonePresentBlocksList"),
+	storedNonePresentBlocksList: $("#itemViewStoredNonePresentBlocksList"),
+	storedBulkNumStoredDisplay: $("#itemViewStoredBulkNumStoredDisplay"),
+	storedBulkBlockNum: $("#itemViewStoredBulkBlockNum"),
+
+
 	itemViewTotal: $("#itemViewTotal"),
 	itemViewTotalVal: $("#itemViewTotalVal"),
 	itemViewValPerUnitDefault: $("#itemViewValPerUnitDefault"),
@@ -37,16 +55,32 @@ const ItemView = {
 	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
 	itemViewFiles: $("#itemViewFilesContainer"),
 
+	allStoredSearchForm: $("#itemViewAllStoredSearchForm"),
+	allStoredSearchFormItemInputDeleteButton: $("#itemViewAllStoredSearchForm-itemInputClearButton"),
+	allStoredSearchFormItemInputSearchButton: $("#itemViewAllStoredSearchForm-itemInputSearchButton"),
+	allStoredSearchFormItemInputId: $("#itemViewAllStoredSearchForm-itemInputId"),
+	allStoredSearchFormItemInputName: $("#itemViewAllStoredSearchForm-itemInputName"),
+
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
-		ItemView.itemViewStoredNum.text("");
-		ItemView.itemViewStored.hide();
-		ItemView.itemViewStoredNonePresentContainer.hide();
-		ItemView.itemViewStoredAccordion.text("");
+		ItemView.storedMultiContainer.hide();
+		ItemView.storedSingleContainer.hide();
+		ItemView.storedBulkContainer.hide();
+		ItemView.storedBulkNumStoredDisplay.text("");
+		ItemView.storedBulkBlockNum.text("");
+		ItemView.storedNonePresentContainer.hide();
+		ItemView.storedNonePresentHasStorageContainer.hide();
+		ItemView.storedNonePresentNoStorageContainer.hide();
+
+		ItemView.storedMultiByBlockAccordion.text("");
+		ItemView.storedMultiNoneStoredInBlock.text("");
+		ItemView.storedSingleAccordion.text("");
+		ItemView.storedBulkAccordion.text("");
 		ItemView.itemViewValPerUnitDefault.hide();
 		ItemView.itemViewValPerUnit.text("");
 		ItemView.itemViewIdentifyingAttContainer.hide();
 		ItemView.itemViewTotalVal.text("");
+		ItemView.storedNonePresentBlocksList.text("");
 
 		ItemView.itemViewCategoriesContainer.hide();
 		ItemView.itemViewCategories.text("");
@@ -69,139 +103,64 @@ const ItemView = {
 		ItemView.checkoutSearchForm.trigger("reset");
 		FileAttachmentView.resetObjectView(ItemView.itemViewFiles);
 
+		ItemView.allStoredSearchForm.trigger("reset");
+
 		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
 
+		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
+		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO
+		this.allStoredSearchFormItemInputName.val("");
+		this.allStoredSearchFormItemInputId.val("");
+
+
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.off('click');
 		}
 	},
-	addViewAccordionItem: function (id, content, headerContent, trackedType) {
-		let accordId = "itemViewAccordBlock" + id;
 
-		//if not string, expected as stored obj
-		if (typeof headerContent !== 'string' && !(headerContent instanceof String)) {
-			let stored = headerContent;
-			headerContent = "";
-
-			let funcForAmount = function () {
-				headerContent += stored.amount.value + stored.amount.unit.symbol;
-			};
-			StoredTypeUtils.foreachStoredType(
-				trackedType,
-				funcForAmount,
-				funcForAmount,
-				function () {
-
-				}
-			);
-
-			if (stored.condition) {
-				headerContent += " Condition: " + stored.condition + "%";
-			}
-			if (stored.expires) {
-				headerContent += " Expires: " + stored.expires;
-			}
-		}
+	addStoredBlockViewAccordionItem: async function (item, blockId, accordionId, body) {
+		let headerId = blockId + "-stored-view-accord-header";
+		let collapseId = headerId + "-collapse";
 
 		let newAccordItem = $('<div class="accordion-item">' +
-			'<h2 class="accordion-header" id="' + accordId + 'Header">' +
-			'<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordId + 'Collapse" aria-expanded="false" aria-controls="' + accordId + 'Collapse">' +
-			headerContent +
-			'</button>' +
-			'</h2>' +
-			'<div id="' + accordId + 'Collapse" class="accordion-collapse collapse" aria-labelledby="' + accordId + 'Header" data-bs-parent="#' + accordId + 'Header">' +
-			'<div class="accordion-body">' +
-			'</div>' +
-			'</div>' +
+			'  <h2 class="accordion-header">' +
+			'    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
+			'    </button>' +
+			'  </h2>' +
+			'  <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">' +
+			'    <div class="accordion-body">' +
+			'    </div>' +
+			'  </div>' +
 			'</div>');
 
-		newAccordItem.find('.accordion-button').text(headerContent);
-		newAccordItem.find('.accordion-body').append(content);
+		let header = newAccordItem.find(".accordion-header");
+		header.prop("id", headerId);
+		let collapse = newAccordItem.find(".accordion-collapse");
+		collapse.prop("id", collapseId);
+		collapse.attr("aria-labelledby", header.prop("id"));
+		collapse.attr("data-bs-parent", "#" + accordionId);
+		let collapseButton = newAccordItem.find(".accordion-button");
+		collapseButton.attr("aria-controls", collapseId);
+		collapseButton.attr("data-bs-target", "#" + collapseId);
+		newAccordItem.find(".accordion-body").append(body);
+
+		collapseButton.text(blockId);
+		getStorageBlockLabel(blockId, function(blockLabel){
+			let labelText = blockLabel;
+			//TODO:: num stored
+			//TODO:: total/unit
+
+			collapseButton.text(labelText);
+		});
 
 		return newAccordItem;
 	},
-	addViewStorageBlocksAccordionItem: function (blockId, content, stored) {
-		return ItemView.itemViewStoredAccordion.append($(ItemView.addViewAccordionItem(blockId, content, stored)));
-	},
-
-
-	getAmountStoredContent(stored, itemId, storageBlockId) {
-		console.log("Getting view content for simple amount stored.");
-		return StoredView.getStoredViewContent(stored, itemId, storageBlockId, false, true, true);
-	},
-	getAmountListStoredContent(itemId, blockId, storedList) {
-		console.log("Getting view content for list amount stored.");
-
-		let accordContent = $('<div class="col accordion"></div>');
-
-		if (storedList.length > 0) {
-			let accordId = "itemViewStored" + blockId + "Accordion";
-			accordContent.prop("id", accordId);
-			let i = 0;
-			storedList.forEach(function (curStored) {
-				accordContent.append(
-					ItemView.addViewAccordionItem(
-						accordId + i,
-						StoredView.getStoredViewContent(curStored, itemId, blockId, i, false, true),
-						curStored,
-						"AMOUNT_LIST"
-					)
-				);
-				i++;
-			});
-
-		} else {
-			accordContent.append($('<h4>Nothing currently stored.</h4>'));
-		}
-
-		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
-			.append($('<div class="row"></div>').append(accordContent));
-	},
-	getTrackedStoredWrapperContent(itemId, blockId, trackedMap) {
-		console.log("Getting view content for tracked stored wrapper.");
-
-		let accordContent = $('<div class="col accordion"></div>');
-		let storageIds = Object.keys(trackedMap);
-
-		if (storageIds.length > 0) {
-			let accordId = "itemViewStored" + blockId + "Accordion";
-			accordContent.prop("id", accordId);
-			storageIds.forEach(key => {
-
-				accordContent.append(ItemView.addViewAccordionItem(
-					accordId + key,
-					StoredView.getStoredViewContent(trackedMap[key], itemId, blockId, key, false, true, true),
-					key
-				));
-			});
-
-		} else {
-			accordContent.html('<h4>Nothing currently stored.</h4>');
-		}
-
-
-		return $('<div></div>')
-			.append($('<div class="row mb-1"></div>').append(StoredView.getStoredBlockLink(blockId)))
-			.append($('<div class="row"></div>').append(accordContent));
-	},
-	getStoredAccordView(storageType, itemId, storageId, storedWrapperData){
-		return StoredTypeUtils.foreachStoredType(
-			storageType,
-			function () {
-				return ItemView.getAmountStoredContent(storedWrapperData, itemId, storageId);
-			},
-			function () {
-				return ItemView.getAmountListStoredContent(itemId, storageId, storedWrapperData);
-			},
-			function () {
-				return ItemView.getTrackedStoredWrapperContent(itemId, storageId, storedWrapperData)
-			}
-		);
+	getStoredInBlockSearch: function(itemId, blockId){
+		return $("<p>Search!</p>");//TODO
 	},
 	setupView(itemId) {
 		console.log("Setting up view for item " + itemId);
@@ -224,6 +183,115 @@ const ItemView = {
 			done: async function (itemData) {
 				let promises = [];
 
+				if (itemData.stats.numStored) {
+					ItemView.storedBulkNumStoredDisplay.text(itemData.stats.numStored);
+					ItemView.storedBulkBlockNum.text(itemData.storageBlocks.length);
+					let multiDisplay = function () {
+						console.log(itemData.stats.numStored + " stored.");
+						ItemView.storedMultiNumBlocksDisplay.text(itemData.stats.numStored);
+						ItemView.storedMultiContainer.show();
+
+						ItemView.allStoredSearchFormItemInputName.val(itemData.name);
+						ItemView.allStoredSearchFormItemInputId.val(itemId);
+						ItemView.allStoredSearchForm.submit();
+						//TODO:: doublecheck above
+						//TODO:: populate by block accordion
+
+
+						itemData.storageBlocks.forEach(function (blockId) {
+							console.debug("Displaying block: ", blockId);
+
+							if(itemData.stats.storageBlockStats[blockId].numStored) {
+								promises.push(
+									Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
+										ItemView.addStoredBlockViewAccordionItem(
+											itemData,
+											blockId,
+											"itemViewStoredBulkAccordion",
+											ItemView.getStoredInBlockSearch(itemId, blockId)
+										).then(function(newAccordItem){
+											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
+										});
+									})
+								);
+							} else {
+								if(ItemView.storedMultiNoneStoredInBlock.empty()){
+									ItemView.storedMultiNoneStoredInBlock.append("Blocks with nothing stored:");
+								}
+								getStorageBlockLabel(blockId, function (labelText) {
+									let newLink = Links.getStorageViewLink(blockId, labelText);
+									ItemView.storedMultiNoneStoredInBlock.append(newLink);
+									ItemView.storedMultiNoneStoredInBlock.append(" ");
+								});
+							}
+						});
+					}
+					StorageTypeUtils.runForType(
+						itemData,
+						function () {
+							itemData.storageBlocks.forEach(function (blockId) {
+								console.debug("Displaying block: ", blockId);
+
+								if(itemData.stats.storageBlockStats[blockId].numStored) {
+									promises.push(
+										Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
+											ItemView.addStoredBlockViewAccordionItem(
+												itemData,
+												blockId,
+												"itemViewStoredBulkAccordion",
+												StoredView.getStoredViewContent(
+													stored,
+													itemId,
+													blockId,
+													false,
+													true,
+													false,
+													false,
+													true
+												)
+											).then(function(newAccordItem){
+												ItemView.storedBulkAccordion.append(newAccordItem);
+											});
+										})
+									);
+								} else {
+									if(ItemView.storedBulkNonePresentBlocksList.empty()){
+										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no items:");
+									}
+									getStorageBlockLabel(blockId, function (labelText) {
+										let newLink = Links.getStorageViewLink(blockId, labelText);
+										ItemView.storedBulkNonePresentBlocksList.append(newLink);
+										ItemView.storedBulkNonePresentBlocksList.append(" ");
+									});
+								}
+							});
+
+							ItemView.storedBulkContainer.show();
+						},
+						multiDisplay,
+						multiDisplay,
+						function () {
+							//TODO
+						}
+					);
+				} else {
+					console.log("None stored.");
+					ItemView.storedNonePresentContainer.show();
+
+					if (itemData.storageBlocks.length) {
+						itemData.storageBlocks.forEach(function (curBlock) {
+							getStorageBlockLabel(curBlock, function (labelText) {
+								let newLink = Links.getStorageViewLink(curBlock, labelText);
+								ItemView.storedNonePresentBlocksList.append(newLink);
+								ItemView.storedNonePresentBlocksList.append(" ");
+							});
+						});
+						ItemView.storedNonePresentHasStorageContainer.show();
+					} else {
+						ItemView.storedNonePresentNoStorageContainer.show();
+					}
+				}
+
 				if (itemData.categories.length) {
 					ItemView.itemViewCategoriesContainer.show();
 					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
@@ -232,9 +300,9 @@ const ItemView = {
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
 				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
 				ItemView.itemViewModalLabel.text(itemData.name);
-				ItemView.itemViewStorageType.text(StoredTypeUtils.storedTypeToDisplay(itemData.storageType));
-				ItemView.itemViewTotal.text(itemData.total.value + "" + itemData.total.unit.symbol);
-				ItemView.itemViewTotalVal.text(itemData.valueOfStored);
+				ItemView.itemViewStorageType.text(StorageTypeUtils.typeToDisplay(itemData.storageType));
+				ItemView.itemViewTotal.text(itemData.stats.total.value + "" + itemData.stats.total.unit.symbol);
+				ItemView.itemViewTotalVal.text(itemData.valueOfStored);//TODO
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
 
 				if (itemData.description) {
@@ -243,7 +311,7 @@ const ItemView = {
 				}
 
 				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode")
+					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode");
 					ItemView.itemViewBarcodeContainer.show();
 				}
 
@@ -256,54 +324,24 @@ const ItemView = {
 
 				console.log("Setting up view of stored.");
 
-				let numStorageBlocks = Object.keys(itemData.storageMap).length;
+				// let numStorageBlocks = itemData.stats.numStored;// Object.keys(itemData.storageBlocks).length;
+				//TODO:: show storage blocks associated
+				// if (numStorageBlocks === 0) {
+				// 	console.log("None stored.");
+				// 	ItemView.storedNonePresentContainer.show();
+				// 	//TODO:: if storage blocks present, prompt to edit item to add block(s)
+				// 	//TODO:: prompt to add stored item
+				// } else {
+				// 	//TODO:: display right; bulk vs multi vs single display
+				// 	console.log(numStorageBlocks + " stored.");
+				// 	ItemView.itemViewStoredNum.text(numStorageBlocks);
+				// 	ItemView.itemViewStored.show();
+				//
+				// 	ItemView.allStoredSearchFormItemInputName.val(itemData.name);
+				// 	ItemView.allStoredSearchFormItemInputId.val(itemId);
+				// 	ItemView.allStoredSearchForm.submit();
+				// }
 
-				if (numStorageBlocks === 0) {
-					console.log("None stored.");
-					ItemView.itemViewStoredNonePresentContainer.show();
-				} else {
-					console.log(numStorageBlocks + " stored.");
-					ItemView.itemViewStoredNum.text(numStorageBlocks);
-					ItemView.itemViewStored.show();
-				}
-
-				let showAmountStoredPricePerUnit = function () {
-					ItemView.itemViewValPerUnit.text(itemData.valuePerUnit);
-				}
-				StoredTypeUtils.foreachStoredType(
-					itemData.storageType,
-					showAmountStoredPricePerUnit,
-					showAmountStoredPricePerUnit,
-					function () {
-						ItemView.itemViewValPerUnit.text(itemData.defaultValue);
-						ItemView.itemViewValPerUnitDefault.show();
-
-						ItemView.itemViewIdentifyingAtt.text(itemData.trackedItemIdentifierName);
-						ItemView.itemViewIdentifyingAttContainer.show();
-					}
-				);
-
-				Object.keys(itemData.storageMap).forEach(storageId => {
-					promises.push(new Promise(async function () {
-						console.log("Processing stored wrapper under storage block " + storageId);
-						let curBlockName = storageId;
-						await Rest.call({
-							spinnerContainer: null,
-							async: false,
-							url: Rest.passRoot + "/inventory/storage-block/" + storageId,
-							failMessagesDiv: ItemView.itemViewMessages,
-							done: function (data) {
-								curBlockName = data.label;
-							}
-						});
-
-						ItemView.addViewStorageBlocksAccordionItem(
-							storageId,
-							ItemView.getStoredAccordView(itemData.storageType, itemId, storageId, itemData.storageMap[storageId].stored),
-							curBlockName
-						);
-					}));
-				});
 				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
 				ItemView.checkoutSearchFormItemIdInput.val(itemId);
 				ItemView.checkoutSearchForm.submit();
@@ -328,14 +366,15 @@ if (UriUtils.getParams.has("view")
 	ItemView.viewBsModal.show();
 }
 
-
-//TODO:: disable item input
+ItemView.allStoredSearchFormItemInputDeleteButton.prop("disabled", true);
+ItemView.allStoredSearchFormItemInputSearchButton.prop("disabled", true);
+ItemView.allStoredSearchFormItemInputName.prop("disabled", true);
 
 ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
 ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
 ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
 
-ItemView.checkoutSearchForm.on("submit", function(e){
+ItemView.checkoutSearchForm.on("submit", function (e) {
 	e.preventDefault();
 	let searchParams = new URLSearchParams(new FormData(e.target));
 	console.log("URL search params: " + searchParams);
