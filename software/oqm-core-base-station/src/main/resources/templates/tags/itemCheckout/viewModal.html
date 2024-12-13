@@ -1,8 +1,8 @@
 {#modal id='itemCheckoutView' size='xl' title='Item Checkout View'}
-    {#titleIcon}{#icons/checkout}{/icons/checkout}{/titleIcon}
+    {#titleIcon}{#icons/transactionCheckout}{/icons/transactionCheckout}{/titleIcon}
     {#footerButtons}
     <button type="button" class="btn btn-success" id="itemCheckoutViewCheckinButton" data-bs-toggle="modal" data-bs-target="#itemCheckinModal">
-        {#icons/checkin}{/icons/checkin} Checkin
+        {#icons/transactionCheckin}{/icons/transactionCheckin} Checkin
     </button>
     {/footerButtons}
     <div class="row">
@@ -102,7 +102,7 @@
     <div class="card col-12">
         <div class="card-body">
             <h3 class="card-title">
-                {#icons/checkin}{/icons/checkin} Checkin Details:
+                {#icons/transactionCheckin}{/icons/transactionCheckin} Checkin Details:
             </h3>
             <div class="row">
                 {#carousel id='itemCheckoutViewCheckinDetailsCarousel' carouselCss='col'}{/carousel}

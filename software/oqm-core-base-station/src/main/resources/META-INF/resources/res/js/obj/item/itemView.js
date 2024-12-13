@@ -149,7 +149,7 @@ const ItemView = {
 		newAccordItem.find(".accordion-body").append(body);
 
 		collapseButton.text(blockId);
-		getStorageBlockLabel(blockId, function(blockLabel){
+		getStorageBlockLabel(blockId, function (blockLabel) {
 			let labelText = blockLabel;
 			//TODO:: num stored
 			//TODO:: total/unit
@@ -159,7 +159,7 @@ const ItemView = {
 
 		return newAccordItem;
 	},
-	getStoredInBlockSearch: function(itemId, blockId){
+	getStoredInBlockSearch: function (itemId, blockId) {
 		return $("<p>Search!</p>");//TODO
 	},
 	setupView(itemId) {
@@ -201,7 +201,7 @@ const ItemView = {
 						itemData.storageBlocks.forEach(function (blockId) {
 							console.debug("Displaying block: ", blockId);
 
-							if(itemData.stats.storageBlockStats[blockId].numStored) {
+							if (itemData.stats.storageBlockStats[blockId].numStored) {
 								promises.push(
 									Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
 										ItemView.addStoredBlockViewAccordionItem(
@@ -209,13 +209,13 @@ const ItemView = {
 											blockId,
 											"itemViewStoredBulkAccordion",
 											ItemView.getStoredInBlockSearch(itemId, blockId)
-										).then(function(newAccordItem){
+										).then(function (newAccordItem) {
 											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
 										});
 									})
 								);
 							} else {
-								if(ItemView.storedMultiNoneStoredInBlock.empty()){
+								if (ItemView.storedMultiNoneStoredInBlock.empty()) {
 									ItemView.storedMultiNoneStoredInBlock.append("Blocks with nothing stored:");
 								}
 								getStorageBlockLabel(blockId, function (labelText) {
@@ -232,7 +232,7 @@ const ItemView = {
 							itemData.storageBlocks.forEach(function (blockId) {
 								console.debug("Displaying block: ", blockId);
 
-								if(itemData.stats.storageBlockStats[blockId].numStored) {
+								if (itemData.stats.storageBlockStats[blockId].numStored) {
 									promises.push(
 										Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
 											ItemView.addStoredBlockViewAccordionItem(
@@ -241,21 +241,17 @@ const ItemView = {
 												"itemViewStoredBulkAccordion",
 												StoredView.getStoredViewContent(
 													stored,
-													itemId,
-													blockId,
-													false,
-													true,
-													false,
-													false,
-													true
-												)
-											).then(function(newAccordItem){
+													{
+														includeBlockLink: true,
+														showAllTransactions: true
+													})
+											).then(function (newAccordItem) {
 												ItemView.storedBulkAccordion.append(newAccordItem);
 											});
 										})
 									);
 								} else {
-									if(ItemView.storedBulkNonePresentBlocksList.empty()){
+									if (ItemView.storedBulkNonePresentBlocksList.empty()) {
 										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no items:");
 									}
 									getStorageBlockLabel(blockId, function (labelText) {

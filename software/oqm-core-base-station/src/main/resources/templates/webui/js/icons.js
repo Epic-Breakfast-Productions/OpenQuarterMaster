@@ -3,8 +3,8 @@ const Icons = {
 	add: '{#icons/add}{/icons/add}',
 	copy: '{#icons/copy}{/icons/copy}',
 	copyChecked: '{#icons/copyChecked}{/icons/copyChecked}',
-	itemCheckin: '{#icons/checkin}{/icons/checkin}',
-	itemCheckout: '{#icons/checkout}{/icons/checkout}',
+	itemCheckin: '',
+	itemCheckout: '',
 	itemCheckinout: '{#icons/checkinout}{/icons/checkinout}',
 	edit: '{#icons/edit}{/icons/edit}',
 	info: '{#icons/info}{/icons/info}',
@@ -18,6 +18,14 @@ const Icons = {
 	storageBlocks: '{#icons/storageBlocks}{/icons/storageBlocks}',
 	useDatapoint: '{#icons/useDatapoint}{/icons/useDatapoint}',
 	view: '{#icons/view}{/icons/view}',
+	//transactions
+	transaction: '{#icons/transaction}{/icons/transaction}',
+	addTransaction: '{#icons/transactionAdd}{/icons/transactionAdd}',
+	subtractTransaction: '{#icons/transactionSubtract}{/icons/transactionSubtract}',
+	checkoutTransaction: '{#icons/transactionCheckout}{/icons/transactionCheckout}',
+	checkinTransaction: '{#icons/transactionCheckin}{/icons/transactionCheckin}',
+	transferTransaction: '{#icons/transactionTransfer}{/icons/transactionTransfer}',
+	setTransaction: '{#icons/transactionSet}{/icons/transactionSet}',
 
 	iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';
