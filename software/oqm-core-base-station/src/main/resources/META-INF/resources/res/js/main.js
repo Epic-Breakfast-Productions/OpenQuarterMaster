@@ -9,3 +9,19 @@ function updateNavSearchDestination(action, icon, fieldName){
 }
 
 TimeHelpers.setupDateTimeInputs();
+
+const Main = {
+    processCount: 0,
+    processStart(){
+        this.processCount++;
+    },
+    processStop(){
+        this.processCount--;
+    },
+    processesRunning(){
+        return this.processCount !== 0;
+    },
+    noProcessesRunning(){
+        return !this.processesRunning();
+    }
+}
