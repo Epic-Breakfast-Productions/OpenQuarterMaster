@@ -16,7 +16,6 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Tag("ui")
@@ -82,19 +81,24 @@ public abstract class WebUiTest extends RunningServerTest {
 		this.context.close();
 	}
 
+	protected Page navigateTo(Page page, String endpoint){
+		if(endpoint.startsWith("/")){
+			endpoint = endpoint.substring(1);
+		}
+
+		String url = this.getIndex().toString() + endpoint;
+		log.info("Navigating to {}", url);
+		Response response = page.navigate(url);
+
+		assertEquals("OK", response.statusText());
+		page.waitForLoadState();
+		return page;
+	}
+
 	protected Page getLoggedInPage(TestUser user, String page){
 		Page output = this.getContext().newPage();
 
-		if(page.startsWith("/")){
-			page = page.substring(1);
-		}
-
-		String url = this.getIndex().toString() + page;
-		log.info("Navigating to {}", url);
-		Response response = output.navigate(url);
-
-		assertEquals("OK", response.statusText());
-		output.waitForLoadState();
+		this.navigateTo(output, page);
 
 		if(output.title().contains("Sign in to Open QuarterMaster")){
 			log.info("Need to log in user.");

@@ -56,7 +56,7 @@ Accepts:
 </div>
 <div class="row">
     <div class="col table-responsive">
-        <table class=" table table-bordered table-striped table-hover table-sm">
+        <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
             {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
             {/search/storage/searchResults}
         </table>
@@ -460,6 +460,7 @@ function resetAddEdit(){
 
 
 function setupAddEditForAdd(){
+    Main.processStart();
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
     addBulkAccord.show();
@@ -467,9 +468,11 @@ function setupAddEditForAdd(){
     addEditModalTitleText.text("Add Storage Block");
     addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
     addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
+    Main.processStop();
 }
 
 function setupAddEditForEdit(blockId){
+    Main.processStart()
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
@@ -498,8 +501,10 @@ function setupAddEditForEdit(blockId){
             KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
             KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
             // addCapacityInputs(capacityInputDiv, data.capacityMeasures);
+            Main.processStop();
     	}
     });
+
 }
 
 addEditStorageForm.submit(async function (event) {
