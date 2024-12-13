@@ -20,9 +20,10 @@ const ItemStoredTransaction = {
 			//TODO
 		},
 		getTransactionSelectDropdown: function (
-			itemId,
+			itemId = null,
 			stored = null,
 			{
+				buttonText = true,
 				showAllTransactions = false,
 				showAddTransaction = false,
 				showSubtractTransaction = false,
@@ -30,33 +31,45 @@ const ItemStoredTransaction = {
 				showCheckinTransaction = false,
 				showCheckoutTransaction = false,
 				showSetTransaction = false,
-			}) {
+			}
+		) {
+			if (stored != null) {
+				if(itemId == null) {
+					itemId = stored.item;
+				}
+				//TODO:: not show based on stored
+			}
 			let output = $('<div class="dropdown">\n' +
 				'  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
-				'    ' + Icons.transaction + ' Transact\n' +
+				'    ' + Icons.transaction + (buttonText ? " Transact" : "") + '\n' +
 				'  </button>\n' +
 				'  <ul class="dropdown-menu">\n' +
 				'  </ul>\n' +
 				'</div>');
 			let menu = output.find(".dropdown-menu");
 
-			//TODO:: not show based on stored
-			//TODO:: modal js
 			if (showAllTransactions || showAddTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.addTransaction + ' Add</button></li>'));
+				menu.append($('<li><button class="dropdown-item" type="button" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + stored.id + ', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
+					Icons.addTransaction + ' Add' +
+					'</button></li>'));
 			}
+			//TODO:: modal js
 			if (showAllTransactions || showSubtractTransaction) {
 				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.subtractTransaction + ' Subtract</button></li>'));
 			}
+			//TODO:: modal js
 			if (showAllTransactions || showCheckinTransaction) {
 				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.checkinTransaction + ' Checkin</button></li>'));
 			}
+			//TODO:: modal js
 			if (showAllTransactions || showCheckoutTransaction) {
 				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.checkoutTransaction + ' Checkout</button></li>'));
 			}
+			//TODO:: modal js
 			if (showAllTransactions || showTransferTransaction) {
 				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.transferTransaction + ' Transfer</button></li>'));
 			}
+			//TODO:: modal js
 			if (showAllTransactions || showSetTransaction) {
 				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.setTransaction + ' Set</button></li>'));
 			}
@@ -65,7 +78,7 @@ const ItemStoredTransaction = {
 		},
 		getAddTransactionButton: function (itemId = null, storedId = null) {
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.addTransaction + ' Add' +
 				'</button>'
 			);
@@ -74,7 +87,7 @@ const ItemStoredTransaction = {
 		getSubtractTransactionButton: function (itemId = null, storedId = null) {
 			//TODO:: update onclick
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.subtractTransaction + ' Subtract' +
 				'</button>'
 			);
@@ -83,7 +96,7 @@ const ItemStoredTransaction = {
 		getCheckinTransactionButton: function (itemId = null, storedId = null) {
 			//TODO:: update onclick
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.checkinTransaction + ' Checkin' +
 				'</button>'
 			);
@@ -92,7 +105,7 @@ const ItemStoredTransaction = {
 		getCheckoutTransactionButton: function (itemId = null, storedId = null) {
 			//TODO:: update onclick
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.checkoutTransaction + ' Checkout' +
 				'</button>'
 			);
@@ -101,7 +114,7 @@ const ItemStoredTransaction = {
 		getTransferTransactionButton: function (itemId = null, storedId = null) {
 			//TODO:: update onclick
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.transferTransaction + ' Transfer' +
 				'</button>'
 			);
@@ -110,7 +123,7 @@ const ItemStoredTransaction = {
 		getSetTransactionButton: function (itemId = null, storedId = null) {
 			//TODO:: update onclick
 			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm('+itemId+', '+storedId+', this);">' +
+				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.setTransaction + ' Set Amount' +
 				'</button>'
 			);
@@ -380,7 +393,7 @@ const ItemStoredTransaction = {
 				await Promise.all(promises);
 			});
 		},
-		setupForm: async function (itemId = null, preselectedStored = null, buttonElement = null) {
+		setupForm: async function (itemId = null, preselectedStoredId = null, buttonElement = null) {
 			//TODO:: do something wiht preselected stored
 			console.log("Setting up item stored add transaction form for item", itemId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
@@ -388,13 +401,16 @@ const ItemStoredTransaction = {
 			if (itemId != null) {
 				console.log("Given an item, keeping inputs disabled.");
 				this.itemDisplayContainer.show();
-				await this.setupFormForItem(itemId, false);
+				await this.setupFormForItem(itemId);
 			} else {
 				console.log("Enabling for searching for item.");
 				this.itemInputContainer.show();
 				this.itemNameInput.prop("disabled", false);
 				this.itemClearButton.prop("disabled", false);
 				this.itemSearchButton.prop("disabled", false);
+			}
+			if(preselectedStoredId != null){
+				//TODO:: setup form for stored
 			}
 		},
 		submitForm: async function () {
