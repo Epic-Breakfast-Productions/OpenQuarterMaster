@@ -49,7 +49,7 @@ const ItemStoredTransaction = {
 			let menu = output.find(".dropdown-menu");
 
 			if (showAllTransactions || showAddTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + stored.id + ', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
+				menu.append($('<li><button class="dropdown-item" type="button" onclick="ItemStoredTransaction.Add.setupForm(\'' + itemId + '\', \'' + stored.id + '\', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
 					Icons.addTransaction + ' Add' +
 					'</button></li>'));
 			}
