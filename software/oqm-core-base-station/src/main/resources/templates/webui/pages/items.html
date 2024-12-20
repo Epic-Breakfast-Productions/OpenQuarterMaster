@@ -91,6 +91,8 @@
 {/search/image/imageSearchSelectModal}
 {#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
 {/itemCheckout/itemCheckoutModal}
+{#itemStored/transaction/addTransactionModal}
+{/itemStored/transaction/addTransactionModal}
 {#CodeScannerModal}{/CodeScannerModal}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}
 	{/fileAttachment/FileAttachmentSearchSelectModal}
@@ -127,10 +129,14 @@
     <script src="/res/js/obj/item/storedView.js"></script>
     <script src="/res/js/obj/item/storedEdit.js"></script>
     <script src="/res/js/obj/item/itemView.js"></script>
+    <script src="/res/js/obj/itemStored/itemStoredSearch.js"></script>
     <script src="/res/js/CodeScanning.js"></script>
     <script src="/res/js/obj/itemCheckout/itemCheckout.js"></script>
     <script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
     <script src="/res/js/pageComponents.js"></script>
+    <script src="/res/js/modalHelpers.js"></script>
+    <script src="/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+
 {/scripts}
 {#pageScript}
 <script>

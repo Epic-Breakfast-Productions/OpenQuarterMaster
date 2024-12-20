@@ -320,7 +320,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		ArrayNode keywords = update.putArray("keywords");
 		keywords.add("something");
 		
-		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
+		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
 		
 		assertNotEquals(original, result);
 		assertEquals("something completely different", result.getTestField());
@@ -340,7 +340,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		ArrayNode keywords = update.putArray("keywords");
 		keywords.add("something");
 		
-		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId().toHexString(), update);
+		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId().toHexString(), update);
 		
 		assertNotEquals(original, result);
 		assertEquals("something completely different", result.getTestField());
@@ -359,7 +359,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
 			}
 		);
 	}
@@ -375,7 +375,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
 			}
 		);
 	}
@@ -391,7 +391,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
 			}
 		);
 	}
@@ -407,7 +407,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			IllegalArgumentException.class,
 			()->{
-				this.testMongoService.update(DEFAULT_TEST_DB_NAME, original.getId(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
 			}
 		);
 	}
@@ -423,7 +423,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertThrows(
 			DbNotFoundException.class,
 			()->{
-				this.testMongoService.update(DEFAULT_TEST_DB_NAME, ObjectId.get(), update);
+				this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, ObjectId.get(), update);
 			}
 		);
 	}

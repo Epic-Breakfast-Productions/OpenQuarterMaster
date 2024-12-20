@@ -1,19 +1,28 @@
 package tech.ebp.oqm.core.api.testResources.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.restassured.specification.RequestSpecification;
 import io.smallrye.jwt.build.Jwt;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.Claims;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import tech.ebp.oqm.core.api.testResources.TestRestUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static io.restassured.RestAssured.given;
+import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 /**
  *
@@ -103,8 +112,12 @@ public class TestUserService {
 			;
 		return token;
 	}
+
+	public RequestSpecification newJwtCall(User testUser) {
+		return TestRestUtils.newJwtCall(this.getUserToken(testUser));
+	}
 	
-	public User getTestUser(Set<String> roles) {
+	public User getTestUser(Set<String> roles, boolean create) {
 		User.Builder builder = User.builder();
 		
 		builder.username(FAKER.name().username());
@@ -119,22 +132,42 @@ public class TestUserService {
 		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
 		
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
-		
+
+		if(create) {
+			//ensure user is added to db
+			String userJsonString = this.newJwtCall(testUser)
+				.basePath("")
+				.get("/api/v1/interacting-entity/self")
+				.then()
+				.statusCode(200)
+				.extract().body().asString();
+			try {
+				ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
+				testUser.setId(new ObjectId(userJson.get("id").asText()));
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 		return testUser;
 	}
 	
 	public User getTestUser(String ... roles) {
-		return this.getTestUser(Set.of(roles));
+		return this.getTestUser(Set.of(roles), true);
 	}
-	
-	public User getTestUser(boolean admin) {
+
+	public User getTestUser(boolean admin, boolean create) {
 		Set<String> roles = new HashSet<>(Roles.NON_ADMIN_ROLES);
-		
+
 		if(admin){
 			roles.addAll(Roles.ADMIN_ROLES);
 		}
-		
-		return this.getTestUser(roles);
+
+		return this.getTestUser(roles, create);
+	}
+
+	public User getTestUser(boolean admin) {
+		return this.getTestUser(admin, true);
 	}
 	
 	public User getTestUser(){
