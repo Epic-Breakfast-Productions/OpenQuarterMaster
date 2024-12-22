@@ -54,7 +54,7 @@
       <img src="/api/passthrough/media/image/for/storageBlock/{id}" class="searchResultImage" alt="Image for {label}">
     {/if}
   </td>
-  <td>{label}</td>
+  <td class="blockSearchResultLabel">{label}</td>
   <td>{result.get("location").asText()}</td>
   <td>
     {#if result.get("hasParent").asBoolean()}

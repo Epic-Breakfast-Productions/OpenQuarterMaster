@@ -8,10 +8,12 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Path;
 
@@ -21,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("ui")
 public abstract class WebUiTest extends RunningServerTest {
 
-	private static Path getCurTestDir(TestInfo testInfo){
+	private static Path getCurTestDir(TestInfo testInfo) {
 		log.debug("Display name: {}", testInfo.getDisplayName());
 
 		Path output = PlaywrightSetup.RECORDINGS_DIR.resolve(testInfo.getTestClass().get().getName());
 
-		if(testInfo.getDisplayName().startsWith("[")){
+		if (testInfo.getDisplayName().startsWith("[")) {
 			return output.resolve(testInfo.getTestMethod().get().getName())
 				.resolve(testInfo.getDisplayName().replaceAll("/", ""));
 		} else {
@@ -56,10 +58,9 @@ public abstract class WebUiTest extends RunningServerTest {
 		this.curTestUiResultDir = getCurTestDir(testInfo);
 		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
 			.setRecordVideoDir(this.curTestUiResultDir)
-			.setScreenSize(1920,1080)
-			.setRecordVideoSize(1920,1080)
-			.setViewportSize(1920,1080)
-			;
+			.setScreenSize(1920, 1080)
+			.setRecordVideoSize(1920, 1080)
+			.setViewportSize(1920, 1080);
 
 		this.context = PlaywrightSetup.getInstance().getBrowser().newContext(newContextOptions);
 	}
@@ -67,40 +68,36 @@ public abstract class WebUiTest extends RunningServerTest {
 	@AfterEach
 	public void afterEachUi(TestInfo testInfo) throws InterruptedException, IOException {
 
-		for(int i = 0; i < this.getContext().pages().size(); i++){
+		for (int i = 0; i < this.getContext().pages().size(); i++) {
 			Page curPage = this.getContext().pages().get(i);
 			Path curPageFinalScreenshot = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final.png");
 			Path curPageHtmlFile = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final-code.html");
+			Path curPageInfoFile = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final-info.txt");
 
 			curPage.screenshot(getScreenshotOptions().setPath(curPageFinalScreenshot));
-			try(OutputStream outputStream = new FileOutputStream(curPageHtmlFile.toFile())){
+			try (OutputStream outputStream = new FileOutputStream(curPageHtmlFile.toFile())) {
 				outputStream.write(curPage.content().getBytes());
+			}
+			try (
+				OutputStream outputStream = new FileOutputStream(curPageInfoFile.toFile());
+				PrintWriter pw = new PrintWriter(outputStream);
+			) {
+				pw.println("Test info:");
+				pw.println();
+				pw.println("Final url: " + curPage.url());
+				pw.println();
 			}
 		}
 		Thread.sleep(250);
 		this.context.close();
 	}
 
-	protected Page navigateTo(Page page, String endpoint){
-		if(endpoint.startsWith("/")){
-			endpoint = endpoint.substring(1);
-		}
-
-		String url = this.getIndex().toString() + endpoint;
-		log.info("Navigating to {}", url);
-		Response response = page.navigate(url);
-
-		assertEquals("OK", response.statusText());
-		page.waitForLoadState();
-		return page;
-	}
-
-	protected Page getLoggedInPage(TestUser user, String page){
+	protected Page getLoggedInPage(TestUser user, String page) {
 		Page output = this.getContext().newPage();
 
-		this.navigateTo(output, page);
+		NavUtils.navigateToEndpoint(output, page);
 
-		if(output.title().contains("Sign in to Open QuarterMaster")){
+		if (output.title().contains("Sign in to Open QuarterMaster")) {
 			log.info("Need to log in user.");
 
 			Locator locator = output.locator("#password");
@@ -111,8 +108,8 @@ public abstract class WebUiTest extends RunningServerTest {
 			output.locator("#kc-login").click();
 			output.waitForLoadState();
 
-			if(!output.locator("#topOqmLogo").isVisible()){
-				if(!output.getByText("Invalid username or password.").isVisible()){
+			if (!output.locator("#topOqmLogo").isVisible()) {
+				if (!output.getByText("Invalid username or password.").isVisible()) {
 					throw new IllegalStateException("Not logged in but not where we thought.");
 				}
 				output.locator("#kc-registration").locator("a").click();
@@ -130,7 +127,7 @@ public abstract class WebUiTest extends RunningServerTest {
 
 			}
 
-			if(!output.locator("#topOqmLogo").isVisible()){
+			if (!output.locator("#topOqmLogo").isVisible()) {
 				throw new IllegalStateException("Not logged in.");
 			}
 		} else {

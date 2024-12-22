@@ -8,6 +8,7 @@ public class StorageBlockPage {
 
 	public static final String STORAGE_PAGE = "/storage";
 
+	public static final String MAIN_ADD_BUTTON = "#mainAddButton";
 	public static final String SEARCH_RESULTS_TABLE = "#mainPageSearchResults";
 	public static final String SEARCH_RESULTS_NONE_ADD_BUTTON = ".noResultsAddButton";
 	// add/edit form

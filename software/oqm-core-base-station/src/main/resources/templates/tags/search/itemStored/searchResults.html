@@ -58,7 +58,7 @@
       <img src="/api/passthrough/media/image/for/itemStored/{id}" class="searchResultImage">{! TODO:: fix this url !}
       {/if}
     </td>
-    <td>{labelText}</td>
+    <td class="">{labelText}</td>
     <td>{id}</td>
 
     {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}

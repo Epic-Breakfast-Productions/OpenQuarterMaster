@@ -37,7 +37,7 @@
       </h2>
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+        <button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
                 data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
           {#icons/add}{/icons/add} Add Item
         </button>
@@ -64,7 +64,7 @@
     </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
+      <button type="button" class="btn btn-sm btn-info viewButton" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
