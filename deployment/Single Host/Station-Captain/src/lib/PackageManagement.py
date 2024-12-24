@@ -1,6 +1,7 @@
 import os
 import subprocess
 import platform
+import re
 
 from ServiceUtils import *
 from LogUtils import *
@@ -220,3 +221,22 @@ class PackageManagement:
         PackageManagement.installPackages(pluginList)
 
         ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
+
+    @staticmethod
+    def checkSnapInstalled():
+        packageInfo = PackageManagement.getPackageInfo("snapd")
+
+
+    @staticmethod
+    def checkFirefoxSnapInstalled() -> (bool, str):
+        log.debug("Checking if ")
+        snapInfoResult = subprocess.run(['snap', 'info', 'firefox'], shell=False, capture_output=True, text=True, check=False)
+        # print("Firefox snap output: " + snapInfoResult.stdout)
+        if snapInfoResult.returncode != 0:
+            # print("snap command for firefox failed")
+            return False
+
+        if re.search("^installed: ", snapInfoResult.stdout, re.MULTILINE):
+            return True
+        # print("Installed not found.")
+        return False
