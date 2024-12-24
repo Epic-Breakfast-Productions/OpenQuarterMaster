@@ -18,6 +18,8 @@ from ServiceUtils import *
 from LogUtils import *
 from ipaddress import *
 
+from PackageManagement import PackageManagement
+
 log = LogUtils.setupLogger(__name__)
 
 class CertsUtils:
@@ -68,6 +70,12 @@ class CertsUtils:
             ffCertsDir = "/usr/lib/mozilla/certificates/"
         elif os.path.exists("/etc/firefox"):
             log.debug("Firefox probably installed via snap.")
+            ffInstalled = True
+            ffPoliciesFile = "/etc/firefox/policies/policies.json"
+            ffPoliciesDir = os.path.basename(ffPoliciesFile)
+            ffCertsDir = "/etc/firefox/policies/certificates/"
+        elif PackageManagement.checkFirefoxSnapInstalled():
+            log.debug("Firefox probably installed via newer snap.")
             ffInstalled = True
             ffPoliciesFile = "/etc/firefox/policies/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)

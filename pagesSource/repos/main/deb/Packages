@@ -861,6 +861,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-manager-station+captain
+Version: 2.4.3
+Architecture: all
+Maintainer: EBP
+Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2, python3-distutils-extra
+Filename: ./oqm-manager-station+captain_2.4.3_all.deb
+Size: 41928
+MD5sum: 5c788cfceb5c37de65435b7d7c807901
+SHA1: e14c1606193c92bfd4c1d1e37385add0d05db859
+SHA256: 2bd0b0322ce1d8f36434d9f0e477ca56e6a9ae4242225ebb746c4731c5ca864b
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-plugin-ext+item+search
 Version: 1.0.0
 Architecture: all
@@ -871,6 +886,21 @@ Size: 3502
 MD5sum: f185000d1e3dedc0d9eba96ea0690adf
 SHA1: 31fce82f26b92507e3df49db19773eff05f1ee82
 SHA256: d148e0b26dfb7997434340cc7cd88c3ee9831b5c36324406d9293be072a84465
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
+Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
+Licence: GPL-3+
+
+Package: oqm-plugin-ext+item+search
+Version: 1.0.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.1.0), oqm-infra-jaeger (>= 1.1.0)
+Filename: ./oqm-plugin-ext+item+search_1.0.1_all.deb
+Size: 3496
+MD5sum: cff06e99ce86be4aadeb6e442d09b20c
+SHA1: db14c8b0ac0d9dfde498e920303172b213aef9bb
+SHA256: 01df268ca6f72cc37ced7c227cb7f6d2ebf8a3b4e135a1c20a2c85e22c268a9a
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
 Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
