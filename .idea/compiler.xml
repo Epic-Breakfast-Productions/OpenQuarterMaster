@@ -8,14 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="stationCaptainTest" />
       </profile>
-      <profile name="Gradle Imported" enabled="true">
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.28/a2ff5da8bcd8b1b26f36b806ced63213362c6dcc/lombok-1.18.28.jar" />
-        </processorPath>
-        <module name="open-qm-lib-core.main" />
-        <module name="open-qm-lib-core.test" />
-      </profile>
     </annotationProcessing>
   </component>
 </project>
