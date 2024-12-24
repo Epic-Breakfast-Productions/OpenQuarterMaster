@@ -1,0 +1,11 @@
+schemaVersion: 2.3.0
+metadata:
+  name: oqm-dev-environment
+  version: 1.0.0
+projects:
+  - name: Open QuarterMaster
+    git:
+      remotes:
+        origin: 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git'
+      checkoutFrom:
+        revision: main
