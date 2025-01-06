@@ -66,7 +66,7 @@ dependencies {
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
 	testImplementation 'net.datafaker:datafaker:2.4.2'
-	testImplementation 'org.assertj:assertj-core:3.27.0'
+	testImplementation 'org.assertj:assertj-core:3.27.2'
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 }
 
