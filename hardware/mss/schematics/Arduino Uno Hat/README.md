@@ -1,6 +1,6 @@
 # OQM MSS Arduino Uno Hat
 
-![PCB](./outputs/OQM MSS Arduino Uno Hat.jpg)
+![PCB](./outputs/OQM%20MSS%20Arduino%20Uno%20Hat.jpg)
 
 This is a Kicad project to create the PCB for the MSS Module controller hat for the Arduino Uno.
 
