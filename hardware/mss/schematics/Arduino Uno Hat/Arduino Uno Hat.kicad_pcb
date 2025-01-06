@@ -2616,7 +2616,7 @@
 		(descr "JST XH series connector, S3B-XH-A-1 (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J5"
-			(at 2.5 -5.1 90)
+			(at 2.5 -3 90)
 			(layer "F.SilkS")
 			(uuid "fbea1bb3-8e72-4840-a7e9-623ef92fa22f")
 			(effects
@@ -2628,7 +2628,7 @@
 		)
 		(property "Value" "LED_STRIP"
 			(at 2.5 8.8 90)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "085cd2b4-5287-4b0d-a452-d212b32767b0")
 			(effects
 				(font
@@ -3422,7 +3422,7 @@
 		)
 		(property "Value" "SPKR"
 			(at 3.81 3.11 0)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "9008d243-e25a-4b2d-9fdd-869a01c607ad")
 			(effects
 				(font
@@ -4313,7 +4313,7 @@
 		)
 		(property "Value" "Speaker"
 			(at 3.81 8.89 90)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "dfc72b8c-35ae-4809-baf8-64bbd3001b81")
 			(effects
 				(font
@@ -5283,7 +5283,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 1.27 3.96 0)
+			(at 1.27 2.5 0)
 			(layer "F.Fab")
 			(uuid "cfe24c85-51c0-447f-a9b7-0453c694df49")
 			(effects
@@ -6070,6 +6070,42 @@
 		(layer "Edge.Cuts")
 		(uuid "ef0ee1ce-7ed7-4e9c-abb9-dc0926a9353e")
 	)
+	(gr_text "+"
+		(at 114.5 57.5 0)
+		(layer "F.SilkS")
+		(uuid "408a1c03-f0e3-446e-9026-131a6781a0d0")
+		(effects
+			(font
+				(size 1.5 1.5)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "OV"
+		(at 105 78.5 0)
+		(layer "F.SilkS")
+		(uuid "7ba0522e-5610-45fb-afbc-3e8664247698")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "-"
+		(at 115 63.5 0)
+		(layer "F.SilkS")
+		(uuid "b34244fb-2695-441e-95a4-e94bb58bccfd")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
 	(gr_text "https://openquartermaster.com/"
 		(at 120.5 94.5 0)
 		(layer "F.SilkS")
@@ -6079,6 +6115,18 @@
 				(size 1.5 1.5)
 				(thickness 0.3)
 				(bold yes)
+			)
+			(justify left bottom)
+		)
+	)
+	(gr_text "D"
+		(at 115 60.5 0)
+		(layer "F.SilkS")
+		(uuid "e85899d7-fdcd-4527-a8da-e60d76d43dfd")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
 			)
 			(justify left bottom)
 		)
